@@ -18,15 +18,11 @@
 
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
+#include <celrender/rendererfwd.h>
 #include <celutil/color.h>
 
 class Body;
 struct Matrices;
-
-namespace celestia::render
-{
-class ReferenceMarkRenderer;
-}
 
 /*! VisibleRegion is a reference mark that shows the outline of
  *  region on the surface of a body in which a specified target

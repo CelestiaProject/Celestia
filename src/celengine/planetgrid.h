@@ -17,15 +17,11 @@
 #include <Eigen/Core>
 
 #include <celengine/referencemark.h>
+#include <celrender/rendererfwd.h>
 
 class Body;
 struct Matrices;
 class Renderer;
-
-namespace celestia::render
-{
-class ReferenceMarkRenderer;
-}
 
 class PlanetographicGrid : public ReferenceMark
 {
@@ -72,9 +68,6 @@ protected:
 
 private:
     const Body& body;
-
-    float minLongitudeStep{ 10.0f };
-    float minLatitudeStep{ 10.0f };
 
     LongitudeConvention longitudeConvention{ LongitudeConvention::Westward };
     NorthDirection northDirection{ NorthDirection::NorthNormal };

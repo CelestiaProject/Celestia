@@ -2996,7 +2996,7 @@ void Renderer::renderReferenceMark(const ReferenceMark& refMark,
                                    float distance,
                                    double now,
                                    float nearPlaneDistance,
-                                   const Matrices &m)
+                                   const Matrices &m) const
 {
     float altitude = distance - refMark.boundingSphereRadius();
     float discSizeInPixels = refMark.boundingSphereRadius() /
