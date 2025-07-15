@@ -54,8 +54,6 @@ set(CELENGINE_SOURCES
   location.h
   lodspheremesh.cpp
   lodspheremesh.h
-  mapmanager.cpp
-  mapmanager.h
   marker.cpp
   marker.h
   meshmanager.cpp
@@ -155,6 +153,8 @@ set(CELENGINE_SOURCES
   virtualtex.h
   visibleregion.cpp
   visibleregion.h
+  warpmesh.cpp
+  warpmesh.h
 )
 
 add_library(celengine OBJECT ${CELENGINE_SOURCES})

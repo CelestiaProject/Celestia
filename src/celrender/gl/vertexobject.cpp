@@ -107,7 +107,7 @@ VertexObject::~VertexObject()
 }
 
 VertexObject&
-VertexObject::setCount(int count)
+VertexObject::setCount(GLsizei count)
 {
     m_count = count;
     return *this;
@@ -169,7 +169,7 @@ VertexObject::draw(int count, int first)
 }
 
 VertexObject&
-VertexObject::draw(VertexObject::Primitive primitive, int count, int first)
+VertexObject::draw(VertexObject::Primitive primitive, GLsizei count, GLint first)
 {
     if (count == 0)
         return *this;

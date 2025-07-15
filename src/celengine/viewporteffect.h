@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 
@@ -52,8 +54,8 @@ private:
 class WarpMeshViewportEffect : public ViewportEffect
 {
 public:
-    WarpMeshViewportEffect(WarpMesh *mesh);
-    ~WarpMeshViewportEffect() override = default;
+    explicit WarpMeshViewportEffect(std::unique_ptr<WarpMesh>&& mesh);
+    ~WarpMeshViewportEffect() override;
 
     bool prerender(Renderer*, FramebufferObject* fbo) override;
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
@@ -63,7 +65,7 @@ private:
     celestia::gl::VertexObject vo{ celestia::util::NoCreateT{} };
     celestia::gl::Buffer bo{ celestia::util::NoCreateT{} };
 
-    WarpMesh *mesh;
+    std::unique_ptr<WarpMesh> mesh;
 
     void initialize();
 
