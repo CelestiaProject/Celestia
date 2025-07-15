@@ -136,7 +136,7 @@ public:
      *
      * @see @ref Primitive @ref VertexObject(Primitive)
      */
-    VertexObject& draw(int count, int first = 0);
+    VertexObject& draw(GLsizei count, GLint first = 0);
 
     /**
      * @brief Render VertexObject.
@@ -150,7 +150,7 @@ public:
      *
      * @see @ref Primitive @ref VertexObject(Primitive)
      */
-    VertexObject& draw(Primitive primitive, int count, int first = 0);
+    VertexObject& draw(Primitive primitive, GLsizei count, GLint first = 0);
 
     /**
      * @brief Set the primitive.
@@ -181,14 +181,14 @@ public:
      *
      * @see @ref draw()
      */
-    VertexObject& setCount(int count);
+    VertexObject& setCount(GLsizei count);
 
     /**
      * @brief Return vertex/index count.
      *
-     * @return int
+     * @return GLsizei
      */
-    int count() const;
+    GLsizei count() const;
 
     /**
      * Whether the VertexObject is indexed.
@@ -269,7 +269,7 @@ private:
     Primitive m_primitive{ Primitive::Triangles };
 
     //! GL primitive count
-    int m_count{ 0 };
+    GLsizei m_count{ 0 };
 
     //! VAO Id (OpenGL name)
     GLuint m_id{ 0 };

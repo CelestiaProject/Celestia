@@ -49,7 +49,6 @@
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
 #include <celengine/location.h>
-#include <celengine/mapmanager.h>
 #include <celengine/multitexture.h>
 #include <celengine/overlay.h>
 #include <celengine/perspectiveprojectionmode.h>
@@ -58,6 +57,7 @@
 #include <celengine/textlayout.h>
 #include <celengine/rectangle.h>
 #include <celengine/visibleregion.h>
+#include <celengine/warpmesh.h>
 #include <celestia/configfile.h>
 #include <celestia/favorites.h>
 #include <celestia/loaddso.h>
@@ -2507,10 +2507,9 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
             }
             else
             {
-                WarpMeshManager *manager = GetWarpMeshManager();
-                WarpMesh *mesh = manager->find(manager->getHandle(WarpMeshInfo(config->paths.warpMeshFile)));
+                auto mesh = WarpMesh::load(config->paths.warpMeshFile);
                 if (mesh != nullptr)
-                    viewportEffect = std::make_unique<WarpMeshViewportEffect>(mesh);
+                    viewportEffect = std::make_unique<WarpMeshViewportEffect>(std::move(mesh));
                 else
                     GetLogger()->error("Failed to read warp mesh file {}\n", config->paths.warpMeshFile);
             }

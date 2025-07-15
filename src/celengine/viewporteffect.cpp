@@ -13,7 +13,7 @@
 #include "framebuffer.h"
 #include "render.h"
 #include "shadermanager.h"
-#include "mapmanager.h"
+#include "warpmesh.h"
 
 namespace gl = celestia::gl;
 namespace util = celestia::util;
@@ -70,7 +70,7 @@ void PassthroughViewportEffect::initialize()
         return;
     initialized = true;
 
-    static std::array quadVertices = {
+    static constexpr std::array quadVertices = {
         // positions   // texCoords
         -1.0f,  1.0f,  0.0f, 1.0f,
         -1.0f, -1.0f,  0.0f, 0.0f,
@@ -103,11 +103,12 @@ void PassthroughViewportEffect::initialize()
         2 * sizeof(float));
 }
 
-WarpMeshViewportEffect::WarpMeshViewportEffect(WarpMesh *mesh) :
-    ViewportEffect(),
-    mesh(mesh)
+WarpMeshViewportEffect::WarpMeshViewportEffect(std::unique_ptr<WarpMesh>&& _mesh) :
+    mesh(std::move(_mesh))
 {
 }
+
+WarpMeshViewportEffect::~WarpMeshViewportEffect() = default;
 
 bool WarpMeshViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo)
 {
@@ -143,35 +144,9 @@ void WarpMeshViewportEffect::initialize()
     initialized = true;
 
     vo = gl::VertexObject();
-    bo = gl::Buffer();
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array);
 
-    bo.setData(mesh->scopedDataForRendering(), gl::Buffer::BufferUsage::StaticDraw);
-
-    vo.setCount(mesh->count());
-    vo.addVertexBuffer(
-        bo,
-        CelestiaGLProgram::VertexCoordAttributeIndex,
-        2,
-        gl::VertexObject::DataType::Float,
-        false,
-        5 * sizeof(float),
-        0);
-    vo.addVertexBuffer(
-        bo,
-        CelestiaGLProgram::TextureCoord0AttributeIndex,
-        2,
-        gl::VertexObject::DataType::Float,
-        false,
-        5 * sizeof(float),
-        2 * sizeof(float));
-    vo.addVertexBuffer(
-        bo,
-        CelestiaGLProgram::IntensityAttributeIndex,
-        1,
-        gl::VertexObject::DataType::Float,
-        false,
-        5 * sizeof(float),
-        4 * sizeof(float));
+    mesh->setUpVertexObject(vo, bo);
 }
 
 bool WarpMeshViewportEffect::distortXY(float &x, float &y)
@@ -181,7 +156,7 @@ bool WarpMeshViewportEffect::distortXY(float &x, float &y)
 
     float u;
     float v;
-    if (!mesh->mapVertex(x * 2.0f, y * 2.0f, &u, &v))
+    if (!mesh->mapVertex(x * 2.0f, y * 2.0f, u, v))
         return false;
 
     x = u / 2.0f;
