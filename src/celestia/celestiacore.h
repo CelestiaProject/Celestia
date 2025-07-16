@@ -100,11 +100,14 @@ public:
         WhatsThisCursor     = 16,
     };
 
-    enum
+    enum class JoyAxis
     {
-        Joy_XAxis           = 0,
-        Joy_YAxis           = 1,
-        Joy_ZAxis           = 2,
+        X           = 0,
+        Y           = 1,
+        Z           = 2,
+        RX          = 3,
+        RY          = 4,
+        RZ          = 5,
     };
 
     enum
@@ -223,7 +226,7 @@ public:
     void mouseButtonUp(float, float, int);
     void mouseMove(float, float, int);
     void mouseMove(float, float);
-    void joystickAxis(int axis, float amount);
+    void joystickAxis(JoyAxis axis, float amount);
     void joystickButton(int button, bool down);
     void pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV);
     void resize(GLsizei w, GLsizei h);
@@ -481,6 +484,7 @@ private:
     double sysTime{ 0.0 };
 
     Eigen::Vector3f joystickRotation{ Eigen::Vector3f::Zero() };
+    Eigen::Vector3f joystickRightRotation{ Eigen::Vector3f::Zero() };
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     bool shiftKeysPressed[KeyCount];

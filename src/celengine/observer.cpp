@@ -420,9 +420,12 @@ Observer::Observer(const Observer& o) :
     position(o.position),
     originalOrientation(o.originalOrientation),
     transformedOrientation(o.transformedOrientation),
-    orientationTransform(o.orientationTransform),
+    devicePoseQuaternion(o.devicePoseQuaternion),
+    eulerDrivenOrientation(o.eulerDrivenOrientation),
+    inputEulerAngles(o.inputEulerAngles),
     velocity(o.velocity),
     angularVelocity(o.angularVelocity),
+    inputAngularVelocity(o.inputAngularVelocity),
     realTime(o.realTime),
     targetSpeed(o.targetSpeed),
     targetVelocity(o.targetVelocity),
@@ -447,10 +450,13 @@ Observer& Observer::operator=(const Observer& o)
     simTime = o.simTime;
     position = o.position;
     originalOrientation = o.originalOrientation;
-    orientationTransform = o.orientationTransform;
+    devicePoseQuaternion = o.devicePoseQuaternion;
+    eulerDrivenOrientation = o.eulerDrivenOrientation;
+    inputEulerAngles = o.inputEulerAngles;
     transformedOrientation = o.transformedOrientation;
     velocity = o.velocity;
     angularVelocity = o.angularVelocity;
+    inputAngularVelocity = o.inputAngularVelocity;
     frame = nullptr;
     realTime = o.realTime;
     targetSpeed = o.targetSpeed;
@@ -581,13 +587,13 @@ Observer::setOriginalOrientation(const Eigen::Quaterniond& q)
 const Eigen::Quaterniond&
 Observer::getOrientationTransform() const
 {
-    return orientationTransform;
+    return devicePoseQuaternion;
 }
 
 void
 Observer::setOrientationTransform(const Eigen::Quaterniond& transform)
 {
-    orientationTransform = transform;
+    devicePoseQuaternion = transform;
     updateOrientation();
 }
 
@@ -598,7 +604,9 @@ Observer::applyCurrentTransform()
 {
     originalOrientationUniv = transformedOrientationUniv;
     originalOrientation = transformedOrientation;
-    orientationTransform = Eigen::Quaterniond::Identity();
+    devicePoseQuaternion = Eigen::Quaterniond::Identity();
+    inputEulerAngles = Eigen::Vector3d::Identity();
+    eulerDrivenOrientation = Eigen::Quaterniond::Identity();
     updateOrientation();
 }
 
@@ -628,6 +636,18 @@ void
 Observer::setAngularVelocity(const Eigen::Vector3d& v)
 {
     angularVelocity = v;
+}
+
+Eigen::Vector3d
+Observer::getInputAngularVelocity() const
+{
+    return inputAngularVelocity;
+}
+
+void
+Observer::setInputAngularVelocity(const Eigen::Vector3d& v)
+{
+    inputAngularVelocity = v;
 }
 
 double
@@ -687,7 +707,7 @@ Observer::update(double dt, double timeScale)
 
         // At some threshold, we just set the velocity to zero; otherwise,
         // we'll end up with ridiculous velocities like 10^-40 m/s.
-        if (v.norm() < 1.0e-12)
+        if (v.norm() < celestia::engine::MIN_SIG_LINEAR_SPEED)
             v = Eigen::Vector3d::Zero();
         setVelocity(v);
     }
@@ -702,6 +722,19 @@ Observer::update(double dt, double timeScale)
         Eigen::Quaterniond dr = Eigen::Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * transformedOrientation;
         Eigen::Quaterniond expectedOrientation = Eigen::Quaterniond(transformedOrientation.coeffs() + dt * dr.coeffs()).normalized();
         originalOrientation = undoTransform(expectedOrientation);
+
+        // Update the input angular orientation transform
+        if (inputAngularVelocity.norm() > celestia::engine::MIN_SIG_ANGULAR_SPEED)
+        {
+            inputEulerAngles += inputAngularVelocity * dt;
+            // Clamp pitch between -90 and +90 to avoid gimbal lock
+            inputEulerAngles[0] = std::clamp(std::remainder(inputEulerAngles[0], 2 * celestia::numbers::pi), -0.5 * celestia::numbers::pi + std::numeric_limits<double>::epsilon(), 0.5 * celestia::numbers::pi - std::numeric_limits<double>::epsilon());
+            inputEulerAngles[1] = std::remainder(inputEulerAngles[1], 2 * celestia::numbers::pi);
+            inputEulerAngles[2] = std::remainder(inputEulerAngles[2], 2 * celestia::numbers::pi);
+            eulerDrivenOrientation = Eigen::AngleAxisd(inputEulerAngles[0], Eigen::Vector3d::UnitX()) *
+                                     Eigen::AngleAxisd(inputEulerAngles[1], Eigen::Vector3d::UnitY()) *
+                                     Eigen::AngleAxisd(inputEulerAngles[2], Eigen::Vector3d::UnitZ());
+        }
     }
 
     updateUniversal();
@@ -720,14 +753,14 @@ Observer::update(double dt, double timeScale)
 void
 Observer::updateOrientation()
 {
-    transformedOrientationUniv = orientationTransform * originalOrientationUniv;
+    transformedOrientationUniv = eulerDrivenOrientation * devicePoseQuaternion * originalOrientationUniv;
     transformedOrientation = frame->convertFromUniversal(transformedOrientationUniv, getTime());
 }
 
 Eigen::Quaterniond
 Observer::undoTransform(const Eigen::Quaterniond& transformed) const
 {
-    return orientationTransform.inverse() * transformed;
+    return devicePoseQuaternion.inverse() * eulerDrivenOrientation.inverse()  * transformed;
 }
 
 Selection
@@ -1246,7 +1279,7 @@ Observer::gotoJourney(const JourneyParams& params)
 void
 Observer::startTraveling()
 {
-    journey.orientationTransformInverse = orientationTransform.inverse();
+    journey.orientationTransformInverse = devicePoseQuaternion.inverse() * eulerDrivenOrientation.inverse();
     observerMode = ObserverMode::Travelling;
 }
 

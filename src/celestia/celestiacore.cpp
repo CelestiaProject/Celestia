@@ -716,7 +716,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 }
 
 
-void CelestiaCore::joystickAxis(int axis, float amount)
+void CelestiaCore::joystickAxis(JoyAxis axis, float amount)
 {
     float deadZone = 0.25f;
 
@@ -727,10 +727,23 @@ void CelestiaCore::joystickAxis(int axis, float amount)
 
     amount = math::sign(amount) * math::square(amount);
 
-    if (axis == Joy_XAxis)
+    switch (axis)
+    {
+    case CelestiaCore::JoyAxis::X:
         joystickRotation.y() = amount;
-    else if (axis == Joy_YAxis)
+        break;
+    case JoyAxis::Y:
         joystickRotation.x() = -amount;
+        break;
+    case JoyAxis::RX:
+        joystickRightRotation.y() = amount;
+        break;
+    case JoyAxis::RY:
+        joystickRightRotation.x() = -amount;
+        break;
+    default:
+        break;
+    }
 }
 
 
@@ -1792,8 +1805,11 @@ void CelestiaCore::tick(double dt)
 
     // Keyboard rotate
     Vector3d av = sim->getObserver().getAngularVelocity();
+    Vector3d inputAV = sim->getObserver().getInputAngularVelocity();
 
-    av = av * exp(-dt * RotationDecay);
+    double decayFactor = std::exp(-dt * static_cast<double>(RotationDecay));
+    av = av * decayFactor;
+    inputAV = inputAV * decayFactor;
 
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
     Selection refObject = sim->getFrame()->getRefObject();
@@ -1864,6 +1880,11 @@ void CelestiaCore::tick(double dt)
 
     sim->getObserver().setAngularVelocity(av);
 
+    if (joystickRightRotation != Vector3f::Zero())
+        inputAV += (dt * KeyRotationAccel) * joystickRightRotation.cast<double>();
+
+    sim->getObserver().setInputAngularVelocity(inputAV);
+
     if (keysPressed[static_cast<int>('A')] || joyButtonsPressed[JoyButton2])
     {
         bSetTargetSpeed = true;
@@ -1884,7 +1905,7 @@ void CelestiaCore::tick(double dt)
                 sim->setTargetSpeed(currentSpeed / std::exp(static_cast<float>(dt) * 3.0f * decelerationCoefficient));
         }
     }
-    if (!bSetTargetSpeed && av.norm() > 1.0e-10)
+    if (!bSetTargetSpeed && av.norm() > MIN_SIG_ANGULAR_SPEED)
     {
         // Force observer velocity vector to align with observer direction if an observer
         // angular velocity still exists.
