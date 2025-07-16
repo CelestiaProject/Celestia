@@ -569,9 +569,9 @@ MainWindow::handleKey(WPARAM wParam, bool down)
     case VK_F8:
         if (joystickAvailable && down)
         {
-            appCore->joystickAxis(CelestiaCore::Joy_XAxis, 0);
-            appCore->joystickAxis(CelestiaCore::Joy_YAxis, 0);
-            appCore->joystickAxis(CelestiaCore::Joy_ZAxis, 0);
+            appCore->joystickAxis(CelestiaCore::JoyAxis::X, 0);
+            appCore->joystickAxis(CelestiaCore::JoyAxis::Y, 0);
+            appCore->joystickAxis(CelestiaCore::JoyAxis::Z, 0);
             useJoystick = !useJoystick;
         }
         break;
@@ -1211,8 +1211,8 @@ MainWindow::handleJoystick()
     float x = static_cast<float>(info.dwXpos) / 32768.0f - 1.0f;
     float y = static_cast<float>(info.dwYpos) / 32768.0f - 1.0f;
 
-    appCore->joystickAxis(CelestiaCore::Joy_XAxis, x);
-    appCore->joystickAxis(CelestiaCore::Joy_YAxis, y);
+    appCore->joystickAxis(CelestiaCore::JoyAxis::X, x);
+    appCore->joystickAxis(CelestiaCore::JoyAxis::Y, y);
     appCore->joystickButton(CelestiaCore::JoyButton1,
                             (info.dwButtons & 0x1) != 0);
     appCore->joystickButton(CelestiaCore::JoyButton2,

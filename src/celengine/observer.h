@@ -31,6 +31,14 @@
 #include "shared.h"
 #include "univcoord.h"
 
+namespace celestia::engine
+{
+
+constexpr inline double MIN_SIG_ANGULAR_SPEED     = 1.0e-10;
+constexpr inline double MIN_SIG_LINEAR_SPEED      = 1.0e-12;
+
+}
+
 class ReferenceFrame;
 
 /*! ObserverFrame is a wrapper class for ReferenceFrame which adds some

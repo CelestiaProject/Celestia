@@ -707,7 +707,7 @@ Observer::update(double dt, double timeScale)
 
         // At some threshold, we just set the velocity to zero; otherwise,
         // we'll end up with ridiculous velocities like 10^-40 m/s.
-        if (v.norm() < 1.0e-12)
+        if (v.norm() < celestia::engine::MIN_SIG_LINEAR_SPEED)
             v = Eigen::Vector3d::Zero();
         setVelocity(v);
     }
@@ -724,7 +724,7 @@ Observer::update(double dt, double timeScale)
         originalOrientation = undoTransform(expectedOrientation);
 
         // Update the input angular orientation transform
-        if (inputAngularVelocity.norm() > 1.0e-12)
+        if (inputAngularVelocity.norm() > celestia::engine::MIN_SIG_ANGULAR_SPEED)
         {
             inputEulerAngles += inputAngularVelocity * dt;
             // Clamp pitch between -90 and +90 to avoid gimbal lock
