@@ -2090,6 +2090,16 @@ void CelestiaCore::setInteractionFlags(InteractionFlags flags)
     interactionFlags = flags;
 }
 
+celestia::engine::ObserverFlags CelestiaCore::getObserverFlags() const
+{
+    return observerSettings->flags;
+}
+
+void CelestiaCore::setObserverFlags(celestia::engine::ObserverFlags flags)
+{
+    observerSettings->flags = flags;
+}
+
 // Return true if anything changed that requires re-rendering. Otherwise, we
 // can skip rendering, keep the GPU idle, and save power.
 bool CelestiaCore::viewUpdateRequired() const
@@ -2563,7 +2573,9 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     set_or_unset(interactionFlags, InteractionFlags::RayBasedDragging, config->mouse.rayBasedDragging);
     set_or_unset(interactionFlags, InteractionFlags::FocusZooming, config->mouse.focusZooming);
 
-    sim = new Simulation(universe);
+    set_or_unset(observerSettings->flags, celestia::engine::ObserverFlags::AlignCameraToSurfaceOnLand, config->observer.alignCameraToSurfaceOnLand);
+
+    sim = new Simulation(universe, observerSettings);
     if (!util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         sim->setFaintestVisible(config->renderDetails.faintestVisible);

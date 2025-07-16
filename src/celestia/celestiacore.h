@@ -319,6 +319,9 @@ public:
     InteractionFlags getInteractionFlags() const;
     void setInteractionFlags(InteractionFlags);
 
+    celestia::engine::ObserverFlags getObserverFlags() const;
+    void setObserverFlags(celestia::engine::ObserverFlags);
+
     void setFOVFromZoom();
     void setZoomFromFOV();
 
@@ -435,6 +438,8 @@ private:
 
     Simulation* sim{ nullptr };
     Renderer* renderer{ nullptr };
+
+    std::shared_ptr<celestia::engine::ObserverSettings> observerSettings{ std::make_shared<celestia::engine::ObserverSettings>() };
 
     static std::locale loc;
 

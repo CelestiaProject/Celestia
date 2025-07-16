@@ -63,6 +63,11 @@ struct CelestiaConfig
         bool focusZooming{ false };
     };
 
+    struct Observer
+    {
+        bool alignCameraToSurfaceOnLand{ false };
+    };
+
     struct RenderDetails
     {
         double orbitWindowEnd{ 0.5 };
@@ -96,6 +101,7 @@ struct CelestiaConfig
     Paths paths{ };
     Fonts fonts{ };
     Mouse mouse{ };
+    Observer observer{ };
     RenderDetails renderDetails{ };
     StarDetails::StarTextureSet starTextures{ };
 

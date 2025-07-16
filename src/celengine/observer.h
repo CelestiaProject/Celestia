@@ -27,6 +27,8 @@
 #include <Eigen/Geometry>
 
 #include <celcompat/numbers.h>
+#include <celutil/flag.h>
+
 #include "selection.h"
 #include "shared.h"
 #include "univcoord.h"
@@ -36,6 +38,19 @@ namespace celestia::engine
 
 constexpr inline double MIN_SIG_ANGULAR_SPEED     = 1.0e-10;
 constexpr inline double MIN_SIG_LINEAR_SPEED      = 1.0e-12;
+
+enum class ObserverFlags : unsigned int
+{
+    None                        = 0x0,
+    AlignCameraToSurfaceOnLand  = 0x1,
+};
+
+struct ObserverSettings
+{
+    ObserverFlags flags{ ObserverFlags::None };
+};
+
+ENUM_CLASS_BITWISE_OPS(ObserverFlags);
 
 }
 
@@ -127,7 +142,7 @@ public:
     static constexpr const double EndInterpolation   = 0.75;
     static constexpr const double AccelerationTime   = 0.5;
 
-    Observer();
+    explicit Observer(const std::shared_ptr<celestia::engine::ObserverSettings>&);
     Observer(const Observer &o);
     ~Observer() = default;
 
@@ -350,6 +365,8 @@ private:
     float alternateZoom{ 1.0f };
 
     bool reverseFlag{ false };
+
+    std::shared_ptr<celestia::engine::ObserverSettings> settings;
 
     std::uint64_t locationFilter{ DefaultLocationFilter };
     std::string displayedSurface;

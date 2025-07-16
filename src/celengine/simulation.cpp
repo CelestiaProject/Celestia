@@ -21,10 +21,10 @@
 #include "render.h"
 
 
-Simulation::Simulation(Universe* _universe) :
-    universe(_universe)
+Simulation::Simulation(Universe* universe, const std::shared_ptr<celestia::engine::ObserverSettings>& observerSettings) :
+    universe(universe)
 {
-    activeObserver = new Observer();
+    activeObserver = new Observer(observerSettings);
     observers.push_back(activeObserver);
 }
 
