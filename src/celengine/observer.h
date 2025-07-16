@@ -304,6 +304,7 @@ private:
     void setOriginalOrientation(const Eigen::Quaterniond&);
     void updateUniversal();
     void updateOrientation();
+    Eigen::Quaterniond transform(const Eigen::Quaterniond&) const;
     Eigen::Quaterniond undoTransform(const Eigen::Quaterniond&) const;
     void convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame);
 

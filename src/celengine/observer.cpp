@@ -753,8 +753,14 @@ Observer::update(double dt, double timeScale)
 void
 Observer::updateOrientation()
 {
-    transformedOrientationUniv = eulerDrivenOrientation * devicePoseQuaternion * originalOrientationUniv;
+    transformedOrientationUniv = transform(originalOrientationUniv);
     transformedOrientation = frame->convertFromUniversal(transformedOrientationUniv, getTime());
+}
+
+Eigen::Quaterniond
+Observer::transform(const Eigen::Quaterniond& original) const
+{
+    return eulerDrivenOrientation * devicePoseQuaternion * original;
 }
 
 Eigen::Quaterniond
@@ -1458,7 +1464,7 @@ Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.from = position;
     journey.initialOrientation = transformedOrientation;
     journey.to = toPosition;
-    journey.finalOrientation = toOrientation;
+    journey.finalOrientation = transform(toOrientation);
 
     journey.startInterpolation = StartInterpolation;
     journey.endInterpolation   = EndInterpolation;
@@ -1502,9 +1508,9 @@ Observer::gotoSurface(const Selection& sel, double duration)
     Eigen::Vector3d v = getPosition().offsetFromKm(sel.getPosition(getTime()));
     v.normalize();
 
-    Eigen::Vector3d viewDir = transformedOrientationUniv.conjugate() * -Eigen::Vector3d::UnitZ();
-    Eigen::Vector3d up      = transformedOrientationUniv.conjugate() * Eigen::Vector3d::UnitY();
-    Eigen::Quaterniond q    = transformedOrientationUniv;
+    Eigen::Vector3d viewDir = originalOrientationUniv.conjugate() * -Eigen::Vector3d::UnitZ();
+    Eigen::Vector3d up      = originalOrientationUniv.conjugate() * Eigen::Vector3d::UnitY();
+    Eigen::Quaterniond q    = originalOrientationUniv;
     if (v.dot(viewDir) < 0.0)
     {
         q = math::LookAt<double>(Eigen::Vector3d::Zero(), up, v);
