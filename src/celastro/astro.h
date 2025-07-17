@@ -218,6 +218,8 @@ struct KeplerElements
     double argPericenter{ 0.0 };
     double meanAnomaly{ 0.0 };
     double period{ 0.0 };
+    double nodalPeriod{ 0.0 };
+    double apsidalPeriod{ 0.0 };
 };
 
 

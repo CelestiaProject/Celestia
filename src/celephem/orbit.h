@@ -95,6 +95,37 @@ private:
 };
 
 
+class PrecessingOrbit final : public Orbit
+{
+public:
+    PrecessingOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
+    ~PrecessingOrbit() override = default;
+
+    // Compute the orbit for a specified Julian date
+    Eigen::Vector3d positionAtTime(double) const override;
+    Eigen::Vector3d velocityAtTime(double) const override;
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
+
+private:
+    double eccentricAnomaly(double) const;
+    Eigen::Vector3d positionAtE(double, double, double) const;
+    Eigen::Vector3d velocityAtE(double, double, double, double) const;
+
+    double semiMajorAxis;
+    double semiMinorAxis;
+    double eccentricity;
+    double inclination;
+    double longAscendingNodeAtEpoch;
+    double argPericenterAtEpoch;
+    double meanAnomalyAtEpoch;
+    double period;
+    double nodalPeriod;
+    double apsidalPeriod;
+    double epoch;
+};
+
+
 class HyperbolicOrbit final : public Orbit
 {
 public:
