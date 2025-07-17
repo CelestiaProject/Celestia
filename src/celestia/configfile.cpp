@@ -179,6 +179,13 @@ applyMouse(CelestiaConfig::Mouse& mouse, const AssociativeArray& hash)
 
 
 void
+applyObserver(CelestiaConfig::Observer& observer, const AssociativeArray& hash)
+{
+    applyBoolean(observer.alignCameraToSurfaceOnLand, hash, "AlignCameraToSurfaceOnLand"sv);
+}
+
+
+void
 applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const AssociativeArray& hash)
 {
     applyNumber(renderDetails.orbitWindowEnd, hash, "OrbitWindowEnd"sv);
@@ -280,6 +287,7 @@ bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& c
     applyPaths(config.paths, *configParams);
     applyFonts(config.fonts, *configParams);
     applyMouse(config.mouse, *configParams);
+    applyObserver(config.observer, *configParams);
     applyRenderDetails(config.renderDetails, *configParams);
     applyStarTextures(config.starTextures, *configParams, "StarTextures"sv);
 

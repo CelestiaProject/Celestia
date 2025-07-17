@@ -290,6 +290,15 @@ StarTextures
 
 
 #------------------------------------------------------------------------
+# AlignCameraToSurfaceOnLand enables aligning the camera orientation
+# to be parallel with the planetary surface when landing. If false,
+# the current camera orientation is preserved during landing.
+# The default value is false.
+#------------------------------------------------------------------------
+#  AlignCameraToSurfaceOnLand true
+
+
+#------------------------------------------------------------------------
 # The following parameter is used in Lua (.celx) scripting.
 #
 #   ScriptScreenshotDirectory defines the directory where screenshots

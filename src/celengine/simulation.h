@@ -33,7 +33,7 @@ class Renderer;
 class Simulation
 {
 public:
-    explicit Simulation(Universe*);
+    Simulation(Universe*, const std::shared_ptr<celestia::engine::ObserverSettings>&);
     ~Simulation();
 
     double getTime() const; // Julian date

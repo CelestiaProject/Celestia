@@ -408,8 +408,9 @@ createFrame(ObserverFrame::CoordinateSystem _coordSys,
  *  updates due to an active goto operation.
  */
 
-Observer::Observer() :
-    frame(std::make_shared<ObserverFrame>())
+Observer::Observer(const std::shared_ptr<celestia::engine::ObserverSettings>& settings) :
+    frame(std::make_shared<ObserverFrame>()),
+    settings(settings)
 {
     updateUniversal();
 }
@@ -438,6 +439,7 @@ Observer::Observer(const Observer& o) :
     zoom(o.zoom),
     alternateZoom(o.alternateZoom),
     reverseFlag(o.reverseFlag),
+    settings(o.settings),
     locationFilter(o.locationFilter),
     displayedSurface(o.displayedSurface)
 {
@@ -470,6 +472,7 @@ Observer& Observer::operator=(const Observer& o)
     zoom = o.zoom;
     alternateZoom = o.alternateZoom;
     reverseFlag = o.reverseFlag;
+    settings = o.settings;
     locationFilter = o.locationFilter;
     displayedSurface = o.displayedSurface;
 
@@ -1505,26 +1508,53 @@ Observer::getSelectionLongLat(const Selection& selection,
 void
 Observer::gotoSurface(const Selection& sel, double duration)
 {
-    Eigen::Vector3d v = getPosition().offsetFromKm(sel.getPosition(getTime()));
-    v.normalize();
-
-    Eigen::Vector3d viewDir = originalOrientationUniv.conjugate() * -Eigen::Vector3d::UnitZ();
-    Eigen::Vector3d up      = originalOrientationUniv.conjugate() * Eigen::Vector3d::UnitY();
-    Eigen::Quaterniond q    = originalOrientationUniv;
-    if (v.dot(viewDir) < 0.0)
-    {
-        q = math::LookAt<double>(Eigen::Vector3d::Zero(), up, v);
-    }
-
     ObserverFrame selFrame(ObserverFrame::CoordinateSystem::BodyFixed, sel);
     UniversalCoord bfPos = selFrame.convertFromUniversal(positionUniv, getTime());
-    q = selFrame.convertFromUniversal(q, getTime());
 
+    // Calculate the surface normal at the landing point (radial direction from center)
+    Eigen::Vector3d surfaceNormal = bfPos.offsetFromKm(UniversalCoord::Zero()).normalized();
+
+    // Position the observer just above the surface
     double height = 1.0001 * sel.radius();
-    Eigen::Vector3d dir = bfPos.offsetFromKm(UniversalCoord::Zero()).normalized() * height;
-    UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(dir);
+    UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(surfaceNormal * height);
 
-    gotoLocation(nearSurfacePoint, q, duration);
+    Eigen::Quaterniond toOrientation;
+    if (celestia::util::is_set(settings->flags, celestia::engine::ObserverFlags::AlignCameraToSurfaceOnLand))
+    {
+        // Get the current orientation in the body-fixed frame
+        Eigen::Quaterniond currentOrientation = selFrame.convertFromUniversal(originalOrientationUniv, getTime());
+
+        // Use the window's up direction (UnitY) as the forward direction
+        Eigen::Vector3d windowUp = currentOrientation.conjugate() * Eigen::Vector3d::UnitY();
+
+        // Project the window's up direction onto the surface plane to get the tangent direction
+        Eigen::Vector3d tangentDirection = windowUp - surfaceNormal * surfaceNormal.dot(windowUp);
+
+        // Fallback if the projection is too small. In this case the planet is
+        // below or above us (likely not within viewport) so we can just use an
+        // arbitrary orientation.
+        if (tangentDirection.norm() < 0.1)
+        {
+            Eigen::Vector3d reference = (std::abs(surfaceNormal.dot(Eigen::Vector3d::UnitY())) < 0.9) ? Eigen::Vector3d::UnitY() : Eigen::Vector3d::UnitX();
+            tangentDirection = surfaceNormal.cross(reference);
+        }
+
+        tangentDirection.normalize();
+        toOrientation = math::LookAt<double>(Eigen::Vector3d::Zero(), tangentDirection, surfaceNormal);
+    }
+    else
+    {
+        Eigen::Vector3d v       = getPosition().offsetFromKm(sel.getPosition(getTime()));
+        Eigen::Vector3d viewDir = originalOrientationUniv.conjugate() * -Eigen::Vector3d::UnitZ();
+        Eigen::Vector3d up      = originalOrientationUniv.conjugate() * Eigen::Vector3d::UnitY();
+        toOrientation = originalOrientationUniv;
+        if (v.dot(viewDir) < 0.0)
+        {
+            toOrientation = math::LookAt<double>(Eigen::Vector3d::Zero(), up, v);
+        }
+        toOrientation = selFrame.convertFromUniversal(toOrientation, getTime());
+    }
+    gotoLocation(nearSurfacePoint, toOrientation, duration);
 }
 
 void
