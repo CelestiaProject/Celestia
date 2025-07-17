@@ -436,7 +436,7 @@ private:
     std::unique_ptr<FavoritesList> favorites;
     DestinationList* destinations{ nullptr };
 
-    Simulation* sim{ nullptr };
+    std::unique_ptr<Simulation> sim;
     Renderer* renderer{ nullptr };
 
     std::shared_ptr<celestia::engine::ObserverSettings> observerSettings{ std::make_shared<celestia::engine::ObserverSettings>() };
