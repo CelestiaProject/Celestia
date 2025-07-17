@@ -99,6 +99,62 @@ TEST_CASE("Elliptical orbits")
     }
 }
 
+TEST_CASE("Precessing orbits")
+{
+    constexpr std::array testEccentricities{ 0.0, 0.2, 0.6 };
+
+    for (double period : testPeriods)
+    {
+        double semimajor = std::cbrt(GMsun * math::square(period) / fourpi2);
+        for (double meanAnomalyDeg : testAngles)
+        for (double inclinationDeg : testInclinations)
+        {
+            auto testNodes = inclinationDeg == 0.0 || inclinationDeg == 180.0
+                ? celestia::util::array_view<double>(fixedZero)
+                : celestia::util::array_view<double>(testAngles);
+            for (double nodeDeg : testNodes)
+            {
+                auto testNodalPeriods = nodeDeg == 0.0
+                    ? celestia::util::array_view<double>(fixedZero)
+                    : celestia::util::array_view<double>(testPeriods);
+                for (double nodalPeriod : testNodalPeriods)
+                for (double eccentricity : testEccentricities)
+                {
+                    auto testPericenters = eccentricity == 0.0
+                        ? celestia::util::array_view<double>(fixedZero)
+                        : celestia::util::array_view<double>(testAngles);
+                    for (double pericenterDeg : testPericenters)
+                    {
+                        auto testApsidalPeriods = pericenterDeg == 0.0
+                            ? celestia::util::array_view<double>(fixedZero)
+                            : celestia::util::array_view<double>(testPeriods);
+                        for (double apsidalPeriod : testApsidalPeriods)
+                        {
+                            astro::KeplerElements expected;
+                            expected.period = period;
+                            expected.semimajorAxis = semimajor;
+                            expected.eccentricity = eccentricity;
+                            expected.inclination = math::degToRad(inclinationDeg);
+                            expected.longAscendingNode = math::degToRad(nodeDeg);
+                            expected.argPericenter = math::degToRad(pericenterDeg);
+                            expected.meanAnomaly = math::degToRad(meanAnomalyDeg);
+                            expected.nodalPeriod = nodalPeriod;
+                            expected.apsidalPeriod = apsidalPeriod;
+                            auto orbit = celestia::ephem::PrecessingOrbit(expected, 0.0);
+                            auto position = orbit.positionAtTime(0.0);
+                            auto velocity = orbit.velocityAtTime(0.0);
+
+                            auto actual = astro::StateVectorToElements(position, velocity, GMsun);
+
+                            TestElements(expected, actual);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 TEST_CASE("Hyperbolic orbits")
 {
     constexpr std::array testEccentricities{ 1.5, 2.4 };
