@@ -10,30 +10,14 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celengine/timeline.h"
-#include "celengine/timelinephase.h"
-#include "celengine/frametree.h"
-#include "celengine/frame.h"
+#include "timeline.h"
 
-using namespace std;
+#include <utility>
 
-
-/*! A Timeline is a list of TimelinePhases that covers a continuous
- *  interval of time.
- */
-
-Timeline::~Timeline()
-{
-    for (auto phase : phases)
-    {
-        // Remove the phase from whatever phase tree contains it.
-        phase->getFrameTree()->removeChild(phase);
-    }
-}
-
+#include "frametree.h"
 
 bool
-Timeline::appendPhase(TimelinePhase::SharedConstPtr &phase)
+Timeline::appendPhase(std::unique_ptr<TimelinePhase>&& phase)
 {
     // Validate start and end times. If there are existing phases in the timeline,
     // startTime must be equal to endTime of the previous phases so that there are
@@ -44,13 +28,11 @@ Timeline::appendPhase(TimelinePhase::SharedConstPtr &phase)
             return false;
     }
 
-    phases.push_back(phase);
-
+    phases.emplace_back(std::move(phase));
     return true;
 }
 
-
-const TimelinePhase::SharedConstPtr&
+const TimelinePhase&
 Timeline::findPhase(double t) const
 {
     // Find the phase containing time t. The overwhelming common case is
@@ -58,30 +40,29 @@ Timeline::findPhase(double t) const
     // as the number of phases in a timeline should always be quite small.
     if (phases.size() == 1)
     {
-        return phases[0];
+        return *phases[0];
     }
     else
     {
         for (const auto& phase : phases)
         {
             if (t < phase->endTime())
-                return phase;
+                return *phase;
         }
 
         // Time is greater than the end time of the final phase. Just return the final phase.
-        return phases.back();
+        return *phases.back();
     }
 }
 
-
 /*! Get the phase at the specified index.
  */
-const TimelinePhase::SharedConstPtr&
+const TimelinePhase&
 Timeline::getPhase(unsigned int n) const
 {
-    return phases.at(n);
+    assert(n < phases.size());
+    return *phases[n];
 }
-
 
 /*! Get the number of phases in this timeline.
  */
@@ -91,20 +72,17 @@ Timeline::phaseCount() const
     return phases.size();
 }
 
-
 double
 Timeline::startTime() const
 {
     return phases.front()->startTime();
 }
 
-
 double
 Timeline::endTime() const
 {
     return phases.back()->endTime();
 }
-
 
 /*! Check whether the timeline covers the specified time t. True if
  *  startTime <= t <= endTime. Note that this is deliberately different
@@ -117,17 +95,13 @@ Timeline::includes(double t) const
     return phases.front()->startTime() <= t && t <= phases.back()->endTime();
 }
 
-
+// We don't want this to be a non-const function as it is actually modifying stuff
 void
-Timeline::markChanged()
+Timeline::markChanged() //NOSONAR
 {
-    if (phases.size() == 1)
+    for (const auto& phase : phases)
     {
-        phases[0]->getFrameTree()->markChanged();
-    }
-    else
-    {
-        for (const auto &phase : phases)
-            phase->getFrameTree()->markChanged();
+        if (auto frameTree = phase->getFrameTree(); frameTree)
+            frameTree->markChanged();
     }
 }

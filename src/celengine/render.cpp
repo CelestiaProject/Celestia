@@ -3581,11 +3581,11 @@ void Renderer::buildLabelLists(const math::InfiniteFrustum& viewFrustum,
         if (body->getName().empty())
             continue;
 
-        const TimelinePhase* phase = body->getTimeline()->findPhase(now).get();
-        const Body* primary = phase->orbitFrame()->getCenter().body();
+        const TimelinePhase& phase = body->getTimeline()->findPhase(now);
+        const Body* primary = phase.orbitFrame()->getCenter().body();
         if (primary != nullptr && util::is_set(primary->getClassification(), BodyClassification::Invisible))
         {
-            const Body* parent = phase->orbitFrame()->getCenter().body();
+            const Body* parent = phase.orbitFrame()->getCenter().body();
             if (parent != nullptr)
                 primary = parent;
         }
@@ -3617,8 +3617,8 @@ void Renderer::buildLabelLists(const math::InfiniteFrustum& viewFrustum,
             // position.
             if (primary != lastPrimary)
             {
-                Vector3d p = phase->orbitFrame()->getOrientation(now).conjugate() *
-                             phase->orbit()->positionAtTime(now);
+                Vector3d p = phase.orbitFrame()->getOrientation(now).conjugate() *
+                             phase.orbit()->positionAtTime(now);
                 Vector3d v = ri.position.cast<double>() - p;
 
                 primarySphere = math::Sphered(v, primary->getRadius());

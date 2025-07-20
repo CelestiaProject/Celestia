@@ -13,6 +13,7 @@
 #include "frametree.h"
 
 #include <algorithm>
+#include <cassert>
 
 #include <celephem/orbit.h>
 #include "frame.h"
@@ -57,7 +58,11 @@ FrameTree::FrameTree(Body* body) :
 {
 }
 
-FrameTree::~FrameTree() = default;
+FrameTree::~FrameTree()
+{
+    for (const auto& phase : children)
+        phase->m_owner = nullptr;
+}
 
 /*! Return the default reference frame for the object a frame tree is associated
  *  with.
@@ -138,8 +143,10 @@ FrameTree::recomputeBoundingSphere()
 /*! Add a new phase to this tree.
  */
 void
-FrameTree::addChild(const std::shared_ptr<const TimelinePhase>& phase)
+FrameTree::addChild(TimelinePhase* phase)
 {
+    assert(phase->m_owner == nullptr);
+    phase->m_owner = this;
     children.push_back(phase);
     markChanged();
 }
@@ -148,12 +155,14 @@ FrameTree::addChild(const std::shared_ptr<const TimelinePhase>& phase)
  *  phase doesn't exist in the tree.
  */
 void
-FrameTree::removeChild(const std::shared_ptr<const TimelinePhase>& phase)
+FrameTree::removeChild(TimelinePhase* phase)
 {
     auto iter = std::find(children.begin(), children.end(), phase);
     if (iter != children.end())
     {
         children.erase(iter);
+        assert(phase->m_owner == this);
+        phase->m_owner = nullptr;
         markChanged();
     }
 }
@@ -162,7 +171,8 @@ FrameTree::removeChild(const std::shared_ptr<const TimelinePhase>& phase)
 const TimelinePhase*
 FrameTree::getChild(unsigned int n) const
 {
-    return children[n].get();
+    assert(n < children.size());
+    return children[n];
 }
 
 /*! Get the number of immediate children of this tree. */

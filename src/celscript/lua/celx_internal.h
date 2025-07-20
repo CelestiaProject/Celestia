@@ -278,7 +278,7 @@ public:
     void newRotation(const Eigen::Quaterniond& q);
     void newPosition(const UniversalCoord& uc);
     void newObject(const Selection& sel);
-    void newPhase(const TimelinePhase::SharedConstPtr& phase);
+    void newPhase(const TimelinePhase* phase);
 
     Eigen::Vector3d* toVector(int n);
     Eigen::Quaterniond* toRotation(int n);

@@ -33,7 +33,8 @@ class Renderer;
 class Simulation
 {
 public:
-    Simulation(Universe*, const std::shared_ptr<celestia::engine::ObserverSettings>&);
+    Simulation(std::unique_ptr<Universe>&&,
+               const std::shared_ptr<celestia::engine::ObserverSettings>&);
     ~Simulation();
 
     double getTime() const; // Julian date
@@ -131,7 +132,7 @@ private:
     double storedTimeScale{ 1.0 };
     bool syncTime{ true };
 
-    Universe* universe;
+    std::unique_ptr<Universe> universe;
 
     mutable std::optional<SolarSystem*> closestSolarSystem{ std::nullopt };
     Selection selection;

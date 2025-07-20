@@ -436,7 +436,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
         return;
 
     // To select the clicked into view before a drag.
-    viewManager->pickView(sim, metrics, x, y);
+    viewManager->pickView(sim.get(), metrics, x, y);
 
     if (button == LeftButton) // look if click is near a view border
         viewManager->tryStartResizing(metrics, x, y);
@@ -471,7 +471,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
-            viewManager->pickView(sim, metrics, x, y);
+            viewManager->pickView(sim.get(), metrics, x, y);
 
             Vector3f pickRay = getPickRay(x, y, viewManager->activeView());
 
@@ -756,7 +756,7 @@ void CelestiaCore::joystickButton(int button, bool down)
 
 void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV)
 {
-    viewManager->pickView(sim, metrics, focusX, focusY);
+    viewManager->pickView(sim.get(), metrics, focusX, focusY);
     const View *view = viewManager->activeView();
     bool focusZoomingEnabled = is_set(interactionFlags, InteractionFlags::FocusZooming);
 
@@ -1003,7 +1003,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\011': // TAB
-        viewManager->nextView(sim);
+        viewManager->nextView(sim.get());
         break;
 
     case '\020':  // Ctrl+P
@@ -1637,7 +1637,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
 void CelestiaCore::charEnteredAutoComplete(const char* c_p)
 {
-    switch (hud->textInput().charEntered(sim, c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels)))
+    switch (hud->textInput().charEntered(sim.get(), c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels)))
     {
     case CharEnteredResult::Finished:
         updateSelectionFromInput();
@@ -2142,7 +2142,7 @@ bool CelestiaCore::viewUpdateRequired() const
 
 void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 {
-    switch (viewManager->splitView(sim, type, av, splitPos))
+    switch (viewManager->splitView(sim.get(), type, av, splitPos))
     {
     case ViewSplitResult::Ignored:
         return;
@@ -2185,18 +2185,18 @@ void CelestiaCore::setZoomFromFOV()
 
 void CelestiaCore::singleView(const View* av)
 {
-    viewManager->singleView(sim, av);
+    viewManager->singleView(sim.get(), av);
     setFOVFromZoom();
 }
 
 void CelestiaCore::setActiveView(const View* v)
 {
-    viewManager->setActiveView(sim, v);
+    viewManager->setActiveView(sim.get(), v);
 }
 
 void CelestiaCore::deleteView(View* v)
 {
-    if (viewManager->deleteView(sim, v))
+    if (viewManager->deleteView(sim.get(), v))
         setFOVFromZoom();
 }
 
@@ -2228,7 +2228,7 @@ Renderer* CelestiaCore::getRenderer() const
 
 Simulation* CelestiaCore::getSimulation() const
 {
-    return sim;
+    return sim.get();
 }
 
 void CelestiaCore::showText(std::string_view s,
@@ -2264,7 +2264,7 @@ void CelestiaCore::renderOverlay()
     if (m_scriptHook != nullptr)
         m_scriptHook->call("renderoverlay");
 
-    hud->renderOverlay(metrics, sim, *viewManager, movieCapture, timeInfo, m_script != nullptr, editMode);
+    hud->renderOverlay(metrics, sim.get(), *viewManager, movieCapture, timeInfo, m_script != nullptr, editMode);
 }
 
 
@@ -2418,7 +2418,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     if (favorites == nullptr)
         favorites = std::make_unique<FavoritesList>();
 
-    universe = new Universe();
+    auto universe = std::make_unique<Universe>();
 
     /***** Load star catalogs *****/
 
@@ -2444,11 +2444,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the solar system catalogs *****/
 
-    loadSSO(*config, progressNotifier, universe);
-
-    // Load asterisms:
-    if (!config->paths.asterismsFile.empty())
-        loadAsterismsFile(config->paths.asterismsFile);
+    loadSSO(*config, progressNotifier, universe.get());
 
     if (!config->paths.boundariesFile.empty())
     {
@@ -2574,7 +2570,12 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     set_or_unset(observerSettings->flags, celestia::engine::ObserverFlags::AlignCameraToSurfaceOnLand, config->observer.alignCameraToSurfaceOnLand);
 
-    sim = new Simulation(universe, observerSettings);
+    sim = std::make_unique<Simulation>(std::move(universe), observerSettings);
+
+    // Load asterisms:
+    if (!config->paths.asterismsFile.empty())
+        loadAsterismsFile(config->paths.asterismsFile);
+
     if (!util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         sim->setFaintestVisible(config->renderDetails.faintestVisible);
@@ -3175,7 +3176,7 @@ std::string_view CelestiaCore::getTypedText() const
 
 void CelestiaCore::setTypedText(const char *c_p)
 {
-    hud->textInput().appendText(sim, c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels));
+    hud->textInput().appendText(sim.get(), c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels));
 }
 
 vector<Observer*> CelestiaCore::getObservers() const
@@ -3412,15 +3413,17 @@ void CelestiaCore::setLogFile(const std::filesystem::path &fn)
     }
 }
 
-void CelestiaCore::loadAsterismsFile(const std::filesystem::path &path)
+// We don't want this to be a non-const function as it is actually modifying stuff
+void CelestiaCore::loadAsterismsFile(const std::filesystem::path &path) //NOSONAR
 {
-    if (ifstream asterismsFile(path, ios::in); !asterismsFile.good())
+    std::ifstream asterismsFile(path, std::ios::in);
+    if (!asterismsFile)
     {
         GetLogger()->error(_("Error opening asterisms file {}.\n"), path);
+        return;
     }
-    else
-    {
-        std::unique_ptr<AsterismList> asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
-        universe->setAsterisms(std::move(asterisms));
-    }
+
+    Universe* universe = sim->getUniverse();
+    std::unique_ptr<AsterismList> asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
+    universe->setAsterisms(std::move(asterisms));
 }
