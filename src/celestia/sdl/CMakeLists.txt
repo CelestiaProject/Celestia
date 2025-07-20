@@ -70,17 +70,11 @@ target_link_libraries(celestia-sdl PRIVATE imgui celestia)
 
 set_target_properties(celestia-sdl PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-if(TARGET SDL2::SDL2main AND TARGET SDL2::SDL2)
-  if(MINGW)
-    target_compile_definitions(celestia-sdl PRIVATE SDL_MAIN_HANDLED)
-  endif()
-  target_link_libraries(celestia-sdl PRIVATE SDL2::SDL2main SDL2::SDL2)
-  target_link_libraries(imgui PUBLIC SDL2::SDL2)
-else()
-  target_include_directories(celestia-sdl PRIVATE ${SDL2_INCLUDE_DIRS})
-  target_link_libraries(celestia-sdl PRIVATE ${SDL2_LIBRARIES})
-  target_link_libraries(imgui PUBLIC ${SDL2_LIBRARIES})
+if(MINGW)
+  target_compile_definitions(celestia-sdl PRIVATE SDL_MAIN_HANDLED)
 endif()
+target_link_libraries(celestia-sdl PRIVATE SDL2::SDL2main SDL2::SDL2)
+target_link_libraries(imgui PUBLIC SDL2::SDL2)
 
 if(WIN32)
   install(
