@@ -191,7 +191,7 @@ static int phase_gc(lua_State* l)
     CelxLua celx(l);
 
     if (auto ref = to_phase(l, 1); ref)
-        ref->~shared_ptr();
+        ref->~shared_ptr(); //NOSONAR
 
     return 0;
 }
