@@ -190,15 +190,8 @@ static int phase_gc(lua_State* l)
 {
     CelxLua celx(l);
 
-    auto ref = this_phase(l);
-    if (ref)
-    {
-        ref.reset();
-    }
-    else
-    {
-        celx.doError("Bad phase object during garbage collection!");
-    }
+    if (auto ref = to_phase(l, 1); ref)
+        ref->~shared_ptr();
 
     return 0;
 }
