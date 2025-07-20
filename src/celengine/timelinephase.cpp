@@ -23,29 +23,35 @@
 
 
 TimelinePhase::TimelinePhase(CreateToken,
-                             Body* _body,
-                             double _startTime,
-                             double _endTime,
-                             const ReferenceFrame::SharedConstPtr& _orbitFrame,
-                             const std::shared_ptr<const celestia::ephem::Orbit>& _orbit,
-                             const ReferenceFrame::SharedConstPtr& _bodyFrame,
-                             const std::shared_ptr<const celestia::ephem::RotationModel>& _rotationModel,
-                             FrameTree* _owner) :
-    m_body(_body),
-    m_startTime(_startTime),
-    m_endTime(_endTime),
-    m_orbitFrame(_orbitFrame),
-    m_orbit(_orbit),
-    m_bodyFrame(_bodyFrame),
-    m_rotationModel(_rotationModel),
-    m_owner(_owner)
+                             Body* body,
+                             double startTime,
+                             double endTime,
+                             const ReferenceFrame::SharedConstPtr& orbitFrame,
+                             const std::shared_ptr<const celestia::ephem::Orbit>& orbit,
+                             const ReferenceFrame::SharedConstPtr& bodyFrame,
+                             const std::shared_ptr<const celestia::ephem::RotationModel>& rotationModel,
+                             FrameTree* owner) :
+    m_body(body),
+    m_startTime(startTime),
+    m_endTime(endTime),
+    m_orbitFrame(orbitFrame),
+    m_orbit(orbit),
+    m_bodyFrame(bodyFrame),
+    m_rotationModel(rotationModel)
 {
-    // assert(owner == orbitFrame->getCenter()->getFrameTree());
+    assert(owner);
+    owner->addChild(this);
+}
+
+TimelinePhase::~TimelinePhase()
+{
+    if (m_owner)
+        m_owner->removeChild(this);
 }
 
 /*! Create a new timeline phase in the specified universe.
  */
-TimelinePhase::SharedConstPtr
+std::unique_ptr<TimelinePhase>
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
                                    double startTime,
@@ -78,17 +84,13 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
         return nullptr;
     }
 
-    auto phase = std::make_shared<TimelinePhase>(CreateToken(),
-                                                 body,
-                                                 startTime,
-                                                 endTime,
-                                                 orbitFrame,
-                                                 orbit,
-                                                 bodyFrame,
-                                                 rotationModel,
-                                                 frameTree);
-
-    frameTree->addChild(phase);
-
-    return phase;
+    return std::make_unique<TimelinePhase>(CreateToken(),
+                                           body,
+                                           startTime,
+                                           endTime,
+                                           orbitFrame,
+                                           orbit,
+                                           bodyFrame,
+                                           rotationModel,
+                                           frameTree);
 }

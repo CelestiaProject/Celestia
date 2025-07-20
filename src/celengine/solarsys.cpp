@@ -270,15 +270,16 @@ Selection GetParentObject(PlanetarySystem* system)
 }
 
 
-TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
-                                                  Universe& universe,
-                                                  const AssociativeArray* phaseData,
-                                                  const std::filesystem::path& path,
-                                                  const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
-                                                  const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
-                                                  bool isFirstPhase,
-                                                  bool isLastPhase,
-                                                  double previousPhaseEnd)
+std::unique_ptr<TimelinePhase>
+CreateTimelinePhase(Body* body,
+                    Universe& universe,
+                    const AssociativeArray* phaseData,
+                    const std::filesystem::path& path,
+                    const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
+                    const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
+                    bool isFirstPhase,
+                    bool isLastPhase,
+                    double previousPhaseEnd)
 {
     double beginning = previousPhaseEnd;
     double ending = std::numeric_limits<double>::infinity();
@@ -417,7 +418,7 @@ CreateTimelineFromArray(Body* body,
 
         previousEnding = phase->endTime();
 
-        timeline->appendPhase(phase);
+        timeline->appendPhase(std::move(phase));
     }
 
     return timeline;
@@ -509,13 +510,13 @@ bool CreateTimeline(Body* body,
         const Timeline* timeline = body->getTimeline();
         if (timeline->phaseCount() == 1)
         {
-            auto phase    = timeline->getPhase(0).get();
-            orbitFrame    = phase->orbitFrame();
-            bodyFrame     = phase->bodyFrame();
-            orbit         = phase->orbit();
-            rotationModel = phase->rotationModel();
-            beginning     = phase->startTime();
-            ending        = phase->endTime();
+            const auto& phase = timeline->getPhase(0);
+            orbitFrame    = phase.orbitFrame();
+            bodyFrame     = phase.bodyFrame();
+            orbit         = phase.orbit();
+            rotationModel = phase.rotationModel();
+            beginning     = phase.startTime();
+            ending        = phase.endTime();
         }
     }
 
@@ -642,7 +643,7 @@ bool CreateTimeline(Body* body,
         }
 
         auto timeline = std::make_unique<Timeline>();
-        timeline->appendPhase(phase);
+        timeline->appendPhase(std::move(phase));
 
         body->setTimeline(std::move(timeline));
 

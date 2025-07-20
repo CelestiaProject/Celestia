@@ -16,10 +16,10 @@
 struct lua_State;
 class TimelinePhase;
 
-inline int celxClassId(const TimelinePhase::SharedConstPtr&)
+inline int celxClassId(const TimelinePhase*)
 {
     return Celx_Phase;
 }
 
 extern void CreatePhaseMetaTable(lua_State* l);
-extern int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase);
+extern int phase_new(lua_State* l, const TimelinePhase* phase);
