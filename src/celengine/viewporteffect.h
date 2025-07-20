@@ -51,7 +51,7 @@ private:
     bool initialized{ false };
 };
 
-class WarpMeshViewportEffect : public ViewportEffect
+class WarpMeshViewportEffect : public ViewportEffect //NOSONAR
 {
 public:
     explicit WarpMeshViewportEffect(std::unique_ptr<WarpMesh>&& mesh);
