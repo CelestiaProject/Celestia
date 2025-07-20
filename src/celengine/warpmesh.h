@@ -23,7 +23,7 @@ class VertexObject;
 
 // File format for data used to warp an image, for
 // detail, see http://paulbourke.net/dataformats/meshwarp/
-class WarpMesh
+class WarpMesh //NOSONAR
 {
 public:
     struct WarpVertex;

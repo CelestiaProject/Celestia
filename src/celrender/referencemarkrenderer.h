@@ -28,7 +28,7 @@ class VertexObject;
 namespace render
 {
 
-class ArrowRenderer
+class ArrowRenderer //NOSONAR
 {
 public:
     explicit ArrowRenderer(const Renderer& renderer);
