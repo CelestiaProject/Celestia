@@ -9,6 +9,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.#pragma once
 
+#pragma once
+
 #include <iterator>
 #include <type_traits>
 #include <utility>
