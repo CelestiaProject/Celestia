@@ -35,6 +35,7 @@ Configuration
                                "data/visualbins.stc"
                                "data/spectbins.stc"
                                "data/charm2.stc"
+                               "data/whitedwarfs.stc"
                                "data/pulsars.stc" ]
 
   HDCrossIndex                 "data/hdxindex.dat"
