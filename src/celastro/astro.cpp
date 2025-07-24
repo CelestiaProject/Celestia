@@ -1,6 +1,6 @@
 // astro.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -54,19 +54,50 @@ negateIf(double& d, bool condition)
 
 } // end unnamed namespace
 
+
+// Computes the luminosity of a perfectly reflective disc.
+// It is also used as an upper bound for the irradiance of an object when culling invisible objects.
+// The function translates luminosity into luminosity of the same units
+// (distanceFromSun and objRadius must also be in the same units).
+float reflectedLuminosity(float sunLuminosity,
+                          float distanceFromSun,
+                          float objRadius)
+{
+    float lengthRatio = objRadius / distanceFromSun;
+    return sunLuminosity * 0.25 * lengthRatio * lengthRatio;
+}
+
+
+// The following notation rules apply in the functions below and in the code in general:
+// - Luminosity is implied in solar units (in SI, flux is measured in W)
+// - Irradiance is implied in vegan units (in SI, it is measured in W/m^2)
+
+// Absolute magnitude is the logarithmic inverse of luminosity.
+// Apparent magnitude is the logarithmic inverse of irradiance.
+
+
+// Luminosity conversions:
+
 float
 lumToAbsMag(float lum)
 {
     return SOLAR_ABSMAG - std::log(lum) * LN_MAG;
 }
 
-// Return the apparent magnitude of a star with lum times solar
-// luminosity viewed at lyrs light years
 float
 lumToAppMag(float lum, float lyrs)
 {
     return absToAppMag(lumToAbsMag(lum), lyrs);
 }
+
+float
+lumToIrradiance(float lum, float km)
+{
+    return lum * SOLAR_POWER / (math::sphereArea(km * 1000) * VEGAN_IRRADIANCE);
+}
+
+
+// Magnitude conversions:
 
 float
 absMagToLum(float mag)
@@ -79,6 +110,51 @@ appMagToLum(float mag, float lyrs)
 {
     return absMagToLum(appToAbsMag(mag, lyrs));
 }
+
+float
+absMagToIrradiance(float mag, float km)
+{
+    return lumToIrradiance(absMagToLum(mag), km);
+}
+
+
+// Logarithmic magnitude system <-> linear irradiance system in Vega units:
+
+float
+magToIrradiance(float mag)
+{
+    return std::exp(- mag / LN_MAG);
+    // slower solution:
+    // return std::pow(10.0f, -0.4f * mag);
+}
+
+float
+irradianceToMag(float irradiance)
+{
+    return - std::log(irradiance) * LN_MAG;
+    // equivalent solution:
+    // return -2.5f * std::log10(irradiance);
+}
+
+
+// Faintest star magnitude system <-> exposure time:
+
+float
+faintestMagToExposure(float faintestMag)
+{
+    return std::exp(faintestMag / LN_MAG) * LOWEST_IRRADIATION;
+    // slower solution:
+    // return std::pow(10.0f, 0.4f * faintestMag) * LOWEST_IRRADIATION;
+}
+
+float
+exposureToFaintestMag(float exposure)
+{
+    return std::log(exposure / LOWEST_IRRADIATION) * LN_MAG;
+    // equivalent solution:
+    // return 2.5f * std::log10(exposure / LOWEST_IRRADIATION);
+}
+
 
 void
 decimalToDegMinSec(double angle, int& degrees, int& minutes, double& seconds)
@@ -108,8 +184,7 @@ decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
     seconds = (B - (double) minutes) * 60.0;
 }
 
-// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
-// coordinates.
+// Convert equatorial coordinates to Cartesian celestial (or ecliptical) coordinates.
 Eigen::Vector3f
 equatorialToCelestialCart(float ra, float dec, float distance)
 {
@@ -129,8 +204,7 @@ equatorialToCelestialCart(float ra, float dec, float distance)
     return EQUATORIAL_TO_ECLIPTIC_MATRIX_F * Eigen::Vector3f(x, y, z);
 }
 
-// Convert equatorial coordinates to Cartesian celestial (or ecliptical)
-// coordinates.
+// Convert equatorial coordinates to Cartesian celestial (or ecliptical) coordinates.
 Eigen::Vector3d
 equatorialToCelestialCart(double ra, double dec, double distance)
 {
