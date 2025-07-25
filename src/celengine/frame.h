@@ -34,13 +34,6 @@ public:
     explicit ReferenceFrame(Selection center);
     virtual ~ReferenceFrame() = default;
 
-    UniversalCoord convertFromUniversal(const UniversalCoord& uc, double tjd) const;
-    UniversalCoord convertToUniversal(const UniversalCoord& uc, double tjd) const;
-    Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const;
-    Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond& q, double tjd) const;
-
-    Eigen::Vector3d convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const;
-
     Selection getCenter() const;
 
     virtual Eigen::Quaterniond getOrientation(double tjd) const = 0;
