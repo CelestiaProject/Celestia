@@ -581,24 +581,18 @@ Body::getPosition(double tdb) const
 {
     Eigen::Vector3d position = Eigen::Vector3d::Zero();
 
-    const TimelinePhase& phase = timeline->findPhase(tdb);
-    Eigen::Vector3d p = phase.orbit()->positionAtTime(tdb);
-    const ReferenceFrame* frame = phase.orbitFrame().get();
-
-    while (frame->getCenter().getType() == SelectionType::Body)
+    const Body* body = this;
+    for (;;)
     {
-        const TimelinePhase& centerPhase = frame->getCenter().body()->timeline->findPhase(tdb);
+        const TimelinePhase& phase = body->timeline->findPhase(tdb);
+        Eigen::Vector3d p = phase.orbit()->positionAtTime(tdb);
+        const ReferenceFrame* frame = phase.orbitFrame().get();
         position += frame->getOrientation(tdb).conjugate() * p;
-        p = centerPhase.orbit()->positionAtTime(tdb);
-        frame = centerPhase.orbitFrame().get();
+        if (auto center = frame->getCenter(); center.getType() == SelectionType::Body)
+            body = center.body();
+        else
+            return center.getPosition(tdb).offsetKm(position);
     }
-
-    position += frame->getOrientation(tdb).conjugate() * p;
-
-    if (frame->getCenter().star())
-        return frame->getCenter().star()->getPosition(tdb).offsetKm(position);
-    else
-        return frame->getCenter().getPosition(tdb).offsetKm(position);
 }
 
 /*! Get the orientation of the body in the universal coordinate system.
@@ -659,8 +653,7 @@ Body::getAngularVelocity(double tdb) const
 Eigen::Matrix4d
 Body::getLocalToAstrocentric(double tdb) const
 {
-    const TimelinePhase& phase = timeline->findPhase(tdb);
-    Eigen::Vector3d p = phase.orbitFrame()->convertToAstrocentric(phase.orbit()->positionAtTime(tdb), tdb);
+    Eigen::Vector3d p = getAstrocentricPosition(tdb);
     return Eigen::Transform<double, 3, Eigen::Affine>(Eigen::Translation3d(p)).matrix();
 }
 
@@ -669,9 +662,19 @@ Body::getLocalToAstrocentric(double tdb) const
 Eigen::Vector3d
 Body::getAstrocentricPosition(double tdb) const
 {
-    // TODO: Switch the iterative method used in getPosition
-    const TimelinePhase& phase = timeline->findPhase(tdb);
-    return phase.orbitFrame()->convertToAstrocentric(phase.orbit()->positionAtTime(tdb), tdb);
+    Eigen::Vector3d position = Eigen::Vector3d::Zero();
+
+    const Body* body = this;
+    do
+    {
+        const TimelinePhase& phase = body->timeline->findPhase(tdb);
+        Eigen::Vector3d p = phase.orbit()->positionAtTime(tdb);
+        const ReferenceFrame* frame = phase.orbitFrame().get();
+        position += frame->getOrientation(tdb).conjugate() * p;
+        body = frame->getCenter().body();
+    } while (body);
+
+    return position;
 }
 
 /*! Get a rotation that converts from the ecliptic frame to the body frame.

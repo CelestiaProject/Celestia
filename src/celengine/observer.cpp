@@ -21,6 +21,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
 #include <celmath/sphere.h>
+#include <celutil/r128.h>
 #include "body.h"
 #include "frame.h"
 #include "frametree.h"
@@ -391,6 +392,21 @@ createFrame(ObserverFrame::CoordinateSystem _coordSys,
     default:
         return std::make_shared<J2000EclipticFrame>(_refObject);
     }
+}
+
+// High-precision rotation using 64.64 fixed point path. Rotate uc by
+// the rotation specified by unit quaternion q.
+UniversalCoord
+rotate(const UniversalCoord& uc, const Eigen::Quaterniond& q)
+{
+    Eigen::Matrix3d r = q.toRotationMatrix();
+    UniversalCoord uc1;
+
+    uc1.x = uc.x * R128(r(0, 0)) + uc.y * R128(r(1, 0)) + uc.z * R128(r(2, 0));
+    uc1.y = uc.x * R128(r(0, 1)) + uc.y * R128(r(1, 1)) + uc.z * R128(r(2, 1));
+    uc1.z = uc.x * R128(r(0, 2)) + uc.y * R128(r(1, 2)) + uc.z * R128(r(2, 2));
+
+    return uc1;
 }
 
 } // end unnamed namespace
@@ -1741,28 +1757,46 @@ ObserverFrame::getFrame() const
     return frame;
 }
 
+/*! Convert from universal coordinates to frame coordinates. This method
+ *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
+ *  than convertFromAstrocentric(), which works with double precision
+ *  floating points values. For cases when the bodies are all in the same
+ *  solar system, convertFromAstrocentric() should be used.
+ */
 UniversalCoord
 ObserverFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
-    return frame->convertFromUniversal(uc, tjd);
+    UniversalCoord uc1 = uc - frame->getCenter().getPosition(tjd);
+    return rotate(uc1, frame->getOrientation(tjd).conjugate());
 }
 
+/*! Convert from local coordinates to universal coordinates. This method
+ *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
+ *  than convertFromAstrocentric(), which works with double precision
+ *  floating points values. For cases when the bodies are all in the same
+ *  solar system, convertFromAstrocentric() should be used.
+ *
+ *  To get the position of a solar system object in universal coordinates,
+ *  it usually suffices to get the astrocentric position and then add that
+ *  to the position of the star in universal coordinates. This avoids any
+ *  expensive high-precision multiplication.
+ */
 UniversalCoord
 ObserverFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 {
-    return frame->convertToUniversal(uc, tjd);
+    return frame->getCenter().getPosition(tjd) + rotate(uc, frame->getOrientation(tjd));
 }
 
 Eigen::Quaterniond
 ObserverFrame::convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const
 {
-    return frame->convertFromUniversal(q, tjd);
+    return q * frame->getOrientation(tjd).conjugate();
 }
 
 Eigen::Quaterniond
 ObserverFrame::convertToUniversal(const Eigen::Quaterniond& q, double tjd) const
 {
-    return frame->convertToUniversal(q, tjd);
+    return q * frame->getOrientation(tjd);
 }
 
 /*! Convert a position from one frame to another.
