@@ -116,7 +116,6 @@ class Renderer
 
     struct DetailOptions
     {
-        DetailOptions();
         unsigned int orbitPathSamplePoints{ 100 };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };

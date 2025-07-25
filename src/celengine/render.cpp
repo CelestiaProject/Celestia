@@ -228,25 +228,6 @@ Renderer::~Renderer()
     CurvePlot::deinit();
 }
 
-
-Renderer::DetailOptions::DetailOptions() :
-    orbitPathSamplePoints(100),
-    shadowTextureSize(256),
-    eclipseTextureSize(128),
-    orbitWindowEnd(0.5),
-    orbitPeriodsShown(1.0),
-    linearFadeFraction(0.0),
-
-    renderAsterismsFadeStartDist(600.0f),
-    renderAsterismsFadeEndDist(6.52e4f),
-    renderBoundariesFadeStartDist(6.0f),
-    renderBoundariesFadeEndDist(20.0f),
-    labelConstellationsFadeStartDist(6.0f),
-    labelConstellationsFadeEndDist(20.0f)
-{
-}
-
-
 #if 0
 // Not used yet.
 
