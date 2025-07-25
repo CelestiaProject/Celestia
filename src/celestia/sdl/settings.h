@@ -46,7 +46,7 @@ struct Settings
     int ambientLight{ 10 };
     int tintSaturation{ 50 };
     int minFeatureSize{ 20 };
-    ColorTableType starColors{ ColorTableType::Blackbody_D65 };
+    ColorTableType starColors{ ColorTableType::SunWhite };
     StarStyle starStyle{ StarStyle::PointStars };
 };
 
