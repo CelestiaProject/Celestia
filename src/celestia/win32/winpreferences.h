@@ -43,7 +43,7 @@ struct AppPreferences
     std::uint64_t locationFilter{ 0 };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon };
     float visualMagnitude{ 8.0f };
-    float ambientLight{ 0.1f }; // Low
+    float ambientLight{ 0.0f }; // None
     float galaxyLightGain{ 0.0f };
     int showLocalTime{ 0 };
     int dateFormat{ 0 };
