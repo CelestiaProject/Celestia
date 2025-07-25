@@ -49,7 +49,7 @@ struct AppPreferences
     int dateFormat{ 0 };
     int hudDetail{ 2 };
     int fullScreenMode{ -1 };
-    int starsColor{ static_cast<int>(ColorTableType::Blackbody_D65) };
+    int starsColor{ static_cast<int>(ColorTableType::SunWhite) };
     std::uint32_t lastVersion{ 0 };
     std::string altSurfaceName;
     TextureResolution textureResolution{ TextureResolution::medres };
