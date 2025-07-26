@@ -14,7 +14,7 @@
 #include <array>
 #include <cstddef> // std::size_t
 #include <vector>
-#include <type_traits> // std::remove_cv
+#include <type_traits>
 
 namespace celestia::util
 {
@@ -32,15 +32,14 @@ public:
     /**
      * Create an empty array view.
      */
-    constexpr array_view() noexcept :
-        m_ptr(nullptr),
-        m_size(0)
-    {}
+    constexpr array_view() noexcept = default;
 
     /**
      * Wrap a pointer and length
      */
-    constexpr array_view(const T* ptr, size_type size) noexcept :
+    template<typename U,
+             std::enable_if_t<std::is_convertible_v<U(*)[], const element_type(*)[]>, int> = 0>
+    constexpr array_view(const U* ptr, size_type size) noexcept :
         m_ptr(ptr),
         m_size(size)
     {}
@@ -48,7 +47,9 @@ public:
     /**
      * Wrap a C-style array.
      */
-    template<std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
+    template<typename U, std::size_t N,
+             std::enable_if_t<std::is_convertible_v<U(*)[], const element_type(*)[]>, int> = 0>
+    constexpr array_view(const U (&ary)[N]) noexcept : //NOSONAR
         m_ptr(ary),
         m_size(N)
     {}
@@ -57,28 +58,38 @@ public:
      * Wrap a std::array or std::vector or other classes which have the same
      * memory layout and interface.
      */
-    template<std::size_t N> constexpr array_view(const std::array<element_type, N> &ary) noexcept :
+    template<typename U, std::size_t N,
+             std::enable_if_t<std::is_convertible_v<U(*)[], const element_type(*)[]>, int> = 0>
+    constexpr array_view(const std::array<U, N> &ary) noexcept : //NOSONAR
         m_ptr(ary.data()),
         m_size(N)
     {}
 
     /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<std::size_t N> constexpr array_view(std::array<element_type, N> &&ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N)
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    constexpr array_view(const std::vector<element_type> &vec) noexcept :
+    template<typename U,
+             std::enable_if_t<std::is_convertible_v<U(*)[], const element_type(*)[]>, int> = 0>
+    constexpr array_view(const std::vector<U> &vec) noexcept : //NOSONAR
         m_ptr(vec.data()),
         m_size(vec.size())
     {}
 
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    constexpr array_view(std::vector<element_type> &&vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size())
-    {}
+    /**
+     * Copy another view.
+     */
+    constexpr array_view(const array_view&) = default;
+
+    /**
+     * Copy another view of compatible type
+     */
+    template<typename U,
+             std::enable_if_t<!std::is_same_v<std::remove_cv_t<U>, void> &&
+                              !std::is_same_v<std::remove_cv_t<U>, element_type> &&
+                              std::is_convertible_v<std::remove_cv_t<U>(*)[], const element_type(*)[]>, int> = 0>
+    constexpr array_view(const array_view<U>& other) noexcept : //NOSONAR
+        m_ptr(other.m_ptr),
+        m_size(other.m_size)
+    {
+    }
 
     /**
      * Direct access to the underlying array.
@@ -172,8 +183,8 @@ public:
     }
 
 private:
-    const element_type* m_ptr;
-    size_type m_size;
+    const element_type* m_ptr{ nullptr };
+    size_type m_size{ 0 };
 };
 
 /**
@@ -189,10 +200,7 @@ public:
     /**
      * Create an empty array view.
      */
-    constexpr array_view() noexcept :
-        m_ptr(nullptr),
-        m_size(0)
-    {}
+    constexpr array_view() noexcept = default;
 
     /**
      * Wrap a pointer and length
@@ -205,7 +213,8 @@ public:
     /**
      * Wrap a C-style array.
      */
-    template<typename T, std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
+    template<typename T, std::size_t N>
+    constexpr array_view(const T (&ary)[N]) noexcept : //NOSONAR
         m_ptr(ary),
         m_size(N * sizeof(T))
     {}
@@ -214,25 +223,15 @@ public:
      * Wrap a std::array or std::vector or other classes which have the same
      * memory layout and interface.
      */
-    template<typename T, std::size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
+    template<typename T, std::size_t N>
+    constexpr array_view(const std::array<T, N> &ary) noexcept : //NOSONAR
         m_ptr(ary.data()),
         m_size(N * sizeof(T))
     {}
 
     /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T, std::size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(const std::vector<T> &vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(std::vector<T> &&vec) noexcept :
+    template<typename T>
+    constexpr array_view(const std::vector<T> &vec) noexcept : //NOSONAR
         m_ptr(vec.data()),
         m_size(vec.size() * sizeof(T))
     {}
@@ -240,13 +239,14 @@ public:
     /**
      * Copy another view.
      */
-    template<typename T> constexpr array_view(const array_view<T> &ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size())
-    {}
+    constexpr array_view(const array_view&) = default;
 
-    /** @copydoc array_view::array_view(const array_view<T> &ary) */
-    template<typename T> constexpr array_view(array_view<T> &&ary) :
+    /**
+     * Copy another view of concrete type.
+     */
+    template<typename T,
+             std::enable_if_t<!std::is_same_v<std::remove_cv_t<T>, void>, int> = 0>
+    constexpr array_view(const array_view<T> &ary) : //NOSONAR
         m_ptr(ary.data()),
         m_size(ary.size() * sizeof(T))
     {}
@@ -254,15 +254,14 @@ public:
     /**
      * Assign another view.
      */
-    template<typename T> constexpr array_view& operator=(const array_view<T> &ary)
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
+    constexpr array_view& operator=(const array_view&) = default;
 
-    /** @copydoc array_view::operator=(const array_view<T> &ary) */
-    template<typename T> constexpr array_view& operator=(array_view<T> &&ary) noexcept
+    /**
+     * Assign from another view of concrete type.
+     */
+    template<typename T,
+             std::enable_if_t<!std::is_same_v<std::remove_cv_t<T>, void>, int> = 0>
+    constexpr array_view& operator=(const array_view<T> &ary)
     {
         m_ptr = ary.data();
         m_size = ary.size() * sizeof(T);
@@ -294,130 +293,20 @@ public:
     }
 
 private:
-    const element_type* m_ptr;
-    size_type m_size;
+    const element_type* m_ptr{ nullptr };
+    size_type m_size{ 0 };
 };
 
-/**
- * Specialization for API accepting opaque blobs of data.
- */
-template <>
-class array_view<const void>
-{
-public:
-    using element_type = const void;
-    using size_type = std::size_t;
+template<typename T>
+array_view(const T*, std::size_t) -> array_view<std::remove_cv_t<T>>;
 
-    /**
-     * Create an empty array view.
-     */
-    constexpr array_view() noexcept :
-        m_ptr(nullptr),
-        m_size(0)
-    {}
+template<typename T, std::size_t N>
+array_view(const T (&)[N]) -> array_view<std::remove_cv_t<T>>;
 
-    /**
-     * Wrap a pointer and length
-     */
-    constexpr array_view(const void* ptr, size_type size) noexcept :
-        m_ptr(ptr),
-        m_size(size)
-    {}
+template<typename T, std::size_t N>
+array_view(const std::array<T, N> &) -> array_view<std::remove_cv_t<T>>;
 
-    /**
-     * Wrap a C-style array.
-     */
-    template<typename T, std::size_t N> constexpr array_view(const T (&ary)[N]) noexcept :
-        m_ptr(ary),
-        m_size(N * sizeof(T))
-    {}
-
-    /**
-     * Wrap a std::array or std::vector or other classes which have the same
-     * memory layout and interface.
-     */
-    template<typename T, std::size_t N> constexpr array_view(const std::array<T, N> &ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T, std::size_t N> constexpr array_view(std::array<T, N> &&ary) noexcept :
-        m_ptr(ary.data()),
-        m_size(N * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(const std::vector<T> &vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /** @copydoc array_view::array_view((const std::array<T, N> &ary) */
-    template<typename T> constexpr array_view(std::vector<T> &&vec) noexcept :
-        m_ptr(vec.data()),
-        m_size(vec.size() * sizeof(T))
-    {}
-
-    /**
-     * Copy another view.
-     */
-    template<typename T> constexpr array_view(const array_view<T> &ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size())
-    {}
-
-    /** @copydoc array_view::array_view(const array_view<T> &ary) */
-    template<typename T> constexpr array_view(array_view<T> &&ary) :
-        m_ptr(ary.data()),
-        m_size(ary.size() * sizeof(T))
-    {}
-
-    /**
-     * Assign another view.
-     */
-    template<typename T> constexpr array_view& operator=(const array_view<T> &ary)
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
-
-    /** @copydoc array_view::operator=(const array_view<T> &ary) */
-    template<typename T> constexpr array_view& operator=(array_view<T> &&ary) noexcept
-    {
-        m_ptr = ary.data();
-        m_size = ary.size() * sizeof(T);
-        return *this;
-    }
-
-    /**
-     * Direct access to the underlying array.
-     */
-    constexpr const element_type* data() const noexcept
-    {
-        return m_ptr;
-    }
-
-    /**
-     * Return the number of elements.
-     */
-    constexpr size_type size() const noexcept
-    {
-        return m_size;
-    }
-
-    /**
-     * Check whether the view is empty.
-     */
-    constexpr bool empty() const noexcept
-    {
-        return m_size == 0;
-    }
-
-private:
-    const element_type* m_ptr;
-    size_type m_size;
-};
+template<typename T>
+array_view(const std::vector<T> &) -> array_view<std::remove_cv_t<T>>;
 
 } // end namespace celestia::util
