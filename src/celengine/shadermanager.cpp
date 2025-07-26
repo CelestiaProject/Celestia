@@ -2973,65 +2973,64 @@ CelestiaGLProgram::initSamplers()
 
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "diffTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "diffTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::NormalTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "normTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "normTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "specTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "specTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::NightTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "nightTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "nightTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "emissiveTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "emissiveTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "overlayTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "overlayTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "ringTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "ringTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "cloudShadowTex");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "cloudShadowTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 
     if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
-        int slot = glGetUniformLocation(program.getID(), "shadowMapTex0");
-        if (slot != -1)
-            glUniform1i(slot, nSamplers++);
+        if (GLint slot = glGetUniformLocation(program.getID(), "shadowMapTex0"); slot != -1)
+            glUniform1i(slot, nSamplers);
     }
 }
 
