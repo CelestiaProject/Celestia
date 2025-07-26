@@ -54,15 +54,14 @@ if(ENABLE_MINIAUDIO)
     miniaudiosession.h
   )
 
-  set(MINIAUDIO_SOURCES
-    miniaudiosession.cpp
-  )
-
-  # Files including miniaudio needs to treated as Objective-C++
-  # on Apple platforms
   if(APPLE)
-    set_property(SOURCE ${MINIAUDIO_SOURCES}
-      APPEND_STRING PROPERTY COMPILE_FLAGS "-x objective-c++")
+    set(MINIAUDIO_SOURCES
+      miniaudiosession.mm
+    )
+  else()
+    set(MINIAUDIO_SOURCES
+      miniaudiosession.cpp
+    )
   endif()
 
   list(APPEND CELESTIA_SOURCES
