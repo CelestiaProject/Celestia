@@ -58,12 +58,12 @@ public:
 
 
     Selection findPath(std::string_view s,
-                       celestia::util::array_view<const Selection> contexts,
+                       celestia::util::array_view<Selection> contexts,
                        bool i18n = false) const;
 
     void getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                            std::string_view s,
-                           celestia::util::array_view<const Selection> contexts,
+                           celestia::util::array_view<Selection> contexts,
                            bool withLocations = false) const;
 
 
@@ -89,11 +89,11 @@ public:
 private:
     void getCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
-                       celestia::util::array_view<const Selection> contexts,
+                       celestia::util::array_view<Selection> contexts,
                        bool withLocations = false) const;
 
     Selection find(std::string_view s,
-                   celestia::util::array_view<const Selection> contexts,
+                   celestia::util::array_view<Selection> contexts,
                    bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
                               std::string_view name,
