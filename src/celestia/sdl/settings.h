@@ -43,10 +43,10 @@ struct Settings
     RenderLabels labelMode{ RenderLabels::I18nConstellationLabels };
     TextureResolution textureResolution{ TextureResolution::medres };
     BodyClassification orbitMask{ BodyClassification::DefaultOrbitMask };
-    int ambientLight{ 10 };
+    int ambientLight{ 0 }; // None
     int tintSaturation{ 50 };
     int minFeatureSize{ 20 };
-    ColorTableType starColors{ ColorTableType::Blackbody_D65 };
+    ColorTableType starColors{ ColorTableType::SunWhite };
     StarStyle starStyle{ StarStyle::PointStars };
 };
 

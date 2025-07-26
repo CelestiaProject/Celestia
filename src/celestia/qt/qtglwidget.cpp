@@ -50,9 +50,9 @@ namespace
 constexpr auto DEFAULT_RENDER_FLAGS = static_cast<qulonglong>(RenderFlags::DefaultRenderFlags);
 constexpr auto DEFAULT_ORBIT_MASK = static_cast<uint>(BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar);
 constexpr auto DEFAULT_LABEL_MODE = static_cast<uint>(RenderLabels::LocationLabels | RenderLabels::I18nConstellationLabels);
-constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.1f;
+constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.0f; // None
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
-constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::Blackbody_D65);
+constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::SunWhite);
 constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
 constexpr auto DEFAULT_STAR_STYLE = static_cast<int>(StarStyle::FuzzyPointStars);
 constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(TextureResolution::medres);
