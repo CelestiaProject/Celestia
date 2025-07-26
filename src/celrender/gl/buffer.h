@@ -32,7 +32,7 @@ public:
      * Provides information how frequently buffer object is used.
      * @see @ref setData().
      */
-    enum class BufferUsage
+    enum class BufferUsage : GLenum
     {
         //! Set data once and use frequently.
         StaticDraw  = GL_STATIC_DRAW,
@@ -49,7 +49,7 @@ public:
      *
      * @see @ref Buffer(TargetHint)
      */
-    enum class TargetHint
+    enum class TargetHint : GLenum
     {
         //! Store vertex attributes.
         Array        = GL_ARRAY_BUFFER,
