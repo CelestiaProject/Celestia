@@ -153,7 +153,7 @@ ModelGeometry::render(RenderContext& rc, double /* t */)
 
             m_glData->vbos.emplace_back(
                 gl::Buffer::TargetHint::Array,
-                util::array_view<const void>(
+                util::array_view<void>(
                     mesh->getVertexData(),
                     mesh->getVertexCount() * vertexDesc.strideBytes));
 
