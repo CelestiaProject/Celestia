@@ -50,8 +50,8 @@ public:
         {}
     };
 
-    GeometryInfo(const std::filesystem::path& _source,
-                 const std::filesystem::path& _path = "") :
+    explicit GeometryInfo(const std::filesystem::path& _source,
+                          const std::filesystem::path& _path = "") :
         source(_source),
         path(_path)
     {

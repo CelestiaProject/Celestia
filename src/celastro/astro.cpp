@@ -64,7 +64,7 @@ float reflectedLuminosity(float sunLuminosity,
                           float objRadius)
 {
     float lengthRatio = objRadius / distanceFromSun;
-    return sunLuminosity * 0.25 * lengthRatio * lengthRatio;
+    return sunLuminosity * 0.25f * lengthRatio * lengthRatio;
 }
 
 
@@ -123,17 +123,13 @@ absMagToIrradiance(float mag, float km)
 float
 magToIrradiance(float mag)
 {
-    return std::exp(- mag / LN_MAG);
-    // slower solution:
-    // return std::pow(10.0f, -0.4f * mag);
+    return std::exp(-mag / LN_MAG); // 10^(-0.4*mag)
 }
 
 float
 irradianceToMag(float irradiance)
 {
-    return - std::log(irradiance) * LN_MAG;
-    // equivalent solution:
-    // return -2.5f * std::log10(irradiance);
+    return - std::log(irradiance) * LN_MAG; // -2.5*log_10(irradiance)
 }
 
 
@@ -142,17 +138,13 @@ irradianceToMag(float irradiance)
 float
 faintestMagToExposure(float faintestMag)
 {
-    return std::exp(faintestMag / LN_MAG) * LOWEST_IRRADIATION;
-    // slower solution:
-    // return std::pow(10.0f, 0.4f * faintestMag) * LOWEST_IRRADIATION;
+    return std::exp(faintestMag / LN_MAG) * LOWEST_IRRADIATION; // 10^(0.4*faintestMag) * LOWEST_IRRADIATION
 }
 
 float
 exposureToFaintestMag(float exposure)
 {
-    return std::log(exposure / LOWEST_IRRADIATION) * LN_MAG;
-    // equivalent solution:
-    // return 2.5f * std::log10(exposure / LOWEST_IRRADIATION);
+    return std::log(exposure / LOWEST_IRRADIATION) * LN_MAG; // -2.5*log_10(exposure / LOWEST_IRRADIATION)
 }
 
 

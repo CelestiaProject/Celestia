@@ -2095,7 +2095,8 @@ celestia::engine::ObserverFlags CelestiaCore::getObserverFlags() const
     return observerSettings->flags;
 }
 
-void CelestiaCore::setObserverFlags(celestia::engine::ObserverFlags flags)
+// Set method makes changes even though could technically be const
+void CelestiaCore::setObserverFlags(celestia::engine::ObserverFlags flags) //NOSONAR
 {
     observerSettings->flags = flags;
 }
