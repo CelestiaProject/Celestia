@@ -385,9 +385,10 @@ class Renderer
         const Atmosphere* atmosphere{ nullptr };
         RingSystem* rings{ nullptr };
         float radius{ 1.0f };
-        float geometryScale{ 1.0f };
         Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
+        float geomAlbedo{ 0.5f };
         ResourceHandle geometry{ InvalidResource };
+        float geometryScale{ 1.0f };
         Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
         LightingState::EclipseShadowVector* eclipseShadows;
     };

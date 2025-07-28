@@ -485,7 +485,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
     {
         source += "float phaseAngle = acos(clamp(dot(" + LightProperty(i, "direction") + ", eyeDir), -1.0, 1.0));\n";
         // Rough match to the phase functions of non-Lambertian surfaces
-        source += "float phaseFunction = exp(-phaseAngle);\n";
+        source += "float phaseFunction = phaseFunctionAt0 * exp(-phaseAngle);\n";
         // Normalize by the phase function
         source += "float normFactor = mix(1.0, phaseFunction, lunarLambert);\n";
         source += AssignDiffuse(i, props) + " mix(NL, phaseFunction * NL / (max(NV, 0.001) + NL), lunarLambert) / normFactor;\n";
@@ -1623,7 +1623,7 @@ buildFragmentShader(const ShaderProperties& props)
                 source += "NL = max(0.0, NL);\n";
                 source += "float phaseAngle = acos(clamp(dot(" + LightDir_tan(i) + ", eyeDir_tan), -1.0, 1.0));\n";
                 // Rough match to the phase functions of non-Lambertian surfaces
-                source += "float phaseFunction = exp(-phaseAngle);\n";
+                source += "float phaseFunction = phaseFunctionAt0 * exp(-phaseAngle);\n";
                 // Normalize by the phase function
                 source += "float normFactor = mix(1.0, phaseFunction, lunarLambert);\n";
                 source += "l = mix(NL, (phaseFunction * NL / (max(NV, 0.001) + NL)), lunarLambert) / normFactor * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
@@ -2956,6 +2956,7 @@ CelestiaGLProgram::initParameters()
     if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
         lunarLambert         = floatParam("lunarLambert");
+        phaseFunctionAt0     = floatParam("phaseFunctionAt0");
     }
 
     if (props.usePointSize())
@@ -3074,6 +3075,16 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
     eyePosition = ls.eyePos_obj;
     ambientColor = ls.ambientColor.cwiseProduct(diffuseColor) + materialEmissive.toVector3();
     opacity = materialDiffuse.alpha();
+}
+
+
+void
+CelestiaGLProgram::setLunarLambertParameters(float l,
+                                             float geomAlbedo)
+{
+    lunarLambert = l;
+    // Derived from Equation 6 of Buratti and Veverka (1983)
+    phaseFunctionAt0 = std::max(0.001f, (2.0f * geomAlbedo - 4.0f / 3.0f * (1.0f - l)) / l);
 }
 
 

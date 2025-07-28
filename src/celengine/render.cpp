@@ -2291,6 +2291,7 @@ void Renderer::renderObject(const Vector3f& pos,
             renderEllipsoid_GLSL(ri, ls,
                                  atmosphere, cloudTexOffset,
                                  scaleFactors,
+                                 obj.geomAlbedo,
                                  textureResolution,
                                  renderFlags,
                                  obj.orientation,
@@ -2318,6 +2319,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                     ls,
                                     obj.atmosphere,
                                     geometryScale,
+                                    obj.geomAlbedo,
                                     renderFlags,
                                     obj.orientation,
                                     astro::daysToSecs(now - astro::J2000),
@@ -2660,8 +2662,9 @@ void Renderer::renderPlanet(Body& body,
         rp.atmosphere = bodyFeaturesManager->getAtmosphere(&body);
         rp.rings = bodyFeaturesManager->getRings(&body);
         rp.radius = body.getRadius();
-        rp.geometry = body.getGeometry();
         rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
+        rp.geomAlbedo = body.getGeomAlbedo();
+        rp.geometry = body.getGeometry();
         rp.geometryScale = body.getGeometryScale();
 
         Quaterniond q = body.getRotationModel(now)->spin(now) *

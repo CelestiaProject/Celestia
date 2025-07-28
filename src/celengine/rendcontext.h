@@ -98,12 +98,14 @@ class GLSL_RenderContext : public RenderContext
     GLSL_RenderContext(Renderer* r,
                        const LightingState& ls,
                        float _objRadius,
+                       float _geomAlbedo,
                        const Eigen::Quaternionf& orientation,
                        const Eigen::Matrix4f *_modelViewMatrix,
                        const Eigen::Matrix4f *_projectionMatrix);
     GLSL_RenderContext(Renderer* r,
                        const LightingState& ls,
                        const Eigen::Vector3f& _objScale,
+                       float _geomAlbedo,
                        const Eigen::Quaternionf& orientation,
                        const Eigen::Matrix4f *_modelViewMatrix,
                        const Eigen::Matrix4f *_projectionMatrix);
@@ -124,6 +126,7 @@ class GLSL_RenderContext : public RenderContext
     cmod::BlendMode blendMode{ cmod::BlendMode::InvalidBlend };
     float objRadius;
     Eigen::Vector3f objScale;
+    float geomAlbedo;
     Eigen::Quaternionf objOrientation;
 
     // extended material properties
