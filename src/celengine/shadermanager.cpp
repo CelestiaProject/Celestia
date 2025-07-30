@@ -450,6 +450,28 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 }
 
 
+std::string
+LunarLambert(const ShaderProperties& props, unsigned int light)
+{
+    std::string source;
+
+    // Rough match to the phase functions of non-Lambertian surfaces
+    source += "float phaseFunction = phaseFunctionAt0 * exp(-phaseAngle);\n";
+    // Normalize by the phase function
+    source += "float normFactor = mix(1.0, phaseFunction, lunarLambert);\n";
+    if (props.usesTangentSpaceLighting())
+    {
+        source += "l = mix(NL, (phaseFunction * NL / (max(NV, 0.001) + NL)), lunarLambert) / normFactor * clamp(" + LightDir_tan(light) + ".z * 8.0, 0.0, 1.0);\n";
+    }
+    else
+    {
+        source += AssignDiffuse(light, props) + " mix(NL, phaseFunction * NL / (max(NV, 0.001) + NL), lunarLambert) / normFactor;\n";
+    }
+
+    return source;
+}
+
+
 // Values used in generated shaders:
 //    N - surface normal
 //    V - view vector: the normalized direction from vertex to eye
@@ -484,11 +506,7 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
     else if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
         source += "float phaseAngle = acos(clamp(dot(" + LightProperty(i, "direction") + ", eyeDir), -1.0, 1.0));\n";
-        // Rough match to the phase functions of non-Lambertian surfaces
-        source += "float phaseFunction = phaseFunctionAt0 * exp(-phaseAngle);\n";
-        // Normalize by the phase function
-        source += "float normFactor = mix(1.0, phaseFunction, lunarLambert);\n";
-        source += AssignDiffuse(i, props) + " mix(NL, phaseFunction * NL / (max(NV, 0.001) + NL), lunarLambert) / normFactor;\n";
+        source += LunarLambert(props, i);
     }
     else if (props.hasSpecular())
     {
@@ -1622,11 +1640,7 @@ buildFragmentShader(const ShaderProperties& props)
             {
                 source += "NL = max(0.0, NL);\n";
                 source += "float phaseAngle = acos(clamp(dot(" + LightDir_tan(i) + ", eyeDir_tan), -1.0, 1.0));\n";
-                // Rough match to the phase functions of non-Lambertian surfaces
-                source += "float phaseFunction = phaseFunctionAt0 * exp(-phaseAngle);\n";
-                // Normalize by the phase function
-                source += "float normFactor = mix(1.0, phaseFunction, lunarLambert);\n";
-                source += "l = mix(NL, (phaseFunction * NL / (max(NV, 0.001) + NL)), lunarLambert) / normFactor * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
+                source += LunarLambert(props, i);
             }
             else
             {
