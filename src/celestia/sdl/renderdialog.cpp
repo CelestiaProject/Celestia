@@ -63,23 +63,11 @@ lightingPanel(Renderer* renderer)
 void
 starStylePanel(Renderer* renderer)
 {
-    auto starStyle = static_cast<int>(renderer->getStarStyle());
-    int starStyleNew = starStyle;
-    RenderFlags rf = renderer->getRenderFlags();
-    RenderFlags rfNew = rf;
     auto starColors = static_cast<int>(renderer->getStarColorTable());
     int starColorsNew = starColors;
 
-    ImGui::Text("Star style");
-    ImGui::RadioButton("Points##starStylePoints", &starStyleNew, static_cast<int>(StarStyle::PointStars));
-    ImGui::RadioButton("Fuzzy points", &starStyleNew, static_cast<int>(StarStyle::FuzzyPointStars));
-    ImGui::RadioButton("Scaled discs", &starStyleNew, static_cast<int>(StarStyle::ScaledDiscStars));
-    ImGui::Separator();
-    enumCheckbox("Auto-magnitude", rfNew, RenderFlags::ShowAutoMag);
-
-    constexpr std::array<const char*, 4> names =
+    constexpr std::array<const char*, 3> names =
     {
-        "Classic colors",
         "Blackbody D65",
         "Blackbody (Sun white)",
         "Blackbody (Vega white)",
@@ -87,10 +75,6 @@ starStylePanel(Renderer* renderer)
 
     ImGui::Combo("Star colors", &starColorsNew, names.data(), static_cast<int>(names.size()));
 
-    if (starStyleNew != starStyle)
-        renderer->setStarStyle(static_cast<StarStyle>(starStyleNew));
-    if (rfNew != rf)
-        renderer->setRenderFlags(rfNew);
     if (starColorsNew != starColors)
         renderer->setStarColorTable(static_cast<ColorTableType>(starColorsNew));
 }

@@ -112,19 +112,8 @@
                  indipendentemente dalla luminosità delle stelle
   )	............ aumenta la luminosità delle galassie,
                  indipendentemente dalla luminosità delle stelle
-  [	............ diminuisce il limite di magnitudine:
-                 - se autoMag OFF: diminuisce il limite di
-                   magnitudine (meno stelle visibili)
-                 - se autoMag ON: diminuisce il limite di
-                   magnitudine per un campo visivo di 45°
-  ]	............ aumenta il limite di magnitudine:
-                 - se autoMag OFF	: Aumenta il limite di
-                   magnitudine (più stelle visibili)
-                 - se autoMag ON	: Aumenta il limite di
-                   magnitudine per un campo visivo di 45°
-  Ctrl+Y ....... attiva/disattiva AutoMagnitudine = adattamento
-                 automatico della visibilità delle stelle al
-        		     campo visivo (FOV)
+  [	............ Riduzione del tempo di esposizione
+  ]	............ Aumentare il tempo di esposizione
   , 	.......... restringe il campo visivo
   . 	.......... allarga il campo visivo
   Ctrl+X  ...... attiva/disattiva l'antialias delle linee
@@ -135,8 +124,6 @@
   +		.......... scambia la texture dei pianeti fra artistica
                  ed ai limiti delle conoscenze
   %	 ........... mostra/nasconde le tabelle dei colori delle stelle
-  Ctrl+S  ...... seleziona ciclicamente lo stile delle stelle tra
-            		 dischi sfocati, punti o dischi in scala
   V	 ........... cambia il livello di dettaglio delle informazioni
   Ctrl+W  ...... mostra/nasconde la modalità Wireframe
 
