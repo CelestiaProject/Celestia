@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 #include <celcompat/numbers.h>
 #include <celephem/orbit.h>
@@ -17,6 +18,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
+#include <celrender/referencemarkrenderer.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include "axisarrow.h"
@@ -28,141 +30,17 @@
 #include "timeline.h"
 #include "timelinephase.h"
 
+using namespace std::string_view_literals;
+
 using celestia::render::LineRenderer;
 namespace gl = celestia::gl;
 namespace math = celestia::math;
-
-// draw a simple circle or annulus
-#define DRAW_ANNULUS 0
-
-constexpr float shaftLength  = 0.85f;
-constexpr float headLength   = 0.10f;
-constexpr float shaftRadius  = 0.010f;
-constexpr float headRadius   = 0.025f;
-constexpr unsigned nSections = 30;
-
-namespace
-{
-
-gl::VertexObject&
-GetArrowVAO()
-{
-    static bool initialized = false;
-
-    static std::unique_ptr<gl::VertexObject> vo;
-    static std::unique_ptr<gl::Buffer> bo;
-
-    if (initialized)
-        return *vo;
-
-    initialized = true;
-
-    vo = std::make_unique<gl::VertexObject>();
-    bo = std::make_unique<gl::Buffer>();
-
-    // circle at bottom of a shaft
-    std::vector<Eigen::Vector3f> circle;
-    // arrow shaft
-    std::vector<Eigen::Vector3f> shaft;
-    // annulus
-    std::vector<Eigen::Vector3f> annulus;
-    // head of the arrow
-    std::vector<Eigen::Vector3f> head;
-
-    for (unsigned i = 0; i <= nSections; i++)
-    {
-        float c, s;
-        math::sincos((i * 2.0f * celestia::numbers::pi_v<float>) / nSections, c, s);
-
-        // circle at bottom
-        Eigen::Vector3f v0(shaftRadius * c, shaftRadius * s, 0.0f);
-        if (i > 0)
-            circle.push_back(v0);
-        circle.push_back(Eigen::Vector3f::Zero());
-        circle.push_back(v0);
-
-        // shaft
-        Eigen::Vector3f v1(shaftRadius * c, shaftRadius * s, shaftLength);
-        Eigen::Vector3f v1prev;
-        if (i > 0)
-        {
-            shaft.push_back(v0); // left triangle
-
-            shaft.push_back(v0); // right
-            shaft.push_back(v1prev);
-            shaft.push_back(v1);
-        }
-        shaft.push_back(v0); // left
-        shaft.push_back(v1);
-        v1prev = v1;
-
-        // annulus
-        Eigen::Vector3f v2(headRadius * c, headRadius * s, shaftLength);
-#if DRAW_ANNULUS
-        Eigen::Vector3f v2prev;
-        if (i > 0)
-        {
-            annulus.push_back(v2);
-
-            annulus.push_back(v2);
-            annulus.push_back(v2prev);
-            annulus.push_back(v1);
-        }
-        annulus.push_back(v2);
-        annulus.push_back(v1);
-        v2prev = v1;
-#else
-        Eigen::Vector3f v3(0.0f, 0.0f, shaftLength);
-        if (i > 0)
-            annulus.push_back(v2);
-        annulus.push_back(v2);
-        annulus.push_back(v3);
-#endif
-
-        // head
-        Eigen::Vector3f v4(0.0f, 0.0f, shaftLength + headLength);
-        if (i > 0)
-            head.push_back(v2);
-        head.push_back(v4);
-        head.push_back(v2);
-    }
-
-    circle.push_back(circle[1]);
-    shaft.push_back(shaft[0]);
-#if DRAW_ANNULUS
-    annulus.push_back(annulus[0]);
-#else
-    annulus.push_back(annulus[1]);
-#endif
-    head.push_back(head[1]);
-
-    std::vector<Eigen::Vector3f> arrow;
-    arrow.reserve(circle.size() + shaft.size() + annulus.size() + head.size());
-    std::copy(circle.begin(), circle.end(), std::back_inserter(arrow));
-    std::copy(shaft.begin(), shaft.end(), std::back_inserter(arrow));
-    std::copy(annulus.begin(), annulus.end(), std::back_inserter(arrow));
-    std::copy(head.begin(), head.end(), std::back_inserter(arrow));
-
-    bo->setData(arrow, gl::Buffer::BufferUsage::StaticDraw);
-
-    vo->setCount(static_cast<int>(arrow.size())).addVertexBuffer(
-        *bo,
-        CelestiaGLProgram::VertexCoordAttributeIndex,
-        3,
-        gl::VertexObject::DataType::Float);
-
-    return *vo;
-}
-
-} // anonymous namespace
+namespace render = celestia::render;
 
 /****** ArrowReferenceMark base class ******/
 
 ArrowReferenceMark::ArrowReferenceMark(const Body& _body) :
-    body(_body),
-    size(1.0),
-    color(1.0f, 1.0f, 1.0f),
-    opacity(1.0f)
+    body(_body)
 {
     shadprop.texUsage = TexUsage::VertexColors;
     shadprop.lightModel = LightingModel::UnlitModel;
@@ -184,7 +62,7 @@ ArrowReferenceMark::setColor(const Color &_color)
 
 
 void
-ArrowReferenceMark::render(Renderer* renderer,
+ArrowReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
                            const Eigen::Vector3f& position,
                            float /* discSize */,
                            double tdb,
@@ -203,44 +81,35 @@ ArrowReferenceMark::render(Renderer* renderer,
 
     Renderer::PipelineState ps;
     ps.depthTest = true;
-    if (opacity == 1.0f)
-    {
-        ps.depthMask = true;
-    }
-    else
-    {
-        ps.blending = true;
-        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
-    }
-    renderer->setPipelineState(ps);
+    ps.depthMask = true;
+
+    refMarkRenderer->renderer().setPipelineState(ps);
 
     Eigen::Affine3f transform = Eigen::Translation3f(position) * q.cast<float>() * Eigen::Scaling(size);
     Eigen::Matrix4f mv = (*m.modelview) * transform.matrix();
 
-    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    const render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
+    CelestiaGLProgram* prog = arrowRenderer.program();
     if (prog == nullptr)
         return;
     prog->use();
     prog->setMVPMatrices(*m.projection, mv);
 
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
-		     color.red(), color.green(), color.blue(), opacity);
+		             color.red(), color.green(), color.blue(), 1.0f);
 
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 }
 
 
 /****** AxesReferenceMark base class ******/
 
 AxesReferenceMark::AxesReferenceMark(const Body& _body) :
-    body(_body),
-    size(),
-    opacity(1.0f)
+    body(_body)
 {
     shadprop.texUsage = TexUsage::VertexColors;
     shadprop.lightModel = LightingModel::UnlitModel;
 }
-
 
 void
 AxesReferenceMark::setSize(float _size)
@@ -248,16 +117,14 @@ AxesReferenceMark::setSize(float _size)
     size = _size;
 }
 
-
 void
 AxesReferenceMark::setOpacity(float _opacity)
 {
     opacity = _opacity;
 }
 
-
 void
-AxesReferenceMark::render(Renderer* renderer,
+AxesReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
                           const Eigen::Vector3f& position,
                           float /* discSize */,
                           double tdb,
@@ -276,34 +143,16 @@ AxesReferenceMark::render(Renderer* renderer,
         ps.blending = true;
         ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     }
-    renderer->setPipelineState(ps);
+    refMarkRenderer->renderer().setPipelineState(ps);
 
     Eigen::Affine3f transform = Eigen::Translation3f(position) * q.cast<float>() * Eigen::Scaling(size);
     Eigen::Matrix4f projection = *m.projection;
     Eigen::Matrix4f modelView = (*m.modelview) * transform.matrix();
 
-#if 0
-    // Simple line axes
-    glBegin(GL_LINES);
-
-    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-1.0f, 0.0f, 0.0f);
-
-    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 1.0f);
-
-    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 1.0f, 0.0f);
-
-    glEnd();
-#endif
-
     float labelScale = 0.1f;
 
-    CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+    render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
+    CelestiaGLProgram* prog = arrowRenderer.program();
     if (prog == nullptr)
         return;
     prog->use();
@@ -315,21 +164,22 @@ AxesReferenceMark::render(Renderer* renderer,
     Eigen::Matrix4f xModelView = modelView * math::YRot90Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, xModelView);
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 
     // y-axis
     Eigen::Matrix4f yModelView = modelView * math::YRot180Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, yModelView);
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 
     // z-axis
     Eigen::Matrix4f zModelView = modelView * math::XRot270Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     prog->setMVPMatrices(projection, zModelView);
-    GetArrowVAO().draw();
+    arrowRenderer.vertexObject()->draw();
 
-    LineRenderer lr(*renderer);
+    LineRenderer& lr = arrowRenderer.lineRenderer();
+    lr.clear();
     lr.startUpdate();
     // X
     lr.addSegment({0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 1.0f});
@@ -363,7 +213,6 @@ AxesReferenceMark::render(Renderer* renderer,
 VelocityVectorArrow::VelocityVectorArrow(const Body& _body) :
     ArrowReferenceMark(_body)
 {
-    setTag("velocity vector");
     setColor(Color(0.6f, 0.6f, 0.9f));
     setSize(body.getRadius() * 2.0f);
 }
@@ -371,8 +220,14 @@ VelocityVectorArrow::VelocityVectorArrow(const Body& _body) :
 Eigen::Vector3d
 VelocityVectorArrow::getDirection(double tdb) const
 {
-    const TimelinePhase* phase = body.getTimeline()->findPhase(tdb).get();
-    return phase->orbitFrame()->getOrientation(tdb).conjugate() * phase->orbit()->velocityAtTime(tdb);
+    const TimelinePhase& phase = body.getTimeline()->findPhase(tdb);
+    return phase.orbitFrame()->getOrientation(tdb).conjugate() * phase.orbit()->velocityAtTime(tdb);
+}
+
+std::string_view
+VelocityVectorArrow::defaultTag() const
+{
+    return "velocity vector"sv;
 }
 
 
@@ -381,7 +236,6 @@ VelocityVectorArrow::getDirection(double tdb) const
 SunDirectionArrow::SunDirectionArrow(const Body& _body) :
     ArrowReferenceMark(_body)
 {
-    setTag("sun direction");
     setColor(Color(1.0f, 1.0f, 0.4f));
     setSize(body.getRadius() * 2.0f);
 }
@@ -405,13 +259,18 @@ SunDirectionArrow::getDirection(double tdb) const
     return Eigen::Vector3d::Zero();
 }
 
+std::string_view
+SunDirectionArrow::defaultTag() const
+{
+    return "sun direction"sv;
+}
+
 
 /****** SpinVectorArrow implementation ******/
 
 SpinVectorArrow::SpinVectorArrow(const Body& _body) :
     ArrowReferenceMark(_body)
 {
-    setTag("spin vector");
     setColor(Color(0.6f, 0.6f, 0.6f));
     setSize(body.getRadius() * 2.0f);
 }
@@ -419,8 +278,14 @@ SpinVectorArrow::SpinVectorArrow(const Body& _body) :
 Eigen::Vector3d
 SpinVectorArrow::getDirection(double tdb) const
 {
-    const TimelinePhase* phase = body.getTimeline()->findPhase(tdb).get();
-    return phase->bodyFrame()->getOrientation(tdb).conjugate() * phase->rotationModel()->angularVelocityAtTime(tdb);
+    const TimelinePhase& phase = body.getTimeline()->findPhase(tdb);
+    return phase.bodyFrame()->getOrientation(tdb).conjugate() * phase.rotationModel()->angularVelocityAtTime(tdb);
+}
+
+std::string_view
+SpinVectorArrow::defaultTag() const
+{
+    return "spin vector"sv;
 }
 
 
@@ -433,16 +298,20 @@ BodyToBodyDirectionArrow::BodyToBodyDirectionArrow(const Body& _body, const Sele
     ArrowReferenceMark(_body),
     target(_target)
 {
-    setTag("body to body");
     setColor(Color(0.0f, 0.5f, 0.0f));
     setSize(body.getRadius() * 2.0f);
 }
-
 
 Eigen::Vector3d
 BodyToBodyDirectionArrow::getDirection(double tdb) const
 {
     return target.getPosition(tdb).offsetFromKm(body.getPosition(tdb));
+}
+
+std::string_view
+BodyToBodyDirectionArrow::defaultTag() const
+{
+    return "body to body"sv;
 }
 
 
@@ -451,7 +320,6 @@ BodyToBodyDirectionArrow::getDirection(double tdb) const
 BodyAxisArrows::BodyAxisArrows(const Body& _body) :
     AxesReferenceMark(_body)
 {
-    setTag("body axes");
     setOpacity(1.0);
     setSize(body.getRadius() * 2.0f);
 }
@@ -462,13 +330,18 @@ BodyAxisArrows::getOrientation(double tdb) const
     return (math::YRot180<double> * body.getEclipticToBodyFixed(tdb)).conjugate();
 }
 
+std::string_view
+BodyAxisArrows::defaultTag() const
+{
+    return "body axes"sv;
+}
+
 
 /****** FrameAxisArrows implementation ******/
 
 FrameAxisArrows::FrameAxisArrows(const Body& _body) :
     AxesReferenceMark(_body)
 {
-    setTag("frame axes");
     setOpacity(0.5);
     setSize(body.getRadius() * 2.0f);
 }
@@ -477,4 +350,10 @@ Eigen::Quaterniond
 FrameAxisArrows::getOrientation(double tdb) const
 {
     return body.getEclipticToFrame(tdb).conjugate();
+}
+
+std::string_view
+FrameAxisArrows::defaultTag() const
+{
+    return "frame axes"sv;
 }

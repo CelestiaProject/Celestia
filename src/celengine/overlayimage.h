@@ -1,8 +1,9 @@
 #pragma once
 
 #include <array>
+#include <filesystem>
 #include <memory>
-#include <celcompat/filesystem.h>
+
 #include "texture.h"
 
 class Renderer;
@@ -10,14 +11,14 @@ class Renderer;
 class OverlayImage
 {
  public:
-    OverlayImage(fs::path, Renderer*);
+    OverlayImage(std::filesystem::path, Renderer*);
     OverlayImage()               = delete;
     ~OverlayImage()              = default;
     OverlayImage(OverlayImage&)  = delete;
     OverlayImage(OverlayImage&&) = delete;
 
     void render(float, int, int);
-    bool isNewImage(const fs::path& f) const
+    bool isNewImage(const std::filesystem::path& f) const
     {
         return filename != f;
     }
@@ -54,7 +55,7 @@ class OverlayImage
     bool  fitscreen { false };
     std::array<Color, 4> colors;
 
-    fs::path filename;
+    std::filesystem::path filename;
     std::unique_ptr<Texture> texture;
     Renderer *renderer { nullptr };
 };

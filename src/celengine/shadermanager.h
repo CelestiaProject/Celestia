@@ -12,8 +12,11 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <map>
+#include <memory>
 #include <string>
+#include <string_view>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -85,10 +88,9 @@ enum class FisheyeOverrideMode : int
 
 class ShaderProperties
 {
- public:
+public:
     ShaderProperties() = default;
     bool usesShadows() const;
-    bool usesFragmentLighting() const;
     bool usesTangentSpaceLighting() const;
     bool usePointSize() const;
 
@@ -113,7 +115,6 @@ class ShaderProperties
     bool hasScattering() const;
     bool isViewDependent() const;
 
-public:
     std::uint16_t nLights{ 0 };
     LightingModel lightModel{ LightingModel::DiffuseModel };
     TexUsage texUsage{ TexUsage::None };
@@ -131,7 +132,7 @@ public:
 
     FisheyeOverrideMode fishEyeOverride { FisheyeOverrideMode::None };
 
- private:
+private:
     static constexpr unsigned int ShadowBitsPerLight = 8;
 
     enum
@@ -148,6 +149,24 @@ public:
 
     friend class ShaderManager;
 };
+
+bool
+operator==(const ShaderProperties& lhs, const ShaderProperties& rhs);
+
+inline bool
+operator!=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(lhs == rhs); }
+
+bool
+operator<(const ShaderProperties& lhs, const ShaderProperties& rhs);
+
+inline bool
+operator>(const ShaderProperties& lhs, const ShaderProperties& rhs) { return rhs < lhs; }
+
+inline bool
+operator<=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(rhs < lhs); }
+
+inline bool
+operator>=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(lhs < rhs); }
 
 constexpr inline unsigned int MaxShaderLights = 4;
 constexpr inline unsigned int MaxShaderEclipseShadows = 3;
@@ -179,11 +198,11 @@ struct CelestiaGLProgramTextureTransform
 class CelestiaGLProgram
 {
 public:
-    CelestiaGLProgram(GLProgram& _program);
-    CelestiaGLProgram(GLProgram& _program, const ShaderProperties&);
-    ~CelestiaGLProgram();
+    explicit CelestiaGLProgram(GLProgram&& _program);
+    CelestiaGLProgram(GLProgram&& _program, const ShaderProperties&);
+    ~CelestiaGLProgram() = default;
 
-    void use() const { program->use(); }
+    void use() const { program.use(); }
 
     void setLightParameters(const LightingState& ls,
                             Color materialDiffuse,
@@ -304,7 +323,7 @@ private:
     void initParameters();
     void initSamplers();
 
-    GLProgram* program;
+    GLProgram program;
     const ShaderProperties props;
 };
 
@@ -319,7 +338,7 @@ public:
     };
 
     ShaderManager();
-    ~ShaderManager();
+    ~ShaderManager() = default;
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
     CelestiaGLProgram* getShader(std::string_view);
@@ -330,28 +349,8 @@ public:
     void setFisheyeEnabled(bool enabled);
 
 private:
-    CelestiaGLProgram* buildProgram(const ShaderProperties&);
-    CelestiaGLProgram* buildProgram(std::string_view, std::string_view);
-    CelestiaGLProgram* buildProgramGL3(std::string_view, std::string_view);
-    CelestiaGLProgram* buildProgramGL3(std::string_view, std::string_view, std::string_view, const GeomShaderParams* = nullptr);
-
-    GLVertexShader* buildVertexShader(const ShaderProperties&);
-    GLFragmentShader* buildFragmentShader(const ShaderProperties&);
-
-    GLVertexShader* buildRingsVertexShader(const ShaderProperties&);
-    GLFragmentShader* buildRingsFragmentShader(const ShaderProperties&);
-
-    GLVertexShader* buildAtmosphereVertexShader(const ShaderProperties&);
-    GLFragmentShader* buildAtmosphereFragmentShader(const ShaderProperties&);
-
-    GLVertexShader* buildEmissiveVertexShader(const ShaderProperties&);
-    GLFragmentShader* buildEmissiveFragmentShader(const ShaderProperties&);
-
-    GLVertexShader* buildParticleVertexShader(const ShaderProperties&);
-    GLFragmentShader* buildParticleFragmentShader(const ShaderProperties&);
-
-    std::map<ShaderProperties, CelestiaGLProgram*> dynamicShaders;
-    std::map<std::string_view, CelestiaGLProgram*> staticShaders;
+    std::map<ShaderProperties, std::unique_ptr<CelestiaGLProgram>> dynamicShaders;
+    std::map<std::string, std::unique_ptr<CelestiaGLProgram>, std::less<>> staticShaders;
 
     bool fisheyeEnabled { false };
 };

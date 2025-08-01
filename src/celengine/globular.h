@@ -15,22 +15,27 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
+#include <string_view>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
 #include "deepskyobj.h"
+#include "renderflags.h"
 
 struct Matrices;
 class Renderer;
 
+namespace celestia::util
+{
+class AssociativeArray;
+}
 
 class Globular : public DeepSkyObject
 {
 public:
-
    // min/max c-values of globular cluster data
    static constexpr float MinC = 0.50f;
    static constexpr float MaxC = 2.58f;
@@ -52,10 +57,10 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const AssociativeArray*, const fs::path&) override;
+    bool load(const celestia::util::AssociativeArray*, const std::filesystem::path&, std::string_view) override;
 
-    std::uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
     DeepSkyObjectType getObjType() const override;
 
     int getFormId() const;

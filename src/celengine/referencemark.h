@@ -13,10 +13,15 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <Eigen/Core>
 
-class Renderer;
 struct Matrices;
+
+namespace celestia::render
+{
+class ReferenceMarkRenderer;
+}
 
 /*! Reference marks give additional visual information about the
  *  position and orientation of a solar system body. Items such as
@@ -37,7 +42,7 @@ class ReferenceMark
 
     /*! Draw the reference mark geometry at the specified time.
      */
-    virtual void render(Renderer* renderer,
+    virtual void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                         const Eigen::Vector3f& position,
                         float discSizeInPixels,
                         double tdb,
@@ -54,16 +59,24 @@ class ReferenceMark
      */
     virtual bool isOpaque() const { return true; }
 
-    void setTag(const std::string& _tag)
+    void setTag(std::string_view tag)
     {
-        tag = _tag;
+        if (tag.empty() || tag == defaultTag())
+            m_tag = std::string{};
+        else
+            m_tag = tag;
     }
 
-    const std::string& getTag() const
+    std::string_view getTag() const
     {
-        return tag;
+        if (m_tag.empty())
+            return defaultTag();
+        return m_tag;
     }
+
+protected:
+    virtual std::string_view defaultTag() const = 0;
 
 private:
-    std::string tag;
+    std::string m_tag;
 };

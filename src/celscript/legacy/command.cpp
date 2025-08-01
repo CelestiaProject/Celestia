@@ -442,7 +442,7 @@ void CommandLookBack::processInstantaneous(ExecutionEnvironment& env)
 //////////////////
 // Set render flags command
 
-CommandRenderFlags::CommandRenderFlags(std::uint64_t _setFlags, std::uint64_t _clearFlags) :
+CommandRenderFlags::CommandRenderFlags(RenderFlags _setFlags, RenderFlags _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }
@@ -461,7 +461,7 @@ void CommandRenderFlags::processInstantaneous(ExecutionEnvironment& env)
 //////////////////
 // Set labels command
 
-CommandLabels::CommandLabels(int _setFlags, int _clearFlags) :
+CommandLabels::CommandLabels(RenderLabels _setFlags, RenderLabels _clearFlags) :
     setFlags(_setFlags), clearFlags(_clearFlags)
 {
 }
@@ -651,7 +651,7 @@ void CommandPreloadTextures::processInstantaneous(ExecutionEnvironment& env)
 ////////////////
 // Capture command
 
-CommandCapture::CommandCapture(std::string _type, fs::path _filename)
+CommandCapture::CommandCapture(std::string _type, std::filesystem::path _filename)
     : type(std::move(_type)), filename(std::move(_filename))
 {
 }
@@ -674,7 +674,7 @@ void CommandCapture::processInstantaneous(ExecutionEnvironment& env)
 ////////////////
 // Set texture resolution command
 
-CommandSetTextureResolution::CommandSetTextureResolution(unsigned int _res) :
+CommandSetTextureResolution::CommandSetTextureResolution(TextureResolution _res) :
     res(_res)
 {
 }
@@ -855,7 +855,7 @@ CommandPlay::CommandPlay(int channel,
                          std::optional<float> volume,
                          float pan,
                          std::optional<bool> loop,
-                         const std::optional<fs::path> &filename,
+                         const std::optional<std::filesystem::path> &filename,
                          bool nopause) :
     channel(channel),
     volume(volume),
@@ -895,7 +895,7 @@ void CommandPlay::processInstantaneous(ExecutionEnvironment& env)
 // ScriptImage command
 CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
                                        float _xoffset, float _yoffset,
-                                       const fs::path &_filename,
+                                       const std::filesystem::path &_filename,
                                        bool _fitscreen,
                                        std::array<Color,4> &_colors) :
     duration(_duration),
@@ -1056,8 +1056,8 @@ void CommandSetWindowBordersVisible::processInstantaneous(ExecutionEnvironment& 
 ///////////////
 // SetRingsTexture command
 CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
-                                               fs::path _textureName,
-                                               fs::path _path) :
+                                               std::filesystem::path _textureName,
+                                               std::filesystem::path _path) :
     object(std::move(_object)),
     textureName(std::move(_textureName)),
     path(std::move(_path))

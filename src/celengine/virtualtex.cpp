@@ -19,11 +19,12 @@
 
 #include <fmt/format.h>
 
-#include <celengine/parser.h>
 #include <celutil/filetype.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/tokenizer.h>
 
+namespace util = celestia::util;
 
 using celestia::util::GetLogger;
 using celestia::engine::Image;
@@ -33,17 +34,15 @@ namespace
 
 constexpr int MaxResolutionLevels = 13;
 
-
 constexpr bool
 isPow2(int x)
 {
     return ((x & (x - 1)) == 0);
 }
 
-
 std::unique_ptr<VirtualTexture>
-CreateVirtualTexture(const Hash* texParams,
-                     const fs::path& path)
+CreateVirtualTexture(const util::AssociativeArray* texParams,
+                     const std::filesystem::path& path)
 {
     const std::string* imageDirectory = texParams->getString("ImageDirectory");
     if (imageDirectory == nullptr)
@@ -88,7 +87,7 @@ CreateVirtualTexture(const Hash* texParams,
 
     // if absolute directory notation for ImageDirectory used,
     // don't prepend the current add-on path.
-    fs::path directory(*imageDirectory);
+    std::filesystem::path directory(*imageDirectory);
 
     if (directory.is_relative())
         directory = path / directory;
@@ -101,10 +100,10 @@ CreateVirtualTexture(const Hash* texParams,
 
 
 std::unique_ptr<VirtualTexture>
-LoadVirtualTexture(std::istream& in, const fs::path& path)
+LoadVirtualTexture(std::istream& in, const std::filesystem::path& path)
 {
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();
     if (auto tokenValue = tokenizer.getNameValue(); tokenValue != "VirtualTexture")
@@ -112,8 +111,8 @@ LoadVirtualTexture(std::istream& in, const fs::path& path)
         return nullptr;
     }
 
-    const Value texParamsValue = parser.readValue();
-    const Hash* texParams = texParamsValue.getHash();
+    const util::Value texParamsValue = parser.readValue();
+    const util::AssociativeArray* texParams = texParamsValue.getHash();
     if (texParams == nullptr)
     {
         GetLogger()->error("Error parsing virtual texture\n");
@@ -137,7 +136,7 @@ LoadVirtualTexture(std::istream& in, const fs::path& path)
 // number of tiles at the lowest LOD.  It is the log base 2 of the width in
 // tiles of LOD zero.  Though it's not required
 
-VirtualTexture::VirtualTexture(const fs::path& _tilePath,
+VirtualTexture::VirtualTexture(const std::filesystem::path& _tilePath,
                                unsigned int _baseSplit,
                                unsigned int _tileSize,
                                const std::string& _tilePrefix,
@@ -273,7 +272,7 @@ VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v
     lod >>= baseSplit;
     assert(lod < (unsigned)MaxResolutionLevels);
 
-    auto filename = fs::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
+    auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
     filename += tileExt;
 
     auto path = tilePath /
@@ -323,18 +322,18 @@ void VirtualTexture::populateTileTree()
 
     for (int i = 0; i < MaxResolutionLevels; i++)
     {
-        fs::path path = tilePath / fmt::format("level{:d}", i);
+        std::filesystem::path path = tilePath / fmt::format("level{:d}", i);
         std::error_code ec;
-        if (!fs::is_directory(path, ec))
+        if (!std::filesystem::is_directory(path, ec))
             continue;
 
         maxLevel = i + baseSplit;
         int uLimit = 2 << maxLevel;
         int vLimit = 1 << maxLevel;
 
-        for (const auto& d : fs::directory_iterator(path, ec))
+        for (const auto& d : std::filesystem::directory_iterator(path, ec))
         {
-            if (!fs::is_regular_file(d, ec))
+            if (!std::filesystem::is_regular_file(d, ec))
                 continue;
 
             int u = -1;
@@ -377,7 +376,7 @@ VirtualTexture::addTileToTree(std::unique_ptr<Tile> tile, unsigned int lod, unsi
 
 
 std::unique_ptr<VirtualTexture>
-LoadVirtualTexture(const fs::path& filename)
+LoadVirtualTexture(const std::filesystem::path& filename)
 {
     std::ifstream in(filename, std::ios::in);
 

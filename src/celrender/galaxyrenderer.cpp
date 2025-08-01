@@ -8,6 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "galaxyrenderer.h"
+
 #include <cassert>
 #include <cstdint>
 #include <cmath>
@@ -21,7 +23,6 @@
 #include <celmath/geomutil.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include "galaxyrenderer.h"
 
 using celestia::engine::GalacticFormManager;
 
@@ -52,36 +53,19 @@ colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
     Color::fromHSV(hue, 0.20f, 1.0f).get(pixel);
 }
 
-void
-BindTextures()
-{
-    static Texture* galaxyTex = nullptr;
-    static Texture* colorTex  = nullptr;
-
-    if (galaxyTex == nullptr)
-    {
-        galaxyTex = CreateProceduralTexture(kGalaxyTextureSize,
-                                            kGalaxyTextureSize,
-                                            engine::PixelFormat::Luminance,
-                                            galaxyTextureEval).release();
-    }
-    assert(galaxyTex != nullptr);
-    glActiveTexture(GL_TEXTURE0);
-    galaxyTex->bind();
-
-    if (colorTex == nullptr)
-    {
-        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
-                                           colorTextureEval,
-                                           Texture::EdgeClamp,
-                                           Texture::NoMipMaps).release();
-    }
-    assert(colorTex != nullptr);
-    glActiveTexture(GL_TEXTURE1);
-    colorTex->bind();
-}
-
 } // anonymous namespace
+
+struct GalaxyRenderer::RenderData
+{
+    RenderData(gl::Buffer &&bo, gl::VertexObject &&vo) :
+        bo(std::move(bo)),
+        vo(std::move(vo))
+    {
+    }
+
+    gl::Buffer       bo;
+    gl::VertexObject vo;
+};
 
 struct GalaxyRenderer::Object
 {
@@ -182,16 +166,33 @@ GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightne
     return true;
 }
 
-struct GalaxyRenderer::RenderData
+void
+GalaxyRenderer::bindTextures()
 {
-    RenderData(gl::Buffer &&bo, gl::VertexObject &&vo) :
-        bo(std::move(bo)),
-        vo(std::move(vo))
+    if (m_galaxyTex == nullptr)
     {
+        m_galaxyTex = CreateProceduralTexture(kGalaxyTextureSize,
+                                              kGalaxyTextureSize,
+                                              engine::PixelFormat::Luminance,
+                                              &galaxyTextureEval);
     }
-    gl::Buffer       bo{ util::NoCreateT{} };
-    gl::VertexObject vo{ util::NoCreateT{} };
-};
+
+    assert(m_galaxyTex != nullptr);
+    glActiveTexture(GL_TEXTURE0);
+    m_galaxyTex->bind();
+
+    if (m_colorTex == nullptr)
+    {
+        m_colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
+                                             &colorTextureEval,
+                                             Texture::EdgeClamp,
+                                             Texture::NoMipMaps);
+    }
+
+    assert(m_colorTex != nullptr);
+    glActiveTexture(GL_TEXTURE1);
+    m_colorTex->bind();
+}
 
 void
 GalaxyRenderer::renderGL2()
@@ -202,7 +203,7 @@ GalaxyRenderer::renderGL2()
 
     initializeGL2(prog);
 
-    BindTextures();
+    bindTextures();
 
     prog->use();
     prog->samplerParam("galaxyTex") = 0;
@@ -357,7 +358,7 @@ GalaxyRenderer::renderGL3()
 
     initializeGL3(prog);
 
-    BindTextures();
+    bindTextures();
 
     prog->use();
     prog->samplerParam("galaxyTex") = 0;

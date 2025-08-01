@@ -9,15 +9,14 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
-
-#include <celcompat/filesystem.h>
 
 namespace celestia::ephem
 {
 
 class RotationModel;
 
-std::shared_ptr<const RotationModel> LoadSampledOrientation(const fs::path& filename);
+std::shared_ptr<const RotationModel> LoadSampledOrientation(const std::filesystem::path& filename);
 
 }

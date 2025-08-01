@@ -11,14 +11,13 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <optional>
 #include <type_traits> // std::is_standard_layout_v<>
 #include <vector>
 
 #include <Eigen/Core>
-
-#include <celcompat/filesystem.h>
 
 namespace celestia::engine
 {
@@ -48,7 +47,7 @@ public:
     static GalacticFormManager* get();
 
     const GalacticForm* getForm(int) const;
-    int getCustomForm(const fs::path& path);
+    int getCustomForm(const std::filesystem::path& path);
 
     int getCount() const;
 
@@ -58,7 +57,7 @@ private:
     static constexpr std::size_t GalacticFormsReserve = 32;
 
     std::vector<std::optional<GalacticForm>> galacticForms{ };
-    std::map<fs::path, int> customForms{ };
+    std::map<std::filesystem::path, int> customForms{ };
 };
 
 } // namespace celestia::engine

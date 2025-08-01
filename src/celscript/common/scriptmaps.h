@@ -5,6 +5,8 @@
 #include <map>
 #include <string_view>
 
+#include <celengine/renderflags.h>
+
 class Color;
 enum class BodyClassification : std::uint32_t;
 
@@ -26,8 +28,8 @@ struct ScriptMaps
     ScriptMaps& operator=(const ScriptMaps&) = delete;
     ScriptMaps& operator=(ScriptMaps&&) = delete;
 
-    ScriptMap<std::uint64_t>      RenderFlagMap;
-    ScriptMap<std::uint32_t>      LabelFlagMap;
+    ScriptMap<RenderFlags>        RenderFlagMap;
+    ScriptMap<RenderLabels>       LabelFlagMap;
     ScriptMap<std::uint64_t>      LocationFlagMap;
     ScriptMap<BodyClassification> BodyTypeMap;
     ScriptMap<std::uint32_t>      OverlayElementMap;

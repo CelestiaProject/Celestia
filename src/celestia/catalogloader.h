@@ -29,14 +29,14 @@ template<class OBJDB> class CatalogLoader
     std::string                m_typeDesc;
     ContentType                m_contentType;
     ProgressNotifier          *m_notifier;
-    util::array_view<fs::path> m_skipPaths;
+    util::array_view<std::filesystem::path> m_skipPaths;
 
 public:
     CatalogLoader(OBJDB                     *db,
                   const std::string         &typeDesc,
                   const ContentType         &contentType,
                   ProgressNotifier          *notifier,
-                  util::array_view<fs::path> skipPaths) :
+                  util::array_view<std::filesystem::path> skipPaths) :
         m_objDB(db),
         m_typeDesc(typeDesc),
         m_contentType(contentType),
@@ -45,12 +45,12 @@ public:
     {
     }
 
-    bool load(std::istream &in, const fs::path &dir)
+    bool load(std::istream &in, const std::filesystem::path &dir)
     {
         return m_objDB->load(in, dir);
     }
 
-    void process(const fs::path &filePath, const fs::path &parentPath)
+    void process(const std::filesystem::path &filePath, const std::filesystem::path &parentPath)
     {
         if (DetermineFileType(filePath) != m_contentType)
             return;
@@ -74,9 +74,9 @@ public:
         }
     }
 
-    void loadExtras(util::array_view<fs::path> dirs)
+    void loadExtras(util::array_view<std::filesystem::path> dirs)
     {
-        std::vector<fs::path> entries;
+        std::vector<std::filesystem::path> entries;
         std::error_code       ec;
         for (const auto &dir : dirs)
         {
@@ -85,12 +85,12 @@ public:
 
             entries.clear();
 
-            for (auto iter = fs::recursive_directory_iterator(dir, ec); iter != end(iter);
+            for (auto iter = std::filesystem::recursive_directory_iterator(dir, ec); iter != end(iter);
                  iter.increment(ec))
             {
                 if (ec)
                     continue;
-                if (!fs::is_directory(iter->path(), ec))
+                if (!std::filesystem::is_directory(iter->path(), ec))
                     entries.push_back(iter->path());
             }
 

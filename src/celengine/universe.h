@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -24,6 +23,7 @@
 #include <celengine/solarsys.h>
 #include <celengine/deepskyobj.h>
 #include <celengine/marker.h>
+#include <celengine/renderflags.h>
 #include <celengine/selection.h>
 #include <celengine/asterism.h>
 #include <celutil/array_view.h>
@@ -52,18 +52,18 @@ public:
     Selection pick(const UniversalCoord& origin,
                    const Eigen::Vector3f& direction,
                    double when,
-                   std::uint64_t renderFlags,
+                   RenderFlags renderFlags,
                    float faintestMag,
                    float tolerance = 0.0f);
 
 
     Selection findPath(std::string_view s,
-                       celestia::util::array_view<const Selection> contexts,
+                       celestia::util::array_view<Selection> contexts,
                        bool i18n = false) const;
 
     void getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                            std::string_view s,
-                           celestia::util::array_view<const Selection> contexts,
+                           celestia::util::array_view<Selection> contexts,
                            bool withLocations = false) const;
 
 
@@ -89,11 +89,11 @@ public:
 private:
     void getCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
-                       celestia::util::array_view<const Selection> contexts,
+                       celestia::util::array_view<Selection> contexts,
                        bool withLocations = false) const;
 
     Selection find(std::string_view s,
-                   celestia::util::array_view<const Selection> contexts,
+                   celestia::util::array_view<Selection> contexts,
                    bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
                               std::string_view name,
@@ -117,7 +117,7 @@ private:
 
     Selection pickDeepSkyObject(const UniversalCoord& origin,
                                 const Eigen::Vector3f& direction,
-                                uint64_t renderFlags,
+                                RenderFlags renderFlags,
                                 float faintest,
                                 float tolerance = 0.0f) const;
 

@@ -15,6 +15,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstring>
+#include <utility>
 
 #include <fmt/format.h>
 
@@ -1043,10 +1044,10 @@ StarDetails::setRotationModel(boost::intrusive_ptr<StarDetails>& details,
 /*! Set the InfoURL for this star.
 */
 void
-StarDetails::setInfoURL(boost::intrusive_ptr<StarDetails>& details, std::string_view _infoURL)
+StarDetails::setInfoURL(boost::intrusive_ptr<StarDetails>& details, std::string&& _infoURL)
 {
     unshare(details);
-    details->infoURL = _infoURL;
+    details->infoURL = std::move(_infoURL);
 }
 
 void

@@ -104,9 +104,7 @@ struct RingSystem
         color(1.0f, 1.0f, 1.0f),
         texture()
         { };
-    RingSystem(float inner, float outer, Color _color, int _loTexture = -1, int _texture = -1) :
-        innerRadius(inner), outerRadius(outer), color(_color), texture(_loTexture, _texture)
-        { };
+
     RingSystem(float inner, float outer, Color _color, const MultiResTexture& _texture) :
         innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
         { };
@@ -175,6 +173,8 @@ enum class BodyClassification : std::uint32_t
     MinorMoon      =   0x1000,
     Diffuse        =   0x2000,
     Unknown        =  0x10000,
+
+    DefaultOrbitMask = Planet | Stellar | Moon,
 };
 
 ENUM_CLASS_BITWISE_OPS(BodyClassification);
@@ -251,8 +251,10 @@ public:
     void setReflectivity(float);
     float getTemperature(double t = 0) const;
     void setTemperature(float);
-    float getTempDiscrepancy() const;
-    void setTempDiscrepancy(float);
+    float getEmissivity() const;
+    void setEmissivity(float);
+    float getInternalHeatFlux() const;
+    void setInternalHeatFlux(float);
 
     BodyClassification getClassification() const;
     void setClassification(BodyClassification);
@@ -385,7 +387,8 @@ private:
     float bondAlbedo{ 0.5f };
     float reflectivity{ 0.5f };
     float temperature{ 0.0f };
-    float tempDiscrepancy{ 0.0f };
+    float emissivity{ 1.0f };
+    float internalHeatFlux{ 0.0f };
 
     Eigen::Quaternionf geometryOrientation{ Eigen::Quaternionf::Identity() };
 

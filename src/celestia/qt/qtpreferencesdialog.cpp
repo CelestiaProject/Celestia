@@ -12,6 +12,7 @@
 
 #include "qtpreferencesdialog.h"
 
+#include <cassert>
 #include <cstdint>
 
 #include <Qt>
@@ -65,13 +66,18 @@ SetComboBoxValue(QComboBox* combo, const QVariant& value)
 
 void
 setRenderFlag(CelestiaCore* appCore,
-              std::uint64_t flag,
+              RenderFlags flag,
               int state)
 {
     bool isActive = (state == Qt::Checked);
     Renderer* renderer = appCore->getRenderer();
-    std::uint64_t renderFlags = renderer->getRenderFlags() & ~flag;
-    renderer->setRenderFlags(renderFlags | (isActive ? flag : 0));
+    RenderFlags renderFlags = renderer->getRenderFlags();
+    if (isActive)
+        renderFlags |= flag;
+    else
+        renderFlags &= ~flag;
+
+    renderer->setRenderFlags(renderFlags);
 }
 
 void
@@ -99,13 +105,18 @@ setLocationFlag(CelestiaCore* appCore,
 
 void
 setLabelFlag(CelestiaCore* appCore,
-             int flag,
+             RenderLabels flag,
              int state)
 {
     bool isActive = (state == Qt::Checked);
     Renderer* renderer = appCore->getRenderer();
-    int labelMode = renderer->getLabelMode() & ~flag;
-    renderer->setLabelMode(labelMode | (isActive ? flag : 0));
+    RenderLabels labelMode = renderer->getLabelMode();
+    if (isActive)
+        labelMode |= flag;
+    else
+        labelMode &= ~flag;
+
+    renderer->setLabelMode(labelMode);
 }
 
 } // end unnamed namespace
@@ -120,38 +131,38 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     Renderer* renderer = appCore->getRenderer();
     Observer* observer = appCore->getSimulation()->getActiveObserver();
 
-    std::uint64_t renderFlags = renderer->getRenderFlags();
+    ::RenderFlags renderFlags = renderer->getRenderFlags();
     BodyClassification orbitMask = renderer->getOrbitMask();
     std::uint64_t locationFlags = observer->getLocationFilter();
-    int labelMode = renderer->getLabelMode();
+    RenderLabels labelMode = renderer->getLabelMode();
 
     ColorTableType colors = renderer->getStarColorTable();
 
-    ui.starsCheck->setChecked((renderFlags & Renderer::ShowStars) != 0);
-    ui.planetsCheck->setChecked((renderFlags & Renderer::ShowPlanets) != 0);
-    ui.dwarfPlanetsCheck->setChecked((renderFlags & Renderer::ShowDwarfPlanets) != 0);
-    ui.moonsCheck->setChecked((renderFlags & Renderer::ShowMoons) != 0);
-    ui.minorMoonsCheck->setChecked((renderFlags & Renderer::ShowMinorMoons) != 0);
-    ui.asteroidsCheck->setChecked((renderFlags & Renderer::ShowAsteroids) != 0);
-    ui.cometsCheck->setChecked((renderFlags & Renderer::ShowComets) != 0);
-    ui.spacecraftsCheck->setChecked((renderFlags & Renderer::ShowSpacecrafts) != 0);
-    ui.galaxiesCheck->setChecked((renderFlags & Renderer::ShowGalaxies) != 0);
-    ui.nebulaeCheck->setChecked((renderFlags & Renderer::ShowNebulae) != 0);
-    ui.openClustersCheck->setChecked((renderFlags & Renderer::ShowOpenClusters) != 0);
-    ui.globularClustersCheck->setChecked((renderFlags & Renderer::ShowGlobulars) != 0);
+    ui.starsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowStars));
+    ui.planetsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowPlanets));
+    ui.dwarfPlanetsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowDwarfPlanets));
+    ui.moonsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowMoons));
+    ui.minorMoonsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowMinorMoons));
+    ui.asteroidsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowAsteroids));
+    ui.cometsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowComets));
+    ui.spacecraftsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowSpacecrafts));
+    ui.galaxiesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowGalaxies));
+    ui.nebulaeCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowNebulae));
+    ui.openClustersCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowOpenClusters));
+    ui.globularClustersCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowGlobulars));
 
-    ui.atmospheresCheck->setChecked((renderFlags & Renderer::ShowAtmospheres) != 0);
-    ui.cloudsCheck->setChecked((renderFlags & Renderer::ShowCloudMaps) != 0);
-    ui.cloudShadowsCheck->setChecked((renderFlags & Renderer::ShowCloudShadows) != 0);
-    ui.eclipseShadowsCheck->setChecked((renderFlags & Renderer::ShowEclipseShadows) != 0);
-    ui.ringShadowsCheck->setChecked((renderFlags & Renderer::ShowRingShadows) != 0);
-    ui.planetRingsCheck->setChecked((renderFlags & Renderer::ShowPlanetRings) != 0);
-    ui.nightsideLightsCheck->setChecked((renderFlags & Renderer::ShowNightMaps) != 0);
-    ui.cometTailsCheck->setChecked((renderFlags & Renderer::ShowCometTails) != 0);
+    ui.atmospheresCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowAtmospheres));
+    ui.cloudsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowCloudMaps));
+    ui.cloudShadowsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowCloudShadows));
+    ui.eclipseShadowsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowEclipseShadows));
+    ui.ringShadowsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowRingShadows));
+    ui.planetRingsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowPlanetRings));
+    ui.nightsideLightsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowNightMaps));
+    ui.cometTailsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowCometTails));
     ui.limitOfKnowledgeCheck->setChecked(observer->getDisplayedSurface() == "limit of knowledge");
 
-    ui.orbitsCheck->setChecked((renderFlags & Renderer::ShowOrbits) != 0);
-    ui.fadingOrbitsCheck->setChecked((renderFlags & Renderer::ShowFadingOrbits) != 0);
+    ui.orbitsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowOrbits));
+    ui.fadingOrbitsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowFadingOrbits));
     ui.starOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Stellar));
     ui.planetOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Planet));
     ui.dwarfPlanetOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::DwarfPlanet));
@@ -160,35 +171,35 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.asteroidOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Asteroid));
     ui.cometOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Comet));
     ui.spacecraftOrbitsCheck->setChecked(util::is_set(orbitMask, BodyClassification::Spacecraft));
-    ui.partialTrajectoriesCheck->setChecked((renderFlags & Renderer::ShowPartialTrajectories) != 0);
+    ui.partialTrajectoriesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowPartialTrajectories));
 
-    ui.equatorialGridCheck->setChecked((renderFlags & Renderer::ShowCelestialSphere) != 0);
-    ui.eclipticGridCheck->setChecked((renderFlags & Renderer::ShowEclipticGrid) != 0);
-    ui.galacticGridCheck->setChecked((renderFlags & Renderer::ShowGalacticGrid) != 0);
-    ui.horizontalGridCheck->setChecked((renderFlags & Renderer::ShowHorizonGrid) != 0);
+    ui.equatorialGridCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowCelestialSphere));
+    ui.eclipticGridCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowEclipticGrid));
+    ui.galacticGridCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowGalacticGrid));
+    ui.horizontalGridCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowHorizonGrid));
 
-    ui.diagramsCheck->setChecked((renderFlags & Renderer::ShowDiagrams) != 0);
-    ui.boundariesCheck->setChecked((renderFlags & Renderer::ShowBoundaries) != 0);
-    ui.latinNamesCheck->setChecked(!(labelMode & Renderer::I18nConstellationLabels));
+    ui.diagramsCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowDiagrams));
+    ui.boundariesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowBoundaries));
+    ui.latinNamesCheck->setChecked(!util::is_set(labelMode, RenderLabels::I18nConstellationLabels));
 
-    ui.markersCheck->setChecked((renderFlags & Renderer::ShowMarkers) != 0);
-    ui.eclipticLineCheck->setChecked((renderFlags & Renderer::ShowEcliptic) != 0);
+    ui.markersCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowMarkers));
+    ui.eclipticLineCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowEcliptic));
 
-    ui.starLabelsCheck->setChecked(labelMode & Renderer::StarLabels);
-    ui.planetLabelsCheck->setChecked(labelMode & Renderer::PlanetLabels);
-    ui.dwarfPlanetLabelsCheck->setChecked(labelMode & Renderer::DwarfPlanetLabels);
-    ui.moonLabelsCheck->setChecked(labelMode & Renderer::MoonLabels);
-    ui.minorMoonLabelsCheck->setChecked(labelMode & Renderer::MinorMoonLabels);
-    ui.asteroidLabelsCheck->setChecked(labelMode & Renderer::AsteroidLabels);
-    ui.cometLabelsCheck->setChecked(labelMode & Renderer::CometLabels);
-    ui.spacecraftLabelsCheck->setChecked(labelMode & Renderer::SpacecraftLabels);
-    ui.galaxyLabelsCheck->setChecked(labelMode & Renderer::GalaxyLabels);
-    ui.nebulaLabelsCheck->setChecked(labelMode & Renderer::NebulaLabels);
-    ui.openClusterLabelsCheck->setChecked(labelMode & Renderer::OpenClusterLabels);
-    ui.globularClusterLabelsCheck->setChecked(labelMode & Renderer::GlobularLabels);
-    ui.constellationLabelsCheck->setChecked(labelMode & Renderer::ConstellationLabels);
+    ui.starLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::StarLabels));
+    ui.planetLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::PlanetLabels));
+    ui.dwarfPlanetLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::DwarfPlanetLabels));
+    ui.moonLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::MoonLabels));
+    ui.minorMoonLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::MinorMoonLabels));
+    ui.asteroidLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::AsteroidLabels));
+    ui.cometLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::CometLabels));
+    ui.spacecraftLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::SpacecraftLabels));
+    ui.galaxyLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::GalaxyLabels));
+    ui.nebulaLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::NebulaLabels));
+    ui.openClusterLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::OpenClusterLabels));
+    ui.globularClusterLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::GlobularLabels));
+    ui.constellationLabelsCheck->setChecked(util::is_set(labelMode, RenderLabels::ConstellationLabels));
 
-    ui.locationsCheck->setChecked((labelMode & Renderer::LocationLabels) != 0);
+    ui.locationsCheck->setChecked(util::is_set(labelMode, RenderLabels::LocationLabels));
     ui.citiesCheck->setChecked((locationFlags & Location::City) != 0);
     ui.observatoriesCheck->setChecked((locationFlags & Location::Observatory) != 0);
     ui.landingSitesCheck->setChecked((locationFlags & Location::LandingSite) != 0);
@@ -206,19 +217,19 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     ui.renderPathBox->addItem(_("OpenGL 2.1"), 0);
 
-    ui.antialiasLinesCheck->setChecked(renderFlags & Renderer::ShowSmoothLines);
+    ui.antialiasLinesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowSmoothLines));
 
     switch (renderer->getResolution())
     {
-        case 0:
+        case TextureResolution::lores:
             ui.lowResolutionButton->setChecked(true);
             break;
 
-        case 1:
+        case TextureResolution::medres:
             ui.mediumResolutionButton->setChecked(true);
             break;
 
-        case 2:
+        case TextureResolution::hires:
             ui.highResolutionButton->setChecked(true);
     }
 
@@ -250,73 +261,73 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 void
 PreferencesDialog::on_starsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowStars, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowStars, state);
 }
 
 void
 PreferencesDialog::on_planetsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowPlanets, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowPlanets, state);
 }
 
 void
 PreferencesDialog::on_dwarfPlanetsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowDwarfPlanets, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowDwarfPlanets, state);
 }
 
 void
 PreferencesDialog::on_moonsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowMoons, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowMoons, state);
 }
 
 void
 PreferencesDialog::on_minorMoonsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowMinorMoons, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowMinorMoons, state);
 }
 
 void
 PreferencesDialog::on_asteroidsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowAsteroids, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowAsteroids, state);
 }
 
 void
 PreferencesDialog::on_cometsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowComets, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowComets, state);
 }
 
 void
 PreferencesDialog::on_spacecraftsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowSpacecrafts, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowSpacecrafts, state);
 }
 
 void
 PreferencesDialog::on_galaxiesCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowGalaxies, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowGalaxies, state);
 }
 
 void
 PreferencesDialog::on_nebulaeCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowNebulae, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowNebulae, state);
 }
 
 void
 PreferencesDialog::on_openClustersCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowOpenClusters, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowOpenClusters, state);
 }
 
 void
 PreferencesDialog::on_globularClustersCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowGlobulars, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowGlobulars, state);
 }
 
 // Features
@@ -324,49 +335,49 @@ PreferencesDialog::on_globularClustersCheck_stateChanged(int state)
 void
 PreferencesDialog::on_atmospheresCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowAtmospheres, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowAtmospheres, state);
 }
 
 void
 PreferencesDialog::on_cloudsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowCloudMaps, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowCloudMaps, state);
 }
 
 void
 PreferencesDialog::on_cloudShadowsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowCloudShadows, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowCloudShadows, state);
 }
 
 void
 PreferencesDialog::on_eclipseShadowsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowEclipseShadows, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowEclipseShadows, state);
 }
 
 void
 PreferencesDialog::on_ringShadowsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowRingShadows, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowRingShadows, state);
 }
 
 void
 PreferencesDialog::on_planetRingsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowPlanetRings, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowPlanetRings, state);
 }
 
 void
 PreferencesDialog::on_nightsideLightsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowNightMaps, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowNightMaps, state);
 }
 
 void
 PreferencesDialog::on_cometTailsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowCometTails, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowCometTails, state);
 }
 
 void
@@ -388,13 +399,13 @@ PreferencesDialog::on_limitOfKnowledgeCheck_stateChanged(int state) const
 void
 PreferencesDialog::on_orbitsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowOrbits, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowOrbits, state);
 }
 
 void
 PreferencesDialog::on_fadingOrbitsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowFadingOrbits, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowFadingOrbits, state);
 }
 
 void
@@ -448,7 +459,7 @@ PreferencesDialog::on_spacecraftOrbitsCheck_stateChanged(int state)
 void
 PreferencesDialog::on_partialTrajectoriesCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowPartialTrajectories, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowPartialTrajectories, state);
 }
 
 // Grids
@@ -456,25 +467,25 @@ PreferencesDialog::on_partialTrajectoriesCheck_stateChanged(int state)
 void
 PreferencesDialog::on_equatorialGridCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowCelestialSphere, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowCelestialSphere, state);
 }
 
 void
 PreferencesDialog::on_eclipticGridCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowEclipticGrid, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowEclipticGrid, state);
 }
 
 void
 PreferencesDialog::on_galacticGridCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowGalacticGrid, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowGalacticGrid, state);
 }
 
 void
 PreferencesDialog::on_horizontalGridCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowHorizonGrid, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowHorizonGrid, state);
 }
 
 // Constellations
@@ -482,13 +493,13 @@ PreferencesDialog::on_horizontalGridCheck_stateChanged(int state)
 void
 PreferencesDialog::on_diagramsCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowDiagrams, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowDiagrams, state);
 }
 
 void
 PreferencesDialog::on_boundariesCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowBoundaries, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowBoundaries, state);
 }
 
 void
@@ -496,7 +507,7 @@ PreferencesDialog::on_latinNamesCheck_stateChanged(int state)
 {
     // "Latin Names" Checkbox has inverted meaning
     state = state == Qt::Checked ? Qt::Unchecked : Qt::Checked;
-    setLabelFlag(appCore, Renderer::I18nConstellationLabels, state);
+    setLabelFlag(appCore, RenderLabels::I18nConstellationLabels, state);
 }
 
 // Other guides
@@ -504,13 +515,13 @@ PreferencesDialog::on_latinNamesCheck_stateChanged(int state)
 void
 PreferencesDialog::on_markersCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowMarkers, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowMarkers, state);
 }
 
 void
 PreferencesDialog::on_eclipticLineCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowEcliptic, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowEcliptic, state);
 }
 
 // Labels
@@ -518,79 +529,79 @@ PreferencesDialog::on_eclipticLineCheck_stateChanged(int state)
 void
 PreferencesDialog::on_starLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::StarLabels, state);
+    setLabelFlag(appCore, RenderLabels::StarLabels, state);
 }
 
 void
 PreferencesDialog::on_planetLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::PlanetLabels, state);
+    setLabelFlag(appCore, RenderLabels::PlanetLabels, state);
 }
 
 void
 PreferencesDialog::on_dwarfPlanetLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::DwarfPlanetLabels, state);
+    setLabelFlag(appCore, RenderLabels::DwarfPlanetLabels, state);
 }
 
 void
 PreferencesDialog::on_moonLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::MoonLabels, state);
+    setLabelFlag(appCore, RenderLabels::MoonLabels, state);
 }
 
 void
 PreferencesDialog::on_minorMoonLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::MinorMoonLabels, state);
+    setLabelFlag(appCore, RenderLabels::MinorMoonLabels, state);
 }
 
 void
 PreferencesDialog::on_asteroidLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::AsteroidLabels, state);
+    setLabelFlag(appCore, RenderLabels::AsteroidLabels, state);
 }
 
 void
 PreferencesDialog::on_cometLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::CometLabels, state);
+    setLabelFlag(appCore, RenderLabels::CometLabels, state);
 }
 
 void
 PreferencesDialog::on_spacecraftLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::SpacecraftLabels, state);
+    setLabelFlag(appCore, RenderLabels::SpacecraftLabels, state);
 }
 
 void
 PreferencesDialog::on_galaxyLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::GalaxyLabels, state);
+    setLabelFlag(appCore, RenderLabels::GalaxyLabels, state);
 }
 
 void
 PreferencesDialog::on_nebulaLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::NebulaLabels, state);
+    setLabelFlag(appCore, RenderLabels::NebulaLabels, state);
 }
 
 void
 PreferencesDialog::on_openClusterLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::OpenClusterLabels, state);
+    setLabelFlag(appCore, RenderLabels::OpenClusterLabels, state);
 }
 
 void
 PreferencesDialog::on_globularClusterLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::GlobularLabels, state);
+    setLabelFlag(appCore, RenderLabels::GlobularLabels, state);
 }
 
 void
 PreferencesDialog::on_constellationLabelsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::ConstellationLabels, state);
+    setLabelFlag(appCore, RenderLabels::ConstellationLabels, state);
 }
 
 // Locations
@@ -598,7 +609,7 @@ PreferencesDialog::on_constellationLabelsCheck_stateChanged(int state)
 void
 PreferencesDialog::on_locationsCheck_stateChanged(int state)
 {
-    setLabelFlag(appCore, Renderer::LocationLabels, state);
+    setLabelFlag(appCore, RenderLabels::LocationLabels, state);
 }
 
 void
@@ -689,7 +700,7 @@ PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/) const
 void
 PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
 {
-    setRenderFlag(appCore, Renderer::ShowSmoothLines, state);
+    setRenderFlag(appCore, ::RenderFlags::ShowSmoothLines, state);
 }
 
 // Texture resolution
@@ -700,7 +711,7 @@ PreferencesDialog::on_lowResolutionButton_clicked() const
     if (ui.lowResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(0);
+        renderer->setResolution(TextureResolution::lores);
     }
 }
 
@@ -710,7 +721,7 @@ PreferencesDialog::on_mediumResolutionButton_clicked() const
     if (ui.mediumResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(1);
+        renderer->setResolution(TextureResolution::medres);
     }
 }
 
@@ -720,7 +731,7 @@ PreferencesDialog::on_highResolutionButton_clicked() const
     if (ui.highResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(2);
+        renderer->setResolution(TextureResolution::hires);
     }
 }
 

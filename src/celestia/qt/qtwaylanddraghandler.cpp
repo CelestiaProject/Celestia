@@ -36,14 +36,14 @@ addRegistryItem(
 {
     auto pointerInterfaces = static_cast<WaylandDragHandler::PointerInterfaces *>(data);
     if (std::strcmp(interface, zwp_pointer_constraints_v1_interface.name) == 0
-        && version == zwp_pointer_constraints_v1_interface.version)
+        && version == static_cast<std::uint32_t>(zwp_pointer_constraints_v1_interface.version))
     {
         pointerInterfaces->pointerConstraints = static_cast<zwp_pointer_constraints_v1 *>(
             wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, version));
     }
     else if (
         std::strcmp(interface, zwp_relative_pointer_manager_v1_interface.name) == 0
-        && version == zwp_relative_pointer_manager_v1_interface.version)
+        && version == static_cast<std::uint32_t>(zwp_relative_pointer_manager_v1_interface.version))
     {
         pointerInterfaces->relativePointerManager = static_cast<zwp_relative_pointer_manager_v1 *>(
             wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, version));
@@ -77,7 +77,7 @@ getPointerInterfaces()
         return nullptr;
 
     pointerInterfaces = std::make_shared<WaylandDragHandler::PointerInterfaces>(registry);
-    static const wl_registry_listener registryListener{ addRegistryItem, removeRegistryItem };
+    static const wl_registry_listener registryListener{ &addRegistryItem, &removeRegistryItem };
 
     wl_registry_add_listener(registry, &registryListener, pointerInterfaces.get());
     wl_display_roundtrip(display);

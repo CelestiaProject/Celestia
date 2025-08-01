@@ -48,7 +48,7 @@ SplashWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 } // end unnamed namespace
 
-SplashWindow::SplashWindow(const fs::path& _imageFileName) :
+SplashWindow::SplashWindow(const std::filesystem::path& _imageFileName) :
     imageFileName(_imageFileName)
 {
     init();
@@ -119,7 +119,7 @@ SplashWindow::init()
 {
     hwnd = NULL;
 
-    versionString = UTF8ToTString(fmt::format(_("Version: {}"), VERSION_STRING));
+    versionString = UTF8ToTString(fmt::format(fmt::runtime(_("Version: {}")), VERSION_STRING));
     message = versionString + TEXT('\n');
     image = engine::Image::load(imageFileName);
 }

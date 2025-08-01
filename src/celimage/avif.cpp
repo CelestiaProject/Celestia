@@ -10,13 +10,13 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <limits>
 #include <memory>
 #include <vector>
 
-#include <celcompat/filesystem.h>
 #include <celimage/image.h>
 #include <celutil/logger.h>
 #include <celutil/uniquedel.h>
@@ -88,7 +88,7 @@ FStreamAVIFIORead(avifIO* io, std::uint32_t readFlags, std::uint64_t offset, std
 } // end unnamed namespace
 
 Image*
-LoadAVIFImage(const fs::path& filename)
+LoadAVIFImage(const std::filesystem::path& filename)
 {
     UniqueAVIFDecoder decoder{ avifDecoderCreate() };
     if (!decoder)
@@ -105,7 +105,7 @@ LoadAVIFImage(const fs::path& filename)
     reader.io.read = &FStreamAVIFIORead;
     reader.io.write = nullptr; // unused
     reader.io.destroy = nullptr; // automatic lifetime ends on scope exit
-    reader.io.sizeHint = static_cast<std::uint64_t>(fs::file_size(filename));
+    reader.io.sizeHint = static_cast<std::uint64_t>(std::filesystem::file_size(filename));
     reader.io.persistent = AVIF_FALSE;
     reader.io.data = nullptr; // unused
 

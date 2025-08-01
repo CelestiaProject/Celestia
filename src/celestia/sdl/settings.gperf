@@ -1,0 +1,26 @@
+%struct-type
+%language=C++
+%define lookup-function-name getReader
+%define class-name SettingsReaders
+%compare-strncmp
+%readonly-tables
+%global-table
+%define word-array-name settingsKeys
+%enum
+struct SettingsKey { const char* name; SettingsReader reader; SettingsWriter writer; };
+%%
+positionX,         &readPositionX,         &writePositionX
+positionY,         &readPositionY,         &writePositionY
+width,             &readWidth,             &writeWidth
+height,            &readHeight,            &writeHeight
+isFullscreen,      &readIsFullscreen,      &writeIsFullscreen
+lokTextures,       &readLokTextures,       &writeLokTextures
+renderFlags,       &readRenderFlags,       &writeRenderFlags
+labelMode,         &readLabelMode,         &writeLabelMode
+textureResolution, &readTextureResolution, &writeTextureResolution
+orbitMask,         &readOrbitMask,         &writeOrbitMask
+ambientLight,      &readAmbientLight,      &writeAmbientLight
+tintSaturation,    &readTintSaturation,    &writeTintSaturation
+minFeatureSize,    &readMinFeatureSize,    &writeMinFeatureSize
+starColors,        &readStarColors,        &writeStarColors
+starStyle,         &readStarStyle,         &writeStarStyle

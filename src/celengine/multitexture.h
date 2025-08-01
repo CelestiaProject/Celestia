@@ -9,16 +9,17 @@
 
 #pragma once
 
-#include <string>
+#include <array>
+#include <cstddef>
+#include <filesystem>
 
-#include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
 
-enum
+enum class TextureResolution : int
 {
-    lores  = 0,
-    medres = 1,
-    hires  = 2
+    lores = 0,
+    medres,
+    hires,
 };
 
 class Texture;
@@ -26,24 +27,22 @@ class Texture;
 class MultiResTexture
 {
 public:
-    static constexpr int kTextureResolution = 3;
-
     MultiResTexture();
-    MultiResTexture(ResourceHandle loTex,
-                    ResourceHandle medTex = InvalidResource,
-                    ResourceHandle hiTex = InvalidResource);
-    MultiResTexture(const fs::path& source, const fs::path& path);
+    MultiResTexture(const std::filesystem::path& source, const std::filesystem::path& path);
 
-    void setTexture(const fs::path& source,
-                    const fs::path& path,
+    void setTexture(const std::filesystem::path& source,
+                    const std::filesystem::path& path,
                     unsigned int flags = 0);
-    void setTexture(const fs::path& source,
-                    const fs::path& path,
+    void setTexture(const std::filesystem::path& source,
+                    const std::filesystem::path& path,
                     float bumpHeight,
                     unsigned int flags);
-    Texture* find(unsigned int resolution);
+    Texture* find(TextureResolution resolution);
+
+    ResourceHandle texture(TextureResolution resolution) const { return tex[static_cast<std::size_t>(resolution)]; }
 
     bool isValid() const;
 
-    ResourceHandle tex[kTextureResolution];
+private:
+    std::array<ResourceHandle, 3> tex;
 };

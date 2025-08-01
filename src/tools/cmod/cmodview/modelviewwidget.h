@@ -10,7 +10,9 @@
 
 #pragma once
 
+#include <cstddef>
 #include <memory>
+#include <unordered_map>
 
 #include <celengine/glsupport.h>
 
@@ -34,9 +36,9 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celengine/glshader.h>
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
-
 
 namespace cmod
 {
@@ -44,7 +46,6 @@ class Model;
 }
 
 class FramebufferObject;
-class GLProgram;
 
 namespace cmodview
 {
@@ -84,11 +85,6 @@ public:
     unsigned int hash() const
     {
         return m_info;
-    }
-
-    bool operator==(const ShaderKey& other) const
-    {
-        return m_info == other.m_info;
     }
 
     bool hasSpecular() const
@@ -141,20 +137,38 @@ private:
 
 private:
     unsigned int m_info;
+
+    friend bool operator==(const ShaderKey&, const ShaderKey&) noexcept;
+    friend bool operator!=(const ShaderKey&, const ShaderKey&) noexcept;
+
+    friend struct ::std::hash<ShaderKey>;
 };
 
+inline bool operator==(const ShaderKey& lhs, const ShaderKey& rhs) noexcept { return lhs.m_info == rhs.m_info; }
+inline bool operator!=(const ShaderKey& lhs, const ShaderKey& rhs) noexcept { return lhs.m_info != rhs.m_info; }
+
+}
+
+template<>
+struct std::hash<cmodview::ShaderKey>
+{
+    std::size_t operator()(const cmodview::ShaderKey& key) const noexcept { return std::hash<unsigned int>{}(key.m_info); }
+};
+
+namespace cmodview
+{
 
 inline unsigned int qHash(const ShaderKey& key)
 {
     return ::qHash(key.hash());
 }
 
-
 class ModelViewWidget : public QOpenGLWidget
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
-    ModelViewWidget(QWidget *parent);
+    explicit ModelViewWidget(QWidget *parent = nullptr);
     ~ModelViewWidget();
 
     void setModel(std::unique_ptr<cmod::Model>&& model, const QString& modelDir);
@@ -169,10 +183,10 @@ public:
         WireFrameStyle,
     };
 
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent* event);
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
     void select(const Eigen::Vector2f& point);
     QSet<const cmod::PrimitiveGroup*> selection()
@@ -217,9 +231,9 @@ public slots:
     void setShadows(bool enable);
 
 protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int width, int height);
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int width, int height) override;
 
 private:
     void renderModel(cmod::Model* model);
@@ -231,9 +245,8 @@ private:
                       const cmod::VertexDescription* vertexDesc);
 
     void setupDefaultLightSources();
-    GLProgram* createShader(const ShaderKey& shaderKey);
+    GLProgram createProgram(const ShaderKey& shaderKey);
 
-private:
     std::unique_ptr<cmod::Model> m_model;
     double m_modelBoundingRadius;
     Eigen::Vector3d m_cameraPosition;
@@ -247,10 +260,10 @@ private:
 #endif
     RenderStyle m_renderStyle;
 
-    MaterialLibrary* m_materialLibrary;
+    std::unique_ptr<MaterialLibrary> m_materialLibrary;
 
     QSet<const cmod::PrimitiveGroup*> m_selection;
-    QHash<ShaderKey, GLProgram*> m_shaderCache;
+    std::unordered_map<ShaderKey, GLProgram> m_shaderCache;
 
     QColor m_backgroundColor;
 

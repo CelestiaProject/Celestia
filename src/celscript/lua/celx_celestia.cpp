@@ -11,12 +11,12 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <filesystem>
 #include <iostream>
 #include <string_view>
 
 #include <fmt/format.h>
 
-#include <celcompat/filesystem.h>
 #include <celengine/category.h>
 #include <celengine/texture.h>
 #include <celestia/audiosession.h>
@@ -65,7 +65,7 @@ void PushClass(lua_State*, int);
 void setTable(lua_State*, const char*, lua_Number);
 ObserverFrame::CoordinateSystem parseCoordSys(std::string_view);
 
-static fs::path GetScriptPath(lua_State* l)
+static std::filesystem::path GetScriptPath(lua_State* l)
 {
     lua_Debug ar;
     lua_getstack(l, 1, &ar);
@@ -73,7 +73,7 @@ static fs::path GetScriptPath(lua_State* l)
     auto* base_dir = ar.source; // Lua file from which we are called
     if (base_dir[0] == '@')
         base_dir++;
-    return fs::path(base_dir).parent_path();
+    return std::filesystem::path(base_dir).parent_path();
 }
 
 // ==================== Celestia-object ====================
@@ -226,7 +226,7 @@ static int celestia_show(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    uint64_t flags = 0;
+    RenderFlags flags = RenderFlags::ShowNothing;
     const auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -250,7 +250,7 @@ static int celestia_hide(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    uint64_t flags = 0;
+    RenderFlags flags = RenderFlags::ShowNothing;
     const auto &RenderFlagMap = appCore->scriptMaps().RenderFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -278,7 +278,7 @@ static int celestia_setrenderflags(lua_State* l)
         return 0;
     }
 
-    uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     lua_pushnil(l);
     const auto& renderFlagMap = appCore->scriptMaps().RenderFlagMap;
     while (lua_next(l, -2) != 0)
@@ -333,11 +333,11 @@ static int celestia_getrenderflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getrenderflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    const uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    const RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     for (const auto& rfm : appCore->scriptMaps().RenderFlagMap)
     {
         lua_pushlstring(l, rfm.first.data(), rfm.first.size());
-        lua_pushboolean(l, (rfm.second & renderFlags) != 0);
+        lua_pushboolean(l, util::is_set(renderFlags, rfm.second));
         lua_settable(l,-3);
     }
     lua_pushstring(l, "lightdelay");
@@ -440,7 +440,7 @@ static int celestia_showlabel(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    int flags = 0;
+    RenderLabels flags = RenderLabels::NoLabels;
     const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -462,7 +462,7 @@ static int celestia_hidelabel(lua_State* l)
     CelestiaCore* appCore = this_celestia(l);
 
     int argc = lua_gettop(l);
-    int flags = 0;
+    RenderLabels flags = RenderLabels::NoLabels;
     const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     for (int i = 2; i <= argc; i++)
     {
@@ -488,7 +488,7 @@ static int celestia_setlabelflags(lua_State* l)
         return 0;
     }
 
-    int labelFlags = appCore->getRenderer()->getLabelMode();
+    RenderLabels labelFlags = appCore->getRenderer()->getLabelMode();
     const auto &LabelFlagMap = appCore->scriptMaps().LabelFlagMap;
     lua_pushnil(l);
     while (lua_next(l, -2) != 0)
@@ -521,7 +521,7 @@ static int celestia_setlabelflags(lua_State* l)
         }
         else
         {
-            int flag = it->second;
+            RenderLabels flag = it->second;
             if (value)
                 labelFlags |= flag;
             else
@@ -540,11 +540,11 @@ static int celestia_getlabelflags(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getlabelflags()");
     CelestiaCore* appCore = this_celestia(l);
     lua_newtable(l);
-    const int labelFlags = appCore->getRenderer()->getLabelMode();
+    const RenderLabels labelFlags = appCore->getRenderer()->getLabelMode();
     for (const auto& lfm : appCore->scriptMaps().LabelFlagMap)
     {
         lua_pushlstring(l, lfm.first.data(), lfm.first.size());
-        lua_pushboolean(l, (lfm.second & labelFlags) != 0);
+        lua_pushboolean(l, util::is_set(labelFlags, lfm.second));
         lua_settable(l,-3);
     }
     return 1;
@@ -995,9 +995,9 @@ static int celestia_setexposure(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setexposure()");
 
     CelestiaCore* appCore = this_celestia(l);
-    float exposure = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setexposure() must be a number");
+    auto exposure = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setexposure() must be a number"));
     appCore->getSimulation()->setExposure(exposure);
-    
+
     return 0;
 }
 
@@ -1007,7 +1007,7 @@ static int celestia_getexposure(lua_State* l)
 
     CelestiaCore* appCore = this_celestia(l);
     lua_pushnumber(l, appCore->getSimulation()->getExposure());
-    
+
     return 1;
 }
 
@@ -1716,7 +1716,7 @@ static int celestia_gettextureresolution(lua_State* l)
         return 0;
     }
 
-    lua_pushnumber(l, renderer->getResolution());
+    lua_pushnumber(l, static_cast<int>(renderer->getResolution()));
 
     return 1;
 }
@@ -1726,7 +1726,7 @@ static int celestia_settextureresolution(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settextureresolution");
     CelestiaCore* appCore = this_celestia(l);
 
-    unsigned int textureRes = (unsigned int) Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
+    auto textureResValue = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
     Renderer* renderer = appCore->getRenderer();
     if (renderer == nullptr)
     {
@@ -1734,7 +1734,28 @@ static int celestia_settextureresolution(lua_State* l)
         return 0;
     }
 
-    renderer->setResolution(textureRes);
+    if (textureResValue < 0.0 || textureResValue >= 3.0)
+    {
+        Celx_DoError(l, "Texture resolution out of range");
+        return 0;
+    }
+
+    switch (static_cast<int>(textureResValue))
+    {
+        case 0:
+            renderer->setResolution(TextureResolution::lores);
+            break;
+        case 1:
+            renderer->setResolution(TextureResolution::medres);
+            break;
+        case 2:
+            renderer->setResolution(TextureResolution::hires);
+            break;
+        default:
+            assert(0);
+            break;
+    }
+
     appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
@@ -2039,10 +2060,10 @@ static int celestia_takescreenshot(lua_State* l)
     luastate->screenshotCount++;
     bool success = false;
     string filenamestem;
-    filenamestem = fmt::format("screenshot-{}{:06i}", fileid, luastate->screenshotCount);
+    filenamestem = fmt::format("screenshot-{}{:06}", fileid, luastate->screenshotCount);
 
-    fs::path path = appCore->getConfig()->paths.scriptScreenshotDirectory;
-    fs::path filepath = path / fmt::format("{}.{}", filenamestem, filetype);
+    std::filesystem::path path = appCore->getConfig()->paths.scriptScreenshotDirectory;
+    std::filesystem::path filepath = path / fmt::format("{}.{}", filenamestem, filetype);
     success = appCore->saveScreenShot(filepath);
     lua_pushboolean(l, success);
 
@@ -2083,7 +2104,7 @@ static int celestia_runscript(lua_State* l)
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
     const char* scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
 
-    fs::path base_dir = GetScriptPath(l);
+    std::filesystem::path base_dir = GetScriptPath(l);
     CelestiaCore* appCore = this_celestia(l);
     appCore->runScript(base_dir / scriptfile);
     return 0;
@@ -2631,7 +2652,7 @@ static int celestia_loadtexture(lua_State* l)
         else
            Celx_DoError(l, "Invalid mipMapMode");
     }
-    fs::path base_dir = GetScriptPath(l);
+    std::filesystem::path base_dir = GetScriptPath(l);
     auto t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode);
     if (t == nullptr) return 0;
     return celx.pushClass(t.release());

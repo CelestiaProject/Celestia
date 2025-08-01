@@ -51,7 +51,7 @@ MiniAudioSessionPrivate::~MiniAudioSessionPrivate()
     }
 }
 
-MiniAudioSession::MiniAudioSession(const fs::path &path, float volume, float pan, bool loop, bool nopause) :
+MiniAudioSession::MiniAudioSession(const std::filesystem::path &path, float volume, float pan, bool loop, bool nopause) :
     AudioSession(path, volume, pan, loop, nopause),
     p(std::make_unique<MiniAudioSessionPrivate>())
 {

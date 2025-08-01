@@ -12,22 +12,29 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string_view>
 
-#include <celcompat/filesystem.h>
 #include "frame.h"
 
-class AssociativeArray;
 class Body;
 class Universe;
-class Value;
 class Selection;
 
-namespace celestia::ephem
+namespace celestia
+{
+namespace ephem
 {
 class Orbit;
 class RotationModel;
+}
+
+namespace util
+{
+class AssociativeArray;
+class Value;
+}
 }
 
 enum class DataDisposition
@@ -38,17 +45,19 @@ enum class DataDisposition
 };
 
 bool
-ParseDate(const AssociativeArray* hash, std::string_view name, double& jd);
+ParseDate(const celestia::util::AssociativeArray* hash,
+          std::string_view name,
+          double& jd);
 
 std::shared_ptr<const celestia::ephem::Orbit>
 CreateOrbit(const Selection& centralObject,
-            const AssociativeArray* planetData,
-            const fs::path& path,
+            const celestia::util::AssociativeArray* planetData,
+            const std::filesystem::path& path,
             bool usePlanetUnits);
 
 std::shared_ptr<const celestia::ephem::RotationModel>
-CreateRotationModel(const AssociativeArray* rotationData,
-                    const fs::path& path,
+CreateRotationModel(const celestia::util::AssociativeArray* rotationData,
+                    const std::filesystem::path& path,
                     double syncRotationPeriod);
 
 std::shared_ptr<const celestia::ephem::RotationModel>
@@ -56,7 +65,7 @@ CreateDefaultRotationModel(double syncRotationPeriod);
 
 ReferenceFrame::SharedConstPtr
 CreateReferenceFrame(const Universe& universe,
-                     const Value* frameValue,
+                     const celestia::util::Value* frameValue,
                      const Selection& defaultCenter,
                      Body* defaultObserver);
 

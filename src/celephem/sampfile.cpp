@@ -33,7 +33,7 @@ bool
 checkSampleOrdering(double tdb,
                     double& lastSampleTime,
                     bool& hasOutOfOrderSamples,
-                    const fs::path& filename)
+                    const std::filesystem::path& filename)
 {
     if (tdb > lastSampleTime)
     {
@@ -52,7 +52,7 @@ checkSampleOrdering(double tdb,
 
 
 bool
-logIfNoSamples(bool hasSamples, const fs::path& filename)
+logIfNoSamples(bool hasSamples, const std::filesystem::path& filename)
 {
     if (!hasSamples)
         GetLogger()->error(_("No samples found in sample file {}.\n"), filename);
@@ -62,21 +62,21 @@ logIfNoSamples(bool hasSamples, const fs::path& filename)
 
 
 void
-logReadError(const fs::path& filename)
+logReadError(const std::filesystem::path& filename)
 {
     GetLogger()->error(_("Error reading sample file {}.\n"), filename);
 }
 
 
 void
-logOpenAsciiFail(const fs::path& filename)
+logOpenAsciiFail(const std::filesystem::path& filename)
 {
     GetLogger()->error(_("Error opening ASCII sample file {}.\n"), filename);
 }
 
 
 void
-logSkipCommentsFail(const fs::path& filename)
+logSkipCommentsFail(const std::filesystem::path& filename)
 {
     GetLogger()->error(_("Error finding data in ASCII sample file {}.\n"), filename);
 }

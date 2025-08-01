@@ -1,5 +1,5 @@
 /*
-r128.h: 128-bit (64.64) signed fixed-point arithmetic. Version 1.6.0
+r128.h: 128-bit (64.64) signed fixed-point arithmetic. Version 1.6.1
 
 COMPILATION
 -----------
@@ -302,8 +302,10 @@ struct numeric_limits<R128>
    static const bool has_infinity = false;
    static const bool has_quiet_NaN = false;
    static const bool has_signaling_NaN = false;
+#if !(__cplusplus > 202002L || (defined(_MSVC_LANG) && _MSVC_LANG > 202002L))
    static const float_denorm_style has_denorm = denorm_absent;
    static const bool has_denorm_loss = false;
+#endif
 
    static R128 infinity() throw() { return R128_zero; }
    static R128 quiet_NaN() throw() { return R128_zero; }
@@ -670,7 +672,7 @@ static R128_U64 r128__umul64(R128_U32 a, R128_U32 b)
 {
 #  if defined(_M_IX86) && !defined(R128_STDC_ONLY) && !defined(__MINGW32__)
    return __emulu(a, b);
-#  elif defined(_M_ARM) && !defined(R128_STDC_ONLY)
+#  elif defined(_M_ARM) && !defined(R128_STDC_ONLY) && !defined(__MINGW32__)
    return _arm_umull(a, b);
 #  else
    return a * (R128_U64)b;
@@ -813,7 +815,7 @@ static const r128__udiv128Proc r128__udiv128 = (r128__udiv128Proc)(void*)r128__u
 #else
 static R128_U64 r128__udiv128(R128_U64 nlo, R128_U64 nhi, R128_U64 d, R128_U64 *rem)
 {
-#if defined(_M_X64) && !defined(R128_STDC_ONLY) && !defined(__MINGW32__)
+#if defined(_M_X64) && !defined(R128_STDC_ONLY) && !defined(__MINGW32__) && !defined(__clang__)
    return _udiv128(nhi, nlo, d, rem);
 #elif defined(__x86_64__) && !defined(R128_STDC_ONLY)
    R128_U64 q, r;
@@ -1678,7 +1680,7 @@ void r128Shl(R128 *dst, const R128 *src, int amount)
       r[1] = r[0] << (amount - 64);
       r[0] = 0;
    } else if (amount) {
-#  ifdef _M_X64
+#  if defined(_M_X64) && !defined(R128_STDC_ONLY)
       r[1] = __shiftleft128(r[0], r[1], (char) amount);
 #  else
       r[1] = (r[1] << amount) | (r[0] >> (64 - amount));
@@ -1740,7 +1742,7 @@ void r128Shr(R128 *dst, const R128 *src, int amount)
       r[2] = r[3] >> (amount - 64);
       r[3] = 0;
    } else if (amount) {
-#ifdef _M_X64
+#if defined(_M_X64) && !defined(R128_STDC_ONLY)
       r[2] = __shiftright128(r[2], r[3], (char) amount);
 #else
       r[2] = (r[2] >> amount) | (r[3] << (64 - amount));

@@ -10,11 +10,11 @@
 #pragma once
 
 #include <cstddef>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <unordered_map>
 
-#include <celcompat/filesystem.h>
 #include <celephem/orbit.h>
 #include <celephem/samporbit.h>
 
@@ -30,15 +30,15 @@ public:
     TrajectoryManager(const TrajectoryManager&) = delete;
     TrajectoryManager& operator=(const TrajectoryManager&) = delete;
 
-    std::shared_ptr<const ephem::Orbit> find(const fs::path& source,
-                                             const fs::path& path,
+    std::shared_ptr<const ephem::Orbit> find(const std::filesystem::path& source,
+                                             const std::filesystem::path& path,
                                              ephem::TrajectoryInterpolation interpolation,
                                              ephem::TrajectoryPrecision precision);
 
 private:
     struct Key
     {
-        fs::path path;
+        std::filesystem::path path;
         ephem::TrajectoryInterpolation interpolation;
         ephem::TrajectoryPrecision precision;
 
@@ -66,7 +66,7 @@ private:
                 ? static_cast<std::size_t>(0x9e3779b9) //NOSONAR
                 : static_cast<std::size_t>(0x9e3779b97f4a7c15); //NOSONAR
 
-            auto seed = fs::hash_value(key.path);
+            auto seed = std::filesystem::hash_value(key.path);
             seed ^= std::hash<ephem::TrajectoryInterpolation>{}(key.interpolation) + phi + (seed << 6) + (seed >> 2);
             seed ^= std::hash<ephem::TrajectoryPrecision>{}(key.precision) + phi + (seed << 6) + (seed >> 2);
             return seed;

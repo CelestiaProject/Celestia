@@ -30,7 +30,7 @@ constexpr std::string_view TitleTag = "Title:"sv;
 
 
 
-void process(const fs::path& p, std::vector<ScriptMenuItem>& menuItems)
+void process(const std::filesystem::path& p, std::vector<ScriptMenuItem>& menuItems)
 {
     auto type = DetermineFileType(p);
 #ifndef CELX
@@ -94,7 +94,7 @@ void process(const fs::path& p, std::vector<ScriptMenuItem>& menuItems)
 } // end unnamed namespace
 
 std::vector<ScriptMenuItem>
-ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
+ScanScriptsDirectory(const std::filesystem::path& scriptsDir, bool deep)
 {
     std::vector<ScriptMenuItem> scripts;
 
@@ -102,7 +102,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
         return scripts;
 
     std::error_code ec;
-    if (!fs::is_directory(scriptsDir, ec))
+    if (!std::filesystem::is_directory(scriptsDir, ec))
     {
         GetLogger()->warn(_("Path {} doesn't exist or isn't a directory\n"), scriptsDir);
         return scripts;
@@ -110,7 +110,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
 
     if (deep)
     {
-        for (auto iter = fs::recursive_directory_iterator(scriptsDir, ec); iter != end(iter); iter.increment(ec))
+        for (auto iter = std::filesystem::recursive_directory_iterator(scriptsDir, ec); iter != end(iter); iter.increment(ec))
         {
             if (ec)
                 continue;
@@ -119,7 +119,7 @@ ScanScriptsDirectory(const fs::path& scriptsDir, bool deep)
     }
     else
     {
-        for (const auto& p : fs::directory_iterator(scriptsDir, ec))
+        for (const auto& p : std::filesystem::directory_iterator(scriptsDir, ec))
         {
             if (ec)
                 continue;

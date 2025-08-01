@@ -32,7 +32,7 @@ public:
      * Provides information how frequently buffer object is used.
      * @see @ref setData().
      */
-    enum class BufferUsage
+    enum class BufferUsage : GLenum
     {
         //! Set data once and use frequently.
         StaticDraw  = GL_STATIC_DRAW,
@@ -49,7 +49,7 @@ public:
      *
      * @see @ref Buffer(TargetHint)
      */
-    enum class TargetHint
+    enum class TargetHint : GLenum
     {
         //! Store vertex attributes.
         Array        = GL_ARRAY_BUFFER,
@@ -86,9 +86,9 @@ public:
      *
      * @see @ref TargetHint @ref BufferUsage
      */
-    Buffer(TargetHint                   targetHint,
-           util::array_view<const void> data,
-           BufferUsage                  usage = BufferUsage::StaticDraw);
+    Buffer(TargetHint             targetHint,
+           util::array_view<void> data,
+           BufferUsage            usage = BufferUsage::StaticDraw);
 
     //! Copying is prohibited.
     Buffer(const Buffer &) = delete;
@@ -121,7 +121,7 @@ public:
      * @param usage Buffer usage policy. @see @ref BufferUsage
      * @return Reference to self.
      */
-    Buffer& setData(util::array_view<const void> data, BufferUsage usage = BufferUsage::StaticDraw);
+    Buffer& setData(util::array_view<void> data, BufferUsage usage = BufferUsage::StaticDraw);
 
     /**
      * @brief Partially update the Buffer.
@@ -130,7 +130,7 @@ public:
      * @param data Data.
      * @return Reference to self.
      */
-    Buffer& setSubData(GLintptr offset, util::array_view<const void> data);
+    Buffer& setSubData(GLintptr offset, util::array_view<void> data);
 
     //! Invalidate buffer data.
     Buffer& invalidateData();
@@ -158,13 +158,13 @@ private:
 
     //! Buffer Id (OpenGL name)
     GLuint m_id{ 0 };
-    
+
     //! Buffer target hint, @see @ref TargetHint
     TargetHint m_targetHint{ TargetHint::Array };
     //! Buffer usage hint, @see @ref BufferUsage
-    
+
     BufferUsage m_usage{ BufferUsage::StaticDraw };
-    
+
     //! Wrapped objects are managed externally
     bool m_wrapped{ false };
 

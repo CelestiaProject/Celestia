@@ -14,6 +14,7 @@
 #include <string>
 #include <Eigen/Geometry>
 #include <celengine/observer.h>
+#include <celengine/renderflags.h>
 
 class CelestiaCore;
 
@@ -27,9 +28,9 @@ class CelestiaCore;
  */
 class CelestiaState
 {
- public:
+public:
     CelestiaState() = default;
-    CelestiaState(CelestiaCore* appCore);
+    explicit CelestiaState(CelestiaCore* appCore);
     ~CelestiaState() = default;
     // FIXME
 
@@ -37,7 +38,7 @@ class CelestiaState
     void saveState(std::map<std::string, std::string> &params);
     void captureState();
 
- private:
+private:
     // Observer frame, position, and orientation. For multiview, there needs
     // be one instance of these parameters per view saved.
     ObserverFrame::CoordinateSystem m_coordSys              { ObserverFrame::CoordinateSystem::Universal };
@@ -56,8 +57,8 @@ class CelestiaState
     std::string                     m_trackedBodyName;
     std::string                     m_selectedBodyName;
 
-    int                             m_labelMode             { 0 };
-    uint64_t                        m_renderFlags           { 0 };
+    RenderLabels                    m_labelMode             { RenderLabels::NoLabels };
+    RenderFlags                     m_renderFlags           { RenderFlags::ShowNothing };
 
     CelestiaCore                   *m_appCore               { nullptr };
 

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <iterator>
@@ -8,7 +9,6 @@
 
 #include <doctest.h>
 
-#include <celcompat/filesystem.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
 #include <celutil/reshandle.h>
@@ -17,8 +17,8 @@ TEST_SUITE_BEGIN("CMOD integration");
 
 TEST_CASE("CMOD binary to ASCII roundtrip")
 {
-    std::vector<fs::path> paths;
-    cmod::HandleGetter handleGetter = [&](const fs::path& path)
+    std::vector<std::filesystem::path> paths;
+    cmod::HandleGetter handleGetter = [&](const std::filesystem::path& path)
     {
         auto it = std::find(paths.cbegin(), paths.cend(), path);
         if (it == paths.cend())

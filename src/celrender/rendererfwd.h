@@ -12,6 +12,7 @@ class GlobularRenderer;
 class LineRenderer;
 class NebulaRenderer;
 class OpenClusterRenderer;
+class ReferenceMarkRenderer;
 class RingRenderer;
 class SkyGridRenderer;
 }

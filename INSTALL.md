@@ -116,19 +116,16 @@ support for C++ filesystem library, e.g. GCC 8 or Clang 7.
 
 Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
-libpng. Optional packages are gettext, Qt5, Gtk2 or Gtk3, sdl2, ffmpeg,
-libavif, glu.
+libpng. Optional packages are gettext, Qt5, Qt6, sdl2, ffmpeg, libavif, glu.
 
 For example on modern Debian-derived system you need to install the following
 packages: libboost-dev, libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
 libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
-libqt5opengl5-dev if you want to build with Qt5 interface; libgtk2.0-dev and
-libgtkglext1-dev to build with legacy Gtk2 interface; libgtk3.0-dev to build
-Gtk3 interface, or libsdl2-dev to build SDL interface. libavcodec-dev,
-libavformat-dev, libavutil-dev and libswscale-dev are required to build with
-video capture support. libavif-dev is required to build to AVIF texture
-support.
+libqt5opengl5-dev if you want to build with Qt5 interface; or libsdl2-dev to
+build SDL interface. libavcodec-dev, libavformat-dev, libavutil-dev and
+libswscale-dev are required to build with video capture support. libavif-dev
+is required to build to AVIF texture support.
 
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
@@ -141,14 +138,11 @@ make
 sudo make install
 ```
 
-[*] `INTERFACE` must be replaced with one of "`QT`", "`GTK`", or "`SDL`"
+[*] `INTERFACE` must be replaced with one of "`QT5`", "`QT6`" or "`SDL`"
 
 Four interfaces are available for Celestia on Unix-like systems:
 - SDL: minimal interface, barebone Celestia core with no toolbar or menu...
        Disabled by default.
-- GTK: A full interface with minimal dependencies, adds a menu, a configuration
-       dialog some other utilities. Legacy interface, may lack some new
-       features. Disabled by default.
 - QT5: A full interface with minimal dependencies, adds a menu, a configuration
        dialog some other utilities, bookmarks... A preferred option. Enabled by
        default, No need to pass -DENABLE_QT5=ON.
@@ -165,83 +159,99 @@ To check wether your Celestia has been compiled with Lua support, go to File
 -> Open. If you have '*.cel *.celx' in the filter box, then Lua is available
 otherwise the filter will contain only '*.cel'.
 
-The GtkGLExt widget that is required in order to build Celestia with Gtk+ may
-be downloaded from http://gtkglext.sf.net. Note that depending in your
-distribution you may also need other packages containing various files needed
-by the build process. For instance, to build under SUSE Linux, you will also
-need to have the gtk-devel package installed. GtkGLExt widget support is
-optional and own EGL-based implementation of GL widget can be used instead.
-It also required only if Gtk2 used, with Gtk3 own implementation used always.
-
 Celestia will be installed into /usr/local by default, with data files landing
 in /usr/local/share/celestia, but you may specify a new location with the
 following option to cmake: -DCMAKE_INSTALL_PREFIX=/another/path.
 
 
-## Celestia Install instructions for Windows (MSVC)
+## Celestia Install instructions for Windows (Visual Studio Code)
 
-Currently to build on Windows you need Visual Studio 2015 or later, CMake
-and vcpkg (*).
+You will need the following
 
-Install required packages:
+* Visual Studio Code
+* Visual Studio Build Tools 2022 (or Visual Studio 2022 with C++ build tools)
+* CMake (3.19 or later)s
+* vcpkg with the following extensions:
+  - C/C++
+  - CMake Tools
 
-```
-vcpkg --triplet=TRIPLET install --recurse boost-container boost-smart-ptr libpng libjpeg-turbo gettext gperf luajit fmt libepoxy eigen3 freetype
-```
+Use vcpkg to install the following packages:
 
-Install optional packages:
+* boost-container
+* boost-smart-ptr
+* eigen3
+* fmt
+* freetype
+* gettext\[tools\]
+* gperf
+* libepoxy
+* libjpeg-turbo
+* libpng
+* luajit
 
-```
-vcpkg --triplet=TRIPLET install --recurse qt5-base ffmpeg[x264] cspice libavif
-```
+Optional packages:
 
-Replace TRIPLET with `x86-windows` to build 32-bit versions or `x64-windows`
-for 64-bit versions.
+* cspice
+* ffmpeg\[x264\]
+* icu
+* libavif
+* meshoptimizer
+* qtbase
 
-Instead of `luajit` `lua` can be used.
+In Visual Studio Code, create the workspace settings file at
+.vscode\settings.json and add the following sections:
 
-Use `vcpkg list` to ensure that all packages have actually been installed.
-If not, try installing them one at a time.
-
-Configure and build 32-bit version:
-
-```
-md build32
-cd build32
-cmake -DCMAKE_GENERATOR_PLATFORM=Win32 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows ..
-cmake --build . --  /maxcpucount:N /nologo
-```
-
-Configure and build 64-bit version:
-
-```
-md build64
-cd build64
-cmake -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows ..
-cmake --build . --  /maxcpucount:N /nologo
-```
-
-Instead of N in /maxcpucount pass the number of CPU cores you want to use during
-the build.
-
-This example assumes that `vcpkg` is installed into `c:/tools/vcpkg`. Update
-the path to `vcpkg.cmake` according to your installation.
-
-If you have Qt5 installed using official Qt installer, then pass parameter
-CMAKE_PREFIX_PATH to cmake call used to configure Celestia, e.g.
-
-```
-cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.10.1\msvc2015 ..
+```json
+{
+  "cmake.configureSettings": {
+    "CMAKE_TOOLCHAIN_FILE": "<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake",
+    "ENABLE_QT6": false,
+    "ENABLE_WIN": true,
+    "USE_ICU": true,
+    "USE_WIN_ICU": true
+  }
+}
 ```
 
-Not supported yet:
-- automatic installation using cmake
-- using Ninja instead of MSBuild
+Replace the `<path_to_vcpkg>` in the `CMAKE_TOOLCHAIN_FILE` variable with the
+path to your installation of vcpkg.
 
-Notes:
- * vcpkg installation instructions are located on
-   https://github.com/Microsoft/vcpkg
+If you want to build the Qt6 front-end instead of the Windows front-end, you
+have the choice of installing the pre-compiled libraries from the Qt installer
+or building them yourself by installing from vcpkg. To build the front-end,
+set `ENABLE_QT6` to `true` and `ENABLE_WIN` to `false`. If you have installed
+the pre-compiled Qt libraries from the Qt installer, you need to add the
+`Qt6_DIR` key to the `cmake.configureSettings` section to
+`<path_to_qt>/msvc2022_64/lib/cmake/Qt6`.
 
+On versions of Windows older than Windows 10 1903, you will need to set
+`USE_WIN_ICU` to `false`. You will then need to either switch off ICU support
+by setting `USE_ICU` to `false`, or install it via vcpkg.
+
+Optional features (see below) can be enabled by adding additional keys to
+the `cmake.configureSettings` section. These will also require installing the
+corresponding packages from vcpkg.
+
+For faster build times, it is also possible to specify the Ninja generator and
+a number of parallel builds:
+
+```jsonc
+{
+  "cmake.configureSettings": {
+    // ...
+  },
+  "cmake.generator": "Ninja",
+  "cmake.parallelJobs": 10
+}
+```
+
+Select a number of parallel jobs less than or equal to the number of CPU cores
+you have available.
+
+The build can then be triggered by using the CMake (build) command from the
+command palette (CTRL+P). The first time you do this, it will ask you to
+select which compiler to use, choose the entry that corresponds to the
+processor architecture of your computer.
 
 ## Celestia Install instructions for Windows (MINGW64), qt-only
 
@@ -359,20 +369,16 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_CELX          | bool | ON        | Enable Lua scripting support
 | ENABLE_SPICE         | bool | OFF       | Enable NAIF kernels support
 | ENABLE_NLS           | bool | ON        | Enable interface translation
-| ENABLE_GTK           | bool | \*\*OFF   | Build legacy GTK2 frontend
 | ENABLE_QT5           | bool | OFF       | Build Qt5 frontend
 | ENABLE_QT6           | bool | OFF       | Build Qt6 frontend
 | ENABLE_SDL           | bool | OFF       | Build SDL frontend
-| ENABLE_WIN           | bool | \*\*\*ON  | Build Windows native frontend
+| ENABLE_WIN           | bool | \*\*\*OFF | Build Windows native frontend
 | ENABLE_FFMPEG        | bool | OFF       | Support video capture using ffmpeg
 | ENABLE_LIBAVIF       | bool | OFF       | Support AVIF texture using libavif
 | ENABLE_MINIAUDIO     | bool | OFF       | Support audio playback using miniaudio
 | ENABLE_TOOLS         | bool | OFF       | Build tools for Celestia data files
 | ENABLE_GLES          | bool | OFF       | Use OpenGL ES 2.0 in rendering code
-| USE_GTKGLEXT         | bool | ON        | Use libgtkglext1 in GTK2 frontend
 | USE_QT6              | bool | OFF       | Use Qt6 in Qt frontend
-| USE_GTK3             | bool | OFF       | Use Gtk3 instead of Gtk2 in GTK2 frontend
-| USE_GLSL_STRUCTS     | bool | OFF       | Use structs in GLSL
 | USE_ICU              | bool | OFF       | Use ICU for UTF8 decoding for text rendering
 | USE_MESHOPTIMIZER    | bool | OFF       | Use meshoptimizer when loading models
 
@@ -381,8 +387,6 @@ Notes:
    on Windows depending on OS type (32 or 64 bit) and build configuration.
  \*\* Ignored on Windows systems.
  \*\*\* Ignored on Unix-like systems.
- `USE_GTK3` requires `ENABLE_GTK`
-
 
 Parameters of type "bool" accept ON or OFF value. Parameters of type "path"
 accept any directory.
@@ -393,8 +397,6 @@ On Windows systems two additonal options are supported:
 - `CMAKE_TOOLCHAIN_FILE` - location of vcpkg.cmake if vcpkg is used.
 
 Please note that not all options are compatible:
-- `USE_GTKGLEXT` is not compatible with `ENABLE_GLES` and `USE_GTK3` and will
-  be disabled if any of this is set.
 - `ENABLE_GLES` is not compatible with `ENABLE_QT5` or `ENABLE_QT6` if your Qt
   installation doesn't support OpenGL ES.
 - `ENABLE_QT5` and `ENABLE_QT6` are not compatible on Apple systems due to
@@ -432,6 +434,5 @@ Here's the table which provides executable file names accordingly to interface:
 |-----------|----------------|
 | Qt5       | celestia-qt5
 | Qt6       | celestia-qt6
-| GTK       | celestia-gtk
 | SDL       | celestia-sdl
 | WIN       | celestia-win

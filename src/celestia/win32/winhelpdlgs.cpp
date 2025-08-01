@@ -15,6 +15,7 @@
 #include "winhelpdlgs.h"
 
 #include <cstddef>
+#include <filesystem>
 #include <fstream>
 #include <ios>
 #include <string>
@@ -23,7 +24,6 @@
 
 #include <fmt/format.h>
 
-#include <celcompat/filesystem.h>
 #include <celestia/celestiacore.h>
 #include <celestia/helper.h>
 #include <celutil/fsutils.h>
@@ -65,7 +65,7 @@ AppendConvertEOL(std::string_view src, tstring& dest)
 }
 
 bool
-LoadItemTextFromFile(const fs::path& filename, tstring& message)
+LoadItemTextFromFile(const std::filesystem::path& filename, tstring& message)
 {
     constexpr std::size_t bufferSize = 4096;
     std::ifstream f(filename, std::ios::in | std::ios::binary);
@@ -155,7 +155,7 @@ LicenseProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 message.clear();
                 // Gettext complains about using \r in translated messages, so add it in afterwards
-                AppendConvertEOL(fmt::format(_("License file missing!\nSee {}"), licenseUrl), message);
+                AppendConvertEOL(fmt::format(fmt::runtime(_("License file missing!\nSee {}")), licenseUrl), message);
             }
             SetDlgItemText(hDlg, IDC_LICENSE_TEXT, message.c_str());
         }

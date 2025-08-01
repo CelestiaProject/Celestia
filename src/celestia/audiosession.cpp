@@ -3,7 +3,7 @@
 namespace celestia
 {
 
-AudioSession::AudioSession(const fs::path &path, float volume, float pan, bool loop, bool nopause) : m_volume(volume), m_pan(pan), m_loop(loop), m_nopause(nopause)
+AudioSession::AudioSession(const std::filesystem::path &path, float volume, float pan, bool loop, bool nopause) : m_volume(volume), m_pan(pan), m_loop(loop), m_nopause(nopause)
 {
     if (path.is_relative())
         m_path = "sounds" / path;

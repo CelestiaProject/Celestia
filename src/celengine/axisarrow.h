@@ -10,14 +10,19 @@
 
 #pragma once
 
+#include <string_view>
+
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 #include <celutil/color.h>
 #include <celengine/referencemark.h>
 #include <celengine/selection.h>
 #include <celengine/shadermanager.h>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+#include <celrender/rendererfwd.h>
 
 class Body;
+struct Matrices;
 
 class ArrowReferenceMark : public ReferenceMark
 {
@@ -27,7 +32,7 @@ public:
     void setSize(float _size);
     void setColor(const Color& _color);
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                 const Eigen::Vector3f& position,
                 float discSize,
                 double tdb,
@@ -37,20 +42,14 @@ public:
         return size;
     }
 
-    bool isOpaque() const override
-    {
-        return opacity == 1.0f;
-    }
-
     virtual Eigen::Vector3d getDirection(double tdb) const = 0;
 
 protected:
     const Body& body;
 
 private:
-    float size;
-    Color color;
-    float opacity;
+    float size{ 1.0f };
+    Color color{ 1.0f, 1.0f, 1.0f };
     ShaderProperties shadprop;
 };
 
@@ -62,7 +61,7 @@ public:
     void setSize(float _size);
     void setOpacity(float _opacity);
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* refMarkRenderer,
                 const Eigen::Vector3f& position,
                 float discSize,
                 double tdb,
@@ -83,8 +82,8 @@ protected:
     const Body& body;
 
 private:
-    float size;
-    float opacity;
+    float size{ 0.0f };
+    float opacity{ 1.0f };
     ShaderProperties shadprop;
 };
 
@@ -94,6 +93,9 @@ class BodyAxisArrows : public AxesReferenceMark
 public:
     explicit BodyAxisArrows(const Body& _body);
     Eigen::Quaterniond getOrientation(double tdb) const override;
+
+protected:
+    std::string_view defaultTag() const override;
 };
 
 
@@ -102,6 +104,9 @@ class FrameAxisArrows : public AxesReferenceMark
 public:
     explicit FrameAxisArrows(const Body& _body);
     Eigen::Quaterniond getOrientation(double tdb) const override;
+
+protected:
+    std::string_view defaultTag() const override;
 };
 
 
@@ -110,6 +115,9 @@ class SunDirectionArrow : public ArrowReferenceMark
 public:
     explicit SunDirectionArrow(const Body& _body);
     Eigen::Vector3d getDirection(double tdb) const override;
+
+protected:
+    std::string_view defaultTag() const override;
 };
 
 
@@ -118,6 +126,9 @@ class VelocityVectorArrow : public ArrowReferenceMark
 public:
     explicit VelocityVectorArrow(const Body& _body);
     Eigen::Vector3d getDirection(double tdb) const override;
+
+protected:
+    std::string_view defaultTag() const override;
 };
 
 
@@ -126,6 +137,9 @@ class SpinVectorArrow : public ArrowReferenceMark
 public:
     explicit SpinVectorArrow(const Body& _body);
     Eigen::Vector3d getDirection(double tdb) const override;
+
+protected:
+    std::string_view defaultTag() const override;
 };
 
 
@@ -137,6 +151,9 @@ class BodyToBodyDirectionArrow : public ArrowReferenceMark
 public:
     BodyToBodyDirectionArrow(const Body& _body, const Selection& _target);
     Eigen::Vector3d getDirection(double tdb) const override;
+
+protected:
+    std::string_view defaultTag() const override;
 
 private:
     Selection target;

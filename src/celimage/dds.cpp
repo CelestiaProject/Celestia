@@ -217,7 +217,7 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
 }
 
 std::unique_ptr<Image>
-CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istream& in, const fs::path& filename)
+CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istream& in, const std::filesystem::path& filename)
 {
     // DXTc texture not supported, decompress DXTc to RGB/RGBA
     std::unique_ptr<std::uint32_t[]>pixels = nullptr;
@@ -268,7 +268,7 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
 
 } // anonymous namespace
 
-Image* LoadDDSImage(const fs::path& filename)
+Image* LoadDDSImage(const std::filesystem::path& filename)
 {
     std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in.good())
@@ -330,7 +330,8 @@ Image* LoadDDSImage(const fs::path& filename)
                                        static_cast<std::int32_t>(ddsd.width),
                                        static_cast<std::int32_t>(ddsd.height),
                                        std::max(static_cast<std::int32_t>(ddsd.mipMapLevels), INT32_C(1)));
-    if (!in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize())) /* Flawfinder: ignore */
+    in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize()); /* Flawfinder: ignore */
+    if (!in.eof() && !in.good())
     {
         util::GetLogger()->error("Failed reading data from DDS texture file {}.\n", filename);
         return nullptr;

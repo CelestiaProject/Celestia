@@ -89,7 +89,8 @@ Body::setDefaultProperties()
     geomAlbedo = 0.5f;
     reflectivity = 0.5f;
     temperature = 0.0f;
-    tempDiscrepancy = 0.0f;
+    emissivity = 1.0f;
+    internalHeatFlux = 0.0f;
     geometryOrientation = Eigen::Quaternionf::Identity();
     geometry = InvalidResource;
     surface = Surface(Color::White);
@@ -255,25 +256,25 @@ Body::markUpdated()
 const std::shared_ptr<const ReferenceFrame>&
 Body::getOrbitFrame(double tdb) const
 {
-    return timeline->findPhase(tdb)->orbitFrame();
+    return timeline->findPhase(tdb).orbitFrame();
 }
 
 const celestia::ephem::Orbit*
 Body::getOrbit(double tdb) const
 {
-    return timeline->findPhase(tdb)->orbit().get();
+    return timeline->findPhase(tdb).orbit().get();
 }
 
 const std::shared_ptr<const ReferenceFrame>&
 Body::getBodyFrame(double tdb) const
 {
-    return timeline->findPhase(tdb)->bodyFrame();
+    return timeline->findPhase(tdb).bodyFrame();
 }
 
 const celestia::ephem::RotationModel*
 Body::getRotationModel(double tdb) const
 {
-    return timeline->findPhase(tdb)->rotationModel().get();
+    return timeline->findPhase(tdb).rotationModel().get();
 }
 
 /*! Get the radius of a sphere large enough to contain the primary
@@ -395,9 +396,9 @@ Body::getTemperature(double time) const
     if (sun->getVisibility()) // the sun is a star
     {
         auto distFromSun = static_cast<float>(getAstrocentricPosition(time).norm());
-        temp = sun->getTemperature() *
-               std::pow(1.0f - getBondAlbedo(), 0.25f) *
-               std::sqrt(sun->getRadius() / (2.0f * distFromSun));
+        float flux = math::square(sun->getRadius() * math::square(sun->getTemperature())) / math::square(distFromSun);
+        temp = std::pow(((1.0f - getBondAlbedo()) * flux / 4.0f +
+                        internalHeatFlux / 5.670374e-8) / emissivity, 0.25f);
     }
     else // the sun is a barycenter
     {
@@ -413,9 +414,10 @@ Body::getTemperature(double time) const
             float lum = math::square(s->getRadius() * math::square(s->getTemperature()));
             flux += lum / math::square(distFromSun);
         }
-        temp = std::pow((1.0f - getBondAlbedo()) * flux, 0.25f) * (numbers::sqrt2_v<float> * 0.5f);
+        temp = std::pow(((1.0f - getBondAlbedo()) * flux / 4.0f +
+                        internalHeatFlux / 5.670374e-8) / emissivity, 0.25f);
     }
-    return getTempDiscrepancy() + temp;
+    return temp;
 }
 
 void
@@ -425,15 +427,27 @@ Body::setTemperature(float _temperature)
 }
 
 float
-Body::getTempDiscrepancy() const
+Body::getEmissivity() const
 {
-    return tempDiscrepancy;
+    return emissivity;
 }
 
 void
-Body::setTempDiscrepancy(float _tempDiscrepancy)
+Body::setEmissivity(float _emissivity)
 {
-    tempDiscrepancy = _tempDiscrepancy;
+    emissivity = _emissivity;
+}
+
+float
+Body::getInternalHeatFlux() const
+{
+    return internalHeatFlux;
+}
+
+void
+Body::setInternalHeatFlux(float _internalHeatFlux)
+{
+    internalHeatFlux = _internalHeatFlux;
 }
 
 Eigen::Quaternionf
@@ -568,24 +582,18 @@ Body::getPosition(double tdb) const
 {
     Eigen::Vector3d position = Eigen::Vector3d::Zero();
 
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    Eigen::Vector3d p = phase->orbit()->positionAtTime(tdb);
-    const ReferenceFrame* frame = phase->orbitFrame().get();
-
-    while (frame->getCenter().getType() == SelectionType::Body)
+    const Body* body = this;
+    for (;;)
     {
-        phase = frame->getCenter().body()->timeline->findPhase(tdb).get();
+        const TimelinePhase& phase = body->timeline->findPhase(tdb);
+        Eigen::Vector3d p = phase.orbit()->positionAtTime(tdb);
+        const ReferenceFrame* frame = phase.orbitFrame().get();
         position += frame->getOrientation(tdb).conjugate() * p;
-        p = phase->orbit()->positionAtTime(tdb);
-        frame = phase->orbitFrame().get();
+        if (auto center = frame->getCenter(); center.getType() == SelectionType::Body)
+            body = center.body();
+        else
+            return center.getPosition(tdb).offsetKm(position);
     }
-
-    position += frame->getOrientation(tdb).conjugate() * p;
-
-    if (frame->getCenter().star())
-        return frame->getCenter().star()->getPosition(tdb).offsetKm(position);
-    else
-        return frame->getCenter().getPosition(tdb).offsetKm(position);
 }
 
 /*! Get the orientation of the body in the universal coordinate system.
@@ -593,8 +601,8 @@ Body::getPosition(double tdb) const
 Eigen::Quaterniond
 Body::getOrientation(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    return phase->rotationModel()->orientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
+    const TimelinePhase& phase = timeline->findPhase(tdb);
+    return phase.rotationModel()->orientationAtTime(tdb) * phase.bodyFrame()->getOrientation(tdb);
 }
 
 /*! Get the velocity of the body in the universal frame.
@@ -602,11 +610,11 @@ Body::getOrientation(double tdb) const
 Eigen::Vector3d
 Body::getVelocity(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
+    const TimelinePhase& phase = timeline->findPhase(tdb);
 
-    const ReferenceFrame* orbitFrame = phase->orbitFrame().get();
+    const ReferenceFrame* orbitFrame = phase.orbitFrame().get();
 
-    Eigen::Vector3d v = phase->orbit()->velocityAtTime(tdb);
+    Eigen::Vector3d v = phase.orbit()->velocityAtTime(tdb);
     v = orbitFrame->getOrientation(tdb).conjugate() * v + orbitFrame->getCenter().getVelocity(tdb);
 
     if (!orbitFrame->isInertial())
@@ -623,11 +631,11 @@ Body::getVelocity(double tdb) const
 Eigen::Vector3d
 Body::getAngularVelocity(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
+    const TimelinePhase& phase = timeline->findPhase(tdb);
 
-    Eigen::Vector3d v = phase->rotationModel()->angularVelocityAtTime(tdb);
+    Eigen::Vector3d v = phase.rotationModel()->angularVelocityAtTime(tdb);
 
-    const ReferenceFrame* bodyFrame = phase->bodyFrame().get();
+    const ReferenceFrame* bodyFrame = phase.bodyFrame().get();
     v = bodyFrame->getOrientation(tdb).conjugate() * v;
     if (!bodyFrame->isInertial())
     {
@@ -646,8 +654,7 @@ Body::getAngularVelocity(double tdb) const
 Eigen::Matrix4d
 Body::getLocalToAstrocentric(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    Eigen::Vector3d p = phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
+    Eigen::Vector3d p = getAstrocentricPosition(tdb);
     return Eigen::Transform<double, 3, Eigen::Affine>(Eigen::Translation3d(p)).matrix();
 }
 
@@ -656,9 +663,19 @@ Body::getLocalToAstrocentric(double tdb) const
 Eigen::Vector3d
 Body::getAstrocentricPosition(double tdb) const
 {
-    // TODO: Switch the iterative method used in getPosition
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    return phase->orbitFrame()->convertToAstrocentric(phase->orbit()->positionAtTime(tdb), tdb);
+    Eigen::Vector3d position = Eigen::Vector3d::Zero();
+
+    const Body* body = this;
+    do
+    {
+        const TimelinePhase& phase = body->timeline->findPhase(tdb);
+        Eigen::Vector3d p = phase.orbit()->positionAtTime(tdb);
+        const ReferenceFrame* frame = phase.orbitFrame().get();
+        position += frame->getOrientation(tdb).conjugate() * p;
+        body = frame->getCenter().body();
+    } while (body);
+
+    return position;
 }
 
 /*! Get a rotation that converts from the ecliptic frame to the body frame.
@@ -666,8 +683,8 @@ Body::getAstrocentricPosition(double tdb) const
 Eigen::Quaterniond
 Body::getEclipticToFrame(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    return phase->bodyFrame()->getOrientation(tdb);
+    const TimelinePhase& phase = timeline->findPhase(tdb);
+    return phase.bodyFrame()->getOrientation(tdb);
 }
 
 /*! Get a rotation that converts from the ecliptic frame to the body's
@@ -676,8 +693,8 @@ Body::getEclipticToFrame(double tdb) const
 Eigen::Quaterniond
 Body::getEclipticToEquatorial(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    return phase->rotationModel()->equatorOrientationAtTime(tdb) * phase->bodyFrame()->getOrientation(tdb);
+    const TimelinePhase& phase = timeline->findPhase(tdb);
+    return phase.rotationModel()->equatorOrientationAtTime(tdb) * phase.bodyFrame()->getOrientation(tdb);
 }
 
 // The body-fixed coordinate system has an origin at the center of the
@@ -686,8 +703,8 @@ Body::getEclipticToEquatorial(double tdb) const
 Eigen::Quaterniond
 Body::getEquatorialToBodyFixed(double tdb) const
 {
-    const TimelinePhase* phase = timeline->findPhase(tdb).get();
-    return phase->rotationModel()->spin(tdb);
+    const TimelinePhase& phase = timeline->findPhase(tdb);
+    return phase.rotationModel()->spin(tdb);
 }
 
 /*! Get a transformation to convert from the object's body fixed frame

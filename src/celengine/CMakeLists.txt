@@ -49,15 +49,11 @@ set(CELENGINE_SOURCES
   glshader.h
   glsupport.cpp
   glsupport.h
-  hash.cpp
-  hash.h
   lightenv.h
   location.cpp
   location.h
   lodspheremesh.cpp
   lodspheremesh.h
-  mapmanager.cpp
-  mapmanager.h
   marker.cpp
   marker.h
   meshmanager.cpp
@@ -84,8 +80,6 @@ set(CELENGINE_SOURCES
   overlayimage.h
   parseobject.cpp
   parseobject.h
-  parser.cpp
-  parser.h
   perspectiveprojectionmode.cpp
   perspectiveprojectionmode.h
   planetgrid.cpp
@@ -98,6 +92,7 @@ set(CELENGINE_SOURCES
   rendcontext.h
   render.cpp
   render.h
+  renderflags.h
   renderglsl.cpp
   renderglsl.h
   renderinfo.h
@@ -152,14 +147,14 @@ set(CELENGINE_SOURCES
   univcoord.h
   universe.cpp
   universe.h
-  value.cpp
-  value.h
   viewporteffect.h
   viewporteffect.cpp
   virtualtex.cpp
   virtualtex.h
   visibleregion.cpp
   visibleregion.h
+  warpmesh.cpp
+  warpmesh.h
 )
 
 add_library(celengine OBJECT ${CELENGINE_SOURCES})

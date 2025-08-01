@@ -125,13 +125,13 @@ SelectionPopup::SelectionPopup(const Selection& sel,
         setlocale(LC_NUMERIC, "");
 
         if (std::abs(distance) >= astro::AUtoLightYears(1000.0f))
-            buff = fmt::format(_("{:.3f} ly"), distance);
+            buff = fmt::format(fmt::runtime(_("{:.3f} ly")), distance);
         else if (std::abs(distance) >= astro::kilometersToLightYears(10000000.0))
-            buff = fmt::format(_("{:.3f} au"), astro::lightYearsToAU(distance));
+            buff = fmt::format(fmt::runtime(_("{:.3f} au")), astro::lightYearsToAU(distance));
         else if (std::abs(distance) > astro::kilometersToLightYears(1.0f))
-            buff = fmt::format(_("{:.3f} km"), astro::lightYearsToKilometers(distance));
+            buff = fmt::format(fmt::runtime(_("{:.3f} km")), astro::lightYearsToKilometers(distance));
         else
-            buff = fmt::format(_("{:.3f} m"), astro::lightYearsToKilometers(distance) * 1000.0f);
+            buff = fmt::format(fmt::runtime(_("{:.3f} m")), astro::lightYearsToKilometers(distance) * 1000.0f);
 
         addAction(italicTextItem(_("Distance: ") + QString::fromStdString(buff)));
 
@@ -582,7 +582,7 @@ SelectionPopup::slotMark()
                                            1);
 
             // Automatically enable markers
-            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
+            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | ::RenderFlags::ShowMarkers);
         }
     }
 }

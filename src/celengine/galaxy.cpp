@@ -9,20 +9,23 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 #include <celmath/intersect.h>
 #include <celmath/ray.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
+#include <celutil/stringutils.h>
 #include "galaxy.h"
 #include "galaxyform.h"
-#include "hash.h"
 #include "render.h"
 
 using namespace std::string_view_literals;
 
-using celestia::engine::GalacticFormManager;
 namespace math = celestia::math;
+namespace util = celestia::util;
+
+using celestia::engine::GalacticFormManager;
 
 struct GalaxyTypeName
 {
@@ -71,12 +74,12 @@ void Galaxy::setType(const std::string& typeStr)
 {
     type = GalaxyType::Irr;
     auto iter = std::find_if(std::begin(GalaxyTypeNames), std::end(GalaxyTypeNames),
-                             [&](const GalaxyTypeName& g) { return g.name == typeStr; });
+                             [&](const GalaxyTypeName& g) { return compareIgnoringCase(g.name, typeStr) == 0; });
     if (iter != std::end(GalaxyTypeNames))
         type = iter->type;
 }
 
-void Galaxy::setForm(const fs::path& customTmpName, const fs::path& resDir)
+void Galaxy::setForm(const std::filesystem::path& customTmpName, const std::filesystem::path& resDir)
 {
     if (customTmpName.empty())
     {
@@ -84,16 +87,16 @@ void Galaxy::setForm(const fs::path& customTmpName, const fs::path& resDir)
     }
     else
     {
-        if (fs::path fullName = resDir / customTmpName; fs::exists(fullName))
+        if (std::filesystem::path fullName = resDir / customTmpName; std::filesystem::exists(fullName))
             form = GalacticFormManager::get()->getCustomForm(fullName);
         else
-            form = GalacticFormManager::get()->getCustomForm(fs::path("models") / customTmpName);
+            form = GalacticFormManager::get()->getCustomForm(std::filesystem::path("models") / customTmpName);
     }
 }
 
 std::string Galaxy::getDescription() const
 {
-    return fmt::sprintf(_("Galaxy (Hubble type: %s)"), getType());
+    return fmt::format(_("Galaxy (Hubble type: {})"), getType());
 }
 
 DeepSkyObjectType Galaxy::getObjType() const
@@ -133,13 +136,11 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
         cosAngleToBoundCenter);
 }
 
-bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath)
+bool Galaxy::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
 {
     setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 
-    if (const auto* typeName = params->getString("Type"); typeName == nullptr)
-        setType({});
-    else
+    if (const auto* typeName = params->getString("Type"); typeName != nullptr)
         setType(*typeName);
 
 
@@ -148,7 +149,7 @@ bool Galaxy::load(const AssociativeArray* params, const fs::path& resPath)
     else
         setForm({});
 
-    return DeepSkyObject::load(params, resPath);
+    return DeepSkyObject::load(params, resPath, name);
 }
 
 GalaxyType Galaxy::getGalaxyType() const
@@ -177,14 +178,14 @@ float Galaxy::getBrightnessCorrection(const Eigen::Vector3f &offset) const
     return (4.0f * lightGain + 1.0f) * btot * brightness_corr;
 }
 
-std::uint64_t Galaxy::getRenderMask() const
+RenderFlags Galaxy::getRenderMask() const
 {
-    return Renderer::ShowGalaxies;
+    return RenderFlags::ShowGalaxies;
 }
 
-unsigned int Galaxy::getLabelMask() const
+RenderLabels Galaxy::getLabelMask() const
 {
-    return Renderer::GalaxyLabels;
+    return RenderLabels::GalaxyLabels;
 }
 
 void Galaxy::increaseLightGain()

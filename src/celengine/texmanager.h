@@ -10,28 +10,19 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <tuple>
 
-#include <celcompat/filesystem.h>
 #include <celutil/resmanager.h>
 #include "multitexture.h"
 #include "texture.h"
 
 class TextureInfo
 {
-private:
-    fs::path source;
-    fs::path path;
-    unsigned int flags;
-    float bumpHeight;
-    unsigned int resolution;
-
-    friend bool operator<(const TextureInfo&, const TextureInfo&);
-
 public:
     using ResourceType = Texture;
-    using ResourceKey = fs::path;
+    using ResourceKey = std::filesystem::path;
 
     enum
     {
@@ -44,38 +35,47 @@ public:
         LinearColorspace = 0x40,
     };
 
-    TextureInfo(const fs::path& _source,
-                const fs::path& _path,
+    TextureInfo(const std::filesystem::path& _source,
+                const std::filesystem::path& _path,
                 unsigned int _flags,
-                unsigned int _resolution = medres) :
+                TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(_path),
         flags(_flags),
         bumpHeight(0.0f),
         resolution(_resolution) {};
 
-    TextureInfo(const fs::path& _source,
-                const fs::path& _path,
+    TextureInfo(const std::filesystem::path& _source,
+                const std::filesystem::path& _path,
                 float _bumpHeight,
                 unsigned int _flags,
-                unsigned int _resolution = medres) :
+                TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(_path),
         flags(_flags),
         bumpHeight(_bumpHeight),
         resolution(_resolution) {};
 
-    TextureInfo(const fs::path& _source,
+    TextureInfo(const std::filesystem::path& _source,
                 unsigned int _flags,
-                unsigned int _resolution = medres) :
+                TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(""),
         flags(_flags),
         bumpHeight(0.0f),
         resolution(_resolution) {};
 
-    fs::path resolve(const fs::path&) const;
-    std::unique_ptr<Texture> load(const fs::path&) const;
+    std::filesystem::path resolve(const std::filesystem::path&) const;
+    std::unique_ptr<Texture> load(const std::filesystem::path&) const;
+
+private:
+    std::filesystem::path source;
+    std::filesystem::path path;
+    unsigned int flags;
+    float bumpHeight;
+    TextureResolution resolution;
+
+    friend bool operator<(const TextureInfo&, const TextureInfo&);
 };
 
 inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)

@@ -19,7 +19,6 @@
 #include <celastro/date.h>
 #include <celephem/rotation.h>
 #include <celmath/geomutil.h>
-#include <celutil/r128.h>
 #include "body.h"
 #include "location.h"
 #include "selection.h"
@@ -42,21 +41,6 @@ constexpr double Tolerance = 1.0e-6;
 
 const Eigen::Quaterniond J2000Orientation{ Eigen::AngleAxis<double>(astro::J2000Obliquity, Eigen::Vector3d::UnitX()) };
 
-// High-precision rotation using 64.64 fixed point path. Rotate uc by
-// the rotation specified by unit quaternion q.
-UniversalCoord
-rotate(const UniversalCoord& uc, const Eigen::Quaterniond& q)
-{
-    Eigen::Matrix3d r = q.toRotationMatrix();
-    UniversalCoord uc1;
-
-    uc1.x = uc.x * R128(r(0, 0)) + uc.y * R128(r(1, 0)) + uc.z * R128(r(2, 0));
-    uc1.y = uc.x * R128(r(0, 1)) + uc.y * R128(r(1, 1)) + uc.z * R128(r(2, 1));
-    uc1.z = uc.x * R128(r(0, 2)) + uc.y * R128(r(1, 2)) + uc.z * R128(r(2, 2));
-
-    return uc1;
-}
-
 } // end unnamed namespace
 
 /*** ReferenceFrame ***/
@@ -64,68 +48,6 @@ rotate(const UniversalCoord& uc, const Eigen::Quaterniond& q)
 ReferenceFrame::ReferenceFrame(Selection center) :
     centerObject(center)
 {
-}
-
-/*! Convert from universal coordinates to frame coordinates. This method
- *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
- *  than convertFromAstrocentric(), which works with double precision
- *  floating points values. For cases when the bodies are all in the same
- *  solar system, convertFromAstrocentric() should be used.
- */
-UniversalCoord
-ReferenceFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
-{
-    UniversalCoord uc1 = uc - centerObject.getPosition(tjd);
-    return rotate(uc1, getOrientation(tjd).conjugate());
-}
-
-Eigen::Quaterniond
-ReferenceFrame::convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const
-{
-    return q * getOrientation(tjd).conjugate();
-}
-
-/*! Convert from local coordinates to universal coordinates. This method
- *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
- *  than convertFromAstrocentric(), which works with double precision
- *  floating points values. For cases when the bodies are all in the same
- *  solar system, convertFromAstrocentric() should be used.
- *
- *  To get the position of a solar system object in universal coordinates,
- *  it usually suffices to get the astrocentric position and then add that
- *  to the position of the star in universal coordinates. This avoids any
- *  expensive high-precision multiplication.
- */
-UniversalCoord
-ReferenceFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
-{
-    return centerObject.getPosition(tjd) + rotate(uc, getOrientation(tjd));
-}
-
-Eigen::Quaterniond
-ReferenceFrame::convertToUniversal(const Eigen::Quaterniond& q, double tjd) const
-{
-    return q * getOrientation(tjd);
-}
-
-Eigen::Vector3d
-ReferenceFrame::convertToAstrocentric(const Eigen::Vector3d& p, double tjd) const
-{
-    switch (centerObject.getType())
-    {
-    case SelectionType::Body:
-        {
-            Eigen::Vector3d center = centerObject.body()->getAstrocentricPosition(tjd);
-            return center + getOrientation(tjd).conjugate() * p;
-        }
-
-    case SelectionType::Star:
-        return getOrientation(tjd).conjugate() * p;
-
-    default:
-        // DSO/Locations not currently supported
-        return Eigen::Vector3d::Zero();
-    }
 }
 
 /*! Return the object that is the defined origin of the reference frame.

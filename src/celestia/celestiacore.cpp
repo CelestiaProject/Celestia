@@ -1,7 +1,7 @@
 // celestiacore.cpp
 //
 // Platform-independent UI handling and initialization for Celestia.
-// winmain, gtkmain, and qtmain are thin, platform-specific modules
+// winmain, sdlmain and qtmain are thin, platform-specific modules
 // that sit directly on top of CelestiaCore and feed it mouse and
 // keyboard events.  CelestiaCore then turns those events into calls
 // to Renderer and Simulation.
@@ -24,6 +24,7 @@
 #include <cassert>
 #include <ctime>
 #include <cinttypes>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -39,7 +40,6 @@
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/filesystem.h>
 #include <celcompat/numbers.h>
 #include <celengine/asterism.h>
 #include <celengine/axisarrow.h>
@@ -49,7 +49,6 @@
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
 #include <celengine/location.h>
-#include <celengine/mapmanager.h>
 #include <celengine/multitexture.h>
 #include <celengine/overlay.h>
 #include <celengine/perspectiveprojectionmode.h>
@@ -58,6 +57,7 @@
 #include <celengine/textlayout.h>
 #include <celengine/rectangle.h>
 #include <celengine/visibleregion.h>
+#include <celengine/warpmesh.h>
 #include <celestia/configfile.h>
 #include <celestia/favorites.h>
 #include <celestia/loaddso.h>
@@ -115,7 +115,7 @@ std::locale CelestiaCore::loc = std::locale();
 namespace
 {
 
-bool ReadLeapSecondsFile(const fs::path& path, std::vector<astro::LeapSecondRecord> &leapSeconds)
+bool ReadLeapSecondsFile(const std::filesystem::path& path, std::vector<astro::LeapSecondRecord> &leapSeconds)
 {
     std::ifstream file(path);
     if (!file.good())
@@ -246,7 +246,7 @@ CelestiaCore::~CelestiaCore()
 void CelestiaCore::readFavoritesFile()
 {
     // Set up favorites list
-    fs::path path;
+    std::filesystem::path path;
     if (!config->paths.favoritesFile.empty())
         path = config->paths.favoritesFile;
     else
@@ -268,7 +268,7 @@ void CelestiaCore::readFavoritesFile()
 
 void CelestiaCore::writeFavoritesFile()
 {
-    fs::path path;
+    std::filesystem::path path;
     if (!config->paths.favoritesFile.empty())
         path = config->paths.favoritesFile;
     else
@@ -280,7 +280,7 @@ void CelestiaCore::writeFavoritesFile()
 #endif
 
     error_code ec;
-    bool isDir = fs::is_directory(path.parent_path(), ec);
+    bool isDir = std::filesystem::is_directory(path.parent_path(), ec);
     if (ec)
     {
         GetLogger()->error(_("Failed to check directory existance for favorites file {}\n"), path);
@@ -288,7 +288,7 @@ void CelestiaCore::writeFavoritesFile()
     }
     if (!isDir)
     {
-        fs::create_directory(path.parent_path(), ec);
+        std::filesystem::create_directory(path.parent_path(), ec);
         if (ec)
         {
             GetLogger()->error(_("Failed to create a directory for favorites file {}\n"), path);
@@ -398,7 +398,7 @@ void CelestiaCore::cancelScript()
 }
 
 
-void CelestiaCore::runScript(const fs::path& filename, bool i18n)
+void CelestiaCore::runScript(const std::filesystem::path& filename, bool i18n)
 {
     cancelScript();
     auto maybeLocaleFilename = i18n ? LocaleFilename(filename) : filename;
@@ -453,7 +453,7 @@ void CelestiaCore::mouseButtonDown(float x, float y, int button)
         return;
 
     // To select the clicked into view before a drag.
-    viewManager->pickView(sim, metrics, x, y);
+    viewManager->pickView(sim.get(), metrics, x, y);
 
     if (button == LeftButton) // look if click is near a view border
         viewManager->tryStartResizing(metrics, x, y);
@@ -488,7 +488,7 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
     {
         if (button == LeftButton)
         {
-            viewManager->pickView(sim, metrics, x, y);
+            viewManager->pickView(sim.get(), metrics, x, y);
 
             Vector3f pickRay = getPickRay(x, y, viewManager->activeView());
 
@@ -729,7 +729,7 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
 }
 
 
-void CelestiaCore::joystickAxis(int axis, float amount)
+void CelestiaCore::joystickAxis(JoyAxis axis, float amount)
 {
     float deadZone = 0.25f;
 
@@ -740,10 +740,23 @@ void CelestiaCore::joystickAxis(int axis, float amount)
 
     amount = math::sign(amount) * math::square(amount);
 
-    if (axis == Joy_XAxis)
+    switch (axis)
+    {
+    case CelestiaCore::JoyAxis::X:
         joystickRotation.y() = amount;
-    else if (axis == Joy_YAxis)
+        break;
+    case JoyAxis::Y:
         joystickRotation.x() = -amount;
+        break;
+    case JoyAxis::RX:
+        joystickRightRotation.y() = amount;
+        break;
+    case JoyAxis::RY:
+        joystickRightRotation.x() = -amount;
+        break;
+    default:
+        break;
+    }
 }
 
 
@@ -756,7 +769,7 @@ void CelestiaCore::joystickButton(int button, bool down)
 
 void CelestiaCore::pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV)
 {
-    viewManager->pickView(sim, metrics, focusX, focusY);
+    viewManager->pickView(sim.get(), metrics, focusX, focusY);
     const View *view = viewManager->activeView();
     bool focusZoomingEnabled = is_set(interactionFlags, InteractionFlags::FocusZooming);
 
@@ -867,8 +880,8 @@ void CelestiaCore::keyDown(int key, int modifiers)
 void CelestiaCore::keyUp(int key, int)
 {
     KeyAccel = 1.0;
-    if (std::islower(key))
-        key = std::toupper(key);
+    if (std::islower(static_cast<unsigned char>(key)))
+        key = std::toupper(static_cast<unsigned char>(key));
     keysPressed[key] = false;
     shiftKeysPressed[key] = false;
 }
@@ -941,12 +954,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     switch (C)
     {
     case '\001': // Ctrl+A
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowAtmospheres);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowAtmospheres);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\002': // Ctrl+B
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowBoundaries);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowBoundaries);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -960,13 +973,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\014': // Ctrl+L
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNightMaps);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowNightMaps);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\013': // Ctrl+K
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowMarkers);
-        if (renderer->getRenderFlags() & Renderer::ShowMarkers)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowMarkers);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowMarkers))
         {
             flash(_("Markers enabled"));
         }
@@ -976,7 +989,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\005':  // Ctrl+E
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowEclipseShadows);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowEclipseShadows);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1003,7 +1016,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\011': // TAB
-        viewManager->nextView(sim);
+        viewManager->nextView(sim.get());
         break;
 
     case '\020':  // Ctrl+P
@@ -1038,8 +1051,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\024':  // Ctrl+T
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCometTails);
-        if (renderer->getRenderFlags() & Renderer::ShowCometTails)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCometTails);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowCometTails))
         {
             flash(_("Comet tails enabled"));
         }
@@ -1054,8 +1067,8 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\030':  // Ctrl+X
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowSmoothLines);
-        if (renderer->getRenderFlags() & Renderer::ShowSmoothLines)
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowSmoothLines);
+        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowSmoothLines))
         {
             flash(_("Anti-aliasing enabled"));
         }
@@ -1167,13 +1180,13 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '^':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowNebulae);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowNebulae);
         notifyWatchers(RenderFlagsChanged);
         break;
 
 
     case '&':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::LocationLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::LocationLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1193,7 +1206,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (v.norm() >= 86400.0_c)
             {
                 // Light travel time in years, if >= 1day
-                buf = fmt::format(loc, _("Light travel time:  {:.4f} yr"),
+                buf = fmt::format(loc, fmt::runtime(_("Light travel time:  {:.4f} yr")),
                                   astro::kilometersToLightYears(v.norm()));
             }
             else
@@ -1202,12 +1215,12 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 getLightTravelDelay(v.norm(), hours, mins, secs);
                 if (hours == 0)
                 {
-                    buf = fmt::format(loc, _("Light travel time:  {} min  {:.1f} s"),
+                    buf = fmt::format(loc, fmt::runtime(_("Light travel time:  {} min  {:.1f} s")),
                                       mins, secs);
                 }
                 else
                 {
-                    buf = fmt::format(loc, _("Light travel time:  {} h  {} min  {:.1f} s"),
+                    buf = fmt::format(loc, fmt::runtime(_("Light travel time:  {} h  {} min  {:.1f} s")),
                                       hours, mins, secs);
                 }
             }
@@ -1267,7 +1280,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '/':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowDiagrams);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowDiagrams);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1291,17 +1304,17 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case ';':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCelestialSphere);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCelestialSphere);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case '=':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::ConstellationLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::ConstellationLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'B':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::StarLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::StarLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1315,9 +1328,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'E':
         if (c == 'e')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GalaxyLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::GalaxyLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::GlobularLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::GlobularLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1340,7 +1353,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'I':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowCloudMaps);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCloudMaps);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1361,7 +1374,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 sim->setTimeScale(sim->getTimeScale() / CoarseTimeScaleFactor);
             else
                 sim->setTimeScale(sim->getTimeScale() / FineTimeScaleFactor);
-            auto buf = fmt::format(loc, _("Time rate: {:.6g}"), sim->getTimeScale()); // XXX %'.12g
+            auto buf = fmt::format(loc, fmt::runtime(_("Time rate: {:.6g}")), sim->getTimeScale()); // XXX %'.12g
             flash(buf);
         }
         break;
@@ -1374,51 +1387,57 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 sim->setTimeScale(sim->getTimeScale() * CoarseTimeScaleFactor);
             else
                 sim->setTimeScale(sim->getTimeScale() * FineTimeScaleFactor);
-            auto buf = fmt::format(loc, _("Time rate: {:.6g}"), sim->getTimeScale());
+            auto buf = fmt::format(loc, fmt::runtime(_("Time rate: {:.6g}")), sim->getTimeScale());
             flash(buf);
         }
         break;
 
     case 'M':
         if (c == 'm')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MoonLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::MoonLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::MinorMoonLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::MinorMoonLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'N':
-        renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::SpacecraftLabels);
+        renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::SpacecraftLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'O':
-        renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowOrbits);
+        renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowOrbits);
         notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'P':
         if (c == 'p')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::PlanetLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::PlanetLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::DwarfPlanetLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::DwarfPlanetLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'R':
-        if (c == 'r') // Skip rangechecking as setResolution does it already
-            renderer->setResolution(renderer->getResolution() - 1);
+        if (c == 'r')
+        {
+            if (auto current = renderer->getResolution(); current != TextureResolution::lores)
+                renderer->setResolution(static_cast<TextureResolution>(static_cast<int>(current) - 1));
+        }
         else
-            renderer->setResolution(renderer->getResolution() + 1);
+        {
+            if (auto current = renderer->getResolution(); current != TextureResolution::hires)
+                renderer->setResolution(static_cast<TextureResolution>(static_cast<int>(current) + 1));
+        }
         switch (renderer->getResolution())
         {
-        case 0:
+        case TextureResolution::lores:
             flash(_("Low res textures"));
             break;
-        case 1:
+        case TextureResolution::medres:
             flash(_("Medium res textures"));
             break;
-        case 2:
+        case TextureResolution::hires:
             flash(_("High res textures"));
             break;
         }
@@ -1443,9 +1462,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'U':
         if (c == 'u')
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGalaxies);
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowGalaxies);
         else
-            renderer->setRenderFlags(renderer->getRenderFlags() ^ Renderer::ShowGlobulars);
+            renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowGlobulars);
         notifyWatchers(RenderFlagsChanged);
         break;
 
@@ -1455,9 +1474,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'W':
         if (c == 'w')
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::AsteroidLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::AsteroidLabels);
         else
-            renderer->setLabelMode(renderer->getLabelMode() ^ Renderer::CometLabels);
+            renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::CometLabels);
         notifyWatchers(LabelFlagsChanged);
         break;
 
@@ -1484,11 +1503,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '[':
-        AdjustExposure(sim, this, loc, -1.0f);
+        AdjustExposure(sim.get(), this, loc, -1.0f);
         break;
 
     case ']':
-        AdjustExposure(sim, this, loc, +1.0f);
+        AdjustExposure(sim.get(), this, loc, +1.0f);
         break;
 
     case '\\':
@@ -1507,7 +1526,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else
                 renderer->setAmbientLightLevel(0.0f);
             notifyWatchers(AmbientLightChanged);
-            auto buf = fmt::format(loc, _("Ambient light level:  {:.2f}"), renderer->getAmbientLightLevel());
+            auto buf = fmt::format(loc, fmt::runtime(_("Ambient light level:  {:.2f}")), renderer->getAmbientLightLevel());
             flash(buf);
         }
         break;
@@ -1519,7 +1538,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             else
                 renderer->setAmbientLightLevel(1.0f);
             notifyWatchers(AmbientLightChanged);
-            auto buf = fmt::format(loc, _("Ambient light level:  {:.2f}"), renderer->getAmbientLightLevel());
+            auto buf = fmt::format(loc, fmt::runtime(_("Ambient light level:  {:.2f}")), renderer->getAmbientLightLevel());
             flash(buf);
         }
         break;
@@ -1527,7 +1546,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '(':
         {
             Galaxy::decreaseLightGain();
-            auto buf = fmt::format(loc, _("Light gain: {:3.0f} %"), Galaxy::getLightGain() * 100.0f);
+            auto buf = fmt::format(loc, fmt::runtime(_("Light gain: {:3.0f} %")), Galaxy::getLightGain() * 100.0f);
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
         }
@@ -1536,7 +1555,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case ')':
         {
             Galaxy::increaseLightGain();
-            auto buf = fmt::format(loc, _("Light gain: {:3.0f} %"), Galaxy::getLightGain() * 100.0f);
+            auto buf = fmt::format(loc, fmt::runtime(_("Light gain: {:3.0f} %")), Galaxy::getLightGain() * 100.0f);
             flash(buf);
             notifyWatchers(GalaxyLightGainChanged);
         }
@@ -1557,7 +1576,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
 void CelestiaCore::charEnteredAutoComplete(const char* c_p)
 {
-    switch (hud->textInput().charEntered(sim, c_p, (renderer->getLabelMode() & Renderer::LocationLabels) != 0))
+    switch (hud->textInput().charEntered(sim.get(), c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels)))
     {
     case CharEnteredResult::Finished:
         updateSelectionFromInput();
@@ -1633,9 +1652,9 @@ void CelestiaCore::start(double t)
     {
         // using the KdeAlerter in runScript would create an infinite loop,
         // break it here by resetting config->initScriptFile:
-        fs::path filename(config->paths.initScriptFile);
+        std::filesystem::path filename(config->paths.initScriptFile);
         // Don't use {} as it will throw error C2593 on MSVC
-        config->paths.initScriptFile = fs::path();
+        config->paths.initScriptFile = std::filesystem::path();
         runScript(filename);
     }
 
@@ -1655,7 +1674,7 @@ void CelestiaCore::setStartURL(const string &url)
     {
         startURL = url;
         // Don't use {} as it will throw error C2593 on MSVC
-        config->paths.initScriptFile = fs::path();
+        config->paths.initScriptFile = std::filesystem::path();
     }
     else
     {
@@ -1725,8 +1744,11 @@ void CelestiaCore::tick(double dt)
 
     // Keyboard rotate
     Vector3d av = sim->getObserver().getAngularVelocity();
+    Vector3d inputAV = sim->getObserver().getInputAngularVelocity();
 
-    av = av * exp(-dt * RotationDecay);
+    double decayFactor = std::exp(-dt * static_cast<double>(RotationDecay));
+    av = av * decayFactor;
+    inputAV = inputAV * decayFactor;
 
     float fov = sim->getActiveObserver()->getFOV() / stdFOV;
     Selection refObject = sim->getFrame()->getRefObject();
@@ -1797,6 +1819,11 @@ void CelestiaCore::tick(double dt)
 
     sim->getObserver().setAngularVelocity(av);
 
+    if (joystickRightRotation != Vector3f::Zero())
+        inputAV += (dt * KeyRotationAccel) * joystickRightRotation.cast<double>();
+
+    sim->getObserver().setInputAngularVelocity(inputAV);
+
     if (keysPressed[static_cast<int>('A')] || joyButtonsPressed[JoyButton2])
     {
         bSetTargetSpeed = true;
@@ -1817,7 +1844,7 @@ void CelestiaCore::tick(double dt)
                 sim->setTargetSpeed(currentSpeed / std::exp(static_cast<float>(dt) * 3.0f * decelerationCoefficient));
         }
     }
-    if (!bSetTargetSpeed && av.norm() > 0.0f)
+    if (!bSetTargetSpeed && av.norm() > MIN_SIG_ANGULAR_SPEED)
     {
         // Force observer velocity vector to align with observer direction if an observer
         // angular velocity still exists.
@@ -1872,7 +1899,7 @@ void CelestiaCore::draw()
         renderer->setRenderRegion(0, 0, metrics.width, metrics.height, false);
 
     bool toggleAA = renderer->isMSAAEnabled();
-    if (toggleAA && (renderer->getRenderFlags() & Renderer::ShowCloudMaps))
+    if (toggleAA && util::is_set(renderer->getRenderFlags(), RenderFlags::ShowCloudMaps))
         renderer->disableMSAA();
 
     renderOverlay();
@@ -2002,6 +2029,17 @@ void CelestiaCore::setInteractionFlags(InteractionFlags flags)
     interactionFlags = flags;
 }
 
+celestia::engine::ObserverFlags CelestiaCore::getObserverFlags() const
+{
+    return observerSettings->flags;
+}
+
+// Set method makes changes even though could technically be const
+void CelestiaCore::setObserverFlags(celestia::engine::ObserverFlags flags) //NOSONAR
+{
+    observerSettings->flags = flags;
+}
+
 // Return true if anything changed that requires re-rendering. Otherwise, we
 // can skip rendering, keep the GPU idle, and save power.
 bool CelestiaCore::viewUpdateRequired() const
@@ -2044,7 +2082,7 @@ bool CelestiaCore::viewUpdateRequired() const
 
 void CelestiaCore::splitView(View::Type type, View* av, float splitPos)
 {
-    switch (viewManager->splitView(sim, type, av, splitPos))
+    switch (viewManager->splitView(sim.get(), type, av, splitPos))
     {
     case ViewSplitResult::Ignored:
         return;
@@ -2087,18 +2125,18 @@ void CelestiaCore::setZoomFromFOV()
 
 void CelestiaCore::singleView(const View* av)
 {
-    viewManager->singleView(sim, av);
+    viewManager->singleView(sim.get(), av);
     setFOVFromZoom();
 }
 
 void CelestiaCore::setActiveView(const View* v)
 {
-    viewManager->setActiveView(sim, v);
+    viewManager->setActiveView(sim.get(), v);
 }
 
 void CelestiaCore::deleteView(View* v)
 {
-    if (viewManager->deleteView(sim, v))
+    if (viewManager->deleteView(sim.get(), v))
         setFOVFromZoom();
 }
 
@@ -2130,7 +2168,7 @@ Renderer* CelestiaCore::getRenderer() const
 
 Simulation* CelestiaCore::getSimulation() const
 {
-    return sim;
+    return sim.get();
 }
 
 void CelestiaCore::showText(std::string_view s,
@@ -2166,7 +2204,7 @@ void CelestiaCore::renderOverlay()
     if (m_scriptHook != nullptr)
         m_scriptHook->call("renderoverlay");
 
-    hud->renderOverlay(metrics, sim, *viewManager, movieCapture, timeInfo, m_script != nullptr, editMode);
+    hud->renderOverlay(metrics, sim.get(), *viewManager, movieCapture, timeInfo, m_script != nullptr, editMode);
 }
 
 
@@ -2232,8 +2270,8 @@ void CelestiaCore::initLocale()
     setlocale(LC_NUMERIC, "C");
 }
 
-bool CelestiaCore::initSimulation(const fs::path& configFileName,
-                                  const vector<fs::path>& extrasDirs,
+bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
+                                  const vector<std::filesystem::path>& extrasDirs,
                                   ProgressNotifier* progressNotifier)
 {
     config = std::make_unique<CelestiaConfig>();
@@ -2246,7 +2284,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     {
         hasConfig = ReadCelestiaConfig("celestia.cfg", *config);
 
-        fs::path localConfigFile = PathExp("~/.celestia.cfg");
+        std::filesystem::path localConfigFile = PathExp("~/.celestia.cfg");
         if (!localConfigFile.empty())
             hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
 
@@ -2313,7 +2351,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     if (favorites == nullptr)
         favorites = std::make_unique<FavoritesList>();
 
-    universe = new Universe();
+    auto universe = std::make_unique<Universe>();
 
     /***** Load star catalogs *****/
 
@@ -2339,11 +2377,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 
     /***** Load the solar system catalogs *****/
 
-    loadSSO(*config, progressNotifier, universe);
-
-    // Load asterisms:
-    if (!config->paths.asterismsFile.empty())
-        loadAsterismsFile(config->paths.asterismsFile);
+    loadSSO(*config, progressNotifier, universe.get());
 
     if (!config->paths.boundariesFile.empty())
     {
@@ -2362,7 +2396,7 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     // Load destinations list
     if (!config->paths.destinationsFile.empty())
     {
-        fs::path localeDestinationsFile = LocaleFilename(config->paths.destinationsFile);
+        std::filesystem::path localeDestinationsFile = LocaleFilename(config->paths.destinationsFile);
         ifstream destfile(localeDestinationsFile, ios::in);
         if (destfile.good())
         {
@@ -2402,10 +2436,9 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
             }
             else
             {
-                WarpMeshManager *manager = GetWarpMeshManager();
-                WarpMesh *mesh = manager->find(manager->getHandle(WarpMeshInfo(config->paths.warpMeshFile)));
+                auto mesh = WarpMesh::load(config->paths.warpMeshFile);
                 if (mesh != nullptr)
-                    viewportEffect = std::make_unique<WarpMeshViewportEffect>(mesh);
+                    viewportEffect = std::make_unique<WarpMeshViewportEffect>(std::move(mesh));
                 else
                     GetLogger()->error("Failed to read warp mesh file {}\n", config->paths.warpMeshFile);
             }
@@ -2468,7 +2501,14 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
     set_or_unset(interactionFlags, InteractionFlags::RayBasedDragging, config->mouse.rayBasedDragging);
     set_or_unset(interactionFlags, InteractionFlags::FocusZooming, config->mouse.focusZooming);
 
-    sim = new Simulation(universe);
+    set_or_unset(observerSettings->flags, celestia::engine::ObserverFlags::AlignCameraToSurfaceOnLand, config->observer.alignCameraToSurfaceOnLand);
+
+    sim = std::make_unique<Simulation>(std::move(universe), observerSettings);
+
+    // Load asterisms:
+    if (!config->paths.asterismsFile.empty())
+        loadAsterismsFile(config->paths.asterismsFile);
+
     sim->setExposure(config->renderDetails.exposure);
 
     viewManager = std::make_unique<ViewManager>(new View(View::ViewWindow, sim->getActiveObserver(), 0.0f, 0.0f, 1.0f, 1.0f));
@@ -2492,23 +2532,23 @@ bool CelestiaCore::initSimulation(const fs::path& configFileName,
 }
 
 static std::shared_ptr<TextureFont>
-LoadFontHelper(const Renderer *renderer, const fs::path &p)
+LoadFontHelper(const Renderer *renderer, const std::filesystem::path &p)
 {
     if (p.is_absolute())
         return LoadTextureFont(renderer, p);
 
     int index = 0;
     int size = TextureFont::kDefaultSize;
-    fs::path path = LocaleFilename(ParseFontName(fs::path("fonts") / p, index, size));
+    std::filesystem::path path = LocaleFilename(ParseFontName(std::filesystem::path("fonts") / p, index, size));
 
     return LoadTextureFont(renderer, path, index, size);
 }
 
 bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
 {
-    renderer->setRenderFlags(Renderer::ShowStars |
-                             Renderer::ShowPlanets |
-                             Renderer::ShowAtmospheres);
+    renderer->setRenderFlags(RenderFlags::ShowStars |
+                             RenderFlags::ShowPlanets |
+                             RenderFlags::ShowAtmospheres);
 
     Renderer::DetailOptions detailOptions;
     detailOptions.orbitPathSamplePoints = config->renderDetails.orbitPathSamplePoints;
@@ -2517,6 +2557,13 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
     detailOptions.orbitWindowEnd = config->renderDetails.orbitWindowEnd;
     detailOptions.orbitPeriodsShown = config->renderDetails.orbitPeriodsShown;
     detailOptions.linearFadeFraction = config->renderDetails.linearFadeFraction;
+
+    detailOptions.renderAsterismsFadeStartDist = config->renderDetails.renderAsterismsFadeStartDist;
+    detailOptions.renderAsterismsFadeEndDist = config->renderDetails.renderAsterismsFadeEndDist;
+    detailOptions.renderBoundariesFadeStartDist = config->renderDetails.renderBoundariesFadeStartDist;
+    detailOptions.renderBoundariesFadeEndDist = config->renderDetails.renderBoundariesFadeEndDist;
+    detailOptions.labelConstellationsFadeStartDist = config->renderDetails.labelConstellationsFadeStartDist;
+    detailOptions.labelConstellationsFadeEndDist = config->renderDetails.labelConstellationsFadeEndDist;
 #ifndef GL_ES
     detailOptions.useMesaPackInvert = useMesaPackInvert;
 #endif
@@ -2619,7 +2666,7 @@ CelestiaCore::ContextMenuHandler* CelestiaCore::getContextMenuHandler() const
     return contextMenuHandler;
 }
 
-bool CelestiaCore::setHudFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+bool CelestiaCore::setHudFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
     {
@@ -2629,7 +2676,7 @@ bool CelestiaCore::setHudFont(const fs::path& fontPath, int collectionIndex, int
     return false;
 }
 
-bool CelestiaCore::setHudTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize)
+bool CelestiaCore::setHudTitleFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
     {
@@ -2639,7 +2686,7 @@ bool CelestiaCore::setHudTitleFont(const fs::path& fontPath, int collectionIndex
     return false;
 }
 
-bool CelestiaCore::setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
+bool CelestiaCore::setRendererFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle)
 {
     if (auto f = LoadTextureFont(renderer, fontPath, collectionIndex, fontSize); f != nullptr)
     {
@@ -3035,7 +3082,7 @@ std::string_view CelestiaCore::getTypedText() const
 
 void CelestiaCore::setTypedText(const char *c_p)
 {
-    hud->textInput().appendText(sim, c_p, (renderer->getLabelMode() & Renderer::LocationLabels) != 0);
+    hud->textInput().appendText(sim.get(), c_p, util::is_set(renderer->getLabelMode(), RenderLabels::LocationLabels));
 }
 
 vector<Observer*> CelestiaCore::getObservers() const
@@ -3076,7 +3123,7 @@ bool CelestiaCore::captureImage(std::uint8_t* buffer,
     return false;
 }
 
-bool CelestiaCore::saveScreenShot(const fs::path& filename, ContentType type) const
+bool CelestiaCore::saveScreenShot(const std::filesystem::path& filename, ContentType type) const
 {
     if (type == ContentType::Unknown)
         type = DetermineFileType(filename);
@@ -3110,7 +3157,7 @@ bool CelestiaCore::isPlayingAudio(int channel) const
     return audioSession && audioSession->isPlaying();
 }
 
-bool CelestiaCore::playAudio(int channel, const fs::path &path, double startTime, float volume, float pan, bool loop, bool nopause)
+bool CelestiaCore::playAudio(int channel, const std::filesystem::path &path, double startTime, float volume, float pan, bool loop, bool nopause)
 {
     stopAudio(channel);
     auto audioSession = make_shared<MiniAudioSession>(path, volume, pan, loop, nopause);
@@ -3228,6 +3275,23 @@ CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::getScriptSystemAccessPolicy
     return scriptSystemAccessPolicy;
 }
 
+CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::requestScriptSystemAccessPolicy()
+{
+    if (scriptSystemAccessPolicy == ScriptSystemAccessPolicy::Ask && scriptSystemAccessHandler.has_value())
+        return scriptSystemAccessHandler.value()();
+    return scriptSystemAccessPolicy;
+}
+
+void CelestiaCore::setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>& newScriptSystemAccessHandler)
+{
+    scriptSystemAccessHandler = newScriptSystemAccessHandler;
+}
+
+std::optional<std::function<CelestiaCore::ScriptSystemAccessPolicy()>> CelestiaCore::getScriptSystemAccessHandler() const
+{
+    return scriptSystemAccessHandler;
+}
+
 celestia::LayoutDirection CelestiaCore::getLayoutDirection() const
 {
     return metrics.layoutDirection;
@@ -3240,7 +3304,7 @@ void CelestiaCore::setLayoutDirection(celestia::LayoutDirection value)
     renderer->setRTL(metrics.layoutDirection == LayoutDirection::RightToLeft);
 }
 
-void CelestiaCore::setLogFile(const fs::path &fn)
+void CelestiaCore::setLogFile(const std::filesystem::path &fn)
 {
     m_logfile = std::ofstream(fn);
     if (m_logfile.good())
@@ -3255,15 +3319,17 @@ void CelestiaCore::setLogFile(const fs::path &fn)
     }
 }
 
-void CelestiaCore::loadAsterismsFile(const fs::path &path)
+// We don't want this to be a non-const function as it is actually modifying stuff
+void CelestiaCore::loadAsterismsFile(const std::filesystem::path &path) //NOSONAR
 {
-    if (ifstream asterismsFile(path, ios::in); !asterismsFile.good())
+    std::ifstream asterismsFile(path, std::ios::in);
+    if (!asterismsFile)
     {
         GetLogger()->error(_("Error opening asterisms file {}.\n"), path);
+        return;
     }
-    else
-    {
-        std::unique_ptr<AsterismList> asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
-        universe->setAsterisms(std::move(asterisms));
-    }
+
+    Universe* universe = sim->getUniverse();
+    std::unique_ptr<AsterismList> asterisms = ReadAsterismList(asterismsFile, *universe->getStarCatalog());
+    universe->setAsterisms(std::move(asterisms));
 }

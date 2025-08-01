@@ -87,7 +87,7 @@ public:
     static void setVisibility(boost::intrusive_ptr<StarDetails>&, bool);
     static void setRotationModel(boost::intrusive_ptr<StarDetails>&, const std::shared_ptr<const celestia::ephem::RotationModel>&);
     static void setEllipsoidSemiAxes(boost::intrusive_ptr<StarDetails>&, const Eigen::Vector3f&);
-    static void setInfoURL(boost::intrusive_ptr<StarDetails>&, std::string_view _infoURL);
+    static void setInfoURL(boost::intrusive_ptr<StarDetails>&, std::string&& _infoURL);
     static void addOrbitingStar(boost::intrusive_ptr<StarDetails>&, Star*);
 
     bool shared() const;
@@ -136,7 +136,7 @@ private:
     bool visible{ true };
     std::array<char, 8> spectralType{ };
 
-    MultiResTexture texture{ InvalidResource };
+    MultiResTexture texture;
     ResourceHandle geometry{ InvalidResource };
 
     std::shared_ptr<const celestia::ephem::Orbit> orbit;

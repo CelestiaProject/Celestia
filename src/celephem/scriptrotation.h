@@ -11,14 +11,19 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string>
 
-#include <celcompat/filesystem.h>
+namespace celestia
+{
 
+namespace util
+{
 class AssociativeArray;
+}
 
-namespace celestia::ephem
+namespace ephem
 {
 
 class RotationModel;
@@ -26,7 +31,8 @@ class RotationModel;
 std::shared_ptr<const RotationModel>
 CreateScriptedRotation(const std::string* moduleName,
                        const std::string& funcName,
-                       const AssociativeArray& parameters,
-                       const fs::path& path);
+                       const util::AssociativeArray& parameters,
+                       const std::filesystem::path& path);
 
-}
+} // end namespace celestia::ephem
+} // end namespace celestia

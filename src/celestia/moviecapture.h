@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <celcompat/filesystem.h>
+#include <filesystem>
 
 class Renderer;
 
@@ -19,7 +19,7 @@ public:
     MovieCapture(const Renderer *r) : renderer(r) {};
     virtual ~MovieCapture() = default;
 
-    virtual bool start(const fs::path& filename,
+    virtual bool start(const std::filesystem::path& filename,
                        int width, int height,
                        float fps) = 0;
     virtual bool end() = 0;

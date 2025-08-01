@@ -17,8 +17,8 @@ namespace celestia::engine
 {
 
 std::shared_ptr<const ephem::Orbit>
-TrajectoryManager::find(const fs::path& source,
-                        const fs::path& path,
+TrajectoryManager::find(const std::filesystem::path& source,
+                        const std::filesystem::path& path,
                         ephem::TrajectoryInterpolation interpolation,
                         ephem::TrajectoryPrecision precision)
 {

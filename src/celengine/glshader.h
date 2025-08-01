@@ -10,14 +10,11 @@
 #pragma once
 
 #include <iosfwd>
-#include <string>
-#include <vector>
+#include <string_view>
 
 #include <Eigen/Core>
 
 #include "glsupport.h"
-
-class GLShaderLoader;
 
 enum class GLShaderStatus
 {
@@ -30,199 +27,216 @@ enum class GLShaderStatus
 
 class GLShader
 {
- protected:
-    GLShader(GLuint _id);
-    virtual ~GLShader();
+public:
+    GLShader(const GLShader&) = delete;
+    GLShader& operator=(const GLShader&) = delete;
 
- public:
-    GLuint getID() const;
+    GLShader(GLShader&&) noexcept;
+    GLShader& operator=(GLShader&&) noexcept;
 
- private:
-    GLuint id;
+    GLuint getID() const noexcept { return id; }
+    bool isValid() const noexcept { return id != 0; }
 
-    GLShaderStatus compile(const std::vector<std::string>& source);
+protected:
+    struct CreateToken {};
 
-    friend class GLShaderLoader;
+    explicit GLShader() = default;
+    explicit GLShader(GLuint _id);
+    ~GLShader() { destroy(); }
+
+private:
+    void destroy() const;
+
+    GLuint id{ 0 };
 };
 
-
-class GLVertexShader : public GLShader
+class GLVertexShader : private GLShader
 {
- private:
-    GLVertexShader(GLuint _id) : GLShader(_id) {};
+public:
+    static constexpr GLenum ShaderType = GL_VERTEX_SHADER;
 
- friend class GLShaderLoader;
+    GLVertexShader() = default;
+    GLVertexShader(CreateToken, GLuint _id) : GLShader(_id) {}
+
+    static GLVertexShader create(std::string_view source, GLShaderStatus& status);
+
+    using GLShader::getID;
+    using GLShader::isValid;
 };
 
-
-class GLGeometryShader : public GLShader
+class GLGeometryShader : private GLShader
 {
- private:
-    GLGeometryShader(GLuint _id) : GLShader(_id) {};
+public:
+    static constexpr GLenum ShaderType = GL_GEOMETRY_SHADER;
 
- friend class GLShaderLoader;
+    GLGeometryShader() = default;
+    GLGeometryShader(CreateToken, GLuint _id) : GLShader(_id) {}
+
+    static GLGeometryShader create(std::string_view source, GLShaderStatus& status);
+
+    using GLShader::getID;
+    using GLShader::isValid;
 };
 
-
-class GLFragmentShader : public GLShader
+class GLFragmentShader : private GLShader
 {
- private:
-    GLFragmentShader(GLuint _id) : GLShader(_id) {};
+public:
+    static constexpr GLenum ShaderType = GL_FRAGMENT_SHADER;
 
- friend class GLShaderLoader;
+    GLFragmentShader() = default;
+    GLFragmentShader(CreateToken, GLuint _id) : GLShader(_id) {}
+
+    static GLFragmentShader create(std::string_view source, GLShaderStatus& status);
+
+    using GLShader::getID;
+    using GLShader::isValid;
 };
 
+class GLProgramBuilder;
 
 class GLProgram
 {
- private:
-    GLProgram(GLuint _id);
+public:
+    GLProgram() = default;
+    ~GLProgram() { destroy(); }
 
-    void attach(const GLShader&);
+    GLProgram(const GLProgram&) = delete;
+    GLProgram& operator=(const GLProgram&) = delete;
 
- public:
-    virtual ~GLProgram();
+    GLProgram(GLProgram&&) noexcept;
+    GLProgram& operator=(GLProgram&&) noexcept;
 
-    GLShaderStatus link();
+    GLuint getID() const noexcept { return id; }
+    bool isValid() const noexcept { return id != 0; }
 
     void use() const;
-    GLuint getID() const { return id; }
 
- private:
-    GLuint id;
+private:
+    explicit GLProgram(GLuint _id);
+    void destroy() const;
 
- friend class GLShaderLoader;
+    GLuint id{ 0 };
+
+    friend class GLProgramBuilder;
 };
 
+class GLProgramBuilder
+{
+public:
+    GLProgramBuilder() = default;
+    ~GLProgramBuilder() { destroy(); }
+
+    GLProgramBuilder(const GLProgramBuilder&) = delete;
+    GLProgramBuilder& operator=(const GLProgramBuilder&) = delete;
+
+    GLProgramBuilder(GLProgramBuilder&&) noexcept;
+    GLProgramBuilder& operator=(GLProgramBuilder&&) noexcept;
+
+    static GLProgramBuilder create(GLShaderStatus& status);
+
+    GLuint getID() const noexcept { return id; }
+    bool isValid() const noexcept { return id != 0; }
+
+    void attach(GLFragmentShader&&);
+    void attach(GLGeometryShader&&);
+    void attach(GLVertexShader&&);
+
+    void bindAttribute(GLuint index, const GLchar* name) const;
+
+    GLProgram link(GLShaderStatus&);
+
+private:
+    explicit GLProgramBuilder(GLuint _id) : id(_id) {}
+    void destroy() const;
+
+    GLuint id{ 0 };
+    GLFragmentShader fragmentShader;
+    GLGeometryShader geometryShader;
+    GLVertexShader vertexShader;
+};
 
 class FloatShaderParameter
 {
- public:
+public:
     FloatShaderParameter() = default;
     FloatShaderParameter(GLuint obj, const char* name);
 
     FloatShaderParameter& operator=(float);
 
- private:
+private:
     int slot{ -1 };
 };
 
-
 class Vec2ShaderParameter
 {
- public:
+public:
     Vec2ShaderParameter() = default;
     Vec2ShaderParameter(GLuint obj, const char* name);
 
     Vec2ShaderParameter& operator=(const Eigen::Vector2f&);
 
- private:
+private:
     int slot{ -1 };
 };
 
-
 class Vec3ShaderParameter
 {
- public:
+public:
     Vec3ShaderParameter() = default;
     Vec3ShaderParameter(GLuint obj, const char* name);
 
     Vec3ShaderParameter& operator=(const Eigen::Vector3f&);
 
- private:
+private:
     int slot{ -1 };
 };
 
-
 class Vec4ShaderParameter
 {
- public:
+public:
     Vec4ShaderParameter() = default;
     Vec4ShaderParameter(GLuint obj, const char* name);
 
     Vec4ShaderParameter& operator=(const Eigen::Vector4f&);
 
- private:
+private:
     int slot{ -1 };
 };
 
-
 class IntegerShaderParameter
 {
- public:
+public:
     IntegerShaderParameter() = default;
     IntegerShaderParameter(GLuint obj, const char* name);
 
     IntegerShaderParameter& operator=(int);
 
- private:
+private:
     int slot{ -1 };
 };
 
-
 class Mat3ShaderParameter
 {
- public:
+public:
     Mat3ShaderParameter() = default;
     Mat3ShaderParameter(GLuint obj, const char* name);
 
     Mat3ShaderParameter& operator=(const Eigen::Matrix3f&);
 
- private:
+private:
     int slot{ -1 };
 };
 
-
 class Mat4ShaderParameter
 {
- public:
+public:
     Mat4ShaderParameter() = default;
     Mat4ShaderParameter(GLuint obj, const char* name);
 
     Mat4ShaderParameter& operator=(const Eigen::Matrix4f&);
 
- private:
+private:
     int slot{ -1 };
 };
-
-
-class GLShaderLoader
-{
- public:
-    explicit GLShaderLoader() = delete;
-    static GLShaderStatus CreateVertexShader(const std::vector<std::string>&,
-                                             GLVertexShader**);
-    static GLShaderStatus CreateGeometryShader(const std::vector<std::string>&,
-                                               GLGeometryShader**);
-    static GLShaderStatus CreateFragmentShader(const std::vector<std::string>&,
-                                               GLFragmentShader**);
-    static GLShaderStatus CreateVertexShader(const std::string&,
-                                             GLVertexShader**);
-    static GLShaderStatus CreateFragmentShader(const std::string&,
-                                               GLFragmentShader**);
-
-    static GLShaderStatus CreateProgram(const GLVertexShader& vs,
-                                        const GLFragmentShader& fs,
-                                        GLProgram**);
-    static GLShaderStatus CreateProgram(const GLVertexShader& vs,
-                                        const GLGeometryShader& gs,
-                                        const GLFragmentShader& fs,
-                                        GLProgram**);
-    static GLShaderStatus CreateProgram(const std::vector<std::string>& vs,
-                                        const std::vector<std::string>& fs,
-                                        GLProgram**);
-    static GLShaderStatus CreateProgram(const std::vector<std::string>& vs,
-                                        const std::vector<std::string>& gs,
-                                        const std::vector<std::string>& fs,
-                                        GLProgram**);
-    static GLShaderStatus CreateProgram(const std::string& vsSource,
-                                        const std::string& fsSource,
-                                        GLProgram**);
-    static GLShaderStatus CreateProgram(const std::string& vsSource,
-                                        const std::string& fsSource,
-                                        const std::string& gsSource,
-                                        GLProgram**);
-};
-
 
 extern std::ostream* g_shaderLogFile;

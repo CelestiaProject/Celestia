@@ -10,8 +10,19 @@
 
 #pragma once
 
+#include <cstdint>
+#include <filesystem>
+#include <string>
+#include <string_view>
+
 #include <celutil/reshandle.h>
-#include <celengine/deepskyobj.h>
+#include "deepskyobj.h"
+#include "renderflags.h"
+
+namespace celestia::util
+{
+class AssociativeArray;
+}
 
 class Nebula : public DeepSkyObject
 {
@@ -23,28 +34,31 @@ public:
     std::string getDescription() const override;
 
     // pick: the preconditional sphere-ray intersection test is enough for now
-    bool load(const AssociativeArray*, const fs::path&) override;
+    bool load(const celestia::util::AssociativeArray*, const std::filesystem::path&, std::string_view) override;
 
-    uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
 
     void setGeometry(ResourceHandle);
     ResourceHandle getGeometry() const;
 
     DeepSkyObjectType getObjType() const override;
 
-    enum NebulaType
+    enum class Type
     {
-        Emissive           = 0,
-        Reflective         = 1,
-        Dark               = 2,
-        Planetary          = 3,
-        Galactic           = 4,
+        NotDefined         = 0,
+        Emission           = 1,  // includes Herbig–Haro objects and misc. emission nebula not listed below
+        Reflection         = 2,  // includes misc. reflection nebula not listed below
+        Dark               = 3,
+        Planetary          = 4,
         SupernovaRemnant   = 5,
-        Bright_HII_Region  = 6,
-        NotDefined         = 7
+        HII_Region         = 6,
+        Protoplanetary     = 7
     };
+    
+    Type getNebulaType() const;
 
 private:
     ResourceHandle geometry{ InvalidResource };
+    Type type{ Type::NotDefined };
 };

@@ -28,6 +28,8 @@ DSOOctreeVisibleObjectsProcessor::DSOOctreeVisibleObjectsProcessor(DSOHandler* d
     m_frustumPlanes(frustumPlanes),
     m_limitingFactor(limitingFactor)
 {
+    for (int i = 0; i < 5; ++i)
+        m_projectedRadiusFactors[i] = m_frustumPlanes[i].normal().cwiseAbs().sum();
 }
 
 bool
@@ -39,10 +41,7 @@ DSOOctreeVisibleObjectsProcessor::checkNode(const DSOOctree::PointType& center,
     // planes that define the infinite view frustum.
     for (unsigned int i = 0; i < 5; ++i)
     {
-        const PlaneType& plane = m_frustumPlanes[i];
-
-        double r = size * plane.normal().cwiseAbs().sum();
-        if (plane.signedDistance(center) < -r)
+        if (m_frustumPlanes[i].signedDistance(center) < -m_projectedRadiusFactors[i] * size)
             return false;
     }
 

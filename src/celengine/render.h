@@ -20,6 +20,7 @@
 
 #include <celengine/body.h>
 #include <celengine/lightenv.h>
+#include <celengine/multitexture.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/shadermanager.h>
@@ -30,9 +31,11 @@
 #include <celengine/textlayout.h>
 #include <celimage/pixelformat.h>
 #include <celrender/rendererfwd.h>
+#include "renderflags.h"
 
 class RendererWatcher;
 class FrameTree;
+class LODSphereMesh;
 class ReferenceMark;
 class CurvePlot;
 class StarVertexBuffer;
@@ -113,13 +116,19 @@ class Renderer
 
     struct DetailOptions
     {
-        DetailOptions();
         unsigned int orbitPathSamplePoints{ 100 };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         double orbitWindowEnd{ 0.5 };
         double orbitPeriodsShown{ 1.0 };
         double linearFadeFraction{ 0.0 };
+
+        float renderAsterismsFadeStartDist{ 600.0f };
+        float renderAsterismsFadeEndDist{ 6.52e4f };
+        float renderBoundariesFadeStartDist{ 6.0f };
+        float renderBoundariesFadeEndDist{ 20.0f };
+        float labelConstellationsFadeStartDist{ 6.0f };
+        float labelConstellationsFadeEndDist{ 20.0f };
 #ifndef GL_ES
         bool useMesaPackInvert{ true };
 #endif
@@ -141,97 +150,10 @@ class Renderer
 
     bool getInfo(std::map<std::string, std::string>& info) const;
 
-    enum
-    {
-        NoLabels                = 0x000,
-        StarLabels              = 0x001,
-        PlanetLabels            = 0x002,
-        MoonLabels              = 0x004,
-        ConstellationLabels     = 0x008,
-        GalaxyLabels            = 0x010,
-        AsteroidLabels          = 0x020,
-        SpacecraftLabels        = 0x040,
-        LocationLabels          = 0x080,
-        CometLabels             = 0x100,
-        NebulaLabels            = 0x200,
-        OpenClusterLabels       = 0x400,
-        I18nConstellationLabels = 0x800,
-        DwarfPlanetLabels       = 0x1000,
-        MinorMoonLabels         = 0x2000,
-        GlobularLabels          = 0x4000,
-        BodyLabelMask           = (PlanetLabels | DwarfPlanetLabels | MoonLabels | MinorMoonLabels | AsteroidLabels | SpacecraftLabels | CometLabels),
-    };
-
-    enum RenderFlags : uint64_t
-    {
-        ShowNothing             = 0x0000000000000000,
-        ShowStars               = 0x0000000000000001,
-        ShowPlanets             = 0x0000000000000002,
-        ShowGalaxies            = 0x0000000000000004,
-        ShowDiagrams            = 0x0000000000000008,
-        ShowCloudMaps           = 0x0000000000000010,
-        ShowOrbits              = 0x0000000000000020,
-        ShowCelestialSphere     = 0x0000000000000040,
-        ShowNightMaps           = 0x0000000000000080,
-        ShowAtmospheres         = 0x0000000000000100,
-        ShowSmoothLines         = 0x0000000000000200,
-        ShowEclipseShadows      = 0x0000000000000400,
-        // removed flag         = 0x0000000000000800,
-        ShowRingShadows         = 0x0000000000001000,
-        ShowBoundaries          = 0x0000000000002000,
-        // removed flag         = 0x0000000000004000,
-        ShowCometTails          = 0x0000000000008000,
-        ShowMarkers             = 0x0000000000010000,
-        ShowPartialTrajectories = 0x0000000000020000,
-        ShowNebulae             = 0x0000000000040000,
-        ShowOpenClusters        = 0x0000000000080000,
-        ShowGlobulars           = 0x0000000000100000,
-        ShowCloudShadows        = 0x0000000000200000,
-        ShowGalacticGrid        = 0x0000000000400000,
-        ShowEclipticGrid        = 0x0000000000800000,
-        ShowHorizonGrid         = 0x0000000001000000,
-        ShowEcliptic            = 0x0000000002000000,
-        // options added in 1.7
-        // removed flag         = 0x0000000004000000,
-        ShowDwarfPlanets        = 0x0000000008000000,
-        ShowMoons               = 0x0000000010000000,
-        ShowMinorMoons          = 0x0000000020000000,
-        ShowAsteroids           = 0x0000000040000000,
-        ShowComets              = 0x0000000080000000,
-        ShowSpacecrafts         = 0x0000000100000000,
-        ShowFadingOrbits        = 0x0000000200000000,
-        ShowPlanetRings         = 0x0000000400000000,
-        ShowSolarSystemObjects  = ShowPlanets           |
-                                  ShowDwarfPlanets      |
-                                  ShowMoons             |
-                                  ShowMinorMoons        |
-                                  ShowAsteroids         |
-                                  ShowComets            |
-                                  ShowSpacecrafts,
-        ShowDeepSpaceObjects    = ShowGalaxies          |
-                                  ShowGlobulars         |
-                                  ShowNebulae           |
-                                  ShowOpenClusters,
-        DefaultRenderFlags      = ShowStars             |
-                                  ShowSolarSystemObjects|
-                                  ShowPlanetRings       |
-                                  ShowDeepSpaceObjects  |
-                                  ShowCloudMaps         |
-                                  ShowNightMaps         |
-                                  ShowAtmospheres       |
-                                  ShowEclipseShadows    |
-                                  ShowRingShadows       |
-                                  ShowCloudShadows      |
-                                  ShowCometTails        |
-                                  ShowPlanetRings       |
-                                  ShowFadingOrbits      |
-                                  ShowSmoothLines
-    };
-
-    uint64_t getRenderFlags() const;
-    void setRenderFlags(uint64_t);
-    int getLabelMode() const;
-    void setLabelMode(int);
+    RenderFlags getRenderFlags() const;
+    void setRenderFlags(RenderFlags);
+    RenderLabels getLabelMode() const;
+    void setLabelMode(RenderLabels);
     std::shared_ptr<celestia::engine::ProjectionMode> getProjectionMode() const;
     void setProjectionMode(std::shared_ptr<celestia::engine::ProjectionMode>);
     float getAmbientLightLevel() const;
@@ -279,8 +201,6 @@ class Renderer
 
     ColorTableType getStarColorTable() const;
     void setStarColorTable(ColorTableType);
-    [[deprecated]] bool getVideoSync() const;
-    [[deprecated]] void setVideoSync(bool);
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
 
@@ -343,8 +263,8 @@ class Renderer
 
     void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const;
 
-    void setResolution(unsigned int resolution);
-    unsigned int getResolution() const;
+    void setResolution(TextureResolution resolution);
+    TextureResolution getResolution() const;
     void enableSelectionPointer();
     void disableSelectionPointer();
 
@@ -556,7 +476,7 @@ class Renderer
                              float distance,
                              double now,
                              float nearPlaneDistance,
-                             const Matrices&);
+                             const Matrices&) const;
 
     void renderCometTail(const Body& body,
                          const Eigen::Vector3f& pos,
@@ -648,22 +568,22 @@ class Renderer
     void createShadowFBO();
 
  private:
-    ShaderManager* shaderManager{ nullptr };
+    std::unique_ptr<ShaderManager> shaderManager{ std::make_unique<ShaderManager>() };
 
-    int windowWidth;
-    int windowHeight;
-    float fov;
+    int windowWidth{ 0 };
+    int windowHeight{ 0 };
+    float fov{ celestia::engine::standardFOV };
     double cosViewConeAngle{ 0.0 };
-    int screenDpi;
+    int screenDpi{ 96 };
     float pixelSize{ 1.0f };
     std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
 
-    std::shared_ptr<celestia::engine::ProjectionMode> projectionMode{ nullptr };
+    std::shared_ptr<celestia::engine::ProjectionMode> projectionMode;
     int renderMode;
-    int labelMode;
+    RenderLabels labelMode{ RenderLabels::NoLabels };
     bool rtl{ false };
     bool showSelectionPointer{ true };
-    uint64_t renderFlags;
+    RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
     BodyClassification bodyVisibilityMask{ ~BodyClassification::EmptyMask };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar };
     float ambientLightLevel{ 0.1f };
@@ -677,7 +597,7 @@ class Renderer
 
     Eigen::Quaterniond m_cameraOrientation;
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
-    StarVertexBuffer* starVertexBuffer;
+    std::unique_ptr<StarVertexBuffer> starVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
@@ -699,10 +619,10 @@ class Renderer
     const Eigen::Matrix4f *m_projectionPtr { &m_projMatrix };
 
     bool useCompressedTextures{ false };
-    unsigned int textureResolution;
+    TextureResolution textureResolution{ TextureResolution::medres };
     DetailOptions detailOptions;
 
-    uint32_t frameCount;
+    std::uint32_t frameCount{ 0 };
 
     int currentIntervalIndex{ 0 };
 
@@ -710,24 +630,28 @@ class Renderer
 
     std::array<int, 4> m_viewport { 0, 0, 0, 0 };
 
-    typedef std::map<const celestia::ephem::Orbit*, CurvePlot*> OrbitCache;
+    using OrbitCache = std::map<const celestia::ephem::Orbit*, std::unique_ptr<CurvePlot>>;
     OrbitCache orbitCache;
-    uint32_t lastOrbitCacheFlush;
+    std::uint32_t lastOrbitCacheFlush{ 0 };
 
-    float minOrbitSize;
-    float distanceLimit;
-    float minFeatureSize;
-    uint64_t locationFilter;
+    // The minimum apparent size of an objects orbit in pixels before we display
+    // a label for it.  This minimizes label clutter.
+    float minOrbitSize{ 20.0f };
+    float distanceLimit{ 1.0e6f };
+    // The minimum apparent size of a surface feature in pixels before we display
+    // a label for it.
+    float minFeatureSize{ 20.0f };
+    std::uint64_t locationFilter{ ~UINT64_C(0) };
 
     ColorTemperatureTable starColors{ ColorTableType::SunWhite };
     ColorTemperatureTable tintColors{ ColorTableType::SunWhite };
 
     Selection highlightObject;
 
-    bool settingsChanged;
+    bool settingsChanged{ true };
 
     // True if we're in between a begin/endObjectAnnotations
-    bool objectAnnotationSetOpen;
+    bool objectAnnotationSetOpen{ false };
 
     double realTime{ true };
 
@@ -747,6 +671,10 @@ class Renderer
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
+    std::unique_ptr<LODSphereMesh> m_lodSphere;
+    std::unique_ptr<Texture> m_gaussianDiscTex;
+    std::unique_ptr<Texture> m_gaussianGlareTex;
+
     std::unique_ptr<celestia::render::AsterismRenderer> m_asterismRenderer;
     std::unique_ptr<celestia::render::BoundariesRenderer> m_boundariesRenderer;
     std::unique_ptr<celestia::render::AtmosphereRenderer> m_atmosphereRenderer;
@@ -757,6 +685,7 @@ class Renderer
     std::unique_ptr<celestia::render::LineRenderer> m_hollowMarkerRenderer;
     std::unique_ptr<celestia::render::NebulaRenderer> m_nebulaRenderer;
     std::unique_ptr<celestia::render::OpenClusterRenderer> m_openClusterRenderer;
+    std::unique_ptr<celestia::render::ReferenceMarkRenderer> m_referenceMarkRenderer;
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
@@ -817,6 +746,7 @@ class Renderer
 
     static Color SelectionCursorColor;
 
+    friend class celestia::render::AtmosphereRenderer;
     friend class StarRenderer;
 };
 

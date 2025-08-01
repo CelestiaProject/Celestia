@@ -9,9 +9,8 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
-
-#include <celcompat/filesystem.h>
 
 class CelestiaCore;
 
@@ -41,8 +40,8 @@ class IScriptPlugin
     IScriptPlugin& operator=(IScriptPlugin&&) = delete;
     virtual ~IScriptPlugin() = default;
 
-    virtual bool isOurFile(const fs::path&) const = 0;
-    virtual std::unique_ptr<IScript> loadScript(const fs::path&) = 0;
+    virtual bool isOurFile(const std::filesystem::path&) const = 0;
+    virtual std::unique_ptr<IScript> loadScript(const std::filesystem::path&) = 0;
 
     CelestiaCore *appCore() const { return m_appCore; }
 

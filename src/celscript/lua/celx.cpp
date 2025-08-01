@@ -26,6 +26,7 @@
 #include <celscript/legacy/execution.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
@@ -47,10 +48,12 @@
 #include "celx_gl.h"
 #include "celx_category.h"
 
-
 using namespace Eigen;
 using namespace std;
 using namespace std::string_view_literals;
+
+namespace util = celestia::util;
+
 using celestia::util::GetLogger;
 
 static constexpr std::array CelxClassNames
@@ -286,7 +289,7 @@ void LuaState::cleanup()
             lua_gettable(state, LUA_REGISTRYINDEX);
             if (lua_isuserdata(state, -1))
             {
-                uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_touserdata(state, -1));
+                auto savedrenderflags = static_cast<const RenderFlags*>(lua_touserdata(state, -1));
                 appCore->getRenderer()->setRenderFlags(*savedrenderflags);
                 // now delete entry:
                 lua_pushstring(state, "celestia-savedrenderflags");
@@ -455,7 +458,7 @@ bool LuaState::charEntered(const char* c_p)
         lua_gettable(costate, LUA_REGISTRYINDEX);
         if (lua_isuserdata(costate, -1))
         {
-            uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_touserdata(costate, -1));
+            auto savedrenderflags = static_cast<const RenderFlags*>(lua_touserdata(costate, -1));
             appCore->getRenderer()->setRenderFlags(*savedrenderflags);
             // now delete entry:
             lua_pushstring(costate, "celestia-savedrenderflags");
@@ -645,7 +648,7 @@ bool LuaState::handleTickEvent(double dt)
 }
 
 
-int LuaState::loadScript(istream& in, const fs::path& streamname)
+int LuaState::loadScript(istream& in, const std::filesystem::path& streamname)
 {
     char buf[4096];
     ReadChunkInfo info;
@@ -732,7 +735,7 @@ void Celx_DoError(lua_State* l, const char* errorMsg)
     lua_Debug debug;
     if (lua_getstack(l, 1, &debug) && lua_getinfo(l, "l", &debug))
     {
-        string buf = fmt::format(_("In line {}: {}"), debug.currentline, errorMsg);
+        string buf = fmt::format(fmt::runtime(_("In line {}: {}")), debug.currentline, errorMsg);
         lua_pushstring(l, buf.c_str());
     }
     else
@@ -767,10 +770,10 @@ bool LuaState::tick(double dt)
         if (lua_isnil(state, -1))
         {
             lua_pushstring(state, "celestia-savedrenderflags");
-            uint64_t* savedrenderflags = static_cast<uint64_t*>(lua_newuserdata(state, sizeof(int)));
-            *savedrenderflags = appCore->getRenderer()->getRenderFlags();
+            void* userData = lua_newuserdata(state, sizeof(RenderFlags));
+            new (userData) RenderFlags(appCore->getRenderer()->getRenderFlags());
             lua_settable(state, LUA_REGISTRYINDEX);
-            appCore->getRenderer()->setRenderFlags(0);
+            appCore->getRenderer()->setRenderFlags(RenderFlags::ShowNothing);
         }
         // now pop result of gettable
         lua_pop(state, 1);
@@ -835,7 +838,7 @@ void LuaState::requestIO()
     if (ioMode == IOMode::NotDetermined)
     {
         CelestiaCore* appCore = getAppCore(state, AllErrors);
-        auto policy = appCore->getScriptSystemAccessPolicy();
+        auto policy = appCore->requestScriptSystemAccessPolicy();
         switch (policy)
         {
         case CelestiaCore::ScriptSystemAccessPolicy::Allow:
@@ -1429,59 +1432,6 @@ bool CelxLua::isType(int index, int type) const
     return Celx_istype(m_lua, index, type);
 }
 
-Value CelxLua::getValue(int index)
-{
-    if (isInteger(index))
-        return Value((double)getInt(index));
-    if (isNumber(index))
-        return Value(getNumber(index));
-    if (isBoolean(index))
-        return Value(getBoolean(index));
-    if (isString(index))
-        return Value(getString(index));
-    if (isTable(index))
-    {
-        auto array = std::make_unique<ValueArray>();
-        auto hash = std::make_unique<Hash>();
-        push();
-        while(lua_next(m_lua, index) != 0)
-        {
-            if (isInteger(-2))
-            {
-                if (hash != nullptr)
-                {
-                    hash = nullptr;
-                }
-                if (array != nullptr)
-                {
-                    array->push_back(getValue(-1));
-                }
-            }
-            else if (isString(-2))
-            {
-                if (array != nullptr)
-                {
-                    array = nullptr;
-                }
-                if (hash != nullptr)
-                {
-                    hash->addValue(getString(-2), getValue(-1));
-                }
-            }
-            pop(1);
-            if (array == nullptr && hash == nullptr)
-                break;
-        }
-        pop(1);
-        if (hash != nullptr)
-            return Value(std::move(hash));
-        else if (array != nullptr)
-            return Value(std::move(array));
-    }
-
-    return Value();
-}
-
 void CelxLua::setClass(int id)
 {
     Celx_SetClass(m_lua, id);
@@ -1618,7 +1568,7 @@ void CelxLua::newFrame(const ObserverFrame& f)
     frame_new(m_lua, f);
 }
 
-void CelxLua::newPhase(const shared_ptr<const TimelinePhase>& phase)
+void CelxLua::newPhase(const TimelinePhase* phase)
 {
     phase_new(m_lua, phase);
 }

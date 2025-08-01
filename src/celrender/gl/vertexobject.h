@@ -35,7 +35,7 @@ public:
      *
      * @see @ref addVertexBuffer()
      */
-    enum class DataType
+    enum class DataType : GLenum
     {
         Byte            = GL_BYTE,
         UnsignedByte    = GL_UNSIGNED_BYTE,
@@ -52,7 +52,7 @@ public:
      *
      * @see @ref setIndexBuffer() @ref isIndexed()
      */
-    enum class IndexType
+    enum class IndexType : GLenum
     {
         UnsignedShort   = GL_UNSIGNED_SHORT,
         UnsignedInt     = GL_UNSIGNED_INT,
@@ -63,7 +63,7 @@ public:
      *
      * @see @ref draw() @ref draw(Primitive, int, int)
      */
-    enum class Primitive
+    enum class Primitive : GLenum
     {
         Points          = GL_POINTS,
         Lines           = GL_LINES,
@@ -136,7 +136,7 @@ public:
      *
      * @see @ref Primitive @ref VertexObject(Primitive)
      */
-    VertexObject& draw(int count, int first = 0);
+    VertexObject& draw(GLsizei count, GLint first = 0);
 
     /**
      * @brief Render VertexObject.
@@ -150,7 +150,7 @@ public:
      *
      * @see @ref Primitive @ref VertexObject(Primitive)
      */
-    VertexObject& draw(Primitive primitive, int count, int first = 0);
+    VertexObject& draw(Primitive primitive, GLsizei count, GLint first = 0);
 
     /**
      * @brief Set the primitive.
@@ -181,14 +181,14 @@ public:
      *
      * @see @ref draw()
      */
-    VertexObject& setCount(int count);
+    VertexObject& setCount(GLsizei count);
 
     /**
      * @brief Return vertex/index count.
      *
-     * @return int
+     * @return GLsizei
      */
-    int count() const;
+    GLsizei count() const;
 
     /**
      * Whether the VertexObject is indexed.
@@ -227,7 +227,7 @@ public:
      *
      * @see @ref IndexType
      */
-    VertexObject& setIndexBuffer(const Buffer &buffer, std::ptrdiff_t /*offset*/, IndexType type);
+    VertexObject& setIndexBuffer(const Buffer &buffer, std::ptrdiff_t offset, IndexType type);
 
     /**
      * @brief Add index buffer and become its owner.
@@ -238,7 +238,7 @@ public:
      *
      * @see @ref IndexType
      */
-    VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t /*offset*/, IndexType type);
+    VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t offset, IndexType type);
 
 private:
     //! Reset object to initial state
@@ -269,7 +269,7 @@ private:
     Primitive m_primitive{ Primitive::Triangles };
 
     //! GL primitive count
-    int m_count{ 0 };
+    GLsizei m_count{ 0 };
 
     //! VAO Id (OpenGL name)
     GLuint m_id{ 0 };

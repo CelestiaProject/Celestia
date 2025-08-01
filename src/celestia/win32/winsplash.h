@@ -9,12 +9,12 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <filesystem>
 #include <memory>
 #include <string_view>
 
 #include <windows.h>
 
-#include <celcompat/filesystem.h>
 #include "tstring.h"
 
 namespace celestia
@@ -31,7 +31,7 @@ namespace win32
 class SplashWindow
 {
 public:
-    SplashWindow(const fs::path& _imageFileName);
+    SplashWindow(const std::filesystem::path& _imageFileName);
     ~SplashWindow();
 
     void showSplash();
@@ -49,7 +49,7 @@ private:
     void updateWindow();
 
     HWND hwnd{ NULL };
-    fs::path imageFileName;
+    std::filesystem::path imageFileName;
     std::unique_ptr<celestia::engine::Image> image;
     HBITMAP hBitmap{ NULL };
     HBITMAP hCompositionBitmap{ NULL };

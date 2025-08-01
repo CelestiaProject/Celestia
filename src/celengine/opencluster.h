@@ -9,15 +9,19 @@
 
 #pragma once
 
+#include <cstdint>
+#include <string>
+#include <string_view>
+
 #include <Eigen/Geometry>
 
 #include <celutil/reshandle.h>
-#include <celengine/deepskyobj.h>
-
+#include "deepskyobj.h"
+#include "renderflags.h"
 
 class OpenCluster : public DeepSkyObject
 {
- public:
+public:
     OpenCluster() = default;
 
     const char* getType() const override;
@@ -27,22 +31,16 @@ class OpenCluster : public DeepSkyObject
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const AssociativeArray*, const fs::path&) override;
 
-    uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
 
     DeepSkyObjectType getObjType() const override;
 
- public:
     enum ClusterType
     {
         Open          = 0,
         Globular      = 1,
         NotDefined    = 2
     };
-
- private:
-    // TODO: It could be very useful to have a list of stars that are members
-    // of the cluster.
 };

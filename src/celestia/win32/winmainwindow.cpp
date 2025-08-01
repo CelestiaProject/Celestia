@@ -569,9 +569,9 @@ MainWindow::handleKey(WPARAM wParam, bool down)
     case VK_F8:
         if (joystickAvailable && down)
         {
-            appCore->joystickAxis(CelestiaCore::Joy_XAxis, 0);
-            appCore->joystickAxis(CelestiaCore::Joy_YAxis, 0);
-            appCore->joystickAxis(CelestiaCore::Joy_ZAxis, 0);
+            appCore->joystickAxis(CelestiaCore::JoyAxis::X, 0);
+            appCore->joystickAxis(CelestiaCore::JoyAxis::Y, 0);
+            appCore->joystickAxis(CelestiaCore::JoyAxis::Z, 0);
             useJoystick = !useJoystick;
         }
         break;
@@ -661,8 +661,8 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
         modifiers |= CelestiaCore::ShiftKey;
 
     Renderer* r = appCore->getRenderer();
-    std::uint64_t oldRenderFlags = r->getRenderFlags();
-    int oldLabelMode = r->getLabelMode();
+    RenderFlags oldRenderFlags = r->getRenderFlags();
+    RenderLabels oldLabelMode = r->getLabelMode();
     auto oldResolution = r->getResolution();
     auto oldColorTable = r->getStarColorTable();
 
@@ -730,7 +730,7 @@ MainWindow::copyData(LPARAM lParam) const
     else if ((url.size() >= 4 && url.substr(url.size() - 4) == ".cel"sv) ||
              (url.size() >= 5 && url.substr(url.size() - 5) == ".celx"sv))
     {
-        appCore->runScript(fs::u8path(url));
+        appCore->runScript(std::filesystem::u8path(url));
     }
 }
 
@@ -893,17 +893,17 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_RENDER_TEXTURERES_LOW:
-        appCore->getRenderer()->setResolution(0);
+        appCore->getRenderer()->setResolution(TextureResolution::lores);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_MEDIUM:
-        appCore->getRenderer()->setResolution(1);
+        appCore->getRenderer()->setResolution(TextureResolution::medres);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_HIGH:
-        appCore->getRenderer()->setResolution(2);
+        appCore->getRenderer()->setResolution(TextureResolution::hires);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
@@ -1071,7 +1071,7 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
                                             markerRep,
                                             1);
 
-            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | Renderer::ShowMarkers);
+            appCore->getRenderer()->setRenderFlags(appCore->getRenderer()->getRenderFlags() | RenderFlags::ShowMarkers);
         }
         break;
 
@@ -1184,8 +1184,8 @@ MainWindow::handleJoystick()
     float x = static_cast<float>(info.dwXpos) / 32768.0f - 1.0f;
     float y = static_cast<float>(info.dwYpos) / 32768.0f - 1.0f;
 
-    appCore->joystickAxis(CelestiaCore::Joy_XAxis, x);
-    appCore->joystickAxis(CelestiaCore::Joy_YAxis, y);
+    appCore->joystickAxis(CelestiaCore::JoyAxis::X, x);
+    appCore->joystickAxis(CelestiaCore::JoyAxis::Y, y);
     appCore->joystickButton(CelestiaCore::JoyButton1,
                             (info.dwButtons & 0x1) != 0);
     appCore->joystickButton(CelestiaCore::JoyButton2,
@@ -1552,9 +1552,9 @@ RegisterMainWindowClass(HINSTANCE appInstance, HCURSOR hDefaultCursor)
 void
 SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
 {
-    std::uint64_t renderFlags = appCore->getRenderer()->getRenderFlags();
+    RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
-    unsigned int textureRes = appCore->getRenderer()->getResolution();
+    TextureResolution textureRes = appCore->getRenderer()->getResolution();
 
     setMenuItemCheck(menuBar, ID_VIEW_SHOW_FRAMES,
                      appCore->getFramesVisible());
@@ -1586,11 +1586,11 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
     CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ?     MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
-                  textureRes == 0 ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == TextureResolution::lores ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_MEDIUM,
-                  textureRes == 1 ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == TextureResolution::medres ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_HIGH,
-                  textureRes == 2 ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == TextureResolution::hires ? MF_CHECKED : MF_UNCHECKED);
 
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);
@@ -1604,7 +1604,7 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
     }
 
     CheckMenuItem(menuBar, ID_RENDER_ANTIALIASING,
-        ((renderFlags & Renderer::ShowSmoothLines) != 0)? MF_CHECKED : MF_UNCHECKED);
+                  util::is_set(renderFlags, RenderFlags::ShowSmoothLines) ? MF_CHECKED : MF_UNCHECKED);
 }
 
 void

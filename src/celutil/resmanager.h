@@ -9,12 +9,12 @@
 
 #pragma once
 
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include <celcompat/filesystem.h>
 #include <celutil/reshandle.h>
 
 
@@ -28,7 +28,7 @@ enum class ResourceState {
 template<class T> class ResourceManager
 {
  public:
-    explicit ResourceManager(const fs::path& _baseDir) : baseDir(_baseDir) {};
+    explicit ResourceManager(const std::filesystem::path& _baseDir) : baseDir(_baseDir) {};
     ~ResourceManager() = default;
 
     ResourceManager(const ResourceManager&) = delete;
@@ -84,7 +84,7 @@ template<class T> class ResourceManager
         InfoType(InfoType&&) noexcept = default;
         InfoType& operator=(InfoType&&) noexcept = default;
 
-        KeyType resolve(const fs::path& _baseDir) { return info.resolve(_baseDir); }
+        KeyType resolve(const std::filesystem::path& _baseDir) { return info.resolve(_baseDir); }
         bool load(const KeyType& resolvedKey)
         {
             resource = info.load(resolvedKey);
@@ -96,7 +96,7 @@ template<class T> class ResourceManager
     using ResourceHandleMap = std::map<T, ResourceHandle>;
     using NameMap = std::map<KeyType, std::weak_ptr<ResourceType>>;
 
-    fs::path baseDir;
+    std::filesystem::path baseDir;
     ResourceTable resources{ };
     ResourceHandleMap handles{ };
     NameMap loadedResources{ };

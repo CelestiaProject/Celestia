@@ -103,15 +103,6 @@ CometRenderer::initGL()
 }
 
 void
-CometRenderer::deinitGL()
-{
-    m_initialized = false;
-    m_vo = nullptr;
-    m_bo = nullptr;
-    m_io = nullptr;
-}
-
-void
 CometRenderer::render(const Body &body,
                       const Observer &observer,
                       const Eigen::Vector3f &pos,

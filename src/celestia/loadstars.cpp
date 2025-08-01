@@ -9,9 +9,9 @@
 
 #include "loadstars.h"
 
+#include <filesystem>
 #include <fstream>
 
-#include <celcompat/filesystem.h>
 #include <celengine/stardb.h>
 #include <celengine/stardbbuilder.h>
 #include <celestia/catalogloader.h>
@@ -29,7 +29,7 @@ namespace
 {
 
 void
-loadCrossIndex(StarNameDatabase& starNamesDB, StarCatalog catalog, const fs::path &filename)
+loadCrossIndex(StarNameDatabase& starNamesDB, StarCatalog catalog, const std::filesystem::path &filename)
 {
     if (filename.empty())
         return;
@@ -103,7 +103,7 @@ loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
                       config.paths.skipExtras);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs list.
-    fs::path empty;
+    std::filesystem::path empty;
     for (const auto &file : config.paths.starCatalogFiles)
         loader.process(file, empty);
 

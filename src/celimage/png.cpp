@@ -12,11 +12,11 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstddef>
+#include <filesystem>
 
 #include <png.h>
 #include <zlib.h>
 
-#include <celcompat/filesystem.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "image.h"
@@ -33,7 +33,7 @@ namespace
 [[noreturn]] void
 PNGError(png_structp pngPtr, png_const_charp error) //NOSONAR
 {
-    auto filename = static_cast<const fs::path*>(png_get_error_ptr(pngPtr));
+    auto filename = static_cast<const std::filesystem::path*>(png_get_error_ptr(pngPtr));
     util::GetLogger()->error(_("PNG error in '{}': {}\n"), *filename, error);
     png_longjmp(pngPtr, static_cast<int>(true));
 }
@@ -41,7 +41,7 @@ PNGError(png_structp pngPtr, png_const_charp error) //NOSONAR
 void
 PNGWarn(png_structp pngPtr, png_const_charp warning) //NOSONAR
 {
-    auto filename = static_cast<const fs::path*>(png_get_error_ptr(pngPtr));
+    auto filename = static_cast<const std::filesystem::path*>(png_get_error_ptr(pngPtr));
     util::GetLogger()->warn(_("PNG warning in '{}': {}\n"), *filename, warning);
 }
 
@@ -97,7 +97,7 @@ GetPixelFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int co
 }
 
 Image*
-LoadPNGImage(std::FILE* in, const fs::path& filename)
+LoadPNGImage(std::FILE* in, const std::filesystem::path& filename)
 {
     constexpr std::size_t headerSize = 8;
     png_byte header[headerSize]; //NOSONAR
@@ -120,7 +120,7 @@ LoadPNGImage(std::FILE* in, const fs::path& filename)
     }
 
     pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-                                    const_cast<fs::path*>(&filename), //NOSONAR
+                                    const_cast<std::filesystem::path*>(&filename), //NOSONAR
                                     &PNGError,
                                     &PNGWarn);
     if (pngPtr == nullptr)
@@ -178,7 +178,7 @@ LoadPNGImage(std::FILE* in, const fs::path& filename)
 
 bool
 SavePNGImage(std::FILE* out,
-             const fs::path& filename,
+             const std::filesystem::path& filename,
              std::int32_t width,
              std::int32_t height,
              std::int32_t rowStride,
@@ -189,7 +189,7 @@ SavePNGImage(std::FILE* out,
     png_infop infoPtr = nullptr;
 
     pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                     const_cast<fs::path*>(&filename), //NOSONAR
+                                     const_cast<std::filesystem::path*>(&filename), //NOSONAR
                                      &PNGError,
                                      &PNGWarn);
     if (pngPtr == nullptr)
@@ -244,7 +244,7 @@ SavePNGImage(std::FILE* out,
 
 } // end unnamed namespace
 
-Image* LoadPNGImage(const fs::path& filename)
+Image* LoadPNGImage(const std::filesystem::path& filename)
 {
 #ifdef _WIN32
     std::FILE* fp = _wfopen(filename.c_str(), L"rb");
@@ -263,7 +263,7 @@ Image* LoadPNGImage(const fs::path& filename)
     return img;
 }
 
-bool SavePNGImage(const fs::path& filename, const Image& image)
+bool SavePNGImage(const std::filesystem::path& filename, const Image& image)
 {
     if (auto format = image.getFormat();
         format != PixelFormat::RGB && format != PixelFormat::RGBA)

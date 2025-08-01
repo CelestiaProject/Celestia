@@ -15,10 +15,7 @@
 
 #include <celutil/color.h>
 
-
-class LODSphereMesh;
 class Texture;
-
 
 struct RenderInfo
 {
@@ -42,5 +39,3 @@ struct RenderInfo
     float pointScale{ 1.0f };
     bool isStar{ false };
 };
-
-extern LODSphereMesh* g_lodSphere;

@@ -80,6 +80,35 @@ GetRegistryInt(HKEY key, LPCTSTR value, T& intVal)
     return true;
 }
 
+template<typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+bool
+GetRegistryEnum(HKEY key, LPCTSTR value, T& enumVal)
+{
+    if (std::underlying_type_t<T> intVal = 0; GetRegistryInt(key, value, intVal))
+    {
+        enumVal = static_cast<T>(intVal);
+        return true;
+    }
+
+    return false;
+}
+
+template<typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+bool
+GetRegistryEnum(HKEY key, LPCTSTR value, T& enumVal, T minValue, T maxValue)
+{
+    const auto minInteger = static_cast<std::underlying_type_t<T>>(minValue);
+    const auto maxInteger = static_cast<std::underlying_type_t<T>>(maxValue);
+    if (std::underlying_type_t<T> intVal = 0;
+        GetRegistryInt(key, value, intVal) && intVal >= minInteger && intVal <= maxInteger)
+    {
+        enumVal = static_cast<T>(intVal);
+        return true;
+    }
+
+    return false;
+}
+
 template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
 bool
 GetRegistryFloat(HKEY key, LPCTSTR value, T& floatVal)
@@ -158,6 +187,13 @@ SetRegistryInt(HKEY key, LPCTSTR value, T intVal)
     return err == ERROR_SUCCESS;
 }
 
+template<typename T,
+         std::enable_if_t<std::is_enum_v<T>, int> = 0>
+bool
+SetRegistryEnum(HKEY key, LPCTSTR value, T enumVal)
+{
+    return SetRegistryInt(key, value, static_cast<std::underlying_type_t<T>>(enumVal));
+}
 
 bool
 SetRegistryString(HKEY key, LPCTSTR value, std::string_view strVal)
@@ -211,11 +247,10 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("Height"), prefs.winHeight);
     GetRegistryInt(key, TEXT("XPos"), prefs.winX);
     GetRegistryInt(key, TEXT("YPos"), prefs.winY);
-    GetRegistryInt(key, TEXT("RenderFlags"), prefs.renderFlags);
-    GetRegistryInt(key, TEXT("LabelMode"), prefs.labelMode);
+    GetRegistryEnum(key, TEXT("RenderFlags"), prefs.renderFlags);
+    GetRegistryEnum(key, TEXT("LabelMode"), prefs.labelMode);
     GetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
-    if (int orbitMask = 0; GetRegistryInt(key, TEXT("OrbitMask"), orbitMask))
-        prefs.orbitMask = static_cast<BodyClassification>(orbitMask);
+    GetRegistryEnum(key, TEXT("OrbitMask"), prefs.orbitMask);
     GetRegistryFloat(key, TEXT("Exposure"), prefs.exposure);
     GetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
     GetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
@@ -225,15 +260,15 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, TEXT("FullScreenMode"), prefs.fullScreenMode);
     GetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
     GetRegistryInt(key, TEXT("LastVersion"), prefs.lastVersion);
-    GetRegistryInt(key, TEXT("TextureResolution"), prefs.textureResolution);
+    GetRegistryEnum(key, TEXT("TextureResolution"), prefs.textureResolution, TextureResolution::lores, TextureResolution::hires);
 
     if (std::string altSurfaceName; GetRegistryString(key, TEXT("AltSurface"), altSurfaceName))
         prefs.altSurfaceName = std::move(altSurfaceName);
 
     if (prefs.lastVersion < 0x01020500)
     {
-        prefs.renderFlags |= Renderer::ShowCometTails;
-        prefs.renderFlags |= Renderer::ShowRingShadows;
+        prefs.renderFlags |= RenderFlags::ShowCometTails;
+        prefs.renderFlags |= RenderFlags::ShowRingShadows;
     }
 
 #ifndef PORTABLE_BUILD
@@ -270,8 +305,8 @@ SavePreferencesToRegistry(AppPreferences& prefs)
     SetRegistryInt(key, TEXT("Height"), prefs.winHeight);
     SetRegistryInt(key, TEXT("XPos"), prefs.winX);
     SetRegistryInt(key, TEXT("YPos"), prefs.winY);
-    SetRegistryInt(key, TEXT("RenderFlags"), prefs.renderFlags);
-    SetRegistryInt(key, TEXT("LabelMode"), prefs.labelMode);
+    SetRegistryEnum(key, TEXT("RenderFlags"), prefs.renderFlags);
+    SetRegistryEnum(key, TEXT("LabelMode"), prefs.labelMode);
     SetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
     SetRegistryInt(key, TEXT("OrbitMask"), static_cast<std::uint32_t>(prefs.orbitMask));
     SetRegistryFloat(key, TEXT("Exposure"), prefs.exposure);
@@ -284,7 +319,7 @@ SavePreferencesToRegistry(AppPreferences& prefs)
     SetRegistryInt(key, TEXT("LastVersion"), prefs.lastVersion);
     SetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
     SetRegistryString(key, TEXT("AltSurface"), prefs.altSurfaceName);
-    SetRegistryInt(key, TEXT("TextureResolution"), prefs.textureResolution);
+    SetRegistryEnum(key, TEXT("TextureResolution"), prefs.textureResolution);
 #ifndef PORTABLE_BUILD
     SetRegistryInt(key, TEXT("IgnoreOldFavorites"), prefs.ignoreOldFavorites ? INT32_C(1) : INT32_C(0));
 #endif

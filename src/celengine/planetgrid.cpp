@@ -10,30 +10,37 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "planetgrid.h"
+
+#include <algorithm>
+#include <cassert>
 #include <cmath>
+#include <iterator>
+
 #include <Eigen/Geometry>
 #include <fmt/format.h>
+
 #include <celastro/date.h>
 #include <celcompat/numbers.h>
+#include <celmath/ellipsoid.h>
 #include <celmath/geomutil.h>
 #include <celmath/intersect.h>
+#include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celrender/linerenderer.h>
+#include <celrender/referencemarkrenderer.h>
 #include "body.h"
-#include "planetgrid.h"
 #include "render.h"
 
-using namespace celestia;
-using celestia::render::LineRenderer;
+using namespace std::string_view_literals;
 
-LineRenderer *PlanetographicGrid::latitudeRenderer = nullptr;
-LineRenderer *PlanetographicGrid::equatorRenderer = nullptr;
-LineRenderer *PlanetographicGrid::longitudeRenderer = nullptr;
-bool PlanetographicGrid::initialized = false;
+namespace astro = celestia::astro;
+namespace math = celestia::math;
+namespace render = celestia::render;
 
 namespace
 {
-constexpr unsigned circleSubdivisions = 100;
+constexpr unsigned int circleSubdivisions = 100U;
 
 void longLatLabel(const std::string& labelText,
                   double longitude,
@@ -44,23 +51,27 @@ void longLatLabel(const std::string& labelText,
                   const Eigen::Quaterniond& bodyOrientation,
                   const Eigen::Vector3f& semiAxes,
                   float labelOffset,
-                  Renderer* renderer)
+                  Renderer& renderer)
 {
-    double theta = math::degToRad(longitude);
-    double phi = math::degToRad(latitude);
-    Eigen::Vector3d pos( cos(phi) * cos(theta) * semiAxes.x(),
-                         sin(phi) * semiAxes.y(),
-                        -cos(phi) * sin(theta) * semiAxes.z());
+    double stheta;
+    double ctheta;
+    math::sincos(math::degToRad(longitude), stheta, ctheta);
+    double sphi;
+    double cphi;
+    math::sincos(math::degToRad(latitude), sphi, cphi);
+    Eigen::Vector3d pos( cphi * ctheta * semiAxes.x(),
+                         sphi * semiAxes.y(),
+                        -cphi * stheta * semiAxes.z());
 
-    float nearDist = renderer->getNearPlaneDistance();
+    float nearDist = renderer.getNearPlaneDistance();
 
-    pos = pos * (1.0 + labelOffset);
+    pos *= 1.0 + labelOffset;
 
     double boundingRadius = semiAxes.maxCoeff();
 
     // Draw the label only if it isn't obscured by the body ellipsoid
-    if (double t = 0.0; testIntersection(Eigen::ParametrizedLine<double, 3>(viewRayOrigin, pos - viewRayOrigin),
-                                         math::Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
+    if (double t = 0.0; math::testIntersection(Eigen::ParametrizedLine<double, 3>(viewRayOrigin, pos - viewRayOrigin),
+                                               math::Ellipsoidd(semiAxes.cast<double>()), t) && t >= 1.0)
     {
         // Compute the position of the label
         Eigen::Vector3d labelPos = bodyCenter +
@@ -72,33 +83,98 @@ void longLatLabel(const std::string& labelText,
         double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
 
-        renderer->addObjectAnnotation(nullptr, labelText,
-                                      Renderer::PlanetographicGridLabelColor,
-                                      labelPos.cast<float>(),
-                                      Renderer::LabelHorizontalAlignment::Start,
-                                      Renderer::LabelVerticalAlignment::Bottom);
+        renderer.addObjectAnnotation(nullptr, labelText,
+                                     Renderer::PlanetographicGridLabelColor,
+                                     labelPos.cast<float>(),
+                                     Renderer::LabelHorizontalAlignment::Start,
+                                     Renderer::LabelVerticalAlignment::Bottom);
     }
-}
-} // namespace
-
-PlanetographicGrid::PlanetographicGrid(const Body& _body) :
-    body(_body)
-{
-    setTag("planetographic grid");
-    setIAULongLatConvention();
 }
 
 void
-PlanetographicGrid::render(Renderer* renderer,
-                           const Eigen::Vector3f& pos,
-                           float discSizeInPixels,
-                           double tdb,
-                           const Matrices& m) const
+latitudeLabel(std::string& buf,
+              int latitude,
+              PlanetographicGrid::NorthDirection northDirection)
 {
-    InitializeGeometry(*renderer);
+    buf.clear();
+    char ns = (latitude < 0) != (northDirection == PlanetographicGrid::NorthDirection::NorthNormal)
+        ? 'N'
+        : 'S';
 
-    // Compatibility
-    Eigen::Quaterniond q = math::YRot180<double> * body.getEclipticToBodyFixed(tdb);
+    fmt::format_to(std::back_inserter(buf), "{}{}", std::abs(latitude), ns);
+}
+
+void
+longitudeLabel(std::string& buf,
+               int longitude,
+               PlanetographicGrid::LongitudeConvention longitudeConvention)
+{
+    buf.clear();
+    auto it = std::back_inserter(buf);
+    switch (longitudeConvention)
+    {
+    case PlanetographicGrid::LongitudeConvention::EastWest:
+        if (longitude >= 0)
+            fmt::format_to(it, "{}E", longitude);
+        else
+            fmt::format_to(it, "{}W", -longitude);
+        break;
+
+    case PlanetographicGrid::LongitudeConvention::Eastward:
+        fmt::format_to(it, "{}E", longitude > 0 ? 360 - longitude : std::abs(longitude));
+        break;
+
+    case PlanetographicGrid::LongitudeConvention::Westward:
+        fmt::format_to(it, "{}W", longitude > 0 ? 360 - longitude : std::abs(longitude));
+
+    default:
+        assert(0);
+        break;
+    }
+}
+
+class RenderDetails
+{
+public:
+    explicit RenderDetails(render::ReferenceMarkRenderer&,
+                           const Body&,
+                           const Eigen::Vector3f&,
+                           float,
+                           double,
+                           const Matrices&);
+
+    RenderDetails(const RenderDetails&) = delete;
+    RenderDetails& operator=(const RenderDetails&) = delete;
+
+    void renderLatitude(int, std::string&, bool, PlanetographicGrid::NorthDirection) const;
+    void renderLongitude(int, std::string&, bool, PlanetographicGrid::LongitudeConvention) const;
+
+private:
+    Eigen::Matrix4f modelView;
+    Eigen::Matrix4f projection;
+    Eigen::Quaterniond q;
+    Eigen::Vector3d posd;
+    Eigen::Vector3d viewRayOrigin;
+    Eigen::Vector3d viewNormal;
+    Eigen::Vector3f semiAxes;
+    float offset;
+    Renderer& renderer;
+    render::PlanetGridRenderer& planetGridRenderer;
+};
+
+RenderDetails::RenderDetails(render::ReferenceMarkRenderer& refMarkRenderer,
+                             const Body& body,
+                             const Eigen::Vector3f& pos,
+                             float discSizeInPixels,
+                             double tdb,
+                             const Matrices& m) :
+    projection(*m.projection),
+    q(math::YRot180<double> * body.getEclipticToBodyFixed(tdb)), // Celestia coordinates
+    posd(pos.cast<double>()),
+    semiAxes(body.getSemiAxes()),
+    renderer(refMarkRenderer.renderer()),
+    planetGridRenderer(refMarkRenderer.planetGridRenderer())
+{
     Eigen::Quaternionf qf = q.cast<float>();
 
     // The grid can't be rendered exactly on the planet sphere, or
@@ -106,139 +182,125 @@ PlanetographicGrid::render(Renderer* renderer,
     // planet that will place it about one pixel away from the planet.
     float scale = (discSizeInPixels + 1) / discSizeInPixels;
     scale = std::max(scale, 1.001f);
-    float offset = scale - 1.0f;
+    offset = scale - 1.0f;
 
-    Eigen::Vector3f semiAxes = body.getSemiAxes();
-    Eigen::Vector3d posd = pos.cast<double>();
-    Eigen::Vector3d viewRayOrigin = q * -posd;
+    viewRayOrigin = q * -posd;
 
     // Calculate the view normal; this is used for placement of the long/lat
     // label text.
-    Eigen::Vector3f vn = renderer->getCameraOrientationf().conjugate() * -Eigen::Vector3f::UnitZ();
-    Eigen::Vector3d viewNormal = vn.cast<double>();
+    Eigen::Vector3f vn = refMarkRenderer.renderer().getCameraOrientationf().conjugate() * -Eigen::Vector3f::UnitZ();
+    viewNormal = vn.cast<double>();
+
+    Eigen::Affine3f transform = Eigen::Translation3f(pos) * qf.conjugate() * Eigen::Scaling(scale * semiAxes);
+    modelView = *m.modelview * transform.matrix();
+}
+
+void
+RenderDetails::renderLatitude(int latitudeStep,
+                              std::string& buf,
+                              bool showCoordinateLabels,
+                              PlanetographicGrid::NorthDirection northDirection) const
+{
+    render::LineRenderer& latitudeRenderer = planetGridRenderer.latitudeRenderer();
+    render::LineRenderer& equatorRenderer = planetGridRenderer.equatorRenderer();
+
+    for (int latitude = -90 + latitudeStep; latitude < 90; latitude += latitudeStep)
+    {
+        float sphi;
+        float r;
+        math::sincos(math::degToRad(static_cast<float>(latitude)), sphi, r);
+
+        Eigen::Matrix4f mvcur = modelView * math::translate(0.0f, sphi, 0.0f) * math::scale(r);
+        if (latitude == 0)
+        {
+            latitudeRenderer.finish();
+            equatorRenderer.render({&projection, &mvcur},
+                                   Renderer::PlanetEquatorColor,
+                                   circleSubdivisions+1);
+            equatorRenderer.finish();
+        }
+        else
+        {
+            latitudeRenderer.render({&projection, &mvcur},
+                                    Renderer::PlanetographicGridColor,
+                                    circleSubdivisions+1);
+        }
+
+        if (showCoordinateLabels && latitude != 0 && std::abs(latitude) < 90)
+        {
+            latitudeLabel(buf, latitude, northDirection);
+            longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+            longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+        }
+    }
+    latitudeRenderer.finish();
+    equatorRenderer.finish();
+}
+
+void
+RenderDetails::renderLongitude(int longitudeStep,
+                               std::string& buf,
+                               bool showCoordinateLabels,
+                               PlanetographicGrid::LongitudeConvention longitudeConvention) const
+{
+    render::LineRenderer& longitudeRenderer = planetGridRenderer.longitudeRenderer();
+    for (int longitude = 0; longitude <= 180; longitude += longitudeStep)
+    {
+        Eigen::Matrix4f mvcur = modelView * math::rotate(Eigen::AngleAxisf(math::degToRad(static_cast<float>(longitude)),
+                                                                           Eigen::Vector3f::UnitY()));
+
+        longitudeRenderer.render({&projection, &mvcur},
+                                 Renderer::PlanetographicGridColor,
+                                 circleSubdivisions + 1);
+
+        if (!showCoordinateLabels)
+            continue;
+
+        longitudeLabel(buf, longitude, longitudeConvention);
+        longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+        if (longitude > 0 && longitude < 180)
+        {
+            longitudeLabel(buf, -longitude, longitudeConvention);
+            longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
+        }
+    }
+
+    longitudeRenderer.finish();
+}
+
+} // namespace
+
+PlanetographicGrid::PlanetographicGrid(const Body& _body) :
+    body(_body)
+{
+    setIAULongLatConvention();
+}
+
+void
+PlanetographicGrid::render(render::ReferenceMarkRenderer* refMarkRenderer,
+                           const Eigen::Vector3f& pos,
+                           float discSizeInPixels,
+                           double tdb,
+                           const Matrices& m) const
+{
+    RenderDetails renderDetails(*refMarkRenderer, body, pos, discSizeInPixels, tdb, m);
+
+    Renderer& renderer = refMarkRenderer->renderer();
 
     Renderer::PipelineState ps;
     ps.depthMask = true;
     ps.depthTest = true;
     ps.smoothLines = true;
-    renderer->setPipelineState(ps);
-
-    Eigen::Affine3f transform = Eigen::Translation3f(pos) * qf.conjugate() * Eigen::Scaling(scale * semiAxes);
-    Eigen::Matrix4f projection = *m.projection;
-    Eigen::Matrix4f modelView = *m.modelview * transform.matrix();
+    renderer.setPipelineState(ps);
 
     // Only show the coordinate labels if the body is sufficiently large on screen
-    bool showCoordinateLabels = false;
-    if (discSizeInPixels > 50)
-        showCoordinateLabels = true;
+    bool showCoordinateLabels = discSizeInPixels > 50;
 
-    float latitudeStep = minLatitudeStep;
-    float longitudeStep = minLongitudeStep;
-    if (discSizeInPixels < 200)
-    {
-        latitudeStep = 30.0f;
-        longitudeStep = 30.0f;
-    }
+    int stepSize = discSizeInPixels < 200 ? 30 : 10;
+    std::string buf;
 
-    for (float latitude = -90.0f + latitudeStep; latitude < 90.0f; latitude += latitudeStep)
-    {
-        float phi = math::degToRad(latitude);
-        float r = std::cos(phi);
-
-        Eigen::Matrix4f mvcur = modelView * math::translate(0.0f, std::sin(phi), 0.0f) * math::scale(r);
-        if (latitude == 0.0f)
-        {
-            latitudeRenderer->finish();
-            equatorRenderer->render({&projection, &mvcur},
-                                    Renderer::PlanetEquatorColor,
-                                    circleSubdivisions+1);
-            equatorRenderer->finish();
-        }
-        else
-        {
-            latitudeRenderer->render({&projection, &mvcur},
-                                     Renderer::PlanetographicGridColor,
-                                     circleSubdivisions+1);
-        }
-
-        if (showCoordinateLabels)
-        {
-            if (latitude != 0.0f && abs(latitude) < 90.0f)
-            {
-                char ns;
-                if (latitude < 0.0f)
-                    ns = northDirection == NorthNormal ? 'S' : 'N';
-                else
-                    ns = northDirection == NorthNormal ? 'N' : 'S';
-
-                auto buf = fmt::format("{}{}", static_cast<int>(fabs(latitude)), ns);
-                longLatLabel(buf, 0.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
-                longLatLabel(buf, 180.0, latitude, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
-            }
-        }
-    }
-    latitudeRenderer->finish();
-    equatorRenderer->finish();
-
-    for (float longitude = 0.0f; longitude <= 180.0f; longitude += longitudeStep)
-    {
-        Eigen::Matrix4f mvcur = modelView * math::rotate(Eigen::AngleAxisf(math::degToRad(longitude), Eigen::Vector3f::UnitY()));
-
-        longitudeRenderer->render({&projection, &mvcur},
-                                  Renderer::PlanetographicGridColor,
-                                  circleSubdivisions+1);
-
-        if (showCoordinateLabels)
-        {
-            int showLongitude = 0;
-            char ew = 'E';
-
-            switch (longitudeConvention)
-            {
-            case EastWest:
-                ew = 'E';
-                showLongitude = (int) longitude;
-                break;
-            case Eastward:
-                if (longitude > 0.0f)
-                    showLongitude = 360 - (int) longitude;
-                ew = 'E';
-                break;
-            case Westward:
-                if (longitude > 0.0f)
-                    showLongitude = 360 - (int) longitude;
-                ew = 'W';
-                break;
-            }
-
-            auto buf = fmt::format("{}{}", showLongitude, ew);
-            longLatLabel(buf, longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
-            if (longitude > 0.0f && longitude < 180.0f)
-            {
-                showLongitude = (int) longitude;
-                switch (longitudeConvention)
-                {
-                case EastWest:
-                    ew = 'W';
-                    showLongitude = (int) longitude;
-                    break;
-                case Eastward:
-                    showLongitude = (int) longitude;
-                    ew = 'E';
-                    break;
-                case Westward:
-                    showLongitude = (int) longitude;
-                    ew = 'W';
-                    break;
-                }
-
-                buf = fmt::format("{}{}", showLongitude, ew);
-                longLatLabel(buf, -longitude, 0.0, viewRayOrigin, viewNormal, posd, q, semiAxes, offset, renderer);
-            }
-        }
-    }
-    longitudeRenderer->finish();
-
+    renderDetails.renderLatitude(stepSize, buf, showCoordinateLabels, northDirection);
+    renderDetails.renderLongitude(stepSize, buf, showCoordinateLabels, longitudeConvention);
 }
 
 float
@@ -256,55 +318,23 @@ PlanetographicGrid::setIAULongLatConvention()
 {
     if (body.getName() == "Earth" || body.getName() == "Moon")
     {
-        northDirection = NorthNormal;
-        longitudeConvention = EastWest;
+        northDirection = NorthDirection::NorthNormal;
+        longitudeConvention = LongitudeConvention::EastWest;
+    }
+    else if (body.getAngularVelocity(astro::J2000).y() >= 0.0)
+    {
+        northDirection = NorthDirection::NorthNormal;
+        longitudeConvention = LongitudeConvention::Westward;
     }
     else
     {
-        if (body.getAngularVelocity(astro::J2000).y() >= 0.0)
-        {
-            northDirection = NorthNormal;
-            longitudeConvention = Westward;
-        }
-        else
-        {
-            northDirection = NorthReversed;
-            longitudeConvention = Eastward;
-        }
+        northDirection = NorthDirection::NorthReversed;
+        longitudeConvention = LongitudeConvention::Eastward;
     }
 }
 
-void
-PlanetographicGrid::InitializeGeometry(const Renderer &renderer)
+std::string_view
+PlanetographicGrid::defaultTag() const
 {
-    if (initialized)
-        return;
-    initialized = true;
-
-    latitudeRenderer  = new LineRenderer(renderer, 1.0f, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Static);
-    equatorRenderer   = new LineRenderer(renderer, 2.0f, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Static);
-    longitudeRenderer = new LineRenderer(renderer, 1.0f, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Static);
-
-    for (unsigned int i = 0; i <= circleSubdivisions + 1; i++)
-    {
-        float theta = (2.0f * celestia::numbers::pi_v<float>) * (float) i / (float) circleSubdivisions;
-        float s, c;
-        math::sincos(theta, s, c);
-        Eigen::Vector3f latitudePoint(c, 0.0f, s);
-        Eigen::Vector3f longitudePoint(c, s, 0.0f);
-        latitudeRenderer->addVertex(latitudePoint);
-        equatorRenderer->addVertex(latitudePoint);
-        longitudeRenderer->addVertex(longitudePoint);
-    }
-}
-
-void
-PlanetographicGrid::deinit()
-{
-    delete latitudeRenderer;
-    latitudeRenderer = nullptr;
-    delete equatorRenderer;
-    equatorRenderer = nullptr;
-    delete longitudeRenderer;
-    longitudeRenderer = nullptr;
+    return "planetographic grid"sv;
 }

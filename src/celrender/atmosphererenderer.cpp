@@ -87,14 +87,6 @@ void AtmosphereRenderer::initGL()
     m_vo->setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
-void AtmosphereRenderer::deinitGL()
-{
-    m_initialized = false;
-    m_vo = nullptr;
-    m_bo = nullptr;
-    m_io = nullptr;
-}
-
 void
 AtmosphereRenderer::computeLegacy(
     const Atmosphere         &atmosphere,
@@ -402,10 +394,10 @@ AtmosphereRenderer::render(
     ps.depthTest = true;
     m_renderer.setPipelineState(ps);
 
-    g_lodSphere->render(LODSphereMesh::Normals,
-                        frustum,
-                        ri.pixWidth,
-                        nullptr);
+    m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
+                                   frustum,
+                                   ri.pixWidth,
+                                   nullptr);
 
     glFrontFace(GL_CCW);
 }

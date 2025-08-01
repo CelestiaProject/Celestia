@@ -643,7 +643,7 @@ namespace
 {
 
 FT_Face
-LoadFontFace(FT_Library ft, const fs::path &path, int index, int size, int dpi)
+LoadFontFace(FT_Library ft, const std::filesystem::path &path, int index, int size, int dpi)
 {
     FT_Face face;
 
@@ -673,8 +673,8 @@ LoadFontFace(FT_Library ft, const fs::path &path, int index, int size, int dpi)
 } // namespace
 
 // temporary while no fontconfig support
-fs::path
-ParseFontName(const fs::path &filename, int &index, int &size)
+std::filesystem::path
+ParseFontName(const std::filesystem::path &filename, int &index, int &size)
 {
     // Format with font path/collection index(if any)/font size(if any)
     auto fn = filename.string();
@@ -695,7 +695,7 @@ ParseFontName(const fs::path &filename, int &index, int &size)
 
 struct FontCacheKey
 {
-    fs::path filename;
+    std::filesystem::path filename;
     int index;
     int size;
     int screenDpi;
@@ -717,7 +717,7 @@ template<> struct std::hash<FontCacheKey>
 using FontCache = std::unordered_map<FontCacheKey, std::weak_ptr<TextureFont>>;
 
 std::shared_ptr<TextureFont>
-LoadTextureFont(const Renderer *r, const fs::path &filename, int index, int size)
+LoadTextureFont(const Renderer *r, const std::filesystem::path &filename, int index, int size)
 {
     // Init FreeType library
     static FT_Library ftlib = nullptr;

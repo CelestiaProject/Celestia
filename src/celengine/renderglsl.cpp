@@ -43,6 +43,8 @@
 
 using namespace celestia;
 
+namespace util = celestia::util;
+
 namespace
 {
 
@@ -124,12 +126,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           Atmosphere* atmosphere,
                           float cloudTexOffset,
                           const Eigen::Vector3f& semiAxes,
-                          unsigned int textureRes,
-                          std::uint64_t renderFlags,
+                          TextureResolution textureRes,
+                          RenderFlags renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
                           const math::Frustum& frustum,
                           const Matrices &m,
-                          Renderer* renderer)
+                          Renderer* renderer,
+                          LODSphereMesh* lodSphere)
 {
     float radius = semiAxes.maxCoeff();
 
@@ -186,7 +189,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     if (atmosphere != nullptr)
     {
-        if ((renderFlags & Renderer::ShowAtmospheres) != 0)
+        if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
@@ -194,11 +197,11 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                 shadprop.texUsage |= TexUsage::Scattering;
         }
 
-        if ((renderFlags & Renderer::ShowCloudMaps) != 0 &&
-            (renderFlags & Renderer::ShowCloudShadows) != 0)
+        if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
+            util::is_set(renderFlags, RenderFlags::ShowCloudShadows))
         {
             Texture* cloudTex = nullptr;
-            if (atmosphere->cloudTexture.tex[textureRes] != InvalidResource)
+            if (atmosphere->cloudTexture.texture(textureRes) != InvalidResource)
                 cloudTex = atmosphere->cloudTexture.find(textureRes);
 
             // The current implementation of cloud shadows is not compatible
@@ -348,9 +351,9 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
-    g_lodSphere->render(attributes,
-                        frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()), prog);
+    lodSphere->render(attributes,
+                      frustum, ri.pixWidth,
+                      textures.data(), static_cast<int>(textures.size()), prog);
 }
 
 
@@ -366,7 +369,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
                          float geometryScale,
-                         std::uint64_t renderFlags,
+                         RenderFlags renderFlags,
                          const Eigen::Quaternionf& planetOrientation,
                          double tsec,
                          const Matrices &m,
@@ -440,7 +443,7 @@ void renderGeometry_GLSL(Geometry* geometry,
 
     GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation, m.modelview, m.projection);
 
-    if ((renderFlags & Renderer::ShowAtmospheres) != 0)
+    if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
     {
         rc.setAtmosphere(atmosphere);
     }
@@ -490,7 +493,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
                                float geometryScale,
-                               std::uint64_t /* renderFlags */,
+                               RenderFlags /* renderFlags */,
                                const Eigen::Quaternionf& /* planetOrientation */,
                                double tsec,
                                const Matrices &m,
@@ -533,12 +536,13 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Texture* cloudNormalMap,
                        float texOffset,
                        const Eigen::Vector3f& semiAxes,
-                       unsigned int /*textureRes*/,
-                       std::uint64_t renderFlags,
+                       TextureResolution /*textureRes*/,
+                       RenderFlags renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const math::Frustum& frustum,
                        const Matrices &m,
-                       Renderer* renderer)
+                       Renderer* renderer,
+                       LODSphereMesh* lodSphere)
 {
     float radius = semiAxes.maxCoeff();
 
@@ -563,15 +567,12 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
-    if (atmosphere != nullptr)
+    if (atmosphere != nullptr && util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
     {
-        if ((renderFlags & Renderer::ShowAtmospheres) != 0)
-        {
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            // ... but don't show atmospheres when there are no light sources.
-            if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
-                shadprop.texUsage |= TexUsage::Scattering;
-        }
+        // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+        // ... but don't show atmospheres when there are no light sources.
+        if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
+            shadprop.texUsage |= TexUsage::Scattering;
     }
 
     // Set the shadow information.
@@ -632,9 +633,9 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
-    g_lodSphere->render(attributes,
-                        frustum, ri.pixWidth,
-                        textures.data(), static_cast<int>(textures.size()), prog);
+    lodSphere->render(attributes,
+                      frustum, ri.pixWidth,
+                      textures.data(), static_cast<int>(textures.size()), prog);
 
     prog->textureOffset = 0.0f;
 }

@@ -9,11 +9,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <memory>
-#include <celcompat/filesystem.h>
 
 class M3DScene;
 
 std::unique_ptr<M3DScene> Read3DSFile(std::istream& in);
-std::unique_ptr<M3DScene> Read3DSFile(const fs::path& filename);
+std::unique_ptr<M3DScene> Read3DSFile(const std::filesystem::path& filename);

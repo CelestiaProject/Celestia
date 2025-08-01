@@ -100,11 +100,14 @@ public:
         WhatsThisCursor     = 16,
     };
 
-    enum
+    enum class JoyAxis
     {
-        Joy_XAxis           = 0,
-        Joy_YAxis           = 1,
-        Joy_ZAxis           = 2,
+        X           = 0,
+        Y           = 1,
+        Z           = 2,
+        RX          = 3,
+        RY          = 4,
+        RZ          = 5,
     };
 
     enum
@@ -194,8 +197,8 @@ public:
     ~CelestiaCore();
 
     static void initLocale();
-    bool initSimulation(const fs::path& configFileName = fs::path(),
-                        const std::vector<fs::path>& extrasDirs = {},
+    bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
+                        const std::vector<std::filesystem::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer(bool useMesaPackInvert = true);
     void start(double t);
@@ -223,7 +226,7 @@ public:
     void mouseButtonUp(float, float, int);
     void mouseMove(float, float, int);
     void mouseMove(float, float);
-    void joystickAxis(int axis, float amount);
+    void joystickAxis(JoyAxis axis, float amount);
     void joystickButton(int button, bool down);
     void pinchUpdate(float focusX, float focusY, float scale, bool zoomFOV);
     void resize(GLsizei w, GLsizei h);
@@ -270,7 +273,7 @@ public:
     bool isCaptureActive();
     bool isRecording();
 
-    void runScript(const fs::path& filename, bool i18n = true);
+    void runScript(const std::filesystem::path& filename, bool i18n = true);
     void cancelScript();
 
     int getHudDetail();
@@ -313,6 +316,9 @@ public:
     InteractionFlags getInteractionFlags() const;
     void setInteractionFlags(InteractionFlags);
 
+    celestia::engine::ObserverFlags getObserverFlags() const;
+    void setObserverFlags(celestia::engine::ObserverFlags);
+
     void setFOVFromZoom();
     void setZoomFromFOV();
 
@@ -322,7 +328,7 @@ public:
 
     void notifyWatchers(int);
 
-    void setLogFile(const fs::path&);
+    void setLogFile(const std::filesystem::path&);
 
     class Alerter
     {
@@ -355,9 +361,9 @@ public:
     void setContextMenuHandler(ContextMenuHandler*);
     ContextMenuHandler* getContextMenuHandler() const;
 
-    bool setHudFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    bool setHudTitleFont(const fs::path& fontPath, int collectionIndex, int fontSize);
-    bool setRendererFont(const fs::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
+    bool setHudFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize);
+    bool setHudTitleFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize);
+    bool setRendererFont(const std::filesystem::path& fontPath, int collectionIndex, int fontSize, Renderer::FontStyle fontStyle);
 
     void toggleReferenceMark(const std::string& refMark, Selection sel = Selection());
     bool referenceMarkEnabled(const std::string& refMark, Selection sel = Selection()) const;
@@ -374,13 +380,13 @@ public:
 
     void getCaptureInfo(std::array<int, 4>& viewport, celestia::engine::PixelFormat& format) const;
     bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::engine::PixelFormat format) const;
-    bool saveScreenShot(const fs::path&, ContentType = ContentType::Unknown) const;
+    bool saveScreenShot(const std::filesystem::path&, ContentType = ContentType::Unknown) const;
 
-    void loadAsterismsFile(const fs::path &path);
+    void loadAsterismsFile(const std::filesystem::path &path);
 
 #ifdef USE_MINIAUDIO
     bool isPlayingAudio(int channel) const;
-    bool playAudio(int channel, const fs::path& path, double startTime, float volume, float pan, bool loop, bool nopause);
+    bool playAudio(int channel, const std::filesystem::path& path, double startTime, float volume, float pan, bool loop, bool nopause);
     bool resumeAudio(int channel);
     void pauseAudio(int channel);
     void stopAudio(int channel);
@@ -402,6 +408,11 @@ public:
     ScriptSystemAccessPolicy getScriptSystemAccessPolicy() const;
     void setScriptSystemAccessPolicy(ScriptSystemAccessPolicy);
 
+    ScriptSystemAccessPolicy requestScriptSystemAccessPolicy();
+
+    void setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>&);
+    std::optional<std::function<ScriptSystemAccessPolicy()>> getScriptSystemAccessHandler() const;
+
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
 
@@ -417,13 +428,13 @@ private:
 
     std::unique_ptr<CelestiaConfig> config;
 
-    Universe* universe{ nullptr };
-
     std::unique_ptr<FavoritesList> favorites;
     DestinationList* destinations{ nullptr };
 
-    Simulation* sim{ nullptr };
+    std::unique_ptr<Simulation> sim;
     Renderer* renderer{ nullptr };
+
+    std::shared_ptr<celestia::engine::ObserverSettings> observerSettings{ std::make_shared<celestia::engine::ObserverSettings>() };
 
     static std::locale loc;
 
@@ -473,6 +484,7 @@ private:
     double sysTime{ 0.0 };
 
     Eigen::Vector3f joystickRotation{ Eigen::Vector3f::Zero() };
+    Eigen::Vector3f joystickRightRotation{ Eigen::Vector3f::Zero() };
     bool joyButtonsPressed[JoyButtonCount];
     bool keysPressed[KeyCount];
     bool shiftKeysPressed[KeyCount];
@@ -492,6 +504,7 @@ private:
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
+    std::optional<std::function<ScriptSystemAccessPolicy()>> scriptSystemAccessHandler{ std::nullopt };
 
     std::vector<Url> history;
     std::vector<Url>::size_type historyCurrent{ 0 };

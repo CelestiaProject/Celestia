@@ -356,7 +356,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     if (lightingState.shadowingRingSystem)
     {
-        Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(medres);
+        Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(TextureResolution::medres);
         if (ringsTex != nullptr)
         {
             glActiveTexture(GL_TEXTURE0 + nTextures);

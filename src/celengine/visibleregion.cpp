@@ -10,21 +10,24 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <cmath>
-#include <Eigen/Geometry>
-#include <celcompat/numbers.h>
-#include <celmath/intersect.h>
-#include <celrender/linerenderer.h>
-#include "body.h"
-#include "render.h"
-#include "selection.h"
 #include "visibleregion.h"
 
-using namespace std;
-using namespace Eigen;
-using celestia::render::LineRenderer;
-namespace math = celestia::math;
+#include <algorithm>
 
+#include <Eigen/Geometry>
+
+#include <celcompat/numbers.h>
+#include <celmath/mathlib.h>
+#include <celrender/linerenderer.h>
+#include <celrender/referencemarkrenderer.h>
+#include "body.h"
+#include "glsupport.h"
+#include "render.h"
+
+using namespace std::string_view_literals;
+
+namespace math = celestia::math;
+namespace render = celestia::render;
 
 /*! Construct a new reference mark that shows the outline of the
  *  region on the surface of a body in which the target object is
@@ -39,13 +42,9 @@ namespace math = celestia::math;
  */
 VisibleRegion::VisibleRegion(const Body& body, const Selection& target) :
     m_body(body),
-    m_target(target),
-    m_color(1.0f, 1.0f, 0.0f),
-    m_opacity(1.0f)
+    m_target(target)
 {
-    setTag("visible region");
 }
-
 
 Color
 VisibleRegion::color() const
@@ -53,13 +52,11 @@ VisibleRegion::color() const
     return m_color;
 }
 
-
 void
 VisibleRegion::setColor(Color color)
 {
     m_color = color;
 }
-
 
 float
 VisibleRegion::opacity() const
@@ -67,19 +64,17 @@ VisibleRegion::opacity() const
     return m_opacity;
 }
 
-
 void
 VisibleRegion::setOpacity(float opacity)
 {
     m_opacity = opacity;
 }
 
-
 constexpr const unsigned maxSections = 360;
 
 void
-VisibleRegion::render(Renderer* renderer,
-                      const Vector3f& position,
+VisibleRegion::render(render::ReferenceMarkRenderer* refMarkRenderer,
+                      const Eigen::Vector3f& position,
                       float discSizeInPixels,
                       double tdb,
                       const Matrices& m) const
@@ -104,27 +99,27 @@ VisibleRegion::render(Renderer* renderer,
     // Don't render the terminator if the it's smaller than the minimum size
     if (opacity <= 0.0f)
         return;
-    opacity = min(opacity, 1.0f) * m_opacity;
+    opacity = std::min(opacity, 1.0f) * m_opacity;
 
     // Base the amount of subdivision on the apparent size
-    auto nSections = (unsigned int) (30.0f + discSizeInPixels * 0.5f);
-    nSections = min(nSections, maxSections);
+    auto nSections = static_cast<unsigned int>(30.0f + discSizeInPixels * 0.5f);
+    nSections = std::min(nSections, maxSections);
 
-    Quaterniond q = m_body.getEclipticToBodyFixed(tdb);
-    Quaternionf qf = q.cast<float>();
+    Eigen::Quaterniond q = m_body.getEclipticToBodyFixed(tdb);
+    Eigen::Quaternionf qf = q.cast<float>();
 
     // The outline can't be rendered exactly on the planet sphere, or
     // there will be z-fighting problems. Render it at a height above the
     // planet that will place it about one pixel away from the planet.
     float scale = (discSizeInPixels + 1) / discSizeInPixels;
-    scale = max(scale, 1.0001f);
+    scale = std::max(scale, 1.0001f);
 
-    Vector3f semiAxes = m_body.getSemiAxes();
+    Eigen::Vector3f semiAxes = m_body.getSemiAxes();
     double maxSemiAxis = m_body.getRadius();
 
     // In order to avoid precision problems and extremely large values, scale
     // the target position and semiaxes such that the largest semiaxis is 1.0.
-    Vector3d lightDir = m_body.getPosition(tdb).offsetFromKm(m_target.getPosition(tdb));
+    Eigen::Vector3d lightDir = m_body.getPosition(tdb).offsetFromKm(m_target.getPosition(tdb));
     lightDir = lightDir / maxSemiAxis;
     lightDir = q * lightDir;
 
@@ -135,31 +130,34 @@ VisibleRegion::render(Renderer* renderer,
         lightDir *= (10000.0 / lightDir.norm());
 
     // Pick two orthogonal axes both normal to the light direction
-    Vector3d lightDirNorm = lightDir.normalized();
+    Eigen::Vector3d lightDirNorm = lightDir.normalized();
 
-    Vector3d uAxis = lightDirNorm.unitOrthogonal();
-    Vector3d vAxis = uAxis.cross(lightDirNorm);
+    Eigen::Vector3d uAxis = lightDirNorm.unitOrthogonal();
+    Eigen::Vector3d vAxis = uAxis.cross(lightDirNorm);
 
-    Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwiseInverse();
-    Vector3d e = -lightDir;
-    Vector3d e_ = e.cwiseProduct(recipSemiAxes);
+    Eigen::Vector3d recipSemiAxes = maxSemiAxis * semiAxes.cast<double>().cwiseInverse();
+    Eigen::Vector3d e = -lightDir;
+    Eigen::Vector3d e_ = e.cwiseProduct(recipSemiAxes);
     double ee = e_.squaredNorm();
 
-    LineRenderer lr(*renderer, 1.0f, LineRenderer::PrimType::LineStrip);
+    render::LineRenderer& lr = refMarkRenderer->visibleRegionRenderer();
+    lr.clear();
     lr.startUpdate();
 
     for (unsigned i = 0; i <= nSections + 1; i++)
     {
-        double theta = (double) i / (double) (nSections) * 2.0 * celestia::numbers::pi;
-        Vector3d w = cos(theta) * uAxis + sin(theta) * vAxis;
+        double stheta;
+        double ctheta;
+        math::sincos(static_cast<double>(i) / static_cast<double>(nSections) * 2.0 * celestia::numbers::pi, stheta, ctheta);
+        Eigen::Vector3d w = ctheta * uAxis + stheta * vAxis;
 
-        Vector3d toCenter = math::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
+        Eigen::Vector3d toCenter = math::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
         toCenter *= maxSemiAxis * scale;
-        lr.addVertex(Vector3f(toCenter.cast<float>()));
+        lr.addVertex(Eigen::Vector3f(toCenter.cast<float>()));
     }
 
-    Affine3f transform = Translation3f(position) * qf.conjugate();
-    Matrix4f modelView = (*m.modelview) * transform.matrix();
+    Eigen::Affine3f transform = Eigen::Translation3f(position) * qf.conjugate();
+    Eigen::Matrix4f modelView = (*m.modelview) * transform.matrix();
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -167,15 +165,20 @@ VisibleRegion::render(Renderer* renderer,
     ps.depthMask = true;
     ps.depthTest = true;
     ps.smoothLines = true;
-    renderer->setPipelineState(ps);
+    refMarkRenderer->renderer().setPipelineState(ps);
 
     lr.render({ m.projection, &modelView }, Color(m_color, opacity), nSections+1, 0);
     lr.finish();
 }
 
-
 float
 VisibleRegion::boundingSphereRadius() const
 {
     return m_body.getRadius();
+}
+
+std::string_view
+VisibleRegion::defaultTag() const
+{
+    return "visible region"sv;
 }

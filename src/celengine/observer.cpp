@@ -21,6 +21,7 @@
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
 #include <celmath/sphere.h>
+#include <celutil/r128.h>
 #include "body.h"
 #include "frame.h"
 #include "frametree.h"
@@ -393,6 +394,21 @@ createFrame(ObserverFrame::CoordinateSystem _coordSys,
     }
 }
 
+// High-precision rotation using 64.64 fixed point path. Rotate uc by
+// the rotation specified by unit quaternion q.
+UniversalCoord
+rotate(const UniversalCoord& uc, const Eigen::Quaterniond& q)
+{
+    Eigen::Matrix3d r = q.toRotationMatrix();
+    UniversalCoord uc1;
+
+    uc1.x = uc.x * R128(r(0, 0)) + uc.y * R128(r(1, 0)) + uc.z * R128(r(2, 0));
+    uc1.y = uc.x * R128(r(0, 1)) + uc.y * R128(r(1, 1)) + uc.z * R128(r(2, 1));
+    uc1.z = uc.x * R128(r(0, 2)) + uc.y * R128(r(1, 2)) + uc.z * R128(r(2, 2));
+
+    return uc1;
+}
+
 } // end unnamed namespace
 
 /*! Notes on the Observer class
@@ -408,8 +424,9 @@ createFrame(ObserverFrame::CoordinateSystem _coordSys,
  *  updates due to an active goto operation.
  */
 
-Observer::Observer() :
-    frame(std::make_shared<ObserverFrame>())
+Observer::Observer(const std::shared_ptr<celestia::engine::ObserverSettings>& settings) :
+    frame(std::make_shared<ObserverFrame>()),
+    settings(settings)
 {
     updateUniversal();
 }
@@ -420,9 +437,12 @@ Observer::Observer(const Observer& o) :
     position(o.position),
     originalOrientation(o.originalOrientation),
     transformedOrientation(o.transformedOrientation),
-    orientationTransform(o.orientationTransform),
+    devicePoseQuaternion(o.devicePoseQuaternion),
+    eulerDrivenOrientation(o.eulerDrivenOrientation),
+    inputEulerAngles(o.inputEulerAngles),
     velocity(o.velocity),
     angularVelocity(o.angularVelocity),
+    inputAngularVelocity(o.inputAngularVelocity),
     realTime(o.realTime),
     targetSpeed(o.targetSpeed),
     targetVelocity(o.targetVelocity),
@@ -435,6 +455,7 @@ Observer::Observer(const Observer& o) :
     zoom(o.zoom),
     alternateZoom(o.alternateZoom),
     reverseFlag(o.reverseFlag),
+    settings(o.settings),
     locationFilter(o.locationFilter),
     displayedSurface(o.displayedSurface)
 {
@@ -447,10 +468,13 @@ Observer& Observer::operator=(const Observer& o)
     simTime = o.simTime;
     position = o.position;
     originalOrientation = o.originalOrientation;
-    orientationTransform = o.orientationTransform;
+    devicePoseQuaternion = o.devicePoseQuaternion;
+    eulerDrivenOrientation = o.eulerDrivenOrientation;
+    inputEulerAngles = o.inputEulerAngles;
     transformedOrientation = o.transformedOrientation;
     velocity = o.velocity;
     angularVelocity = o.angularVelocity;
+    inputAngularVelocity = o.inputAngularVelocity;
     frame = nullptr;
     realTime = o.realTime;
     targetSpeed = o.targetSpeed;
@@ -464,6 +488,7 @@ Observer& Observer::operator=(const Observer& o)
     zoom = o.zoom;
     alternateZoom = o.alternateZoom;
     reverseFlag = o.reverseFlag;
+    settings = o.settings;
     locationFilter = o.locationFilter;
     displayedSurface = o.displayedSurface;
 
@@ -578,16 +603,29 @@ Observer::setOriginalOrientation(const Eigen::Quaterniond& q)
     updateOrientation();
 }
 
-Eigen::Matrix3d
+const Eigen::Quaterniond&
 Observer::getOrientationTransform() const
 {
-    return orientationTransform;
+    return devicePoseQuaternion;
 }
 
 void
-Observer::setOrientationTransform(const Eigen::Matrix3d& transform)
+Observer::setOrientationTransform(const Eigen::Quaterniond& transform)
 {
-    orientationTransform = transform;
+    devicePoseQuaternion = transform;
+    updateOrientation();
+}
+
+/*! Apply the transform to the original orientation and reset transform.
+ */
+void
+Observer::applyCurrentTransform()
+{
+    originalOrientationUniv = transformedOrientationUniv;
+    originalOrientation = transformedOrientation;
+    devicePoseQuaternion = Eigen::Quaterniond::Identity();
+    inputEulerAngles = Eigen::Vector3d::Identity();
+    eulerDrivenOrientation = Eigen::Quaterniond::Identity();
     updateOrientation();
 }
 
@@ -617,6 +655,18 @@ void
 Observer::setAngularVelocity(const Eigen::Vector3d& v)
 {
     angularVelocity = v;
+}
+
+Eigen::Vector3d
+Observer::getInputAngularVelocity() const
+{
+    return inputAngularVelocity;
+}
+
+void
+Observer::setInputAngularVelocity(const Eigen::Vector3d& v)
+{
+    inputAngularVelocity = v;
 }
 
 double
@@ -652,7 +702,7 @@ Observer::update(double dt, double timeScale)
 
         // Spherically interpolate the orientation over the first half
         // of the journey.
-        originalOrientation = undoTransform(interpolateOrientation(journey, t));
+        originalOrientation = journey.orientationTransformInverse * interpolateOrientation(journey, t);
 
         // If the journey's complete, reset to manual control
         if (t == 1.0f)
@@ -661,7 +711,7 @@ Observer::update(double dt, double timeScale)
             {
                 //situation = RigidTransform(journey.to, journey.finalOrientation);
                 position = journey.to;
-                originalOrientation = undoTransform(journey.finalOrientation);
+                originalOrientation = journey.orientationTransformInverse * journey.finalOrientation;
             }
 
             observerMode = ObserverMode::Free;
@@ -676,7 +726,7 @@ Observer::update(double dt, double timeScale)
 
         // At some threshold, we just set the velocity to zero; otherwise,
         // we'll end up with ridiculous velocities like 10^-40 m/s.
-        if (v.norm() < 1.0e-12)
+        if (v.norm() < celestia::engine::MIN_SIG_LINEAR_SPEED)
             v = Eigen::Vector3d::Zero();
         setVelocity(v);
     }
@@ -691,6 +741,19 @@ Observer::update(double dt, double timeScale)
         Eigen::Quaterniond dr = Eigen::Quaterniond(0.0, halfAV.x(), halfAV.y(), halfAV.z()) * transformedOrientation;
         Eigen::Quaterniond expectedOrientation = Eigen::Quaterniond(transformedOrientation.coeffs() + dt * dr.coeffs()).normalized();
         originalOrientation = undoTransform(expectedOrientation);
+
+        // Update the input angular orientation transform
+        if (inputAngularVelocity.norm() > celestia::engine::MIN_SIG_ANGULAR_SPEED)
+        {
+            inputEulerAngles += inputAngularVelocity * dt;
+            // Clamp pitch between -90 and +90 to avoid gimbal lock
+            inputEulerAngles[0] = std::clamp(std::remainder(inputEulerAngles[0], 2 * celestia::numbers::pi), -0.5 * celestia::numbers::pi + std::numeric_limits<double>::epsilon(), 0.5 * celestia::numbers::pi - std::numeric_limits<double>::epsilon());
+            inputEulerAngles[1] = std::remainder(inputEulerAngles[1], 2 * celestia::numbers::pi);
+            inputEulerAngles[2] = std::remainder(inputEulerAngles[2], 2 * celestia::numbers::pi);
+            eulerDrivenOrientation = Eigen::AngleAxisd(inputEulerAngles[0], Eigen::Vector3d::UnitX()) *
+                                     Eigen::AngleAxisd(inputEulerAngles[1], Eigen::Vector3d::UnitY()) *
+                                     Eigen::AngleAxisd(inputEulerAngles[2], Eigen::Vector3d::UnitZ());
+        }
     }
 
     updateUniversal();
@@ -709,14 +772,20 @@ Observer::update(double dt, double timeScale)
 void
 Observer::updateOrientation()
 {
-    transformedOrientationUniv = Eigen::Quaterniond(orientationTransform) * originalOrientationUniv;
+    transformedOrientationUniv = transform(originalOrientationUniv);
     transformedOrientation = frame->convertFromUniversal(transformedOrientationUniv, getTime());
+}
+
+Eigen::Quaterniond
+Observer::transform(const Eigen::Quaterniond& original) const
+{
+    return eulerDrivenOrientation * devicePoseQuaternion * original;
 }
 
 Eigen::Quaterniond
 Observer::undoTransform(const Eigen::Quaterniond& transformed) const
 {
-    return Eigen::Quaterniond(orientationTransform).inverse() * transformed;
+    return devicePoseQuaternion.inverse() * eulerDrivenOrientation.inverse()  * transformed;
 }
 
 Selection
@@ -939,7 +1008,7 @@ Observer::centerSelectionCO(const Selection& selection, double centerTime)
     if (!selection.empty() && !frame->getRefObject().empty())
     {
         computeCenterCOParameters(selection, journey, centerTime);
-        observerMode = ObserverMode::Travelling;
+        startTraveling();
     }
 }
 
@@ -1198,10 +1267,10 @@ Observer::setTargetSpeed(float s)
         s = -s;
     if (trackObject.empty())
     {
-        trackingOrientation = getOrientation();
+        trackingOrientation = originalOrientationUniv;
         // Generate vector for velocity using current orientation
         // and specified speed.
-        v = getOrientation().conjugate() * Eigen::Vector3d(0, 0, -s);
+        v = trackingOrientation.conjugate() * Eigen::Vector3d(0, 0, -s);
     }
     else
     {
@@ -1229,6 +1298,13 @@ Observer::gotoJourney(const JourneyParams& params)
                                               0.0001, 100.0,
                                               1e-10).first;
     journey.startTime = realTime;
+    startTraveling();
+}
+
+void
+Observer::startTraveling()
+{
+    journey.orientationTransformInverse = devicePoseQuaternion.inverse() * eulerDrivenOrientation.inverse();
     observerMode = ObserverMode::Travelling;
 }
 
@@ -1265,7 +1341,7 @@ Observer::gotoSelection(const Selection& selection,
                           ObserverFrame::CoordinateSystem::Universal,
                           up, upFrame);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 /*! Like normal goto, except we'll follow a great circle trajectory.  Useful
@@ -1307,7 +1383,7 @@ Observer::gotoSelectionGC(const Selection& selection,
                             up, upFrame,
                             centerObj);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1330,7 +1406,7 @@ Observer::gotoSelection(const Selection& selection,
     computeGotoParameters(selection, journey,
                           v * -distance, ObserverFrame::CoordinateSystem::Universal,
                           up, upFrame);
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1357,7 +1433,7 @@ Observer::gotoSelectionGC(const Selection& selection,
                             up, upFrame,
                             centerObj);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 /** Make the observer travel to the specified planetocentric coordinates.
@@ -1393,7 +1469,7 @@ Observer::gotoSelectionLongLat(const Selection& selection,
                           ObserverFrame::CoordinateSystem::BodyFixed,
                           up, ObserverFrame::CoordinateSystem::BodyFixed);
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1407,7 +1483,7 @@ Observer::gotoLocation(const UniversalCoord& toPosition,
     journey.from = position;
     journey.initialOrientation = transformedOrientation;
     journey.to = toPosition;
-    journey.finalOrientation = toOrientation;
+    journey.finalOrientation = transform(toOrientation);
 
     journey.startInterpolation = StartInterpolation;
     journey.endInterpolation   = EndInterpolation;
@@ -1418,7 +1494,7 @@ Observer::gotoLocation(const UniversalCoord& toPosition,
                                               0.0001, 100.0,
                                               1e-10).first;
 
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1448,26 +1524,53 @@ Observer::getSelectionLongLat(const Selection& selection,
 void
 Observer::gotoSurface(const Selection& sel, double duration)
 {
-    Eigen::Vector3d v = getPosition().offsetFromKm(sel.getPosition(getTime()));
-    v.normalize();
-
-    Eigen::Vector3d viewDir = transformedOrientationUniv.conjugate() * -Eigen::Vector3d::UnitZ();
-    Eigen::Vector3d up      = transformedOrientationUniv.conjugate() * Eigen::Vector3d::UnitY();
-    Eigen::Quaterniond q    = transformedOrientationUniv;
-    if (v.dot(viewDir) < 0.0)
-    {
-        q = math::LookAt<double>(Eigen::Vector3d::Zero(), up, v);
-    }
-
     ObserverFrame selFrame(ObserverFrame::CoordinateSystem::BodyFixed, sel);
     UniversalCoord bfPos = selFrame.convertFromUniversal(positionUniv, getTime());
-    q = selFrame.convertFromUniversal(q, getTime());
 
+    // Calculate the surface normal at the landing point (radial direction from center)
+    Eigen::Vector3d surfaceNormal = bfPos.offsetFromKm(UniversalCoord::Zero()).normalized();
+
+    // Position the observer just above the surface
     double height = 1.0001 * sel.radius();
-    Eigen::Vector3d dir = bfPos.offsetFromKm(UniversalCoord::Zero()).normalized() * height;
-    UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(dir);
+    UniversalCoord nearSurfacePoint = UniversalCoord::Zero().offsetKm(surfaceNormal * height);
 
-    gotoLocation(nearSurfacePoint, q, duration);
+    Eigen::Quaterniond toOrientation;
+    if (celestia::util::is_set(settings->flags, celestia::engine::ObserverFlags::AlignCameraToSurfaceOnLand))
+    {
+        // Get the current orientation in the body-fixed frame
+        Eigen::Quaterniond currentOrientation = selFrame.convertFromUniversal(originalOrientationUniv, getTime());
+
+        // Use the window's up direction (UnitY) as the forward direction
+        Eigen::Vector3d windowUp = currentOrientation.conjugate() * Eigen::Vector3d::UnitY();
+
+        // Project the window's up direction onto the surface plane to get the tangent direction
+        Eigen::Vector3d tangentDirection = windowUp - surfaceNormal * surfaceNormal.dot(windowUp);
+
+        // Fallback if the projection is too small. In this case the planet is
+        // below or above us (likely not within viewport) so we can just use an
+        // arbitrary orientation.
+        if (tangentDirection.norm() < 0.1)
+        {
+            Eigen::Vector3d reference = (std::abs(surfaceNormal.dot(Eigen::Vector3d::UnitY())) < 0.9) ? Eigen::Vector3d::UnitY() : Eigen::Vector3d::UnitX();
+            tangentDirection = surfaceNormal.cross(reference);
+        }
+
+        tangentDirection.normalize();
+        toOrientation = math::LookAt<double>(Eigen::Vector3d::Zero(), tangentDirection, surfaceNormal);
+    }
+    else
+    {
+        Eigen::Vector3d v       = getPosition().offsetFromKm(sel.getPosition(getTime()));
+        Eigen::Vector3d viewDir = originalOrientationUniv.conjugate() * -Eigen::Vector3d::UnitZ();
+        Eigen::Vector3d up      = originalOrientationUniv.conjugate() * Eigen::Vector3d::UnitY();
+        toOrientation = originalOrientationUniv;
+        if (v.dot(viewDir) < 0.0)
+        {
+            toOrientation = math::LookAt<double>(Eigen::Vector3d::Zero(), up, v);
+        }
+        toOrientation = selFrame.convertFromUniversal(toOrientation, getTime());
+    }
+    gotoLocation(nearSurfacePoint, toOrientation, duration);
 }
 
 void
@@ -1483,7 +1586,7 @@ Observer::centerSelection(const Selection& selection, double centerTime)
         return;
 
     computeCenterParameters(selection, journey, centerTime);
-    observerMode = ObserverMode::Travelling;
+    startTraveling();
 }
 
 void
@@ -1654,28 +1757,46 @@ ObserverFrame::getFrame() const
     return frame;
 }
 
+/*! Convert from universal coordinates to frame coordinates. This method
+ *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
+ *  than convertFromAstrocentric(), which works with double precision
+ *  floating points values. For cases when the bodies are all in the same
+ *  solar system, convertFromAstrocentric() should be used.
+ */
 UniversalCoord
 ObserverFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
-    return frame->convertFromUniversal(uc, tjd);
+    UniversalCoord uc1 = uc - frame->getCenter().getPosition(tjd);
+    return rotate(uc1, frame->getOrientation(tjd).conjugate());
 }
 
+/*! Convert from local coordinates to universal coordinates. This method
+ *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
+ *  than convertFromAstrocentric(), which works with double precision
+ *  floating points values. For cases when the bodies are all in the same
+ *  solar system, convertFromAstrocentric() should be used.
+ *
+ *  To get the position of a solar system object in universal coordinates,
+ *  it usually suffices to get the astrocentric position and then add that
+ *  to the position of the star in universal coordinates. This avoids any
+ *  expensive high-precision multiplication.
+ */
 UniversalCoord
 ObserverFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 {
-    return frame->convertToUniversal(uc, tjd);
+    return frame->getCenter().getPosition(tjd) + rotate(uc, frame->getOrientation(tjd));
 }
 
 Eigen::Quaterniond
 ObserverFrame::convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const
 {
-    return frame->convertFromUniversal(q, tjd);
+    return q * frame->getOrientation(tjd).conjugate();
 }
 
 Eigen::Quaterniond
 ObserverFrame::convertToUniversal(const Eigen::Quaterniond& q, double tjd) const
 {
-    return frame->convertToUniversal(q, tjd);
+    return q * frame->getOrientation(tjd);
 }
 
 /*! Convert a position from one frame to another.

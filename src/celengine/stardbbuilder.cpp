@@ -30,19 +30,19 @@
 #include <celastro/astro.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
+#include <celutil/associativearray.h>
 #include <celutil/binaryread.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
+#include <celutil/infourl.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/timer.h>
 #include <celutil/tokenizer.h>
-#include "hash.h"
 #include "meshmanager.h"
 #include "octreebuilder.h"
-#include "parser.h"
 #include "stardb.h"
 #include "stellarclass.h"
-#include "value.h"
 
 using namespace std::string_view_literals;
 
@@ -52,14 +52,17 @@ namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
+using util::AssociativeArray;
 using util::GetLogger;
+using util::Value;
+using util::ValueArray;
 
 struct StarDatabaseBuilder::StcHeader
 {
-    explicit StcHeader(const fs::path&);
-    explicit StcHeader(fs::path&&) = delete;
+    explicit StcHeader(const std::filesystem::path&);
+    explicit StcHeader(std::filesystem::path&&) = delete;
 
-    const fs::path* path;
+    const std::filesystem::path* path;
     int lineNumber{ 0 };
     DataDisposition disposition{ DataDisposition::Add };
     bool isStar{ true };
@@ -67,7 +70,7 @@ struct StarDatabaseBuilder::StcHeader
     std::vector<std::string> names;
 };
 
-StarDatabaseBuilder::StcHeader::StcHeader(const fs::path& _path) :
+StarDatabaseBuilder::StcHeader::StcHeader(const std::filesystem::path& _path) :
     path(&_path)
 {
 }
@@ -215,7 +218,7 @@ stcWarn(const StarDatabaseBuilder::StcHeader& header, std::string_view msg)
 }
 
 bool
-parseStcHeader(Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& header)
+parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& header)
 {
     header.lineNumber = tokenizer.getLineNumber();
 
@@ -462,6 +465,35 @@ mergeStarDetails(boost::intrusive_ptr<StarDetails>& existingDetails,
 }
 
 void
+applyMesh(const StarDatabaseBuilder::StcHeader& header,
+          const AssociativeArray* starData,
+          boost::intrusive_ptr<StarDetails>& details)
+{
+    const auto* mesh = starData->getString("Mesh");
+    if (mesh == nullptr)
+        return;
+
+    if (!header.isStar)
+    {
+        stcWarn(header, _("Mesh is ignored on Barycenters"));
+        return;
+    }
+
+    auto meshPath = util::U8FileName(*mesh);
+    if (!meshPath.has_value())
+    {
+        stcError(header, _("invalid filename in Mesh"));
+        return;
+    }
+
+    using engine::GeometryInfo;
+    using engine::GetGeometryManager;
+    GeometryInfo geometryInfo(*meshPath, *header.path, Eigen::Vector3f::Zero(), 1.0f, true);
+    ResourceHandle geometryHandle = GetGeometryManager()->getHandle(geometryInfo);
+    StarDetails::setGeometry(details, geometryHandle);
+}
+
+void
 applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                                const AssociativeArray* starData,
                                boost::intrusive_ptr<StarDetails>& details)
@@ -509,30 +541,10 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
 void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
-                   boost::intrusive_ptr<StarDetails>& details)
+                   boost::intrusive_ptr<StarDetails>& details,
+                   const std::filesystem::path& resourcePath)
 {
-    if (const auto* mesh = starData->getString("Mesh"); mesh != nullptr)
-    {
-        if (!header.isStar)
-        {
-            stcWarn(header, _("Mesh is ignored on Barycenters"));
-        }
-        else if (auto meshPath = util::U8FileName(*mesh); meshPath.has_value())
-        {
-            using engine::GeometryInfo;
-            using engine::GetGeometryManager;
-            ResourceHandle geometryHandle = GetGeometryManager()->getHandle(GeometryInfo(*meshPath,
-                                                                                         *header.path,
-                                                                                         Eigen::Vector3f::Zero(),
-                                                                                         1.0f,
-                                                                                         true));
-            StarDetails::setGeometry(details, geometryHandle);
-        }
-        else
-        {
-            stcError(header, _("invalid filename in Mesh"));
-        }
-    }
+    applyMesh(header, starData, details);
 
     if (const auto* texture = starData->getString("Texture"); texture != nullptr)
     {
@@ -574,8 +586,13 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
 
     applyTemperatureBoloCorrection(header, starData, details);
 
-    if (const auto* infoUrl = starData->getString("InfoURL"); infoUrl != nullptr)
-        StarDetails::setInfoURL(details, *infoUrl);
+    if (const auto* infoUrlValue = starData->getString("InfoURL"); infoUrlValue != nullptr)
+    {
+        if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resourcePath); !infoUrl.empty())
+            StarDetails::setInfoURL(details, std::move(infoUrl));
+        else
+            stcWarn(header, _("Invalid InfoURL"));
+    }
 }
 
 } // end unnamed namespace
@@ -685,10 +702,10 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
  *  Modify <number>   : error
  */
 bool
-StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
+StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
 {
-    Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&in);
+    util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
     std::string domain = resourcePath.string();
@@ -699,7 +716,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
 #endif
 
     StcHeader header(resourcePath);
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
     {
         if (!parseStcHeader(tokenizer, header))
             return false;
@@ -707,7 +724,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
         // now goes the star definition
         tokenizer.pushBack();
         const Value starDataValue = parser.readValue();
-        const Hash* starData = starDataValue.getHash();
+        const AssociativeArray* starData = starDataValue.getHash();
         if (starData == nullptr)
         {
             GetLogger()->error(_("Bad star definition at line {}.\n"), tokenizer.getLineNumber());
@@ -733,7 +750,7 @@ StarDatabaseBuilder::load(std::istream& in, const fs::path& resourcePath)
             }
         }
 
-        if (createOrUpdateStar(header, starData, star))
+        if (createOrUpdateStar(header, starData, star, resourcePath))
         {
             loadCategories(header, starData, domain);
 
@@ -795,7 +812,8 @@ StarDatabaseBuilder::finish()
 bool
 StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
                                         const AssociativeArray* starData,
-                                        Star* star)
+                                        Star* star,
+                                        const std::filesystem::path& resourcePath)
 {
     boost::intrusive_ptr<StarDetails> newDetails = nullptr;
     if (!checkSpectralType(header, starData, star, newDetails))
@@ -856,7 +874,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     if (orbit != nullptr)
         StarDetails::setOrbit(star->details, orbit);
 
-    applyCustomDetails(header, starData, star->details);
+    applyCustomDetails(header, starData, star->details, resourcePath);
     return true;
 }
 

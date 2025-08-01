@@ -46,7 +46,7 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
     longjmp(myerr->setjmp_buffer, 1);
 }
 
-bool SaveJPEGImage(const fs::path& filename,
+bool SaveJPEGImage(const std::filesystem::path& filename,
                    int width, int height,
                    int rowStride,
                    const std::uint8_t *pixels,
@@ -120,7 +120,7 @@ bool SaveJPEGImage(const fs::path& filename,
 
 } // anonymous namespace
 
-Image* LoadJPEGImage(const fs::path& filename)
+Image* LoadJPEGImage(const std::filesystem::path& filename)
 {
     Image* img = nullptr;
 
@@ -264,7 +264,7 @@ Image* LoadJPEGImage(const fs::path& filename)
     return img;
 }
 
-bool SaveJPEGImage(const fs::path& filename, const Image& image)
+bool SaveJPEGImage(const std::filesystem::path& filename, const Image& image)
 {
     return SaveJPEGImage(filename,
                          image.getWidth(),

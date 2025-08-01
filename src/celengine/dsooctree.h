@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <memory>
 
@@ -49,6 +50,7 @@ private:
     DSOHandler* m_dsoHandler;
     DSOOctree::PointType m_obsPosition;
     util::array_view<PlaneType> m_frustumPlanes;
+    std::array<double, 5> m_projectedRadiusFactors;
     float m_limitingFactor;
 
     float m_dimmest{ 1000.0f };

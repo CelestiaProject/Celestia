@@ -40,9 +40,9 @@ if(WIN32)
   install(
     TARGETS celestia-qt6
     RUNTIME_DEPENDENCIES
-      PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-" "^qt6"
+      PRE_EXCLUDE_REGEXES "^api-ms" "^ext-ms-"
       POST_EXCLUDE_REGEXES ".*system32/.*\\.dll$"
-      DIRECTORIES $<TARGET_FILE_DIR:celestia>
+      DIRECTORIES $<TARGET_FILE_DIR:celestia> $<TARGET_FILE_DIR:Qt6::Core>
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT qt6gui
   )

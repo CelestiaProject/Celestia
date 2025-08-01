@@ -12,17 +12,23 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <filesystem>
 #include <string>
+#include <string_view>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
 #include "deepskyobj.h"
+#include "renderflags.h"
 
-class AssociativeArray;
 struct Matrices;
 class Renderer;
+
+namespace celestia::util
+{
+class AssociativeArray;
+}
 
 enum class GalaxyType
 {
@@ -60,15 +66,15 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const AssociativeArray*, const fs::path&) override;
+    bool load(const celestia::util::AssociativeArray*, const std::filesystem::path&, std::string_view) override;
 
     static void  increaseLightGain();
     static void  decreaseLightGain();
     static float getLightGain();
     static void  setLightGain(float);
 
-    std::uint64_t getRenderMask() const override;
-    unsigned int getLabelMask() const override;
+    RenderFlags getRenderMask() const override;
+    RenderLabels getLabelMask() const override;
 
     DeepSkyObjectType getObjType() const override;
 
@@ -83,7 +89,7 @@ private:
     // To be optimal, it should actually be computed:
     constexpr static float kRadiusCorrection = 0.025f;
 
-    void setForm(const fs::path&, const fs::path& = {});
+    void setForm(const std::filesystem::path&, const std::filesystem::path& = {});
 
     float       detail{ 1.0f };
     GalaxyType  type{ GalaxyType::Irr };

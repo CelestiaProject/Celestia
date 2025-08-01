@@ -10,13 +10,13 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
-#include <celcompat/filesystem.h>
 #include <celengine/star.h>
 #ifdef CELX
-#include <celengine/value.h>
+#include <celutil/associativearray.h>
 #endif
 
 
@@ -24,34 +24,34 @@ struct CelestiaConfig
 {
     struct Paths
     {
-        fs::path starDatabaseFile{ };
-        fs::path starNamesFile{ };
-        std::vector<fs::path> solarSystemFiles{ };
-        std::vector<fs::path> starCatalogFiles{ };
-        std::vector<fs::path> dsoCatalogFiles{ };
-        std::vector<fs::path> extrasDirs{ };
-        std::vector<fs::path> skipExtras{ };
-        fs::path asterismsFile{ };
-        fs::path boundariesFile{ };
-        fs::path favoritesFile{ };
-        fs::path initScriptFile{ };
-        fs::path demoScriptFile{ };
-        fs::path destinationsFile{ };
-        fs::path HDCrossIndexFile{ };
-        fs::path SAOCrossIndexFile{ };
-        fs::path warpMeshFile{ };
-        fs::path leapSecondsFile{ };
+        std::filesystem::path starDatabaseFile{ };
+        std::filesystem::path starNamesFile{ };
+        std::vector<std::filesystem::path> solarSystemFiles{ };
+        std::vector<std::filesystem::path> starCatalogFiles{ };
+        std::vector<std::filesystem::path> dsoCatalogFiles{ };
+        std::vector<std::filesystem::path> extrasDirs{ };
+        std::vector<std::filesystem::path> skipExtras{ };
+        std::filesystem::path asterismsFile{ };
+        std::filesystem::path boundariesFile{ };
+        std::filesystem::path favoritesFile{ };
+        std::filesystem::path initScriptFile{ };
+        std::filesystem::path demoScriptFile{ };
+        std::filesystem::path destinationsFile{ };
+        std::filesystem::path HDCrossIndexFile{ };
+        std::filesystem::path SAOCrossIndexFile{ };
+        std::filesystem::path warpMeshFile{ };
+        std::filesystem::path leapSecondsFile{ };
 #ifdef CELX
-        fs::path scriptScreenshotDirectory{ };
-        fs::path luaHook{ };
+        std::filesystem::path scriptScreenshotDirectory{ };
+        std::filesystem::path luaHook{ };
 #endif
     };
 
     struct Fonts
     {
-        fs::path mainFont{ };
-        fs::path labelFont{ };
-        fs::path titleFont{ };
+        std::filesystem::path mainFont{ };
+        std::filesystem::path labelFont{ };
+        std::filesystem::path titleFont{ };
     };
 
     struct Mouse
@@ -64,12 +64,25 @@ struct CelestiaConfig
         bool focusZooming{ false };
     };
 
+    struct Observer
+    {
+        bool alignCameraToSurfaceOnLand{ false };
+    };
+
     struct RenderDetails
     {
         double orbitWindowEnd{ 0.5 };
         double orbitPeriodsShown{ 1.0 };
         double linearFadeFraction{ 0.0 };
         float exposure{ 1.0f };
+
+        float renderAsterismsFadeStartDist{ 600.0f };
+        float renderAsterismsFadeEndDist{ 6.52e4f };
+        float renderBoundariesFadeStartDist{ 6.0f };
+        float renderBoundariesFadeEndDist{ 20.0f };
+        float labelConstellationsFadeStartDist{ 6.0f };
+        float labelConstellationsFadeEndDist{ 20.0f };
+
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };
@@ -89,6 +102,7 @@ struct CelestiaConfig
     Paths paths{ };
     Fonts fonts{ };
     Mouse mouse{ };
+    Observer observer{ };
     RenderDetails renderDetails{ };
     StarDetails::StarTextureSet starTextures{ };
 
@@ -107,8 +121,8 @@ struct CelestiaConfig
     std::string layoutDirection{ };
 
 #ifdef CELX
-    Value configParams{ };
+    celestia::util::Value configParams{ };
 #endif
 };
 
-bool ReadCelestiaConfig(const fs::path& filename, CelestiaConfig& config);
+bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& config);

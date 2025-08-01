@@ -21,13 +21,13 @@ using namespace std;
 
 namespace astro = celestia::astro;
 
-int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase)
+int phase_new(lua_State* l, const TimelinePhase* phase)
 {
     CelxLua celx(l);
 
     // Use placement new to put the new phase reference in the userdata block.
-    void* block = lua_newuserdata(l, sizeof(TimelinePhase::SharedConstPtr));
-    new (block) TimelinePhase::SharedConstPtr(phase);
+    void* block = lua_newuserdata(l, sizeof(const TimelinePhase*));
+    new (block) const TimelinePhase*(phase);
 
     celx.setClass(Celx_Phase);
 
@@ -35,24 +35,22 @@ int phase_new(lua_State* l, const TimelinePhase::SharedConstPtr& phase)
 }
 
 
-static TimelinePhase::SharedConstPtr* to_phase(lua_State* l, int index)
+static const TimelinePhase** to_phase(lua_State* l, int index)
 {
     CelxLua celx(l);
 
-    return celx.safeGetClass<TimelinePhase::SharedConstPtr>(index);
+    return celx.safeGetClass<const TimelinePhase*>(index);
 }
 
 
-static const TimelinePhase::SharedConstPtr& this_phase(lua_State* l)
+static const TimelinePhase* this_phase(lua_State* l)
 {
     CelxLua celx(l);
 
     auto phase = to_phase(l, 1);
     assert(phase != nullptr);
     if (phase == nullptr)
-    {
         celx.doError("Bad phase object!");
-    }
 
     return *phase;
 }
@@ -183,27 +181,6 @@ static int phase_tostring(lua_State* l)
 }
 
 
-/*! __gc metamethod
- * Garbage collection for phases.
- */
-static int phase_gc(lua_State* l)
-{
-    CelxLua celx(l);
-
-    auto ref = this_phase(l);
-    if (ref)
-    {
-        ref.reset();
-    }
-    else
-    {
-        celx.doError("Bad phase object during garbage collection!");
-    }
-
-    return 0;
-}
-
-
 void CreatePhaseMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -211,7 +188,6 @@ void CreatePhaseMetaTable(lua_State* l)
     celx.createClassMetatable(Celx_Phase);
 
     celx.registerMethod("__tostring", phase_tostring);
-    celx.registerMethod("__gc", phase_gc);
     celx.registerMethod("timespan", phase_timespan);
     celx.registerMethod("orbitframe", phase_orbitframe);
     celx.registerMethod("bodyframe", phase_bodyframe);

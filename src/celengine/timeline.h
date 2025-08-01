@@ -20,11 +20,16 @@ class Timeline
 {
 public:
     Timeline() = default;
-    ~Timeline();
+    ~Timeline() = default;
 
-    const TimelinePhase::SharedConstPtr& findPhase(double t) const;
-    bool appendPhase(TimelinePhase::SharedConstPtr&);
-    const TimelinePhase::SharedConstPtr& getPhase(unsigned int n) const;
+    Timeline(const Timeline&) = delete;
+    Timeline& operator=(const Timeline&) = delete;
+    Timeline(Timeline&&) = delete;
+    Timeline& operator=(Timeline&&) = delete;
+
+    const TimelinePhase& findPhase(double t) const;
+    bool appendPhase(std::unique_ptr<TimelinePhase>&&);
+    const TimelinePhase& getPhase(unsigned int n) const;
     unsigned int phaseCount() const;
 
     double startTime() const;
@@ -34,5 +39,5 @@ public:
     void markChanged();
 
 private:
-    std::vector<TimelinePhase::SharedConstPtr> phases;
+    std::vector<std::unique_ptr<TimelinePhase>> phases;
 };

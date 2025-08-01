@@ -21,16 +21,15 @@
 #include <cel3ds/3dsread.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
+#include <celutil/associativearray.h>
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/tokenizer.h>
-#include "hash.h"
 #include "modelgeometry.h"
-#include "parser.h"
 #include "spheremesh.h"
 #include "texmanager.h"
-#include "value.h"
 
 using celestia::util::GetLogger;
 
@@ -41,7 +40,7 @@ namespace
 {
 
 std::unique_ptr<cmod::Model>
-LoadCelestiaMesh(const fs::path& filename)
+LoadCelestiaMesh(const std::filesystem::path& filename)
 {
     std::ifstream meshFile(filename, std::ios::in);
     if (!meshFile.good())
@@ -50,8 +49,8 @@ LoadCelestiaMesh(const fs::path& filename)
         return nullptr;
     }
 
-    Tokenizer tokenizer(&meshFile);
-    Parser parser(&tokenizer);
+    util::Tokenizer tokenizer(&meshFile);
+    util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();
     if (auto tokenValue = tokenizer.getNameValue(); !tokenValue.has_value())
@@ -66,8 +65,8 @@ LoadCelestiaMesh(const fs::path& filename)
         return nullptr;
     }
 
-    const Value meshDefValue = parser.readValue();
-    const Hash* meshDef = meshDefValue.getHash();
+    const util::Value meshDefValue = parser.readValue();
+    const util::AssociativeArray* meshDef = meshDefValue.getHash();
     if (meshDef == nullptr)
     {
         GetLogger()->error("{}: Bad mesh file.\n", filename);
@@ -294,7 +293,7 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
 }
 
 std::unique_ptr<cmod::Model>
-Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
+Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
 {
     auto model = std::make_unique<cmod::Model>();
 
@@ -356,13 +355,13 @@ Convert3DSModel(const M3DScene& scene, const fs::path& texPath)
 }
 
 std::unique_ptr<cmod::Model>
-Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
+Load3DSModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path& path)
 {
     std::unique_ptr<M3DScene> scene = Read3DSFile(key.resolvedPath);
     if (scene == nullptr)
         return nullptr;
 
-    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, key.resolvedToPath ? path : fs::path());
+    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, key.resolvedToPath ? path : std::filesystem::path());
 
     if (key.isNormalized)
         model->normalize(key.center);
@@ -373,7 +372,7 @@ Load3DSModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 }
 
 std::unique_ptr<cmod::Model>
-LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
+LoadCMODModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path& path)
 {
     std::ifstream in(key.resolvedPath, std::ios::binary);
     if (!in.good())
@@ -381,7 +380,7 @@ LoadCMODModel(const GeometryInfo::ResourceKey& key, const fs::path& path)
 
     std::unique_ptr<cmod::Model> model = cmod::LoadModel(
         in,
-        [&path](const fs::path& name)
+        [&path](const std::filesystem::path& name)
         {
             return GetTextureManager()->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
         });
@@ -415,7 +414,7 @@ LoadCMSModel(const GeometryInfo::ResourceKey& key)
 } // end unnamed namespace
 
 GeometryInfo::ResourceKey
-GeometryInfo::resolve(const fs::path& baseDir) const
+GeometryInfo::resolve(const std::filesystem::path& baseDir) const
 {
     // All empty meshes resolve to the same resource regardless of center/scaling
     if (source.empty())
@@ -423,7 +422,7 @@ GeometryInfo::resolve(const fs::path& baseDir) const
 
     if (!path.empty())
     {
-        fs::path filename = path / "models" / source;
+        std::filesystem::path filename = path / "models" / source;
         std::ifstream in(filename);
         if (in.good())
         {

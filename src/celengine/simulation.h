@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
@@ -25,6 +24,7 @@
 #include <celengine/universe.h>
 #include <celengine/galaxy.h>
 #include <celengine/globular.h>
+#include <celengine/renderflags.h>
 #include <celengine/texmanager.h>
 #include <celengine/frame.h>
 #include <celengine/observer.h>
@@ -34,7 +34,8 @@ class Renderer;
 class Simulation
 {
 public:
-    explicit Simulation(Universe*);
+    Simulation(std::unique_ptr<Universe>&&,
+               const std::shared_ptr<celestia::engine::ObserverSettings>&);
     ~Simulation();
 
     double getTime() const; // Julian date
@@ -47,7 +48,7 @@ public:
     void render(Renderer&);
     void render(Renderer&, Observer&);
 
-    Selection pickObject(const Eigen::Vector3f& pickRay, std::uint64_t renderFlags, float tolerance = 0.0f);
+    Selection pickObject(const Eigen::Vector3f& pickRay, RenderFlags renderFlags, float tolerance = 0.0f);
 
     Universe* getUniverse() const;
 
@@ -132,7 +133,7 @@ private:
     double storedTimeScale{ 1.0 };
     bool syncTime{ true };
 
-    Universe* universe;
+    std::unique_ptr<Universe> universe;
 
     mutable std::optional<SolarSystem*> closestSolarSystem{ std::nullopt };
     Selection selection;

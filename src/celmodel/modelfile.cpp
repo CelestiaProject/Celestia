@@ -33,7 +33,7 @@
 using namespace std::string_view_literals;
 
 namespace util = celestia::util;
-
+using celestia::util::Tokenizer;
 
 namespace cmod
 {
@@ -104,7 +104,7 @@ public:
     const std::string& getErrorMessage() const { return errorMessage; }
 
 protected:
-    ResourceHandle getHandle(const fs::path& path) { return handleGetter(path); }
+    ResourceHandle getHandle(const std::filesystem::path& path) { return handleGetter(path); }
     virtual void reportError(const std::string& msg) { errorMessage = msg; }
 
 private:
@@ -124,7 +124,7 @@ public:
     virtual bool write(const Model&) = 0;
 
 protected:
-    fs::path getSource(ResourceHandle handle) { return sourceGetter(handle); }
+    std::filesystem::path getSource(ResourceHandle handle) { return sourceGetter(handle); }
 
 private:
     SourceGetter sourceGetter;
@@ -777,7 +777,9 @@ AsciiModelLoader::load()
     bool hasNormalMap = false;
 
     // Parse material and mesh definitions
-    for (Tokenizer::TokenType token = tok.nextToken(); token != Tokenizer::TokenEnd; token = tok.nextToken())
+    for (Tokenizer::TokenType token = tok.nextToken();
+         token != Tokenizer::TokenEnd;
+         token = tok.nextToken())
     {
         if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
         {
@@ -1196,7 +1198,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
 
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
-        fs::path texSource;
+        std::filesystem::path texSource;
         if (material.maps[i] != InvalidResource)
         {
             texSource = getSource(material.maps[i]);
@@ -2023,7 +2025,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
     {
         if (material.maps[i] != InvalidResource)
         {
-            fs::path texSource = getSource(material.maps[i]);
+            std::filesystem::path texSource = getSource(material.maps[i]);
             if (!texSource.empty()
                 && (!writeToken(*out, CmodToken::Texture)
                     || !util::writeLE<std::int16_t>(*out, static_cast<std::int16_t>(i))

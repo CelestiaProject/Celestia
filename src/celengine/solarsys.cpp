@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Geometry>
@@ -26,37 +27,40 @@
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/mathlib.h>
+#include <celutil/associativearray.h>
 #include <celutil/color.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
+#include <celutil/parser.h>
 #include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "category.h"
-#include "hash.h"
 #include "frame.h"
 #include "frametree.h"
 #include "location.h"
 #include "meshmanager.h"
 #include "parseobject.h"
-#include "parser.h"
 #include "solarsys.h"
 #include "surface.h"
 #include "texmanager.h"
 #include "timeline.h"
 #include "timelinephase.h"
 #include "universe.h"
-#include "value.h"
 
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
 using std::strncmp;
 using namespace std::string_view_literals;
 
+using celestia::util::AssociativeArray;
 using celestia::util::GetLogger;
+using celestia::util::Tokenizer;
+using celestia::util::Value;
+using celestia::util::ValueArray;
 namespace engine = celestia::engine;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
@@ -72,7 +76,6 @@ enum BodyType
     SurfaceObject,
     UnknownBodyType,
 };
-
 
 /*!
   Solar system catalog (.ssc) files contain items of three different types:
@@ -107,8 +110,8 @@ enum BodyType
   The name and parent name are both mandatory.
 */
 
-void sscError(const Tokenizer& tok,
-              const std::string& msg)
+void
+sscError(const Tokenizer& tok, const std::string& msg)
 {
     GetLogger()->error(_("Error in .ssc file (line {}): {}\n"),
                       tok.getLineNumber(), msg);
@@ -141,7 +144,7 @@ bool isFrameCircular(const ReferenceFrame& frame)
 
 
 std::unique_ptr<Location>
-CreateLocation(const Hash* locationData,
+CreateLocation(const AssociativeArray* locationData,
                const Body* body)
 {
     auto location = std::make_unique<Location>();
@@ -177,8 +180,10 @@ inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
         dst &= ~flag;
 }
 
-std::optional<fs::path>
-GetFilename(const Hash& hash, std::string_view key, const char* errorMessage)
+std::optional<std::filesystem::path>
+GetFilename(const AssociativeArray& hash,
+            std::string_view key,
+            const char* errorMessage)
 {
     const std::string* value = hash.getString(key);
     if (value == nullptr)
@@ -192,9 +197,9 @@ GetFilename(const Hash& hash, std::string_view key, const char* errorMessage)
 }
 
 
-void FillinSurface(const Hash* surfaceData,
+void FillinSurface(const AssociativeArray* surfaceData,
                    Surface* surface,
-                   const fs::path& path)
+                   const std::filesystem::path& path)
 {
     if (auto color = surfaceData->getColor("Color"); color.has_value())
         surface->color = *color;
@@ -265,15 +270,16 @@ Selection GetParentObject(PlanetarySystem* system)
 }
 
 
-TimelinePhase::SharedConstPtr CreateTimelinePhase(Body* body,
-                                                  Universe& universe,
-                                                  const Hash* phaseData,
-                                                  const fs::path& path,
-                                                  const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
-                                                  const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
-                                                  bool isFirstPhase,
-                                                  bool isLastPhase,
-                                                  double previousPhaseEnd)
+std::unique_ptr<TimelinePhase>
+CreateTimelinePhase(Body* body,
+                    Universe& universe,
+                    const AssociativeArray* phaseData,
+                    const std::filesystem::path& path,
+                    const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
+                    const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
+                    bool isFirstPhase,
+                    bool isLastPhase,
+                    double previousPhaseEnd)
 {
     double beginning = previousPhaseEnd;
     double ending = std::numeric_limits<double>::infinity();
@@ -371,7 +377,7 @@ std::unique_ptr<Timeline>
 CreateTimelineFromArray(Body* body,
                         Universe& universe,
                         const ValueArray* timelineArray,
-                        const fs::path& path,
+                        const std::filesystem::path& path,
                         const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
                         const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
 {
@@ -387,7 +393,7 @@ CreateTimelineFromArray(Body* body,
     const auto finalIter = timelineArray->end() - 1;
     for (auto iter = timelineArray->begin(); iter != timelineArray->end(); iter++)
     {
-        const Hash* phaseData = iter->getHash();
+        const AssociativeArray* phaseData = iter->getHash();
         if (phaseData == nullptr)
         {
             GetLogger()->error("Error in timeline of '{}': phase {} is not a property group.\n", body->getName(), iter - timelineArray->begin() + 1);
@@ -412,7 +418,7 @@ CreateTimelineFromArray(Body* body,
 
         previousEnding = phase->endTime();
 
-        timeline->appendPhase(phase);
+        timeline->appendPhase(std::move(phase));
     }
 
     return timeline;
@@ -422,8 +428,8 @@ CreateTimelineFromArray(Body* body,
 bool CreateTimeline(Body* body,
                     PlanetarySystem* system,
                     Universe& universe,
-                    const Hash* planetData,
-                    const fs::path& path,
+                    const AssociativeArray* planetData,
+                    const std::filesystem::path& path,
                     DataDisposition disposition,
                     BodyType bodyType)
 {
@@ -504,13 +510,13 @@ bool CreateTimeline(Body* body,
         const Timeline* timeline = body->getTimeline();
         if (timeline->phaseCount() == 1)
         {
-            auto phase    = timeline->getPhase(0).get();
-            orbitFrame    = phase->orbitFrame();
-            bodyFrame     = phase->bodyFrame();
-            orbit         = phase->orbit();
-            rotationModel = phase->rotationModel();
-            beginning     = phase->startTime();
-            ending        = phase->endTime();
+            const auto& phase = timeline->getPhase(0);
+            orbitFrame    = phase.orbitFrame();
+            bodyFrame     = phase.bodyFrame();
+            orbit         = phase.orbit();
+            rotationModel = phase.rotationModel();
+            beginning     = phase.startTime();
+            ending        = phase.endTime();
         }
     }
 
@@ -637,7 +643,7 @@ bool CreateTimeline(Body* body,
         }
 
         auto timeline = std::make_unique<Timeline>();
-        timeline->appendPhase(phase);
+        timeline->appendPhase(std::move(phase));
 
         body->setTimeline(std::move(timeline));
 
@@ -662,7 +668,7 @@ bool CreateTimeline(Body* body,
 }
 
 void
-ReadMesh(const Hash& planetData, Body& body, const fs::path& path)
+ReadMesh(const AssociativeArray& planetData, Body& body, const std::filesystem::path& path)
 {
     using engine::GeometryInfo;
     using engine::GetGeometryManager;
@@ -698,8 +704,8 @@ ReadMesh(const Hash& planetData, Body& body, const fs::path& path)
 }
 
 void ReadAtmosphere(Body* body,
-                    const Hash* atmosData,
-                    const fs::path& path,
+                    const AssociativeArray* atmosData,
+                    const std::filesystem::path& path,
                     DataDisposition disposition)
 {
     auto bodyFeaturesManager = GetBodyFeaturesManager();
@@ -771,8 +777,8 @@ void ReadAtmosphere(Body* body,
 
 
 void ReadRings(Body* body,
-               const Hash* ringsData,
-               const fs::path& path,
+               const AssociativeArray* ringsData,
+               const std::filesystem::path& path,
                DataDisposition disposition)
 {
     auto inner = ringsData->getLength<float>("Inner");
@@ -824,8 +830,8 @@ Body* CreateBody(const std::string& name,
                  PlanetarySystem* system,
                  Universe& universe,
                  Body* existingBody,
-                 const Hash* planetData,
-                 const fs::path& path,
+                 const AssociativeArray* planetData,
+                 const std::filesystem::path& path,
                  DataDisposition disposition,
                  BodyType bodyType)
 {
@@ -945,8 +951,13 @@ Body* CreateBody(const std::string& name,
         body->setClickable(false);
 
     // TODO: should be own class
-    if (const auto *infoURL = planetData->getString("InfoURL"); infoURL != nullptr)
-        body->setInfoURL(BuildInfoURL(*infoURL, path));
+    if (const auto *infoURLValue = planetData->getString("InfoURL"); infoURLValue != nullptr)
+    {
+        if (std::string infoURL = util::BuildInfoURL(*infoURLValue, path); !infoURL.empty())
+            body->setInfoURL(std::move(infoURL));
+        else
+            GetLogger()->error(_("Invalid InfoURL used in {} definition.\n"), name);
+    }
 
     if (auto albedo = planetData->getNumber<float>("Albedo"); albedo.has_value())
     {
@@ -990,8 +1001,10 @@ Body* CreateBody(const std::string& name,
 
     if (auto temperature = planetData->getNumber<float>("Temperature"); temperature.has_value() && *temperature > 0.0f)
         body->setTemperature(*temperature);
-    if (auto tempDiscrepancy = planetData->getNumber<float>("TempDiscrepancy"); tempDiscrepancy.has_value())
-        body->setTempDiscrepancy(*tempDiscrepancy);
+    if (auto emissivity = planetData->getNumber<float>("Emissivity"); emissivity.has_value())
+        body->setEmissivity(*emissivity);
+    if (auto internalHeatFlux = planetData->getNumber<float>("InternalHeatFlux"); internalHeatFlux.has_value())
+        body->setInternalHeatFlux(*internalHeatFlux);
     if (auto mass = planetData->getMass<float>("Mass", 1.0, 1.0); mass.has_value())
         body->setMass(*mass);
     if (auto density = planetData->getNumber<float>("Density"); density.has_value())
@@ -1014,7 +1027,7 @@ Body* CreateBody(const std::string& name,
     // Read the atmosphere
     if (const Value* atmosDataValue = planetData->getValue("Atmosphere"); atmosDataValue != nullptr)
     {
-        if (const Hash* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
+        if (const AssociativeArray* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
             GetLogger()->error(_("Atmosphere must be an associative array.\n"));
         else
             ReadAtmosphere(body, atmosData, path, disposition);
@@ -1023,7 +1036,7 @@ Body* CreateBody(const std::string& name,
     // Read the ring system
     if (const Value* ringsDataValue = planetData->getValue("Rings"); ringsDataValue != nullptr)
     {
-        if (const Hash* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
+        if (const AssociativeArray* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
             GetLogger()->error(_("Rings must be an associative array.\n"));
         else
             ReadRings(body, ringsData, path, disposition);
@@ -1056,8 +1069,8 @@ Body* CreateReferencePoint(const std::string& name,
                            PlanetarySystem* system,
                            Universe& universe,
                            Body* existingBody,
-                           const Hash* refPointData,
-                           const fs::path& path,
+                           const AssociativeArray* refPointData,
+                           const std::filesystem::path& path,
                            DataDisposition disposition)
 {
     Body* body = nullptr;
@@ -1110,10 +1123,10 @@ Body* CreateReferencePoint(const std::string& name,
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
-                            const fs::path& directory)
+                            const std::filesystem::path& directory)
 {
     Tokenizer tokenizer(&in);
-    Parser parser(&tokenizer);
+    util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
     std::string s = directory.string();
@@ -1178,7 +1191,7 @@ bool LoadSolarSystemObjects(std::istream& in,
         }
 
         const Value objectDataValue = parser.readValue();
-        const Hash* objectData = objectDataValue.getHash();
+        const AssociativeArray* objectData = objectDataValue.getHash();
         if (objectData == nullptr)
         {
             sscError(tokenizer, "{ expected");

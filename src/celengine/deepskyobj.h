@@ -10,27 +10,32 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <iosfwd>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/filesystem.h>
-#include <celengine/astroobj.h>
+#include "astroobj.h"
+#include "renderflags.h"
 
-class AssociativeArray;
-class Selection;
-class Renderer;
-struct Matrices;
-
-constexpr inline float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
-
-class Nebula;
 class Galaxy;
 class Globular;
+struct Matrices;
+class Nebula;
 class OpenCluster;
+class Selection;
+class Renderer;
+
+namespace celestia::util
+{
+class AssociativeArray;
+}
+
+constexpr inline float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
 
 enum class DeepSkyObjectType
 {
@@ -86,10 +91,10 @@ public:
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
-    virtual bool load(const AssociativeArray*, const fs::path& resPath);
+    virtual bool load(const celestia::util::AssociativeArray*, const std::filesystem::path& resPath, std::string_view name);
 
-    virtual std::uint64_t getRenderMask() const { return 0; }
-    virtual unsigned int getLabelMask() const { return 0; }
+    virtual RenderFlags getRenderMask() const { return RenderFlags::ShowNothing; }
+    virtual RenderLabels getLabelMask() const { return RenderLabels::NoLabels; }
 
     AstroCatalog::IndexNumber getIndex() const { return indexNumber; }
     void setIndex(AstroCatalog::IndexNumber idx) { indexNumber = idx; }

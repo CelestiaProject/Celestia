@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <utility>
 
 #include <celutil/strnatcmp.h>
 #include "body.h"
@@ -22,10 +23,11 @@
 #include "render.h"
 
 
-Simulation::Simulation(Universe* _universe) :
-    universe(_universe)
+Simulation::Simulation(std::unique_ptr<Universe>&& universe,
+                       const std::shared_ptr<celestia::engine::ObserverSettings>& observerSettings) :
+    universe(std::move(universe))
 {
-    activeObserver = new Observer();
+    activeObserver = new Observer(observerSettings);
     observers.push_back(activeObserver);
 }
 
@@ -64,7 +66,7 @@ void Simulation::render(Renderer& renderer, Observer& observer)
 
 Universe* Simulation::getUniverse() const
 {
-    return universe;
+    return universe.get();
 }
 
 
@@ -144,7 +146,7 @@ void Simulation::setTrackedObject(const Selection& sel)
 
 
 Selection Simulation::pickObject(const Eigen::Vector3f& pickRay,
-                                 std::uint64_t renderFlags,
+                                 RenderFlags renderFlags,
                                  float tolerance)
 {
     return universe->pick(activeObserver->getPosition(),

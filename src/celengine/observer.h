@@ -27,9 +27,32 @@
 #include <Eigen/Geometry>
 
 #include <celcompat/numbers.h>
+#include <celutil/flag.h>
+
 #include "selection.h"
 #include "shared.h"
 #include "univcoord.h"
+
+namespace celestia::engine
+{
+
+constexpr inline double MIN_SIG_ANGULAR_SPEED     = 1.0e-10;
+constexpr inline double MIN_SIG_LINEAR_SPEED      = 1.0e-12;
+
+enum class ObserverFlags : unsigned int
+{
+    None                        = 0x0,
+    AlignCameraToSurfaceOnLand  = 0x1,
+};
+
+struct ObserverSettings
+{
+    ObserverFlags flags{ ObserverFlags::None };
+};
+
+ENUM_CLASS_BITWISE_OPS(ObserverFlags);
+
+}
 
 class ReferenceFrame;
 
@@ -119,7 +142,7 @@ public:
     static constexpr const double EndInterpolation   = 0.75;
     static constexpr const double AccelerationTime   = 0.5;
 
-    Observer();
+    explicit Observer(const std::shared_ptr<celestia::engine::ObserverSettings>&);
     Observer(const Observer &o);
     ~Observer() = default;
 
@@ -133,13 +156,16 @@ public:
     void               setOrientation(const Eigen::Quaternionf&);
     void               setOrientation(const Eigen::Quaterniond&);
 
-    Eigen::Matrix3d getOrientationTransform() const;
-    void            setOrientationTransform(const Eigen::Matrix3d&);
+    const Eigen::Quaterniond& getOrientationTransform() const;
+    void                      setOrientationTransform(const Eigen::Quaterniond&);
+    void                      applyCurrentTransform();
 
     Eigen::Vector3d getVelocity() const;
     void            setVelocity(const Eigen::Vector3d&);
     Eigen::Vector3d getAngularVelocity() const;
     void            setAngularVelocity(const Eigen::Vector3d&);
+    Eigen::Vector3d getInputAngularVelocity() const;
+    void            setInputAngularVelocity(const Eigen::Vector3d&);
 
     float          getFOV() const;
     void           setFOV(float);
@@ -257,6 +283,7 @@ public:
         double expFactor{ 0.5 };
         double accelTime{ AccelerationTime };
         Eigen::Quaterniond rotation1; // rotation on the CircularOrbit around centerObject
+        Eigen::Quaterniond orientationTransformInverse; // the inverse of orientation transform when the journey starts
 
         Selection centerObject;
 
@@ -264,7 +291,6 @@ public:
     };
 
     void gotoJourney(const JourneyParams&);
-    // void setSimulation(Simulation* _sim) { sim = _sim; };
 
 private:
     void computeGotoParameters(const Selection &sel,
@@ -287,10 +313,13 @@ private:
                                    JourneyParams &jparams,
                                    double centerTime) const;
 
+    void startTraveling();
+
     void setOriginalOrientation(const Eigen::Quaternionf&);
     void setOriginalOrientation(const Eigen::Quaterniond&);
     void updateUniversal();
     void updateOrientation();
+    Eigen::Quaterniond transform(const Eigen::Quaterniond&) const;
     Eigen::Quaterniond undoTransform(const Eigen::Quaterniond&) const;
     void convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame);
 
@@ -300,9 +329,15 @@ private:
     UniversalCoord      position{ 0.0, 0.0, 0.0 };
     Eigen::Quaterniond  originalOrientation{ Eigen::Quaterniond::Identity() };
     Eigen::Quaterniond  transformedOrientation{ Eigen::Quaterniond::Identity() };
-    Eigen::Matrix3d     orientationTransform{ Eigen::Matrix3d::Identity() };
+    // Flexible, full 6DoF observer pose, e.g., AR/VR headset
+    Eigen::Quaterniond  devicePoseQuaternion{ Eigen::Quaterniond::Identity() };
+    // Orientation driven by input (Euler-based, like joystick)
+    Eigen::Quaterniond  eulerDrivenOrientation{ Eigen::Quaterniond::Identity() };
+    Eigen::Vector3d     inputEulerAngles{ Eigen::Vector3d::Zero() };
+
     Eigen::Vector3d     velocity{ Eigen::Vector3d::Zero() };
     Eigen::Vector3d     angularVelocity{ Eigen::Vector3d::Zero() };
+    Eigen::Vector3d     inputAngularVelocity{ Eigen::Vector3d::Zero() };
 
     // Position and orientation in universal coordinates, derived from the
     // equivalent quantities in the observer reference frame.
@@ -330,6 +365,8 @@ private:
     float alternateZoom{ 1.0f };
 
     bool reverseFlag{ false };
+
+    std::shared_ptr<celestia::engine::ObserverSettings> settings;
 
     std::uint64_t locationFilter{ DefaultLocationFilter };
     std::string displayedSurface;

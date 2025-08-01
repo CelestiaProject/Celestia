@@ -7,14 +7,40 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celutil/logger.h>
 #include "glshader.h"
+
+#include <cassert>
+#include <limits>
+#include <string>
+#include <utility>
+
+#include <fmt/ostream.h>
+
+#include <celutil/logger.h>
+
+using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
 
-
 namespace
 {
+constexpr std::string_view
+shaderType(GLenum shaderType)
+{
+    switch (shaderType)
+    {
+    case GL_VERTEX_SHADER:
+        return "vertex"sv;
+    case GL_GEOMETRY_SHADER:
+        return "geometry"sv;
+    case GL_FRAGMENT_SHADER:
+        return "fragment"sv;
+    default:
+        assert(0);
+        return std::string_view{};
+    }
+}
+
 std::string
 GetInfoLog(GLuint obj)
 {
@@ -56,38 +82,30 @@ GetInfoLog(GLuint obj)
     infoLog.resize(static_cast<std::string::size_type>(charsWritten));
     return infoLog;
 }
-} // end unnamed namespace
 
-std::ostream* g_shaderLogFile = nullptr;
-
-
-GLShader::GLShader(GLuint _id) :
-    id(_id)
+template<typename... Args>
+void
+writeShaderLog(std::string_view format, Args&&... args)
 {
+    if (g_shaderLogFile == nullptr)
+        return;
+
+    fmt::print(*g_shaderLogFile, format, std::forward<Args>(args)...);
 }
-
-
-GLuint
-GLShader::getID() const
-{
-    return id;
-}
-
 
 GLShaderStatus
-GLShader::compile(const std::vector<std::string>& source)
+compile(GLuint id, std::string_view source)
 {
     if (source.empty())
         return GLShaderStatus::EmptyProgram;
 
-    // Convert vector of shader source strings to an array for OpenGL
-    const auto** sourceStrings = new const char*[source.size()];
-    for (unsigned int i = 0; i < source.size(); i++)
-        sourceStrings[i] = source[i].c_str();
+    if (source.size() > std::numeric_limits<GLint>::max())
+        return GLShaderStatus::OutOfMemory;
 
-    // Copy shader source to OpenGL
-    glShaderSource(id, source.size(), sourceStrings, nullptr);
-    delete[] sourceStrings;
+    const char* ptr = source.data();
+    GLint length = static_cast<GLint>(source.size());
+
+    glShaderSource(id, 1, &ptr, &length);
 
     // Actually compile the shader
     glCompileShader(id);
@@ -100,13 +118,63 @@ GLShader::compile(const std::vector<std::string>& source)
     return GLShaderStatus::OK;
 }
 
-
-GLShader::~GLShader()
+template<typename Shader, typename Key>
+Shader
+createShader(Key key, std::string_view source, GLShaderStatus& status)
 {
-    glDeleteShader(id);
+    GLuint id = glCreateShader(Shader::ShaderType);
+    if (id == 0)
+    {
+        status = GLShaderStatus::OutOfMemory;
+        writeShaderLog("Could not obtain {} shader id\n", shaderType(Shader::ShaderType));
+        return Shader();
+    }
+
+    Shader shader{ key, id };
+    status = compile(id, source);
+    if (status != GLShaderStatus::OK)
+    {
+        writeShaderLog("Error compiling {} shader:\n{}", shaderType(Shader::ShaderType), GetInfoLog(id));
+        return Shader();
+    }
+
+    return shader;
 }
 
+} // end unnamed namespace
 
+std::ostream* g_shaderLogFile = nullptr;
+
+GLShader::GLShader(GLuint _id) :
+    id(_id)
+{
+}
+
+GLShader::GLShader(GLShader&& other) noexcept :
+    id(other.id)
+{
+    other.id = 0;
+}
+
+GLShader&
+GLShader::operator=(GLShader&& other) noexcept
+{
+    if (this != &other)
+    {
+        destroy();
+        id = other.id;
+        other.id = 0;
+    }
+
+    return *this;
+}
+
+void
+GLShader::destroy() const
+{
+    if (id != 0)
+        glDeleteShader(id);
+}
 
 //************* GLxxxProperty **********
 
@@ -123,7 +191,6 @@ FloatShaderParameter::operator=(float f)
     return *this;
 }
 
-
 Vec2ShaderParameter::Vec2ShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -136,7 +203,6 @@ Vec2ShaderParameter::operator=(const Eigen::Vector2f& v)
         glUniform2fv(slot, 1, v.data());
     return *this;
 }
-
 
 Vec3ShaderParameter::Vec3ShaderParameter(GLuint obj, const char* name)
 {
@@ -151,7 +217,6 @@ Vec3ShaderParameter::operator=(const Eigen::Vector3f& v)
     return *this;
 }
 
-
 Vec4ShaderParameter::Vec4ShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -164,7 +229,6 @@ Vec4ShaderParameter::operator=(const Eigen::Vector4f& v)
         glUniform4fv(slot, 1, v.data());
     return *this;
 }
-
 
 IntegerShaderParameter::IntegerShaderParameter(GLuint obj, const char* name)
 {
@@ -179,7 +243,6 @@ IntegerShaderParameter::operator=(int i)
     return *this;
 }
 
-
 Mat3ShaderParameter::Mat3ShaderParameter(GLuint obj, const char* name)
 {
     slot = glGetUniformLocation(obj, name);
@@ -192,7 +255,6 @@ Mat3ShaderParameter::operator=(const Eigen::Matrix3f& v)
         glUniformMatrix3fv(slot, 1, GL_FALSE, v.data());
     return *this;
 }
-
 
 Mat4ShaderParameter::Mat4ShaderParameter(GLuint obj, const char* name)
 {
@@ -207,7 +269,6 @@ Mat4ShaderParameter::operator=(const Eigen::Matrix4f& v)
     return *this;
 }
 
-
 //************* GLProgram **************
 
 GLProgram::GLProgram(GLuint _id) :
@@ -215,12 +276,31 @@ GLProgram::GLProgram(GLuint _id) :
 {
 }
 
-
-GLProgram::~GLProgram()
+GLProgram::GLProgram(GLProgram&& other) noexcept :
+    id(other.id)
 {
-    glDeleteProgram(id);
+    other.id = 0;
 }
 
+GLProgram&
+GLProgram::operator=(GLProgram&& other) noexcept
+{
+    if (this != &other)
+    {
+        destroy();
+        id = other.id;
+        other.id = 0;
+    }
+
+    return *this;
+}
+
+void
+GLProgram::destroy() const
+{
+    if (id != 0)
+        glDeleteProgram(id);
+}
 
 void
 GLProgram::use() const
@@ -228,280 +308,117 @@ GLProgram::use() const
     glUseProgram(id);
 }
 
-
-void
-GLProgram::attach(const GLShader& shader)
+GLVertexShader
+GLVertexShader::create(std::string_view source, GLShaderStatus& status)
 {
-    glAttachShader(id, shader.getID());
+    return createShader<GLVertexShader>(CreateToken{}, source, status);
 }
 
-
-GLShaderStatus
-GLProgram::link()
+GLGeometryShader
+GLGeometryShader::create(std::string_view source, GLShaderStatus& status)
 {
+    return createShader<GLGeometryShader>(CreateToken{}, source, status);
+}
+
+GLFragmentShader
+GLFragmentShader::create(std::string_view source, GLShaderStatus& status)
+{
+    return createShader<GLFragmentShader>(CreateToken{}, source, status);
+}
+
+GLProgramBuilder::GLProgramBuilder(GLProgramBuilder&& other) noexcept :
+    id(other.id)
+{
+    other.id = 0;
+}
+
+GLProgramBuilder&
+GLProgramBuilder::operator=(GLProgramBuilder&& other) noexcept
+{
+    if (this != &other)
+    {
+        destroy();
+        id = other.id;
+        other.id = 0;
+    }
+
+    return *this;
+}
+
+void
+GLProgramBuilder::destroy() const
+{
+    if (id != 0)
+        glDeleteProgram(id);
+}
+
+GLProgramBuilder
+GLProgramBuilder::create(GLShaderStatus& status)
+{
+    GLuint progId = glCreateProgram();
+    if (progId == 0)
+    {
+        status = GLShaderStatus::OutOfMemory;
+        return GLProgramBuilder{};
+    }
+
+    status = GLShaderStatus::OK;
+    return GLProgramBuilder{ progId };
+}
+
+void
+GLProgramBuilder::attach(GLVertexShader&& vs)
+{
+    vertexShader = std::move(vs);
+}
+
+void
+GLProgramBuilder::attach(GLGeometryShader&& gs)
+{
+    geometryShader = std::move(gs);
+}
+
+void
+GLProgramBuilder::attach(GLFragmentShader&& fs)
+{
+    fragmentShader = std::move(fs);
+}
+
+void
+GLProgramBuilder::bindAttribute(GLuint index, const GLchar* name) const
+{
+    if (isValid())
+        glBindAttribLocation(id, index, name);
+}
+
+GLProgram
+GLProgramBuilder::link(GLShaderStatus& status)
+{
+    if (!isValid())
+    {
+        status = GLShaderStatus::OutOfMemory;
+        return GLProgram{};
+    }
+
+    if (vertexShader.isValid())
+        glAttachShader(id, vertexShader.getID());
+    if (geometryShader.isValid())
+        glAttachShader(id, geometryShader.getID());
+    if (fragmentShader.isValid())
+        glAttachShader(id, fragmentShader.getID());
+
     glLinkProgram(id);
 
     GLint linkSuccess;
     glGetProgramiv(id, GL_LINK_STATUS, &linkSuccess);
     if (linkSuccess != GL_TRUE)
     {
-        if (g_shaderLogFile != nullptr)
-        {
-            *g_shaderLogFile << "Error linking shader program:\n";
-            *g_shaderLogFile << GetInfoLog(getID());
-        }
-        return GLShaderStatus::LinkError;
+        writeShaderLog("Error linking shader program:\n{}", GetInfoLog(id));
+        status = GLShaderStatus::LinkError;
     }
 
-    return GLShaderStatus::OK;
-}
-
-
-//************* GLShaderLoader ************
-
-GLShaderStatus
-GLShaderLoader::CreateVertexShader(const std::vector<std::string>& source,
-                                   GLVertexShader** vs)
-{
-    GLuint vsid = glCreateShader(GL_VERTEX_SHADER);
-
-    auto* shader = new GLVertexShader(vsid);
-
-    GLShaderStatus status = shader->compile(source);
-    if (status != GLShaderStatus::OK)
-    {
-        if (g_shaderLogFile != nullptr)
-        {
-            *g_shaderLogFile << "Error compiling vertex shader:\n";
-            *g_shaderLogFile << GetInfoLog(shader->getID());
-        }
-        delete shader;
-        return status;
-    }
-
-    *vs = shader;
-
-    return GLShaderStatus::OK;
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateFragmentShader(const std::vector<std::string>& source,
-                                     GLFragmentShader** fs)
-{
-    GLuint fsid = glCreateShader(GL_FRAGMENT_SHADER);
-
-    auto* shader = new GLFragmentShader(fsid);
-
-    GLShaderStatus status = shader->compile(source);
-    if (status != GLShaderStatus::OK)
-    {
-        if (g_shaderLogFile != nullptr)
-        {
-            *g_shaderLogFile << "Error compiling fragment shader:\n";
-            *g_shaderLogFile << GetInfoLog(shader->getID());
-        }
-        delete shader;
-        return status;
-    }
-
-    *fs = shader;
-
-    return GLShaderStatus::OK;
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateGeometryShader(const std::vector<std::string>& source,
-                                     GLGeometryShader** gs)
-{
-    GLuint vsid = glCreateShader(GL_GEOMETRY_SHADER);
-
-    auto* shader = new GLGeometryShader(vsid);
-
-    GLShaderStatus status = shader->compile(source);
-    if (status != GLShaderStatus::OK)
-    {
-        if (g_shaderLogFile != nullptr)
-        {
-            *g_shaderLogFile << "Error compiling geometry shader:\n";
-            *g_shaderLogFile << GetInfoLog(shader->getID());
-        }
-        delete shader;
-        return status;
-    }
-
-    *gs = shader;
-
-    return GLShaderStatus::OK;
-}
-
-GLShaderStatus
-GLShaderLoader::CreateVertexShader(const std::string& source,
-                                   GLVertexShader** vs)
-
-{
-    std::vector<std::string> v;
-    v.push_back(source);
-    return CreateVertexShader(v, vs);
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateFragmentShader(const std::string& source,
-                                     GLFragmentShader** fs)
-{
-    std::vector<std::string> v;
-    v.push_back(source);
-    return CreateFragmentShader(v, fs);
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateProgram(const GLVertexShader& vs,
-                              const GLFragmentShader& fs,
-                              GLProgram** progOut)
-{
-    GLuint progid = glCreateProgram();
-
-    auto* prog = new GLProgram(progid);
-
-    prog->attach(vs);
-    prog->attach(fs);
-
-    *progOut = prog;
-
-    return GLShaderStatus::OK;
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
-                              const std::vector<std::string>& fsSource,
-                              GLProgram** progOut)
-{
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = CreateVertexShader(vsSource, &vs);
-    if (status != GLShaderStatus::OK)
-        return status;
-
-    GLFragmentShader* fs = nullptr;
-    status = CreateFragmentShader(fsSource, &fs);
-    if (status != GLShaderStatus::OK)
-    {
-        delete vs;
-        return status;
-    }
-
-    GLProgram* prog = nullptr;
-    status = CreateProgram(*vs, *fs, &prog);
-    if (status != GLShaderStatus::OK)
-    {
-        delete vs;
-        delete fs;
-        return status;
-    }
-
-    *progOut = prog;
-
-    // No need to keep these around--the program doesn't reference them
-    delete vs;
-    delete fs;
-
-    return GLShaderStatus::OK;
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateProgram(const GLVertexShader& vs,
-                              const GLGeometryShader& gs,
-                              const GLFragmentShader& fs,
-                              GLProgram** progOut)
-{
-    GLuint progid = glCreateProgram();
-
-    auto* prog = new GLProgram(progid);
-
-    prog->attach(vs);
-    prog->attach(gs);
-    prog->attach(fs);
-
-    *progOut = prog;
-
-    return GLShaderStatus::OK;
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateProgram(const std::vector<std::string>& vsSource,
-                              const std::vector<std::string>& gsSource,
-                              const std::vector<std::string>& fsSource,
-                              GLProgram** progOut)
-{
-    GLVertexShader* vs = nullptr;
-    GLShaderStatus status = CreateVertexShader(vsSource, &vs);
-    if (status != GLShaderStatus::OK)
-        return status;
-
-    GLFragmentShader* fs = nullptr;
-    status = CreateFragmentShader(fsSource, &fs);
-    if (status != GLShaderStatus::OK)
-    {
-        delete vs;
-        return status;
-    }
-
-    GLGeometryShader* gs = nullptr;
-    status = CreateGeometryShader(gsSource, &gs);
-    if (status != GLShaderStatus::OK)
-    {
-        delete vs;
-        delete fs;
-        return status;
-    }
-
-    GLProgram* prog = nullptr;
-    status = CreateProgram(*vs, *gs, *fs, &prog);
-    if (status != GLShaderStatus::OK)
-    {
-        delete vs;
-        delete gs;
-        delete fs;
-        return status;
-    }
-
-    *progOut = prog;
-
-    // No need to keep these around--the program doesn't reference them
-    delete vs;
-    delete gs;
-    delete fs;
-
-    return GLShaderStatus::OK;
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateProgram(const std::string& vsSource,
-                              const std::string& fsSource,
-                              GLProgram** progOut)
-{
-    std::vector<std::string> vsSourceVec { vsSource };
-    std::vector<std::string> fsSourceVec { fsSource };
-
-    return CreateProgram(vsSourceVec, fsSourceVec, progOut);
-}
-
-
-GLShaderStatus
-GLShaderLoader::CreateProgram(const std::string& vsSource,
-                              const std::string& gsSource,
-                              const std::string& fsSource,
-                              GLProgram** progOut)
-{
-    std::vector<std::string> vsSourceVec { vsSource };
-    std::vector<std::string> gsSourceVec { gsSource };
-    std::vector<std::string> fsSourceVec { fsSource };
-
-    return CreateProgram(vsSourceVec, gsSourceVec, fsSourceVec, progOut);
+    status = GLShaderStatus::OK;
+    GLProgram program{ id };
+    id = 0;
+    return program;
 }

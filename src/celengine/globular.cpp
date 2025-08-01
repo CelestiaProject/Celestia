@@ -16,17 +16,18 @@
 
 #include <fmt/printf.h>
 
-#include <celengine/hash.h>
 #include <celengine/render.h>
 #include <celmath/ellipsoid.h>
 #include <celmath/intersect.h>
 #include <celmath/randutils.h>
 #include <celmath/ray.h>
+#include <celutil/associativearray.h>
 #include <celutil/gettext.h>
 #include "globular.h"
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
+namespace util = celestia::util;
 
 namespace
 {
@@ -94,10 +95,10 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                   cosAngleToBoundCenter);
 }
 
-bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
+bool Globular::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
 {
     // Load the basic DSO parameters first
-    if (!DeepSkyObject::load(params, resPath))
+    if (!DeepSkyObject::load(params, resPath, name))
         return false;
 
     if (auto detailVal = params->getNumber<float>("Detail"); detailVal.has_value())
@@ -118,14 +119,14 @@ bool Globular::load(const AssociativeArray* params, const fs::path& resPath)
     return true;
 }
 
-std::uint64_t Globular::getRenderMask() const
+RenderFlags Globular::getRenderMask() const
 {
-    return Renderer::ShowGlobulars;
+    return RenderFlags::ShowGlobulars;
 }
 
-unsigned int Globular::getLabelMask() const
+RenderLabels Globular::getLabelMask() const
 {
-    return Renderer::GlobularLabels;
+    return RenderLabels::GlobularLabels;
 }
 
 void Globular::recomputeTidalRadius()

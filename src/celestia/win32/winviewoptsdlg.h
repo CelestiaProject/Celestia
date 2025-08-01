@@ -15,6 +15,7 @@
 
 #include <windows.h>
 
+#include <celengine/renderflags.h>
 #include <celestia/celestiacore.h>
 
 namespace celestia::win32
@@ -34,8 +35,8 @@ class ViewOptionsDialog : public CelestiaWatcher
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;
-    std::uint64_t initialRenderFlags;
-    int initialLabelMode;
+    RenderFlags initialRenderFlags;
+    RenderLabels initialLabelMode;
     int initialHudDetail;
 };
 

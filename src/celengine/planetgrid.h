@@ -12,10 +12,15 @@
 
 #pragma once
 
+#include <string_view>
+
+#include <Eigen/Core>
+
 #include <celengine/referencemark.h>
-#include <celrender/linerenderer.h>
+#include <celrender/rendererfwd.h>
 
 class Body;
+struct Matrices;
 class Renderer;
 
 class PlanetographicGrid : public ReferenceMark
@@ -29,7 +34,7 @@ public:
      *      EastWest measures longitude both east and west, and is used only
      *         for the Earth and Moon (strictly because of convention.)
      */
-    enum LongitudeConvention
+    enum class LongitudeConvention
     {
         EastWest,
         Westward,
@@ -40,7 +45,7 @@ public:
      *  the rotation north. It should be set for retrograde rotators in
      *  order to conform with IAU conventions.
      */
-    enum NorthDirection
+    enum class NorthDirection
     {
         NorthNormal,
         NorthReversed
@@ -49,7 +54,7 @@ public:
     PlanetographicGrid(const Body& _body);
     ~PlanetographicGrid() = default;
 
-    void render(Renderer* renderer,
+    void render(celestia::render::ReferenceMarkRenderer* renderer,
                 const Eigen::Vector3f& pos,
                 float discSizeInPixels,
                 double tdb,
@@ -58,20 +63,12 @@ public:
 
     void setIAULongLatConvention();
 
-    static void deinit();
+protected:
+    std::string_view defaultTag() const override;
 
 private:
-    static celestia::render::LineRenderer *latitudeRenderer;
-    static celestia::render::LineRenderer *equatorRenderer;
-    static celestia::render::LineRenderer *longitudeRenderer;
-    static bool initialized;
-    static void InitializeGeometry(const Renderer&);
-
     const Body& body;
 
-    float minLongitudeStep{ 10.0f };
-    float minLatitudeStep{ 10.0f };
-
-    LongitudeConvention longitudeConvention{ Westward };
-    NorthDirection northDirection{ NorthNormal };
+    LongitudeConvention longitudeConvention{ LongitudeConvention::Westward };
+    NorthDirection northDirection{ NorthDirection::NorthNormal };
 };

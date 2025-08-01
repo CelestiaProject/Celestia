@@ -18,8 +18,8 @@ namespace celestia::engine
 {
 
 std::shared_ptr<const ephem::RotationModel>
-RotationModelManager::find(const fs::path& source,
-                           const fs::path& path)
+RotationModelManager::find(const std::filesystem::path& source,
+                           const std::filesystem::path& path)
 {
     auto filename = path.empty()
         ? "data" / source
