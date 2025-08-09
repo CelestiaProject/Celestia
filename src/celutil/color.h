@@ -11,11 +11,18 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <string_view>
 
 #include <Eigen/Core>
 
+#if defined(__GNUC__) && !defined(__clang_version__)
+// GCC >= 4.6 implements constexpr for <cmath> in C++11 mode. Other compilers require C++26.
+#define constexprmath constexpr
+#else
+#define constexprmath
+#endif
 
 class Color
 {
@@ -25,23 +32,28 @@ class Color
         return static_cast<std::uint8_t>(std::clamp(a, 0.0f, 1.0f) * 255.99f);
     }
 
+    static constexprmath float linearize(float v)
+    {
+        return v <= 0.04045f ? v * (1.0f/12.92f) : std::pow((v + 0.055f)/1.055f, 2.4f);
+    }
+
     std::array<std::uint8_t, 4> c;
 
  public:
     constexpr Color() noexcept :
         c({ 0, 0, 0, 0xff })
+
     {}
-    constexpr Color(float r, float g, float b, float a) noexcept :
-        c({ scaleFloat(r), scaleFloat(g), scaleFloat(b), scaleFloat(a) })
+    constexpr Color(float r, float g, float b, float a = 1.0f) noexcept :
+       c({ scaleFloat(r), scaleFloat(g), scaleFloat(b), scaleFloat(a) })
     {}
-    constexpr Color(float r, float g, float b) noexcept :
-        Color(r, g, b, 1.0f)
-    {}
-    constexpr Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) noexcept :
-        c({ r, g, b, a })
-    {}
-    constexpr Color(std::uint8_t r, std::uint8_t g, std::uint8_t b) noexcept:
-        Color(r, g, b, 0xff)
+    constexpr Color(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 0xff) noexcept :
+    c({ r, g, b, a })
+
+    //{}
+    //constexpr Color(std::uint8_t r, std::uint8_t g, std::uint8_t b) noexcept:
+    //    Color(r, g, b, 0xff)
+
     {}
     constexpr Color(const Color &color, float alpha) noexcept :
         Color(color.red(), color.green(), color.blue(), alpha)
@@ -51,7 +63,24 @@ class Color
     {}
     Color(const Eigen::Vector4f &v) noexcept :
         Color(v.x(), v.y(), v.z(), v.w())
-    {}
+
+        {
+        }
+
+        constexprmath void linearize()
+        {
+            *this = srgb(*this);
+        }
+
+        static constexprmath Color srgb(float r, float g, float b, float a = 1.0f)
+        {
+            return { linearize(r), linearize(g), linearize(b), a };
+        }
+
+        static constexprmath Color srgb(const Color &other)
+        {
+            return Color::srgb(other.red(), other.green(), other.blue(), other.alpha());
+        }
 
     enum
     {

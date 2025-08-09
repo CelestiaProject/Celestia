@@ -141,6 +141,8 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
     // requires it in order to read binary files.
 
+celestia::util::GetLogger()->info("Loading {}\n", filename);
+
 #ifdef _WIN32
     FILE *in = _wfopen(filename.c_str(), L"rb");
 #else
@@ -219,9 +221,16 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // Here we use the library's state variable cinfo.output_scanline as the
     // loop counter, so that we don't have to keep track ourselves.
 
+    #ifdef GL_ES
     PixelFormat format = PixelFormat::RGB;
     if (cinfo.output_components == 1)
         format = PixelFormat::Luminance;
+
+    #else
+    PixelFormat format = PixelFormat::sRGB;
+    if (cinfo.output_components == 1)
+        format = PixelFormat::sLuminance;
+    #endif
 
     img = new Image(format, cinfo.image_width, cinfo.image_height);
 

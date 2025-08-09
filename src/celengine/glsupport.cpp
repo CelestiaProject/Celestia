@@ -11,9 +11,12 @@ namespace celestia::gl
 CELAPI bool OES_vertex_array_object        = false;
 CELAPI bool OES_texture_border_clamp       = false;
 CELAPI bool OES_geometry_shader            = false;
+CELAPI bool EXT_color_buffer_half_float    = false;
+CELAPI bool EXT_sRGB                       = false;
 #else
 CELAPI bool ARB_vertex_array_object        = false;
 CELAPI bool ARB_framebuffer_object         = false;
+CELAPI bool ARB_color_buffer_float         = false;
 #endif
 CELAPI bool ARB_shader_texture_lod         = false;
 CELAPI bool EXT_texture_compression_s3tc   = false;
@@ -81,6 +84,8 @@ bool init(util::array_view<std::string> ignore) noexcept
     OES_vertex_array_object        = check_extension(ignore, "GL_OES_vertex_array_object");
     OES_texture_border_clamp       = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
     OES_geometry_shader            = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
+    EXT_color_buffer_half_float    = check_extension(ignore, "EXT_color_buffer_half_float");
+    EXT_sRGB                       = check_extension(ignore, "EXT_sRGB");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     if (!has_extension("GL_ARB_framebuffer_object"))
@@ -88,6 +93,7 @@ bool init(util::array_view<std::string> ignore) noexcept
         fmt::print("{}", _("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
         return false;
     }
+    ARB_color_buffer_float         = check_extension(ignore, "ARB_color_buffer_float");
 #endif
     ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");

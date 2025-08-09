@@ -10,7 +10,7 @@
 #define CELAPI __declspec(dllexport)
 #endif
 #else
-#define CELAPI
+#define CELAPI __attribute__((visibility("default")))
 #endif
 #include <epoxy/gl.h>
 
@@ -47,8 +47,11 @@ extern CELAPI bool MESA_pack_invert; //NOSONAR
 extern CELAPI bool OES_vertex_array_object; //NOSONAR
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
+extern CELAPI bool EXT_color_buffer_half_float; //NOSONAR
+extern CELAPI bool EXT_sRGB; // NOSONAR
 #else
 extern CELAPI bool ARB_vertex_array_object; //NOSONAR
+extern CELAPI bool ARB_color_buffer_float; //NOSONAR
 #endif
 extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR

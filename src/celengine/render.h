@@ -774,6 +774,8 @@ class Renderer
 
     static Color SelectionCursorColor;
 
+    static bool linearMode;
+
     friend class celestia::render::AtmosphereRenderer;
     friend class PointStarRenderer;
 };

@@ -462,7 +462,13 @@ GlobularRenderer::FormManager::getColorTex()
 {
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
+        celestia::engine::PixelFormat format;
+        #ifdef GL_ES
+        format = celestia::PixelFormat::RGBA;
+        #else
+        format = celestia::engine::PixelFormat::sRGBA;
+        #endif
+        colorTex = CreateProceduralTexture(256, 1, format,
                                            colorTextureEval,
                                            Texture::EdgeClamp,
                                            Texture::NoMipMaps);

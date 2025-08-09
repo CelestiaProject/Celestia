@@ -44,53 +44,45 @@ PNGWarn(png_structp pngPtr, png_const_charp warning) //NOSONAR
     auto filename = static_cast<const std::filesystem::path*>(png_get_error_ptr(pngPtr));
     util::GetLogger()->warn(_("PNG warning in '{}': {}\n"), *filename, warning);
 }
-PixelFormat
-GetPixelFormat(png_structp png_ptr, png_infop info_ptr, int bit_depth, int color_type, const std::filesystem::path& filename)
-{
-    double gamma = 1.0/2.2;
-    bool isLinear = true;
 
-    #ifndef GL_ES
-    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA))
-    {
-        png_get_gAMA(png_ptr, info_ptr, &gamma);
-        isLinear = bit_depth != 8 || gamma < 0.454 || gamma > 0.455; // treat images with nonstandard gamma as linear
-    }
+double gamma = 1.0/2.2;
+#ifdef GL_ES
+bool isLinear = true;
+#else
+if (png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA))
+    png_get_gAMA(png_ptr, info_ptr, &gamma);
+    bool isLinear = bit_depth != 8 || gamma < 0.454 || gamma > 0.455; // treat images with nonstandard gamma as linear
     #endif
 
     PixelFormat format = PixelFormat::RGB;
-    switch (color_type)
-    {
-        case PNG_COLOR_TYPE_GRAY:
-            #ifdef GL_ES
-            format = PixelFormat::Luminance;
-            #else
-            format = isLinear ? PixelFormat::Luminance : PixelFormat::sLuminance;
-            #endif
-            break;
-        case PNG_COLOR_TYPE_GRAY_ALPHA:
-            #ifdef GL_ES
-            format = PixelFormat::LumAlpha;
-            #else
-            format = isLinear ? PixelFormat::LumAlpha : PixelFormat::sLumAlpha;
-            #endif
-            break;
-        case PNG_COLOR_TYPE_RGB:
-            format = isLinear ? PixelFormat::RGB : PixelFormat::sRGB;
-            break;
-        case PNG_COLOR_TYPE_PALETTE:
-        case PNG_COLOR_TYPE_RGB_ALPHA:
-            format = isLinear ? PixelFormat::RGBA : PixelFormat::sRGBA;
-            break;
-        default:
-            // badness
-            break;
-    }
-
-    util::GetLogger()->info("File: {}, gamma: {}, linear: {}, format: {:X}\n", filename, gamma, isLinear ? "yes" : "no", (int)format);
-
-    return format;
+switch (color_type)
+{
+    case PNG_COLOR_TYPE_GRAY:
+        #ifdef GL_ES
+        format = PixelFormat::LUMINANCE;
+        #else
+        format = isLinear ? PixelFormat::LUMINANCE : PixelFormat::SLUMINANCE;
+        #endif
+        break;
+    case PNG_COLOR_TYPE_GRAY_ALPHA:
+        #ifdef GL_ES
+        format = PixelFormat::LUM_ALPHA;
+        #else
+        format = isLinear ? PixelFormat::LUM_ALPHA : PixelFormat::SLUM_ALPHA;
+        #endif
+        break;
+    case PNG_COLOR_TYPE_RGB:
+        format = isLinear ? PixelFormat::RGB : PixelFormat::SRGB;
+        break;
+    case PNG_COLOR_TYPE_PALETTE:
+    case PNG_COLOR_TYPE_RGB_ALPHA:
+        format = isLinear ? PixelFormat::RGBA : PixelFormat::SRGBA;
+        break;
+    default:
+        // badness
+        break;
 }
+GetLogger()->info("File: {}, gamma: {}, linear: {}, format: {:X}\n", filename, gamma, isLinear ? "yes" : "no", (int)format);
 
 Image*
 LoadPNGImage(std::FILE* in, const std::filesystem::path& filename)
@@ -152,7 +144,7 @@ LoadPNGImage(std::FILE* in, const std::filesystem::path& filename)
     if (height == 0 || height > Image::MAX_DIMENSION)
         png_error(pngPtr, _("Image height out of range"));
 
-    format = GetPixelFormat(pngPtr, infoPtr, bitDepth, colorType, filename);
+    format = GetPixelFormat(pngPtr, infoPtr, bitDepth, colorType);
     img = new Image(format, static_cast<std::int32_t>(width), static_cast<std::int32_t>(height)); //NOSONAR
     pitch = img->getPitch();
 

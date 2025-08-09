@@ -115,7 +115,7 @@ GalaxyRenderer::render()
     if (m_objects.empty())
         return;
 
-    if (gl::hasGeomShader())
+    if (/*gl::hasGeomShader()*/false)
         renderGL3();
     else
         renderGL2();
@@ -183,7 +183,12 @@ GalaxyRenderer::bindTextures()
 
     if (m_colorTex == nullptr)
     {
-        m_colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
+        m_colorTex = CreateProceduralTexture(256, 1,
+                                           #ifdef GL_ES
+                                           celestia::PixelFormat::RGBA,
+                                           #else
+                                           celestia::engine::PixelFormat::sRGBA,
+                                           #endif
                                              &colorTextureEval,
                                              Texture::EdgeClamp,
                                              Texture::NoMipMaps);
