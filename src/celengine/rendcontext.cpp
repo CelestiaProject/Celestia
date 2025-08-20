@@ -210,6 +210,7 @@ RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::Primitive
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        float _objRadius,
+                                       float _geomAlbedo,
                                        const Eigen::Quaternionf& orientation,
                                        const Eigen::Matrix4f* _modelViewMatrix,
                                        const Eigen::Matrix4f* _projectionMatrix) :
@@ -217,6 +218,7 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
     lightingState(ls),
     objRadius(_objRadius),
     objScale(Eigen::Vector3f::Constant(_objRadius)),
+    geomAlbedo(_geomAlbedo),
     objOrientation(orientation),
     modelViewMatrix(_modelViewMatrix),
     projectionMatrix(_projectionMatrix)
@@ -228,6 +230,7 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        const Eigen::Vector3f& _objScale,
+                                       float _geomAlbedo,
                                        const Eigen::Quaternionf& orientation,
                                        const Eigen::Matrix4f* _modelViewMatrix,
                                        const Eigen::Matrix4f* _projectionMatrix) :
@@ -235,6 +238,7 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
     lightingState(ls),
     objRadius(_objScale.maxCoeff()),
     objScale(_objScale),
+    geomAlbedo(_geomAlbedo),
     objOrientation(orientation),
     modelViewMatrix(_modelViewMatrix),
     projectionMatrix(_projectionMatrix)
@@ -461,7 +465,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     prog->shininess = m.specularPower;
     if (shaderProps.lightModel == LightingModel::LunarLambertModel)
     {
-        prog->lunarLambert = lunarLambert;
+        prog->setLunarLambertParameters(lunarLambert, geomAlbedo);
     }
 
     // Generally, we want to disable depth writes for blend because it
