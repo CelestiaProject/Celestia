@@ -171,22 +171,16 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# 設定可見星的亮度...
-# (移除指令前的井字號/修改參數以符合您所需)
-# 可設定範圍: 0.8 to 15.2, 預設值是 6.0
+# Exposure time (brightness)...
+# Default is 1.0
+# (UNcomment / modify to meet your needs)
 #
-#  setvisibilitylimit {magnitude 6.0}
-
-
-# Faintest auto-magnitude brightness, at 45 degrees, Default is 8.5...
-# (移除指令前的井字號/修改參數以符合您所需)
-#  setfaintestautomag45deg {magnitude 8.5}
+#  setexposure {exposure 1.0}
 
 
 # 要顯示/呈現的項目:
 # 請勿呈現下方的項目 (移除指令前的井字號以符合您所需)...
 #  renderflags {clear "atmospheres"}
-#  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
 #  renderflags {clear "cloudmaps"}
 #  renderflags {clear "comettails"}
@@ -198,16 +192,14 @@
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
 
 
-# 要顯示/呈現的項目::
-# 一定會呈現的項目 (移除指令前的井字號以符合您所需)...
+# 要顯示/呈現的項目:
+# 請勿呈現下方的項目 (移除指令前的井字號以符合您所需)...
 #  renderflags {set "atmospheres"}
-#  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
 #  renderflags {set "cloudmaps"}
 #  renderflags {set "comettails"}
@@ -219,7 +211,6 @@
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}

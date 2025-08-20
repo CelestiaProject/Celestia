@@ -1,7 +1,6 @@
 // qtcelestiaactions.h
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Collection of actions used in the Qt4 UI.
 //
@@ -95,13 +94,8 @@ public:
     QAction* mediumResAction{ nullptr };
     QAction* highResAction{ nullptr };
 
-    QAction* pointStarAction{ nullptr };
-    QAction* fuzzyPointStarAction{ nullptr };
-    QAction* scaledDiscStarAction{ nullptr };
-
-    QAction* autoMagAction{ nullptr };
-    QAction* increaseLimitingMagAction{ nullptr };
-    QAction* decreaseLimitingMagAction{ nullptr };
+    QAction* increaseExposureAction{ nullptr };
+    QAction* decreaseExposureAction{ nullptr };
 
     QAction* toggleVSyncAction{ nullptr };
 
@@ -109,9 +103,8 @@ private slots:
     void slotToggleRenderFlag();
     void slotToggleLabel();
     void slotToggleOrbit();
-    void slotSetStarStyle();
     void slotSetTextureResolution();
-    void slotAdjustLimitingMagnitude();
+    void slotAdjustExposure();
     void slotSetLightTimeDelay();
 
 private:

@@ -1,4 +1,4 @@
-// pointstarvertexbuffer.h
+// starvertexbuffer.h
 //
 // Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
@@ -24,19 +24,19 @@ class Buffer;
 class VertexObject;
 }
 
-// PointStarVertexBuffer is used when hardware supports point sprites.
-class PointStarVertexBuffer
+// StarVertexBuffer is used when hardware supports point sprites.
+class StarVertexBuffer
 {
 public:
     using capacity_t = unsigned int;
 
-    PointStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
-    ~PointStarVertexBuffer() = default;
-    PointStarVertexBuffer() = delete;
-    PointStarVertexBuffer(const PointStarVertexBuffer&) = delete;
-    PointStarVertexBuffer(PointStarVertexBuffer&&) = delete;
-    PointStarVertexBuffer& operator=(const PointStarVertexBuffer&) = delete;
-    PointStarVertexBuffer& operator=(PointStarVertexBuffer&&) = delete;
+    StarVertexBuffer(const Renderer &renderer, capacity_t capacity);
+    ~StarVertexBuffer() = default;
+    StarVertexBuffer() = delete;
+    StarVertexBuffer(const StarVertexBuffer&) = delete;
+    StarVertexBuffer(StarVertexBuffer&&) = delete;
+    StarVertexBuffer& operator=(const StarVertexBuffer&) = delete;
+    StarVertexBuffer& operator=(StarVertexBuffer&&) = delete;
 
     void startBasicPoints();
     void startSprites();
@@ -71,14 +71,14 @@ private:
     std::unique_ptr<celestia::gl::VertexObject>  m_vo2;
     bool m_initialized{ false };
 
-    static PointStarVertexBuffer    *current;
+    static StarVertexBuffer    *current;
 
     void makeCurrent();
     void setupVertexArrayObject();
 };
 
 inline void
-PointStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
+StarVertexBuffer::addStar(const Eigen::Vector3f &pos,
                                const Color &color,
                                float size)
 {

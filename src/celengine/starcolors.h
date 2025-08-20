@@ -1,6 +1,7 @@
 // starcolors.cpp
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Tables of star colors, indexed by temperature.
 //
@@ -22,7 +23,6 @@
 
 enum class ColorTableType
 {
-    Enhanced = 0,
     Blackbody_D65 = 1,
     SunWhite = 2,
     VegaWhite = 3,

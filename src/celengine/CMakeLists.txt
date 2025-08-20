@@ -84,10 +84,6 @@ set(CELENGINE_SOURCES
   perspectiveprojectionmode.h
   planetgrid.cpp
   planetgrid.h
-  pointstarrenderer.cpp
-  pointstarrenderer.h
-  pointstarvertexbuffer.cpp
-  pointstarvertexbuffer.h
   projectionmode.cpp
   projectionmode.h
   rectangle.h
@@ -129,6 +125,10 @@ set(CELENGINE_SOURCES
   starname.h
   staroctree.cpp
   staroctree.h
+  starrenderer.cpp
+  starrenderer.h
+  starvertexbuffer.cpp
+  starvertexbuffer.h
   stellarclass.cpp
   stellarclass.h
   surface.h
