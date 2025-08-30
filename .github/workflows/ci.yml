@@ -28,7 +28,7 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: true
 
@@ -232,24 +232,24 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: true
 
     - name: 'Configure CMake'
       run: |
-        cmake -B ${{github.workspace}}/build            \
-              -G Ninja                                  \
-              -DENABLE_GLES=${{matrix.config.gles}}     \
-              -DENABLE_SPICE=ON                         \
-              -DENABLE_TOOLS=OFF                        \
-              -DENABLE_TESTS=ON                         \
-              -DENABLE_SDL=ON                           \
-              -DENABLE_QT5=ON                           \
-              -DENABLE_QT6=${{matrix.config.qt6}}       \
-              -DUSE_WAYLAND=${{matrix.config.wayland}}  \
-              -DENABLE_FFMPEG=ON                        \
-              -DENABLE_LIBAVIF=${{matrix.config.avif}}  \
+        cmake -B ${{github.workspace}}/build                 \
+              -G Ninja                                       \
+              -DENABLE_GLES=${{matrix.config.gles}}          \
+              -DENABLE_SPICE=ON                              \
+              -DENABLE_TOOLS=OFF                             \
+              -DENABLE_TESTS=ON                              \
+              -DENABLE_SDL=ON                                \
+              -DENABLE_QT5=ON                                \
+              -DENABLE_QT6=${{matrix.config.qt6}}            \
+              -DUSE_WAYLAND=${{matrix.config.wayland}}       \
+              -DENABLE_FFMPEG=ON                             \
+              -DENABLE_LIBAVIF=${{matrix.config.avif}}       \
               -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
               -DUSE_ICU=${{matrix.config.icu}}
 
@@ -316,7 +316,7 @@ jobs:
                      sdl2
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: true
 
