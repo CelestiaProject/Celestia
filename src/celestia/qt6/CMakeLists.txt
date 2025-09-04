@@ -11,6 +11,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets CONFIG REQUIRED)
+if (Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
+    find_package(Qt6GuiPrivate REQUIRED NO_MODULE)
+endif()
 qt6_add_resources(RC_SRC "../qt/icons.qrc")
 
 if(USE_WAYLAND)
@@ -21,12 +24,17 @@ endif()
 
 add_executable(celestia-qt6 WIN32 ${QT_SOURCES} ${RES} ${RC_SRC})
 add_dependencies(celestia-qt6 celestia)
-target_link_libraries(celestia-qt6 Qt6::Widgets Qt6::OpenGLWidgets celestia)
+target_link_libraries(celestia-qt6 PUBLIC Qt6::Widgets Qt6::OpenGLWidgets celestia)
 
 if(USE_WAYLAND)
-  target_link_libraries(celestia-qt6 Wayland::Client wayland-protocols-helper)
   target_compile_definitions(celestia-qt6 PRIVATE USE_WAYLAND)
-  target_include_directories(celestia-qt6 PRIVATE ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
+  target_link_libraries(celestia-qt6
+      PUBLIC
+          Wayland::Client
+          wayland-protocols-helper
+      PRIVATE
+          Qt6::GuiPrivate
+  )
 endif()
 
 set_target_properties(celestia-qt6 PROPERTIES CXX_VISIBILITY_PRESET hidden)
