@@ -98,13 +98,8 @@ N ...................................... Spacecraft
  } ....................................... Increase Ambient Light
  ( ....................................... Decrease Galaxy Light Gain
  ) ....................................... Increase Galaxy Light Gain
- [ ....................................... Decrease Magnitude Limit :
-                                           - If AutoMag OFF: Decrease limiting magnitude (fewer stars)
-                                           - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
- ] ....................................... Increase Magnitude :
-                                           - If AutoMag OFF: Increase limiting magnitude (more stars)
-                                           - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
- Ctrl+Y ............................... Toggle Auto Magnitude (auto adaptation of star visibility to FOV
+ [ ....................................... Decrease Exposure Time
+ ] ....................................... Increase Exposure Time
  , ....................................... Narrow Field Of View [Shift+Left Drag]
  . ....................................... Widen Field Of View [Shift+Left Drag]
  Ctrl+X ............................... Toggle Antialias lines
@@ -113,7 +108,6 @@ N ...................................... Spacecraft
  Ctrl+V ............................... Cycle among supported OpenGL render paths
  + ...................................... Toggle Planet Texture type (Artistic / Limit of Knowledge)
  % ..................................... Star color table toggle
- Ctrl+S ............................... Cycle the Star Style (points / fuzzy discs / scaled discs)
  V ...................................... Cycle the Info text verbosity (None / Terse / Verbose)
  Ctrl+W .............................. Toggle Wireframe mode
 

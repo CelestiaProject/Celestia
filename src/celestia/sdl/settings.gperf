@@ -23,4 +23,3 @@ ambientLight,      &readAmbientLight,      &writeAmbientLight
 tintSaturation,    &readTintSaturation,    &writeTintSaturation
 minFeatureSize,    &readMinFeatureSize,    &writeMinFeatureSize
 starColors,        &readStarColors,        &writeStarColors
-starStyle,         &readStarStyle,         &writeStarStyle

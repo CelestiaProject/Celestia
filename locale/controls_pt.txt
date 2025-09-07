@@ -63,10 +63,8 @@ O	: Ligar/Desligar órbitas dos planetas
 ^	: Ligar/Desligar renderização de nebulosas
 %	: Ligar/Desligar tabelas de cores estelares
 ;	: Mostrar um esfera equatorial de coordenadas baseada na Terra
-[	: Se a magnitude automática estiver OFF: Diminuir a magnitude limite (menos estrelas visíveis)
-	  Se a magnitude automática estiver ON : Diminuir a magnitude limite num campo de visão de 45 graus
-]	: Se a magnitude automática estiver OFF: Aumentar a magnitude limite (mais estrelas visíveis)
-	: Se a magnitude automática estiver ON : Aumentar a magnitude limite num campo de visão de 45 graus
+[	: Diminuir o tempo de exposição
+]	: Aumentar o tempo de exposição
 {	: Diminuir a iluminação ambiente
 }	: Aumentar a iluminação ambiente
 (	: Dimunuir o brilho das galáxias independentemente do brilho das estrelas
@@ -80,12 +78,10 @@ Ctrl+E	: Ligar/Desligar a renderização de sombras de eclipses
 Ctrl+K	: Ligar/Desligar os marcadores
 Ctrl+L	: Ligar/Desligar os mapas dos lados nocturnos dos planetas (poluição luminosa)
 Ctrl+P	: Marcar o objecto seleccionado
-Ctrl+S	: Alternar o estilo de estrelas entre pontos indistintos, pontos e discos à escala.
 Ctrl+T	: Ligar/Desligar a renderização de caudas de cometas
 Ctrl+V	: Alternar entre os caminhos de renderização OpenGL suportados
 Ctrl+W	: Ligar/Desligar modo wireframe
 Ctrl+X	: Ligar/Desligar linhas anti-serrilhadas
-Ctrl+Y	: Ligar/Desligar magnitude automática, ou seja, a adaptação automática da visibilidade estelar ao campo de visão
 +	: Alternar entre as texturas artísticas e as do limite do conhecimento nos planetas
 
 Multipanorama:
