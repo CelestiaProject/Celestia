@@ -318,7 +318,7 @@ if(USE_WAYLAND)
 
   set_source_files_properties(${PROTOCOL_SOURCES} PROPERTIES GENERATED ON)
   add_library(wayland-protocols-helper STATIC ${PROTOCOL_SOURCES})
-  target_include_directories(wayland-protocols-helper INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
+  target_include_directories(wayland-protocols-helper PUBLIC ${Wayland_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 find_package(gperf REQUIRED)
