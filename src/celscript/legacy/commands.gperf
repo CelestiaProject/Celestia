@@ -40,8 +40,7 @@ struct LegacyCommand { const char* name; ParseCommandPtr parser; };
 "orbitflags",              &parseOrbitFlagsCommand
 "constellations",          &parseConstellationsCommand
 "constellationcolor",      &parseConstellationColorCommand
-"setvisibilitylimit",      &parseSetVisibilityLimitCommand
-"setfaintestautomag45deg", &parseSetFaintestAutoMag45DegCommand
+"setexposure",             &parseSetExposureCommand
 "setambientlight",         &parseSetAmbientLightCommand
 "setgalaxylightgain",      &parseSetGalaxyLightGainCommand
 "settextureresolution",    &parseSetTextureResolutionCommand
