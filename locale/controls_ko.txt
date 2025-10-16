@@ -130,24 +130,18 @@ O ................ 궤도
 { ........... 주변빛 (감소)
 } ........... 주변빛 (증가)
 Ctrl+X ...... 부드러운 궤도선
-Ctrl+Y ...... 자동 등급 조정
 Alt+Enter.... 전체화면 전환
 , ........... 시야(FOV)를 좁게 (마우스 : 쉬프트+왼쪽 버튼 드래그)
 . ........... 시야(FOV)를 넓게 (마우스 : 쉬프트+왼쪽 버튼 드래그)
 ( ........... 은하 밝기 조정 (어둡게 : 광도 이득 감소)
 ) ........... 은하 밝기 조정 (밝게 : 광도 이득 증가)
-[ ........... 등급 제한 (감소):
-               - If AutoMag OFF: Decrease limiting magnitude (fewer stars)
-               - If AutoMag ON : Decrease limiting magnitude at 45 deg FOV
-] ........... 등급 제한 (증가):
-               - If AutoMag OFF: Increase limiting magnitude (more stars)
-               - If AutoMag ON : Increase limiting magnitude at 45 deg FOV
+[ ........... 노출 시간 줄이기
+] ........... 노출 시간 늘리기
 Ctrl+P ...... Mark selected object (Marker display must be active--Ctrl+K)
 Ctrl+V ...... OpenGl Render Paths--Cycle through the paths supported on
                      your graphics card
 + ........... Planet Texture Type toggle (Artistic / Limit of Knowledge)
 % ........... Star color table toggle
-Ctrl+S ...... 항성 모양 전환 : 희미한 점, 점, 등급에 따른 원
 V ........... 천체 정보 표시 전환(없음 / 보통 / 많이)
 Ctrl+W ...... 와이어 프레임 모드 전환
 

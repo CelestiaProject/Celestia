@@ -66,10 +66,8 @@ O  : Växla planeternas omloppsbanor
 ^  : Växla visning av nebulosor
 %  : Växla färgtabeller för stjärnor
 ;  : Visa en jordbaserad ekvatorial koordinatsfär
-[  : Om autoMag är AV : Minska magnitud (färre antal stjärnor synliga)
-     Om autoMag är PÅ : Minska magnitud vid ett synfält om 45 grader
-]  : Om autoMag är AV : Öka magnitud (fler antal stjärnor synliga)
-     Om autoMag är PÅ : Öka magnitud vid ett synfält om 45 grader
+[  : Minska exponeringstiden
+]  : Öka exponeringstiden
 {  : Minska omgivande ljus
 }  : Öka omgivande ljus
 (  : Minska galaxers ljusstyrka oberoende av stjärnors ljusstyrka
@@ -83,13 +81,10 @@ Ctrl+E  : Vaxla förmörkelseskuggor
 Ctrl+K  : Vaxla visning av markeringar
 Ctrl+L  : Vaxla nattljus
 Ctrl+P  : Markera valt objekt
-Ctrl+S  : Växla stjärnor som punkter, skivor eller suddiga punkter
 Ctrl+T  : Vaxla visning av kometsvansar
 Ctrl+V  : Växla mellan olika OpenGL-metoder som stöds
 Ctrl+W  : Vaxla trådmodellsläge
 Ctrl+X  : Vaxla kantutjämning
-Ctrl+Y  : Vaxla autoMag = automatisk anpassning av mängden synliga stjärnor
-          i synfältet
 +  : Växla mellan artistiska eller kunskapsbegränsade planettexturer
 
 Multivy:

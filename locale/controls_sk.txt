@@ -99,13 +99,8 @@
  } ....................................... Zvýšiť rozptýlené svetlo
  ( ....................................... Znížiť zosilnenie svetla galaxií
  ) ....................................... Zvýšiť zosilnenie svetla galaxií
- [ ....................................... Znížiť medznú hviezdnu jasnosť :
-                                           - Ak je automatická magnitúda vypnutá: Zníži medznú jasnosť (menej hviezd)
-                                           - Ak je automatická magnitúda zapnutá: Zníži medznú jasnosť pri zor.poli 45 stupňov
- ] ....................................... Zvýšiť medznú hviezdnu jasnosť :
-                                           - Ak je automatická magnitúda vypnutá: Zvýši medznú jasnosť (viac hviezd)
-                                           - Ak je automatická magnitúda zapnutá: Zvýši medznú jasnosť pri zor.poli 45 stupňov
- Ctrl+Y ............................... Prepnúť automatickú magnitúdu (automatické prispôsobenie viditeľnosti hviezd podľa zor.poľa)
+ [ ....................................... Zníženie času expozície
+ ] ....................................... Zvýšenie času expozície
  , ....................................... Zúžiť zorné pole [Shift+ťahanie ľavým tlačidlom myši]
  . ....................................... Rozšíriť zorné pole [Shift+ťahanie ľavým tlačidlom myši]
  Ctrl+X ............................... Prepnúť vyhladzovanie čiar
@@ -114,7 +109,6 @@
  Ctrl+V ............................... Prepínať podporované spôsoby vykresľovania cez OpenGL
  + ...................................... Prepnúť typ textúr planét (Umelecké / Hranica poznania)
  % ..................................... Prepnúť farbu hviezd
- Ctrl+S ............................... Prepínať tvar hviezd (body / neostré body / kotúče v mierke)
  V ...................................... Prepínať podrobnosť informačných textov (Žiadne / Stručné / Podrobné)
  Ctrl+W .............................. Prepnúť obrysový režim
 
