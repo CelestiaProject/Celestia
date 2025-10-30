@@ -4277,7 +4277,7 @@ static void draw_rectangle_solid(const Renderer &renderer,
         uint8_t color[4]; // NOSONAR
     };
 
-    array<RectVtx, 4> vertices = {
+    std::array<RectVtx, 4> vertices = {
         RectVtx{ r.x,       r.y,       0.0f, 1.0f, {} },
         RectVtx{ r.x + r.w, r.y,       1.0f, 1.0f, {} },
         RectVtx{ r.x + r.w, r.y + r.h, 1.0f, 0.0f, {} },
