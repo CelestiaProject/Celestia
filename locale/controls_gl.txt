@@ -97,13 +97,8 @@ N ....................................... Sondas Espaciais
  } ....................................... Incrementa-la Luz Ambiental
  ( ....................................... Reduci-la Luz das Galaxias (non a das súas estrelas)
  ) ....................................... Incrementa-la Luz das Galaxias (non a das súas estrelas)
- [ ....................................... Reduci-lo Límite de Magnitude :
-                                           - Se a AutoMag está OFF: Reduci-lo límite de magnitude (menos estrelas)
-                                           - Se a AutoMag está ON : Reducir limitando a magnitude ós 45 graos do campo visual
- ] ....................................... Incrementa-la Magnitude :
-                                           - Se a AutoMag está OFF: Incrementa-lo límite de magnitude (máis estrelas)
-                                           - Se a AutoMag está ON : Incrementa-lo límite de magnitude ós 45 graos do campo visual
- Ctrl+Y .................................. Cambia-lo Auto Magnitude (adaptación automática da visibilidade estelar ó campo visual
+ [ ....................................... Diminuír o tempo de exposición
+ ] ....................................... Aumenta o tempo de exposición
  , ....................................... Estreita-lo campo visual [Maiús.+Bt. esquerdo e arrastrar]
  . ....................................... Expandi-lo campo visual [Maiús.+Bt. esquerdo e arrastrar]
  Ctrl+X .................................. Cambia-lo suavizado de liñas
@@ -112,7 +107,6 @@ N ....................................... Sondas Espaciais
  Ctrl+V .................................. Cambiar entre as rutas dos motores de procesación de OpenGL
  + ....................................... Cambiar entre presentación artística e o límite no coñecemento das texturas planetarias
  % ....................................... Cambia-las táboas de cores das estrelas
- Ctrl+S .................................. Cambia-los estilos das estrelas entre puntos, discos difusos e discos a escala
  V ....................................... Cambia-la información do texto entre ningunha,  estilo seco e estilo amigable
  Ctrl+W .................................. Cambiar a modo Wireframe
 

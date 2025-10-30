@@ -1,6 +1,6 @@
 // universe.cpp
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // A container for catalogs of galaxies, stars, and planets.
@@ -783,7 +783,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
 
     // If no planet was intersected by the pick ray, choose the planet|moon
     // with the smallest angular separation from the pick ray.  Very distant
-    // planets are likley to fail the intersection test even if the user
+    // planets are likely to fail the intersection test even if the user
     // clicks on a pixel where the planet's disc has been rendered--in order
     // to make distant planets visible on the screen at all, their apparent
     // size has to be greater than their actual disc size.
@@ -1042,7 +1042,7 @@ Universe::find(std::string_view s,
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b
 // Currently, 'absolute' paths starting with a / are not supported nor are
 // paths that contain galaxies.  The caller may pass in a list of solar systems
-// to search for objects--this is roughly analgous to the PATH environment
+// to search for objects--this is roughly analogous to the PATH environment
 // variable in Unix and Windows.  Typically, the solar system will be one
 // in which the user is currently located.
 Selection
