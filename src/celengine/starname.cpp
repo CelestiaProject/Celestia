@@ -318,7 +318,7 @@ StarNameDatabase::findCatalogNumberByName(std::string_view name, bool i18n) cons
     if (parseSimpleCatalogNumber(name, SAOCatalogPrefix, catalogNumber))
         return searchCrossIndexForCatalogNumber(StarCatalog::SAO, catalogNumber);
 
-    return AstroCatalog::InvalidIndex;
+    return findWithComponentSuffix(name, i18n);
 }
 
 // Return the Celestia catalog number for the star with a specified number
@@ -377,7 +377,7 @@ StarNameDatabase::findByName(std::string_view name, bool i18n) const
             return catalogNumber;
     }
 
-    return findWithComponentSuffix(name, i18n);
+    return AstroCatalog::InvalidIndex;
 }
 
 AstroCatalog::IndexNumber
