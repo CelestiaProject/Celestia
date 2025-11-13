@@ -47,7 +47,6 @@ struct Settings
     int tintSaturation{ 50 };
     int minFeatureSize{ 20 };
     ColorTableType starColors{ ColorTableType::SunWhite };
-    StarStyle starStyle{ StarStyle::PointStars };
 };
 
 }

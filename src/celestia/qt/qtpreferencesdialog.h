@@ -1,7 +1,6 @@
 // qtpreferencesdialog.h
 //
-// Copyright (C) 2007-2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2007-present, the Celestia Development Team
 //
 // Preferences dialog for Celestia's Qt front-end. Based on
 // kdepreferencesdialog.h by Christophe Teyssier.
@@ -116,11 +115,6 @@ private slots:
     void on_ambientLightSpinBox_valueChanged(int value);
     void on_tintSaturationSlider_valueChanged(int value);
     void on_tintSaturationSpinBox_valueChanged(int value);
-
-    void on_pointStarsButton_clicked() const;
-    void on_scaledDiscsButton_clicked() const;
-    void on_fuzzyPointStarsButton_clicked() const;
-    void on_autoMagnitudeCheck_stateChanged(int state);
 
     void on_starColorBox_currentIndexChanged(int index);
 

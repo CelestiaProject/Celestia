@@ -220,24 +220,17 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# Helderheid limiet van sterren ...
-# Verwijder het "#" karakter en pas de 'magnitude' waarde aan je eigen wensen aan ...
-# Celestia Gebruikers Interface: 0.8 tot 15.2, standaard is 6.0
+# Exposure time (brightness)...
+# Default is 1.0
+# (UNcomment / modify to meet your needs)
 #
-#  setvisibilitylimit {magnitude 6.0}
-
-
-# Automatische helderheid limiet van sterren bij 45 graden, standaard is 8.5 ...
-# Verwijder het "#" karakter en pas de 'magnitude' waarde aan je eigen wensen aan ...
-#
-#  setfaintestautomag45deg {magnitude 8.5}
+#  setexposure {exposure 1.0}
 
 
 # Weergeven van items (renderen):
 # Geef de volgende objecten NIET weer (Verwijder het "#" karakter naar eigen wensen) ...
 #
 #  renderflags {clear "atmospheres"}
-#  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
 #  renderflags {clear "cloudmaps"}
 #  renderflags {clear "comettails"}
@@ -249,7 +242,6 @@
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
@@ -259,7 +251,6 @@
 # Geef de volgende objecten WEL weer (Verwijder het "#" karakter naar eigen wensen) ...
 #
 #  renderflags {set "atmospheres"}
-#  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
 #  renderflags {set "cloudmaps"}
 #  renderflags {set "comettails"}
@@ -271,7 +262,6 @@
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}
