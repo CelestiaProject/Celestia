@@ -144,10 +144,8 @@ void initLocationFlagMap(ScriptMap<std::uint64_t>& LocationFlagMap)
     LocationFlagMap["virga"sv]             = Location::Virga;
     LocationFlagMap["other"sv]             = Location::Other;
     LocationFlagMap["saxum"sv]             = Location::Saxum;
-    LocationFlagMap["capital"sv]           = Location::Capital;
     LocationFlagMap["cosmodrome"sv]        = Location::Cosmodrome;
     LocationFlagMap["ring"sv]              = Location::Ring;
-    LocationFlagMap["historical"sv]        = Location::Historical;
 }
 
 void initOverlayElementMap(ScriptMap<std::uint32_t>& OverlayElementMap)
