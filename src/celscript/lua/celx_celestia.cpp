@@ -990,40 +990,24 @@ static int celestia_getlinecolor(lua_State* l)
     return 3;
 }
 
-
-static int celestia_setfaintestvisible(lua_State* l)
+static int celestia_setexposure(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setexposure()");
+
     CelestiaCore* appCore = this_celestia(l);
-    float faintest = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
-    if (util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
-    {
-        faintest = min(12.0f, max(6.0f, faintest));
-        appCore->getRenderer()->setFaintestAM45deg(faintest);
-        appCore->setFaintestAutoMag();
-    }
-    else
-    {
-        faintest = min(15.0f, max(1.0f, faintest));
-        appCore->setFaintest(faintest);
-        appCore->notifyWatchers(CelestiaCore::FaintestChanged);
-    }
+    auto exposure = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setexposure() must be a number"));
+    appCore->getSimulation()->setExposure(exposure);
 
     return 0;
 }
 
-static int celestia_getfaintestvisible(lua_State* l)
+static int celestia_getexposure(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
-    if (const CelestiaCore* appCore = this_celestia(l);
-        util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
-    {
-        lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
-    }
-    else
-    {
-        lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
-    }
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getexposure()");
+
+    CelestiaCore* appCore = this_celestia(l);
+    lua_pushnumber(l, appCore->getSimulation()->getExposure());
+
     return 1;
 }
 
@@ -1658,59 +1642,6 @@ static int celestia_getstardistancelimit(lua_State* l)
     return 1;
 }
 
-static int celestia_getstarstyle(lua_State* l)
-{
-    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getstarstyle");
-    CelestiaCore* appCore = this_celestia(l);
-
-    Renderer* renderer = appCore->getRenderer();
-    if (renderer == nullptr)
-    {
-        Celx_DoError(l, "Internal Error: renderer is nullptr!");
-        return 0;
-    }
-
-    StarStyle starStyle = renderer->getStarStyle();
-    switch (starStyle)
-    {
-    case StarStyle::FuzzyPointStars:
-        lua_pushstring(l, "fuzzy"); break;
-    case StarStyle::PointStars:
-        lua_pushstring(l, "point"); break;
-    case StarStyle::ScaledDiscStars:
-        lua_pushstring(l, "disc"); break;
-    default:
-        lua_pushstring(l, "invalid starstyle");
-    };
-    return 1;
-}
-
-static int celestia_setstarstyle(lua_State* l)
-{
-    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
-    CelestiaCore* appCore = this_celestia(l);
-
-    std::string_view starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
-    Renderer* renderer = appCore->getRenderer();
-    if (renderer == nullptr)
-    {
-        Celx_DoError(l, "Internal Error: renderer is nullptr!");
-        return 0;
-    }
-
-    if (starStyle == "fuzzy"sv)
-        renderer->setStarStyle(StarStyle::FuzzyPointStars);
-    else if (starStyle == "point"sv)
-        renderer->setStarStyle(StarStyle::PointStars);
-    else if (starStyle == "disc"sv)
-        renderer->setStarStyle(StarStyle::ScaledDiscStars);
-    else
-       Celx_DoError(l, "Invalid starstyle");
-
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
-    return 0;
-}
-
 // -----------------------------------------------------------------------------
 // Star Color
 
@@ -1728,9 +1659,6 @@ static int celestia_getstarcolor(lua_State* l)
 
     switch (renderer->getStarColorTable())
     {
-    case ColorTableType::Enhanced:
-        lua_pushstring(l, "enhanced");
-        break;
     case ColorTableType::Blackbody_D65:
         lua_pushstring(l, "blackbody_d65");
         break;
@@ -1763,8 +1691,6 @@ static int celestia_setstarcolor(lua_State* l)
 
     if (starColor == "blackbody_d65"sv)
         renderer->setStarColorTable(ColorTableType::Blackbody_D65);
-    else if (starColor == "enhanced"sv)
-        renderer->setStarColorTable(ColorTableType::Enhanced);
     else if (starColor == "sunwhite"sv)
         renderer->setStarColorTable(ColorTableType::SunWhite);
     else if (starColor == "vegawhite"sv)
@@ -2577,8 +2503,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "gettextcolor",  celestia_gettextcolor);
     Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
     Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
-    Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
-    Celx_RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    Celx_RegisterMethod(l, "getexposure", celestia_getexposure);
+    Celx_RegisterMethod(l, "setexposure", celestia_setexposure);
     Celx_RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
     Celx_RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
     Celx_RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
@@ -2607,8 +2533,6 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
     Celx_RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
     Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
-    Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
-    Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
 
     // New CELX command for Star Color
     Celx_RegisterMethod(l, "getstarcolor", celestia_getstarcolor);

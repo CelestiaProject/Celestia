@@ -47,11 +47,10 @@ enum class RenderFlags : std::uint64_t
     ShowAtmospheres         = 0x0000000000000100,
     ShowSmoothLines         = 0x0000000000000200,
     ShowEclipseShadows      = 0x0000000000000400,
-    // the next one is unused in 1.7, kept for compatibility with 1.6
-    ShowStarsAsPoints       = 0x0000000000000800,
+    // ShowStarsAsPoints    = 0x0000000000000800, // removed
     ShowRingShadows         = 0x0000000000001000,
     ShowBoundaries          = 0x0000000000002000,
-    ShowAutoMag             = 0x0000000000004000,
+    // ShowAutoMag          = 0x0000000000004000, // removed
     ShowCometTails          = 0x0000000000008000,
     ShowMarkers             = 0x0000000000010000,
     ShowPartialTrajectories = 0x0000000000020000,
@@ -95,18 +94,9 @@ enum class RenderFlags : std::uint64_t
                               ShowRingShadows       |
                               ShowCloudShadows      |
                               ShowCometTails        |
-                              ShowAutoMag           |
                               ShowPlanetRings       |
                               ShowFadingOrbits      |
                               ShowSmoothLines,
 };
 
 ENUM_CLASS_BITWISE_OPS(RenderFlags);
-
-enum class StarStyle : int
-{
-    FuzzyPointStars  = 0,
-    PointStars       = 1,
-    ScaledDiscStars  = 2,
-    StarStyleCount,
-};
