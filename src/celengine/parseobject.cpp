@@ -136,8 +136,8 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
  * 
  *     # For precessing orbits (default unit is Julian years):
  *     # Default values result in no precession
- *     NodalPeriod <number>   (default: 0.0)
- *     ApsidalPeriod <number> (default: 0.0)
+ *     NodalPrecessionPeriod <number>   (default: 0.0)
+ *     ApsidalPrecessionPeriod <number> (default: 0.0)
  * } \endcode
  *
  * If usePlanetUnits is true:
@@ -203,9 +203,9 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
         return nullptr;
     }
 
-    elements.nodalPeriod = orbitData->getTime<double>("NodalPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
+    elements.nodalPeriod = orbitData->getTime<double>("NodalPrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
 
-    elements.apsidalPeriod = orbitData->getTime<double>("ApsidalPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
+    elements.apsidalPeriod = orbitData->getTime<double>("ApsidalPrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
 
     elements.inclination = orbitData->getAngle<double>("Inclination").value_or(0.0);
 
@@ -239,7 +239,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
     {
         if (elements.nodalPeriod == 0.0 && elements.apsidalPeriod == 0.0)
         {
-            return std::make_shared<ephem::EllipticalOrbit>(elements, epoch);
+            return std::make_shared<ephem::EllipticalKeplerOrbit>(elements, epoch);
         }
 
         return std::make_shared<ephem::PrecessingOrbit>(elements, epoch);

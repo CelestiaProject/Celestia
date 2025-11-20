@@ -86,7 +86,7 @@ TEST_CASE("Elliptical orbits")
                     expected.longAscendingNode = math::degToRad(nodeDeg);
                     expected.argPericenter = math::degToRad(pericenterDeg);
                     expected.meanAnomaly = math::degToRad(meanAnomalyDeg);
-                    auto orbit = celestia::ephem::EllipticalOrbit(expected, 0.0);
+                    auto orbit = celestia::ephem::EllipticalKeplerOrbit(expected, 0.0);
                     auto position = orbit.positionAtTime(0.0);
                     auto velocity = orbit.velocityAtTime(0.0);
 
