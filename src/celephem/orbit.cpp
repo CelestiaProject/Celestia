@@ -129,7 +129,7 @@ CreateKeplerOrbit(const astro::KeplerElements& elements, double epoch)
     if (elements.eccentricity < 1.0)
     {
         if (elements.nodalPeriod == 0.0 && elements.apsidalPeriod == 0.0)
-            return std::make_unique<EllipticalKeplerOrbit>(elements, epoch);
+            return std::make_unique<EllipticalOrbit>(elements, epoch);
 
         return std::make_unique<PrecessingOrbit>(elements, epoch);
     }
@@ -274,6 +274,23 @@ Eigen::Vector3d Orbit::velocityAtTime(double tdb) const
 }
 
 
+EllipticalOrbit::EllipticalOrbit(const astro::KeplerElements& _elements, double _epoch) :
+    semiMajorAxis(_elements.semimajorAxis),
+    eccentricity(_elements.eccentricity),
+    meanAnomalyAtEpoch(_elements.meanAnomaly),
+    period(_elements.period),
+    epoch(_epoch),
+    orbitPlaneRotation((math::ZRotation(_elements.longAscendingNode) *
+                        math::XRotation(_elements.inclination) *
+                        math::ZRotation(_elements.argPericenter)).toRotationMatrix())
+{
+    assert(eccentricity >= 0.0 && eccentricity < 1.0);
+    assert(semiMajorAxis >= 0.0);
+    assert(period != 0.0);
+    semiMinorAxis = semiMajorAxis * std::sqrt(1.0 - math::square(eccentricity));
+}
+
+
 double EllipticalOrbit::eccentricAnomaly(double M) const
 {
     if (eccentricity == 0.0)
@@ -301,39 +318,9 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
 }
 
 
-double EllipticalOrbit::getPeriod() const
-{
-    return period;
-}
-
-
-double EllipticalOrbit::getBoundingRadius() const
-{
-    // TODO: watch out for unbounded parabolic and hyperbolic orbits
-    return semiMajorAxis * (1.0 + eccentricity);
-}
-
-
-EllipticalKeplerOrbit::EllipticalKeplerOrbit(const astro::KeplerElements& _elements, double _epoch) :
-    semiMajorAxis(_elements.semimajorAxis),
-    eccentricity(_elements.eccentricity),
-    meanAnomalyAtEpoch(_elements.meanAnomaly),
-    period(_elements.period),
-    epoch(_epoch),
-    orbitPlaneRotation((math::ZRotation(_elements.longAscendingNode) *
-                        math::XRotation(_elements.inclination) *
-                        math::ZRotation(_elements.argPericenter)).toRotationMatrix())
-{
-    assert(eccentricity >= 0.0 && eccentricity < 1.0);
-    assert(semiMajorAxis >= 0.0);
-    assert(period != 0.0);
-    semiMinorAxis = semiMajorAxis * std::sqrt(1.0 - math::square(eccentricity));
-}
-
-
 // Compute the position at the specified eccentric
 // anomaly E.
-Eigen::Vector3d EllipticalKeplerOrbit::positionAtE(double E) const
+Eigen::Vector3d EllipticalOrbit::positionAtE(double E) const
 {
     double x = semiMajorAxis * (std::cos(E) - eccentricity);
     double y = semiMinorAxis * std::sin(E);
@@ -347,7 +334,7 @@ Eigen::Vector3d EllipticalKeplerOrbit::positionAtE(double E) const
 
 // Compute the velocity at the specified eccentric
 // anomaly E.
-Eigen::Vector3d EllipticalKeplerOrbit::velocityAtE(double E, double meanMotion) const
+Eigen::Vector3d EllipticalOrbit::velocityAtE(double E, double meanMotion) const
 {
     double sinE;
     double cosE;
@@ -366,7 +353,7 @@ Eigen::Vector3d EllipticalKeplerOrbit::velocityAtE(double E, double meanMotion) 
 
 
 // Return the offset from the center
-Eigen::Vector3d EllipticalKeplerOrbit::positionAtTime(double t) const
+Eigen::Vector3d EllipticalOrbit::positionAtTime(double t) const
 {
     t = t - epoch;
     double meanMotion = 2.0 * celestia::numbers::pi / period;
@@ -377,7 +364,7 @@ Eigen::Vector3d EllipticalKeplerOrbit::positionAtTime(double t) const
 }
 
 
-Eigen::Vector3d EllipticalKeplerOrbit::velocityAtTime(double t) const
+Eigen::Vector3d EllipticalOrbit::velocityAtTime(double t) const
 {
     t = t - epoch;
     double meanMotion = 2.0 * celestia::numbers::pi / period;
@@ -385,6 +372,19 @@ Eigen::Vector3d EllipticalKeplerOrbit::velocityAtTime(double t) const
     double E = eccentricAnomaly(meanAnomaly);
 
     return velocityAtE(E, meanMotion);
+}
+
+
+double EllipticalOrbit::getPeriod() const
+{
+    return period;
+}
+
+
+double EllipticalOrbit::getBoundingRadius() const
+{
+    // TODO: watch out for unbounded parabolic and hyperbolic orbits
+    return semiMajorAxis * (1.0 + eccentricity);
 }
 
 
@@ -404,6 +404,33 @@ PrecessingOrbit::PrecessingOrbit(const astro::KeplerElements& _elements, double 
     assert(semiMajorAxis >= 0.0);
     assert(period != 0.0);
     semiMinorAxis = semiMajorAxis * std::sqrt(1.0 - math::square(eccentricity));
+}
+
+
+double PrecessingOrbit::eccentricAnomaly(double M) const
+{
+    if (eccentricity == 0.0)
+    {
+        // Circular orbit
+        return M;
+    }
+    if (eccentricity < 0.2)
+    {
+        // Low eccentricity, so use the standard iteration technique
+        return math::solve_iteration_fixed(SolveKeplerFunc1(eccentricity, M), M, 5).first;
+    }
+    if (eccentricity < 0.9)
+    {
+        // Higher eccentricity elliptical orbit; use a more complex but
+        // much faster converging iteration.
+        return math::solve_iteration_fixed(SolveKeplerFunc2(eccentricity, M), M, 6).first;
+    }
+
+    // Extremely stable Laguerre-Conway method for solving Kepler's
+    // equation.  Only use this for high-eccentricity orbits, as it
+    // requires more calcuation.
+    double E = M + 0.85 * eccentricity * math::sign(std::sin(M));
+    return math::solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8).first;
 }
 
 
@@ -477,6 +504,19 @@ Eigen::Vector3d PrecessingOrbit::velocityAtTime(double t) const
     double argPericenter = argPericenterAtEpoch + t * apsidalPrecessionRate;
 
     return velocityAtE(E, longAscendingNode, argPericenter, meanMotion);
+}
+
+
+double PrecessingOrbit::getPeriod() const
+{
+    return period;
+}
+
+
+double PrecessingOrbit::getBoundingRadius() const
+{
+    // TODO: watch out for unbounded parabolic and hyperbolic orbits
+    return semiMajorAxis * (1.0 + eccentricity);
 }
 
 

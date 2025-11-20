@@ -239,7 +239,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
     {
         if (elements.nodalPeriod == 0.0 && elements.apsidalPeriod == 0.0)
         {
-            return std::make_shared<ephem::EllipticalKeplerOrbit>(elements, epoch);
+            return std::make_shared<ephem::EllipticalOrbit>(elements, epoch);
         }
 
         return std::make_shared<ephem::PrecessingOrbit>(elements, epoch);

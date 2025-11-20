@@ -67,16 +67,22 @@ protected:
 };
 
 
-class EllipticalOrbit : public Orbit
+class EllipticalOrbit final : public Orbit
 {
 public:
-    virtual ~EllipticalOrbit() = default;
+    EllipticalOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
+    ~EllipticalOrbit() override = default;
 
+    // Compute the orbit for a specified Julian date
+    Eigen::Vector3d positionAtTime(double) const override;
+    Eigen::Vector3d velocityAtTime(double) const override;
     double getPeriod() const override;
     double getBoundingRadius() const override;
 
-protected:
+private:
     double eccentricAnomaly(double) const;
+    Eigen::Vector3d positionAtE(double) const;
+    Eigen::Vector3d velocityAtE(double, double) const;
 
     double semiMajorAxis;
     double semiMinorAxis;
@@ -84,28 +90,12 @@ protected:
     double meanAnomalyAtEpoch;
     double period;
     double epoch;
-};
-
-
-class EllipticalKeplerOrbit final : public EllipticalOrbit
-{
-public:
-    EllipticalKeplerOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
-    ~EllipticalKeplerOrbit() override = default;
-
-    // Compute the orbit for a specified Julian date
-    Eigen::Vector3d positionAtTime(double) const override;
-    Eigen::Vector3d velocityAtTime(double) const override;
-
-private:
-    Eigen::Vector3d positionAtE(double) const;
-    Eigen::Vector3d velocityAtE(double, double) const;
 
     Eigen::Matrix3d orbitPlaneRotation;
 };
 
 
-class PrecessingOrbit final : public EllipticalOrbit
+class PrecessingOrbit final : public Orbit
 {
 public:
     PrecessingOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
@@ -114,15 +104,24 @@ public:
     // Compute the orbit for a specified Julian date
     Eigen::Vector3d positionAtTime(double) const override;
     Eigen::Vector3d velocityAtTime(double) const override;
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
 
 private:
+    double eccentricAnomaly(double) const;
     Eigen::Vector3d positionAtE(double, double, double) const;
     Eigen::Vector3d velocityAtE(double, double, double, double) const;
 
+    double semiMajorAxis;
+    double semiMinorAxis;
+    double eccentricity;
     double longAscendingNodeAtEpoch;
     double argPericenterAtEpoch;
+    double meanAnomalyAtEpoch;
+    double period;
     double nodalPeriod;
     double apsidalPeriod;
+    double epoch;
 
     Eigen::Quaterniond inclinationRotation;
 };
