@@ -126,6 +126,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           Atmosphere* atmosphere,
                           float cloudTexOffset,
                           const Eigen::Vector3f& semiAxes,
+                          float geomAlbedo,
                           TextureResolution textureRes,
                           RenderFlags renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
@@ -305,7 +306,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     prog->eyePosition = ls.eyePos_obj;
     prog->shininess = ri.specularPower;
     if (util::is_set(shadprop.lightModel, LightingModel::LunarLambertModel))
-        prog->lunarLambert = ri.lunarLambert;
+        prog->setLunarLambertParameters(ri.lunarLambert, geomAlbedo);
 
     if (util::is_set(shadprop.texUsage, TexUsage::RingShadowTexture))
     {
@@ -369,6 +370,7 @@ void renderGeometry_GLSL(Geometry* geometry,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
                          float geometryScale,
+                         float geomAlbedo,
                          RenderFlags renderFlags,
                          const Eigen::Quaternionf& planetOrientation,
                          double tsec,
@@ -441,7 +443,7 @@ void renderGeometry_GLSL(Geometry* geometry,
         glDepthRange(range[0], range[1]);
     }
 
-    GLSL_RenderContext rc(renderer, ls, geometryScale, planetOrientation, m.modelview, m.projection);
+    GLSL_RenderContext rc(renderer, ls, geometryScale, geomAlbedo, planetOrientation, m.modelview, m.projection);
 
     if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
     {
