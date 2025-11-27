@@ -261,8 +261,15 @@ find_package(Libepoxy REQUIRED)
 link_libraries(libepoxy::libepoxy)
 include_directories(${LIBEPOXY_INCLUDE_DIR})
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE) # -DEigen3_DIR=...
-message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
+find_package(Eigen3 CONFIG REQUIRED NO_MODULE) # -DEigen3_DIR=...
+message(STATUS "Found Eigen3 ${Eigen3_VERSION}")
+# version range in find_package is only supported in CMake 3.19 or later
+# so do the check manually here
+if(Eigen3_VERSION VERSION_LESS "3.3" OR
+   Eigen3_VERSION VERSION_GREATER_EQUAL "6.0")
+   message(FATAL_ERROR "Eigen3 version is not supported")
+endif()
+
 link_libraries(Eigen3::Eigen)
 
 find_package(fmt 8.1.0 CONFIG QUIET)
