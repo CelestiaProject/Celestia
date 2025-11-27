@@ -6,6 +6,8 @@ set(CELUTIL_SOURCES
   binaryread.h
   binarywrite.h
   blockarray.h
+  buffile.cpp
+  buffile.h
   bytes.h
   color.cpp
   color.h

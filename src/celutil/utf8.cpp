@@ -12,7 +12,9 @@
 
 #include <cassert>
 #include <cwctype>
+#include <istream>
 
+using namespace std::string_view_literals;
 
 namespace
 {
@@ -462,6 +464,26 @@ bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCa
         if (ch0 != ch1)
             return false;
     }
+}
+
+std::istream&
+SkipUTF8BOM(std::istream& in)
+{
+    constexpr std::string_view bom = "\357\273\277"sv;
+
+    auto pos = in.tellg();
+    std::array<char, bom.size()> data;
+    in.read(data.data(), bom.size()); /* Flawfinder: ignore */
+    if (in.bad())
+        return in;
+
+    if (in.gcount() == bom.size() &&
+        std::string_view(data.data(), data.size()) == bom)
+    {
+        return in;
+    }
+
+    return in.seekg(pos);
 }
 
 std::int32_t

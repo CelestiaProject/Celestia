@@ -27,6 +27,7 @@
 
 #include <celcompat/charconv.h>
 #include <celutil/binaryread.h>
+#include <celutil/buffile.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include <celutil/logger.h>
@@ -295,6 +296,167 @@ checkCrossIndexHeader(std::istream& in)
     return true;
 }
 
+class StarNameReader
+{
+public:
+    StarNameReader(std::istream&, StarNameDatabase&);
+
+    bool load();
+
+private:
+    enum class LineState
+    {
+        Initial,
+        SkipLine,
+        Number,
+        Name,
+        Error,
+    };
+
+    void processInitial(char);
+    void processSkipLine(char);
+    void processNumber(char);
+    void processName(char);
+
+    StarNameDatabase* m_db;
+    util::BufferedFile m_file;
+    AstroCatalog::IndexNumber m_catalogNumber{ 0 };
+    LineState m_state{ LineState::Initial };
+};
+
+StarNameReader::StarNameReader(std::istream& in, StarNameDatabase& db) :
+    m_db(&db),
+    m_file(in, 1024)
+{
+}
+
+bool
+StarNameReader::load()
+{
+    do
+    {
+        int next = m_file.next();
+        if (m_file.error())
+            return false;
+
+        if (next == std::char_traits<char>::eof())
+        {
+            if (m_state == LineState::Name && m_file.has_value())
+                m_db->add(m_catalogNumber, m_file.value());
+            return true;
+        }
+
+        char ch = std::char_traits<char>::to_char_type(next);
+        switch (m_state)
+        {
+        case LineState::Initial:
+            processInitial(ch);
+            break;
+        case LineState::SkipLine:
+            processSkipLine(ch);
+            break;
+        case LineState::Number:
+            processNumber(ch);
+            break;
+        case LineState::Name:
+            processName(ch);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    } while (m_state != LineState::Error);
+
+    return false;
+}
+
+void
+StarNameReader::processInitial(char ch)
+{
+    if (ch >= '0' && ch <= '9')
+    {
+        m_state = LineState::Number;
+        m_file.advance(false);
+    }
+    else if (ch == '#')
+    {
+        m_state = LineState::SkipLine;
+        m_file.advance(true);
+    }
+    else if (ch == '\r' || ch == '\n')
+    {
+        m_file.advance(true);
+    }
+    else
+    {
+        m_state = LineState::Error;
+    }
+}
+
+void
+StarNameReader::processSkipLine(char ch)
+{
+    if (ch == '\r' || ch == '\n')
+        m_state = LineState::Initial;
+    m_file.advance(true);
+}
+
+void
+StarNameReader::processNumber(char ch)
+{
+    using compat::from_chars;
+
+    if (ch >= '0' && ch <= '9')
+    {
+        m_file.advance(false);
+        return;
+    }
+
+    if (ch == '\r' || ch == '\n')
+    {
+        m_state = LineState::Initial;
+        m_file.advance(true);
+        return;
+    }
+
+    if (ch != ':')
+    {
+        m_state = LineState::Error;
+        return;
+    }
+
+    auto value = m_file.value();
+    const auto end = value.data() + value.size();
+    if (auto [ptr, ec] = from_chars(value.data(), end, m_catalogNumber);
+        ec == std::errc{} && ptr == end)
+    {
+        m_state = LineState::Name;
+        m_file.advance(true);
+    }
+    else
+    {
+        m_state = LineState::Error;
+    }
+}
+
+void
+StarNameReader::processName(char ch)
+{
+    if (ch != ':' && ch != '\r' && ch != '\n')
+    {
+        m_file.advance(false);
+        return;
+    }
+
+    if (m_file.has_value())
+        m_db->add(m_catalogNumber, m_file.value());
+
+    if (ch == '\r' || ch == '\n')
+        m_state = LineState::Initial;
+
+    m_file.advance(true);
+}
+
 } // end unnamed namespace
 
 AstroCatalog::IndexNumber
@@ -508,54 +670,9 @@ StarNameDatabase::findWithComponentSuffix(std::string_view name, bool i18n) cons
 std::unique_ptr<StarNameDatabase>
 StarNameDatabase::readNames(std::istream& in)
 {
-    using compat::from_chars;
-
-    constexpr std::size_t maxLength = 1024;
     auto db = std::make_unique<StarNameDatabase>();
-    std::string buffer(maxLength, '\0');
-    while (!in.eof())
-    {
-        in.getline(buffer.data(), maxLength);
-        // Delimiter is extracted and contributes to gcount() but is not stored
-        std::size_t lineLength;
-
-        if (in.good())
-            lineLength = static_cast<std::size_t>(in.gcount() - 1);
-        else if (in.eof())
-            lineLength = static_cast<std::size_t>(in.gcount());
-        else
-            return nullptr;
-
-        auto line = static_cast<std::string_view>(buffer).substr(0, lineLength);
-
-        if (line.empty() || line.front() == '#')
-            continue;
-
-        auto pos = line.find(':');
-        if (pos == std::string_view::npos)
-            return nullptr;
-
-        auto catalogNumber = AstroCatalog::InvalidIndex;
-        if (auto [ptr, ec] = from_chars(line.data(), line.data() + pos, catalogNumber);
-            ec != std::errc{} || ptr != line.data() + pos)
-        {
-            return nullptr;
-        }
-
-        // Iterate through the string for names delimited
-        // by ':', and insert them into the star database. Note that
-        // db->add() will skip empty names.
-        line = line.substr(pos + 1);
-        while (!line.empty())
-        {
-            pos = line.find(':');
-            std::string_view name = line.substr(0, pos);
-            db->add(catalogNumber, name);
-            if (pos == std::string_view::npos)
-                break;
-            line = line.substr(pos + 1);
-        }
-    }
+    if (StarNameReader reader(in, *db); !reader.load())
+        return nullptr;
 
     return db;
 }
