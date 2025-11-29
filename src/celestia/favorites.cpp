@@ -28,7 +28,7 @@ std::unique_ptr<FavoritesList>
 ReadFavoritesList(std::istream& in)
 {
     auto favorites = std::make_unique<FavoritesList>();
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
     while (tokenizer.nextToken() != util::TokenType::End)

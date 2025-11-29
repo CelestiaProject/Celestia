@@ -203,7 +203,7 @@ std::unique_ptr<AsterismList>
 ReadAsterismList(std::istream& in, const StarDatabase& starDB)
 {
     auto asterisms = std::make_unique<AsterismList>();
-    Tokenizer tokenizer(&in);
+    Tokenizer tokenizer(in);
 
     while (tokenizer.nextToken() != util::TokenType::End)
     {
