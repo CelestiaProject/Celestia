@@ -24,8 +24,6 @@
 namespace celestia::util
 {
 
-class TokenizerImpl;
-
 enum class TokenType
 {
     Begin,
@@ -49,8 +47,7 @@ class Tokenizer
 public:
     static constexpr std::size_t DEFAULT_BUFFER_SIZE = 4096;
 
-    Tokenizer(std::istream&, std::size_t = DEFAULT_BUFFER_SIZE);
-    ~Tokenizer();
+    explicit Tokenizer(std::istream&, std::size_t = DEFAULT_BUFFER_SIZE);
 
     TokenType nextToken();
     TokenType getTokenType() const noexcept { return m_tokenType; }
@@ -66,7 +63,6 @@ public:
 private:
     TokenType processToken(char);
     TokenType processName();
-    TokenType processString();
 
     BufferedFile m_file;
     mutable std::string m_escaped;
