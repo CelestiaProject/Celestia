@@ -159,7 +159,7 @@ Parser::readValue()
     switch (tokenizer->nextToken())
     {
     case TokenType::Number:
-        return Value(*tokenizer->getNumberValue());
+        return Value(*tokenizer->getNumberValue<double>());
 
     case TokenType::String:
         return Value(*tokenizer->getStringValue());

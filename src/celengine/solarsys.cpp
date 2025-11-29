@@ -1125,7 +1125,7 @@ bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const std::filesystem::path& directory)
 {
-    Tokenizer tokenizer(&in);
+    Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS

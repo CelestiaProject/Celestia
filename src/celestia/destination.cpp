@@ -24,7 +24,7 @@ namespace util = celestia::util;
 
 DestinationList* ReadDestinationList(std::istream& in)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
     auto* destinations = new DestinationList();
 

@@ -13,9 +13,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
-#include <memory>
 #include <optional>
+#include <string>
 #include <string_view>
+#include <system_error>
+
+#include <celcompat/charconv.h>
+#include "buffile.h"
 
 namespace celestia::util
 {
@@ -24,21 +28,20 @@ class TokenizerImpl;
 
 enum class TokenType
 {
-    Name,
-    String,
-    Number,
     Begin,
     End,
-    Null,
+    Error,
     BeginGroup,
     EndGroup,
     BeginArray,
     EndArray,
-    Equals,
-    Error,
-    Bar,
     BeginUnits,
     EndUnits,
+    Name,
+    String,
+    Number,
+    Equals,
+    Bar,
 };
 
 class Tokenizer
@@ -46,23 +49,49 @@ class Tokenizer
 public:
     static constexpr std::size_t DEFAULT_BUFFER_SIZE = 4096;
 
-    Tokenizer(std::istream*, std::size_t = DEFAULT_BUFFER_SIZE);
+    Tokenizer(std::istream&, std::size_t = DEFAULT_BUFFER_SIZE);
     ~Tokenizer();
 
     TokenType nextToken();
-    TokenType getTokenType() const;
-    void pushBack();
-    std::optional<double> getNumberValue() const;
-    std::optional<std::int32_t> getIntegerValue() const;
+    TokenType getTokenType() const noexcept { return m_tokenType; }
+    void pushBack() noexcept { m_pushedBack = true; }
     std::optional<std::string_view> getNameValue() const;
     std::optional<std::string_view> getStringValue() const;
 
-    int getLineNumber() const;
+    template<typename T>
+    std::optional<T> getNumberValue() const;
+
+    std::uint64_t getLineNumber() const noexcept { return m_file.lineNumber(); }
 
 private:
-    std::unique_ptr<TokenizerImpl> impl;
-    TokenType tokenType{ TokenType::Begin };
-    bool isPushedBack{ false };
+    TokenType processToken(char);
+    TokenType processName();
+    TokenType processString();
+
+    BufferedFile m_file;
+    mutable std::string m_escaped;
+    TokenType m_tokenType{ TokenType::Begin };
+    bool m_pushedBack{ false };
+    bool m_needsEscape{ false };
 };
+
+template<typename T>
+std::optional<T>
+Tokenizer::getNumberValue() const
+{
+    if (m_tokenType != TokenType::Number)
+        return std::nullopt;
+
+    std::string_view value = m_file.value();
+    const auto end = value.data() + value.size();
+    T result;
+    if (auto [ptr, ec] = compat::from_chars(value.data(), end, result);
+        ec == std::errc{} && ptr == end)
+    {
+        return result;
+    }
+
+    return std::nullopt;
+}
 
 } // end namespace celestia::util

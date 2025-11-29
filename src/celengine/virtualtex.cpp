@@ -102,7 +102,7 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
 std::unique_ptr<VirtualTexture>
 LoadVirtualTexture(std::istream& in, const std::filesystem::path& path)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();

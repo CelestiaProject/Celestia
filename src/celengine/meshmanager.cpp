@@ -49,7 +49,7 @@ LoadCelestiaMesh(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    util::Tokenizer tokenizer(&meshFile);
+    util::Tokenizer tokenizer(meshFile);
     util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();

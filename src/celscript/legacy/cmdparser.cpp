@@ -65,7 +65,7 @@ T
 parseFlags(const std::string& s, const celestia::scripts::ScriptMap<T>& flagMap, std::string_view flagTypeName)
 {
     std::istringstream in(s);
-    Tokenizer tokenizer(&in);
+    Tokenizer tokenizer(in);
     auto flags = static_cast<T>(0);
 
     for (util::TokenType ttype = tokenizer.nextToken(); ttype != util::TokenType::End;)
@@ -91,8 +91,7 @@ int
 parseConstellations(CommandConstellations& cmd, const std::string &s, bool act)
 {
     std::istringstream in(s);
-
-    Tokenizer tokenizer(&in);
+    Tokenizer tokenizer(in);
     int flags = 0;
 
     for (util::TokenType ttype = tokenizer.nextToken(); ttype != util::TokenType::End;)
@@ -131,7 +130,7 @@ parseConstellationColor(CommandConstellationColor& cmd,
 {
     std::istringstream in(s);
 
-    Tokenizer tokenizer(&in);
+    Tokenizer tokenizer(in);
     int flags = 0;
 
     if (act)
@@ -963,7 +962,7 @@ using ParseCommandPtr = ParseResult (*)(const AssociativeArray&, const ScriptMap
 
 
 CommandParser::CommandParser(std::istream& in, const ScriptMaps &sm) :
-    tokenizer(std::make_unique<Tokenizer>(&in)),
+    tokenizer(std::make_unique<Tokenizer>(in)),
     scriptMaps(sm)
 {
     parser = std::make_unique<util::Parser>(tokenizer.get());

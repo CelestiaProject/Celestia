@@ -203,7 +203,7 @@ DSODatabaseBuilder::~DSODatabaseBuilder() = default;
 bool
 DSODatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser    parser(&tokenizer);
 
 #ifdef ENABLE_NLS

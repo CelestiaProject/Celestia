@@ -268,9 +268,9 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
 
     // Parse the catalog number; it may be omitted if a name is supplied.
     header.catalogNumber = AstroCatalog::InvalidIndex;
-    if (auto tokenValue = tokenizer.getNumberValue(); tokenValue.has_value())
+    if (auto tokenValue = tokenizer.getNumberValue<AstroCatalog::IndexNumber>(); tokenValue.has_value())
     {
-        header.catalogNumber = static_cast<AstroCatalog::IndexNumber>(*tokenValue);
+        header.catalogNumber = *tokenValue;
         tokenizer.nextToken();
     }
 
@@ -704,7 +704,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
 bool
 StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
