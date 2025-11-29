@@ -11,6 +11,7 @@
 #include <doctest.h>
 
 using Tokenizer = celestia::util::Tokenizer;
+using TokenType = celestia::util::TokenType;
 
 TEST_SUITE_BEGIN("Tokenizer");
 
@@ -25,22 +26,22 @@ TEST_CASE("Tokenizer parses names")
                                 "_prefixed");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Normal");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Number2");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Number3Number");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "snake_case");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "_prefixed");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Followed by units")
@@ -48,16 +49,16 @@ TEST_CASE("Tokenizer parses names")
         std::istringstream input("Quantity<unit>");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Quantity");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenBeginUnits);
+        REQUIRE(tok.nextToken() == TokenType::BeginUnits);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "unit");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEndUnits);
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::EndUnits);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Buffer boundary")
@@ -79,7 +80,7 @@ TEST_CASE("Tokenizer parses names")
                 std::istringstream in(spacedStr);
                 Tokenizer tok(&in, 8);
 
-                REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+                REQUIRE(tok.nextToken() == TokenType::Name);
                 REQUIRE(tok.getNameValue() == input);
             }
         }
@@ -94,13 +95,13 @@ TEST_CASE("Tokenizer parses strings")
                                  "\"\"");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == "abc 123.456 {}<>");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue().value().empty());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Standard escapes")
@@ -108,10 +109,10 @@ TEST_CASE("Tokenizer parses strings")
         std::istringstream input("\"abc\\\\def\\nghi\\\"jkl\"");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == "abc\\def\nghi\"jkl");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Unicode escapes")
@@ -121,16 +122,16 @@ TEST_CASE("Tokenizer parses strings")
                                  "\"\\udabc\"");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == "\303\257");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == "\340\244\200");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == UTF8_REPLACEMENT_CHAR);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Invalid escape")
@@ -138,7 +139,7 @@ TEST_CASE("Tokenizer parses strings")
         std::istringstream input("\"abcdefghijklmnop\\qrstuvwxyz\"");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenError);
+        REQUIRE(tok.nextToken() == TokenType::Error);
     }
 
     SUBCASE("UTF-8 sequences")
@@ -151,25 +152,25 @@ TEST_CASE("Tokenizer parses strings")
                                  "\"\303\257\340\240x\"");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == "\303\257\340\244\200");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == UTF8_REPLACEMENT_CHAR);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == UTF8_REPLACEMENT_CHAR);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == UTF8_REPLACEMENT_CHAR);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == UTF8_REPLACEMENT_CHAR UTF8_REPLACEMENT_CHAR);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+        REQUIRE(tok.nextToken() == TokenType::String);
         REQUIRE(tok.getStringValue() == "\303\257" UTF8_REPLACEMENT_CHAR);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Buffer boundary")
@@ -193,7 +194,7 @@ TEST_CASE("Tokenizer parses strings")
                 std::istringstream in(spacedStr);
                 Tokenizer tok(&in, 8);
 
-                REQUIRE(tok.nextToken() == Tokenizer::TokenString);
+                REQUIRE(tok.nextToken() == TokenType::String);
                 REQUIRE(tok.getStringValue() == expected);
             }
         }
@@ -217,51 +218,51 @@ TEST_CASE("Tokenizer parses numbers")
                                  "7.5E-1 ");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.0);
         REQUIRE(tok.getIntegerValue() == 0);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 12345.0);
         REQUIRE(tok.getIntegerValue() == 12345);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 12345.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 32.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 1200000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 2300000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 1200000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 2300000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Explicit positive sign")
@@ -276,39 +277,39 @@ TEST_CASE("Tokenizer parses numbers")
                                  "+7.5e-1");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.0);
         REQUIRE(tok.getIntegerValue() == 0);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 12345.0);
         REQUIRE(tok.getIntegerValue() == 12345);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 12345.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 32.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 1200000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 2300000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 0.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Negative sign")
@@ -324,45 +325,45 @@ TEST_CASE("Tokenizer parses numbers")
         Tokenizer tok(&input);
 
         // negative zero is not considered to be an integer value
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         std::optional<double> numberValue = tok.getNumberValue();
         REQUIRE(numberValue.has_value());
         REQUIRE(numberValue.value() == -0.0);
         REQUIRE(std::signbit(numberValue.value()));
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         numberValue = tok.getNumberValue();
         REQUIRE(numberValue.has_value());
         REQUIRE(numberValue.value() == -0.0);
         REQUIRE(std::signbit(numberValue.value()));
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == -12345.0);
         REQUIRE(tok.getIntegerValue() == -12345);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == -12345.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == -32.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == -1200000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == -2300000.0);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == -0.75);
         REQUIRE(!tok.getIntegerValue().has_value());
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Buffer boundary")
@@ -402,7 +403,7 @@ TEST_CASE("Tokenizer parses numbers")
                 std::istringstream in(spacedStr);
                 Tokenizer tok(&in, 8);
 
-                REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+                REQUIRE(tok.nextToken() == TokenType::Number);
                 REQUIRE(tok.getNumberValue() == value);
                 REQUIRE(tok.getIntegerValue().has_value() == isInteger);
             }
@@ -424,7 +425,7 @@ TEST_CASE("Tokenizer parses numbers")
         {
             std::istringstream input(test);
             Tokenizer tok(&input);
-            REQUIRE(tok.nextToken() == Tokenizer::TokenError);
+            REQUIRE(tok.nextToken() == TokenType::Error);
         }
     }
 
@@ -443,12 +444,12 @@ TEST_CASE("Tokenizer parses numbers")
         {
             std::istringstream input(test);
             Tokenizer tok(&input);
-            REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+            REQUIRE(tok.nextToken() == TokenType::Number);
             REQUIRE(tok.getNumberValue() == 1.25);
             REQUIRE(!tok.getIntegerValue().has_value());
 
             // Exponent is treated as a name token (e or E)
-            REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+            REQUIRE(tok.nextToken() == TokenType::Name);
             REQUIRE(tok.getNameValue() == std::string_view(test.data() + 4, 1));
         }
     }
@@ -458,12 +459,12 @@ TEST_CASE("Tokenizer parses numbers")
         std::istringstream input("123{");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenNumber);
+        REQUIRE(tok.nextToken() == TokenType::Number);
         REQUIRE(tok.getNumberValue() == 123.0);
         REQUIRE(tok.getIntegerValue() == 123);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenBeginGroup);
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::BeginGroup);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 }
 
@@ -472,15 +473,15 @@ TEST_CASE("Tokenizer parses symbols and groups")
     std::istringstream input("={}|[]<>");
     Tokenizer tok(&input);
 
-    REQUIRE(tok.nextToken() == Tokenizer::TokenEquals);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenBeginGroup);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenEndGroup);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenBar);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenBeginArray);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenEndArray);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenBeginUnits);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenEndUnits);
-    REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+    REQUIRE(tok.nextToken() == TokenType::Equals);
+    REQUIRE(tok.nextToken() == TokenType::BeginGroup);
+    REQUIRE(tok.nextToken() == TokenType::EndGroup);
+    REQUIRE(tok.nextToken() == TokenType::Bar);
+    REQUIRE(tok.nextToken() == TokenType::BeginArray);
+    REQUIRE(tok.nextToken() == TokenType::EndArray);
+    REQUIRE(tok.nextToken() == TokenType::BeginUnits);
+    REQUIRE(tok.nextToken() == TokenType::EndUnits);
+    REQUIRE(tok.nextToken() == TokenType::End);
 }
 
 TEST_CASE("Tokenizer skips comments")
@@ -492,16 +493,16 @@ TEST_CASE("Tokenizer skips comments")
                                 "Token3 # blah");
         Tokenizer tok(&input);
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Token1");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Token2");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenName);
+        REQUIRE(tok.nextToken() == TokenType::Name);
         REQUIRE(tok.getNameValue() == "Token3");
 
-        REQUIRE(tok.nextToken() == Tokenizer::TokenEnd);
+        REQUIRE(tok.nextToken() == TokenType::End);
     }
 
     SUBCASE("Buffer boundary")
@@ -515,7 +516,7 @@ TEST_CASE("Tokenizer skips comments")
             std::istringstream in(spacedStr);
             Tokenizer tok(&in, 8);
 
-            REQUIRE(tok.nextToken() == Tokenizer::TokenBeginGroup);
+            REQUIRE(tok.nextToken() == TokenType::BeginGroup);
         }
     }
 }

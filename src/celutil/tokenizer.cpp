@@ -160,7 +160,7 @@ public:
     TokenizerImpl(TokenizerImpl&&) = delete;
     TokenizerImpl& operator=(TokenizerImpl&&) = delete;
 
-    Tokenizer::TokenType nextToken();
+    TokenType nextToken();
 
     const TokenValue& getTokenValue() const { return tokenValue; }
     int getLineNumber() const { return lineNumber; }
@@ -178,8 +178,8 @@ private:
 
     bool skipUTF8Bom();
 
-    std::variant<char, Tokenizer::TokenType> skipWhitespace();
-    Tokenizer::TokenType readToken(char);
+    std::variant<char, TokenType> skipWhitespace();
+    TokenType readToken(char);
 
     bool readString();
     bool readNumber();
@@ -202,20 +202,20 @@ TokenizerImpl::TokenizerImpl(std::istream* _in, std::size_t _bufferSize)
       buffer(_bufferSize)
 {}
 
-Tokenizer::TokenType
+TokenType
 TokenizerImpl::nextToken()
 {
     tokenValue.emplace<std::monostate>();
 
     // skip UTF8 BOM
     if (isAtStart && !skipUTF8Bom())
-        return Tokenizer::TokenError;
+        return TokenType::Error;
 
     auto wsResult = skipWhitespace();
     return std::visit([this](auto& arg)
     {
         using T = std::decay_t<decltype(arg)>;
-        if constexpr (std::is_same_v<T, Tokenizer::TokenType>)
+        if constexpr (std::is_same_v<T, TokenType>)
         {
             return arg;
         }
@@ -227,7 +227,7 @@ TokenizerImpl::nextToken()
     }, wsResult);
 }
 
-std::variant<char, Tokenizer::TokenType>
+std::variant<char, TokenType>
 TokenizerImpl::skipWhitespace()
 {
     for (;;)
@@ -239,9 +239,9 @@ TokenizerImpl::skipWhitespace()
         if (it == bufferEnd)
         {
             if (isEnded)
-                return Tokenizer::TokenEnd;
+                return TokenType::End;
             if (!fillBuffer())
-                return Tokenizer::TokenError;
+                return TokenType::Error;
             continue;
         }
 
@@ -269,62 +269,62 @@ TokenizerImpl::skipWhitespace()
             }
 
             if (isEnded)
-                return Tokenizer::TokenEnd;
+                return TokenType::End;
             if (!fillBuffer())
-                return Tokenizer::TokenError;
+                return TokenType::Error;
             bufferEnd = buffer.cbegin() + length;
         }
     }
 }
 
-Tokenizer::TokenType
+TokenType
 TokenizerImpl::readToken(char ch)
 {
     switch (ch)
     {
     case '{':
         ++position;
-        return Tokenizer::TokenBeginGroup;
+        return TokenType::BeginGroup;
 
     case '}':
         ++position;
-        return Tokenizer::TokenEndGroup;
+        return TokenType::EndGroup;
 
     case '[':
         ++position;
-        return Tokenizer::TokenBeginArray;
+        return TokenType::BeginArray;
 
     case ']':
         ++position;
-        return Tokenizer::TokenEndArray;
+        return TokenType::EndArray;
 
     case '=':
         ++position;
-        return Tokenizer::TokenEquals;
+        return TokenType::Equals;
 
     case '|':
         ++position;
-        return Tokenizer::TokenBar;
+        return TokenType::Bar;
 
     case '<':
         ++position;
-        return Tokenizer::TokenBeginUnits;
+        return TokenType::BeginUnits;
 
     case '>':
         ++position;
-        return Tokenizer::TokenEndUnits;
+        return TokenType::EndUnits;
 
     case '"':
-        return readString() ? Tokenizer::TokenString : Tokenizer::TokenError;
+        return readString() ? TokenType::String : TokenType::Error;
 
     default:
         if (ch == '-' || ch == '+' || ch == '.' || isAsciiDigit(ch))
-            return readNumber() ? Tokenizer::TokenNumber : Tokenizer::TokenError;
+            return readNumber() ? TokenType::Number : TokenType::Error;
         if (isStartName(ch))
-            return readName() ? Tokenizer::TokenName : Tokenizer::TokenError;
+            return readName() ? TokenType::Name : TokenType::Error;
 
         ++position;
-        return Tokenizer::TokenError;
+        return TokenType::Error;
     }
 }
 
@@ -732,7 +732,7 @@ Tokenizer::pushBack()
     isPushedBack = true;
 }
 
-Tokenizer::TokenType
+TokenType
 Tokenizer::nextToken()
 {
     if (isPushedBack)
@@ -743,7 +743,7 @@ Tokenizer::nextToken()
     return tokenType;
 }
 
-Tokenizer::TokenType
+TokenType
 Tokenizer::getTokenType() const
 {
     return tokenType;
@@ -752,7 +752,7 @@ Tokenizer::getTokenType() const
 std::optional<std::string_view>
 Tokenizer::getNameValue() const
 {
-    if (tokenType != TokenType::TokenName)
+    if (tokenType != TokenType::Name)
         return std::nullopt;
     return std::visit(VisitorStringView(), impl->getTokenValue());
 }
@@ -760,7 +760,7 @@ Tokenizer::getNameValue() const
 std::optional<std::string_view>
 Tokenizer::getStringValue() const
 {
-    if (tokenType != TokenType::TokenString)
+    if (tokenType != TokenType::String)
         return std::nullopt;
     return std::visit(VisitorStringView(), impl->getTokenValue());
 }

@@ -22,28 +22,28 @@ namespace celestia::util
 
 class TokenizerImpl;
 
+enum class TokenType
+{
+    Name,
+    String,
+    Number,
+    Begin,
+    End,
+    Null,
+    BeginGroup,
+    EndGroup,
+    BeginArray,
+    EndArray,
+    Equals,
+    Error,
+    Bar,
+    BeginUnits,
+    EndUnits,
+};
+
 class Tokenizer
 {
 public:
-    enum TokenType
-    {
-        TokenName           = 0,
-        TokenString         = 1,
-        TokenNumber         = 2,
-        TokenBegin          = 3,
-        TokenEnd            = 4,
-        TokenNull           = 5,
-        TokenBeginGroup     = 6,
-        TokenEndGroup       = 7,
-        TokenBeginArray     = 8,
-        TokenEndArray       = 9,
-        TokenEquals         = 10,
-        TokenError          = 11,
-        TokenBar            = 12,
-        TokenBeginUnits     = 13,
-        TokenEndUnits       = 14,
-    };
-
     static constexpr std::size_t DEFAULT_BUFFER_SIZE = 4096;
 
     Tokenizer(std::istream*, std::size_t = DEFAULT_BUFFER_SIZE);
@@ -61,7 +61,7 @@ public:
 
 private:
     std::unique_ptr<TokenizerImpl> impl;
-    TokenType tokenType{ TokenType::TokenBegin };
+    TokenType tokenType{ TokenType::Begin };
     bool isPushedBack{ false };
 };
 

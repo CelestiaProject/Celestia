@@ -68,7 +68,7 @@ parseFlags(const std::string& s, const celestia::scripts::ScriptMap<T>& flagMap,
     Tokenizer tokenizer(&in);
     auto flags = static_cast<T>(0);
 
-    for (Tokenizer::TokenType ttype = tokenizer.nextToken(); ttype != Tokenizer::TokenEnd;)
+    for (util::TokenType ttype = tokenizer.nextToken(); ttype != util::TokenType::End;)
     {
         auto tokenValue = tokenizer.getNameValue();
         if (!tokenValue.has_value())
@@ -80,7 +80,7 @@ parseFlags(const std::string& s, const celestia::scripts::ScriptMap<T>& flagMap,
             flags = static_cast<T>(flags | it->second);
 
         ttype = tokenizer.nextToken();
-        if (ttype == Tokenizer::TokenBar)
+        if (ttype == util::TokenType::Bar)
             ttype = tokenizer.nextToken();
     }
 
@@ -95,8 +95,7 @@ parseConstellations(CommandConstellations& cmd, const std::string &s, bool act)
     Tokenizer tokenizer(&in);
     int flags = 0;
 
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
+    for (util::TokenType ttype = tokenizer.nextToken(); ttype != util::TokenType::End;)
     {
         auto tokenValue = tokenizer.getNameValue();
         if (!tokenValue.has_value())
@@ -116,7 +115,7 @@ parseConstellations(CommandConstellations& cmd, const std::string &s, bool act)
             cmd.setValues(*tokenValue, act);
 
         ttype = tokenizer.nextToken();
-        if (ttype == Tokenizer::TokenBar)
+        if (ttype == util::TokenType::Bar)
             ttype = tokenizer.nextToken();
     }
 
@@ -142,8 +141,7 @@ parseConstellationColor(CommandConstellationColor& cmd,
     else
         cmd.unsetColor();
 
-    Tokenizer::TokenType ttype = tokenizer.nextToken();
-    while (ttype != Tokenizer::TokenEnd)
+    for (util::TokenType ttype = tokenizer.nextToken(); ttype != util::TokenType::End;)
     {
         auto tokenValue = tokenizer.getNameValue();
         if (!tokenValue.has_value())
@@ -163,7 +161,7 @@ parseConstellationColor(CommandConstellationColor& cmd,
             cmd.setConstellations(*tokenValue);
 
         ttype = tokenizer.nextToken();
-        if (ttype == Tokenizer::TokenBar)
+        if (ttype == util::TokenType::Bar)
             ttype = tokenizer.nextToken();
     }
 
@@ -979,14 +977,14 @@ CommandSequence CommandParser::parse()
 {
     CommandSequence seq;
 
-    if (tokenizer->nextToken() != Tokenizer::TokenBeginGroup)
+    if (tokenizer->nextToken() != util::TokenType::BeginGroup)
     {
         error("'{' expected at start of script.");
         return {};
     }
 
-    Tokenizer::TokenType ttype = tokenizer->nextToken();
-    while (ttype != Tokenizer::TokenEnd && ttype != Tokenizer::TokenEndGroup)
+    util::TokenType ttype = tokenizer->nextToken();
+    while (ttype != util::TokenType::End && ttype != util::TokenType::EndGroup)
     {
         tokenizer->pushBack();
         std::unique_ptr<Command> cmd = parseCommand();
@@ -1002,7 +1000,7 @@ CommandSequence CommandParser::parse()
         ttype = tokenizer->nextToken();
     }
 
-    if (ttype != Tokenizer::TokenEndGroup)
+    if (ttype != util::TokenType::EndGroup)
     {
         error("Missing '}' at end of script.");
         return {};

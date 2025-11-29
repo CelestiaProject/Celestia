@@ -716,7 +716,7 @@ StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourc
 #endif
 
     StcHeader header(resourcePath);
-    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
         if (!parseStcHeader(tokenizer, header))
             return false;
