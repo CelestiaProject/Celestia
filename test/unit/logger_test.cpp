@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <memory>
 #include <celutil/logger.h>
 
 using celestia::util::Logger;
@@ -17,7 +18,7 @@ TEST_CASE("logger")
     SUBCASE("With INFO Level")
     {
         std::ostringstream err, log;
-        auto *logger = new Logger(Level::Info, log, err);
+        auto logger = std::make_unique<Logger>(Level::Info, log, err);
 
         logger->error("number={}\n", 123);
         REQUIRE(err.str() == "number=123\n");
@@ -46,7 +47,7 @@ TEST_CASE("logger")
     SUBCASE("With VERBOSE Level")
     {
         std::ostringstream err, log;
-        auto *logger = new Logger(Level::Verbose, log, err);
+        auto logger = std::make_unique<Logger>(Level::Verbose, log, err);
 
         logger->error("number={}\n", 123);
         REQUIRE(err.str() == "number=123\n");
@@ -76,7 +77,7 @@ TEST_CASE("logger")
     SUBCASE("With WARN Level")
     {
         std::ostringstream err, log;
-        auto *logger = new Logger(Level::Warning, log, err);
+        auto logger = std::make_unique<Logger>(Level::Warning, log, err);
 
         logger->error("number={}\n", 123);
         REQUIRE(err.str() == "number=123\n");
@@ -104,7 +105,7 @@ TEST_CASE("logger")
     SUBCASE("With ERROR Level")
     {
         std::ostringstream err, log;
-        auto *logger = new Logger(Level::Error, log, err);
+        auto logger = std::make_unique<Logger>(Level::Error, log, err);
 
         logger->error("number={}\n", 123);
         REQUIRE(err.str() == "number=123\n");
@@ -131,7 +132,7 @@ TEST_CASE("logger")
     SUBCASE("With DEBUG Level")
     {
         std::ostringstream err, log;
-        auto *logger = new Logger(Level::Debug, log, err);
+        auto logger = std::make_unique<Logger>(Level::Debug, log, err);
 
         logger->error("number={}\n", 123);
         REQUIRE(err.str() == "number=123\n");
