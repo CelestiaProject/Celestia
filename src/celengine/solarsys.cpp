@@ -1134,7 +1134,7 @@ bool LoadSolarSystemObjects(std::istream& in,
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
         // Read the disposition; if none is specified, the default is Add.
         DataDisposition disposition = DataDisposition::Add;

@@ -28,9 +28,9 @@ DestinationList* ReadDestinationList(std::istream& in)
     util::Parser parser(&tokenizer);
     auto* destinations = new DestinationList();
 
-    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
-        if (tokenizer.getTokenType() != util::Tokenizer::TokenBeginGroup)
+        if (tokenizer.getTokenType() != util::TokenType::BeginGroup)
         {
             GetLogger()->error("Error parsing destinations file.\n");
             std::for_each(destinations->begin(), destinations->end(), [](Destination* dest) { delete dest; });

@@ -212,7 +212,7 @@ DSODatabaseBuilder::load(std::istream& in, const std::filesystem::path& resource
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
 
-    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
         std::string objType;
         if (auto tokenValue = tokenizer.getNameValue(); tokenValue.has_value())
