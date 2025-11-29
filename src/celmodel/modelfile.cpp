@@ -605,8 +605,7 @@ AsciiModelLoader::loadUByte4Attribute(const VertexAttribute& attr,
     for (int i = 0; i < 4; ++i)
     {
         tok.nextToken();
-        if (auto tokenValue = tok.getNumberValue<std::uint8_t>();
-            tokenValue.has_value() && *tokenValue >= 0 && *tokenValue <= 255)
+        if (auto tokenValue = tok.getNumberValue<std::uint8_t>(); tokenValue.has_value())
         {
             values[i] = *tokenValue;
         }
@@ -725,7 +724,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
         }
 
         unsigned int indexCount;
-        if (auto tokenValue = tok.getNumberValue<unsigned int>(); tokenValue.has_value() && *tokenValue >= 0)
+        if (auto tokenValue = tok.getNumberValue<unsigned int>(); tokenValue.has_value())
         {
             indexCount = *tokenValue;
         }
@@ -755,7 +754,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
             }
             else
             {
-                index = static_cast<unsigned int>(*tokenValue);
+                index = *tokenValue;
             }
 
             indices.push_back(index);

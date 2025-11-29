@@ -392,6 +392,142 @@ NumberStateMachine::isInvalidEndState() const noexcept
            m_state == State::ExponentSign;
 }
 
+class StringStateMachine
+{
+public:
+    StringStateMachine(BufferedFile&, bool&);
+    TokenType parse();
+
+    bool needsEscape() const noexcept { return m_needsEscape; }
+
+private:
+    enum class State
+    {
+        Normal,
+        Escape,
+        Unicode,
+        End,
+        Error,
+    };
+
+    void processNormal(std::int32_t);
+    void processEscape(std::int32_t);
+    void processUnicode(std::int32_t);
+
+    BufferedFile* m_file;
+    State m_state{ State::Normal };
+    unsigned int m_digits{ 0 };
+    bool* m_needsEscape;
+};
+
+StringStateMachine::StringStateMachine(BufferedFile& file, bool& needsEscape) :
+    m_file(&file),
+    m_needsEscape(&needsEscape)
+{
+}
+
+TokenType
+StringStateMachine::parse()
+{
+    // skip initial quote
+    m_file->advance(true);
+
+    *m_needsEscape = false;
+    UTF8Validator validator;
+    while (m_state != State::End && m_state != State::Error)
+    {
+        int next = m_file->next();
+        if (next == std::char_traits<char>::eof())
+            return TokenType::Error;
+
+        m_file->advance(false);
+        std::int32_t cp = validator.check(std::char_traits<char>::to_char_type(next));
+        if (cp == UTF8Validator::PartialSequence)
+            continue;
+
+        if (cp == UTF8Validator::InvalidStarter ||
+            cp == UTF8Validator::InvalidTrailing ||
+            cp == static_cast<std::int32_t>(U'\r'))
+        {
+            *m_needsEscape = true;
+            continue;
+        }
+
+        switch (m_state)
+        {
+        case State::Normal:
+            processNormal(cp);
+            break;
+        case State::Escape:
+            processEscape(cp);
+            break;
+        case State::Unicode:
+            processUnicode(cp);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    }
+
+    return m_state == State::End ? TokenType::String : TokenType::Error;
+}
+
+void
+StringStateMachine::processNormal(std::int32_t cp)
+{
+    switch (cp)
+    {
+    case static_cast<std::int32_t>(U'"'):
+        m_state = State::End;
+        break;
+
+    case static_cast<std::int32_t>(U'\\'):
+        *m_needsEscape = true;
+        m_state = State::Escape;
+        break;
+
+    default:
+        break;
+    }
+}
+
+void
+StringStateMachine::processEscape(std::int32_t cp)
+{
+    switch (cp)
+    {
+    case static_cast<std::int32_t>(U'"'):
+    case static_cast<std::int32_t>(U'\\'):
+    case static_cast<std::int32_t>(U'n'):
+        m_state = State::Normal;
+        break;
+
+    case static_cast<std::int32_t>(U'u'):
+        m_digits = 4;
+        m_state = State::Unicode;
+        break;
+
+    default:
+        m_state = State::Error;
+        break;
+    }
+}
+
+void
+StringStateMachine::processUnicode(std::int32_t cp)
+{
+    if (!isHexDigit(cp))
+    {
+        m_state = State::Error;
+        return;
+    }
+
+    --m_digits;
+    if (m_digits == 0)
+        m_state = State::Normal;
+}
+
 void
 processEscape(std::string_view src, std::int32_t& pos, std::int32_t end, std::string& result)
 {
@@ -501,8 +637,6 @@ Tokenizer::Tokenizer(std::istream& in, std::size_t bufferSize) :
     m_file(in, bufferSize)
 {}
 
-Tokenizer::~Tokenizer() = default;
-
 TokenType
 Tokenizer::nextToken()
 {
@@ -587,7 +721,7 @@ Tokenizer::processToken(char ch)
         return TokenType::Bar;
 
     case '"':
-        return processString();
+        return StringStateMachine(m_file, m_needsEscape).parse();
 
     default:
         if (isNumberStart(ch))
@@ -615,81 +749,6 @@ Tokenizer::processName()
             return TokenType::Name;
 
         m_file.advance(false);
-    }
-}
-
-TokenType
-Tokenizer::processString()
-{
-    enum class StringState { Normal, Escape, Unicode };
-    unsigned int remainingDigits = 0;
-
-    // Consume initial quote
-    m_file.advance(true);
-    auto state = StringState::Normal;
-    UTF8Validator validator;
-    for (;;)
-    {
-        int next = m_file.next();
-        if (next == std::char_traits<char>::eof())
-            return TokenType::Error;
-
-        m_file.advance(false);
-        std::int32_t cp = validator.check(std::char_traits<char>::to_char_type(next));
-        if (cp == UTF8Validator::PartialSequence)
-            continue;
-
-        if (cp == UTF8Validator::InvalidStarter ||
-            cp == UTF8Validator::InvalidTrailing ||
-            cp == static_cast<std::int32_t>(U'\r'))
-        {
-            m_needsEscape = true;
-            continue;
-        }
-
-        switch (state)
-        {
-        case StringState::Normal:
-            if (cp == static_cast<std::int32_t>(U'"'))
-                return TokenType::String;
-            if (cp == static_cast<std::int32_t>(U'\\'))
-            {
-                m_needsEscape = true;
-                state = StringState::Escape;
-            }
-            break;
-
-        case StringState::Escape:
-            if (cp == static_cast<std::int32_t>(U'"') ||
-                cp == static_cast<std::int32_t>(U'\\') ||
-                cp == static_cast<std::int32_t>(U'n'))
-            {
-                state = StringState::Normal;
-            }
-            else if (cp == static_cast<std::int32_t>(U'u'))
-            {
-                remainingDigits = 4;
-                state = StringState::Unicode;
-            }
-            else
-            {
-                return TokenType::Error;
-            }
-            break;
-
-        case StringState::Unicode:
-            if (!isHexDigit(cp))
-                return TokenType::Error;
-
-            --remainingDigits;
-            if (remainingDigits == 0)
-                state = StringState::Normal;
-            break;
-
-        default:
-            assert(0);
-            break;
-        }
     }
 }
 

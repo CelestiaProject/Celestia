@@ -63,7 +63,7 @@ struct StarDatabaseBuilder::StcHeader
     explicit StcHeader(std::filesystem::path&&) = delete;
 
     const std::filesystem::path* path;
-    int lineNumber{ 0 };
+    std::uint64_t lineNumber{ 0 };
     DataDisposition disposition{ DataDisposition::Add };
     bool isStar{ true };
     AstroCatalog::IndexNumber catalogNumber{ AstroCatalog::InvalidIndex };
