@@ -1,6 +1,6 @@
 // tokenizer.cpp
 //
-// Copyright (C) 2001-2021, the Celestia Development Team
+// Copyright (C) 2001-2025, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -587,11 +587,10 @@ processEscape(std::string_view src, std::int32_t& pos, std::int32_t end, std::st
 }
 
 std::string
-unescapeString(std::string_view src)
+unescapeString(std::string_view src, std::string& result)
 {
     enum class StringState { Normal, LF, CR };
 
-    std::string result;
     result.reserve(src.size());
     auto state = StringState::Normal;
     const auto end = static_cast<std::int32_t>(src.size());
@@ -627,7 +626,6 @@ unescapeString(std::string_view src)
         }
     }
 
-    result.shrink_to_fit();
     return result;
 }
 
@@ -779,7 +777,7 @@ Tokenizer::getStringValue() const
         return value;
 
     if (m_escaped.empty())
-        m_escaped = unescapeString(value);
+        unescapeString(value, m_escaped);
 
     return m_escaped;
 }
