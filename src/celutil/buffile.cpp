@@ -90,6 +90,15 @@ BufferedFile::advance(bool consume) noexcept
         m_consumed = m_position;
 }
 
+void
+BufferedFile::resizeValue(std::size_t length)
+{
+    if (auto max = valueSize(); length > max)
+        length = max;
+
+    m_position = m_consumed + length;
+}
+
 std::string_view
 BufferedFile::value() const
 {

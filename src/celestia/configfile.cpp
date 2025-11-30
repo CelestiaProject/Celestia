@@ -265,7 +265,7 @@ bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& c
         return false;
     }
 
-    util::Tokenizer tokenizer(&configFile);
+    util::Tokenizer tokenizer(configFile);
     util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();

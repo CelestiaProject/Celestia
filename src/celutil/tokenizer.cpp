@@ -1,6 +1,6 @@
 // tokenizer.cpp
 //
-// Copyright (C) 2001-2021, the Celestia Development Team
+// Copyright (C) 2001-2025, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -8,36 +8,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstring>
-#include <istream>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <variant>
-#include <vector>
-#include <system_error>
-
-#include <celcompat/charconv.h>
-#include <celutil/utf8.h>
 #include "tokenizer.h"
 
-using namespace std::string_view_literals;
+#include <cassert>
+
+#include "utf8.h"
 
 namespace celestia::util
 {
 
 namespace
 {
-constexpr inline std::string_view UTF8_BOM = "\357\273\277"sv;
-
-constexpr bool
-isWhitespace(char ch)
-{
-    return ch == ' ' || ch == '\t' || ch == '\r';
-}
 
 constexpr bool
 isAsciiDigit(char ch)
@@ -46,741 +27,759 @@ isAsciiDigit(char ch)
 }
 
 constexpr bool
-isStartName(char ch)
+isNumberSign(char ch)
 {
+    return ch == '-' || ch == '+';
+}
+
+constexpr bool
+isNumberStart(char ch)
+{
+    return isAsciiDigit(ch) || isNumberSign(ch) || ch == '.';
+}
+
+constexpr bool
+isExponentSymbol(char ch)
+{
+    return ch == 'E' || ch == 'e';
+}
+
+constexpr bool
+isNameStart(char ch)
+{
+    static_assert('Z' - 'A' == 25, "EBCDIC is not supported");
     return (ch >= 'A' && ch <= 'Z') ||
            (ch >= 'a' && ch <= 'z') ||
-           (ch == '_');
+           ch == '_';
 }
 
 constexpr bool
-isName(char ch)
+isNameContinuation(char ch)
 {
-    return isStartName(ch) || isAsciiDigit(ch);
+    return isNameStart(ch) || isAsciiDigit(ch);
 }
 
 constexpr bool
-isSign(char ch)
+isHexDigit(std::int32_t cp)
 {
-    return ch == '+' || ch == '-';
+    return (cp >= static_cast<std::int32_t>(U'0') && cp <= static_cast<std::int32_t>(U'9')) ||
+           (cp >= static_cast<std::int32_t>(U'A') && cp <= static_cast<std::int32_t>(U'F')) ||
+           (cp >= static_cast<std::int32_t>(U'a') && cp <= static_cast<std::int32_t>(U'f'));
 }
 
-enum class NumberPart
-{
-    Initial,
-    Fraction,
-    Exponent,
-    End,
-    Error,
-};
-
-struct NumberState
-{
-    std::size_t endPosition{ 0 };
-    NumberPart part{ NumberPart::Initial };
-    bool isInteger{ true };
-};
-
-struct StringState
-{
-    std::size_t runStart{ 1 };
-    std::size_t runEnd{ 1 };
-    std::string processed{};
-    UTF8Validator validator{};
-
-    bool checkUTF8(char, std::string_view);
-};
-
-bool
-StringState::checkUTF8(char c, std::string_view run)
-{
-    auto decodedChar = validator.check(c);
-    if (decodedChar >= 0 || decodedChar == UTF8Validator::PartialSequence)
-        return true;
-
-    if (decodedChar == UTF8Validator::InvalidTrailing)
-    {
-        std::size_t pos = run.size();
-        while (pos > 0)
-        {
-            --pos;
-            auto uch = static_cast<unsigned char>(run[pos]);
-            if (uch >= 0xc0)
-                break;
-        }
-
-        run = run.substr(0, pos);
-    }
-
-    processed.append(run);
-    processed.append(UTF8_REPLACEMENT_CHAR);
-    runStart = runEnd + 1;
-    runEnd = runStart;
-    return false;
-}
-
-struct VisitorStringView
-{
-    std::optional<std::string_view> operator()(std::monostate) const { return std::nullopt; }
-    std::optional<std::string_view> operator()(std::int32_t) const { return std::nullopt; }
-    std::optional<std::string_view> operator()(double) const { return std::nullopt; }
-    std::optional<std::string_view> operator()(std::string_view sv) const { return sv; }
-    std::optional<std::string_view> operator()(const std::string& s) const { return s; }
-};
-
-struct VisitorDouble
-{
-    std::optional<double> operator()(std::monostate) const { return std::nullopt; }
-    std::optional<double> operator()(std::int32_t i) const { return static_cast<double>(i); }
-    std::optional<double> operator()(double d) const { return d; }
-    std::optional<double> operator()(std::string_view) const { return std::nullopt; }
-    std::optional<double> operator()(const std::string&) const { return std::nullopt; }
-};
-
-struct VisitorInteger
-{
-    std::optional<std::int32_t> operator()(std::monostate) const { return std::nullopt; }
-    std::optional<std::int32_t> operator()(std::int32_t i) const { return i; }
-    std::optional<std::int32_t> operator()(double) const { return std::nullopt; }
-    std::optional<std::int32_t> operator()(std::string_view) const { return std::nullopt; }
-    std::optional<std::int32_t> operator()(const std::string&) const { return std::nullopt; }
-};
-
-} // end unnamed namespace
-
-class TokenizerImpl
+class NumberStateMachine
 {
 public:
-    using TokenValue = std::variant<std::monostate, std::int32_t, double, std::string_view, std::string>;
-
-    TokenizerImpl(std::istream*, std::size_t);
-
-    TokenizerImpl(const TokenizerImpl&) = delete;
-    TokenizerImpl& operator=(const TokenizerImpl&) = delete;
-    TokenizerImpl(TokenizerImpl&&) = delete;
-    TokenizerImpl& operator=(TokenizerImpl&&) = delete;
-
-    Tokenizer::TokenType nextToken();
-
-    const TokenValue& getTokenValue() const { return tokenValue; }
-    int getLineNumber() const { return lineNumber; }
+    explicit NumberStateMachine(BufferedFile&);
+    TokenType parse();
 
 private:
-    std::istream* in;
-    std::vector<char> buffer;
-    std::size_t position{ 0 };
-    std::size_t length{ 0 };
-    TokenValue tokenValue{ std::in_place_type<std::monostate> };
+    enum class State
+    {
+        Start,
+        End,
+        Error,
+        IntegerSign,
+        Integer,
+        FractionalPoint,
+        Fractional,
+        ExponentSymbol,
+        ExponentSign,
+        Exponent,
+    };
 
-    int lineNumber{ 1 };
-    bool isAtStart{ true };
-    bool isEnded{ false };
+    void processStart(int);
+    void processIntegerSign(int);
+    void processInteger(int);
+    void processFractionalPoint(int);
+    void processFractional(int);
+    void processExponentSymbol(int);
+    void processExponentSign(int);
+    void processExponent(int);
 
-    bool skipUTF8Bom();
+    bool isInvalidEndState() const noexcept;
 
-    std::variant<char, Tokenizer::TokenType> skipWhitespace();
-    Tokenizer::TokenType readToken(char);
-
-    bool readString();
-    bool readNumber();
-    bool readName();
-
-    NumberState createNumberState();
-    static void parseDecimal(NumberState&);
-    void parseExponent(NumberState&);
-    bool setNumber(const NumberState&);
-
-    bool parseChar(StringState&, char, std::string_view);
-    bool parseEscape(StringState&, char);
-
-    bool fillBuffer(std::size_t* = nullptr);
-    std::optional<char> peekAt(std::size_t&);
+    BufferedFile* m_file;
+    std::size_t m_expPos{ 0 };
+    State m_state{ State::Start };
+    bool m_hasDigits{ false };
 };
 
-TokenizerImpl::TokenizerImpl(std::istream* _in, std::size_t _bufferSize)
-    : in(_in),
-      buffer(_bufferSize)
-{}
-
-Tokenizer::TokenType
-TokenizerImpl::nextToken()
+NumberStateMachine::NumberStateMachine(BufferedFile& file) :
+    m_file(&file)
 {
-    tokenValue.emplace<std::monostate>();
+}
 
-    // skip UTF8 BOM
-    if (isAtStart && !skipUTF8Bom())
-        return Tokenizer::TokenError;
-
-    auto wsResult = skipWhitespace();
-    return std::visit([this](auto& arg)
+TokenType
+NumberStateMachine::parse()
+{
+    while (m_state != State::End && m_state != State::Error)
     {
-        using T = std::decay_t<decltype(arg)>;
-        if constexpr (std::is_same_v<T, Tokenizer::TokenType>)
+        int next = m_file->next();
+        switch (m_state)
         {
-            return arg;
+        case State::Start:
+            processStart(next);
+            break;
+        case State::IntegerSign:
+            processIntegerSign(next);
+            break;
+        case State::Integer:
+            processInteger(next);
+            break;
+        case State::FractionalPoint:
+            processFractionalPoint(next);
+            break;
+        case State::Fractional:
+            processFractional(next);
+            break;
+        case State::ExponentSymbol:
+            processExponentSymbol(next);
+            break;
+        case State::ExponentSign:
+            processExponentSign(next);
+            break;
+        case State::Exponent:
+            processExponent(next);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    }
+
+    return m_state == State::Error ? TokenType::Error : TokenType::Number;
+}
+
+void
+NumberStateMachine::processStart(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_state = State::Error;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    switch (ch)
+    {
+    case '-':
+        m_state = State::IntegerSign;
+        m_file->advance(false);
+        break;
+
+    case '+':
+        m_state = State::IntegerSign;
+        m_file->advance(true); // exclude for charconv purposes
+        break;
+
+    case '.':
+        m_state = State::FractionalPoint;
+        m_file->advance(false);
+        break;
+
+    default:
+        if (isAsciiDigit(ch))
+        {
+            m_state = State::Integer;
+            m_hasDigits = true;
+            m_file->advance(false);
         }
         else
         {
-            static_assert(std::is_same_v<T, char>);
-            return readToken(arg);
+            m_state = State::Error;
+            m_file->advance(true);
         }
-    }, wsResult);
-}
-
-std::variant<char, Tokenizer::TokenType>
-TokenizerImpl::skipWhitespace()
-{
-    for (;;)
-    {
-        // skip whitespace
-        auto bufferEnd = buffer.cbegin() + length;
-        auto it = std::find_if_not(buffer.cbegin() + position, bufferEnd, isWhitespace);
-        position = it - buffer.cbegin();
-        if (it == bufferEnd)
-        {
-            if (isEnded)
-                return Tokenizer::TokenEnd;
-            if (!fillBuffer())
-                return Tokenizer::TokenError;
-            continue;
-        }
-
-        // track lines
-        if (*it == '\n')
-        {
-            ++lineNumber;
-            ++position;
-            continue;
-        }
-
-        if (*it != '#')
-            return *it;
-
-        // skip comments
-        for (;;)
-        {
-            it = std::find(buffer.cbegin() + position, bufferEnd, '\n');
-            position = it - buffer.cbegin();
-            if (it != bufferEnd)
-            {
-                ++lineNumber;
-                ++position;
-                break;
-            }
-
-            if (isEnded)
-                return Tokenizer::TokenEnd;
-            if (!fillBuffer())
-                return Tokenizer::TokenError;
-            bufferEnd = buffer.cbegin() + length;
-        }
+        break;
     }
 }
 
-Tokenizer::TokenType
-TokenizerImpl::readToken(char ch)
+void
+NumberStateMachine::processIntegerSign(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_state = State::Error;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (ch == '.')
+    {
+        m_state = State::FractionalPoint;
+        m_file->advance(false);
+    }
+    else if (isAsciiDigit(ch))
+    {
+        m_state = State::Integer;
+        m_hasDigits = true;
+        m_file->advance(false);
+    }
+    else
+    {
+        m_state = State::Error;
+    }
+}
+
+void
+NumberStateMachine::processInteger(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_state = State::End;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (ch == '.')
+    {
+        m_state = State::FractionalPoint;
+        m_file->advance(false);
+    }
+    else if (isExponentSymbol(ch))
+    {
+        m_expPos = m_file->valueSize();
+        m_state = State::ExponentSymbol;
+        m_file->advance(false);
+    }
+    else if (isAsciiDigit(ch))
+    {
+        m_hasDigits = true;
+        m_file->advance(false);
+    }
+    else
+    {
+        m_state = State::End;
+    }
+}
+
+void
+NumberStateMachine::processFractionalPoint(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_state = m_hasDigits ? State::End : State::Error;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (isAsciiDigit(ch))
+    {
+        m_state = State::Fractional;
+        m_hasDigits = true;
+        m_file->advance(false);
+    }
+    else if (m_hasDigits)
+    {
+        if (isExponentSymbol(ch))
+        {
+            m_expPos = m_file->valueSize();
+            m_state = State::ExponentSymbol;
+            m_file->advance(false);
+        }
+        else
+        {
+            m_state = State::End;
+        }
+    }
+    else
+    {
+        m_state = State::Error;
+    }
+}
+
+void
+NumberStateMachine::processFractional(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_state = State::End;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (isExponentSymbol(ch))
+    {
+        m_expPos = m_file->valueSize();
+        m_state = State::ExponentSymbol;
+        m_file->advance(false);
+    }
+    else if (isAsciiDigit(ch))
+    {
+        m_hasDigits = true;
+        m_file->advance(false);
+    }
+    else
+    {
+        m_state = State::End;
+    }
+}
+
+void
+NumberStateMachine::processExponentSymbol(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_file->resizeValue(m_expPos);
+        m_state = State::End;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (isNumberSign(ch))
+    {
+        m_state = State::ExponentSign;
+        m_file->advance(false);
+    }
+    else if (isAsciiDigit(ch))
+    {
+        m_state = State::Exponent;
+        m_file->advance(false);
+    }
+    else
+    {
+        m_file->resizeValue(m_expPos);
+        m_state = State::End;
+    }
+}
+
+void
+NumberStateMachine::processExponentSign(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_file->resizeValue(m_expPos);
+        m_state = State::End;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (isAsciiDigit(ch))
+    {
+        m_state = State::Exponent;
+        m_file->advance(false);
+    }
+    else
+    {
+        m_file->resizeValue(m_expPos);
+        m_state = State::End;
+    }
+}
+
+void
+NumberStateMachine::processExponent(int next)
+{
+    if (next == std::char_traits<char>::eof())
+    {
+        m_state = State::End;
+        return;
+    }
+
+    auto ch = std::char_traits<char>::to_char_type(next);
+    if (isAsciiDigit(ch))
+        m_file->advance(false);
+    else
+        m_state = State::End;
+}
+
+bool
+NumberStateMachine::isInvalidEndState() const noexcept
+{
+    return m_state == State::Start ||
+           m_state == State::IntegerSign ||
+           (m_state == State::FractionalPoint && !m_hasDigits) ||
+           m_state == State::ExponentSymbol ||
+           m_state == State::ExponentSign;
+}
+
+class StringStateMachine
+{
+public:
+    StringStateMachine(BufferedFile&, bool&);
+    TokenType parse();
+
+    bool needsEscape() const noexcept { return m_needsEscape; }
+
+private:
+    enum class State
+    {
+        Normal,
+        Escape,
+        Unicode,
+        End,
+        Error,
+    };
+
+    void processNormal(std::int32_t);
+    void processEscape(std::int32_t);
+    void processUnicode(std::int32_t);
+
+    BufferedFile* m_file;
+    State m_state{ State::Normal };
+    unsigned int m_digits{ 0 };
+    bool* m_needsEscape;
+};
+
+StringStateMachine::StringStateMachine(BufferedFile& file, bool& needsEscape) :
+    m_file(&file),
+    m_needsEscape(&needsEscape)
+{
+}
+
+TokenType
+StringStateMachine::parse()
+{
+    // skip initial quote
+    m_file->advance(true);
+
+    *m_needsEscape = false;
+    UTF8Validator validator;
+    while (m_state != State::End && m_state != State::Error)
+    {
+        int next = m_file->next();
+        if (next == std::char_traits<char>::eof())
+            return TokenType::Error;
+
+        m_file->advance(false);
+        std::int32_t cp = validator.check(std::char_traits<char>::to_char_type(next));
+        if (cp == UTF8Validator::PartialSequence)
+            continue;
+
+        if (cp == UTF8Validator::InvalidStarter ||
+            cp == UTF8Validator::InvalidTrailing ||
+            cp == static_cast<std::int32_t>(U'\r'))
+        {
+            *m_needsEscape = true;
+            continue;
+        }
+
+        switch (m_state)
+        {
+        case State::Normal:
+            processNormal(cp);
+            break;
+        case State::Escape:
+            processEscape(cp);
+            break;
+        case State::Unicode:
+            processUnicode(cp);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    }
+
+    return m_state == State::End ? TokenType::String : TokenType::Error;
+}
+
+void
+StringStateMachine::processNormal(std::int32_t cp)
+{
+    switch (cp)
+    {
+    case static_cast<std::int32_t>(U'"'):
+        m_state = State::End;
+        break;
+
+    case static_cast<std::int32_t>(U'\\'):
+        *m_needsEscape = true;
+        m_state = State::Escape;
+        break;
+
+    default:
+        break;
+    }
+}
+
+void
+StringStateMachine::processEscape(std::int32_t cp)
+{
+    switch (cp)
+    {
+    case static_cast<std::int32_t>(U'"'):
+    case static_cast<std::int32_t>(U'\\'):
+    case static_cast<std::int32_t>(U'n'):
+        m_state = State::Normal;
+        break;
+
+    case static_cast<std::int32_t>(U'u'):
+        m_digits = 4;
+        m_state = State::Unicode;
+        break;
+
+    default:
+        m_state = State::Error;
+        break;
+    }
+}
+
+void
+StringStateMachine::processUnicode(std::int32_t cp)
+{
+    if (!isHexDigit(cp))
+    {
+        m_state = State::Error;
+        return;
+    }
+
+    --m_digits;
+    if (m_digits == 0)
+        m_state = State::Normal;
+}
+
+void
+processEscape(std::string_view src, std::int32_t& pos, std::int32_t end, std::string& result)
+{
+    if (pos >= end)
+    {
+        result += UTF8_REPLACEMENT_CHAR;
+        return;
+    }
+
+    switch (src[pos])
+    {
+    case '"':
+        result += '"';
+        ++pos;
+        return;
+
+    case '\\':
+        result += '\\';
+        ++pos;
+        return;
+
+    case 'n':
+        result += '\n';
+        ++pos;
+        return;
+
+    case 'u':
+        break;
+
+    default:
+        result += UTF8_REPLACEMENT_CHAR;
+        ++pos;
+        return;
+    }
+
+    constexpr std::int32_t digits = 4;
+    if (end - pos < digits + 1)
+    {
+        result += UTF8_REPLACEMENT_CHAR;
+        pos = end;
+        return;
+    }
+
+    std::uint32_t uch;
+    const auto uStart = src.data() + (pos + 1);
+    const auto uEnd = uStart + digits;
+    pos += digits + 1;
+    if (auto [ptr, ec] = compat::from_chars(uStart, uEnd, uch, 16);
+        ec == std::errc{} && ptr == uEnd)
+    {
+        UTF8Encode(uch, result);
+    }
+    else
+    {
+        result += UTF8_REPLACEMENT_CHAR;
+    }
+}
+
+std::string
+unescapeString(std::string_view src, std::string& result)
+{
+    enum class StringState { Normal, LF, CR };
+
+    result.reserve(src.size());
+    auto state = StringState::Normal;
+    const auto end = static_cast<std::int32_t>(src.size());
+    for (std::int32_t pos = 0; pos < end;)
+    {
+        std::int32_t cp;
+        if (!UTF8Decode(src, pos, cp))
+        {
+            result += UTF8_REPLACEMENT_CHAR;
+            state = StringState::Normal;
+            continue;
+        }
+
+        if (cp == static_cast<std::int32_t>(U'\n'))
+        {
+            if (state != StringState::CR)
+                result += '\n';
+            state = StringState::LF;
+        }
+        else if (cp == static_cast<std::int32_t>(U'\r'))
+        {
+            if (state != StringState::LF)
+                result += '\n';
+            state = StringState::CR;
+        }
+        else
+        {
+            state = StringState::Normal;
+            if (cp == static_cast<std::int32_t>(U'\\'))
+                processEscape(src, pos, end, result);
+            else
+                UTF8Encode(static_cast<std::uint32_t>(cp), result);
+        }
+    }
+
+    return result;
+}
+
+} // end unnamed namespace
+
+Tokenizer::Tokenizer(std::istream& in, std::size_t bufferSize) :
+    m_file(in, bufferSize)
+{}
+
+TokenType
+Tokenizer::nextToken()
+{
+    if (m_pushedBack)
+    {
+        m_pushedBack = false;
+        return m_tokenType;
+    }
+
+    if (m_tokenType == TokenType::End || m_tokenType == TokenType::Error)
+        return TokenType::End;
+
+    m_needsEscape = false;
+    m_escaped.clear();
+
+    m_file.consume();
+    bool isComment = false;
+    for (;;)
+    {
+        int next = m_file.next();
+        if (next == std::char_traits<char>::eof())
+        {
+            m_tokenType = m_file.error() ? TokenType::Error : TokenType::End;
+            return m_tokenType;
+        }
+
+        auto ch = std::char_traits<char>::to_char_type(next);
+        if (isComment)
+        {
+            if (ch == '\r' || ch == '\n')
+                isComment = false;
+        }
+        else if (ch == '#')
+        {
+            isComment = true;
+        }
+        else if (ch != '\t' && ch != '\n' && ch != '\r' && ch != ' ')
+        {
+            m_tokenType = processToken(ch);
+            return m_tokenType;
+        }
+
+        m_file.advance(true);
+    }
+}
+
+TokenType
+Tokenizer::processToken(char ch)
 {
     switch (ch)
     {
     case '{':
-        ++position;
-        return Tokenizer::TokenBeginGroup;
+        m_file.advance(true);
+        return TokenType::BeginGroup;
 
     case '}':
-        ++position;
-        return Tokenizer::TokenEndGroup;
+        m_file.advance(true);
+        return TokenType::EndGroup;
 
     case '[':
-        ++position;
-        return Tokenizer::TokenBeginArray;
+        m_file.advance(true);
+        return TokenType::BeginArray;
 
     case ']':
-        ++position;
-        return Tokenizer::TokenEndArray;
-
-    case '=':
-        ++position;
-        return Tokenizer::TokenEquals;
-
-    case '|':
-        ++position;
-        return Tokenizer::TokenBar;
+        m_file.advance(true);
+        return TokenType::EndArray;
 
     case '<':
-        ++position;
-        return Tokenizer::TokenBeginUnits;
+        m_file.advance(true);
+        return TokenType::BeginUnits;
 
     case '>':
-        ++position;
-        return Tokenizer::TokenEndUnits;
+        m_file.advance(true);
+        return TokenType::EndUnits;
+
+    case '=':
+        m_file.advance(true);
+        return TokenType::Equals;
+
+    case '|':
+        m_file.advance(true);
+        return TokenType::Bar;
 
     case '"':
-        return readString() ? Tokenizer::TokenString : Tokenizer::TokenError;
+        return StringStateMachine(m_file, m_needsEscape).parse();
 
     default:
-        if (ch == '-' || ch == '+' || ch == '.' || isAsciiDigit(ch))
-            return readNumber() ? Tokenizer::TokenNumber : Tokenizer::TokenError;
-        if (isStartName(ch))
-            return readName() ? Tokenizer::TokenName : Tokenizer::TokenError;
-
-        ++position;
-        return Tokenizer::TokenError;
+        if (isNumberStart(ch))
+            return NumberStateMachine(m_file).parse();
+        if (isNameStart(ch))
+            return processName();
+        m_file.advance(true);
+        return TokenType::Error;
     }
 }
 
-bool
-TokenizerImpl::skipUTF8Bom()
+TokenType
+Tokenizer::processName()
 {
-    if (!fillBuffer())
-        return false;
+    // Handle first letter
+    m_file.advance(false);
 
-    isAtStart = false;
-    if (length >= UTF8_BOM.size() && std::string_view(buffer.data(), UTF8_BOM.size()) == UTF8_BOM)
-        position += UTF8_BOM.size();
-
-    return true;
-}
-
-bool
-TokenizerImpl::readName()
-{
-    std::size_t endPosition = position + 1;
-    do
-    {
-        auto bufferEnd = buffer.cbegin() + length;
-        auto it = std::find_if_not(buffer.cbegin() + endPosition, bufferEnd, isName);
-        endPosition = it - buffer.cbegin();
-        if (it != bufferEnd || isEnded) { break; }
-
-        if (!fillBuffer(&endPosition))
-        {
-            position = endPosition;
-            return false;
-        }
-    } while (endPosition < length);
-
-    tokenValue.emplace<std::string_view>(buffer.data() + position, endPosition - position);
-    position = endPosition;
-
-    return true;
-}
-
-bool
-TokenizerImpl::readNumber()
-{
-    NumberState state = createNumberState();
-    if (state.part == NumberPart::Error)
-        return false;
-
-    while (state.part != NumberPart::End)
-    {
-        auto bufferEnd = buffer.cbegin() + length;
-        auto it = std::find_if_not(buffer.cbegin() + state.endPosition, bufferEnd, isAsciiDigit);
-        state.endPosition = it - buffer.cbegin();
-        if (it == bufferEnd)
-        {
-            if (isEnded)
-            {
-                state.part = NumberPart::End;
-            }
-            else if (!fillBuffer(&state.endPosition))
-            {
-                position = state.endPosition;
-                return false;
-            }
-            else if (state.endPosition == length)
-            {
-                state.part = NumberPart::End;
-            }
-            continue;
-        }
-
-        switch (*it)
-        {
-        case '.':
-            parseDecimal(state);
-            break;
-
-        case 'E':
-        case 'e':
-            parseExponent(state);
-            break;
-
-        default:
-            state.part = NumberPart::End;
-            break;
-        }
-    }
-
-    return setNumber(state);
-}
-
-NumberState
-TokenizerImpl::createNumberState()
-{
-    NumberState state;
-    state.endPosition = position + 1;
-    if (buffer[position] == '.')
-    {
-        // decimal point must be followed by a digit
-        if (auto check = peekAt(state.endPosition); !isAsciiDigit(check.value_or('\0')))
-        {
-            position = state.endPosition;
-            state.part = NumberPart::Error;
-            return state;
-        }
-        state.isInteger = false;
-        state.part = NumberPart::Fraction;
-    }
-    else if (isSign(buffer[position]))
-    {
-        // sign must be followed by either a decimal point or a digit
-        if (auto check = peekAt(state.endPosition); check == '.')
-        {
-            ++state.endPosition;
-            state.isInteger = false;
-            // decimal point must be followed by a digit
-            if (auto check2 = peekAt(state.endPosition); !isAsciiDigit(check2.value_or('\0')))
-            {
-                position = state.endPosition;
-                state.part = NumberPart::Error;
-            }
-        }
-        else if (!isAsciiDigit(check.value_or('\0')))
-        {
-            position = state.endPosition;
-            state.part = NumberPart::Error;
-        }
-    }
-
-    return state;
-}
-
-void
-TokenizerImpl::parseDecimal(NumberState& numberState)
-{
-    if (numberState.part == NumberPart::Initial)
-    {
-        numberState.isInteger = false;
-        numberState.part = NumberPart::Fraction;
-        ++numberState.endPosition;
-    }
-    else
-    {
-        numberState.part = NumberPart::End;
-    }
-}
-
-void
-TokenizerImpl::parseExponent(NumberState& numberState)
-{
-    if (numberState.part == NumberPart::Initial || numberState.part == NumberPart::Fraction)
-    {
-        ++numberState.endPosition;
-        if (auto check = peekAt(numberState.endPosition).value_or('\0'); isSign(check))
-        {
-            ++numberState.endPosition;
-            if (auto check2 = peekAt(numberState.endPosition).value_or('\0'); isAsciiDigit(check2))
-            {
-                numberState.part = NumberPart::Exponent;
-            }
-            else
-            {
-                numberState.endPosition -= 2;
-                numberState.part = NumberPart::End;
-            }
-        }
-        else if (isAsciiDigit(check))
-        {
-            numberState.part = NumberPart::Exponent;
-        }
-        else
-        {
-            --numberState.endPosition;
-            numberState.part = NumberPart::End;
-        }
-    }
-    else
-    {
-        numberState.part = NumberPart::End;
-    }
-}
-
-bool
-TokenizerImpl::setNumber(const NumberState& numberState)
-{
-    using celestia::compat::from_chars;
-
-    const char* startPtr = buffer.data() + position;
-    if (*startPtr == '+')
-        ++startPtr;
-
-    const char* endPtr = buffer.data() + numberState.endPosition;
-    position = numberState.endPosition;
-
-    // detect negative zero in order to roundtrip CMOD correctly
-    bool isNegative = *startPtr == '-';
-
-    if (numberState.isInteger)
-    {
-        std::int32_t intResult;
-        if (auto [ptr, ec] = from_chars(startPtr, endPtr, intResult);
-            ec == std::errc{} && ptr == endPtr && !(intResult == 0 && isNegative))
-        {
-            tokenValue = intResult;
-            return true;
-        }
-    }
-
-    double dblResult;
-    if (auto [ptr, ec] = from_chars(startPtr, endPtr, dblResult);
-        ec == std::errc{} && ptr == endPtr)
-    {
-        tokenValue = dblResult;
-        return true;
-    }
-
-    return false;
-}
-
-bool
-TokenizerImpl::readString()
-{
-    StringState state;
     for (;;)
     {
-        char ch;
-        auto peekPos = position + state.runEnd;
-        if (auto check = peekAt(peekPos); check.has_value())
-        {
-            ch = *check;
-        }
-        else
-        {
-            position = peekPos;
-            return false;
-        }
+        int next = m_file.next();
+        if (next == std::char_traits<char>::eof())
+            return m_file.error() ? TokenType::Error : TokenType::Name;
 
-        std::string_view run(buffer.data() + position + state.runStart,
-                             state.runEnd - state.runStart);
+        if (!isNameContinuation(std::char_traits<char>::to_char_type(next)))
+            return TokenType::Name;
 
-        if (!state.checkUTF8(ch, run) && ch != '"')
-            continue;
-        if (ch == '"')
-            break;
-        if (!parseChar(state, ch, run))
-            return false;
+        m_file.advance(false);
     }
-
-    const char* startPtr = buffer.data() + position;
-    position += state.runEnd + 1;
-
-    if (state.runStart == 1)
-    {
-        // string did not need to be modified
-        tokenValue.emplace<std::string_view>(startPtr + state.runStart, state.runEnd - state.runStart);
-        return true;
-    }
-
-    state.processed.append(startPtr + state.runStart, startPtr + state.runEnd);
-    tokenValue = state.processed;
-    return true;
-}
-
-bool
-TokenizerImpl::parseChar(StringState& state, char ch, std::string_view run)
-{
-    switch (ch)
-    {
-    case '\r':
-        state.processed.append(run);
-        state.runStart = state.runEnd + 1;
-        state.runEnd = state.runStart;
-        break;
-
-    case '\\':
-        {
-            state.processed.append(run);
-            std::size_t peekPos = position + state.runEnd + 1;
-            if (auto check = peekAt(peekPos); check.has_value())
-                return parseEscape(state, *check);
-
-            position = peekPos;
-            return false;
-        }
-
-    case '\n':
-        ++lineNumber;
-        [[fallthrough]];
-
-    default:
-        ++state.runEnd;
-        break;
-    }
-
-    return true;
-}
-
-bool
-TokenizerImpl::parseEscape(StringState& state, char ch)
-{
-    switch (ch)
-    {
-    case '"':
-        state.processed.push_back('\"');
-        state.runStart = state.runEnd + 2;
-        state.runEnd = state.runStart;
-        break;
-
-    case 'n':
-        state.processed.push_back('\n');
-        state.runStart = state.runEnd + 2;
-        state.runEnd = state.runStart;
-        break;
-
-    case '\\':
-        state.processed.push_back('\\');
-        state.runStart = state.runEnd + 2;
-        state.runEnd = state.runStart;
-        break;
-
-    case 'u':
-        {
-            std::size_t peekPos = position + state.runEnd + 5;
-            if (auto check = peekAt(peekPos); !check.has_value())
-            {
-                position = length;
-                return false;
-            }
-
-            const char* uStart = buffer.data() + position + state.runEnd + 2;
-            const char* uEnd = buffer.data() + position + state.runEnd + 6;
-
-            std::uint32_t uch;
-            if (auto [ptr, ec] = celestia::compat::from_chars(uStart, uEnd, uch, 16);
-                ec == std::errc{} && ptr == uEnd)
-            {
-                UTF8Encode(uch, state.processed);
-                state.runStart = state.runEnd + 6;
-                state.runEnd = state.runStart;
-            }
-            else
-            {
-                position = ptr - buffer.data();
-                return false;
-            }
-        }
-
-        break;
-
-    default:
-        position += state.runEnd + 1;
-        return false;
-    }
-
-    return true;
-}
-
-bool
-TokenizerImpl::fillBuffer(std::size_t* alterOffset)
-{
-    // If we've hit EOF or we've got an overlong token then exit
-    if (position == 0 && length > 0)
-        return false;
-
-    assert(position <= length);
-
-    std::size_t unprocessed = length - position;
-    // Move any unprocessed elements to the front of the buffer
-    if (unprocessed > 0)
-        std::memmove(buffer.data(), buffer.data() + position, unprocessed);
-
-    if (alterOffset)
-        *alterOffset -= position;
-
-    in->read(buffer.data() + unprocessed, buffer.size() - unprocessed);
-    if (in->bad())
-        return false;
-
-    if (in->eof())
-        isEnded = true;
-
-    position = 0;
-    length = unprocessed + static_cast<std::size_t>(in->gcount());
-    return true;
-}
-
-std::optional<char>
-TokenizerImpl::peekAt(std::size_t& offset)
-{
-    if (offset < length)
-        return buffer[offset];
-    if (isEnded || !fillBuffer(&offset) || offset >= length)
-        return std::nullopt;
-    return buffer[offset];
-}
-
-Tokenizer::Tokenizer(std::istream* _in, std::size_t buffer_size)
-    : impl(std::make_unique<TokenizerImpl>(_in, buffer_size))
-{}
-
-Tokenizer::~Tokenizer() = default;
-
-void
-Tokenizer::pushBack()
-{
-    isPushedBack = true;
-}
-
-Tokenizer::TokenType
-Tokenizer::nextToken()
-{
-    if (isPushedBack)
-        isPushedBack = false;
-    else
-        tokenType = impl->nextToken();
-
-    return tokenType;
-}
-
-Tokenizer::TokenType
-Tokenizer::getTokenType() const
-{
-    return tokenType;
 }
 
 std::optional<std::string_view>
 Tokenizer::getNameValue() const
 {
-    if (tokenType != TokenType::TokenName)
+    if (m_tokenType != TokenType::Name)
         return std::nullopt;
-    return std::visit(VisitorStringView(), impl->getTokenValue());
+    return m_file.value();
 }
 
 std::optional<std::string_view>
 Tokenizer::getStringValue() const
 {
-    if (tokenType != TokenType::TokenString)
+    if (m_tokenType != TokenType::String)
         return std::nullopt;
-    return std::visit(VisitorStringView(), impl->getTokenValue());
-}
 
-std::optional<double>
-Tokenizer::getNumberValue() const
-{
-    return std::visit(VisitorDouble(), impl->getTokenValue());
-}
+    auto value = m_file.value();
+    if (value.empty())
+    {
+        assert(0);
+        return std::nullopt;
+    }
 
-std::optional<std::int32_t>
-Tokenizer::getIntegerValue() const
-{
-    return std::visit(VisitorInteger(), impl->getTokenValue());
-}
+    // Remove trailing quote
+    value = value.substr(0, value.size() - 1U);
+    if (!m_needsEscape)
+        return value;
 
-int
-Tokenizer::getLineNumber() const
-{
-    return impl->getLineNumber();
+    if (m_escaped.empty())
+        unescapeString(value, m_escaped);
+
+    return m_escaped;
 }
 
 } // end namespace celestia::util
