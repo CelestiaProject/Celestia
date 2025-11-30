@@ -24,11 +24,14 @@ public:
 
     int next();
     void advance(bool consume) noexcept;
+    void consume() noexcept { m_consumed = m_position; }
+    void resizeValue(std::size_t length);
 
     bool error() const noexcept { return m_state == State::Error; }
     std::uint64_t lineNumber() const noexcept { return m_lineNumber; }
-    bool has_value() const noexcept { return m_position > m_consumed; }
 
+    bool has_value() const noexcept { return m_position > m_consumed; }
+    std::size_t valueSize() const noexcept { return m_position - m_consumed; }
     std::string_view value() const;
 
 private:

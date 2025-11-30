@@ -63,7 +63,7 @@ struct StarDatabaseBuilder::StcHeader
     explicit StcHeader(std::filesystem::path&&) = delete;
 
     const std::filesystem::path* path;
-    int lineNumber{ 0 };
+    std::uint64_t lineNumber{ 0 };
     DataDisposition disposition{ DataDisposition::Add };
     bool isStar{ true };
     AstroCatalog::IndexNumber catalogNumber{ AstroCatalog::InvalidIndex };
@@ -268,9 +268,9 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
 
     // Parse the catalog number; it may be omitted if a name is supplied.
     header.catalogNumber = AstroCatalog::InvalidIndex;
-    if (auto tokenValue = tokenizer.getNumberValue(); tokenValue.has_value())
+    if (auto tokenValue = tokenizer.getNumberValue<AstroCatalog::IndexNumber>(); tokenValue.has_value())
     {
-        header.catalogNumber = static_cast<AstroCatalog::IndexNumber>(*tokenValue);
+        header.catalogNumber = *tokenValue;
         tokenizer.nextToken();
     }
 
@@ -704,7 +704,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
 bool
 StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
@@ -716,7 +716,7 @@ StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourc
 #endif
 
     StcHeader header(resourcePath);
-    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
         if (!parseStcHeader(tokenizer, header))
             return false;

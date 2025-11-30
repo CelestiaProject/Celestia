@@ -294,7 +294,7 @@ hasTangents(const Mesh &mesh)
 class AsciiModelLoader : public ModelLoader
 {
 public:
-    AsciiModelLoader(std::istream* _in, HandleGetter&& _handleGetter) :
+    AsciiModelLoader(std::istream& _in, HandleGetter&& _handleGetter) :
         ModelLoader(std::move(_handleGetter)),
         tok(_in)
     {}
@@ -410,7 +410,7 @@ AsciiModelLoader::loadMaterial(Material& material)
             for (int i = 0; i < nValues; i++)
             {
                 tok.nextToken();
-                if (auto tokenValue = tok.getNumberValue(); tokenValue.has_value())
+                if (auto tokenValue = tok.getNumberValue<double>(); tokenValue.has_value())
                 {
                     data[i] = *tokenValue;
                 }
@@ -452,7 +452,7 @@ AsciiModelLoader::loadMaterial(Material& material)
         }
     }
 
-    if (tok.getTokenType() != Tokenizer::TokenName)
+    if (tok.getTokenType() != util::TokenType::Name)
     {
         return false;
     }
@@ -527,7 +527,7 @@ AsciiModelLoader::loadVertexDescription()
         nAttributes++;
     }
 
-    if (tok.getTokenType() != Tokenizer::TokenName)
+    if (tok.getTokenType() != util::TokenType::Name)
     {
         reportError("Invalid vertex description");
         return {};
@@ -555,7 +555,7 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
     }
 
     tok.nextToken();
-    if (auto tokenValue = tok.getIntegerValue(); tokenValue.has_value())
+    if (auto tokenValue = tok.getNumberValue<unsigned int>(); tokenValue.has_value())
     {
         if (*tokenValue <= 0)
         {
@@ -563,7 +563,7 @@ AsciiModelLoader::loadVertices(const VertexDescription& vertexDesc,
             return {};
         }
 
-        vertexCount = static_cast<unsigned int>(*tokenValue);
+        vertexCount = *tokenValue;
     }
     else
     {
@@ -605,10 +605,9 @@ AsciiModelLoader::loadUByte4Attribute(const VertexAttribute& attr,
     for (int i = 0; i < 4; ++i)
     {
         tok.nextToken();
-        if (auto tokenValue = tok.getIntegerValue();
-            tokenValue.has_value() && *tokenValue >= 0 && *tokenValue <= 255)
+        if (auto tokenValue = tok.getNumberValue<std::uint8_t>(); tokenValue.has_value())
         {
-            values[i] = static_cast<std::uint8_t>(*tokenValue);
+            values[i] = *tokenValue;
         }
         else
         {
@@ -648,9 +647,9 @@ AsciiModelLoader::loadFloatAttribute(const VertexAttribute& attr,
     for (std::size_t i = 0; i < readCount; ++i)
     {
         tok.nextToken();
-        if (auto tokenValue = tok.getNumberValue(); tokenValue.has_value())
+        if (auto tokenValue = tok.getNumberValue<float>(); tokenValue.has_value())
         {
-            values[i] = static_cast<float>(*tokenValue);
+            values[i] = *tokenValue;
         }
         else
         {
@@ -708,7 +707,7 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
 
         tok.nextToken();
         unsigned int materialIndex;
-        if (auto tokenValue = tok.getIntegerValue(); !tokenValue.has_value() || *tokenValue < -1)
+        if (auto tokenValue = tok.getNumberValue<int>(); !tokenValue.has_value() || *tokenValue < -1)
         {
             reportError("Bad material index in primitive group");
             return false;
@@ -718,16 +717,16 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
             materialIndex = *tokenValue == -1 ? ~0u : static_cast<unsigned int>(*tokenValue);
         }
 
-        if (tok.nextToken() != Tokenizer::TokenNumber)
+        if (tok.nextToken() != util::TokenType::Number)
         {
             reportError("Index count expected in primitive group");
             return false;
         }
 
         unsigned int indexCount;
-        if (auto tokenValue = tok.getIntegerValue(); tokenValue.has_value() && *tokenValue >= 0)
+        if (auto tokenValue = tok.getNumberValue<unsigned int>(); tokenValue.has_value())
         {
-            indexCount = static_cast<unsigned int>(*tokenValue);
+            indexCount = *tokenValue;
         }
         else
         {
@@ -740,23 +739,22 @@ AsciiModelLoader::loadMesh(Mesh& mesh)
 
         for (unsigned int i = 0; i < indexCount; i++)
         {
-            if (tok.nextToken() != Tokenizer::TokenNumber)
+            if (tok.nextToken() != util::TokenType::Number)
             {
                 reportError("Incomplete index list in primitive group");
                 return false;
             }
 
             unsigned int index;
-            if (auto tokenValue = tok.getIntegerValue();
-                !tokenValue.has_value() || *tokenValue < 0 ||
-                static_cast<std::uint32_t>(*tokenValue) >= vertexCount)
+            if (auto tokenValue = tok.getNumberValue<unsigned int>();
+                !tokenValue.has_value() || *tokenValue >= vertexCount)
             {
                 reportError("Index out of range");
                 return false;
             }
             else
             {
-                index = static_cast<unsigned int>(*tokenValue);
+                index = *tokenValue;
             }
 
             indices.push_back(index);
@@ -777,8 +775,8 @@ AsciiModelLoader::load()
     bool hasNormalMap = false;
 
     // Parse material and mesh definitions
-    for (Tokenizer::TokenType token = tok.nextToken();
-         token != Tokenizer::TokenEnd;
+    for (util::TokenType token = tok.nextToken();
+         token != util::TokenType::End;
          token = tok.nextToken())
     {
         if (auto tokenValue = tok.getNameValue(); tokenValue.has_value())
@@ -1351,9 +1349,9 @@ bool ignoreValue(std::istream& in)
 class BinaryModelLoader : public ModelLoader
 {
 public:
-    BinaryModelLoader(std::istream* _in, HandleGetter&& _handleGetter) :
+    BinaryModelLoader(std::istream& _in, HandleGetter&& _handleGetter) :
         ModelLoader(std::move(_handleGetter)),
-        in(_in)
+        in(&_in)
     {}
     ~BinaryModelLoader() override = default;
 
@@ -2053,11 +2051,11 @@ openModel(std::istream& in, HandleGetter&& getHandle)
     std::string_view headerType(header.data(), header.size());
     if (headerType == CEL_MODEL_HEADER_ASCII)
     {
-        return std::make_unique<AsciiModelLoader>(&in, std::move(getHandle));
+        return std::make_unique<AsciiModelLoader>(in, std::move(getHandle));
     }
     if (headerType == CEL_MODEL_HEADER_BINARY)
     {
-        return std::make_unique<BinaryModelLoader>(&in, std::move(getHandle));
+        return std::make_unique<BinaryModelLoader>(in, std::move(getHandle));
     }
     else
     {

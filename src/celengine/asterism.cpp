@@ -36,7 +36,7 @@ readChain(Tokenizer& tokenizer,
 {
     for (;;)
     {
-        if (auto tokenType = tokenizer.nextToken(); tokenType == Tokenizer::TokenEndArray)
+        if (auto tokenType = tokenizer.nextToken(); tokenType == util::TokenType::EndArray)
             break;
 
         auto starName = tokenizer.getStringValue();
@@ -65,7 +65,7 @@ readChains(Tokenizer& tokenizer,
            const StarDatabase& starDB,
            std::string_view astName)
 {
-    if (tokenizer.nextToken() != Tokenizer::TokenBeginArray)
+    if (tokenizer.nextToken() != util::TokenType::BeginArray)
     {
         GetLogger()->error("Error parsing asterism \"{}\": expected array\n", astName);
         return false;
@@ -74,10 +74,10 @@ readChains(Tokenizer& tokenizer,
     for (;;)
     {
         auto tokenType = tokenizer.nextToken();
-        if (tokenType == Tokenizer::TokenEndArray)
+        if (tokenType == util::TokenType::EndArray)
             break;
 
-        if (tokenType != Tokenizer::TokenBeginArray)
+        if (tokenType != util::TokenType::BeginArray)
         {
             GetLogger()->error("Error parsing asterism {} chain: expected array\n", astName);
             return false;
@@ -203,9 +203,9 @@ std::unique_ptr<AsterismList>
 ReadAsterismList(std::istream& in, const StarDatabase& starDB)
 {
     auto asterisms = std::make_unique<AsterismList>();
-    Tokenizer tokenizer(&in);
+    Tokenizer tokenizer(in);
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
         auto tokenValue = tokenizer.getStringValue();
         if (!tokenValue.has_value())

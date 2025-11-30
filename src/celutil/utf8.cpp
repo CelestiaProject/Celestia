@@ -483,6 +483,7 @@ SkipUTF8BOM(std::istream& in)
         return in;
     }
 
+    in.clear();
     return in.seekg(pos);
 }
 
