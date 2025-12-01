@@ -450,6 +450,28 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 }
 
 
+std::string
+LunarLambert(const ShaderProperties& props, unsigned int light)
+{
+    std::string source;
+
+    // Rough match to the phase functions of non-Lambertian surfaces
+    source += "float phaseFunction = phaseFunctionAt0 * exp(-phaseAngle);\n";
+    // Normalize by the phase function
+    source += "float normFactor = mix(1.0, phaseFunction, lunarLambert);\n";
+    if (props.usesTangentSpaceLighting())
+    {
+        source += "l = mix(NL, (phaseFunction * NL / (max(NV, 0.001) + NL)), lunarLambert) / normFactor * clamp(" + LightDir_tan(light) + ".z * 8.0, 0.0, 1.0);\n";
+    }
+    else
+    {
+        source += AssignDiffuse(light, props) + " mix(NL, phaseFunction * NL / (max(NV, 0.001) + NL), lunarLambert) / normFactor;\n";
+    }
+
+    return source;
+}
+
+
 // Values used in generated shaders:
 //    N - surface normal
 //    V - view vector: the normalized direction from vertex to eye
@@ -481,12 +503,14 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
     {
         source += TangentSpaceTransform(LightDir_tan(i), LightProperty(i, "direction"));
     }
+    else if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
+    {
+        source += "float phaseAngle = acos(clamp(dot(" + LightProperty(i, "direction") + ", eyeDir), -1.0, 1.0));\n";
+        source += LunarLambert(props, i);
+    }
     else if (props.hasSpecular())
     {
-        if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
-            source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
-        else
-            source += SeparateDiffuse(i) + " = NL;\n";
+        source += SeparateDiffuse(i) + " = NL;\n";
     }
 #if 0
     else if (props.lightModel == LightingModel::OrenNayarModel)
@@ -514,10 +538,6 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         }
     }
 #endif
-    else if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
-    {
-        source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
-    }
     else if (props.usesShadows())
     {
         // When there are shadows, we need to track the diffuse contributions
@@ -1619,7 +1639,8 @@ buildFragmentShader(const ShaderProperties& props)
             if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
             {
                 source += "NL = max(0.0, NL);\n";
-                source += "l = mix(NL, (NL / (max(NV, 0.001) + NL)), lunarLambert) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
+                source += "float phaseAngle = acos(clamp(dot(" + LightDir_tan(i) + ", eyeDir_tan), -1.0, 1.0));\n";
+                source += LunarLambert(props, i);
             }
             else
             {
@@ -2949,6 +2970,7 @@ CelestiaGLProgram::initParameters()
     if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
         lunarLambert         = floatParam("lunarLambert");
+        phaseFunctionAt0     = floatParam("phaseFunctionAt0");
     }
 
     if (props.usePointSize())
@@ -3053,16 +3075,6 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         Eigen::Vector3f lightColor = light.color.toVector3() * light.irradiance;
         lights[i].color = light.color.toVector3();
         lights[i].direction = light.direction_obj;
-
-        // Include a phase-based normalization factor to prevent planets from appearing
-        // too dim when rendered with non-Lambertian photometric functions.
-        float cosPhaseAngle = light.direction_obj.dot(ls.eyeDir_obj);
-        if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
-        {
-            float photometricNormFactor = std::max(1.0f, 1.0f + cosPhaseAngle * 0.5f);
-            lightColor *= photometricNormFactor;
-        }
-
         lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
         lights[i].brightness = lightColor.maxCoeff();
         lights[i].specular = lightColor.cwiseProduct(specularColor);
@@ -3076,6 +3088,16 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
     eyePosition = ls.eyePos_obj;
     ambientColor = ls.ambientColor.cwiseProduct(diffuseColor) + materialEmissive.toVector3();
     opacity = materialDiffuse.alpha();
+}
+
+
+void
+CelestiaGLProgram::setLunarLambertParameters(float l,
+                                             float geomAlbedo)
+{
+    lunarLambert = l;
+    // Derived from Equation 6 of Buratti and Veverka (1983)
+    phaseFunctionAt0 = std::max(0.001f, (2.0f * geomAlbedo - 4.0f / 3.0f * (1.0f - l)) / l);
 }
 
 

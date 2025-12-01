@@ -206,6 +206,8 @@ public:
                             Color materialDiffuse,
                             Color materialSpecular,
                             Color materialEmissive);
+    void setLunarLambertParameters(float l,
+                                   float geomAlbedo);
     void setEclipseShadowParameters(const LightingState& ls,
                                     const Eigen::Vector3f& scale,
                                     const Eigen::Quaternionf& orientation);
@@ -245,6 +247,8 @@ public:
     // Mix of Lambertian and "lunar" (Lommel-Seeliger) photometric models.
     // 0 = pure Lambertian, 1 = L-S
     FloatShaderParameter lunarLambert;
+    // Surface phase function f(alpha) at 0°
+    FloatShaderParameter phaseFunctionAt0;
 
     // Diffuse texture coordinate offset
     FloatShaderParameter textureOffset;
