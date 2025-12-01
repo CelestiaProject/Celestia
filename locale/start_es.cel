@@ -189,22 +189,16 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# Magnitud (brillo) estelar más débil visible...
+# Exposure time (brightness)...
+# Default is 1.0
 # (DEScomentar / modificar a voluntad)
-# Celestia UI: 0.8 to 15.2, default is 6.0
 #
-#  setvisibilitylimit {magnitude 6.0}
-
-
-# Automag: brillo más débil visible a 45 grados de campo visual, default es 8.5...
-# (DEScomentar / modificar a voluntad)
-#  setfaintestautomag45deg {magnitude 8.5}
+#  setexposure {exposure 1.0}
 
 
 # Items a ser representados (rendered):
 # NO representar los siguientes objetos (DEScomentar a voluntad)...
 #  renderflags {clear "atmospheres"}
-#  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
 #  renderflags {clear "cloudmaps"}
 #  renderflags {clear "comettails"}
@@ -216,7 +210,6 @@
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
@@ -225,7 +218,6 @@
 # Items a ser representados (rendered):
 # SÍ representar los siguientes objetos (DEScomentar a voluntad)...
 #  renderflags {set "atmospheres"}
-#  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
 #  renderflags {set "cloudmaps"}
 #  renderflags {set "comettails"}
@@ -237,7 +229,6 @@
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}

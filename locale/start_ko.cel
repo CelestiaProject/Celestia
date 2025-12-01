@@ -185,35 +185,27 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# Faintest visible star magnitude (brightness)...
+# Exposure time (brightness)...
+# Default is 1.0
 # (UNcomment / modify to meet your needs)
-# Celestia UI: 0.8 to 15.2, default is 6.0
 #
-#  setvisibilitylimit {magnitude 6.0}
-
-
-# Faintest auto-magnitude brightness, at 45 degrees, Default is 8.5...
-# (UNcomment / modify to meet your needs)
-#  setfaintestautomag45deg {magnitude 8.5}
+#  setexposure {exposure 1.0}
 
 
 # Items to be displayed (rendered):
 # Do NOT render the following objects (UNcomment to suit your needs)...
 #  renderflags {clear "atmospheres"}
-#  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
 #  renderflags {clear "cloudmaps"}
 #  renderflags {clear "comettails"}
 #  renderflags {clear "constellations"}
 #  renderflags {clear "eclipseshadows"}
 #  renderflags {clear "galaxies"}
-#  renderflags {clear "nebulae"}
 #  renderflags {clear "grid"}
 #  renderflags {clear "markers"}
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
@@ -222,20 +214,17 @@
 # Items to be displayed (rendered):
 # DO render the following objects (UNcomment to suit your needs)...
 #  renderflags {set "atmospheres"}
-#  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
 #  renderflags {set "cloudmaps"}
 #  renderflags {set "comettails"}
 #  renderflags {set "constellations"}
 #  renderflags {set "eclipseshadows"}
 #  renderflags {set "galaxies"}
-#  renderflags {set "nebulae"}
 #  renderflags {set "grid"}
 #  renderflags {set "markers"}
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}

@@ -1,7 +1,6 @@
 // qteventfinder.cpp
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Qt4 interface for the celestial event finder.
 //

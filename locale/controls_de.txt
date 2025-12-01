@@ -171,16 +171,8 @@ AltGr+{ ............. Streulichtanteil verringern
 AltGr+} ............. Streulichtanteil erhöhen
 Umschalt+( ...... Galaxienhelligkeit verringern (unabhängig von Sternhelligkeit)
 Umschalt+) ...... Galaxienhelligkeit erhöhen (unabhängig von Sternhelligkeit)
-AltGr+[ ............. Grenzmagnitude verringern:
-                           - Wenn autoMag AUS: Magnitude verringern (weniger Sterne
-                                                                        sichtbar)
-                           - Wenn autoMag EIN: Magnitude verringern bei 45° Blickfeld
-AltGr+] ............. Grenzmagnitude erhöhen:
-                           - Wenn autoMag AUS: Magnitude vergrößern (mehr Sterne
-                                                                        sichtbar)
-                           - Wenn autoMag EIN: Magnitude vergrößern bei 45° Blickfeld
-Strg+Y ............. autoMag ein-/ausschalten (autoMag = Automatische Anpassung
-                          der Sternensichtbarkeit an das Blickfeld)
+AltGr+[ ............. Belichtungszeit verringern
+AltGr+] ............. Belichtungszeit erhöhen
 , ....................... Blickfeld verkleinern (oder Umschalt+Linke Maustaste (ziehen))
 . ....................... Blickfeld vergrößern (oder Umschalt+Linke Maustaste (ziehen))
 Strg+X ............. Kantenglättung (Antialiasing) ein-/ausschalten (z. B. für die
@@ -192,8 +184,6 @@ Strg+V .............. Unterstützte OpenGL-Methoden durchschalten
 + ....................... Zwischen 'Limit Of Knowledge'-Texturen und interpretierenden
                            Texturen umschalten
 % ....................... Farben für die Sterndarstellung umschalten
-Strg+S .............. Aussehen der Sterne ändern (verschwommene Punkte, Punkte,
-                           skalierte Scheiben)
 V ....................... Umfang des Informationstextes verändern (knapp/ ausführlich/
                            kein Text)
 Strg+W ............. Drahtgitter-Modus ein-/ausschalten

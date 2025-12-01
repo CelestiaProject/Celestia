@@ -1039,72 +1039,6 @@
           </spacer>
          </item>
          <item>
-          <widget class="QGroupBox" name="starStyleGroupBox">
-           <property name="title">
-            <string>Star style</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_17">
-            <item>
-             <widget class="QRadioButton" name="pointStarsButton">
-              <property name="text">
-               <string>Points</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="fuzzyPointStarsButton">
-              <property name="text">
-               <string>Fuzzy points</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="scaledDiscsButton">
-              <property name="text">
-               <string>Scaled discs</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_15">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>12</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="autoMagnitudeCheck">
-              <property name="text">
-               <string>Auto-magnitude</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_16">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
           <widget class="QGroupBox" name="starColorGroupBox">
            <property name="title">
             <string>Star colors</string>
@@ -1121,7 +1055,7 @@
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>40</height>
+                <height>30</height>
                </size>
               </property>
              </spacer>

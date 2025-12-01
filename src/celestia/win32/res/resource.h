@@ -229,9 +229,9 @@
 #define ID_BOOKMARKS_ADDBOOKMARK        40034
 #define ID_RENDER_LOCATIONS             40035
 #define ID_INFO                         40040
-#define ID_RENDER_MORESTARS             40042
-#define ID_RENDER_FEWERSTARS            40043
-#define ID_RENDER_AUTOMAG               40044
+#define ID_RENDER_INCREASEEXPOSURE      40042
+#define ID_RENDER_DECREASEEXPOSURE      40043
+// removed ID                           40044
 #define ID_NAVIGATION_SYNCORBIT         40045
 #define ID_NAVIGATION_SSBROWSER         40046
 #define ID_NAVIGATION_STARBROWSER       40047
@@ -258,17 +258,17 @@
 #define ID_VIEW_SHOW_FRAMES             40071
 #define ID_VIEW_SYNC_TIME               40072
 #define ID_FILE_SCRIPTS                 40073
-#define ID_RENDER_STARSTYLE             40079
-#define ID_RENDER_STARSTYLE_FUZZY       40080
-#define ID_RENDER_STARSTYLE_POINTS      40081
-#define ID_RENDER_STARSTYLE_DISCS       40082
+// removed ID                           40079
+// removed ID                           40080
+// removed ID                           40081
+// removed ID                           40082
 #define ID_RENDER_BODY_AXES             40083
 #define ID_RENDER_FRAME_AXES            40084
 #define ID_RENDER_SUN_DIRECTION         40085
 #define ID_RENDER_VELOCITY_VECTOR       40086
 #define ID_RENDER_PLANETOGRAPHIC_GRID   40087
 #define ID_RENDER_TERMINATOR            40088
-#define ID_STARCOLOR_CLASSIC            40089
+// removed ID                           40089
 #define ID_STARCOLOR_D65                40090
 #define ID_STARCOLOR_SOLAR              40091
 #define ID_STARCOLOR_VEGA               40092

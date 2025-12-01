@@ -226,24 +226,17 @@
 #  set {name "AmbientLightLevel" value 0.1}
 
 
-# Управление видимой величиной звёзд...
-# Диапазон звёздных величин лежит в пределах от 0.8 до 15.2.
-# По умолчанию используется 6.0.
+# Время экспозиции (яркость)...
+# Значение по умолчанию 1.0
 # Для включения команды удалите символ "#".
-#  setvisibilitylimit {magnitude 6.0}
+#
+#  setexposure {exposure 1.0}
 
 
-# Автонастройка количества звёзд в зависимости от заданной видимой величины 
-# и изменении поля зрения до 45 градусов. По умолчанию равно 8.5...
-# Для включения команды удалите символ "#".
-#  setfaintestautomag45deg {magnitude 8.5}
-
-
-# Отображение элементов небесной сферы (визуализация):
+# Отображение элементов небесной сферы (рендер):
 # ОТКЛЮЧИТЬ отображение следующих элементов...
 # Для включения команды удалите символ "#".
 #  renderflags {clear "atmospheres"}
-#  renderflags {clear "automag"}
 #  renderflags {clear "boundaries"}
 #  renderflags {clear "cloudmaps"}
 #  renderflags {clear "comettails"}
@@ -255,17 +248,15 @@
 #  renderflags {clear "nightmaps"}
 #  renderflags {clear "orbits"}
 #  renderflags {clear "planets"}
-#  renderflags {clear "pointstars"}
 #  renderflags {clear "ringshadows"}
 #  renderflags {clear "stars"}
 #  renderflags {clear "partialtrajectories"}
 
 
-# Отображение элементов небесной сферы (визуализация):
+# Отображение элементов небесной сферы (рендер):
 # ВКЛЮЧИТЬ отображение следующих элементов...
 # Для включения команды удалите символ "#".
 #  renderflags {set "atmospheres"}
-#  renderflags {set "automag"}
 #  renderflags {set "boundaries"}
 #  renderflags {set "cloudmaps"}
 #  renderflags {set "comettails"}
@@ -277,7 +268,6 @@
 #  renderflags {set "nightmaps"}
 #  renderflags {set "orbits"}
 #  renderflags {set "planets"}
-#  renderflags {set "pointstars"}
 #  renderflags {set "ringshadows"}
 #  renderflags {set "stars"}
 #  renderflags {set "partialtrajectories"}

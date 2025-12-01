@@ -1,7 +1,6 @@
 // qtcelestialbrowser.h
 //
-// Copyright (C) 2007-2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2007-present, the Celestia Development Team
 //
 // Dockable celestial browser widget.
 //

@@ -1,6 +1,6 @@
 // render.h
 //
-// Copyright (C) 2001-2008, Celestia Development Team
+// Copyright (C) 2001-present, the Celestia Development Team
 // Contact: Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ class FrameTree;
 class LODSphereMesh;
 class ReferenceMark;
 class CurvePlot;
-class PointStarVertexBuffer;
+class StarVertexBuffer;
 class Observer;
 class Surface;
 class TextureFont;
@@ -81,9 +81,9 @@ struct LightSource
 struct SecondaryIlluminator
 {
     const Body*     body;
-    Eigen::Vector3d position_v;       // viewer relative position
-    float           radius;           // radius in km
-    float           reflectedIrradiance;  // albedo times total irradiance from direct sources
+    Eigen::Vector3d position_v;          // viewer relative position
+    float           radius;              // radius in km
+    float           reflectedIrradiance; // albedo times total irradiance from direct sources
 };
 
 
@@ -140,16 +140,13 @@ class Renderer
     void resize(int, int);
     float getAspectRatio() const;
 
-    void setFaintestAM45deg(float);
-    float getFaintestAM45deg() const;
     void setRTL(bool);
     bool isRTL() const;
 
     void setRenderMode(RenderMode);
-    void autoMag(float& faintestMag, float zoom);
     void render(const Observer&,
                 const Universe&,
-                float faintestVisible,
+                float exposure,
                 const Selection& sel);
 
     bool getInfo(std::map<std::string, std::string>& info) const;
@@ -267,8 +264,6 @@ class Renderer
 
     void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const;
 
-    void setStarStyle(StarStyle);
-    StarStyle getStarStyle() const;
     void setResolution(TextureResolution resolution);
     TextureResolution getResolution() const;
     void enableSelectionPointer();
@@ -384,12 +379,15 @@ class Renderer
         Surface* surface{ nullptr };
         const Atmosphere* atmosphere{ nullptr };
         RingSystem* rings{ nullptr };
+        LightingState::EclipseShadowVector* eclipseShadows{ nullptr };
+
+        Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
+        Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
         float radius{ 1.0f };
         float geometryScale{ 1.0f };
-        Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
+
         ResourceHandle geometry{ InvalidResource };
-        Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
-        LightingState::EclipseShadowVector* eclipseShadows;
+        bool isStar{ false };
     };
 
     struct DepthBufferPartition
@@ -401,12 +399,12 @@ class Renderer
 
  private:
     void setFieldOfView(float);
-    void renderPointStars(const StarDatabase& starDB,
-                          float faintestVisible,
-                          const Observer& observer);
+    void renderStars(const StarDatabase& starDB,
+                     float exposure,
+                     const Observer& observer);
     void renderDeepSkyObjects(const Universe&,
                               const Observer&,
-                              float faintestMagNight);
+                              float exposure);
     void renderSkyGrids(const Observer& observer);
     void renderSelectionPointer(const Observer& observer,
                                 double now,
@@ -488,22 +486,6 @@ class Renderer
                          float discSizeInPixels,
                          const Matrices&);
 
-    void calculatePointSize(float appMag,
-                            float size,
-                            float &discSize,
-                            float &alpha,
-                            float &glareSize,
-                            float &glareAlpha) const;
-
-    void renderObjectAsPoint(const Eigen::Vector3f& center,
-                             float radius,
-                             float appMag,
-                             float discSizeInPixels,
-                             const Color& color,
-                             bool useHalos,
-                             bool emissive,
-                             const Matrices&);
-
     void locationsToAnnotations(const Body& body,
                                 const Eigen::Vector3d& bodyPosition,
                                 const Eigen::Quaterniond& bodyOrientation);
@@ -568,9 +550,8 @@ class Renderer
                                const celestia::math::InfiniteFrustum &xfrustum,
                                double now);
 
-    void adjustMagnitudeInsideAtmosphere(float &faintestMag,
-                                         float &saturationMag,
-                                         double now);
+    void adjustExposureInsideAtmosphere(float &faintestMag,
+                                        double now);
 
     void renderOrbit(const OrbitPathListEntry&,
                      double now,
@@ -595,9 +576,7 @@ class Renderer
     float fov{ celestia::engine::standardFOV };
     double cosViewConeAngle{ 0.0 };
     int screenDpi{ 96 };
-    float corrFac{ 1.12f };
     float pixelSize{ 1.0f };
-    float faintestAutoMag45deg{ 8.0f };
     std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
 
     std::shared_ptr<celestia::engine::ProjectionMode> projectionMode;
@@ -610,22 +589,16 @@ class Renderer
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar };
     float ambientLightLevel{ 0.1f };
     float tintSaturation{ 0.5f };
-    float brightnessBias{ 0.0f };
 
-    float brightnessScale{ 1.0f };
-    float faintestMag{ 0.0f };
-    float faintestPlanetMag{ 0.0f };
-    float saturationMagNight{ 1.0f };
-    float saturationMag{ 1.0f };
-    StarStyle starStyle{ StarStyle::FuzzyPointStars };
+    float exposure{ 1.0f };
+    float faintestPlanetIrradiance{ 1.0f }; // default faintestPlanetIrradiance was 0; maybe remove it at all?
 
     Color ambientColor;
     std::string displayedSurface;
 
     Eigen::Quaterniond m_cameraOrientation;
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
-    std::unique_ptr<PointStarVertexBuffer> pointStarVertexBuffer;
-    std::unique_ptr<PointStarVertexBuffer> glareVertexBuffer;
+    std::unique_ptr<StarVertexBuffer> starVertexBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
@@ -671,7 +644,7 @@ class Renderer
     float minFeatureSize{ 20.0f };
     std::uint64_t locationFilter{ ~UINT64_C(0) };
 
-    ColorTemperatureTable starColors{ ColorTableType::Blackbody_D65 };
+    ColorTemperatureTable starColors{ ColorTableType::SunWhite };
     ColorTemperatureTable tintColors{ ColorTableType::SunWhite };
 
     Selection highlightObject;
@@ -710,7 +683,6 @@ class Renderer
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
     std::unique_ptr<celestia::render::GalaxyRenderer> m_galaxyRenderer;
     std::unique_ptr<celestia::render::GlobularRenderer> m_globularRenderer;
-    std::unique_ptr<celestia::render::LargeStarRenderer> m_largeStarRenderer;
     std::unique_ptr<celestia::render::LineRenderer> m_hollowMarkerRenderer;
     std::unique_ptr<celestia::render::NebulaRenderer> m_nebulaRenderer;
     std::unique_ptr<celestia::render::OpenClusterRenderer> m_openClusterRenderer;
@@ -776,7 +748,7 @@ class Renderer
     static Color SelectionCursorColor;
 
     friend class celestia::render::AtmosphereRenderer;
-    friend class PointStarRenderer;
+    friend class StarRenderer;
 };
 
 

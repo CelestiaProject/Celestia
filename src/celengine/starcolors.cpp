@@ -1,6 +1,7 @@
 // starcolors.cpp
 //
-// Copyright (C) 2004, Chris Laurel <claurel@shatters.net>
+// Copyright (C) 2004-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // Tables of star colors, indexed by temperature.
 //
@@ -35,53 +36,6 @@ const Eigen::Vector3d D65_XYZ(0.95047, 1.00000, 1.08883);
 const Eigen::Vector2d SRGB_R_xy(0.64, 0.33);
 const Eigen::Vector2d SRGB_G_xy(0.30, 0.60);
 const Eigen::Vector2d SRGB_B_xy(0.15, 0.06);
-
-
-// Approximate colors used by older versions of Celestia
-constexpr std::array<Color, 41> StarColors_Enhanced
-{
-    Color(0.00f, 0.00f, 0.00f), // T = 0K
-    Color(0.75f, 0.20f, 0.20f), // T = 1000K
-    Color(1.00f, 0.40f, 0.40f), // T = 2000K
-    Color(1.00f, 0.70f, 0.70f), // T = 3000K
-    Color(1.00f, 0.90f, 0.70f), // T = 4000K
-    Color(1.00f, 1.00f, 0.75f), // T = 5000K
-    Color(1.00f, 1.00f, 0.88f), // T = 6000K
-    Color(1.00f, 1.00f, 0.95f), // T = 7000K
-    Color(1.00f, 1.00f, 1.00f), // T = 8000K
-    Color(0.95f, 0.98f, 1.00f), // T = 9000K
-    Color(0.90f, 0.95f, 1.00f), // T = 10000K
-    Color(0.85f, 0.93f, 1.00f), // T = 11000K
-    Color(0.80f, 0.90f, 1.00f), // T = 12000K
-    Color(0.79f, 0.89f, 1.00f), // T = 13000K
-    Color(0.78f, 0.88f, 1.00f), // T = 14000K
-    Color(0.77f, 0.87f, 1.00f), // T = 15000K
-    Color(0.76f, 0.86f, 1.00f), // T = 16000K
-    Color(0.75f, 0.85f, 1.00f), // T = 17000K
-    Color(0.74f, 0.84f, 1.00f), // T = 18000K
-    Color(0.73f, 0.83f, 1.00f), // T = 19000K
-    Color(0.72f, 0.82f, 1.00f), // T = 20000K
-    Color(0.71f, 0.81f, 1.00f), // T = 21000K
-    Color(0.70f, 0.80f, 1.00f), // T = 22000K
-    Color(0.69f, 0.79f, 1.00f), // T = 23000K
-    Color(0.68f, 0.78f, 1.00f), // T = 24000K
-    Color(0.67f, 0.77f, 1.00f), // T = 25000K
-    Color(0.66f, 0.76f, 1.00f), // T = 26000K
-    Color(0.65f, 0.75f, 1.00f), // T = 27000K
-    Color(0.65f, 0.75f, 1.00f), // T = 28000K
-    Color(0.64f, 0.74f, 1.00f), // T = 29000K
-    Color(0.64f, 0.74f, 1.00f), // T = 30000K
-    Color(0.63f, 0.73f, 1.00f), // T = 31000K
-    Color(0.63f, 0.73f, 1.00f), // T = 32000K
-    Color(0.62f, 0.72f, 1.00f), // T = 33000K
-    Color(0.62f, 0.72f, 1.00f), // T = 34000K
-    Color(0.61f, 0.71f, 1.00f), // T = 35000K
-    Color(0.61f, 0.71f, 1.00f), // T = 36000K
-    Color(0.60f, 0.70f, 1.00f), // T = 37000K
-    Color(0.60f, 0.70f, 1.00f), // T = 38000K
-    Color(0.60f, 0.70f, 1.00f), // T = 39000K
-    Color(0.60f, 0.70f, 1.00f), // T = 40000K
-};
 
 
 struct CIEPoint
@@ -695,7 +649,7 @@ createBlackbodyTable(const Eigen::Vector3d& whitepoint,
 ColorTemperatureTable::ColorTemperatureTable(ColorTableType _type)
 {
     if (!setType(_type))
-        setType(ColorTableType::Enhanced);
+        setType(ColorTableType::SunWhite);
 }
 
 
@@ -705,13 +659,6 @@ ColorTemperatureTable::setType(ColorTableType _type)
     tableType = _type;
     switch (tableType)
     {
-    case ColorTableType::Enhanced:
-        colors.clear();
-        colors.reserve(StarColors_Enhanced.size());
-        std::copy(StarColors_Enhanced.cbegin(), StarColors_Enhanced.cend(), std::back_inserter(colors));
-        tempScale = static_cast<float>(StarColors_Enhanced.size() - 1) / MaxTemperature;
-        return true;
-
     case ColorTableType::Blackbody_D65:
         createBlackbodyTable(D65_XYZ, tempScale, colors);
         return true;

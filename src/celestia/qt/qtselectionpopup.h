@@ -1,7 +1,6 @@
 // qtselectionpopup.h
 //
-// Copyright (C) 2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2008-present, the Celestia Development Team
 //
 // Context menu for objects in the 3D view.
 //

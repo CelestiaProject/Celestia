@@ -67,10 +67,8 @@ O  : Planeetomloopbanen weergave (de)activeren
 ^  : Nevellen weergave (de)activeren
 %  : Sterrenkleur tabellen (de)activeren
 ;  : Een Aarde-gebaseerd equatoriaal coordinaten bol weergeven (de)activeren
-[  : Als autoMag UIT is: Verminder schijnbare helderheid limiet (minder sterren zichtbaar)
-     Als autoMag AAN is: Verminder schijnbare helderheid limiet bij 45 graden zichtsveld
-]  : Als autoMag UIT is: Vergroot schijnbare helderheid limiet (meer sterren zichtbaar)
-     Als autoMag AAN is: Vergroot schijnbare helderheid limiet bij 45 graden zichtsveld
+[  : Belichtingstijd verminderen
+]  : Belichtingstijd verhogen
 {  : Verminder omgevingslicht
 }  : Vergroot omgevingslicht
 (  : Verminder sterrenstelsel helderheid onafhankelijk van helderheid van sterren
@@ -84,12 +82,10 @@ Ctrl+E : Eclips schaduw weergave (de)activeren
 Ctrl+K : Markers weergave (de)activeren
 Ctrl+L : Nachtzijde (lichtvervuiling) van planeetkaarten weergave (de)activeren
 Ctrl+P : Markeer geselecteerd object
-Ctrl+S : Verander de sterrenstijl tussen vage punten, punten en geschaalde schijven
 Ctrl+T : weergave van komeetstaarten (de)activeren
 Ctrl+V : Verander ondersteunde OpenGL weergave methoden
 Ctrl+W : Draadmodel modus (de)activeren
 Ctrl+X : Antialias lijnen (de)activeren
-Ctrl+Y : autoMag (de)activeren = auto adaptatie van ster zichtbaarheid aan zichtsveld
 +  : Verander tussen artistieke en limiet van kennis planeet texturen
 
 MeerdereVensters:

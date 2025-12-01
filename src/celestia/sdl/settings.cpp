@@ -245,9 +245,9 @@ readStarColors(Settings& settings, std::string_view value)
 {
     using StarCols = std::underlying_type_t<ColorTableType>;
     StarCols cols;
-    static_assert(ColorTableType::Enhanced < ColorTableType::VegaWhite);
+    static_assert(ColorTableType::Blackbody_D65 < ColorTableType::VegaWhite);
     if (readInt(value, cols)
-        && cols >= static_cast<StarCols>(ColorTableType::Enhanced)
+        && cols >= static_cast<StarCols>(ColorTableType::Blackbody_D65)
         && cols <= static_cast<StarCols>(ColorTableType::VegaWhite))
     {
         settings.starColors = static_cast<ColorTableType>(cols);
@@ -258,25 +258,6 @@ void
 writeStarColors(std::ostream& os, const Settings& settings)
 {
     printEnumInt(os, settings.starColors);
-}
-
-void
-readStarStyle(Settings& settings, std::string_view value)
-{
-    using Style = std::underlying_type_t<StarStyle>;
-    Style starStyle;
-    if (readInt(value, starStyle)
-        && starStyle >= static_cast<Style>(StarStyle::FuzzyPointStars)
-        && starStyle < static_cast<Style>(StarStyle::StarStyleCount))
-    {
-        settings.starStyle = static_cast<StarStyle>(starStyle);
-    }
-}
-
-void
-writeStarStyle(std::ostream& os, const Settings& settings)
-{
-    printEnumInt(os, settings.starStyle);
 }
 
 using SettingsReader = void(*)(Settings&, std::string_view);
@@ -365,7 +346,6 @@ Settings::fromApplication(const AppWindow& appWindow, const CelestiaCore* appCor
         settings.tintSaturation = static_cast<int>(renderer->getTintSaturation() * 100.0f);
         settings.minFeatureSize = static_cast<int>(renderer->getMinimumFeatureSize());
         settings.starColors = renderer->getStarColorTable();
-        settings.starStyle = renderer->getStarStyle();
     }
 
     return settings;
@@ -383,7 +363,6 @@ Settings::apply(const CelestiaCore* appCore) const
     renderer->setTintSaturation(static_cast<float>(tintSaturation) / 100.0f);
     renderer->setMinimumFeatureSize(static_cast<float>(minFeatureSize));
     renderer->setStarColorTable(starColors);
-    renderer->setStarStyle(starStyle);
 }
 
 } // end namespace celestia::sdl

@@ -142,26 +142,19 @@ F1 ou S...................	Arrête le mouvement
  { ...........................	Diminue la lumière ambiante
  } ...........................	Augmente la lumière ambiante
  Ctrl + X .................	Anticrénelage. Lisse les lignes affichées ( ex : orbites)
- Ctrl + Y .................	Auto Magnitude (on/off). Adaptation automatique de la
-		visibilité des étoiles en fonction du CdV. Parfait avec l'addon
-		contenant une base de données de 2 millions d'étoiles.
  Alt + Entrée ..........	Bascule Plein écran / mode fenêtré
  , (virgule) ..............	Diminue le champ de vision (CdV). (aussi avec Maj + drag).
  . (point) .................	Augmente le CdV. (également possible avec Maj + drag)
  ( ............................	Diminue     l'éclat des galaxies - indépendant des étoiles
  ) ............................	Augmente  l'éclat des galaxies - indépendant des étoiles
- [ ............................	Diminue la magnitude limite d'affichage des étoiles.
-		- Si AutoMag=Off : Il s'agit de la magnitude apparente réelle
-		- Sinon il s'agit de la magnitude pour un CdV de 45 degrés.
- ] ...........................	Augmente la magnitude limite (on voit plus d'étoiles)
+ [ ............................	Diminuer le temps d'exposition
+ ] ........................... Augmenter le temps d'exposition
 		- Même fonctionnement que ci-dessus
  Ctrl + P .................	Marque l'objet sélectionné. L'option d'activation des
 		marqueurs doit être active (Ctrl + K)
  Ctrl + V ................	Cycle parmi les différents modes de rendu disponibles.
  + ..........................	Bascule entre les textures de surface normales/ connues
  % .........................	Bascule  entre les différentes tables de couleur des étoiles
- Ctrl + S .................	Cycle entre les styles d'étoiles :
-		points flous, points et échelle de disques.
  V ..........................	Contrôle du texte d'information (aucun, concis, complet).
  Ctr + W .................	Affichage "fil de fer"
 

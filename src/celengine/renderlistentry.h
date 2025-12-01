@@ -1,7 +1,7 @@
 // renderlistentry.h
 //
-// Copyright (C) 2001-2019, Celestia Development Team
-// Contact: Chris Laurel <claurel@gmail.com>
+// Copyright (C) 2001-present, the Celestia Development Team
+// Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ struct RenderListEntry
     float nearZ;
     float farZ;
     float discSizeInPixels;
-    float appMag;
+    float irradiation;
     RenderableType renderableType;
     bool isOpaque;
 };

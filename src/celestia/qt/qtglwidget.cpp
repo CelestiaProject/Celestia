@@ -53,8 +53,7 @@ constexpr auto DEFAULT_LABEL_MODE = static_cast<uint>(RenderLabels::LocationLabe
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.0f; // None
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
 constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::SunWhite);
-constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
-constexpr auto DEFAULT_STAR_STYLE = static_cast<int>(StarStyle::FuzzyPointStars);
+constexpr float DEFAULT_EXPOSURE = 1.0f;
 constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(TextureResolution::medres);
 
 std::pair<float, float>
@@ -143,10 +142,7 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setLabelMode(static_cast<RenderLabels>(settings.value("LabelMode", DEFAULT_LABEL_MODE).toUInt()));
     appRenderer->setAmbientLightLevel(static_cast<float>(settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble()));
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));
-    auto starStyle = settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt();
-    if (starStyle < 0 || starStyle >= static_cast<int>(StarStyle::StarStyleCount))
-        starStyle = DEFAULT_STAR_STYLE;
-    appRenderer->setStarStyle(static_cast<StarStyle>(starStyle));
+
     auto textureResolution = settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt();
     if (textureResolution < 0 || textureResolution > static_cast<int>(TextureResolution::hires))
         textureResolution = DEFAULT_TEXTURE_RESOLUTION;
@@ -159,7 +155,7 @@ CelestiaGlWidget::initializeGL()
 
     appCore->getSimulation()->getActiveObserver()->setLocationFilter(settings.value("LocationFilter", static_cast<quint64>(Observer::DefaultLocationFilter)).toULongLong());
 
-    appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
+    appCore->getSimulation()->setExposure((float) settings.value("Exposure", DEFAULT_EXPOSURE).toDouble());
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);

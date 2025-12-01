@@ -210,21 +210,13 @@ IDR_MAIN_MENU MENU
         MENUITEM "View Options...", ID_RENDER_VIEWOPTIONS
         MENUITEM "Locations...", ID_RENDER_LOCATIONS
         MENUITEM SEPARATOR
-        MENUITEM "More Stars Visible\t]", ID_RENDER_MORESTARS
-        MENUITEM "Fewer Stars Visible\t[", ID_RENDER_FEWERSTARS
-        MENUITEM "Auto Magnitude\tCtrl+Y", ID_RENDER_AUTOMAG
-        POPUP "Star St&yle"
-        {
-            MENUITEM "&Points", ID_RENDER_STARSTYLE_POINTS
-            MENUITEM "&Fuzzy Points", ID_RENDER_STARSTYLE_FUZZY, CHECKED
-            MENUITEM "Scaled &Discs", ID_RENDER_STARSTYLE_DISCS
-        }
+        MENUITEM "Increase Exposure Time\t]", ID_RENDER_INCREASEEXPOSURE
+        MENUITEM "Decrease Exposure Time\t[", ID_RENDER_DECREASEEXPOSURE
         POPUP "Star &Color"
         {
-            MENUITEM "Blackbody D65", ID_STARCOLOR_D65, CHECKED
-            MENUITEM "Blackbody (Solar Whitepoint)", ID_STARCOLOR_SOLAR
+            MENUITEM "Blackbody D65", ID_STARCOLOR_D65
+            MENUITEM "Blackbody (Solar Whitepoint)", ID_STARCOLOR_SOLAR, CHECKED
             MENUITEM "Blackbody (Vega Whitepoint)", ID_STARCOLOR_VEGA
-            MENUITEM "Classic colors", ID_STARCOLOR_CLASSIC
         }
         MENUITEM SEPARATOR
         POPUP "&Ambient Light"

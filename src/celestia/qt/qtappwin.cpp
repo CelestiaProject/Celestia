@@ -1,7 +1,6 @@
 // qtappwin.cpp
 //
-// Copyright (C) 2007-2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2007-present, the Celestia Development Team
 //
 // Main window for Celestia Qt front-end.
 //
@@ -595,7 +594,6 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("LabelMode", static_cast<quint32>(renderer->getLabelMode()));
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());
-    settings.setValue("StarStyle", static_cast<int>(renderer->getStarStyle()));
     settings.setValue("TextureResolution", static_cast<unsigned int>(renderer->getResolution()));
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 
@@ -607,7 +605,7 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("LocationFilter", static_cast<quint64>(observer->getLocationFilter()));
 
     settings.beginGroup("Preferences");
-    settings.setValue("VisualMagnitude", simulation->getFaintestVisible());
+    settings.setValue("Exposure", simulation->getExposure());
     settings.setValue("SyncTime", simulation->getSyncTime());
     settings.setValue("FramesVisible", m_appCore->getFramesVisible());
     settings.setValue("ActiveFrameVisible", m_appCore->getActiveFrameVisible());
@@ -1478,14 +1476,8 @@ CelestiaAppWindow::createMenus()
 
     displayMenu->addSeparator();
 
-    displayMenu->addAction(actions->increaseLimitingMagAction);
-    displayMenu->addAction(actions->decreaseLimitingMagAction);
-    displayMenu->addAction(actions->autoMagAction);
-
-    QMenu* starStyleMenu = displayMenu->addMenu(_("Star St&yle"));
-    starStyleMenu->addAction(actions->pointStarAction);
-    starStyleMenu->addAction(actions->fuzzyPointStarAction);
-    starStyleMenu->addAction(actions->scaledDiscStarAction);
+    displayMenu->addAction(actions->increaseExposureAction);
+    displayMenu->addAction(actions->decreaseExposureAction);
 
     displayMenu->addSeparator();
 

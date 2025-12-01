@@ -1,7 +1,6 @@
 // qtpreferencesdialog.cpp
 //
-// Copyright (C) 2007-2008, Celestia Development Team
-// celestia-developers@lists.sourceforge.net
+// Copyright (C) 2007-present, the Celestia Development Team
 //
 // Preferences dialog for Celestia's Qt front-end. Based on
 // kdepreferencesdialog.h by Christophe Teyssier.
@@ -240,35 +239,12 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     auto tint = static_cast<int>(renderer->getTintSaturation() * 100.0f);
     ui.tintSaturationSlider->setValue(tint);
-    ui.tintSaturationSlider->setEnabled(colors != ColorTableType::Enhanced);
     ui.tintSaturationSpinBox->setValue(tint);
-    ui.tintSaturationSpinBox->setEnabled(colors != ColorTableType::Enhanced);
-
-    switch (renderer->getStarStyle())
-    {
-        case StarStyle::PointStars:
-            ui.pointStarsButton->setChecked(true);
-            break;
-
-        case StarStyle::FuzzyPointStars:
-            ui.fuzzyPointStarsButton->setChecked(true);
-            break;
-
-        case StarStyle::ScaledDiscStars:
-            ui.scaledDiscsButton->setChecked(true);
-
-        default:
-            assert(0);
-            break;
-    }
 
     ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
     ui.starColorBox->addItem(_("Blackbody (Solar Whitepoint)"), static_cast<int>(ColorTableType::SunWhite));
     ui.starColorBox->addItem(_("Blackbody (Vega Whitepoint)"), static_cast<int>(ColorTableType::VegaWhite));
-    ui.starColorBox->addItem(_("Classic colors"), static_cast<int>(ColorTableType::Enhanced));
     SetComboBoxValue(ui.starColorBox, static_cast<int>(colors));
-
-    ui.autoMagnitudeCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowAutoMag));
 
 #ifndef _WIN32
     ui.dateFormatBox->addItem(_("Local format"), astro::Date::Locale);
@@ -803,44 +779,6 @@ PreferencesDialog::on_tintSaturationSpinBox_valueChanged(int value)
     ui.tintSaturationSlider->blockSignals(savedBlockState);
 }
 
-// Star style
-
-void
-PreferencesDialog::on_pointStarsButton_clicked() const
-{
-    if (ui.pointStarsButton->isChecked())
-    {
-        Renderer* renderer = appCore->getRenderer();
-        renderer->setStarStyle(StarStyle::PointStars);
-    }
-}
-
-void
-PreferencesDialog::on_scaledDiscsButton_clicked() const
-{
-    if (ui.scaledDiscsButton->isChecked())
-    {
-        Renderer* renderer = appCore->getRenderer();
-        renderer->setStarStyle(StarStyle::ScaledDiscStars);
-    }
-}
-
-void
-PreferencesDialog::on_fuzzyPointStarsButton_clicked() const
-{
-    if (ui.fuzzyPointStarsButton->isChecked())
-    {
-        Renderer* renderer = appCore->getRenderer();
-        renderer->setStarStyle(StarStyle::FuzzyPointStars);
-    }
-}
-
-void
-PreferencesDialog::on_autoMagnitudeCheck_stateChanged(int state)
-{
-    setRenderFlag(appCore, ::RenderFlags::ShowAutoMag, state);
-}
-
 // Star colors
 
 void
@@ -850,9 +788,6 @@ PreferencesDialog::on_starColorBox_currentIndexChanged(int index)
     QVariant itemData = ui.starColorBox->itemData(index, Qt::UserRole);
     ColorTableType value = static_cast<ColorTableType>(itemData.toInt());
     renderer->setStarColorTable(value);
-    bool enableTintSaturation = value != ColorTableType::Enhanced;
-    ui.tintSaturationSlider->setEnabled(enableTintSaturation);
-    ui.tintSaturationSpinBox->setEnabled(enableTintSaturation);
 }
 
 // Time
