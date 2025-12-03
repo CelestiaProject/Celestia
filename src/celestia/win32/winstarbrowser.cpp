@@ -35,8 +35,8 @@
 #include <commctrl.h>
 
 #include "res/resource.h"
-#include "tstring.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {

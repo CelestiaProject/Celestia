@@ -32,8 +32,8 @@
 #include <shellapi.h>
 
 #include "res/resource.h"
-#include "tstring.h"
 #include "winhyperlinks.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 

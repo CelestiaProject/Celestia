@@ -47,7 +47,6 @@
 
 #include "res/resource.h"
 #include "odmenu.h"
-#include "tstring.h"
 #include "winbookmarks.h"
 #include "wincontextmenu.h"
 #include "windisplaymodedlg.h"
@@ -66,6 +65,7 @@
 #include "wintime.h"
 #include "wintourguide.h"
 #include "winviewoptsdlg.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
@@ -97,7 +97,7 @@ setMenuItemCheck(HMENU menuBar, int menuItem, bool checked)
     CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
-// Version of the function from tstring.h with smaller intermediate buffer
+// Version of the function from wstringutils.h with smaller intermediate buffer
 // suitable for char event processing
 template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
 void

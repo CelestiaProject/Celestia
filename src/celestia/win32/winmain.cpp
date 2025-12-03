@@ -46,7 +46,6 @@
 
 #include "res/resource.h"
 #include "odmenu.h"
-#include "tstring.h"
 #include "winbookmarks.h"
 #include "wincontextmenu.h"
 #include "windatepicker.h"
@@ -55,6 +54,7 @@
 #include "winpreferences.h"
 #include "winsplash.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;

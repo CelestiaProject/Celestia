@@ -32,8 +32,8 @@
 #include <celestia/celestiacore.h>
 #include <celmath/mathlib.h>
 #include "res/resource.h"
-#include "tcharconv.h"
-#include "tstring.h"
+#include "wcharconv.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -57,7 +57,7 @@ GetDialogFloat(HWND hDlg, int id, float& f)
     if (start == end)
         return false;
 
-    return from_tchars(start, end, f).ec == std::errc{};
+    return from_wchars(start, end, f).ec == std::errc{};
 }
 
 bool

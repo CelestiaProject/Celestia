@@ -31,8 +31,8 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include "res/resource.h"
-#include "tcharconv.h"
-#include "tstring.h"
+#include "wcharconv.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -236,7 +236,7 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
                 std::array<wchar_t, 16> jdStr;
                 GetWindowText(GetDlgItem(hDlg, IDC_JDPICKER), jdStr.data(), static_cast<int>(jdStr.size()));
                 double jd;
-                if (auto ec = from_tchars(jdStr.data(), jdStr.data() + jdStr.size(), jd).ec;
+                if (auto ec = from_wchars(jdStr.data(), jdStr.data() + jdStr.size(), jd).ec;
                     ec == std::errc{})
                 {
                     tdb = astro::TTtoTDB(astro::TAItoTT(astro::JDUTCtoTAI(jd)));
