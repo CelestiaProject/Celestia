@@ -68,11 +68,11 @@ InitEclipseFinderColumns(HWND listView)
 
     std::array<std::wstring, numColumns> headers
     {
-        UTF8ToTString(_("Body")),
-        UTF8ToTString(_("Occulter")),
-        UTF8ToTString(_("Date")),
-        UTF8ToTString(_("Start")),
-        UTF8ToTString(_("Duration")),
+        UTF8ToWideString(_("Body")),
+        UTF8ToWideString(_("Occulter")),
+        UTF8ToWideString(_("Date")),
+        UTF8ToWideString(_("Start")),
+        UTF8ToWideString(_("Duration")),
     };
 
     constexpr std::array<int, numColumns> widths
@@ -130,13 +130,13 @@ EclipseFinderDisplayItem(NMLVDISPINFO* nm, util::array_view<std::wstring> monthN
     {
     case 0:
         {
-            int length = UTF8ToTChar(eclipse->receiver->getName(true), nm->item.pszText, nm->item.cchTextMax - 1);
+            int length = UTF8ToWide(eclipse->receiver->getName(true), nm->item.pszText, nm->item.cchTextMax - 1);
             nm->item.pszText[length] = L'\0';
             break;
         }
     case 1:
         {
-            int length = UTF8ToTChar(eclipse->occulter->getName(true), nm->item.pszText, nm->item.cchTextMax - 1);
+            int length = UTF8ToWide(eclipse->occulter->getName(true), nm->item.pszText, nm->item.cchTextMax - 1);
             nm->item.pszText[length] = L'\0';
             break;
         }
@@ -310,12 +310,12 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         constexpr std::size_t numItems = 6;
         std::array<std::wstring, numItems> items
         {
-            UTF8ToTString(_("Earth")),
-            UTF8ToTString(_("Jupiter")),
-            UTF8ToTString(_("Saturn")),
-            UTF8ToTString(_("Uranus")),
-            UTF8ToTString(_("Neptune")),
-            UTF8ToTString(_("Pluto")),
+            UTF8ToWideString(_("Earth")),
+            UTF8ToWideString(_("Jupiter")),
+            UTF8ToWideString(_("Saturn")),
+            UTF8ToWideString(_("Uranus")),
+            UTF8ToWideString(_("Neptune")),
+            UTF8ToWideString(_("Pluto")),
         };
 
         for (std::size_t i = 0; i < numItems; ++i)

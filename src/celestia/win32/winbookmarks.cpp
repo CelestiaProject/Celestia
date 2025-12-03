@@ -194,7 +194,7 @@ AddBookmarkFolderDialog::addNewBookmarkFolderInTree(HWND hTree, const wchar_t* f
 
     auto folderFav = std::make_unique<FavoritesEntry>();
     folderFav->isFolder = true;
-    folderFav->name = TCharToUTF8String(folderName);
+    folderFav->name = WideToUTF8String(folderName);
 
     FavoritesList* favorites = appCore->getFavorites();
     auto lParam = reinterpret_cast<LPARAM>(favorites->emplace_back(std::move(folderFav)).get());
@@ -316,7 +316,7 @@ AddBookmarkDialog::init(HWND _hDlg)
         const Body* body = appCore->getSimulation()->getSelection().body();
         if (body != nullptr)
         {
-            std::wstring name = UTF8ToTString(body->getName(true));
+            std::wstring name = UTF8ToWideString(body->getName(true));
             SetWindowText(hCtrl, name.c_str());
         }
     }
@@ -430,7 +430,7 @@ AddBookmarkDialog::populateBookmarkFolders(HWND hTree)
     // Create a subtree item called "Bookmarks"
     TVINSERTSTRUCT tvis;
 
-    std::wstring bookmarks = UTF8ToTString(_("Bookmarks"));
+    std::wstring bookmarks = UTF8ToWideString(_("Bookmarks"));
     tvis.hParent = TVI_ROOT;
     tvis.hInsertAfter = TVI_LAST;
     tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
@@ -474,7 +474,7 @@ AddBookmarkDialog::populateBookmarkFolders(HWND hTree)
 void
 AddBookmarkDialog::insertBookmarkInFavorites(HWND hTree, const wchar_t* name) const
 {
-    std::string newBookmark = TCharToUTF8String(name);
+    std::string newBookmark = WideToUTF8String(name);
 
     // Determine which tree item (folder) is selected (if any)
     HTREEITEM hItem = TreeView_GetSelection(hTree);
@@ -494,7 +494,7 @@ AddBookmarkDialog::insertBookmarkInFavorites(HWND hTree, const wchar_t* name) co
         {
             auto fav = reinterpret_cast<const FavoritesEntry*>(tvItem.lParam);
             if (fav != nullptr && fav->isFolder)
-                appCore->addFavorite(newBookmark, TCharToUTF8String(itemName.data()));
+                appCore->addFavorite(newBookmark, WideToUTF8String(itemName.data()));
         }
     }
     else
@@ -722,7 +722,7 @@ RenameBookmarkDialog::renameBookmarkInFavorites(HWND hTree, const wchar_t* newNa
         return;
 
     std::string oldName = std::move(fav->name);
-    fav->name = TCharToUTF8String(newName);
+    fav->name = WideToUTF8String(newName);
 
     if (!fav->isFolder)
         return;
@@ -1045,7 +1045,7 @@ OrganizeBookmarksDialog::populateBookmarksTree(HWND hTree)
         return nullptr;
 
     // Create a subtree item called "Bookmarks"
-    std::wstring bookmarks = UTF8ToTString(_("Bookmarks"));
+    std::wstring bookmarks = UTF8ToWideString(_("Bookmarks"));
     TVINSERTSTRUCT tvis;
     tvis.hParent = TVI_ROOT;
     tvis.hInsertAfter = TVI_LAST;
@@ -1077,7 +1077,7 @@ OrganizeBookmarksDialog::addSubtreeItem(FavoritesEntry* fav,
                                         HWND hTree,
                                         HTREEITEM hParent)
 {
-    std::wstring favName = UTF8ToTString(fav->name);
+    std::wstring favName = UTF8ToWideString(fav->name);
 
     // Create a subtree item
     TVINSERTSTRUCT tvis;
@@ -1099,7 +1099,7 @@ OrganizeBookmarksDialog::addSubtreeItem(FavoritesEntry* fav,
         if (child->isFolder || child->parentFolder != fav->name)
             continue;
 
-        std::wstring childName = UTF8ToTString(child->name);
+        std::wstring childName = UTF8ToWideString(child->name);
 
         // Add items to sub tree
         tvis.hParent = hParentItem;
@@ -1331,7 +1331,7 @@ OrganizeBookmarksDialog::moveBookmarkInFavorites(HWND hTree)
 
     // Now perform the move in favorites
     if (draggedFav != nullptr)
-        draggedFav->parentFolder = TCharToUTF8String(dropFolderName.data());
+        draggedFav->parentFolder = WideToUTF8String(dropFolderName.data());
 }
 
 void
@@ -1432,7 +1432,7 @@ CreateFavoritesSubMenu(const FavoritesEntry* fav,
         return;
 
     // Create a menu item that displays a popup sub menu
-    std::wstring favName = UTF8ToTString(fav->name);
+    std::wstring favName = UTF8ToWideString(fav->name);
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);
     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
@@ -1460,7 +1460,7 @@ CreateFavoritesSubMenu(const FavoritesEntry* fav,
         {
             GetLogger()->debug("  {}\n", child->name);
             // Add item to sub menu
-            std::wstring childName = UTF8ToTString(child->name);
+            std::wstring childName = UTF8ToWideString(child->name);
 
             menuInfo.cbSize = sizeof(MENUITEMINFO);
             menuInfo.fMask = MIIM_TYPE | MIIM_ID;
@@ -1482,7 +1482,7 @@ CreateFavoritesSubMenu(const FavoritesEntry* fav,
     // were added to sub menu
     if (subMenuIndex == 0)
     {
-        std::wstring empty = UTF8ToTString(_("(empty)"));
+        std::wstring empty = UTF8ToWideString(_("(empty)"));
         menuInfo.cbSize = sizeof(MENUITEMINFO);
         menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
         menuInfo.fType = MFT_STRING;
@@ -1590,7 +1590,7 @@ BuildFavoritesMenu(HMENU menuBar,
         if (!fav->isFolder && isTopLevel(fav.get()))
         {
             // Append to bookmarksMenu
-            std::wstring favName = UTF8ToTString(fav->name);
+            std::wstring favName = UTF8ToWideString(fav->name);
             AppendMenu(bookmarksMenu, MF_STRING,
                        ID_BOOKMARKS_FIRSTBOOKMARK + rootResIndex,
                        favName.data());

@@ -95,7 +95,7 @@ GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, 5, (float)longitude);
             SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, 5, (float)latitude);
             SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME,
-                const_cast<wchar_t*>(UTF8ToTString(sim->getSelection().body()->getName(true)).c_str()));
+                const_cast<wchar_t*>(UTF8ToWideString(sim->getSelection().body()->getName(true)).c_str()));
         }
 
         return TRUE;
@@ -115,7 +115,7 @@ GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             if (len > 0)
             {
                 fmt::memory_buffer path;
-                AppendTCharToUTF8(std::wstring_view(buf.data(), static_cast<std::size_t>(len)), path);
+                AppendWideToUTF8(std::wstring_view(buf.data(), static_cast<std::size_t>(len)), path);
                 sel = sim->findObjectFromPath(std::string_view(path.data(), path.size()), true);
             }
 

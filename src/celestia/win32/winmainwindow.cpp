@@ -106,7 +106,7 @@ AppendTCharCodeToUTF8(wchar_t* tch, int nch, T& destination)
     if (nch <= 0)
         return;
     std::wstring_view source(tch, static_cast<std::size_t>(nch));
-    AppendTCharToUTF8(source, destination);
+    AppendWideToUTF8(source, destination);
 }
 
 unsigned int
@@ -242,7 +242,7 @@ InitJoystick()
         return false;
     }
 
-    GetLogger()->error(_("Using joystick: {}\n"), TCharToUTF8String(caps.szPname));
+    GetLogger()->error(_("Using joystick: {}\n"), WideToUTF8String(caps.szPname));
 
     return true;
 }
@@ -1101,8 +1101,8 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
     deviceContext = GetDC(hWnd);
     if (!SetDCPixelFormat(deviceContext, appCore))
     {
-        std::wstring message = UTF8ToTString(_("Could not get appropriate pixel format for OpenGL rendering."));
-        std::wstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Could not get appropriate pixel format for OpenGL rendering."));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return false;
     }
@@ -1119,8 +1119,8 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
     {
         if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
         {
-            std::wstring message = UTF8ToTString(_("Your system doesn't support OpenGL 2.1!"));
-            std::wstring error = UTF8ToTString(_("Fatal Error"));
+            std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 2.1!"));
+            std::wstring error = UTF8ToWideString(_("Fatal Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
             return false;
         }
@@ -1136,8 +1136,8 @@ MainWindow::destroyDeviceContext()
     {
         if (!ReleaseDC(hWnd, deviceContext))
         {
-            std::wstring message = UTF8ToTString(_("Releasing device context failed."));
-            std::wstring error = UTF8ToTString(_("Error"));
+            std::wstring message = UTF8ToWideString(_("Releasing device context failed."));
+            std::wstring error = UTF8ToWideString(_("Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         }
         deviceContext = nullptr;
@@ -1530,8 +1530,8 @@ RegisterMainWindowClass(HINSTANCE appInstance, HCURSOR hDefaultCursor)
     ATOM result = RegisterClass(&wc);
     if (result == 0)
     {
-        std::wstring message = UTF8ToTString(_("Failed to register the window class."));
-        std::wstring fatalError = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Failed to register the window class."));
+        std::wstring fatalError = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), fatalError.c_str(), MB_OK | MB_ICONERROR);
     }
 

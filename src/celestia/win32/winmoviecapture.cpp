@@ -207,8 +207,8 @@ void HandleCaptureMovie(HINSTANCE appInstance, HWND hWnd, CelestiaCore* appCore)
     // is complete.
     if (appCore->isCaptureActive())
     {
-        auto message = UTF8ToTString(_("Stop current movie capture before starting another one."));
-        auto error = UTF8ToTString(_("Error"));
+        auto message = UTF8ToWideString(_("Stop current movie capture before starting another one."));
+        auto error = UTF8ToWideString(_("Error"));
         MessageBox(hWnd, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         return;
     }
@@ -287,16 +287,16 @@ void HandleCaptureMovie(HINSTANCE appInstance, HWND hWnd, CelestiaCore* appCore)
     else
     {
         // Invalid file extension specified.
-        auto message = UTF8ToTString(_("Unknown file extension specified for movie capture."));
-        auto title = UTF8ToTString(_("Error"));
+        auto message = UTF8ToWideString(_("Unknown file extension specified for movie capture."));
+        auto title = UTF8ToWideString(_("Error"));
         MessageBox(hWnd, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
         return;
     }
 
     if (!success)
     {
-        auto message = UTF8ToTString(_("Could not capture movie."));
-        auto title = UTF8ToTString(_("Error"));
+        auto message = UTF8ToWideString(_("Could not capture movie."));
+        auto title = UTF8ToWideString(_("Error"));
         MessageBox(hWnd, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
     }
 }

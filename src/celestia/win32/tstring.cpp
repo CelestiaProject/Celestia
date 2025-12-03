@@ -32,7 +32,7 @@ NonLocalizedCompare(std::string_view lhs, std::string_view rhs)
 } // end unnamed namespace
 
 int
-UTF8ToTChar(std::string_view str, wchar_t* dest, int destSize)
+UTF8ToWide(std::string_view str, wchar_t* dest, int destSize)
 {
     if (str.empty())
         return 0;

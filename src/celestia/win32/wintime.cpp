@@ -92,10 +92,10 @@ SetTimeDialog::init(HWND _hDlg)
     useLocalTime = appCore->getTimeZoneBias() != 0;
     useUTCOffset = appCore->getDateFormat() == 2;
 
-    std::wstring item0 = UTF8ToTString(_("Universal Time"));
-    std::wstring item1 = UTF8ToTString(_("Local Time"));
-    std::wstring item2 = UTF8ToTString(_("Time Zone Name"));
-    std::wstring item3 = UTF8ToTString(_("UTC Offset"));
+    std::wstring item0 = UTF8ToWideString(_("Universal Time"));
+    std::wstring item1 = UTF8ToWideString(_("Local Time"));
+    std::wstring item2 = UTF8ToWideString(_("Time Zone Name"));
+    std::wstring item3 = UTF8ToWideString(_("UTC Offset"));
 
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item0.c_str()));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item1.c_str()));
