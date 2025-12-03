@@ -18,9 +18,7 @@
 #include <optional>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celutil/gettext.h>
 

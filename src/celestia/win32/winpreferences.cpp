@@ -25,9 +25,7 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
-#ifdef _UNICODE
 #include <celutil/winutil.h>
-#endif
 
 #include <basetsd.h>
 
@@ -136,30 +134,17 @@ GetRegistryString(HKEY key, LPCTSTR value, std::string& strVal)
     DWORD type;
     DWORD size;
     LSTATUS err = RegQueryValueEx(key, value, 0, &type, nullptr, &size);
-#ifdef _UNICODE
     if (err != ERROR_SUCCESS || type != REG_SZ || (size % sizeof(wchar_t)) != 0)
-#else
-    if (err != ERROR_SUCCESS || type != REG_SZ)
-#endif
         return false;
 
     if (size == 0)
         return true;
 
-#ifdef _UNICODE
     fmt::basic_memory_buffer<wchar_t> buffer;
     buffer.resize(size / sizeof(wchar_t));
-#else
-    fmt::memory_buffer buffer;
-    buffer.resize(size);
-#endif
     err = RegQueryValueEx(key, value, 0, &type,
                           reinterpret_cast<LPBYTE>(buffer.data()), &size);
-#ifdef _UNICODE
     if (err != ERROR_SUCCESS || type != REG_SZ || (size % sizeof(wchar_t)) != 0)
-#else
-    if (err != ERROR_SUCCESS || type != REG_SZ)
-#endif
         return false;
 
     return AppendTCharToUTF8(tstring_view(buffer.data(), size), strVal) > 0;
@@ -199,7 +184,7 @@ bool
 SetRegistryString(HKEY key, LPCTSTR value, std::string_view strVal)
 {
     fmt::basic_memory_buffer<TCHAR> buffer;
-    AppendUTF8ToTChar(strVal, buffer);
+    AppendUTF8ToWide(strVal, buffer);
     buffer.push_back(TEXT('\0'));
 
     LSTATUS err = RegSetValueEx(key, value, 0, REG_SZ,

@@ -21,9 +21,7 @@
 #include <Eigen/Geometry>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celastro/date.h>
 #include <celengine/body.h>

@@ -58,9 +58,6 @@ CreateLocalizedMonthNames()
     std::vector<tstring> months;
     months.reserve(monthCount);
 
-#ifndef _UNICODE
-    fmt::basic_memory_buffer<wchar_t, 256> buffer;
-#endif
     for (std::size_t i = 0; i < monthCount; ++i)
     {
         CALTYPE calType = monthConstants[i];
@@ -72,18 +69,12 @@ CreateLocalizedMonthNames()
             continue;
         }
 
-#ifdef _UNICODE
         std::wstring& name = months.emplace_back(static_cast<std::size_t>(length), L'\0');
         length = GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, name.data(), length, nullptr);
         if (length > 1)
             name.resize(static_cast<std::size_t>(length - 1));
         else
             name = defaultMonthNames[i];
-#else
-        buffer.resize(static_cast<std::size_t>(length));
-        GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, buffer.data(), length, nullptr);
-        months.push_back(WideToCurrentCP(buffer.data()));
-#endif
     }
 
     return months;
