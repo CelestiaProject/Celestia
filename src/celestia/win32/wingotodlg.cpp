@@ -44,18 +44,14 @@ namespace
 bool
 GetDialogFloat(HWND hDlg, int id, float& f)
 {
-    std::array<TCHAR, 128> buf;
+    std::array<wchar_t, 128> buf;
     UINT size = GetDlgItemText(hDlg, id, buf.data(), buf.size());
     if (size == 0)
         return false;
 
-    const TCHAR* start = buf.data();
-    const TCHAR* end = buf.data() + size;
-#ifdef _UNICODE
+    const wchar_t* start = buf.data();
+    const wchar_t* end = buf.data() + size;
     while (start != end && std::iswspace(static_cast<std::wint_t>(*start)))
-#else
-    while (start != end && std::isspace(static_cast<unsigned char>(*start)))
-#endif
         ++start;
 
     if (start == end)
@@ -67,9 +63,9 @@ GetDialogFloat(HWND hDlg, int id, float& f)
 bool
 SetDialogFloat(HWND hDlg, int id, unsigned int precision, float f)
 {
-    std::array<TCHAR, 128> buf;
-    auto it = fmt::format_to_n(buf.begin(), buf.size() - 1, TEXT("{:.{}f}"), f, precision).out;
-    *it = TEXT('\0');
+    std::array<wchar_t, 128> buf;
+    auto it = fmt::format_to_n(buf.begin(), buf.size() - 1, L"{:.{}f}", f, precision).out;
+    *it = L'\0';
     return (SetDlgItemText(hDlg, id, buf.data()) == TRUE);
 }
 
@@ -99,7 +95,7 @@ GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             SetDialogFloat(hDlg, IDC_EDIT_LONGITUDE, 5, (float)longitude);
             SetDialogFloat(hDlg, IDC_EDIT_LATITUDE, 5, (float)latitude);
             SetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME,
-                const_cast<TCHAR*>(UTF8ToTString(sim->getSelection().body()->getName(true)).c_str()));
+                const_cast<wchar_t*>(UTF8ToTString(sim->getSelection().body()->getName(true)).c_str()));
         }
 
         return TRUE;
@@ -111,7 +107,7 @@ GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         if (LOWORD(wParam) == IDC_BUTTON_GOTO)
         {
-            std::array<TCHAR, 1024> buf;
+            std::array<wchar_t, 1024> buf;
             int len = GetDlgItemText(hDlg, IDC_EDIT_OBJECTNAME, buf.data(), buf.size());
 
             Simulation* sim = gotoDlg->appCore->getSimulation();
@@ -119,7 +115,7 @@ GotoObjectProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             if (len > 0)
             {
                 fmt::memory_buffer path;
-                AppendTCharToUTF8(tstring_view(buf.data(), static_cast<std::size_t>(len)), path);
+                AppendTCharToUTF8(std::wstring_view(buf.data(), static_cast<std::size_t>(len)), path);
                 sel = sim->findObjectFromPath(std::string_view(path.data(), path.size()), true);
             }
 

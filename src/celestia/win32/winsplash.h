@@ -11,11 +11,10 @@
 
 #include <filesystem>
 #include <memory>
+#include <string>
 #include <string_view>
 
 #include <windows.h>
-
-#include "tstring.h"
 
 namespace celestia
 {
@@ -53,8 +52,8 @@ private:
     std::unique_ptr<celestia::engine::Image> image;
     HBITMAP hBitmap{ NULL };
     HBITMAP hCompositionBitmap{ NULL };
-    tstring versionString;
-    tstring message;
+    std::wstring versionString;
+    std::wstring message;
     unsigned int winWidth{ 640U };
     unsigned int winHeight{ 480U };
     unsigned int imageWidth{ 0U };

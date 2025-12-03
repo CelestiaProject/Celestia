@@ -39,6 +39,7 @@
 
 #include "res/resource.h"
 #include "datetimehelpers.h"
+#include "tstring.h"
 #include "winuiutils.h"
 
 using namespace std::string_view_literals;
@@ -65,7 +66,7 @@ InitEclipseFinderColumns(HWND listView)
 {
     constexpr std::size_t numColumns = 5;
 
-    std::array<tstring, numColumns> headers
+    std::array<std::wstring, numColumns> headers
     {
         UTF8ToTString(_("Body")),
         UTF8ToTString(_("Occulter")),
@@ -85,7 +86,7 @@ InitEclipseFinderColumns(HWND listView)
         lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
         lvc.fmt = LVCFMT_CENTER;
         lvc.cx = DpToPixels(widths[i], listView);
-        lvc.pszText = const_cast<TCHAR*>(headers[i].c_str());
+        lvc.pszText = const_cast<wchar_t*>(headers[i].c_str());
         lvc.iSubItem = static_cast<int>(i);
         if (ListView_InsertColumn(listView, static_cast<int>(i), &lvc) == -1)
             return false;
@@ -116,12 +117,12 @@ InitEclipseFinderItems(HWND listView, const std::vector<Eclipse>& eclipses)
 }
 
 void
-EclipseFinderDisplayItem(NMLVDISPINFO* nm, util::array_view<tstring> monthNames)
+EclipseFinderDisplayItem(NMLVDISPINFO* nm, util::array_view<std::wstring> monthNames)
 {
     auto eclipse = reinterpret_cast<const Eclipse*>(nm->item.lParam);
     if (eclipse == NULL)
     {
-        nm->item.pszText[0] = TEXT('\0');
+        nm->item.pszText[0] = L'\0';
         return;
     }
 
@@ -130,41 +131,41 @@ EclipseFinderDisplayItem(NMLVDISPINFO* nm, util::array_view<tstring> monthNames)
     case 0:
         {
             int length = UTF8ToTChar(eclipse->receiver->getName(true), nm->item.pszText, nm->item.cchTextMax - 1);
-            nm->item.pszText[length] = TEXT('\0');
+            nm->item.pszText[length] = L'\0';
             break;
         }
     case 1:
         {
             int length = UTF8ToTChar(eclipse->occulter->getName(true), nm->item.pszText, nm->item.cchTextMax - 1);
-            nm->item.pszText[length] = TEXT('\0');
+            nm->item.pszText[length] = L'\0';
             break;
         }
     case 2:
         {
             astro::Date startDate(eclipse->startTime);
-            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, TEXT("{:>2d} {} {:>4d}"),
+            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, L"{:>2d} {} {:>4d}",
                                         startDate.day, monthNames[startDate.month - 1], startDate.year).out;
-            *out = TEXT('\0');
+            *out = L'\0';
             break;
         }
     case 3:
         {
             astro::Date startDate(eclipse->startTime);
-            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, TEXT("{:02d}:{:02d}"),
+            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, L"{:02d}:{:02d}",
                                         startDate.hour, startDate.minute).out;
-            *out = TEXT('\0');
+            *out = L'\0';
             break;
         }
     case 4:
         {
             int minutes = static_cast<int>((eclipse->endTime - eclipse->startTime) * 24 * 60);
-            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, TEXT("{:02d}:{:02d}"),
+            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, L"{:02d}:{:02d}",
                                         minutes / 60, minutes % 60).out;
-            *out = TEXT('\0');
+            *out = L'\0';
             break;
         }
     default:
-        *(nm->item.pszText) = TEXT('\0');
+        *(nm->item.pszText) = L'\0';
         break;
     }
 }
@@ -187,13 +188,13 @@ InitDateControls(HWND hDlg, const astro::Date& newTime, SYSTEMTIME& fromTime, SY
     HWND dateItem = GetDlgItem(hDlg, IDC_DATEFROM);
     if (dateItem != NULL)
     {
-        DateTime_SetFormat(dateItem, TEXT("dd' 'MMM' 'yyy"));
+        DateTime_SetFormat(dateItem, L"dd' 'MMM' 'yyy");
         DateTime_SetSystemtime(dateItem, GDT_VALID, &fromTime);
     }
     dateItem = GetDlgItem(hDlg, IDC_DATETO);
     if (dateItem != NULL)
     {
-        DateTime_SetFormat(dateItem, TEXT("dd' 'MMM' 'yyy"));
+        DateTime_SetFormat(dateItem, L"dd' 'MMM' 'yyy");
         DateTime_SetSystemtime(dateItem, GDT_VALID, &toTime);
     }
 }
@@ -307,7 +308,7 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         efd->type = Eclipse::Solar;
 
         constexpr std::size_t numItems = 6;
-        std::array<tstring, numItems> items
+        std::array<std::wstring, numItems> items
         {
             UTF8ToTString(_("Earth")),
             UTF8ToTString(_("Jupiter")),

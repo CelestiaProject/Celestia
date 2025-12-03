@@ -40,7 +40,7 @@ namespace celestia::win32
 namespace
 {
 
-using IntStrPair = std::pair<int, tstring>;
+using IntStrPair = std::pair<int, std::wstring>;
 
 struct IntStrPairComparer
 {
@@ -88,7 +88,7 @@ CreatePlanetarySystemMenu(std::string_view parentName, const PlanetarySystem* ps
 
     // We will use these objects to iterate over all the above vectors
     std::vector<std::vector<IntStrPair>> objects;
-    std::vector<tstring> menuNames;
+    std::vector<std::wstring> menuNames;
 
     // Place each body in the correct vector based on classification
     HMENU menu = CreatePopupMenu();
