@@ -1,4 +1,4 @@
-// tstring.cpp
+// wstringutils.cpp
 //
 // Copyright (C) 2023, Celestia Development Team
 //
@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "tstring.h"
+#include "wstringutils.h"
 
 #include <algorithm>
 
@@ -32,21 +32,12 @@ NonLocalizedCompare(std::string_view lhs, std::string_view rhs)
 } // end unnamed namespace
 
 int
-UTF8ToTChar(std::string_view str, tstring::value_type* dest, int destSize)
+UTF8ToWide(std::string_view str, wchar_t* dest, int destSize)
 {
     if (str.empty())
         return 0;
     const auto srcLength = static_cast<int>(str.size());
-#ifdef _UNICODE
     return std::max(MultiByteToWideChar(CP_UTF8, 0, str.data(), srcLength, dest, destSize), 0);
-#else
-    fmt::basic_memory_buffer<wchar_t> wbuffer;
-    int wideLength = AppendUTF8ToWide(str, wbuffer);
-    if (wideLength <= 0)
-        return 0;
-
-    return std::max(WideCharToMultiByte(CP_ACP, 0, wbuffer.data(), wideLength, dest, destSize, nullptr, nullptr), 0);
-#endif
 }
 
 int

@@ -21,10 +21,10 @@ namespace celestia::win32
 namespace
 {
 
-constexpr TCHAR hyperLinkFromStatic[] = TEXT("_Hyperlink_From_Static_");
-constexpr TCHAR hyperLinkOriginalProc[] = TEXT("_Hyperlink_Original_Proc_");
-constexpr TCHAR hyperLinkOriginalFont[] = TEXT("_Hyperlink_Original_Font_");
-constexpr TCHAR hyperLinkUnderlineFont[] = TEXT("_Hyperlink_Underline_Font_");
+constexpr wchar_t hyperLinkFromStatic[] = L"_Hyperlink_From_Static_";
+constexpr wchar_t hyperLinkOriginalProc[] = L"_Hyperlink_Original_Proc_";
+constexpr wchar_t hyperLinkOriginalFont[] = L"_Hyperlink_Original_Font_";
+constexpr wchar_t hyperLinkUnderlineFont[] = L"_Hyperlink_Underline_Font_";
 
 bool
 GetTextRect(HWND hWnd, RECT* rectText)
@@ -39,7 +39,7 @@ GetTextRect(HWND hWnd, RECT* rectText)
     auto hOldFont = static_cast<HFONT>(SelectObject(hDC, hFont));
 
     bool result = false;
-    std::array<TCHAR, 1024> staticText;
+    std::array<wchar_t, 1024> staticText;
     int length = GetWindowText(hWnd, staticText.data(), staticText.size());
 
     if (SIZE sizeText; GetTextExtentPoint32(hDC, staticText.data(), length, &sizeText))

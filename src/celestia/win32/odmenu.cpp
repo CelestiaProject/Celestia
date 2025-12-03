@@ -23,8 +23,8 @@ GenerateDisplayText(ODMENUITEM& item)
     item.rawDisplayText = {};
     item.shortcutText = {};
 
-    auto tabPos = item.rawText.find(TEXT('\t'));
-    if (tabPos == tstring::npos)
+    auto tabPos = item.rawText.find(L'\t');
+    if (tabPos == std::wstring::npos)
         tabPos = item.rawText.size();
     else
         item.shortcutText = item.rawText.substr(tabPos + 1);
@@ -34,7 +34,7 @@ GenerateDisplayText(ODMENUITEM& item)
     item.displayText.reserve(item.rawDisplayText.size());
     std::copy_if(item.rawDisplayText.cbegin(), item.rawDisplayText.cend(),
                  std::back_inserter(item.displayText),
-                 [](TCHAR ch) { return ch != TEXT('&'); });
+                 [](wchar_t ch) { return ch != L'&'; });
 }
 
 COLORREF
@@ -277,7 +277,7 @@ ODMenu::DrawItemText(const DRAWITEMSTRUCT* lpdis, const ODMENUITEM& item) const
     }
 
     //Draw the item rectangle with appropriate background color
-    ExtTextOut(lpdis->hDC, x, y, ETO_OPAQUE, &rectItem, TEXT(""), 0, NULL);
+    ExtTextOut(lpdis->hDC, x, y, ETO_OPAQUE, &rectItem, L"", 0, NULL);
 
     //Draw the text
     DrawText(lpdis->hDC, item.rawDisplayText.c_str(), item.rawDisplayText.length(),

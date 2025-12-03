@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cwchar>
 #include <memory>
 #include <string_view>
 #include <utility>
@@ -32,8 +33,8 @@
 
 #include "res/resource.h"
 #include "odmenu.h"
-#include "tstring.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
@@ -69,7 +70,7 @@ public:
     BOOL command(WPARAM, LPARAM) const;
 
 private:
-    void addNewBookmarkFolderInTree(HWND, const TCHAR*) const;
+    void addNewBookmarkFolderInTree(HWND, const wchar_t*) const;
 
     HWND hDlg{ nullptr };
     CelestiaCore* appCore;
@@ -117,7 +118,7 @@ AddBookmarkFolderDialog::command(WPARAM wParam, LPARAM lParam) const
         if (hOK && hCancel)
         {
             // If edit control contains text, enable OK button
-            std::array<TCHAR, 33> name;
+            std::array<wchar_t, 33> name;
             if (GetWindowText(reinterpret_cast<HWND>(lParam), name.data(), static_cast<int>(name.size())))
             {
                 // Remove Cancel button default style
@@ -147,7 +148,7 @@ AddBookmarkFolderDialog::command(WPARAM wParam, LPARAM lParam) const
     {
     case IDOK:
         // Get text entered in Folder Name Edit box
-        if (std::array<TCHAR, 33> name;
+        if (std::array<wchar_t, 33> name;
             GetDlgItemText(hDlg, IDC_BOOKMARKFOLDER, name.data(), static_cast<int>(name.size())))
         {
             addNewBookmarkFolderInTree(hBookmarkTree, name.data());
@@ -166,7 +167,7 @@ AddBookmarkFolderDialog::command(WPARAM wParam, LPARAM lParam) const
 }
 
 void
-AddBookmarkFolderDialog::addNewBookmarkFolderInTree(HWND hTree, const TCHAR* folderName) const
+AddBookmarkFolderDialog::addNewBookmarkFolderInTree(HWND hTree, const wchar_t* folderName) const
 {
     // Add new item to bookmark item after other folders but before root items
     HTREEITEM hParent = TreeView_GetChild(hTree, TVI_ROOT);
@@ -193,7 +194,7 @@ AddBookmarkFolderDialog::addNewBookmarkFolderInTree(HWND hTree, const TCHAR* fol
 
     auto folderFav = std::make_unique<FavoritesEntry>();
     folderFav->isFolder = true;
-    folderFav->name = TCharToUTF8String(folderName);
+    folderFav->name = WideToUTF8String(folderName);
 
     FavoritesList* favorites = appCore->getFavorites();
     auto lParam = reinterpret_cast<LPARAM>(favorites->emplace_back(std::move(folderFav)).get());
@@ -202,7 +203,7 @@ AddBookmarkFolderDialog::addNewBookmarkFolderInTree(HWND hTree, const TCHAR* fol
     tvis.hParent = hParent;
     tvis.hInsertAfter = hInsertAfter;
     tvis.item.mask = StdItemMask;
-    tvis.item.pszText = const_cast<TCHAR*>(folderName);
+    tvis.item.pszText = const_cast<wchar_t*>(folderName);
     tvis.item.lParam = lParam;
     tvis.item.iImage = 2;
     tvis.item.iSelectedImage = 1;
@@ -248,7 +249,7 @@ public:
 
 private:
     HTREEITEM populateBookmarkFolders(HWND hTree);
-    void insertBookmarkInFavorites(HWND hTree, const TCHAR* name) const;
+    void insertBookmarkInFavorites(HWND hTree, const wchar_t* name) const;
     BOOL createIn() const;
 
     HWND hDlg{ nullptr };
@@ -315,7 +316,7 @@ AddBookmarkDialog::init(HWND _hDlg)
         const Body* body = appCore->getSimulation()->getSelection().body();
         if (body != nullptr)
         {
-            tstring name = UTF8ToTString(body->getName(true));
+            std::wstring name = UTF8ToWideString(body->getName(true));
             SetWindowText(hCtrl, name.c_str());
         }
     }
@@ -334,7 +335,7 @@ AddBookmarkDialog::command(WPARAM wParam, LPARAM lParam) const
         if (hOK && hCancel)
         {
             //If edit control contains text, enable OK button
-            std::array<TCHAR, 33> name;
+            std::array<wchar_t, 33> name;
             GetWindowText(reinterpret_cast<HWND>(lParam), name.data(), static_cast<int>(name.size()));
             if (name[0])
             {
@@ -364,7 +365,7 @@ AddBookmarkDialog::command(WPARAM wParam, LPARAM lParam) const
     switch (LOWORD(wParam))
     {
     case IDOK:
-        if (std::array<TCHAR, 33> name;
+        if (std::array<wchar_t, 33> name;
             GetDlgItemText(hDlg, IDC_BOOKMARK_EDIT, name.data(), static_cast<int>(name.size())))
         {
             HWND hTree = GetDlgItem(hDlg, IDC_BOOKMARK_FOLDERTREE);
@@ -429,7 +430,7 @@ AddBookmarkDialog::populateBookmarkFolders(HWND hTree)
     // Create a subtree item called "Bookmarks"
     TVINSERTSTRUCT tvis;
 
-    tstring bookmarks = UTF8ToTString(_("Bookmarks"));
+    std::wstring bookmarks = UTF8ToWideString(_("Bookmarks"));
     tvis.hParent = TVI_ROOT;
     tvis.hInsertAfter = TVI_LAST;
     tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
@@ -442,15 +443,15 @@ AddBookmarkDialog::populateBookmarkFolders(HWND hTree)
     if (!hParent)
         return nullptr;
 
-    fmt::basic_memory_buffer<TCHAR> buf;
+    fmt::basic_memory_buffer<wchar_t> buf;
     for (const auto& fav : *favorites)
     {
         if (!fav->isFolder)
             continue;
 
         buf.clear();
-        AppendUTF8ToTChar(fav->name, buf);
-        buf.push_back(TEXT('\0'));
+        AppendUTF8ToWide(fav->name, buf);
+        buf.push_back(L'\0');
 
         // Create a subtree item for the folder
         TVINSERTSTRUCT tvis;
@@ -471,9 +472,9 @@ AddBookmarkDialog::populateBookmarkFolders(HWND hTree)
 }
 
 void
-AddBookmarkDialog::insertBookmarkInFavorites(HWND hTree, const TCHAR* name) const
+AddBookmarkDialog::insertBookmarkInFavorites(HWND hTree, const wchar_t* name) const
 {
-    std::string newBookmark = TCharToUTF8String(name);
+    std::string newBookmark = WideToUTF8String(name);
 
     // Determine which tree item (folder) is selected (if any)
     HTREEITEM hItem = TreeView_GetSelection(hTree);
@@ -482,7 +483,7 @@ AddBookmarkDialog::insertBookmarkInFavorites(HWND hTree, const TCHAR* name) cons
 
     if (hItem)
     {
-        std::array<TCHAR, 33> itemName;
+        std::array<wchar_t, 33> itemName;
 
         TVITEM tvItem;
         tvItem.hItem = hItem;
@@ -493,7 +494,7 @@ AddBookmarkDialog::insertBookmarkInFavorites(HWND hTree, const TCHAR* name) cons
         {
             auto fav = reinterpret_cast<const FavoritesEntry*>(tvItem.lParam);
             if (fav != nullptr && fav->isFolder)
-                appCore->addFavorite(newBookmark, TCharToUTF8String(itemName.data()));
+                appCore->addFavorite(newBookmark, WideToUTF8String(itemName.data()));
         }
     }
     else
@@ -522,11 +523,11 @@ AddBookmarkDialog::createIn() const
     if (!button)
         return FALSE;
 
-    std::array<TCHAR, 16> text;
+    std::array<wchar_t, 16> text;
     int textLength = GetWindowText(button, text.data(), static_cast<int>(text.size()));
 
-    constexpr tstring_view indicatorRight = TEXT(">>"sv);
-    constexpr tstring_view indicatorLeft = TEXT("<<"sv);
+    constexpr std::wstring_view indicatorRight = L">>"sv;
+    constexpr std::wstring_view indicatorLeft = L"<<"sv;
     static_assert(indicatorRight.size() == indicatorLeft.size());
     constexpr std::size_t indicatorSize = indicatorRight.size();
 
@@ -534,8 +535,8 @@ AddBookmarkDialog::createIn() const
         return FALSE;
 
     int width = dlgRect.right - dlgRect.left;
-    TCHAR* const indicatorStart = text.data() + (static_cast<std::ptrdiff_t>(textLength) - indicatorSize);
-    tstring_view indicator(indicatorStart, indicatorSize);
+    wchar_t* const indicatorStart = text.data() + (static_cast<std::ptrdiff_t>(textLength) - indicatorSize);
+    std::wstring_view indicator(indicatorStart, indicatorSize);
 
     if (indicator == indicatorRight)
     {
@@ -588,24 +589,24 @@ AddBookmarkProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 class RenameBookmarkDialog
 {
 public:
-    RenameBookmarkDialog(CelestiaCore*, HWND, const TCHAR*);
+    RenameBookmarkDialog(CelestiaCore*, HWND, const wchar_t*);
 
     bool checkHWnd(HWND hWnd) const { return hWnd == hDlg; }
     BOOL init(HWND);
     BOOL command(WPARAM, LPARAM) const;
 
 private:
-    void renameBookmarkInFavorites(HWND hTree, const TCHAR* newName) const;
+    void renameBookmarkInFavorites(HWND hTree, const wchar_t* newName) const;
 
     HWND hDlg{ nullptr };
     CelestiaCore* appCore;
     HWND hBookmarkTree;
-    const TCHAR* bookmarkName;
+    const wchar_t* bookmarkName;
 };
 
 RenameBookmarkDialog::RenameBookmarkDialog(CelestiaCore* _appCore,
                                            HWND _hBookmarkTree,
-                                           const TCHAR* _bookmarkName) :
+                                           const wchar_t* _bookmarkName) :
     appCore(_appCore),
     hBookmarkTree(_hBookmarkTree),
     bookmarkName(_bookmarkName)
@@ -642,7 +643,7 @@ RenameBookmarkDialog::command(WPARAM wParam, LPARAM lParam) const
         if (hOK && hCancel)
         {
             //If edit control contains text, enable OK button
-            std::array<TCHAR, 33> name;
+            std::array<wchar_t, 33> name;
             GetWindowText((HWND)lParam, name.data(), static_cast<int>(name.size()));
             if (name[0])
             {
@@ -673,7 +674,7 @@ RenameBookmarkDialog::command(WPARAM wParam, LPARAM lParam) const
     {
     case IDOK:
         //Get text entered in Folder Name Edit box
-        if (std::array<TCHAR, 33> name;
+        if (std::array<wchar_t, 33> name;
             GetDlgItemText(hDlg, IDC_NEWBOOKMARK, name.data(), static_cast<int>(name.size())))
         {
             renameBookmarkInFavorites(hBookmarkTree, name.data());
@@ -692,14 +693,14 @@ RenameBookmarkDialog::command(WPARAM wParam, LPARAM lParam) const
 }
 
 void
-RenameBookmarkDialog::renameBookmarkInFavorites(HWND hTree, const TCHAR* newName) const
+RenameBookmarkDialog::renameBookmarkInFavorites(HWND hTree, const wchar_t* newName) const
 {
     // First get the selected item
     HTREEITEM hItem = TreeView_GetSelection(hTree);
     if (!hItem)
         return;
 
-    std::array<TCHAR, 33> itemName;
+    std::array<wchar_t, 33> itemName;
 
     // Get the item text
     TVITEM tvItem;
@@ -716,12 +717,12 @@ RenameBookmarkDialog::renameBookmarkInFavorites(HWND hTree, const TCHAR* newName
 
     tvItem.hItem = hItem;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
-    tvItem.pszText = const_cast<TCHAR*>(newName);
+    tvItem.pszText = const_cast<wchar_t*>(newName);
     if (!TreeView_SetItem(hTree, &tvItem))
         return;
 
     std::string oldName = std::move(fav->name);
-    fav->name = TCharToUTF8String(newName);
+    fav->name = WideToUTF8String(newName);
 
     if (!fav->isFolder)
         return;
@@ -789,7 +790,7 @@ private:
     HTREEITEM hDropTargetItem{ nullptr };
     POINT dragPos{ 0, 0 };
     bool dragging{ false };
-    std::array<TCHAR, 33> bookmarkName;
+    std::array<wchar_t, 33> bookmarkName;
 };
 
 OrganizeBookmarksDialog::OrganizeBookmarksDialog(HINSTANCE _appInstance,
@@ -803,7 +804,7 @@ OrganizeBookmarksDialog::OrganizeBookmarksDialog(HINSTANCE _appInstance,
     odAppMenu(_odAppMenu),
     appCore(_appCore)
 {
-    bookmarkName.fill(TEXT('\0'));
+    bookmarkName.fill(L'\0');
 }
 
 BOOL
@@ -1044,7 +1045,7 @@ OrganizeBookmarksDialog::populateBookmarksTree(HWND hTree)
         return nullptr;
 
     // Create a subtree item called "Bookmarks"
-    tstring bookmarks = UTF8ToTString(_("Bookmarks"));
+    std::wstring bookmarks = UTF8ToWideString(_("Bookmarks"));
     TVINSERTSTRUCT tvis;
     tvis.hParent = TVI_ROOT;
     tvis.hInsertAfter = TVI_LAST;
@@ -1076,7 +1077,7 @@ OrganizeBookmarksDialog::addSubtreeItem(FavoritesEntry* fav,
                                         HWND hTree,
                                         HTREEITEM hParent)
 {
-    tstring favName = UTF8ToTString(fav->name);
+    std::wstring favName = UTF8ToWideString(fav->name);
 
     // Create a subtree item
     TVINSERTSTRUCT tvis;
@@ -1098,7 +1099,7 @@ OrganizeBookmarksDialog::addSubtreeItem(FavoritesEntry* fav,
         if (child->isFolder || child->parentFolder != fav->name)
             continue;
 
-        tstring childName = UTF8ToTString(child->name);
+        std::wstring childName = UTF8ToWideString(child->name);
 
         // Add items to sub tree
         tvis.hParent = hParentItem;
@@ -1118,9 +1119,9 @@ OrganizeBookmarksDialog::addSubtreeItem(FavoritesEntry* fav,
 void
 OrganizeBookmarksDialog::addRootItem(FavoritesEntry* fav, HWND hTree, HTREEITEM hParent)
 {
-    fmt::basic_memory_buffer<TCHAR> buf;
-    AppendUTF8ToTChar(fav->name, buf);
-    buf.push_back(TEXT('\0'));
+    fmt::basic_memory_buffer<wchar_t> buf;
+    AppendUTF8ToWide(fav->name, buf);
+    buf.push_back(L'\0');
 
     // Add item to root "Bookmarks"
     TVINSERTSTRUCT tvis;
@@ -1141,7 +1142,7 @@ OrganizeBookmarksDialog::deleteBookmarkFromFavorites(HWND hTree)
     if (!hItem)
         return;
 
-    std::array<TCHAR, 33> itemName;
+    std::array<wchar_t, 33> itemName;
 
     // Get the selected item text (which is the bookmark name)
     TVITEM tvItem;
@@ -1258,7 +1259,7 @@ void
 OrganizeBookmarksDialog::moveBookmarkInFavorites(HWND hTree)
 {
     // First get the target folder name
-    std::array<TCHAR, 33> dropFolderName;
+    std::array<wchar_t, 33> dropFolderName;
 
     TVITEM tvItem;
     tvItem.hItem = hDropTargetItem;
@@ -1269,10 +1270,10 @@ OrganizeBookmarksDialog::moveBookmarkInFavorites(HWND hTree)
         return;
 
     if (!TreeView_GetParent(hTree, hDropTargetItem))
-        dropFolderName[0] = TEXT('\0');
+        dropFolderName[0] = L'\0';
 
     // Get the dragged item text
-    std::array<TCHAR, 33> dragItemName;
+    std::array<wchar_t, 33> dragItemName;
 
     tvItem.lParam = 0;
     tvItem.hItem = hDragItem;
@@ -1289,7 +1290,7 @@ OrganizeBookmarksDialog::moveBookmarkInFavorites(HWND hTree)
     if (!hDragItemFolder)
         return;
 
-    std::array<TCHAR, 33> dragItemFolderName;
+    std::array<wchar_t, 33> dragItemFolderName;
 
     tvItem.hItem = hDragItemFolder;
     tvItem.mask = TVIF_TEXT | TVIF_HANDLE;
@@ -1299,10 +1300,10 @@ OrganizeBookmarksDialog::moveBookmarkInFavorites(HWND hTree)
         return;
 
     if (!TreeView_GetParent(hTree, hDragItemFolder))
-        dragItemFolderName[0] = TEXT('\0');
+        dragItemFolderName[0] = L'\0';
 
     // Make sure drag and target folders are different
-    if (tstring_view(dragItemFolderName.data()) == tstring_view(dropFolderName.data()))
+    if (std::wcscmp(dragItemFolderName.data(), dropFolderName.data()) == 0)
         return;
 
     // Delete tree item from source bookmark
@@ -1330,7 +1331,7 @@ OrganizeBookmarksDialog::moveBookmarkInFavorites(HWND hTree)
 
     // Now perform the move in favorites
     if (draggedFav != nullptr)
-        draggedFav->parentFolder = TCharToUTF8String(dropFolderName.data());
+        draggedFav->parentFolder = WideToUTF8String(dropFolderName.data());
 }
 
 void
@@ -1431,7 +1432,7 @@ CreateFavoritesSubMenu(const FavoritesEntry* fav,
         return;
 
     // Create a menu item that displays a popup sub menu
-    tstring favName = UTF8ToTString(fav->name);
+    std::wstring favName = UTF8ToWideString(fav->name);
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);
     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_ID;
@@ -1459,7 +1460,7 @@ CreateFavoritesSubMenu(const FavoritesEntry* fav,
         {
             GetLogger()->debug("  {}\n", child->name);
             // Add item to sub menu
-            tstring childName = UTF8ToTString(child->name);
+            std::wstring childName = UTF8ToWideString(child->name);
 
             menuInfo.cbSize = sizeof(MENUITEMINFO);
             menuInfo.fMask = MIIM_TYPE | MIIM_ID;
@@ -1481,7 +1482,7 @@ CreateFavoritesSubMenu(const FavoritesEntry* fav,
     // were added to sub menu
     if (subMenuIndex == 0)
     {
-        tstring empty = UTF8ToTString(_("(empty)"));
+        std::wstring empty = UTF8ToWideString(_("(empty)"));
         menuInfo.cbSize = sizeof(MENUITEMINFO);
         menuInfo.fMask = MIIM_TYPE | MIIM_STATE;
         menuInfo.fType = MFT_STRING;
@@ -1589,7 +1590,7 @@ BuildFavoritesMenu(HMENU menuBar,
         if (!fav->isFolder && isTopLevel(fav.get()))
         {
             // Append to bookmarksMenu
-            tstring favName = UTF8ToTString(fav->name);
+            std::wstring favName = UTF8ToWideString(fav->name);
             AppendMenu(bookmarksMenu, MF_STRING,
                        ID_BOOKMARKS_FIRSTBOOKMARK + rootResIndex,
                        favName.data());

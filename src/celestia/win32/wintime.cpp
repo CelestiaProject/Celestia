@@ -20,9 +20,7 @@
 #include <system_error>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <winuser.h>
 #include <commctrl.h>
@@ -33,8 +31,8 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include "res/resource.h"
-#include "tcharconv.h"
-#include "tstring.h"
+#include "wcharconv.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -94,10 +92,10 @@ SetTimeDialog::init(HWND _hDlg)
     useLocalTime = appCore->getTimeZoneBias() != 0;
     useUTCOffset = appCore->getDateFormat() == 2;
 
-    tstring item0 = UTF8ToTString(_("Universal Time"));
-    tstring item1 = UTF8ToTString(_("Local Time"));
-    tstring item2 = UTF8ToTString(_("Time Zone Name"));
-    tstring item3 = UTF8ToTString(_("UTC Offset"));
+    std::wstring item0 = UTF8ToWideString(_("Universal Time"));
+    std::wstring item1 = UTF8ToWideString(_("Local Time"));
+    std::wstring item2 = UTF8ToWideString(_("Time Zone Name"));
+    std::wstring item3 = UTF8ToWideString(_("UTC Offset"));
 
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item0.c_str()));
     SendDlgItemMessage(hDlg, IDC_COMBOBOX_TIMEZONE, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(item1.c_str()));
@@ -168,13 +166,13 @@ SetTimeDialog::updateControls()
     dateItem = GetDlgItem(hDlg, IDC_DATEPICKER);
     if (dateItem != NULL)
     {
-        DateTime_SetFormat(dateItem, TEXT("dd' 'MMM' 'yyy"));
+        DateTime_SetFormat(dateItem, L"dd' 'MMM' 'yyy");
         DateTime_SetSystemtime(dateItem, GDT_VALID, &sysTime);
     }
     timeItem = GetDlgItem(hDlg, IDC_TIMEPICKER);
     if (timeItem != NULL)
     {
-        DateTime_SetFormat(timeItem, TEXT("HH':'mm':'ss"));
+        DateTime_SetFormat(timeItem, L"HH':'mm':'ss");
         DateTime_SetSystemtime(timeItem, GDT_VALID, &sysTime);
     }
 
@@ -183,9 +181,9 @@ SetTimeDialog::updateControls()
     {
         auto jdUtc = astro::TAItoJDUTC(astro::TTtoTAI(astro::TDBtoTT(tdb)));
 
-        std::array<TCHAR, 16> jd;
-        jd.fill(TEXT('\0'));
-        fmt::format_to_n(jd.begin(), jd.size() - 1, TEXT("{:.5f}"), jdUtc);
+        std::array<wchar_t, 16> jd;
+        jd.fill(L'\0');
+        fmt::format_to_n(jd.begin(), jd.size() - 1, L"{:.5f}", jdUtc);
         SetWindowText(GetDlgItem(hDlg, IDC_JDPICKER), jd.data());
     }
 }
@@ -235,10 +233,10 @@ SetTimeDialog::command(WPARAM wParam, LPARAM lParam)
         case IDC_JDPICKER:
             if (HIWORD(wParam) == EN_KILLFOCUS)
             {
-                std::array<TCHAR, 16> jdStr;
+                std::array<wchar_t, 16> jdStr;
                 GetWindowText(GetDlgItem(hDlg, IDC_JDPICKER), jdStr.data(), static_cast<int>(jdStr.size()));
                 double jd;
-                if (auto ec = from_tchars(jdStr.data(), jdStr.data() + jdStr.size(), jd).ec;
+                if (auto ec = from_wchars(jdStr.data(), jdStr.data() + jdStr.size(), jd).ec;
                     ec == std::errc{})
                 {
                     tdb = astro::TTtoTDB(astro::TAItoTT(astro::JDUTCtoTAI(jd)));

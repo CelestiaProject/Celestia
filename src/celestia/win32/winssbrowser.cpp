@@ -20,7 +20,7 @@
 #include <celengine/universe.h>
 #include <celestia/celestiacore.h>
 #include "res/resource.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -29,7 +29,7 @@ namespace
 {
 
 HTREEITEM
-AddItemToTree(HWND hwndTV, tstring_view itemText, int nLevel, const void* data, HTREEITEM parent)
+AddItemToTree(HWND hwndTV, std::wstring_view itemText, int nLevel, const void* data, HTREEITEM parent)
 {
     static HTREEITEM hPrev = TVI_FIRST;
 
@@ -37,7 +37,7 @@ AddItemToTree(HWND hwndTV, tstring_view itemText, int nLevel, const void* data, 
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
 
     // Set the text of the item.
-    tvi.pszText = const_cast<TCHAR*>(itemText.data());
+    tvi.pszText = const_cast<wchar_t*>(itemText.data());
     tvi.cchTextMax = static_cast<int>(itemText.size());
 
     // Save the heading level in the item's application-defined
@@ -68,7 +68,7 @@ AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, H
         {
             HTREEITEM item;
             item = AddItemToTree(treeView,
-                                 UTF8ToTString(world->getName(true)),
+                                 UTF8ToWideString(world->getName(true)),
                                  level,
                                  world,
                                  parent);
@@ -96,7 +96,7 @@ SolarSystemBrowserProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         if (solarSys != NULL)
         {
             const Universe* u = browser->appCore->getSimulation()->getUniverse();
-            tstring starNameString = UTF8ToTString(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
+            std::wstring starNameString = UTF8ToWideString(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
             HTREEITEM rootItem = AddItemToTree(hwnd, starNameString, 1, nullptr, TVI_ROOT);
             const PlanetarySystem* planets = solarSys->getPlanets();
             if (planets != NULL)

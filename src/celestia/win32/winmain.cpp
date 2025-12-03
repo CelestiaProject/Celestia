@@ -46,7 +46,6 @@
 
 #include "res/resource.h"
 #include "odmenu.h"
-#include "tstring.h"
 #include "winbookmarks.h"
 #include "wincontextmenu.h"
 #include "windatepicker.h"
@@ -55,6 +54,7 @@
 #include "winpreferences.h"
 #include "winsplash.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
@@ -142,8 +142,8 @@ EnableFullScreen(const DEVMODE& dm)
     if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) !=
         DISP_CHANGE_SUCCESSFUL)
     {
-        tstring message = UTF8ToTString(_("Unable to switch to full screen mode; running in window mode"));
-        tstring error = UTF8ToTString(_("Error"));
+        std::wstring message = UTF8ToWideString(_("Unable to switch to full screen mode; running in window mode"));
+        std::wstring error = UTF8ToWideString(_("Error"));
         MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         return false;
     }
@@ -275,12 +275,12 @@ BuildScriptsMenu(HMENU menuBar, const std::filesystem::path& scriptsDir)
     for (int count = GetMenuItemCount(scriptMenu); count > 0; count--)
         DeleteMenu(scriptMenu, 0, MF_BYPOSITION);
 
-    fmt::basic_memory_buffer<TCHAR> buf;
+    fmt::basic_memory_buffer<wchar_t> buf;
     for (unsigned int i = 0; i < scriptMenuItems.size(); ++i)
     {
         buf.clear();
-        AppendUTF8ToTChar(scriptMenuItems[i].title, buf);
-        buf.push_back(TEXT('\0'));
+        AppendUTF8ToWide(scriptMenuItems[i].title, buf);
+        buf.push_back(L'\0');
         AppendMenu(scriptMenu, MF_STRING, ID_FIRST_SCRIPT + i, buf.data());
     }
 }
@@ -296,8 +296,8 @@ public:
         if (auto splashLock = splash.lock(); splashLock != nullptr)
             splashLock->close();
 
-        tstring tmsg = UTF8ToTString(msg);
-        tstring error = UTF8ToTString(_("Fatal Error"));
+        std::wstring tmsg = UTF8ToWideString(msg);
+        std::wstring error = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, tmsg.c_str(), error.c_str(), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
     }
 
@@ -406,8 +406,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                tstring message = UTF8ToTString(_("Directory expected after --dir"));
-                tstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("Directory expected after --dir"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -418,8 +418,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                tstring message = UTF8ToTString(_("Configuration file name expected after --conf"));
-                tstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("Configuration file name expected after --conf"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -431,8 +431,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                tstring message = UTF8ToTString(_("Directory expected after --extrasdir"));
-                tstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("Directory expected after --extrasdir"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -443,8 +443,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                tstring message = UTF8ToTString(_("URL expected after --url"));
-                tstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("URL expected after --url"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -457,14 +457,9 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         }
         else
         {
-            tstring msgTemplate = UTF8ToTString(_("Invalid command line option '{}'"));
-#ifdef _UNICODE
+            std::wstring msgTemplate = UTF8ToWideString(_("Invalid command line option '{}'"));
             std::wstring message = fmt::format(fmt::runtime(msgTemplate), arg);
-#else
-            auto tArg = WideToCurrentCP(arg);
-            std::string message = fmt::format(fmt::runtime(msgTemplate), tArg);
-#endif
-            tstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+            std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
             MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
             return false;
         }
@@ -496,13 +491,8 @@ private:
 } // end namespace celestia::win32
 
 int APIENTRY
-#ifdef _UNICODE
 wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
          LPWSTR /* lpCmdLine */, int /* nCmdShow */)
-#else
-WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-        LPSTR /* lpCmdLine */, int /* nCmdShow */)
-#endif
 {
     using namespace celestia::win32;
     namespace astro = celestia::astro;
@@ -698,8 +688,8 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     if (appCore->getConfig() == NULL)
     {
-        tstring message = UTF8ToTString(_("Confugration file missing!"));
-        tstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Confugration file missing!"));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return 1;
     }
@@ -734,8 +724,8 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         {
             if (!std::filesystem::exists(path)) // new does not
             {
-                tstring message = UTF8ToTString(_("Old favorites file detected.\nCopy to the new location?"));
-                tstring caption = UTF8ToTString(_("Copy favorites?"));
+                std::wstring message = UTF8ToWideString(_("Old favorites file detected.\nCopy to the new location?"));
+                std::wstring caption = UTF8ToWideString(_("Copy favorites?"));
                 int resp = MessageBox(NULL, message.c_str(), caption.c_str(), MB_YESNO);
                 if (resp == IDYES)
                 {
@@ -776,8 +766,8 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     if (hWnd == NULL)
     {
-        tstring message = UTF8ToTString(_("Failed to create the application window."));
-        tstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Failed to create the application window."));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return FALSE;
     }

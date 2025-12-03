@@ -20,8 +20,6 @@
 
 #include <windows.h>
 
-#include "tstring.h"
-
 class Body;
 class CelestiaCore;
 
@@ -50,7 +48,7 @@ public:
     HWND hwnd;
 
     std::vector<Eclipse> eclipseList;
-    util::array_view<tstring> monthNames;
+    util::array_view<std::wstring> monthNames;
     TargetBody targetBody;
     SYSTEMTIME fromTime, toTime;
     double TimetoSet_;

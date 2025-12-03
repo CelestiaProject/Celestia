@@ -12,15 +12,13 @@
 #include "winsplash.h"
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celimage/image.h>
 #include <celutil/gettext.h>
 #include "res/resource.h"
-#include "tstring.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -28,7 +26,7 @@ namespace celestia::win32
 namespace
 {
 
-constexpr const TCHAR className[] = TEXT("CELSPLASH");
+constexpr const wchar_t className[] = L"CELSPLASH";
 
 LRESULT CALLBACK
 SplashWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -119,8 +117,8 @@ SplashWindow::init()
 {
     hwnd = NULL;
 
-    versionString = UTF8ToTString(fmt::format(fmt::runtime(_("Version: {}")), VERSION_STRING));
-    message = versionString + TEXT('\n');
+    versionString = UTF8ToWideString(fmt::format(fmt::runtime(_("Version: {}")), VERSION_STRING));
+    message = versionString + L'\n';
     image = engine::Image::load(imageFileName);
 }
 
@@ -187,7 +185,7 @@ SplashWindow::createWindow()
     int x = (nScrWidth  - winWidth) / 2;
     int y = (nScrHeight - winHeight) / 2;
     hwnd = ::CreateWindowEx(WS_EX_TOOLWINDOW, className,
-                            TEXT("Banner"), WS_POPUP, x, y,
+                            L"Banner", WS_POPUP, x, y,
                             winWidth, winHeight, NULL, NULL, NULL, this);
 
     if (hwnd)
@@ -288,7 +286,7 @@ SplashWindow::messageLoop()
 void
 SplashWindow::setMessage(std::string_view msg)
 {
-    message = fmt::format(TEXT("{}\n{}"), versionString, UTF8ToTString(msg));
+    message = fmt::format(L"{}\n{}", versionString, UTF8ToWideString(msg));
     InvalidateRect(hwnd, NULL, FALSE);
     updateWindow();
 }

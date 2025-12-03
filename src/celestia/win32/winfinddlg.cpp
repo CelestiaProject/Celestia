@@ -24,7 +24,7 @@
 #include <celestia/celestiacore.h>
 
 #include "res/resource.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -66,13 +66,13 @@ FindObjectDialog::command(WPARAM wParam, LPARAM lParam)
     {
     case IDOK:
         {
-            std::array<TCHAR, 1024> buf;
+            std::array<wchar_t, 1024> buf;
             int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf.data(), buf.size());
             if (len <= 0)
                 return TRUE;
 
             fmt::memory_buffer pathBuf;
-            AppendTCharToUTF8(buf.data(), pathBuf);
+            AppendWideToUTF8(buf.data(), pathBuf);
             std::string_view path(pathBuf.data(), pathBuf.size());
             if (Selection sel = appCore->getSimulation()->findObjectFromPath(path, true);
                 !sel.empty())

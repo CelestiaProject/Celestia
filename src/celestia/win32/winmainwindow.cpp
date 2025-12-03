@@ -47,7 +47,6 @@
 
 #include "res/resource.h"
 #include "odmenu.h"
-#include "tstring.h"
 #include "winbookmarks.h"
 #include "wincontextmenu.h"
 #include "windisplaymodedlg.h"
@@ -66,6 +65,7 @@
 #include "wintime.h"
 #include "wintourguide.h"
 #include "winviewoptsdlg.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
@@ -97,39 +97,16 @@ setMenuItemCheck(HMENU menuBar, int menuItem, bool checked)
     CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
-// Version of the function from tstring.h with smaller intermediate buffer
+// Version of the function from wstringutils.h with smaller intermediate buffer
 // suitable for char event processing
 template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
 void
-AppendTCharCodeToUTF8(TCHAR* tch, int nch, T& destination)
+AppendTCharCodeToUTF8(wchar_t* tch, int nch, T& destination)
 {
     if (nch <= 0)
         return;
-    tstring_view source(tch, static_cast<std::size_t>(nch));
-#ifdef _UNICODE
-    AppendTCharToUTF8(source, destination);
-#else
-    fmt::basic_memory_buffer<wchar_t, 4> wbuffer;
-    int wlength = MultiByteToWideChar(CP_ACP, 0, tch, nch, nullptr, 0);
-    if (wlength <= 0)
-        return;
-
-    wbuffer.resize(static_cast<std::size_t>(wlength));
-    wlength = MultiByteToWideChar(CP_ACP, 0, tch, nch, wbuffer.data(), wlength);
-    if (wlength <= 0)
-        return;
-
-    int length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength, nullptr, 0, nullptr, nullptr);
-    if (length <= 0)
-        return;
-
-    const auto existingSize = destination.size();
-    destination.resize(existingSize + static_cast<std::size_t>(length));
-    length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength,
-                                 destination.data() + existingSize, length,
-                                 nullptr, nullptr);
-    destination.resize(length >= 0 ? (existingSize + static_cast<std::size_t>(length)) : existingSize);
-#endif
+    std::wstring_view source(tch, static_cast<std::size_t>(nch));
+    AppendWideToUTF8(source, destination);
 }
 
 unsigned int
@@ -265,7 +242,7 @@ InitJoystick()
         return false;
     }
 
-    GetLogger()->error(_("Using joystick: {}\n"), TCharToUTF8String(caps.szPname));
+    GetLogger()->error(_("Using joystick: {}\n"), WideToUTF8String(caps.szPname));
 
     return true;
 }
@@ -655,7 +632,7 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
         return;
     }
 
-    auto charCode = static_cast<TCHAR>(wParam);
+    auto charCode = static_cast<wchar_t>(wParam);
     int modifiers = 0;
     if (GetKeyState(VK_SHIFT) & 0x8000)
         modifiers |= CelestiaCore::ShiftKey;
@@ -668,7 +645,7 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
     auto oldColorTable = r->getStarColorTable();
 
     // Catch backtab (Shift+Tab)
-    if (charCode == TEXT('\011') && (modifiers & CelestiaCore::ShiftKey))
+    if (charCode == L'\011' && (modifiers & CelestiaCore::ShiftKey))
     {
         appCore->charEntered(CelestiaCore::Key_BackTab, modifiers);
     }
@@ -695,20 +672,8 @@ void
 MainWindow::imeChar(WPARAM wParam) const
 {
     fmt::basic_memory_buffer<char, 16> buffer;
-#ifdef _UNICODE
-    auto charCode = static_cast<TCHAR>(wParam);
+    auto charCode = static_cast<wchar_t>(wParam);
     AppendTCharCodeToUTF8(&charCode, 1, buffer);
-#else
-    std::array<char, 2> charSeq
-    {
-        static_cast<char>(wParam >> 8),
-        static_cast<char>(wParam & 0x0ff),
-    };
-    if (charSeq[0])
-        AppendTCharCodeToUTF8(charSeq.data(), 2, buffer);
-    else
-        AppendTCharCodeToUTF8(charSeq.data() + 1, 1, buffer);
-#endif
     buffer.push_back('\0');
     appCore->charEntered(buffer.data());
 }
@@ -1041,7 +1006,7 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_HELP_GUIDE:
-        ShellExecute(hWnd, TEXT("open"), TEXT("help\\CelestiaGuide.html"), NULL, NULL, SW_NORMAL);
+        ShellExecute(hWnd, L"open", L"help\\CelestiaGuide.html", NULL, NULL, SW_NORMAL);
         break;
 
     case ID_HELP_CONTROLS:
@@ -1136,8 +1101,8 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
     deviceContext = GetDC(hWnd);
     if (!SetDCPixelFormat(deviceContext, appCore))
     {
-        tstring message = UTF8ToTString(_("Could not get appropriate pixel format for OpenGL rendering."));
-        tstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Could not get appropriate pixel format for OpenGL rendering."));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return false;
     }
@@ -1154,8 +1119,8 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
     {
         if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
         {
-            tstring message = UTF8ToTString(_("Your system doesn't support OpenGL 2.1!"));
-            tstring error = UTF8ToTString(_("Fatal Error"));
+            std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 2.1!"));
+            std::wstring error = UTF8ToWideString(_("Fatal Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
             return false;
         }
@@ -1171,8 +1136,8 @@ MainWindow::destroyDeviceContext()
     {
         if (!ReleaseDC(hWnd, deviceContext))
         {
-            tstring message = UTF8ToTString(_("Releasing device context failed."));
-            tstring error = UTF8ToTString(_("Error"));
+            std::wstring message = UTF8ToWideString(_("Releasing device context failed."));
+            std::wstring error = UTF8ToWideString(_("Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         }
         deviceContext = nullptr;
@@ -1429,14 +1394,10 @@ MainWindow::showWWWInfo() const
     if (url.empty())
         return;
 
-#ifdef _UNICODE
     fmt::basic_memory_buffer<wchar_t> wbuffer;
     AppendUTF8ToWide(url, wbuffer);
     wbuffer.push_back(L'\0');
-    ShellExecute(hWnd, TEXT("open"), wbuffer.data(), nullptr, nullptr, 0);
-#else
-    ShellExecute(hWnd, TEXT("open"), url.c_str(), nullptr, nullptr, 0);
-#endif
+    ShellExecute(hWnd, L"open", wbuffer.data(), nullptr, nullptr, 0);
 }
 
 void
@@ -1569,8 +1530,8 @@ RegisterMainWindowClass(HINSTANCE appInstance, HCURSOR hDefaultCursor)
     ATOM result = RegisterClass(&wc);
     if (result == 0)
     {
-        tstring message = UTF8ToTString(_("Failed to register the window class."));
-        tstring fatalError = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Failed to register the window class."));
+        std::wstring fatalError = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), fatalError.c_str(), MB_OK | MB_ICONERROR);
     }
 

@@ -25,13 +25,11 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
-#ifdef _UNICODE
 #include <celutil/winutil.h>
-#endif
 
 #include <basetsd.h>
 
-#include "tstring.h"
+#include "wstringutils.h"
 
 using celestia::util::GetLogger;
 
@@ -41,7 +39,7 @@ namespace celestia::win32
 namespace
 {
 
-constexpr TCHAR CelestiaRegKey[] = TEXT("Software\\celestiaproject.space\\Celestia1.7-dev");
+constexpr wchar_t CelestiaRegKey[] = L"Software\\celestiaproject.space\\Celestia1.7-dev";
 
 template<typename T,
          std::enable_if_t<std::is_integral_v<T> && sizeof(T) == sizeof(DWORD), int> = 0>
@@ -136,33 +134,20 @@ GetRegistryString(HKEY key, LPCTSTR value, std::string& strVal)
     DWORD type;
     DWORD size;
     LSTATUS err = RegQueryValueEx(key, value, 0, &type, nullptr, &size);
-#ifdef _UNICODE
     if (err != ERROR_SUCCESS || type != REG_SZ || (size % sizeof(wchar_t)) != 0)
-#else
-    if (err != ERROR_SUCCESS || type != REG_SZ)
-#endif
         return false;
 
     if (size == 0)
         return true;
 
-#ifdef _UNICODE
     fmt::basic_memory_buffer<wchar_t> buffer;
     buffer.resize(size / sizeof(wchar_t));
-#else
-    fmt::memory_buffer buffer;
-    buffer.resize(size);
-#endif
     err = RegQueryValueEx(key, value, 0, &type,
                           reinterpret_cast<LPBYTE>(buffer.data()), &size);
-#ifdef _UNICODE
     if (err != ERROR_SUCCESS || type != REG_SZ || (size % sizeof(wchar_t)) != 0)
-#else
-    if (err != ERROR_SUCCESS || type != REG_SZ)
-#endif
         return false;
 
-    return AppendTCharToUTF8(tstring_view(buffer.data(), size), strVal) > 0;
+    return AppendWideToUTF8(std::wstring_view(buffer.data(), size), strVal) > 0;
 }
 
 template<typename T,
@@ -198,9 +183,9 @@ SetRegistryEnum(HKEY key, LPCTSTR value, T enumVal)
 bool
 SetRegistryString(HKEY key, LPCTSTR value, std::string_view strVal)
 {
-    fmt::basic_memory_buffer<TCHAR> buffer;
-    AppendUTF8ToTChar(strVal, buffer);
-    buffer.push_back(TEXT('\0'));
+    fmt::basic_memory_buffer<wchar_t> buffer;
+    AppendUTF8ToWide(strVal, buffer);
+    buffer.push_back(L'\0');
 
     LSTATUS err = RegSetValueEx(key, value, 0, REG_SZ,
                                 reinterpret_cast<const BYTE*>(buffer.data()),
@@ -243,27 +228,27 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
         return false;
     }
 
-    GetRegistryInt(key, TEXT("Width"), prefs.winWidth);
-    GetRegistryInt(key, TEXT("Height"), prefs.winHeight);
-    GetRegistryInt(key, TEXT("XPos"), prefs.winX);
-    GetRegistryInt(key, TEXT("YPos"), prefs.winY);
-    GetRegistryEnum(key, TEXT("RenderFlags"), prefs.renderFlags);
-    GetRegistryEnum(key, TEXT("LabelMode"), prefs.labelMode);
-    GetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
-    GetRegistryEnum(key, TEXT("OrbitMask"), prefs.orbitMask);
-    GetRegistryFloat(key, TEXT("VisualMagnitude"), prefs.visualMagnitude);
-    GetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
-    GetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
-    GetRegistryInt(key, TEXT("ShowLocalTime"), prefs.showLocalTime);
-    GetRegistryInt(key, TEXT("DateFormat"), prefs.dateFormat);
-    GetRegistryInt(key, TEXT("HudDetail"), prefs.hudDetail);
-    GetRegistryInt(key, TEXT("FullScreenMode"), prefs.fullScreenMode);
-    GetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
-    GetRegistryEnum(key, TEXT("StarStyle"), prefs.starStyle, StarStyle::FuzzyPointStars, StarStyle::ScaledDiscStars);
-    GetRegistryInt(key, TEXT("LastVersion"), prefs.lastVersion);
-    GetRegistryEnum(key, TEXT("TextureResolution"), prefs.textureResolution, TextureResolution::lores, TextureResolution::hires);
+    GetRegistryInt(key, L"Width", prefs.winWidth);
+    GetRegistryInt(key, L"Height", prefs.winHeight);
+    GetRegistryInt(key, L"XPos", prefs.winX);
+    GetRegistryInt(key, L"YPos", prefs.winY);
+    GetRegistryEnum(key, L"RenderFlags", prefs.renderFlags);
+    GetRegistryEnum(key, L"LabelMode", prefs.labelMode);
+    GetRegistryInt(key, L"LocationFilter", prefs.locationFilter);
+    GetRegistryEnum(key, L"OrbitMask", prefs.orbitMask);
+    GetRegistryFloat(key, L"VisualMagnitude", prefs.visualMagnitude);
+    GetRegistryFloat(key, L"AmbientLight", prefs.ambientLight);
+    GetRegistryFloat(key, L"GalaxyLightGain", prefs.galaxyLightGain);
+    GetRegistryInt(key, L"ShowLocalTime", prefs.showLocalTime);
+    GetRegistryInt(key, L"DateFormat", prefs.dateFormat);
+    GetRegistryInt(key, L"HudDetail", prefs.hudDetail);
+    GetRegistryInt(key, L"FullScreenMode", prefs.fullScreenMode);
+    GetRegistryInt(key, L"StarsColor", prefs.starsColor);
+    GetRegistryEnum(key, L"StarStyle", prefs.starStyle, StarStyle::FuzzyPointStars, StarStyle::ScaledDiscStars);
+    GetRegistryInt(key, L"LastVersion", prefs.lastVersion);
+    GetRegistryEnum(key, L"TextureResolution", prefs.textureResolution, TextureResolution::lores, TextureResolution::hires);
 
-    if (std::string altSurfaceName; GetRegistryString(key, TEXT("AltSurface"), altSurfaceName))
+    if (std::string altSurfaceName; GetRegistryString(key, L"AltSurface", altSurfaceName))
         prefs.altSurfaceName = std::move(altSurfaceName);
 
     if (prefs.lastVersion < 0x01020500)
@@ -273,7 +258,7 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     }
 
 #ifndef PORTABLE_BUILD
-    if (std::int32_t fav = 0; GetRegistryInt(key, TEXT("IgnoreOldFavorites"), fav))
+    if (std::int32_t fav = 0; GetRegistryInt(key, L"IgnoreOldFavorites", fav))
         prefs.ignoreOldFavorites = fav != 0;
 #endif
 
@@ -302,28 +287,28 @@ SavePreferencesToRegistry(AppPreferences& prefs)
 
     GetLogger()->info(_("Opened registry key\n"));
 
-    SetRegistryInt(key, TEXT("Width"), prefs.winWidth);
-    SetRegistryInt(key, TEXT("Height"), prefs.winHeight);
-    SetRegistryInt(key, TEXT("XPos"), prefs.winX);
-    SetRegistryInt(key, TEXT("YPos"), prefs.winY);
-    SetRegistryEnum(key, TEXT("RenderFlags"), prefs.renderFlags);
-    SetRegistryEnum(key, TEXT("LabelMode"), prefs.labelMode);
-    SetRegistryInt(key, TEXT("LocationFilter"), prefs.locationFilter);
-    SetRegistryInt(key, TEXT("OrbitMask"), static_cast<std::uint32_t>(prefs.orbitMask));
-    SetRegistryFloat(key, TEXT("VisualMagnitude"), prefs.visualMagnitude);
-    SetRegistryFloat(key, TEXT("AmbientLight"), prefs.ambientLight);
-    SetRegistryFloat(key, TEXT("GalaxyLightGain"), prefs.galaxyLightGain);
-    SetRegistryInt(key, TEXT("ShowLocalTime"), prefs.showLocalTime);
-    SetRegistryInt(key, TEXT("DateFormat"), prefs.dateFormat);
-    SetRegistryInt(key, TEXT("HudDetail"), prefs.hudDetail);
-    SetRegistryInt(key, TEXT("FullScreenMode"), prefs.fullScreenMode);
-    SetRegistryInt(key, TEXT("LastVersion"), prefs.lastVersion);
-    SetRegistryEnum(key, TEXT("StarStyle"), prefs.starStyle);
-    SetRegistryInt(key, TEXT("StarsColor"), prefs.starsColor);
-    SetRegistryString(key, TEXT("AltSurface"), prefs.altSurfaceName);
-    SetRegistryEnum(key, TEXT("TextureResolution"), prefs.textureResolution);
+    SetRegistryInt(key, L"Width", prefs.winWidth);
+    SetRegistryInt(key, L"Height", prefs.winHeight);
+    SetRegistryInt(key, L"XPos", prefs.winX);
+    SetRegistryInt(key, L"YPos", prefs.winY);
+    SetRegistryEnum(key, L"RenderFlags", prefs.renderFlags);
+    SetRegistryEnum(key, L"LabelMode", prefs.labelMode);
+    SetRegistryInt(key, L"LocationFilter", prefs.locationFilter);
+    SetRegistryInt(key, L"OrbitMask", static_cast<std::uint32_t>(prefs.orbitMask));
+    SetRegistryFloat(key, L"VisualMagnitude", prefs.visualMagnitude);
+    SetRegistryFloat(key, L"AmbientLight", prefs.ambientLight);
+    SetRegistryFloat(key, L"GalaxyLightGain", prefs.galaxyLightGain);
+    SetRegistryInt(key, L"ShowLocalTime", prefs.showLocalTime);
+    SetRegistryInt(key, L"DateFormat", prefs.dateFormat);
+    SetRegistryInt(key, L"HudDetail", prefs.hudDetail);
+    SetRegistryInt(key, L"FullScreenMode", prefs.fullScreenMode);
+    SetRegistryInt(key, L"LastVersion", prefs.lastVersion);
+    SetRegistryEnum(key, L"StarStyle", prefs.starStyle);
+    SetRegistryInt(key, L"StarsColor", prefs.starsColor);
+    SetRegistryString(key, L"AltSurface", prefs.altSurfaceName);
+    SetRegistryEnum(key, L"TextureResolution", prefs.textureResolution);
 #ifndef PORTABLE_BUILD
-    SetRegistryInt(key, TEXT("IgnoreOldFavorites"), prefs.ignoreOldFavorites ? INT32_C(1) : INT32_C(0));
+    SetRegistryInt(key, L"IgnoreOldFavorites", prefs.ignoreOldFavorites ? INT32_C(1) : INT32_C(0));
 #endif
 
     RegCloseKey(key);
