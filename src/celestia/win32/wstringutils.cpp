@@ -1,4 +1,4 @@
-// tstring.cpp
+// wstringutils.cpp
 //
 // Copyright (C) 2023, Celestia Development Team
 //
@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "tstring.h"
+#include "wstringutils.h"
 
 #include <algorithm>
 

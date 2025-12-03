@@ -31,8 +31,8 @@
 #include "commdlg.h"
 
 #include "res/resource.h"
-#include "tcharconv.h"
-#include "tstring.h"
+#include "wcharconv.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 
@@ -187,7 +187,7 @@ ChooseMovieParamsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 std::array<wchar_t, 24> buf;
                 int len = GetDlgItemText(hDlg, IDC_EDIT_MOVIE_BITRATE, buf.data(), buf.size());
-                if (auto ec = from_tchars(buf.data(), buf.data() + len, movieBitrate).ec; ec != std::errc{})
+                if (auto ec = from_wchars(buf.data(), buf.data() + len, movieBitrate).ec; ec != std::errc{})
                     movieBitrate = INT64_C(400000);
             }
             return TRUE;

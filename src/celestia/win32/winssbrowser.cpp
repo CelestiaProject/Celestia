@@ -20,7 +20,7 @@
 #include <celengine/universe.h>
 #include <celestia/celestiacore.h>
 #include "res/resource.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {

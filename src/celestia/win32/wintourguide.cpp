@@ -22,7 +22,7 @@
 #include <celestia/destination.h>
 
 #include "res/resource.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -45,8 +45,6 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
             if (guide == NULL)
                 return EndDialog(hDlg, 0);
             SetWindowLongPtr(hDlg, DWLP_USER, lParam);
-
-//          guide->selectedDest = NULL;
 
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_TOURGUIDE);
             const DestinationList* destinations = guide->appCore->getDestinations();

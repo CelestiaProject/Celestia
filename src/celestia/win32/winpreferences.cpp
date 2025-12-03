@@ -29,7 +29,7 @@
 
 #include <basetsd.h>
 
-#include "tstring.h"
+#include "wstringutils.h"
 
 using celestia::util::GetLogger;
 

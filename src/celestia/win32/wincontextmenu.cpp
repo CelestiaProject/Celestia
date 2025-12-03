@@ -31,8 +31,8 @@
 #include <celutil/gettext.h>
 
 #include "res/resource.h"
-#include "tstring.h"
 #include "winmainwindow.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {

@@ -1,4 +1,4 @@
-// tstring.h
+// wstringutils.h
 //
 // Copyright (C) 2023, Celestia Development Team
 //

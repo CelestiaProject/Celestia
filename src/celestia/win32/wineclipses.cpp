@@ -39,8 +39,8 @@
 
 #include "res/resource.h"
 #include "datetimehelpers.h"
-#include "tstring.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 

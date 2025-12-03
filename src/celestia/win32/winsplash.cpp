@@ -17,8 +17,8 @@
 #include <celimage/image.h>
 #include <celutil/gettext.h>
 #include "res/resource.h"
-#include "tstring.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {

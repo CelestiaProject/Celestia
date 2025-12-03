@@ -19,8 +19,6 @@
 
 #include <celestia/celestiacore.h>
 
-#include "tstring.h"
-
 using namespace std::string_view_literals;
 
 namespace celestia::win32
