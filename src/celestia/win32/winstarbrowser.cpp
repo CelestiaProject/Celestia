@@ -50,11 +50,11 @@ InitStarBrowserColumns(HWND listView)
     constexpr std::size_t numColumns = 5;
     std::array<std::wstring, numColumns> headers
     {
-        UTF8ToTString(_("Name")),
-        UTF8ToTString(_("Distance (ly)")),
-        UTF8ToTString(_("App. mag")),
-        UTF8ToTString(_("Abs. mag")),
-        UTF8ToTString(_("Type")),
+        UTF8ToWideString(_("Name")),
+        UTF8ToWideString(_("Distance (ly)")),
+        UTF8ToWideString(_("App. mag")),
+        UTF8ToWideString(_("Abs. mag")),
+        UTF8ToWideString(_("Type")),
     };
 
     constexpr std::array<int, numColumns> widths
@@ -205,7 +205,7 @@ void StarBrowserDisplayItem(NMLVDISPINFO* nm, StarBrowser* browser)
     case 0:
         {
             Universe* u = browser->appCore->getSimulation()->getUniverse();
-            int length = UTF8ToTChar(u->getStarCatalog()->getStarName(*record->star, true), nm->item.pszText, nm->item.cchTextMax - 1);
+            int length = UTF8ToWide(u->getStarCatalog()->getStarName(*record->star, true), nm->item.pszText, nm->item.cchTextMax - 1);
             nm->item.pszText[length] = L'\0';
             break;
         }
@@ -229,7 +229,7 @@ void StarBrowserDisplayItem(NMLVDISPINFO* nm, StarBrowser* browser)
         }
     case 4:
         {
-            int length = UTF8ToTChar(record->star->getSpectralType(), nm->item.pszText, nm->item.cchTextMax - 1);
+            int length = UTF8ToWide(record->star->getSpectralType(), nm->item.pszText, nm->item.cchTextMax - 1);
             nm->item.pszText[length] = L'\0';
             break;
         }

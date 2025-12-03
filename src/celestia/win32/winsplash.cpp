@@ -117,7 +117,7 @@ SplashWindow::init()
 {
     hwnd = NULL;
 
-    versionString = UTF8ToTString(fmt::format(fmt::runtime(_("Version: {}")), VERSION_STRING));
+    versionString = UTF8ToWideString(fmt::format(fmt::runtime(_("Version: {}")), VERSION_STRING));
     message = versionString + L'\n';
     image = engine::Image::load(imageFileName);
 }
@@ -286,7 +286,7 @@ SplashWindow::messageLoop()
 void
 SplashWindow::setMessage(std::string_view msg)
 {
-    message = fmt::format(L"{}\n{}", versionString, UTF8ToTString(msg));
+    message = fmt::format(L"{}\n{}", versionString, UTF8ToWideString(msg));
     InvalidateRect(hwnd, NULL, FALSE);
     updateWindow();
 }

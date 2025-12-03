@@ -147,7 +147,7 @@ GetRegistryString(HKEY key, LPCTSTR value, std::string& strVal)
     if (err != ERROR_SUCCESS || type != REG_SZ || (size % sizeof(wchar_t)) != 0)
         return false;
 
-    return AppendTCharToUTF8(std::wstring_view(buffer.data(), size), strVal) > 0;
+    return AppendWideToUTF8(std::wstring_view(buffer.data(), size), strVal) > 0;
 }
 
 template<typename T,

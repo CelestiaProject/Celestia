@@ -51,38 +51,11 @@ AppendUTF8ToWide(std::string_view source, T& destination)
     return wideLength;
 }
 
-template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, wchar_t>, int> = 0>
-int
-AppendCurrentCPToWide(std::string_view source, T& destination)
-{
-    if (source.empty())
-        return 0;
-
-    const auto sourceSize = static_cast<int>(source.size());
-    int wideLength = MultiByteToWideChar(CP_ACP, 0, source.data(), sourceSize, nullptr, 0);
-    if (wideLength <= 0)
-        return 0;
-
-    const auto existingSize = destination.size();
-    destination.resize(existingSize + static_cast<std::size_t>(wideLength));
-    wideLength = MultiByteToWideChar(CP_ACP, 0,
-                                     source.data(), sourceSize,
-                                     destination.data() + existingSize, wideLength);
-    if (wideLength <= 0)
-    {
-        destination.resize(existingSize);
-        return 0;
-    }
-
-    destination.resize(existingSize + static_cast<std::size_t>(wideLength));
-    return wideLength;
-}
-
-// UTF-8 to TCHAR, fixed buffer
-int UTF8ToTChar(std::string_view str, wchar_t* dest, int destSize);
+// UTF-8 to wchar_t, fixed buffer
+int UTF8ToWide(std::string_view str, wchar_t* dest, int destSize);
 
 inline std::wstring
-UTF8ToTString(std::string_view str)
+UTF8ToWideString(std::string_view str)
 {
     std::wstring result;
     AppendUTF8ToWide(str, result);
@@ -91,7 +64,7 @@ UTF8ToTString(std::string_view str)
 
 template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
 int
-AppendTCharToUTF8(std::wstring_view source, T& destination)
+AppendWideToUTF8(std::wstring_view source, T& destination)
 {
     if (source.empty())
         return 0;
@@ -118,10 +91,10 @@ AppendTCharToUTF8(std::wstring_view source, T& destination)
 }
 
 inline std::string
-TCharToUTF8String(std::wstring_view tstr)
+WideToUTF8String(std::wstring_view tstr)
 {
     std::string result;
-    AppendTCharToUTF8(tstr, result);
+    AppendWideToUTF8(tstr, result);
     return result;
 }
 

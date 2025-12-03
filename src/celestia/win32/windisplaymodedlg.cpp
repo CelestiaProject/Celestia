@@ -41,7 +41,7 @@ DisplayModeDialogInit(HWND hDlg, DisplayModeDialog* displayModeDlg)
     HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_RESOLUTION);
 
     // Add windowed mode as the first item on the menu
-    std::wstring str = UTF8ToTString(_("Windowed Mode"));
+    std::wstring str = UTF8ToWideString(_("Windowed Mode"));
     SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(str.c_str()));
 
     fmt::basic_memory_buffer<wchar_t> buf;

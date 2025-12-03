@@ -142,8 +142,8 @@ EnableFullScreen(const DEVMODE& dm)
     if (ChangeDisplaySettings(&devMode, CDS_FULLSCREEN) !=
         DISP_CHANGE_SUCCESSFUL)
     {
-        std::wstring message = UTF8ToTString(_("Unable to switch to full screen mode; running in window mode"));
-        std::wstring error = UTF8ToTString(_("Error"));
+        std::wstring message = UTF8ToWideString(_("Unable to switch to full screen mode; running in window mode"));
+        std::wstring error = UTF8ToWideString(_("Error"));
         MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         return false;
     }
@@ -296,8 +296,8 @@ public:
         if (auto splashLock = splash.lock(); splashLock != nullptr)
             splashLock->close();
 
-        std::wstring tmsg = UTF8ToTString(msg);
-        std::wstring error = UTF8ToTString(_("Fatal Error"));
+        std::wstring tmsg = UTF8ToWideString(msg);
+        std::wstring error = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, tmsg.c_str(), error.c_str(), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
     }
 
@@ -406,8 +406,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                std::wstring message = UTF8ToTString(_("Directory expected after --dir"));
-                std::wstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("Directory expected after --dir"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -418,8 +418,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                std::wstring message = UTF8ToTString(_("Configuration file name expected after --conf"));
-                std::wstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("Configuration file name expected after --conf"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -431,8 +431,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                std::wstring message = UTF8ToTString(_("Directory expected after --extrasdir"));
-                std::wstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("Directory expected after --extrasdir"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -443,8 +443,8 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         {
             if (isLastArg)
             {
-                std::wstring message = UTF8ToTString(_("URL expected after --url"));
-                std::wstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+                std::wstring message = UTF8ToWideString(_("URL expected after --url"));
+                std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
                 MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
                 return false;
             }
@@ -457,9 +457,9 @@ parseCommandLine(int argc, LPWSTR* argv, StartupOptions& options)
         }
         else
         {
-            std::wstring msgTemplate = UTF8ToTString(_("Invalid command line option '{}'"));
+            std::wstring msgTemplate = UTF8ToWideString(_("Invalid command line option '{}'"));
             std::wstring message = fmt::format(fmt::runtime(msgTemplate), arg);
-            std::wstring caption = UTF8ToTString(_("Celestia Command Line Error"));
+            std::wstring caption = UTF8ToWideString(_("Celestia Command Line Error"));
             MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
             return false;
         }
@@ -688,8 +688,8 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     if (appCore->getConfig() == NULL)
     {
-        std::wstring message = UTF8ToTString(_("Confugration file missing!"));
-        std::wstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Confugration file missing!"));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return 1;
     }
@@ -724,8 +724,8 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         {
             if (!std::filesystem::exists(path)) // new does not
             {
-                std::wstring message = UTF8ToTString(_("Old favorites file detected.\nCopy to the new location?"));
-                std::wstring caption = UTF8ToTString(_("Copy favorites?"));
+                std::wstring message = UTF8ToWideString(_("Old favorites file detected.\nCopy to the new location?"));
+                std::wstring caption = UTF8ToWideString(_("Copy favorites?"));
                 int resp = MessageBox(NULL, message.c_str(), caption.c_str(), MB_YESNO);
                 if (resp == IDYES)
                 {
@@ -766,8 +766,8 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     if (hWnd == NULL)
     {
-        std::wstring message = UTF8ToTString(_("Failed to create the application window."));
-        std::wstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Failed to create the application window."));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return FALSE;
     }

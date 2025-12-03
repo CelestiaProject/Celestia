@@ -68,7 +68,7 @@ AddPlanetarySystemToTree(const PlanetarySystem* sys, HWND treeView, int level, H
         {
             HTREEITEM item;
             item = AddItemToTree(treeView,
-                                 UTF8ToTString(world->getName(true)),
+                                 UTF8ToWideString(world->getName(true)),
                                  level,
                                  world,
                                  parent);
@@ -96,7 +96,7 @@ SolarSystemBrowserProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         if (solarSys != NULL)
         {
             const Universe* u = browser->appCore->getSimulation()->getUniverse();
-            std::wstring starNameString = UTF8ToTString(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
+            std::wstring starNameString = UTF8ToWideString(u->getStarCatalog()->getStarName(*(solarSys->getStar())));
             HTREEITEM rootItem = AddItemToTree(hwnd, starNameString, 1, nullptr, TVI_ROOT);
             const PlanetarySystem* planets = solarSys->getPlanets();
             if (planets != NULL)
