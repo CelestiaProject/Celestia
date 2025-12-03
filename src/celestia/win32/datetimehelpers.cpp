@@ -26,7 +26,7 @@ namespace celestia::win32
 namespace
 {
 
-std::vector<tstring>
+std::vector<std::wstring>
 CreateLocalizedMonthNames()
 {
     constexpr std::size_t monthCount = 12;
@@ -47,15 +47,15 @@ CreateLocalizedMonthNames()
         CAL_SABBREVMONTHNAME12,
     };
 
-    constexpr std::array<tstring_view, monthCount> defaultMonthNames
+    constexpr std::array<std::wstring_view, monthCount> defaultMonthNames
     {
-        TEXT("Jan"sv), TEXT("Feb"sv), TEXT("Mar"sv),
-        TEXT("Apr"sv), TEXT("May"sv), TEXT("Jun"sv),
-        TEXT("Jul"sv), TEXT("Aug"sv), TEXT("Sep"sv),
-        TEXT("Oct"sv), TEXT("Nov"sv), TEXT("Dec"sv),
+        L"Jan"sv, L"Feb"sv, L"Mar"sv,
+        L"Apr"sv, L"May"sv, L"Jun"sv,
+        L"Jul"sv, L"Aug"sv, L"Sep"sv,
+        L"Oct"sv, L"Nov"sv, L"Dec"sv,
     };
 
-    std::vector<tstring> months;
+    std::vector<std::wstring> months;
     months.reserve(monthCount);
 
     for (std::size_t i = 0; i < monthCount; ++i)
@@ -82,10 +82,10 @@ CreateLocalizedMonthNames()
 
 } // end unnamed namespace
 
-util::array_view<tstring>
+util::array_view<std::wstring>
 GetLocalizedMonthNames()
 {
-    static const std::vector<tstring> monthNames = CreateLocalizedMonthNames();
+    static const std::vector<std::wstring> monthNames = CreateLocalizedMonthNames();
     return monthNames;
 }
 

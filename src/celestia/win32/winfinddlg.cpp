@@ -66,7 +66,7 @@ FindObjectDialog::command(WPARAM wParam, LPARAM lParam)
     {
     case IDOK:
         {
-            std::array<TCHAR, 1024> buf;
+            std::array<wchar_t, 1024> buf;
             int len = GetDlgItemText(hDlg, IDC_FINDOBJECT_EDIT, buf.data(), buf.size());
             if (len <= 0)
                 return TRUE;

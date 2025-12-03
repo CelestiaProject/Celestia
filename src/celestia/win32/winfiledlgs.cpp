@@ -94,8 +94,8 @@ HandleCaptureImage(HWND hWnd, CelestiaCore* appCore)
     ContentType type = DetermineFileType(filename);
     if (type != ContentType::JPEG && type != ContentType::PNG)
     {
-        tstring errorMessage = UTF8ToTString(_("Please use a name ending in '.jpg' or '.png'."));
-        tstring error = UTF8ToTString(_("Error"));
+        std::wstring errorMessage = UTF8ToTString(_("Please use a name ending in '.jpg' or '.png'."));
+        std::wstring error = UTF8ToTString(_("Error"));
         MessageBox(hWnd, errorMessage.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         return;
     }
@@ -104,8 +104,8 @@ HandleCaptureImage(HWND hWnd, CelestiaCore* appCore)
     appCore->draw();
     if (!appCore->saveScreenShot(filename))
     {
-        tstring errorMessage = UTF8ToTString(_("Could not save image file."));
-        tstring error = UTF8ToTString(_("Error"));
+        std::wstring errorMessage = UTF8ToTString(_("Could not save image file."));
+        std::wstring error = UTF8ToTString(_("Error"));
         MessageBox(hWnd, errorMessage.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
     }
 }

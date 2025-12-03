@@ -105,20 +105,12 @@ InitDialog(HWND hDlg)
 {
     HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_SIZE);
     fmt::basic_memory_buffer<wchar_t, 128> buf;
-#ifndef _UNICODE
-    fmt::basic_memory_buffer<char, 128> acpBuf;
-#endif
     for (const auto& movieSize : MovieSizes)
     {
         buf.clear();
         fmt::format_to(std::back_inserter(buf), L"{} x {}", movieSize.width, movieSize.height);
         buf.push_back(L'\0');
-#ifdef _UNICODE
         SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(buf.data()));
-#else
-        AppendWideToCurrentCP(std::wstring_view(buf.data(), buf.size()), acpBuf);
-        SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(acpBuf.data()));
-#endif
     }
     SendMessage(hwnd, CB_SETCURSEL, movieSize, 0);
 
@@ -128,32 +120,21 @@ InitDialog(HWND hDlg)
         buf.clear();
         fmt::format_to(std::back_inserter(buf), L"{:.2f}", frameRate);
         buf.push_back(L'\0');
-#ifdef _UNICODE
         SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(buf.data()));
-#else
-        AppendWideToCurrentCP(std::wstring_view(buf.data(), buf.size()), acpBuf);
-        SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(acpBuf.data()));
-#endif
     }
     SendMessage(hwnd, CB_SETCURSEL, movieFramerate, 0);
 
     hwnd = GetDlgItem(hDlg, IDC_COMBO_MOVIE_CODEC);
     for (const auto& movieCodec : MovieCodecs)
     {
-#ifdef _UNICODE
         buf.clear();
-        AppendUTF8ToTChar(_(movieCodec.codecDesc), buf);
+        AppendUTF8ToWide(_(movieCodec.codecDesc), buf);
         SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(buf.data()));
-#else
-        acpBuf.clear();
-        AppendUTF8ToTChar(_(movieCodec.codecDesc), acpBuf);
-        SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(acpBuf.data()));
-#endif
     }
     SendMessage(hwnd, CB_SETCURSEL, movieCodec, 0);
 
     hwnd = GetDlgItem(hDlg, IDC_EDIT_MOVIE_BITRATE);
-    SetWindowText(hwnd, TEXT("400000"));
+    SetWindowText(hwnd, L"400000");
 
     return TRUE;
 }
@@ -204,7 +185,7 @@ ChooseMovieParamsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (HIWORD(wParam) == EN_CHANGE)
             {
-                std::array<TCHAR, 24> buf;
+                std::array<wchar_t, 24> buf;
                 int len = GetDlgItemText(hDlg, IDC_EDIT_MOVIE_BITRATE, buf.data(), buf.size());
                 if (auto ec = from_tchars(buf.data(), buf.data() + len, movieBitrate).ec; ec != std::errc{})
                     movieBitrate = INT64_C(400000);
