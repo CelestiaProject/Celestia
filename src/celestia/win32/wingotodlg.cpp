@@ -18,18 +18,12 @@
 #include <cstddef>
 #include <string_view>
 #include <system_error>
-#ifdef _UNICODE
 #include <cwctype>
-#else
-#include <cctype>
-#endif
 
 #include <Eigen/Core>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celastro/astro.h>
 #include <celengine/body.h>

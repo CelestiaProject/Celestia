@@ -22,9 +22,7 @@
 #include <string_view>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celastro/date.h>
 #include <celutil/array_view.h>

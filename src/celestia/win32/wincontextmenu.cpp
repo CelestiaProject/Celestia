@@ -55,28 +55,11 @@ IntStrPairComparer::operator()(const IntStrPair& lhs, const IntStrPair& rhs) con
     if (rhs.second.empty())
         return false;
 
-#ifdef _UNICODE
     const auto length0 = static_cast<int>(lhs.second.size());
     const auto length1 = static_cast<int>(rhs.second.size());
     int result = CompareStringEx(LOCALE_NAME_USER_DEFAULT, NORM_LINGUISTIC_CASING,
                                  lhs.second.data(), length0, rhs.second.data(), length1,
                                  nullptr, nullptr, 0);
-#else
-    fmt::basic_memory_buffer<wchar_t, 256> wname0;
-    int wlength0 = AppendCurrentCPToWide(lhs.second, wname0);
-    if (wlength0 <= 0)
-        return lhs < rhs;
-
-    fmt::basic_memory_buffer<wchar_t, 256> wname1;
-    int wlength1 = AppendCurrentCPToWide(rhs.second, wname1);
-    if (wlength1 < 0)
-        return lhs < rhs;
-
-    int result = CompareStringEx(LOCALE_NAME_USER_DEFAULT, NORM_LINGUISTIC_CASING,
-                                 wname0.data(), wlength0,
-                                 wname1.data(), wlength1,
-                                 nullptr, nullptr, 0);
-#endif
 
     if (result == 0)
         return lhs < rhs;
