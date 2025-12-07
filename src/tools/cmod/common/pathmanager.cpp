@@ -1,5 +1,6 @@
 #include "pathmanager.h"
 
+#include <cstddef>
 
 namespace cmodtools
 {
@@ -12,7 +13,7 @@ PathManager::PathManager()
         if (it == handles.end())
         {
             paths.push_back(path);
-            ResourceHandle result = paths.size() - 1;
+            auto result = static_cast<ResourceHandle>(paths.size() - 1);
             handles.insert({ path, result });
             return result;
         }
@@ -21,7 +22,7 @@ PathManager::PathManager()
             return it->second;
         }
     };
-    getSource = [&](ResourceHandle handle) { return paths[handle]; };
+    getSource = [&](ResourceHandle handle) { return paths[static_cast<std::size_t>(handle)]; };
 }
 
 void
@@ -30,7 +31,6 @@ PathManager::reset()
     paths.clear();
     handles.clear();
 }
-
 
 PathManager*
 GetPathManager()

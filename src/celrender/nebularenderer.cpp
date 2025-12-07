@@ -77,7 +77,7 @@ void
 NebulaRenderer::renderNebula(const Object &obj) const
 {
     Geometry *g = nullptr;
-    if (auto geometry = obj.nebula->getGeometry(); geometry != InvalidResource)
+    if (auto geometry = obj.nebula->getGeometry(); geometry != ResourceHandle::InvalidResource)
         g = engine::GetGeometryManager()->find(geometry);
     if (g == nullptr)
         return;

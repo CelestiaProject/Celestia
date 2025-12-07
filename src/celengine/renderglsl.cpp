@@ -201,7 +201,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             util::is_set(renderFlags, RenderFlags::ShowCloudShadows))
         {
             Texture* cloudTex = nullptr;
-            if (atmosphere->cloudTexture.texture(textureRes) != InvalidResource)
+            if (atmosphere->cloudTexture.texture(textureRes) != ResourceHandle::InvalidResource)
                 cloudTex = atmosphere->cloudTexture.find(textureRes);
 
             // The current implementation of cloud shadows is not compatible
@@ -466,7 +466,7 @@ void renderGeometry_GLSL(Geometry* geometry,
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the geometry file.
-    if (texOverride != InvalidResource)
+    if (texOverride != ResourceHandle::InvalidResource)
     {
         cmod::Material m;
         m.diffuse = cmod::Color(ri.color);
@@ -509,7 +509,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the model file.
-    if (texOverride != InvalidResource)
+    if (texOverride != ResourceHandle::InvalidResource)
     {
         cmod::Material m;
         m.diffuse = cmod::Color(ri.color);

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <ios>
@@ -31,7 +32,7 @@ TEST_CASE("CMOD binary to ASCII roundtrip")
             return static_cast<ResourceHandle>(it - paths.cbegin());
         }
     };
-    cmod::SourceGetter sourceGetter = [&](ResourceHandle handle) { return paths[handle]; };
+    cmod::SourceGetter sourceGetter = [&](ResourceHandle handle) { return paths[static_cast<std::size_t>(handle)]; };
 
     std::ifstream f("testmodel.cmod", std::ios::in | std::ios::binary);
     REQUIRE(f.good());

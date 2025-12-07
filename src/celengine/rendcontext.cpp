@@ -139,7 +139,7 @@ RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& grou
     // emissive texture.
     ResourceHandle emissiveMap = material->getMap(cmod::TextureSemantic::EmissiveMap);
 
-    if (renderPass == EmissivePass && emissiveMap == InvalidResource)
+    if (renderPass == EmissivePass && emissiveMap == ResourceHandle::InvalidResource)
     {
         return;
     }
@@ -304,7 +304,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     ResourceHandle specularMap = m.getMap(cmod::TextureSemantic::SpecularMap);
     ResourceHandle emissiveMap = m.getMap(cmod::TextureSemantic::EmissiveMap);
 
-    if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
+    if (diffuseMap != ResourceHandle::InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
@@ -314,7 +314,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         }
     }
 
-    if (normalMap != InvalidResource)
+    if (normalMap != ResourceHandle::InvalidResource)
     {
         bumpTex = GetTextureManager()->find(normalMap);
         if (bumpTex != nullptr)
@@ -344,7 +344,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         }
     }
 
-    if (emissiveMap != InvalidResource)
+    if (emissiveMap != ResourceHandle::InvalidResource)
     {
         emissiveTex = GetTextureManager()->find(emissiveMap);
         if (emissiveTex != nullptr)
@@ -607,7 +607,7 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     shaderProps.texUsage = TexUsage::SharedTextureCoords;
 
     ResourceHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
-    if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
+    if (diffuseMap != ResourceHandle::InvalidResource && (useTexCoords || usePointSize))
     {
         baseTex = GetTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)

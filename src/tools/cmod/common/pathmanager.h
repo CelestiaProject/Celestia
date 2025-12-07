@@ -7,7 +7,6 @@
 #include <celmodel/modelfile.h>
 #include <celutil/reshandle.h>
 
-
 namespace cmodtools
 {
 
@@ -25,7 +24,6 @@ private:
     std::vector<std::filesystem::path> paths{ };
     std::map<std::filesystem::path, ResourceHandle> handles{ };
 };
-
 
 extern PathManager* GetPathManager();
 

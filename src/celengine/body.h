@@ -381,7 +381,7 @@ private:
 
     float cullingRadius{ 0.0f };
 
-    ResourceHandle geometry{ InvalidResource };
+    ResourceHandle geometry{ ResourceHandle::InvalidResource };
     float geometryScale{ 1.0f };
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 

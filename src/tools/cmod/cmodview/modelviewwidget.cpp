@@ -399,17 +399,17 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
     // Bits 8-15 are texture map info
     if (hasTexCoords)
     {
-        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != ResourceHandle::InvalidResource)
             info |= DiffuseMapMask;
-        if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::SpecularMap) != ResourceHandle::InvalidResource)
             info |= SpecularMapMask;
-        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
             info |= NormalMapMask;
-        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != ResourceHandle::InvalidResource)
             info |= EmissiveMapMask;
 
         // Bit 16 is set if the normal map is compressed
-        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource &&
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != ResourceHandle::InvalidResource &&
             hasTangents &&
             cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
         {
@@ -453,22 +453,22 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
         for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
         {
             const cmod::Material* material = m_model->getMaterial(i);
-            if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::DiffuseMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
                     toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
             }
-            if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
                     toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
             }
-            if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::SpecularMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
                     toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
             }
-            if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
+            if (material->getMap(cmod::TextureSemantic::EmissiveMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
                     toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));

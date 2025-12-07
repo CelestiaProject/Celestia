@@ -55,10 +55,10 @@ public:
         HII_Region         = 6,
         Protoplanetary     = 7
     };
-    
+
     Type getNebulaType() const;
 
 private:
-    ResourceHandle geometry{ InvalidResource };
+    ResourceHandle geometry{ ResourceHandle::InvalidResource };
     Type type{ Type::NotDefined };
 };

@@ -91,7 +91,7 @@ Body::setDefaultProperties()
     emissivity = 1.0f;
     internalHeatFlux = 0.0f;
     geometryOrientation = Eigen::Quaternionf::Identity();
-    geometry = InvalidResource;
+    geometry = ResourceHandle::InvalidResource;
     surface = Surface(Color::White);
     auto manager = GetBodyFeaturesManager();
     manager->setAtmosphere(this, nullptr);
@@ -290,7 +290,7 @@ Body::getRotationModel(double tdb) const
 float
 Body::getBoundingRadius() const
 {
-    if (geometry == InvalidResource)
+    if (geometry == ResourceHandle::InvalidResource)
         return radius;
 
     return radius * numbers::sqrt3_v<float>;
@@ -501,7 +501,7 @@ Body::getRadius() const
 bool
 Body::isSphere() const
 {
-    return (geometry == InvalidResource) &&
+    return (geometry == ResourceHandle::InvalidResource) &&
            (semiAxes.x() == semiAxes.y()) &&
            (semiAxes.x() == semiAxes.z());
 }
@@ -512,7 +512,7 @@ Body::isSphere() const
 bool
 Body::isEllipsoid() const
 {
-    return geometry == InvalidResource;
+    return geometry == ResourceHandle::InvalidResource;
 }
 
 const
@@ -1414,7 +1414,7 @@ BodyFeaturesManager::computeLocations(const Body* body)
 
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     auto geometry = body->getGeometry();
-    if (geometry == InvalidResource)
+    if (geometry == ResourceHandle::InvalidResource)
         return;
 
     const Geometry* g = engine::GetGeometryManager()->find(geometry);
