@@ -162,7 +162,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
         !math::testIntersection(pickInfo.pickRay, math::Sphered(bpos, radius), distance))
         return true;
 
-    if (body->getGeometry() == InvalidResource)
+    if (body->getGeometry() == ResourceHandle::InvalidResource)
     {
         // There's no mesh, so the object is an ellipsoid.  If it's
         // spherical, we've already done all the work we need to. Otherwise,

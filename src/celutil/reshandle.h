@@ -9,6 +9,7 @@
 
 #pragma once
 
-using ResourceHandle = int;
-
-constexpr inline ResourceHandle InvalidResource = -1;
+enum class ResourceHandle : int
+{
+    InvalidResource = -1,
+};

@@ -180,22 +180,22 @@ MaterialWidget::setMaterial(const cmod::Material& material)
     m_opacity->setText(QString::number(m_material.opacity));
     m_specularPower->setText(QString::number(m_material.specularPower));
 
-    if (m_material.getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
+    if (m_material.getMap(cmod::TextureSemantic::DiffuseMap) != ResourceHandle::InvalidResource)
         selectComboBoxItem(m_baseTexture,
                            cmodtools::GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::DiffuseMap)));
     else
         m_baseTexture->setCurrentIndex(0);
-    if (m_material.getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
+    if (m_material.getMap(cmod::TextureSemantic::SpecularMap) != ResourceHandle::InvalidResource)
         selectComboBoxItem(m_specularMap,
                            cmodtools::GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::SpecularMap)));
     else
         m_specularMap->setCurrentIndex(0);
-    if (m_material.getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
+    if (m_material.getMap(cmod::TextureSemantic::EmissiveMap) != ResourceHandle::InvalidResource)
         selectComboBoxItem(m_emissiveMap,
                            cmodtools::GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::EmissiveMap)));
     else
         m_emissiveMap->setCurrentIndex(0);
-    if (m_material.getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
+    if (m_material.getMap(cmod::TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
         selectComboBoxItem(m_normalMap,
                            cmodtools::GetPathManager()->getSource(m_material.getMap(cmod::TextureSemantic::NormalMap)));
     else
@@ -278,28 +278,28 @@ MaterialWidget::changeMaterialParameters()
     m_material.opacity = m_opacity->text().toFloat();
     m_material.specularPower = m_specularPower->text().toFloat();
 
-    m_material.setMap(cmod::TextureSemantic::DiffuseMap, InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::DiffuseMap, ResourceHandle::InvalidResource);
     if (!m_baseTexture->itemData(m_baseTexture->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::DiffuseMap,
                           cmodtools::GetPathManager()->getHandle(m_baseTexture->currentText().toStdString()));
     }
 
-    m_material.setMap(cmod::TextureSemantic::SpecularMap, InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::SpecularMap, ResourceHandle::InvalidResource);
     if (!m_specularMap->itemData(m_specularMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::SpecularMap,
                           cmodtools::GetPathManager()->getHandle(m_specularMap->currentText().toStdString()));
     }
 
-    m_material.setMap(cmod::TextureSemantic::NormalMap, InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::NormalMap, ResourceHandle::InvalidResource);
     if (!m_normalMap->itemData(m_normalMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::NormalMap,
                           cmodtools::GetPathManager()->getHandle(m_normalMap->currentText().toStdString()));
     }
 
-    m_material.setMap(cmod::TextureSemantic::EmissiveMap, InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::EmissiveMap, ResourceHandle::InvalidResource);
     if (!m_emissiveMap->itemData(m_emissiveMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::EmissiveMap,

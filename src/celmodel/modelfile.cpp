@@ -799,7 +799,7 @@ AsciiModelLoader::load()
                     return nullptr;
                 }
 
-                if (material.getMap(TextureSemantic::NormalMap) != InvalidResource)
+                if (material.getMap(TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
                     hasNormalMap = true;
 
                 model->addMaterial(std::move(material));
@@ -1199,7 +1199,7 @@ AsciiModelWriter::writeMaterial(const Material& material)
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
         std::filesystem::path texSource;
-        if (material.maps[i] != InvalidResource)
+        if (material.maps[i] != ResourceHandle::InvalidResource)
         {
             texSource = getSource(material.maps[i]);
         }
@@ -1417,7 +1417,7 @@ BinaryModelLoader::load()
                 return nullptr;
             }
 
-            if (material.getMap(TextureSemantic::NormalMap) != InvalidResource)
+            if (material.getMap(TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
                 hasNormalMap = true;
 
 
@@ -2023,7 +2023,7 @@ BinaryModelWriter::writeMaterial(const Material& material)
 
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
-        if (material.maps[i] != InvalidResource)
+        if (material.maps[i] != ResourceHandle::InvalidResource)
         {
             std::filesystem::path texSource = getSource(material.maps[i]);
             if (!texSource.empty()

@@ -23,9 +23,7 @@ constexpr auto hiresIndex = static_cast<std::size_t>(TextureResolution::hires);
 
 MultiResTexture::MultiResTexture()
 {
-    tex[loresIndex] = InvalidResource;
-    tex[medresIndex] = InvalidResource;
-    tex[hiresIndex] = InvalidResource;
+    tex.fill(ResourceHandle::InvalidResource);
 }
 
 
@@ -102,7 +100,7 @@ Texture* MultiResTexture::find(TextureResolution resolution)
 
 bool MultiResTexture::isValid() const
 {
-    return (tex[loresIndex] != InvalidResource ||
-            tex[medresIndex] != InvalidResource ||
-            tex[hiresIndex] != InvalidResource);
+    return (tex[loresIndex] != ResourceHandle::InvalidResource ||
+            tex[medresIndex] != ResourceHandle::InvalidResource ||
+            tex[hiresIndex] != ResourceHandle::InvalidResource);
 }

@@ -137,7 +137,7 @@ private:
     std::array<char, 8> spectralType{ };
 
     MultiResTexture texture;
-    ResourceHandle geometry{ InvalidResource };
+    ResourceHandle geometry{ ResourceHandle::InvalidResource };
 
     std::shared_ptr<const celestia::ephem::Orbit> orbit;
     float orbitalRadius{ 0.0f };

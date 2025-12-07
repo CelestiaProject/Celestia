@@ -74,7 +74,7 @@ Model::addMaterial(Material&& m)
     // if it forces multipass rendering when it's not required.
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
-        if (m.maps[i] != InvalidResource)
+        if (m.maps[i] != ResourceHandle::InvalidResource)
         {
             textureUsage[i] = true;
         }
@@ -95,7 +95,7 @@ Model::setMaterial(unsigned int index, Material&& m)
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
         textureUsage[i] = std::any_of(materials.cbegin(), materials.cend(),
-                                      [&](const Material& mat) { return mat.maps[i] != InvalidResource; });
+                                      [&](const Material& mat) { return mat.maps[i] != ResourceHandle::InvalidResource; });
     }
 
     return true;

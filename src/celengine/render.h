@@ -387,7 +387,7 @@ class Renderer
         float radius{ 1.0f };
         float geometryScale{ 1.0f };
         Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
-        ResourceHandle geometry{ InvalidResource };
+        ResourceHandle geometry{ ResourceHandle::InvalidResource };
         Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
         LightingState::EclipseShadowVector* eclipseShadows;
     };

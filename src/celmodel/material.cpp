@@ -17,7 +17,7 @@ namespace cmod
 
 Material::Material()
 {
-    maps.fill(InvalidResource);
+    maps.fill(ResourceHandle::InvalidResource);
 }
 
 

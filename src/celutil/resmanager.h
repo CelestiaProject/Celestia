@@ -54,18 +54,19 @@ template<class T> class ResourceManager
 
     ResourceType* find(ResourceHandle h)
     {
-        if (h < 0 || h >= static_cast<ResourceHandle>(handles.size()))
+        const auto hIdx = static_cast<std::size_t>(h);
+        if (hIdx < 0 || hIdx >= handles.size())
         {
             return nullptr;
         }
 
-        if (resources[h].state == ResourceState::NotLoaded)
+        if (resources[hIdx].state == ResourceState::NotLoaded)
         {
-            loadResource(resources[h]);
+            loadResource(resources[hIdx]);
         }
 
-        return resources[h].state == ResourceState::Loaded
-            ? resources[h].resource.get()
+        return resources[hIdx].state == ResourceState::Loaded
+            ? resources[hIdx].resource.get()
             : nullptr;
     }
 
