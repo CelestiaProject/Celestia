@@ -14,9 +14,27 @@
 #include <memory>
 #include <tuple>
 
+#include <celutil/flag.h>
 #include <celutil/resmanager.h>
-#include "multitexture.h"
 #include "texture.h"
+
+enum class TextureResolution : int
+{
+    lores = 0,
+    medres,
+    hires,
+};
+
+enum class TextureFlags : unsigned int
+{
+    None             = 0,
+    WrapTexture      = 0x1,
+    NoMipMaps        = 0x2,
+    BorderClamp      = 0x4,
+    LinearColorspace = 0x8,
+};
+
+ENUM_CLASS_BITWISE_OPS(TextureFlags)
 
 class TextureInfo
 {
@@ -24,31 +42,19 @@ public:
     using ResourceType = Texture;
     using ResourceKey = std::filesystem::path;
 
-    enum
-    {
-        WrapTexture      = 0x1,
-        CompressTexture  = 0x2,
-        NoMipMaps        = 0x4,
-        AutoMipMaps      = 0x8,
-        AllowSplitting   = 0x10,
-        BorderClamp      = 0x20,
-        LinearColorspace = 0x40,
-    };
-
     TextureInfo(const std::filesystem::path& _source,
                 const std::filesystem::path& _path,
-                unsigned int _flags,
+                TextureFlags _flags,
                 TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(_path),
         flags(_flags),
-        bumpHeight(0.0f),
         resolution(_resolution) {};
 
     TextureInfo(const std::filesystem::path& _source,
                 const std::filesystem::path& _path,
                 float _bumpHeight,
-                unsigned int _flags,
+                TextureFlags _flags,
                 TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
         path(_path),
@@ -57,12 +63,10 @@ public:
         resolution(_resolution) {};
 
     TextureInfo(const std::filesystem::path& _source,
-                unsigned int _flags,
+                TextureFlags _flags,
                 TextureResolution _resolution = TextureResolution::medres) :
         source(_source),
-        path(""),
         flags(_flags),
-        bumpHeight(0.0f),
         resolution(_resolution) {};
 
     std::filesystem::path resolve(const std::filesystem::path&) const;
@@ -71,8 +75,8 @@ public:
 private:
     std::filesystem::path source;
     std::filesystem::path path;
-    unsigned int flags;
-    float bumpHeight;
+    TextureFlags flags;
+    float bumpHeight{ 0.0f };
     TextureResolution resolution;
 
     friend bool operator<(const TextureInfo&, const TextureInfo&);
@@ -80,8 +84,8 @@ private:
 
 inline bool operator<(const TextureInfo& ti0, const TextureInfo& ti1)
 {
-    return std::tie(ti0.resolution, ti0.source, ti0.path) <
-           std::tie(ti1.resolution, ti1.source, ti1.path);
+    return std::tie(ti0.resolution, ti0.source, ti0.path, ti0.flags, ti0.bumpHeight) <
+           std::tie(ti1.resolution, ti1.source, ti1.path, ti1.flags, ti1.bumpHeight);
 }
 
 using TextureManager = ResourceManager<TextureInfo>;

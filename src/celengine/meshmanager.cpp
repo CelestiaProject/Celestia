@@ -322,7 +322,7 @@ Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
 
         if (!material->getTextureMap().empty())
         {
-            ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texPath, TextureInfo::WrapTexture));
+            ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texPath, TextureFlags::WrapTexture));
             newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, tex);
         }
 
@@ -382,7 +382,7 @@ LoadCMODModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path&
         in,
         [&path](const std::filesystem::path& name)
         {
-            return GetTextureManager()->getHandle(TextureInfo(name, path, TextureInfo::WrapTexture));
+            return GetTextureManager()->getHandle(TextureInfo(name, path, TextureFlags::WrapTexture));
         });
 
     if (model == nullptr)
