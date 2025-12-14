@@ -18,7 +18,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-class Atmosphere;
+struct Atmosphere;
 class Renderer;
 struct RenderInfo;
 class LightingState;

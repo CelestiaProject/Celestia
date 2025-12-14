@@ -24,7 +24,7 @@
 #include <celutil/flag.h>
 #include <celengine/glshader.h>
 
-class Atmosphere;
+struct Atmosphere;
 class LightingState;
 
 enum class TexUsage : std::uint32_t

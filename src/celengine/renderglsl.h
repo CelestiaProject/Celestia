@@ -21,7 +21,7 @@
 #include "multitexture.h"
 #include "renderflags.h"
 
-class Atmosphere;
+struct Atmosphere;
 class Geometry;
 class LightingState;
 class LODSphereMesh;
