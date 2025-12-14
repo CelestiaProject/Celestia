@@ -492,14 +492,11 @@ void renderGeometry_GLSL(Geometry* geometry,
 void renderGeometry_GLSL_Unlit(Geometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
-                               float geometryScale,
-                               RenderFlags /* renderFlags */,
-                               const Eigen::Quaternionf& /* planetOrientation */,
                                double tsec,
                                const Matrices &m,
                                Renderer* renderer)
 {
-    GLSLUnlit_RenderContext rc(renderer, geometryScale, m.modelview, m.projection);
+    GLSLUnlit_RenderContext rc(renderer, m.modelview, m.projection);
     rc.setPointScale(ri.pointScale);
 
     Renderer::PipelineState ps;

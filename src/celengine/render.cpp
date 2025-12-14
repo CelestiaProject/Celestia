@@ -2309,9 +2309,6 @@ void Renderer::renderObject(const Vector3f& pos,
                 renderGeometry_GLSL_Unlit(geometry,
                                           ri,
                                           texOverride,
-                                          geometryScale,
-                                          renderFlags,
-                                          obj.orientation,
                                           astro::daysToSecs(now - astro::J2000),
                                           planetMVP, this);
             }
