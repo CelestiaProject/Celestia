@@ -207,6 +207,7 @@ Renderer::Renderer() :
 #endif
     pointStarVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
     glareVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
+    curvePlotVertexBuffer(std::make_unique<CurvePlotVertexBuffer>(*this)),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
@@ -222,11 +223,7 @@ Renderer::Renderer() :
 {
 }
 
-
-Renderer::~Renderer()
-{
-    CurvePlot::deinit();
-}
+Renderer::~Renderer() = default;
 
 #if 0
 // Not used yet.
@@ -1006,7 +1003,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
                 startTime = begin;
         }
 
-        cachedOrbit = orbitCache.emplace_hint(cached, orbit, std::make_unique<CurvePlot>(*this))->second.get();
+        cachedOrbit = orbitCache.emplace_hint(cached, orbit, std::make_unique<CurvePlot>(*curvePlotVertexBuffer))->second.get();
         cachedOrbit->setLastUsed(frameCount);
 
         OrbitSampler sampler;
