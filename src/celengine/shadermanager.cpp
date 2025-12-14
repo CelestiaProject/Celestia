@@ -3159,7 +3159,7 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
     // falls off exponentially with height above the planet's surface, so the actual
     // radius is infinite. That's a bit impractical, so well just render the portion
     // out to the point where the density is some fraction of the surface density.
-    float skySphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * std::log(AtmosphereExtinctionThreshold);
+    float skySphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * LogAtmosphereExtinctionThreshold;
 
     float tMieCoeff                  = atmosphere.mieCoeff * objRadius;
     Eigen::Vector3f tRayleighCoeff   = atmosphere.rayleighCoeff * objRadius;

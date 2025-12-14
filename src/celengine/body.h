@@ -30,7 +30,7 @@
 #include "multitexture.h"
 #include "surface.h"
 
-class Atmosphere;
+struct Atmosphere;
 class Body;
 class FrameTree;
 class Location;

@@ -20,7 +20,7 @@
 #include "shadermanager.h"
 
 
-class Atmosphere;
+struct Atmosphere;
 class Color;
 class LightingState;
 class Renderer;

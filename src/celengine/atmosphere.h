@@ -1,6 +1,6 @@
 // atmosphere.h
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2025, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -10,53 +10,38 @@
 
 #pragma once
 
-#include <celutil/reshandle.h>
-#include <celutil/color.h>
-#include <celengine/multitexture.h>
+#include <config.h>
+
+#ifdef HAVE_CONSTEXPR_CMATH
+#include <cmath>
+#endif
+
 #include <Eigen/Core>
 
+#include <celutil/color.h>
+#include <celengine/multitexture.h>
 
-class Atmosphere
+struct Atmosphere
 {
- public:
-    Atmosphere() :
-        height(0.0f),
-        lowerColor(0.0f, 0.0f, 0.0f),
-        upperColor(0.0f, 0.0f, 0.0f),
-        skyColor(0.0f, 0.0f, 0.0f),
-        sunsetColor(1.0f, 0.6f, 0.5f),
-        cloudHeight(0.0f),
-        cloudSpeed(0.0f),
-        cloudTexture(),
-        cloudNormalMap(),
-        mieCoeff(0.0f),
-        mieScaleHeight(0.0f),
-        miePhaseAsymmetry(0.0f),
-        rayleighCoeff(Eigen::Vector3f::Zero()),
-        rayleighScaleHeight(0.0f),
-        absorptionCoeff(Eigen::Vector3f::Zero()),
-        cloudShadowDepth(0.0f)
-    {};
-
-    float height;
+    float height { 0.0f };
     Color lowerColor;
     Color upperColor;
     Color skyColor;
-    Color sunsetColor;
+    Color sunsetColor{ 1.0f, 0.6f, 0.5f };
 
-    float cloudHeight;
-    float cloudSpeed;
+    float cloudHeight{ 0.0f };
+    float cloudSpeed{ 0.0f };
     MultiResTexture cloudTexture;
     MultiResTexture cloudNormalMap;
 
-    float mieCoeff;
-    float mieScaleHeight;
-    float miePhaseAsymmetry;
-    Eigen::Vector3f rayleighCoeff;
-    float rayleighScaleHeight;
-    Eigen::Vector3f absorptionCoeff;
+    float mieCoeff{ 0.0f };
+    float mieScaleHeight{ 0.0f };
+    float miePhaseAsymmetry{ 0.0f };
+    Eigen::Vector3f rayleighCoeff{ Eigen::Vector3f::Zero() };
+    float rayleighScaleHeight{ 0.0f };
+    Eigen::Vector3f absorptionCoeff{ Eigen::Vector3f::Zero() };
 
-    float cloudShadowDepth;
+    float cloudShadowDepth{ 0.0f };
 };
 
 // Atmosphere density is modeled with a exp(-y/H) falloff, where
@@ -66,3 +51,9 @@ class Atmosphere
 // density of the atmosphere falls to the extinction threshold, i.e.
 // -H * ln(extinctionThreshold)
 constexpr inline float AtmosphereExtinctionThreshold = 0.05f;
+
+#ifdef HAVE_CONSTEXPR_CMATH
+constexpr inline float LogAtmosphereExtinctionThreshold = std::log(AtmosphereExtinctionThreshold);
+#else
+extern const float LogAtmosphereExtinctionThreshold;
+#endif

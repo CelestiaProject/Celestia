@@ -372,7 +372,7 @@ AtmosphereRenderer::render(
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->ambientColor = Eigen::Vector3f::Zero();
 
-    float atmosphereRadius = radius + -atmosphere.mieScaleHeight * std::log(AtmosphereExtinctionThreshold);
+    float atmosphereRadius = radius + -atmosphere.mieScaleHeight * LogAtmosphereExtinctionThreshold;
     float atmScale = atmosphereRadius / radius;
 
     prog->eyePosition = ls.eyePos_obj / atmScale;
