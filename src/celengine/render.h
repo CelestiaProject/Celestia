@@ -39,6 +39,7 @@ class FrameTree;
 class LODSphereMesh;
 class ReferenceMark;
 class CurvePlot;
+class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
 class Observer;
 class Surface;
@@ -659,6 +660,7 @@ class Renderer
     std::array<int, 4> m_viewport { 0, 0, 0, 0 };
 
     using OrbitCache = std::map<const celestia::ephem::Orbit*, std::unique_ptr<CurvePlot>>;
+    std::unique_ptr<CurvePlotVertexBuffer> curvePlotVertexBuffer;
     OrbitCache orbitCache;
     std::uint32_t lastOrbitCacheFlush{ 0 };
 
