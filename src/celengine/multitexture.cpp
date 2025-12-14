@@ -11,8 +11,6 @@
 
 #include <cassert>
 
-#include "texmanager.h"
-
 namespace
 {
 constexpr auto loresIndex = static_cast<std::size_t>(TextureResolution::lores);
@@ -36,7 +34,7 @@ MultiResTexture::MultiResTexture(const std::filesystem::path& source,
 
 void MultiResTexture::setTexture(const std::filesystem::path& source,
                                  const std::filesystem::path& path,
-                                 unsigned int flags)
+                                 TextureFlags flags)
 {
     TextureManager* texMan = GetTextureManager();
     tex[loresIndex] = texMan->getHandle(TextureInfo(source, path, flags, TextureResolution::lores));
@@ -48,7 +46,7 @@ void MultiResTexture::setTexture(const std::filesystem::path& source,
 void MultiResTexture::setTexture(const std::filesystem::path& source,
                                  const std::filesystem::path& path,
                                  float bumpHeight,
-                                 unsigned int flags)
+                                 TextureFlags flags)
 {
     TextureManager* texMan = GetTextureManager();
     tex[loresIndex] = texMan->getHandle(TextureInfo(source, path, bumpHeight, flags, TextureResolution::lores));

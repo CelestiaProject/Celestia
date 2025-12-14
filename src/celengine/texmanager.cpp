@@ -20,6 +20,7 @@
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
+using celestia::util::is_set;
 
 namespace
 {
@@ -95,15 +96,15 @@ TextureInfo::load(const std::filesystem::path& name) const
     Texture::MipMapMode  mipMode     = Texture::DefaultMipMaps;
     Texture::Colorspace  colorspace  = Texture::DefaultColorspace;
 
-    if (flags & WrapTexture)
+    if (is_set(flags, TextureFlags::WrapTexture))
         addressMode = Texture::Wrap;
-    else if (flags & BorderClamp)
+    else if (is_set(flags, TextureFlags::BorderClamp))
         addressMode = Texture::BorderClamp;
 
-    if (flags & NoMipMaps)
+    if (is_set(flags, TextureFlags::NoMipMaps))
         mipMode = Texture::NoMipMaps;
 
-    if (flags & LinearColorspace)
+    if (is_set(flags, TextureFlags::LinearColorspace))
         colorspace = Texture::LinearColorspace;
 
     if (bumpHeight == 0.0f)

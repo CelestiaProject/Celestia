@@ -14,13 +14,7 @@
 #include <filesystem>
 
 #include <celutil/reshandle.h>
-
-enum class TextureResolution : int
-{
-    lores = 0,
-    medres,
-    hires,
-};
+#include "texmanager.h"
 
 class Texture;
 
@@ -32,11 +26,11 @@ public:
 
     void setTexture(const std::filesystem::path& source,
                     const std::filesystem::path& path,
-                    unsigned int flags = 0);
+                    TextureFlags flags = TextureFlags::None);
     void setTexture(const std::filesystem::path& source,
                     const std::filesystem::path& path,
                     float bumpHeight,
-                    unsigned int flags);
+                    TextureFlags flags);
     Texture* find(TextureResolution resolution);
 
     ResourceHandle texture(TextureResolution resolution) const { return tex[static_cast<std::size_t>(resolution)]; }

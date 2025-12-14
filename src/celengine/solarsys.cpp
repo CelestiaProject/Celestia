@@ -217,18 +217,15 @@ void FillinSurface(const AssociativeArray* surfaceData,
     auto normalTexture = GetFilename(*surfaceData, "NormalMap"sv, "Invalid filename in NormalMap\n");
     auto overlayTexture = GetFilename(*surfaceData, "OverlayTexture"sv, "Invalid filename in OverlayTexture\n");
 
-    unsigned int baseFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
-    unsigned int bumpFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting | TextureInfo::LinearColorspace;
-    unsigned int nightFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
-    unsigned int specularFlags = TextureInfo::WrapTexture | TextureInfo::AllowSplitting;
+    constexpr TextureFlags baseFlags = TextureFlags::WrapTexture;
+    constexpr TextureFlags bumpFlags = TextureFlags::WrapTexture | TextureFlags::LinearColorspace;
+    constexpr TextureFlags nightFlags = TextureFlags::WrapTexture;
+    constexpr TextureFlags specularFlags = TextureFlags::WrapTexture;
 
     auto bumpHeight = surfaceData->getNumber<float>("BumpHeight").value_or(2.5f);
 
     bool blendTexture = surfaceData->getBoolean("BlendTexture").value_or(false);
     bool emissive = surfaceData->getBoolean("Emissive").value_or(false);
-    bool compressTexture = surfaceData->getBoolean("CompressTexture").value_or(false);
-
-    SetOrUnset(baseFlags, TextureInfo::CompressTexture, compressTexture);
 
     SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
     SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
@@ -754,7 +751,7 @@ void ReadAtmosphere(Body* body,
     {
         atmosphere->cloudTexture.setTexture(*cloudTexture,
                                             path,
-                                            TextureInfo::WrapTexture);
+                                            TextureFlags::WrapTexture);
     }
 
     if (auto cloudNormalMap = GetFilename(*atmosData, "CloudNormalMap"sv, "Invalid filename in CloudNormalMap\n");
@@ -762,7 +759,7 @@ void ReadAtmosphere(Body* body,
     {
         atmosphere->cloudNormalMap.setTexture(*cloudNormalMap,
                                               path,
-                                              TextureInfo::WrapTexture | TextureInfo::LinearColorspace);
+                                              TextureFlags::WrapTexture | TextureFlags::LinearColorspace);
     }
 
     if (auto cloudShadowDepth = atmosData->getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())
