@@ -98,7 +98,7 @@ NebulaRenderer::renderNebula(const Object &obj) const
         math::scale(math::translate(m_renderer.getModelViewMatrix(), obj.offset), radius),
         obj.nebula->getOrientation());
 
-    GLSLUnlit_RenderContext rc(&m_renderer, radius, &mv, &pr);
+    GLSLUnlit_RenderContext rc(&m_renderer, &mv, &pr);
     rc.setPointScale(2.0f * radius / m_pixelSize);
     g->render(rc);
 }
