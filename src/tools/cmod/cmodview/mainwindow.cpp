@@ -10,6 +10,7 @@
 
 #include "mainwindow.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -39,6 +40,7 @@
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
+#include <celestia/qt/qtpathutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
@@ -54,6 +56,8 @@
 #include "modelviewwidget.h"
 
 namespace math = celestia::math;
+
+using celestia::qt::QStringToPath;
 
 namespace cmodview
 {
@@ -335,7 +339,7 @@ MainWindow::openModel(const QString& fileName)
 {
     if (!fileName.isEmpty())
     {
-        std::string fileNameStd = std::string(fileName.toUtf8().data());
+        std::filesystem::path fileNameStd = QStringToPath(fileName);
 
         QFileInfo info(fileName);
         cmodtools::GetPathManager()->reset();
@@ -455,9 +459,7 @@ MainWindow::saveModelAs()
 void
 MainWindow::saveModel(const QString& saveFileName)
 {
-    std::string fileNameStd = std::string(saveFileName.toUtf8().data());
-
-    std::ofstream out(fileNameStd, std::ios::out | std::ios::binary);
+    std::ofstream out(QStringToPath(saveFileName), std::ios::out | std::ios::binary);
     bool ok = false;
     if (out.good())
         ok = SaveModelBinary(m_modelView->model(), out, cmodtools::GetPathManager()->getSource);

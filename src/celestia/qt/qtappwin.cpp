@@ -56,10 +56,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#ifdef _WIN32
-#include <QRect>
-#endif
-
 #ifdef USE_FFMPEG
 #include <QComboBox>
 #include <QGridLayout>
@@ -94,12 +90,19 @@
 #include "qtglwidget.h"
 #include "qtgotoobjectdialog.h"
 #include "qtinfopanel.h"
+#include "qtpathutil.h"
 #include "qtpreferencesdialog.h"
 #include "qtselectionpopup.h"
 #include "qtsettimedialog.h"
 #include "qtsolarsystembrowser.h"
 #include "qttimetoolbar.h"
 #include "qttourguide.h"
+
+#ifdef _WIN32
+#include <QRect>
+
+#include <windows.h>
+#endif
 
 #ifndef CONFIG_DATA_DIR
 #define CONFIG_DATA_DIR "./"
@@ -251,16 +254,16 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     if (!logPath.makeAbsolute())
         QMessageBox::warning(0, "Celestia", _("Error getting path for log filename!"));
 
-    QString celestia_data_dir = options.startDirectory.isEmpty()
-        ? QString::fromLocal8Bit(::getenv("CELESTIA_DATA_DIR"))
-        : options.startDirectory;
+    QString celestiaDataDir = options.startDirectory;
+    if (celestiaDataDir.isEmpty())
+        celestiaDataDir = qEnvironmentVariable("CELESTIA_DATA_DIR");
 
-    if (celestia_data_dir.isEmpty()) {
+    if (celestiaDataDir.isEmpty()) {
         QString dataDir = CONFIG_DATA_DIR;
         QDir::setCurrent(dataDir);
         m_dataHome = QDir::currentPath();
-    } else if (QDir(celestia_data_dir).isReadable()) {
-        QDir::setCurrent(celestia_data_dir);
+    } else if (QDir(celestiaDataDir).isReadable()) {
+        QDir::setCurrent(celestiaDataDir);
         m_dataHome = QDir::currentPath();
     } else {
         QMessageBox::critical(0, "Celestia",
@@ -270,14 +273,14 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     }
 
     // Get the config file name
-    std::string configFileName;
+    std::filesystem::path configFileName;
     if (!options.configFileName.isEmpty())
-        configFileName = options.configFileName.toStdString();
+        configFileName = QStringToPath(options.configFileName);
 
-    // Translate extras directories from QString -> std::string
+    // Translate extras directories from QString to std::filesystem::path
     std::vector<std::filesystem::path> extrasDirectories;
     for (const auto& dir : options.extrasDirectories)
-        extrasDirectories.push_back(dir.toUtf8().data());
+        extrasDirectories.push_back(QStringToPath(dir));
 
     initAppDataDirectory();
 
@@ -308,10 +311,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 #endif
 
     if (!options.logFilename.isEmpty())
-    {
-        std::filesystem::path fn = logPath.absolutePath().toStdString();
-        m_appCore->setLogFile(fn);
-    }
+        m_appCore->setLogFile(QStringToPath(logPath.absolutePath()));
 
     if (!m_appCore->initSimulation(configFileName,
                                    extrasDirectories,
@@ -780,7 +780,7 @@ CelestiaAppWindow::slotCaptureVideo()
             else
                 movieCapture->setEncoderOptions(m_appCore->getConfig()->ffvhEncoderOptions);
 
-            bool ok = movieCapture->start(saveAsName.toStdString(),
+            bool ok = movieCapture->start(QStringToPath(saveAsName),
                                           videoSize.width(), videoSize.height(),
                                           frameRate);
             if (ok)
@@ -965,7 +965,7 @@ CelestiaAppWindow::slotOpenScriptDialog()
     if (!scriptFileName.isEmpty())
     {
         m_appCore->cancelScript();
-        m_appCore->runScript(scriptFileName.toStdString());
+        m_appCore->runScript(QStringToPath(scriptFileName));
 
         QFileInfo scriptFile(scriptFileName);
         settings.setValue("OpenScriptDir", scriptFile.absolutePath());
@@ -981,7 +981,7 @@ CelestiaAppWindow::slotOpenScript()
     if (action != nullptr)
     {
         m_appCore->cancelScript();
-        m_appCore->runScript(action->data().toString().toStdString());
+        m_appCore->runScript(QStringToPath(action->data().toString()));
     }
 }
 
@@ -1741,7 +1741,7 @@ CelestiaAppWindow::buildScriptsMenu()
     for (const auto& script : scripts)
     {
         QAction* act = new QAction(script.title.c_str(), this);
-        act->setData(script.filename.string().c_str());
+        act->setData(PathToQString(script.filename));
         connect(act, SIGNAL(triggered()), this, SLOT(slotOpenScript()));
         menu->addAction(act);
     }

@@ -13,6 +13,7 @@
 #include <config.h> // HAVE_WORDEXP
 #include <array>
 #include <cctype>
+#include <cerrno>
 #include <fstream>
 #include <utility>
 #include <fmt/format.h>
@@ -189,44 +190,71 @@ bool IsValidDirectory(const std::filesystem::path& dir)
 }
 
 #ifndef PORTABLE_BUILD
+
 std::filesystem::path HomeDir()
 {
 #ifdef _WIN32
-    wchar_t p[MAX_PATH + 1];
-    if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PROFILE, nullptr, 0, &p[0])))
-        return std::filesystem::path(p);
-
-    // fallback to environment variables
-    std::size_t size;
-    _wgetenv_s(&size, p, L"USERPROFILE");
-    if (size != 0)
-        return std::filesystem::path(p);
-
-    _wgetenv_s(&size, p, L"HOMEDRIVE");
-    if (size != 0)
+    if (wchar_t* path; SHGetKnownFolderPath(FOLDERID_Profile, KF_FLAG_DEFAULT, nullptr, &path) == S_OK)
     {
-        std::filesystem::path ret(p);
-        _wgetenv_s(&size, p, L"HOMEPATH");
-        if (size != 0)
-            return ret / std::filesystem::path(p);
+        std::filesystem::path result(path);
+        CoTaskMemFree(path);
+        return result;
+    }
+    else
+    {
+        CoTaskMemFree(path);
     }
 
-    // unlikely this is defined in woe but let's check
-    _wgetenv_s(&size, p, L"HOME");
-    if (size != 0)
-        return std::filesystem::path(p);
+    // fallback to environment variables
+    fmt::basic_memory_buffer<wchar_t, MAX_PATH + 1> buffer;
+    buffer.resize(MAX_PATH + 1);
+    std::size_t size;
+    errno_t result;
+
+    while ((result = _wgetenv_s(&size, buffer.data(), buffer.size(), L"USERPROFILE")) == ERANGE)
+        buffer.resize(size);
+    if (result == 0 && size > 0)
+        return buffer.data();
+
+    while ((result = _wgetenv_s(&size, buffer.data(), buffer.size(), L"HOMEDRIVE")) == ERANGE)
+        buffer.resize(size);
+    if (result == 0 && size > 0)
+    {
+        std::filesystem::path homeDrive(buffer.data());
+        while ((result = _wgetenv_s(&size, buffer.data(), buffer.size(), L"HOMEPATH")) == ERANGE)
+            buffer.resize(size);
+        if (result == 0 && size > 0)
+            return homeDrive / buffer.data();
+    }
+
+    // unlikely this is defined in Windows but let's check
+    while ((result = _wgetenv_s(&size, buffer.data(), buffer.size(), L"HOME")) == ERANGE)
+        buffer.resize(size);
+    if (result == 0 && size > 0)
+        return buffer.data();
+
 #elif defined(__APPLE__)
     return AppleHomeDirectory();
+
 #else
-    const auto *home = getenv("HOME");
+    const auto *home = std::getenv("HOME");
     if (home != nullptr)
         return home;
 
-    struct passwd pw, *result = nullptr;
-    char pw_dir[PATH_MAX];
-    getpwuid_r(geteuid(), &pw, pw_dir, sizeof(pw_dir), &result);
-    if (result != nullptr)
-        return pw_dir;
+    struct passwd pwd;
+    struct passwd* result = nullptr;
+    fmt::basic_memory_buffer<char, 1024> buffer;
+    if (static long initlen = sysconf(_SC_GETPW_R_SIZE_MAX); initlen > 0)
+        buffer.resize(static_cast<std::size_t>(initlen));
+    else
+        buffer.resize(1024);
+
+    int errorCode;
+    while ((errorCode = getpwuid_r(geteuid(), &pwd, buffer.data(), buffer.size(), &result)) == ERANGE)
+        buffer.resize(buffer.size() * 2);
+
+    if (errorCode == 0 && result)
+        return pwd.pw_dir;
 #endif
 
     return std::filesystem::path();
@@ -235,23 +263,36 @@ std::filesystem::path HomeDir()
 std::filesystem::path WriteableDataPath()
 {
 #if defined(_WIN32)
-    wchar_t p[MAX_PATH + 1];
-    if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_APPDATA, nullptr, 0, &p[0])))
-        return PathExp(p) / "Celestia";
+    if (wchar_t* path; SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, nullptr, &path) == S_OK)
+    {
+        std::filesystem::path result = std::filesystem::path(path) / L"Celestia";
+        CoTaskMemFree(path);
+        return result;
+    }
+    else
+    {
+        CoTaskMemFree(path);
+    }
 
     // fallback to environment variables
+    fmt::basic_memory_buffer<wchar_t, MAX_PATH + 1> buffer;
+    buffer.resize(MAX_PATH + 1);
     std::size_t size;
-    _wgetenv_s(&size, p, L"APPDATA");
-    if (size != 0)
-        return PathExp(p) / "Celestia";
+    errno_t result;
 
-    return PathExp("~\\AppData\\Roaming") / "Celestia";
+    while ((result = _wgetenv_s(&size, buffer.data(), buffer.size(), L"APPDATA")) == ERANGE)
+        buffer.resize(size);
+
+    if (result == 0 && size > 0)
+        return PathExp(buffer.data()) / L"Celestia";
+
+    return PathExp(L"~\\AppData\\Roaming") / L"Celestia";
 
 #elif defined(__APPLE__)
     return PathExp(AppleApplicationSupportDirectory()) / "Celestia";
 
 #else
-    const char *p = getenv("XDG_DATA_HOME");
+    const char *p = std::getenv("XDG_DATA_HOME");
     p = p != nullptr ? p : "~/.local/share";
     return PathExp(p) / "Celestia";
 #endif
