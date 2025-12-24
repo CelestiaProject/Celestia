@@ -17,8 +17,12 @@
 #include <QSet>
 #include <QStringList>
 
+#include <celestia/qt/qtpathutil.h>
+
 #include "pathmanager.h"
-#include "utils.h"
+
+using celestia::qt::PathToQString;
+using celestia::qt::QStringToPath;
 
 namespace cmodview
 {
@@ -64,7 +68,7 @@ selectComboBoxItem(QComboBox* combo, const QString &text)
 void
 selectComboBoxItem(QComboBox* combo, const std::filesystem::path &path)
 {
-    selectComboBoxItem(combo, toQString(path.c_str()));
+    selectComboBoxItem(combo, PathToQString(path));
 }
 
 // Return a list of all texture filenames in the specified folder
@@ -282,28 +286,28 @@ MaterialWidget::changeMaterialParameters()
     if (!m_baseTexture->itemData(m_baseTexture->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::DiffuseMap,
-                          cmodtools::GetPathManager()->getHandle(m_baseTexture->currentText().toStdString()));
+                          cmodtools::GetPathManager()->getHandle(QStringToPath(m_baseTexture->currentText())));
     }
 
     m_material.setMap(cmod::TextureSemantic::SpecularMap, ResourceHandle::InvalidResource);
     if (!m_specularMap->itemData(m_specularMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::SpecularMap,
-                          cmodtools::GetPathManager()->getHandle(m_specularMap->currentText().toStdString()));
+                          cmodtools::GetPathManager()->getHandle(QStringToPath(m_specularMap->currentText())));
     }
 
     m_material.setMap(cmod::TextureSemantic::NormalMap, ResourceHandle::InvalidResource);
     if (!m_normalMap->itemData(m_normalMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::NormalMap,
-                          cmodtools::GetPathManager()->getHandle(m_normalMap->currentText().toStdString()));
+                          cmodtools::GetPathManager()->getHandle(QStringToPath(m_normalMap->currentText())));
     }
 
     m_material.setMap(cmod::TextureSemantic::EmissiveMap, ResourceHandle::InvalidResource);
     if (!m_emissiveMap->itemData(m_emissiveMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::EmissiveMap,
-                          cmodtools::GetPathManager()->getHandle(m_emissiveMap->currentText().toStdString()));
+                          cmodtools::GetPathManager()->getHandle(QStringToPath(m_emissiveMap->currentText())));
     }
 
     emit materialEdited(m_material);

@@ -41,6 +41,7 @@ function(GetQtSources UseWayland)
     qtgotoobjectdialog.h
     qtglwidget.h
     qtinfopanel.h
+    qtpathutil.h
     qtpreferencesdialog.h
     qtselectionpopup.h
     qtsettimedialog.h

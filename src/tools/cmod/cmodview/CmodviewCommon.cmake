@@ -13,7 +13,6 @@ function(GetCmodviewSources)
     mainwindow.h
     materialwidget.h
     modelviewwidget.h
-    utils.h
   )
 
   foreach(SRC_FILE IN LISTS REL_CMODVIEW_SOURCES)

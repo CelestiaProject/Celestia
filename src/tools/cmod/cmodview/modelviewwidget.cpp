@@ -26,18 +26,20 @@
 
 #include <celengine/framebuffer.h>
 #include <celengine/texture.h>
+#include <celestia/qt/qtpathutil.h>
 #include <celimage/image.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/model.h>
 
 #include "pathmanager.h"
-#include "utils.h"
 
 #define DEBUG_SHADOWS 0
 
 namespace math = celestia::math;
 using celestia::engine::Image;
+using celestia::qt::PathToQString;
+using celestia::qt::QStringToPath;
 
 namespace cmodview
 {
@@ -355,12 +357,7 @@ MaterialLibrary::loadTexture(const QString& fileName)
     if (!info.exists())
         return nullptr;
 
-    std::unique_ptr<Image> image;
-    if constexpr (std::is_same_v<std::filesystem::path::value_type, wchar_t>)
-        image = Image::load(fileName.toStdWString());
-    else
-        image = Image::load(fileName.toStdString());
-
+    std::unique_ptr<Image> image = Image::load(QStringToPath(fileName));
     if (image == nullptr)
         return nullptr;
 
@@ -456,22 +453,22 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
             if (material->getMap(cmod::TextureSemantic::DiffuseMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
+                    PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap))));
             }
             if (material->getMap(cmod::TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
+                    PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap))));
             }
             if (material->getMap(cmod::TextureSemantic::SpecularMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
+                    PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap))));
             }
             if (material->getMap(cmod::TextureSemantic::EmissiveMap) != ResourceHandle::InvalidResource)
             {
                 m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
+                    PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap))));
             }
         }
     }
@@ -915,7 +912,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasDiffuseMap())
     {
         GLuint diffuseMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
+            PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap))));
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, diffuseMapId);
         setSampler(shader, "diffuseMap", 0);
@@ -924,7 +921,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasNormalMap())
     {
         GLuint normalMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
+            PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap))));
         glActiveTexture(GL_TEXTURE1);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, normalMapId);
@@ -935,7 +932,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasSpecularMap())
     {
         GLuint specularMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
+            PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap))));
         glActiveTexture(GL_TEXTURE2);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, specularMapId);
@@ -946,7 +943,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasEmissiveMap())
     {
         GLuint emissiveMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
+            PathToQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap))));
         glActiveTexture(GL_TEXTURE3);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, emissiveMapId);
