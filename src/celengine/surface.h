@@ -12,7 +12,7 @@
 #include <cstdint>
 
 #include <celutil/color.h>
-#include "multitexture.h"
+#include <celutil/texhandle.h>
 
 class Surface
 {
@@ -46,11 +46,11 @@ class Surface
     Color color;
     Color specularColor;
     float specularPower;
-    MultiResTexture baseTexture;    // surface colors
-    MultiResTexture bumpTexture;    // normal map based on terrain relief
-    MultiResTexture nightTexture;   // artificial lights to show on night side
-    MultiResTexture specularTexture;// specular mask
-    MultiResTexture overlayTexture; // overlay texture, applied last
+    celestia::util::TextureHandle baseTexture{ celestia::util::TextureHandle::Invalid };    // surface colors
+    celestia::util::TextureHandle bumpTexture{ celestia::util::TextureHandle::Invalid };    // normal map based on terrain relief
+    celestia::util::TextureHandle nightTexture{ celestia::util::TextureHandle::Invalid };   // artificial lights to show on night side
+    celestia::util::TextureHandle specularTexture{ celestia::util::TextureHandle::Invalid };// specular mask
+    celestia::util::TextureHandle overlayTexture{ celestia::util::TextureHandle::Invalid }; // overlay texture, applied last
     float bumpHeight;               // scale of bump map relief
     float lunarLambert;             // mix between Lambertian and Lommel-Seeliger (lunar-like) photometric functions
 };

@@ -25,6 +25,7 @@ namespace celestia
 namespace engine
 {
 class GeometryPaths;
+class TexturePaths;
 }
 
 template<class OBJDB> class CatalogLoader
@@ -35,13 +36,15 @@ public:
                   const ContentType& contentType,
                   ProgressNotifier* notifier,
                   util::array_view<std::filesystem::path> skipPaths,
-                  engine::GeometryPaths& geometryPaths) :
+                  engine::GeometryPaths& geometryPaths,
+                  engine::TexturePaths& texturePaths) :
         m_objDB(db),
         m_typeDesc(typeDesc),
         m_contentType(contentType),
         m_notifier(notifier),
         m_skipPaths(skipPaths),
-        m_geometryPaths(geometryPaths)
+        m_geometryPaths(&geometryPaths),
+        m_texturePaths(&texturePaths)
     {
     }
 
@@ -107,7 +110,8 @@ private:
     ContentType m_contentType;
     ProgressNotifier* m_notifier;
     util::array_view<std::filesystem::path> m_skipPaths;
-    engine::GeometryPaths& m_geometryPaths;
+    engine::GeometryPaths* m_geometryPaths;
+    engine::TexturePaths* m_texturePaths;
 };
 
 } // namespace celestia

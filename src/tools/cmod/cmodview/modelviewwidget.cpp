@@ -31,6 +31,7 @@
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/model.h>
+#include <celutil/texhandle.h>
 
 #include "modelio.h"
 
@@ -40,6 +41,7 @@ namespace math = celestia::math;
 using celestia::engine::Image;
 using celestia::qt::PathToQString;
 using celestia::qt::QStringToPath;
+using celestia::util::TextureHandle;
 
 namespace cmodview
 {
@@ -293,7 +295,7 @@ setSampler(const GLProgram& program, const char* name, GLint value)
 }
 
 QString
-handleToQString(ResourceHandle handle)
+handleToQString(TextureHandle handle)
 {
     if (auto path = cmodtools::GetModelIO()->path(handle); path)
         return PathToQString(*path);
@@ -405,17 +407,17 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
     // Bits 8-15 are texture map info
     if (hasTexCoords)
     {
-        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != ResourceHandle::InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != TextureHandle::Invalid)
             info |= DiffuseMapMask;
-        if (material->getMap(cmod::TextureSemantic::SpecularMap) != ResourceHandle::InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::SpecularMap) != TextureHandle::Invalid)
             info |= SpecularMapMask;
-        if (material->getMap(cmod::TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != TextureHandle::Invalid)
             info |= NormalMapMask;
-        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != ResourceHandle::InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != TextureHandle::Invalid)
             info |= EmissiveMapMask;
 
         // Bit 16 is set if the normal map is compressed
-        if (auto map = material->getMap(cmod::TextureSemantic::NormalMap); map != ResourceHandle::InvalidResource && hasTangents)
+        if (auto map = material->getMap(cmod::TextureSemantic::NormalMap); map != TextureHandle::Invalid && hasTangents)
         {
             if (auto path = cmodtools::GetModelIO()->path(map); path && path->extension() == ".dxt5nm")
                 info |= CompressedNormalMapMask;
@@ -458,16 +460,16 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
         for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
         {
             const cmod::Material* material = m_model->getMaterial(i);
-            if (auto map = material->getMap(cmod::TextureSemantic::DiffuseMap); map != ResourceHandle::InvalidResource)
+            if (auto map = material->getMap(cmod::TextureSemantic::DiffuseMap); map != TextureHandle::Invalid)
                 m_materialLibrary->getTexture(handleToQString(map));
 
-            if (auto map = material->getMap(cmod::TextureSemantic::NormalMap); map != ResourceHandle::InvalidResource)
+            if (auto map = material->getMap(cmod::TextureSemantic::NormalMap); map != TextureHandle::Invalid)
                 m_materialLibrary->getTexture(handleToQString(map));
 
-            if (auto map = material->getMap(cmod::TextureSemantic::SpecularMap); map != ResourceHandle::InvalidResource)
+            if (auto map = material->getMap(cmod::TextureSemantic::SpecularMap); map != TextureHandle::Invalid)
                 m_materialLibrary->getTexture(handleToQString(map));
 
-            if (auto map = material->getMap(cmod::TextureSemantic::EmissiveMap); map != ResourceHandle::InvalidResource)
+            if (auto map = material->getMap(cmod::TextureSemantic::EmissiveMap); map != TextureHandle::Invalid)
                 m_materialLibrary->getTexture(handleToQString(map));
         }
     }

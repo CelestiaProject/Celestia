@@ -20,6 +20,7 @@
 
 #include <celutil/classops.h>
 #include "geometry.h"
+#include "texmanager.h"
 
 namespace celestia::engine
 {
@@ -100,12 +101,13 @@ private:
 class GeometryManager
 {
 public:
-    explicit GeometryManager(std::shared_ptr<GeometryPaths>);
+    GeometryManager(std::shared_ptr<GeometryPaths>, std::shared_ptr<TexturePaths>);
 
     const Geometry* find(GeometryHandle);
 
 private:
-    std::shared_ptr<GeometryPaths> m_paths;
+    std::shared_ptr<GeometryPaths> m_geometryPaths;
+    std::shared_ptr<TexturePaths> m_texturePaths;
     std::unordered_map<GeometryHandle, std::unique_ptr<const Geometry>> m_geometry;
 };
 

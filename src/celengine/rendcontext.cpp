@@ -15,6 +15,7 @@
 #include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
 #include <celutil/flag.h>
+#include <celutil/texhandle.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "lightenv.h"
@@ -24,6 +25,7 @@
 #include "texmanager.h"
 #include "texture.h"
 
+namespace engine = celestia::engine;
 namespace gl = celestia::gl;
 namespace util = celestia::util;
 
@@ -117,9 +119,8 @@ RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& grou
 {
     // Skip rendering if this is the emissive pass but there's no
     // emissive texture.
-    ResourceHandle emissiveMap = material->getMap(cmod::TextureSemantic::EmissiveMap);
-
-    if (renderPass == EmissivePass && emissiveMap == ResourceHandle::InvalidResource)
+    if (util::TextureHandle emissiveMap = material->getMap(cmod::TextureSemantic::EmissiveMap);
+        renderPass == EmissivePass && emissiveMap == util::TextureHandle::Invalid)
     {
         return;
     }
@@ -274,14 +275,14 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
             shaderProps.lightModel = LightingModel::ParticleDiffuseModel;
     }
 
-    ResourceHandle diffuseMap  = m.getMap(cmod::TextureSemantic::DiffuseMap);
-    ResourceHandle normalMap   = m.getMap(cmod::TextureSemantic::NormalMap);
-    ResourceHandle specularMap = m.getMap(cmod::TextureSemantic::SpecularMap);
-    ResourceHandle emissiveMap = m.getMap(cmod::TextureSemantic::EmissiveMap);
+    util::TextureHandle diffuseMap  = m.getMap(cmod::TextureSemantic::DiffuseMap);
+    util::TextureHandle normalMap   = m.getMap(cmod::TextureSemantic::NormalMap);
+    util::TextureHandle specularMap = m.getMap(cmod::TextureSemantic::SpecularMap);
+    util::TextureHandle emissiveMap = m.getMap(cmod::TextureSemantic::EmissiveMap);
 
-    if (diffuseMap != ResourceHandle::InvalidResource && (useTexCoords || usePointSize))
+    if (diffuseMap != util::TextureHandle::Invalid && (useTexCoords || usePointSize))
     {
-        baseTex = GetTextureManager()->find(diffuseMap);
+        baseTex = renderer->getTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::DiffuseTexture;
@@ -289,9 +290,9 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         }
     }
 
-    if (normalMap != ResourceHandle::InvalidResource)
+    if (normalMap != util::TextureHandle::Invalid)
     {
-        bumpTex = GetTextureManager()->find(normalMap);
+        bumpTex = renderer->getTextureManager()->find(normalMap);
         if (bumpTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::NormalTexture;
@@ -306,7 +307,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     if (m.specular != cmod::Color(0.0f, 0.0f, 0.0f) && useNormals)
     {
         shaderProps.lightModel = LightingModel::PerPixelSpecularModel;
-        specTex = GetTextureManager()->find(specularMap);
+        specTex = renderer->getTextureManager()->find(specularMap);
         if (specTex == nullptr)
         {
             if (baseTex != nullptr)
@@ -319,9 +320,9 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         }
     }
 
-    if (emissiveMap != ResourceHandle::InvalidResource)
+    if (emissiveMap != util::TextureHandle::Invalid)
     {
-        emissiveTex = GetTextureManager()->find(emissiveMap);
+        emissiveTex = renderer->getTextureManager()->find(emissiveMap);
         if (emissiveTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::EmissiveTexture;
@@ -331,7 +332,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     if (lightingState.shadowingRingSystem)
     {
-        Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(TextureResolution::medres);
+        Texture* ringsTex = renderer->getTextureManager()->findShadow(lightingState.shadowingRingSystem->texture);
         if (ringsTex != nullptr)
         {
             glActiveTexture(GL_TEXTURE0 + nTextures);
@@ -575,10 +576,10 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     shaderProps.lightModel = LightingModel::EmissiveModel;
     shaderProps.texUsage = TexUsage::SharedTextureCoords;
 
-    ResourceHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
-    if (diffuseMap != ResourceHandle::InvalidResource && (useTexCoords || usePointSize))
+    if (util::TextureHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
+        diffuseMap != util::TextureHandle::Invalid && (useTexCoords || usePointSize))
     {
-        baseTex = GetTextureManager()->find(diffuseMap);
+        baseTex = renderer->getTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::DiffuseTexture;

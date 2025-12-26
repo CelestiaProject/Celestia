@@ -800,8 +800,11 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     appCore->setScreenDpi(GetDPIForWindow(hWnd));
 
-    if (!appCore->initRenderer())
+    if (auto defaultResolution = prefs.lastVersion != 0 ? prefs.textureResolution : celestia::engine::TextureResolution::medres;
+        !appCore->initRenderer(defaultResolution))
+    {
         return 1;
+    }
 
     // Set values saved in registry: renderFlags, visualMagnitude, labelMode and timezone bias.
     if (prefs.lastVersion != 0)
@@ -824,7 +827,6 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
             ShowUniversalTime(appCore.get());
         appCore->setDateFormat(static_cast<astro::Date::Format>(prefs.dateFormat));
         appCore->getSimulation()->getActiveObserver()->setDisplayedSurface(prefs.altSurfaceName);
-        appCore->getRenderer()->setResolution(prefs.textureResolution);
     }
     else
     {
