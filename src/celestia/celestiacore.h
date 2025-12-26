@@ -53,6 +53,12 @@ class ProgressNotifier;
 
 namespace celestia
 {
+namespace engine
+{
+class GeometryManager;
+class TexturePaths;
+}
+
 class TextPrintPosition;
 class ViewManager;
 #ifdef USE_MINIAUDIO
@@ -181,7 +187,7 @@ public:
     bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
                         const std::vector<std::filesystem::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
-    bool initRenderer(bool useMesaPackInvert = true);
+    bool initRenderer(celestia::engine::TextureResolution, bool useMesaPackInvert = true);
     void start(double t);
     void start();
     void getLightTravelDelay(double distanceKm, int&, int&, float&);
@@ -395,6 +401,8 @@ public:
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
 
+    celestia::engine::TexturePaths* getTexturePaths() const noexcept { return texturePaths.get(); }
+
 private:
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
@@ -512,6 +520,7 @@ private:
     std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
 
     std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
+    std::shared_ptr<celestia::engine::TexturePaths> texturePaths;
 
 #ifdef CELX
     friend celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);

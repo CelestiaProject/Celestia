@@ -12,22 +12,13 @@
 #include <cstdint>
 
 #include <celutil/color.h>
-#include "multitexture.h"
+#include <celutil/texhandle.h>
 
-class Surface
+struct Surface
 {
- public:
-    Surface(Color c = Color(0.0f, 0.0f, 0.0f)) :
-        appearanceFlags(0),
-        color(c),
-        specularPower(0.0f),
-        baseTexture(),
-        bumpTexture(),
-        nightTexture(),
-        overlayTexture(),
-        bumpHeight(0.0f),
-        lunarLambert(0.0f)
-    {};
+    explicit Surface(Color c = Color{}) :
+        color(c)
+    {}
 
     // Appearance flags
     enum {
@@ -42,15 +33,15 @@ class Surface
         ApplyOverlay         = 0x200,
     };
 
-    std::uint32_t appearanceFlags;
+    std::uint32_t appearanceFlags{ 0 };
     Color color;
     Color specularColor;
-    float specularPower;
-    MultiResTexture baseTexture;    // surface colors
-    MultiResTexture bumpTexture;    // normal map based on terrain relief
-    MultiResTexture nightTexture;   // artificial lights to show on night side
-    MultiResTexture specularTexture;// specular mask
-    MultiResTexture overlayTexture; // overlay texture, applied last
-    float bumpHeight;               // scale of bump map relief
-    float lunarLambert;             // mix between Lambertian and Lommel-Seeliger (lunar-like) photometric functions
+    float specularPower{ 0.0f };
+    celestia::util::TextureHandle baseTexture{ celestia::util::TextureHandle::Invalid };    // surface colors
+    celestia::util::TextureHandle bumpTexture{ celestia::util::TextureHandle::Invalid };    // normal map based on terrain relief
+    celestia::util::TextureHandle nightTexture{ celestia::util::TextureHandle::Invalid };   // artificial lights to show on night side
+    celestia::util::TextureHandle specularTexture{ celestia::util::TextureHandle::Invalid };// specular mask
+    celestia::util::TextureHandle overlayTexture{ celestia::util::TextureHandle::Invalid }; // overlay texture, applied last
+    float bumpHeight{ 0.0f };       // scale of bump map relief
+    float lunarLambert{ 0.0f };     // mix between Lambertian and Lommel-Seeliger (lunar-like) photometric functions
 };

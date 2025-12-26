@@ -781,8 +781,10 @@ StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClas
     auto details = createStandardStarType(name, temp, period);
     details->bolometricCorrection = bmagCorrection;
 
-    const MultiResTexture& starTex = starTextures.starTex[specClass];
-    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
+    details->texture = starTextures.starTex[specClass];
+    if (details->texture == util::TextureHandle::Invalid)
+        details->texture = starTextures.defaultTex;
+
     return details;
 }
 
@@ -814,9 +816,10 @@ StarDetailsManager::createWhiteDwarfDetails(std::size_t scIndex,
     float period = 1.0f / 48.0f;
 
     auto details = createStandardStarType(name, temp, period);
-    const MultiResTexture& starTex = starTextures.starTex[StellarClass::Spectral_D];
     details->bolometricCorrection = bmagCorrection;
-    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
+    details->texture = starTextures.starTex[StellarClass::Spectral_D];
+    if (details->texture == util::TextureHandle::Invalid)
+        details->texture = starTextures.defaultTex;
     return details;
 }
 
@@ -829,8 +832,9 @@ StarDetailsManager::createNeutronStarDetails()
                                           1.0f / 86400.0f);
     details->radius = 10.0f;
     details->knowledge = StarDetails::Knowledge::KnowRadius;
-    const MultiResTexture& starTex = starTextures.neutronStarTex;
-    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
+    details->texture = starTextures.neutronStarTex;
+    if (details->texture == util::TextureHandle::Invalid)
+        details->texture = starTextures.defaultTex;
     return details;
 }
 
@@ -981,7 +985,7 @@ StarDetails::setBolometricCorrection(boost::intrusive_ptr<StarDetails>& details,
 }
 
 void
-StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, const MultiResTexture& tex)
+StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, util::TextureHandle tex)
 {
     unshare(details);
     details->texture = tex;
@@ -1172,7 +1176,7 @@ Star::getRadius() const
         math::square(SOLAR_TEMPERATURE / getTemperature());
 }
 
-MultiResTexture
+util::TextureHandle
 Star::getTexture() const
 {
     return details->getTexture();

@@ -644,15 +644,15 @@ ParseResult parseSetGalaxyLightGainCommand(const AssociativeArray& paramList, co
 
 ParseResult parseSetTextureResolutionCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
-    TextureResolution res = TextureResolution::medres;
+    auto res = engine::TextureResolution::medres;
     if (const std::string* textureRes = paramList.getString("resolution"); textureRes != nullptr)
     {
         if (compareIgnoringCase(*textureRes, "low") == 0)
-            res = TextureResolution::lores;
+            res = engine::TextureResolution::lores;
         else if (compareIgnoringCase(*textureRes, "medium") == 0)
-            res = TextureResolution::medres;
+            res = engine::TextureResolution::medres;
         else if (compareIgnoringCase(*textureRes, "high") == 0)
-            res = TextureResolution::hires;
+            res = engine::TextureResolution::hires;
     }
 
     return std::make_unique<CommandSetTextureResolution>(res);
@@ -923,7 +923,6 @@ ParseResult parseSetWindowBordersVisibleCommand(const AssociativeArray& paramLis
     return std::make_unique<CommandSetWindowBordersVisible>(visible);
 }
 
-
 ParseResult parseSetRingsTextureCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
     const std::string* object = paramList.getString("object");
@@ -951,7 +950,6 @@ ParseResult parseSetRingsTextureCommand(const AssociativeArray& paramList, const
 
     return std::make_unique<CommandSetRingsTexture>(*object, texture, path);
 }
-
 
 using ParseCommandPtr = ParseResult (*)(const AssociativeArray&, const ScriptMaps&);
 

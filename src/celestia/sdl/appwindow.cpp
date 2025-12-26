@@ -199,7 +199,7 @@ AppWindow::run(const Settings& settings)
     if (float screenDpi = 96.0f; SDL_GetDisplayDPI(0, &screenDpi, nullptr, nullptr) == 0)
         m_appCore->setScreenDpi(static_cast<int>(screenDpi));
 
-    m_appCore->initRenderer();
+    m_appCore->initRenderer(settings.textureResolution);
 
     auto renderer = m_appCore->getRenderer();
     const auto* config = m_appCore->getConfig();

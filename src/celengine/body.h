@@ -25,9 +25,9 @@
 #include <celutil/color.h>
 #include <celutil/flag.h>
 #include <celutil/ranges.h>
+#include <celutil/texhandle.h>
 #include <celutil/utf8.h>
 #include "meshmanager.h"
-#include "multitexture.h"
 #include "surface.h"
 
 struct Atmosphere;
@@ -94,20 +94,15 @@ private:
 
 struct RingSystem
 {
+    RingSystem(float inner, float outer) :
+        innerRadius(inner), outerRadius(outer)
+    {
+    }
+
     float innerRadius;
     float outerRadius;
-    Color color;
-    MultiResTexture texture;
-
-    RingSystem(float inner, float outer) :
-        innerRadius(inner), outerRadius(outer),
-        color(1.0f, 1.0f, 1.0f),
-        texture()
-        { };
-
-    RingSystem(float inner, float outer, Color _color, const MultiResTexture& _texture) :
-        innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
-        { };
+    Color color{ 1.0f, 1.0f, 1.0f };
+    celestia::util::TextureHandle texture{ celestia::util::TextureHandle::Invalid };
 };
 
 // Object class enumeration:

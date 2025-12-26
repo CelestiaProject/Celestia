@@ -10,11 +10,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <iosfwd>
 #include <memory>
 
-#include <filesystem>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
 #include "model.h"
 
 namespace cmod
@@ -27,8 +27,7 @@ public:
 
 protected:
     ~ModelLoader() = default;
-
-    virtual ResourceHandle getHandle(const std::filesystem::path&) = 0;
+    virtual celestia::util::TextureHandle getHandle(const std::filesystem::path&) = 0;
 
 private:
     class BinaryLoader;
@@ -43,8 +42,7 @@ public:
 
 protected:
     ~ModelWriter() = default;
-
-    virtual const std::filesystem::path* getPath(ResourceHandle) const = 0;
+    virtual const std::filesystem::path* getPath(celestia::util::TextureHandle) const = 0;
 
 private:
     class BinaryWriter;

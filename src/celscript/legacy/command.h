@@ -26,8 +26,8 @@
 
 #include <celengine/marker.h>
 #include <celengine/observer.h>
-#include <celengine/multitexture.h>
 #include <celengine/renderflags.h>
+#include <celengine/texmanager.h>
 #include <celutil/color.h>
 
 enum class BodyClassification : std::uint32_t;
@@ -619,13 +619,13 @@ class CommandCapture : public InstantaneousCommand
 class CommandSetTextureResolution : public InstantaneousCommand
 {
  public:
-    explicit CommandSetTextureResolution(TextureResolution);
+    explicit CommandSetTextureResolution(engine::TextureResolution);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    TextureResolution res;
+    engine::TextureResolution res;
 };
 
 

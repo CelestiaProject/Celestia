@@ -34,7 +34,6 @@
 #include <celutil/tokenizer.h>
 #include "modelgeometry.h"
 #include "spheremesh.h"
-#include "texmanager.h"
 
 using celestia::util::GetLogger;
 
@@ -298,7 +297,9 @@ ConvertTriangleMesh(const M3DTriangleMesh& mesh,
 }
 
 std::unique_ptr<cmod::Model>
-Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
+Convert3DSModel(const M3DScene& scene,
+                const std::filesystem::path& texPath,
+                TexturePaths& texturePaths)
 {
     auto model = std::make_unique<cmod::Model>();
 
@@ -327,7 +328,7 @@ Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
 
         if (!material->getTextureMap().empty())
         {
-            ResourceHandle tex = GetTextureManager()->getHandle(TextureInfo(material->getTextureMap(), texPath, TextureFlags::WrapTexture));
+            util::TextureHandle tex = texturePaths.getHandle(material->getTextureMap(), texPath, TextureFlags::WrapTexture);
             newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, tex);
         }
 
@@ -360,13 +361,13 @@ Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
 }
 
 std::unique_ptr<cmod::Model>
-Load3DSModel(const GeometryInfo& info)
+Load3DSModel(const GeometryInfo& info, TexturePaths& texturePaths)
 {
     std::unique_ptr<M3DScene> scene = Read3DSFile(info.path);
     if (scene == nullptr)
         return nullptr;
 
-    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, info.directory);
+    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, info.directory, texturePaths);
 
     if (info.isNormalized)
         model->normalize(info.center);
@@ -379,26 +380,35 @@ Load3DSModel(const GeometryInfo& info)
 class ModelLoader final : public cmod::ModelLoader
 {
 public:
-    explicit ModelLoader(const std::filesystem::path& directory) : m_directory(directory) {}
+    ModelLoader(TexturePaths&, const std::filesystem::path&);
 
 protected:
-    ResourceHandle getHandle(const std::filesystem::path& filename) override
-    {
-        return GetTextureManager()->getHandle(TextureInfo(filename, m_directory, TextureFlags::WrapTexture));
-    }
+    celestia::util::TextureHandle getHandle(const std::filesystem::path& filename) override;
 
 private:
+    TexturePaths& m_paths;
     const std::filesystem::path& m_directory;
 };
 
+ModelLoader::ModelLoader(TexturePaths& paths, const std::filesystem::path& directory) :
+    m_paths(paths), m_directory(directory)
+{
+}
+
+celestia::util::TextureHandle
+ModelLoader::getHandle(const std::filesystem::path& filename)
+{
+    return m_paths.getHandle(filename, m_directory, TextureFlags::WrapTexture);
+}
+
 std::unique_ptr<cmod::Model>
-LoadCMODModel(const GeometryInfo& info)
+LoadCMODModel(const GeometryInfo& info, engine::TexturePaths& paths)
 {
     std::ifstream in(info.path, std::ios::binary);
     if (!in.good())
         return nullptr;
 
-    std::unique_ptr<cmod::Model> model = ModelLoader(info.directory).load(in);
+    std::unique_ptr<cmod::Model> model = ModelLoader(paths, info.directory).load(in);
 
     if (model == nullptr)
         return nullptr;
@@ -558,8 +568,10 @@ GeometryPaths::getInfo(GeometryHandle handle, GeometryInfo& info) const
     return true;
 }
 
-GeometryManager::GeometryManager(std::shared_ptr<GeometryPaths> paths) :
-    m_paths(paths)
+GeometryManager::GeometryManager(std::shared_ptr<GeometryPaths> geometryPaths,
+                                 std::shared_ptr<TexturePaths> texturePaths) :
+    m_geometryPaths(geometryPaths),
+    m_texturePaths(texturePaths)
 {
     m_geometry.insert_or_assign(GeometryHandle::Empty, std::make_unique<EmptyGeometry>());
 }
@@ -578,18 +590,18 @@ GeometryManager::find(GeometryHandle handle)
     assert(handle != GeometryHandle::Empty);
 
     GeometryInfo info;
-    if (!m_paths->getInfo(handle, info))
+    if (!m_geometryPaths->getInfo(handle, info))
         return nullptr;
 
     std::unique_ptr<cmod::Model> model;
     switch (DetermineFileType(info.path))
     {
     case ContentType::_3DStudio:
-        model = Load3DSModel(info);
+        model = Load3DSModel(info, *m_texturePaths);
         break;
 
     case ContentType::CelestiaModel:
-        model = LoadCMODModel(info);
+        model = LoadCMODModel(info, *m_texturePaths);
         break;
 
     case ContentType::CelestiaMesh:

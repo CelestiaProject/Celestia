@@ -19,7 +19,7 @@
 #include <Eigen/Core>
 
 #include <celutil/color.h>
-#include <celengine/multitexture.h>
+#include <celutil/texhandle.h>
 
 struct Atmosphere
 {
@@ -31,8 +31,8 @@ struct Atmosphere
 
     float cloudHeight{ 0.0f };
     float cloudSpeed{ 0.0f };
-    MultiResTexture cloudTexture;
-    MultiResTexture cloudNormalMap;
+    celestia::util::TextureHandle cloudTexture{ celestia::util::TextureHandle::Invalid };
+    celestia::util::TextureHandle cloudNormalMap{ celestia::util::TextureHandle::Invalid };
 
     float mieCoeff{ 0.0f };
     float mieScaleHeight{ 0.0f };

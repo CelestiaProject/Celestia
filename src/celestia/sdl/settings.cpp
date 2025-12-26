@@ -169,14 +169,14 @@ writeLabelMode(std::ostream& os, const Settings& settings)
 void
 readTextureResolution(Settings& settings, std::string_view value)
 {
-    using TextureRes = std::underlying_type_t<TextureResolution>;
-    static_assert(TextureResolution::lores < TextureResolution::hires);
+    using TextureRes = std::underlying_type_t<engine::TextureResolution>;
+    static_assert(engine::TextureResolution::lores < engine::TextureResolution::hires);
     if (TextureRes res;
         readInt(value, res)
-        && res >= static_cast<TextureRes>(TextureResolution::lores)
-        && res <= static_cast<TextureRes>(TextureResolution::hires))
+        && res >= static_cast<TextureRes>(engine::TextureResolution::lores)
+        && res <= static_cast<TextureRes>(engine::TextureResolution::hires))
     {
-        settings.textureResolution = static_cast<TextureResolution>(res);
+        settings.textureResolution = static_cast<engine::TextureResolution>(res);
     }
 }
 
@@ -377,7 +377,6 @@ Settings::apply(const CelestiaCore* appCore) const
     Renderer* renderer = appCore->getRenderer();
     renderer->setRenderFlags(renderFlags);
     renderer->setLabelMode(labelMode);
-    renderer->setResolution(textureResolution);
     renderer->setOrbitMask(orbitMask);
     renderer->setAmbientLightLevel(static_cast<float>(ambientLight) / 100.0f);
     renderer->setTintSaturation(static_cast<float>(tintSaturation) / 100.0f);

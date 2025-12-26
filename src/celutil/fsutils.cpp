@@ -15,8 +15,11 @@
 #include <cctype>
 #include <cerrno>
 #include <fstream>
+#include <system_error>
 #include <utility>
+
 #include <fmt/format.h>
+
 #include "gettext.h"
 #include "logger.h"
 #ifdef _WIN32
@@ -168,7 +171,10 @@ std::filesystem::path ResolveWildcard(const std::filesystem::path& wildcard,
     for (std::string_view ext : extensions)
     {
         filename.replace_extension(ext);
-        if (std::filesystem::exists(filename))
+
+        std::error_code ec;
+        auto status = std::filesystem::status(filename, ec);
+        if (!ec && std::filesystem::is_regular_file(status))
             return filename;
     }
 

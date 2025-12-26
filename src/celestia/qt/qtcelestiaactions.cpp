@@ -24,6 +24,7 @@
 
 #include <celengine/body.h>
 #include <celengine/simulation.h>
+#include <celengine/texmanager.h>
 #include <celestia/hud.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
@@ -235,9 +236,9 @@ CelestiaActions::CelestiaActions(QObject* parent,
     connect(eclipseShadowsAction, SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
     connect(cloudShadowsAction,   SIGNAL(triggered()), this, SLOT(slotToggleRenderFlag()));
 
-    lowResAction          = createCheckableAction(_("Low"),    this, TextureResolution::lores);
-    mediumResAction       = createCheckableAction(_("Medium"), this, TextureResolution::medres);
-    highResAction         = createCheckableAction(_("High"),   this, TextureResolution::hires);
+    lowResAction          = createCheckableAction(_("Low"),    this, engine::TextureResolution::lores);
+    mediumResAction       = createCheckableAction(_("Medium"), this, engine::TextureResolution::medres);
+    highResAction         = createCheckableAction(_("High"),   this, engine::TextureResolution::hires);
     QActionGroup *texResGroup = new QActionGroup(this);
     texResGroup->addAction(lowResAction);
     texResGroup->addAction(mediumResAction);
@@ -294,7 +295,7 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     RenderFlags renderFlags = renderer->getRenderFlags();
     RenderLabels labelMode = renderer->getLabelMode();
     BodyClassification orbitMask = renderer->getOrbitMask();
-    TextureResolution textureRes = renderer->getResolution();
+    engine::TextureResolution textureRes = renderer->getResolution();
     StarStyle starStyle = renderer->getStarStyle();
 
     equatorialGridAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowCelestialSphere));
@@ -332,9 +333,9 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     spacecraftOrbitsAction->setChecked(util::is_set(orbitMask, BodyClassification::Spacecraft));
 
     // Texture resolution
-    lowResAction->setChecked(textureRes == TextureResolution::lores);
-    mediumResAction->setChecked(textureRes == TextureResolution::medres);
-    highResAction->setChecked(textureRes == TextureResolution::hires);
+    lowResAction->setChecked(textureRes == engine::TextureResolution::lores);
+    mediumResAction->setChecked(textureRes == engine::TextureResolution::medres);
+    highResAction->setChecked(textureRes == engine::TextureResolution::hires);
 
     // Star style
     pointStarAction->setChecked(starStyle == StarStyle::PointStars);
@@ -424,7 +425,7 @@ CelestiaActions::slotSetTextureResolution()
     QAction* act = qobject_cast<QAction*>(sender());
     if (act != nullptr)
     {
-        auto textureResolution = getFromVariant<TextureResolution>(act->data());
+        auto textureResolution = getFromVariant<engine::TextureResolution>(act->data());
         appCore->getRenderer()->setResolution(textureResolution);
     }
 }

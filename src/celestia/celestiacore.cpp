@@ -49,7 +49,6 @@
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
 #include <celengine/location.h>
-#include <celengine/multitexture.h>
 #include <celengine/overlay.h>
 #include <celengine/perspectiveprojectionmode.h>
 #include <celengine/planetgrid.h>
@@ -2304,25 +2303,26 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 {
     config = std::make_unique<CelestiaConfig>();
     bool hasConfig = false;
+    texturePaths = std::make_shared<engine::TexturePaths>();
     if (!configFileName.empty())
     {
-        hasConfig = ReadCelestiaConfig(configFileName, *config);
+        hasConfig = ReadCelestiaConfig(configFileName, *config, *texturePaths);
     }
     else
     {
-        hasConfig = ReadCelestiaConfig("celestia.cfg", *config);
+        hasConfig = ReadCelestiaConfig("celestia.cfg", *config, *texturePaths);
 
         std::filesystem::path localConfigFile = PathExp("~/.celestia.cfg");
         if (!localConfigFile.empty())
-            hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
+            hasConfig |= ReadCelestiaConfig(localConfigFile, *config, *texturePaths);
 
         localConfigFile = PathExp("~/.celestia-1.7.cfg");
         if (!localConfigFile.empty())
-            hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
+            hasConfig |= ReadCelestiaConfig(localConfigFile, *config, *texturePaths);
 
         localConfigFile = PathExp("~/.celestia/celestia.cfg");
         if (!localConfigFile.empty())
-            hasConfig |= ReadCelestiaConfig(localConfigFile, *config);
+            hasConfig |= ReadCelestiaConfig(localConfigFile, *config, *texturePaths);
     }
 
     if (!hasConfig)
@@ -2380,14 +2380,14 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
         favorites = std::make_unique<FavoritesList>();
 
     auto geometryPaths = std::make_shared<engine::GeometryPaths>();
-    geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths);
+    geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths, texturePaths);
     auto universe = std::make_unique<Universe>(geometryManager);
 
     /***** Load star catalogs *****/
 
     StarDetails::SetStarTextures(config->starTextures);
 
-    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier, *geometryPaths);
+    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier, *geometryPaths, *texturePaths);
     if (starCatalog == nullptr)
     {
         fatalError(_("Cannot read star database."), false);
@@ -2397,7 +2397,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths);
+    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths, *texturePaths);
     if (dsoCatalog == nullptr)
     {
         fatalError(_("Cannot read DSO database."), false);
@@ -2407,7 +2407,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the solar system catalogs *****/
 
-    loadSSO(*config, progressNotifier, universe.get(), *geometryPaths);
+    loadSSO(*config, progressNotifier, universe.get(), *geometryPaths, *texturePaths);
 
     if (!config->paths.boundariesFile.empty())
     {
@@ -2577,7 +2577,8 @@ LoadFontHelper(const Renderer *renderer, const std::filesystem::path &p)
     return LoadTextureFont(renderer, path, index, size);
 }
 
-bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
+bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
+                                [[maybe_unused]] bool useMesaPackInvert)
 {
     renderer->setRenderFlags(RenderFlags::ShowStars |
                              RenderFlags::ShowPlanets |
@@ -2603,7 +2604,7 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
 #endif
 
     // Prepare the scene for rendering.
-    if (!renderer->init(metrics.width, metrics.height, detailOptions, geometryManager))
+    if (!renderer->init(metrics.width, metrics.height, detailOptions, resolution, geometryManager, texturePaths))
     {
         fatalError(_("Failed to initialize renderer"), false);
         return false;

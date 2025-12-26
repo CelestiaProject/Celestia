@@ -31,6 +31,7 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
@@ -222,15 +223,15 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     switch (renderer->getResolution())
     {
-        case TextureResolution::lores:
+        case engine::TextureResolution::lores:
             ui.lowResolutionButton->setChecked(true);
             break;
 
-        case TextureResolution::medres:
+        case engine::TextureResolution::medres:
             ui.mediumResolutionButton->setChecked(true);
             break;
 
-        case TextureResolution::hires:
+        case engine::TextureResolution::hires:
             ui.highResolutionButton->setChecked(true);
     }
 
@@ -735,7 +736,7 @@ PreferencesDialog::on_lowResolutionButton_clicked() const
     if (ui.lowResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(TextureResolution::lores);
+        renderer->setResolution(engine::TextureResolution::lores);
     }
 }
 
@@ -745,7 +746,7 @@ PreferencesDialog::on_mediumResolutionButton_clicked() const
     if (ui.mediumResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(TextureResolution::medres);
+        renderer->setResolution(engine::TextureResolution::medres);
     }
 }
 
@@ -755,7 +756,7 @@ PreferencesDialog::on_highResolutionButton_clicked() const
     if (ui.highResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(TextureResolution::hires);
+        renderer->setResolution(engine::TextureResolution::hires);
     }
 }
 

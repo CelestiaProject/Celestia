@@ -12,38 +12,38 @@
 
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
 
 namespace
 {
 
-class ModelIO final : public cmod::ModelLoader,
-                      public cmod::ModelWriter
+class ModelIO : public cmod::ModelLoader,
+                public cmod::ModelWriter
 {
 protected:
-    ResourceHandle getHandle(const std::filesystem::path&) override;
-    const std::filesystem::path* getPath(ResourceHandle) const override;
+    celestia::util::TextureHandle getHandle(const std::filesystem::path&) override;
+    const std::filesystem::path* getPath(celestia::util::TextureHandle) const override;
 
 private:
     std::vector<std::filesystem::path> paths;
 };
 
-ResourceHandle
+celestia::util::TextureHandle
 ModelIO::getHandle(const std::filesystem::path& path)
 {
     auto it = std::find(paths.cbegin(), paths.cend(), path);
     if (it == paths.cend())
     {
-        auto result = static_cast<ResourceHandle>(paths.size());
+        auto result = static_cast<celestia::util::TextureHandle>(paths.size());
         paths.push_back(path);
         return result;
     }
 
-    return static_cast<ResourceHandle>(it - paths.cbegin());
+    return static_cast<celestia::util::TextureHandle>(it - paths.cbegin());
 }
 
 const std::filesystem::path*
-ModelIO::getPath(ResourceHandle handle) const
+ModelIO::getPath(celestia::util::TextureHandle handle) const
 {
     auto handleIdx = static_cast<std::size_t>(handle);
     if (handleIdx >= paths.size())
@@ -58,6 +58,7 @@ TEST_SUITE_BEGIN("CMOD integration");
 
 TEST_CASE("CMOD binary to ASCII roundtrip")
 {
+    std::vector<std::filesystem::path> paths;
     ModelIO modelIO;
 
     std::ifstream f("testmodel.cmod", std::ios::in | std::ios::binary);

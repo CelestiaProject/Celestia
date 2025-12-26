@@ -22,7 +22,6 @@
 #include <celengine/body.h>
 #include <celengine/lightenv.h>
 #include <celengine/meshmanager.h>
-#include <celengine/multitexture.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/shadermanager.h>
@@ -30,6 +29,7 @@
 #include <celengine/projectionmode.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
+#include <celengine/texmanager.h>
 #include <celengine/textlayout.h>
 #include <celimage/pixelformat.h>
 #include <celrender/rendererfwd.h>
@@ -43,7 +43,8 @@ class CurvePlot;
 class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
 class Observer;
-class Surface;
+struct Surface;
+class Texture;
 class TextureFont;
 class FramebufferObject;
 
@@ -137,7 +138,9 @@ class Renderer
 #endif
     };
 
-    bool init(int, int, const DetailOptions&, std::shared_ptr<celestia::engine::GeometryManager>);
+    bool init(int, int, const DetailOptions&, celestia::engine::TextureResolution,
+              std::shared_ptr<celestia::engine::GeometryManager>,
+              std::shared_ptr<const celestia::engine::TexturePaths>);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
@@ -271,8 +274,8 @@ class Renderer
 
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
-    void setResolution(TextureResolution resolution);
-    TextureResolution getResolution() const;
+    void setResolution(celestia::engine::TextureResolution resolution);
+    celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
     void disableSelectionPointer();
 
@@ -381,6 +384,7 @@ class Renderer
     FramebufferObject* getShadowFBO(int) const;
 
     celestia::engine::RenderGeometryManager* getGeometryManager() const noexcept { return m_geometryManager.get(); }
+    celestia::engine::TextureManager* getTextureManager() const noexcept { return m_textureManager.get(); }
 
  public:
     struct RenderProperties
@@ -650,8 +654,6 @@ class Renderer
     const Eigen::Matrix4f *m_modelViewPtr  { &m_modelMatrix };
     const Eigen::Matrix4f *m_projectionPtr { &m_projMatrix };
 
-    bool useCompressedTextures{ false };
-    TextureResolution textureResolution{ TextureResolution::medres };
     DetailOptions detailOptions;
 
     std::uint32_t frameCount{ 0 };
@@ -724,6 +726,7 @@ class Renderer
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
     std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
+    std::unique_ptr<celestia::engine::TextureManager> m_textureManager;
 
     // Location markers
  public:
