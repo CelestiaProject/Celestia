@@ -477,7 +477,7 @@ ModelLoader::TextLoader::loadMaterial(Material& material) //NOSONAR
             tok.nextToken();
             if (auto tokenValue = tok.getStringValue(); tokenValue.has_value())
             {
-                ResourceHandle tex = loader.getHandle(std::filesystem::u8path(*tokenValue));
+                celestia::util::TextureHandle tex = loader.getHandle(std::filesystem::u8path(*tokenValue));
                 material.setMap(texType, tex);
             }
             else
@@ -906,7 +906,7 @@ ModelLoader::TextLoader::load() //NOSONAR
                     return nullptr;
                 }
 
-                if (material.getMap(TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
+                if (material.getMap(TextureSemantic::NormalMap) != celestia::util::TextureHandle::Invalid)
                     hasNormalMap = true;
 
                 model->addMaterial(material);
@@ -1299,7 +1299,7 @@ ModelWriter::TextWriter::writeMaterial(const Material& material) //NOSONAR
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
         std::filesystem::path texSource;
-        if (material.maps[i] != ResourceHandle::InvalidResource)
+        if (material.maps[i] != celestia::util::TextureHandle::Invalid)
         {
             if (auto path = writer.getPath(material.maps[i]); path)
                 texSource = path->filename();
@@ -1401,7 +1401,7 @@ ModelLoader::BinaryLoader::load() //NOSONAR
                 return nullptr;
             }
 
-            if (material.getMap(TextureSemantic::NormalMap) != ResourceHandle::InvalidResource)
+            if (material.getMap(TextureSemantic::NormalMap) != celestia::util::TextureHandle::Invalid)
                 hasNormalMap = true;
 
 
@@ -1532,7 +1532,7 @@ ModelLoader::BinaryLoader::loadMaterial(Material& material) //NOSONAR
                     return false;
                 }
 
-                ResourceHandle tex = loader.getHandle(std::filesystem::u8path(texfile));
+                celestia::util::TextureHandle tex = loader.getHandle(std::filesystem::u8path(texfile));
                 material.maps[texType] = tex;
             }
             break;
@@ -1966,7 +1966,7 @@ ModelWriter::BinaryWriter::writeMaterial(const Material& material)
 
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); i++)
     {
-        if (material.maps[i] == ResourceHandle::InvalidResource)
+        if (material.maps[i] == celestia::util::TextureHandle::Invalid)
             continue;
 
         auto texSource = writer.getPath(material.maps[i]);
@@ -2021,3 +2021,4 @@ ModelWriter::saveBinary(const Model& model, std::ostream& out) const
 }
 
 } // end namespace cmod
+

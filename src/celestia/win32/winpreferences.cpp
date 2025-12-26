@@ -246,7 +246,7 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, L"StarsColor", prefs.starsColor);
     GetRegistryEnum(key, L"StarStyle", prefs.starStyle, StarStyle::FuzzyPointStars, StarStyle::ScaledDiscStars);
     GetRegistryInt(key, L"LastVersion", prefs.lastVersion);
-    GetRegistryEnum(key, L"TextureResolution", prefs.textureResolution, TextureResolution::lores, TextureResolution::hires);
+    GetRegistryEnum(key, L"TextureResolution", prefs.textureResolution, engine::TextureResolution::lores, engine::TextureResolution::hires);
 
     if (std::string altSurfaceName; GetRegistryString(key, L"AltSurface", altSurfaceName))
         prefs.altSurfaceName = std::move(altSurfaceName);

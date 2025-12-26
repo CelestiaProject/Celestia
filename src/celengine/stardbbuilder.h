@@ -35,6 +35,7 @@ namespace celestia
 namespace engine
 {
 class GeometryPaths;
+class TexturePaths;
 }
 namespace ephem
 {
@@ -50,7 +51,8 @@ class AssociativeArray;
 class StarDatabaseBuilder
 {
 public:
-    explicit StarDatabaseBuilder(celestia::engine::GeometryPaths&);
+    StarDatabaseBuilder(celestia::engine::GeometryPaths&,
+                        celestia::engine::TexturePaths&);
     ~StarDatabaseBuilder();
 
     bool load(std::istream&,
@@ -102,4 +104,5 @@ private:
     std::map<AstroCatalog::IndexNumber, AstroCatalog::IndexNumber> barycenters;
     std::multimap<AstroCatalog::IndexNumber, UserCategoryId> categories;
     celestia::engine::GeometryPaths* geometryPaths;
+    celestia::engine::TexturePaths* texturePaths;
 };

@@ -18,7 +18,7 @@
 #include <Eigen/Core>
 
 #include <celutil/color.h>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
 
 namespace cmod
 {
@@ -104,14 +104,14 @@ enum class TextureSemantic : std::int16_t
 
 struct Material
 {
-    Material() { maps.fill(ResourceHandle::InvalidResource); }
+    Material() { maps.fill(celestia::util::TextureHandle::Invalid); }
 
-    inline ResourceHandle getMap(TextureSemantic semantic) const
+    celestia::util::TextureHandle getMap(TextureSemantic semantic) const
     {
         return maps[static_cast<std::size_t>(semantic)];
     }
 
-    inline void setMap(TextureSemantic semantic, ResourceHandle handle)
+    void setMap(TextureSemantic semantic, celestia::util::TextureHandle handle)
     {
         maps[static_cast<std::size_t>(semantic)] = handle;
     }
@@ -122,7 +122,8 @@ struct Material
     float specularPower{ 1.0f };
     float opacity{ 1.0f };
     BlendMode blend{ BlendMode::NormalBlend };
-    std::array<ResourceHandle, static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
+    std::array<celestia::util::TextureHandle,
+               static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
 };
 
 inline bool operator==(const Material& lhs, const Material& rhs)
