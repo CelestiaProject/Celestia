@@ -21,6 +21,7 @@
 
 #include <celengine/body.h>
 #include <celengine/lightenv.h>
+#include <celengine/meshmanager.h>
 #include <celengine/multitexture.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
@@ -135,7 +136,7 @@ class Renderer
 #endif
     };
 
-    bool init(int, int, const DetailOptions&);
+    bool init(int, int, const DetailOptions&, std::shared_ptr<celestia::engine::GeometryManager>);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
@@ -378,6 +379,8 @@ class Renderer
 
     FramebufferObject* getShadowFBO(int) const;
 
+    celestia::engine::RenderGeometryManager* getGeometryManager() const noexcept { return m_geometryManager.get(); }
+
  public:
     struct RenderProperties
     {
@@ -387,7 +390,7 @@ class Renderer
         float radius{ 1.0f };
         float geometryScale{ 1.0f };
         Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
-        ResourceHandle geometry{ ResourceHandle::InvalidResource };
+        celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
         Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
         LightingState::EclipseShadowVector* eclipseShadows;
     };
@@ -717,6 +720,8 @@ class Renderer
     std::unique_ptr<celestia::render::ReferenceMarkRenderer> m_referenceMarkRenderer;
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
+
+    std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
 
     // Location markers
  public:

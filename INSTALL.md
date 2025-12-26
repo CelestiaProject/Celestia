@@ -178,6 +178,7 @@ You will need the following
 Use vcpkg to install the following packages:
 
 * boost-container
+* boost-container-hash
 * boost-smart-ptr
 * eigen3
 * fmt

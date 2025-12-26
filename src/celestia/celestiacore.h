@@ -525,7 +525,7 @@ private:
     std::optional<bool> dragStartFromSurface { std::nullopt };
     std::optional<Eigen::Vector2f> dragStart{ std::nullopt };
 
-    std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
+    std::unique_ptr<ViewportEffect> viewportEffect;
     bool isViewportEffectUsed { false };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
@@ -535,6 +535,8 @@ private:
     teestream m_tee;
 
     std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
+
+    std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
 
 #ifdef CELX
     friend celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);

@@ -17,15 +17,15 @@
 #include <celmodel/model.h>
 #include "geometry.h"
 
-
-class ModelOpenGLData;
 class RenderContext;
 
 class ModelGeometry : public Geometry
 {
 public:
-    explicit ModelGeometry(std::unique_ptr<cmod::Model>&& model);
+    explicit ModelGeometry(std::unique_ptr<const cmod::Model>&& model);
     ~ModelGeometry();
+
+    std::unique_ptr<RenderGeometry> createRenderGeometry() const override;
 
     /*! Find the closest intersection between the ray and the
      *  model.  If the ray intersects the model, return true
@@ -34,17 +34,8 @@ public:
      */
     bool pick(const Eigen::ParametrizedLine<double, 3>& r, double& distance) const override;
 
-    //! Render the model in the current OpenGL context
-    void render(RenderContext&, double t = 0.0) override;
-
-    bool usesTextureType(cmod::TextureSemantic) const override;
-    bool isOpaque() const override;
     bool isNormalized() const override;
 
-    void loadTextures() override;
-
 private:
-    std::unique_ptr<cmod::Model> m_model;
-    std::unique_ptr<ModelOpenGLData> m_glData;
-    bool m_vbInitialized{ false };
+    std::shared_ptr<const cmod::Model> m_model;
 };

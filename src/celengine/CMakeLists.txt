@@ -42,6 +42,7 @@ set(CELENGINE_SOURCES
   galaxy.h
   galaxyform.cpp
   galaxyform.h
+  geometry.cpp
   geometry.h
   glmarker.cpp
   globular.cpp

@@ -28,7 +28,6 @@
 #include "lodspheremesh.h"
 #include "geometry.h"
 #include "texmanager.h"
-#include "meshmanager.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
 #include "axisarrow.h"
@@ -437,8 +436,11 @@ bool Renderer::OrbitPathListEntry::operator<(const OrbitPathListEntry& o) const
 }
 
 
-bool Renderer::init(int winWidth, int winHeight, const DetailOptions& _detailOptions)
+bool Renderer::init(int winWidth, int winHeight,
+                    const DetailOptions& _detailOptions,
+                    std::shared_ptr<engine::GeometryManager> geometryManager)
 {
+    m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager);
     detailOptions = _detailOptions;
 
     m_atmosphereRenderer->initGL();
@@ -2110,11 +2112,11 @@ void Renderer::renderObject(const Vector3f& pos,
 
     // Get the object's geometry; nullptr indicates that object is an
     // ellipsoid.
-    Geometry* geometry = nullptr;
-    if (obj.geometry != ResourceHandle::InvalidResource)
+    RenderGeometry* geometry = nullptr;
+    if (obj.geometry != engine::GeometryHandle::Invalid)
     {
         // This is a model loaded from a file
-        geometry = engine::GetGeometryManager()->find(obj.geometry);
+        geometry = m_geometryManager->find(obj.geometry);
     }
 
     // Get the textures . . .
@@ -2203,7 +2205,7 @@ void Renderer::renderObject(const Vector3f& pos,
     // be seen, make the far plane of the frustum as close to the viewer
     // as possible.
     float frustumFarPlane = farPlaneDistance;
-    if (obj.geometry == ResourceHandle::InvalidResource)
+    if (obj.geometry == engine::GeometryHandle::Invalid)
     {
         // Only adjust the far plane for ellipsoidal objects
         float d = pos.norm();
@@ -2264,7 +2266,7 @@ void Renderer::renderObject(const Vector3f& pos,
             cloudTexOffset = (float) (-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
     }
 
-    if (obj.geometry == ResourceHandle::InvalidResource)
+    if (obj.geometry == engine::GeometryHandle::Invalid)
     {
         // A null model indicates that this body is a sphere
         if (lit)
@@ -2285,35 +2287,32 @@ void Renderer::renderObject(const Vector3f& pos,
             renderSphereUnlit(ri, viewFrustum, planetMVP, this, m_lodSphere.get());
         }
     }
-    else
+    else if (geometry != nullptr)
     {
-        if (geometry != nullptr)
-        {
-            ResourceHandle texOverride = obj.surface->baseTexture.texture(textureResolution);
+        ResourceHandle texOverride = obj.surface->baseTexture.texture(textureResolution);
 
-            if (lit)
-            {
-                renderGeometry_GLSL(geometry,
-                                    ri,
-                                    texOverride,
-                                    ls,
-                                    obj.atmosphere,
-                                    geometryScale,
-                                    renderFlags,
-                                    obj.orientation,
-                                    astro::daysToSecs(now - astro::J2000),
-                                    planetMVP, this);
-            }
-            else
-            {
-                renderGeometry_GLSL_Unlit(geometry,
-                                          ri,
-                                          texOverride,
-                                          astro::daysToSecs(now - astro::J2000),
-                                          planetMVP, this);
-            }
-            glActiveTexture(GL_TEXTURE0);
+        if (lit)
+        {
+            renderGeometry_GLSL(geometry,
+                                ri,
+                                texOverride,
+                                ls,
+                                obj.atmosphere,
+                                geometryScale,
+                                renderFlags,
+                                obj.orientation,
+                                astro::daysToSecs(now - astro::J2000),
+                                planetMVP, this);
         }
+        else
+        {
+            renderGeometry_GLSL_Unlit(geometry,
+                                        ri,
+                                        texOverride,
+                                        astro::daysToSecs(now - astro::J2000),
+                                        planetMVP, this);
+        }
+        glActiveTexture(GL_TEXTURE0);
     }
 
     float segmentSizeInPixels = 0.0f;
@@ -2648,13 +2647,13 @@ void Renderer::renderPlanet(Body& body,
         rp.orientation = body.getGeometryOrientation() * q.cast<float>();
 
         if (util::is_set(labelMode, RenderLabels::LocationLabels))
-            bodyFeaturesManager->computeLocations(&body);
+            bodyFeaturesManager->computeLocations(&body, *m_geometryManager->geometryManager());
 
         Vector3f scaleFactors;
         bool isNormalized = false;
-        const Geometry* geometry = nullptr;
-        if (rp.geometry != ResourceHandle::InvalidResource)
-            geometry = engine::GetGeometryManager()->find(rp.geometry);
+        const RenderGeometry* geometry = nullptr;
+        if (rp.geometry != engine::GeometryHandle::Invalid)
+            geometry = m_geometryManager->find(rp.geometry);
         if (geometry == nullptr || geometry->isNormalized())
         {
             scaleFactors = rp.semiAxes * rp.radius;
@@ -2911,7 +2910,7 @@ void Renderer::renderStar(const Star& star,
         Atmosphere atmosphere;
 
         // Use atmosphere effect to give stars a fuzzy fringe
-        if (star.hasCorona() && rp.geometry == ResourceHandle::InvalidResource)
+        if (star.hasCorona() && rp.geometry == engine::GeometryHandle::Invalid)
         {
             Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
             atmosphere.height = radius * CoronaHeight;
@@ -3133,9 +3132,9 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         rle.renderableType = RenderListEntry::RenderableBody;
         rle.body = &body;
 
-        if (body.getGeometry() != ResourceHandle::InvalidResource && rle.discSizeInPixels > 1)
+        if (body.getGeometry() != engine::GeometryHandle::Invalid && rle.discSizeInPixels > 1)
         {
-            const Geometry* geometry = engine::GetGeometryManager()->find(body.getGeometry());
+            const RenderGeometry* geometry = m_geometryManager->find(body.getGeometry());
             if (geometry == nullptr)
                 rle.isOpaque = true;
             else
@@ -4257,15 +4256,6 @@ void Renderer::loadTextures(Body* body)
         rings != nullptr && rings->texture.texture(textureResolution) != ResourceHandle::InvalidResource)
     {
         rings->texture.find(textureResolution);
-    }
-
-    if (body->getGeometry() != ResourceHandle::InvalidResource)
-    {
-        Geometry* geometry = engine::GetGeometryManager()->find(body->getGeometry());
-        if (geometry != nullptr)
-        {
-            geometry->loadTextures();
-        }
     }
 }
 

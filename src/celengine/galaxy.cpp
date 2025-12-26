@@ -22,6 +22,7 @@
 
 using namespace std::string_view_literals;
 
+namespace engine = celestia::engine;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -136,7 +137,10 @@ bool Galaxy::pick(const Eigen::ParametrizedLine<double, 3>& ray,
         cosAngleToBoundCenter);
 }
 
-bool Galaxy::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
+bool Galaxy::load(const util::AssociativeArray* params,
+                  const std::filesystem::path& resPath,
+                  engine::GeometryPaths& geometryPaths,
+                  std::string_view name)
 {
     setDetail(params->getNumber<float>("Detail").value_or(1.0f));
 
@@ -149,7 +153,7 @@ bool Galaxy::load(const util::AssociativeArray* params, const std::filesystem::p
     else
         setForm({});
 
-    return DeepSkyObject::load(params, resPath, name);
+    return DeepSkyObject::load(params, resPath, geometryPaths, name);
 }
 
 GalaxyType Galaxy::getGalaxyType() const
