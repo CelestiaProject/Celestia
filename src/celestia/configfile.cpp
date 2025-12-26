@@ -22,6 +22,7 @@
 
 using namespace std::string_view_literals;
 
+namespace engine = celestia::engine;
 namespace util = celestia::util;
 
 using util::AssociativeArray;
@@ -38,7 +39,6 @@ applyBoolean(bool& target, const AssociativeArray& hash, std::string_view key)
         target = *b;
 }
 
-
 template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
 void
 applyNumber(T& target, const AssociativeArray& hash, std::string_view key)
@@ -48,7 +48,6 @@ applyNumber(T& target, const AssociativeArray& hash, std::string_view key)
         target = *number;
 }
 
-
 void
 applyString(std::string& target, const AssociativeArray& hash, std::string_view key)
 {
@@ -56,7 +55,6 @@ applyString(std::string& target, const AssociativeArray& hash, std::string_view 
     if (str != nullptr)
         target = *str;
 }
-
 
 void
 applyPath(std::filesystem::path& target, const AssociativeArray& hash, std::string_view key)
@@ -66,15 +64,16 @@ applyPath(std::filesystem::path& target, const AssociativeArray& hash, std::stri
         target = *path;
 }
 
-
 void
-applyTexture(MultiResTexture& target, const AssociativeArray& hash, std::string_view key)
+applyTexture(util::TextureHandle& target,
+             const AssociativeArray& hash,
+             std::string_view key,
+             engine::TexturePaths& texturePaths)
 {
     auto source = hash.getPath(key);
     if (source.has_value())
-        target.setTexture(*source, "textures");
+        target = texturePaths.getHandle(*source, {}, engine::TextureFlags::WrapTexture);
 }
-
 
 void
 applyStringArray(std::vector<std::string>& target, const AssociativeArray& hash, std::string_view key)
@@ -100,7 +99,6 @@ applyStringArray(std::vector<std::string>& target, const AssociativeArray& hash,
     else
         GetLogger()->error("{} must be an array of strings.\n", key);
 }
-
 
 void
 applyPathArray(std::vector<std::filesystem::path>& target, const AssociativeArray& hash, std::string_view key)
@@ -129,7 +127,6 @@ applyPathArray(std::vector<std::filesystem::path>& target, const AssociativeArra
         GetLogger()->error("{} must be a string or an array of strings.\n", key);
 }
 
-
 void
 applyPaths(CelestiaConfig::Paths& paths, const AssociativeArray& hash)
 {
@@ -156,7 +153,6 @@ applyPaths(CelestiaConfig::Paths& paths, const AssociativeArray& hash)
 #endif
 }
 
-
 void
 applyFonts(CelestiaConfig::Fonts& fonts, const AssociativeArray& hash)
 {
@@ -164,7 +160,6 @@ applyFonts(CelestiaConfig::Fonts& fonts, const AssociativeArray& hash)
     applyPath(fonts.labelFont, hash, "LabelFont"sv);
     applyPath(fonts.titleFont, hash, "TitleFont"sv);
 }
-
 
 void
 applyMouse(CelestiaConfig::Mouse& mouse, const AssociativeArray& hash)
@@ -177,13 +172,11 @@ applyMouse(CelestiaConfig::Mouse& mouse, const AssociativeArray& hash)
     applyBoolean(mouse.focusZooming, hash, "FocusZooming"sv);
 }
 
-
 void
 applyObserver(CelestiaConfig::Observer& observer, const AssociativeArray& hash)
 {
     applyBoolean(observer.alignCameraToSurfaceOnLand, hash, "AlignCameraToSurfaceOnLand"sv);
 }
-
 
 void
 applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const AssociativeArray& hash)
@@ -210,11 +203,11 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyStringArray(renderDetails.ignoreGLExtensions, hash, "IgnoreGLExtensions"sv);
 }
 
-
 void
 applyStarTextures(StarDetails::StarTextureSet& starTextures,
                   const AssociativeArray& hash,
-                  std::string_view key)
+                  std::string_view key,
+                  engine::TexturePaths& texturePaths)
 {
     const util::Value* starTexValue = hash.getValue(key);
     if (starTexValue == nullptr)
@@ -227,36 +220,38 @@ applyStarTextures(StarDetails::StarTextureSet& starTextures,
         return;
     }
 
-    applyTexture(starTextures.starTex[StellarClass::Spectral_O], *starTexTable, "O"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_B], *starTexTable, "B"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_A], *starTexTable, "A"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_F], *starTexTable, "F"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_G], *starTexTable, "G"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_K], *starTexTable, "K"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_M], *starTexTable, "M"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_R], *starTexTable, "R"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_S], *starTexTable, "S"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_N], *starTexTable, "N"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_WC], *starTexTable, "WC"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_WN], *starTexTable, "WN"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_WO], *starTexTable, "WO"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_Unknown], *starTexTable, "Unknown"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_L], *starTexTable, "L"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_T], *starTexTable, "T"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_Y], *starTexTable, "Y"sv);
-    applyTexture(starTextures.starTex[StellarClass::Spectral_C], *starTexTable, "C"sv);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_O], *starTexTable, "O"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_B], *starTexTable, "B"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_A], *starTexTable, "A"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_F], *starTexTable, "F"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_G], *starTexTable, "G"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_K], *starTexTable, "K"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_M], *starTexTable, "M"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_R], *starTexTable, "R"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_S], *starTexTable, "S"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_N], *starTexTable, "N"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_WC], *starTexTable, "WC"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_WN], *starTexTable, "WN"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_WO], *starTexTable, "WO"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_Unknown], *starTexTable, "Unknown"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_L], *starTexTable, "L"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_T], *starTexTable, "T"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_Y], *starTexTable, "Y"sv, texturePaths);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_C], *starTexTable, "C"sv, texturePaths);
     // One texture for all white dwarf types; not sure if this needs to be
     // changed. White dwarfs vary widely in temperature, so texture choice
     // should probably be based on that instead of spectral type.
-    applyTexture(starTextures.starTex[StellarClass::Spectral_D], *starTexTable, "WD"sv);
-    applyTexture(starTextures.neutronStarTex, *starTexTable, "NeutronStar"sv);
-    applyTexture(starTextures.defaultTex, *starTexTable, "Default"sv);
+    applyTexture(starTextures.starTex[StellarClass::Spectral_D], *starTexTable, "WD"sv, texturePaths);
+    applyTexture(starTextures.neutronStarTex, *starTexTable, "NeutronStar"sv, texturePaths);
+    applyTexture(starTextures.defaultTex, *starTexTable, "Default"sv, texturePaths);
 }
 
 } // end unnamed namespace
 
-
-bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& config)
+bool
+ReadCelestiaConfig(const std::filesystem::path& filename,
+                   CelestiaConfig& config,
+                   engine::TexturePaths& texturePaths)
 {
     std::ifstream configFile(filename);
     if (!configFile.good())
@@ -289,7 +284,7 @@ bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& c
     applyMouse(config.mouse, *configParams);
     applyObserver(config.observer, *configParams);
     applyRenderDetails(config.renderDetails, *configParams);
-    applyStarTextures(config.starTextures, *configParams, "StarTextures"sv);
+    applyStarTextures(config.starTextures, *configParams, "StarTextures"sv, texturePaths);
 
     applyString(config.projectionMode, *configParams, "ProjectionMode"sv);
     applyString(config.viewportEffect, *configParams, "ViewportEffect"sv);

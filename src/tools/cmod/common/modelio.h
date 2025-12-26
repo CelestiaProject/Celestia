@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <celmodel/modelfile.h>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
 
 namespace cmodtools
 {
@@ -15,16 +15,16 @@ class ModelIO final : public cmod::ModelLoader,
 {
 public:
     void reset();
-    ResourceHandle handle(const std::filesystem::path& path) { return getHandle(path); }
-    const std::filesystem::path* path(ResourceHandle handle) const { return getPath(handle); }
+    celestia::util::TextureHandle handle(const std::filesystem::path& path) { return getHandle(path); }
+    const std::filesystem::path* path(celestia::util::TextureHandle handle) const { return getPath(handle); }
 
 protected:
-    ResourceHandle getHandle(const std::filesystem::path&) override;
-    const std::filesystem::path* getPath(ResourceHandle) const override;
+    celestia::util::TextureHandle getHandle(const std::filesystem::path&) override;
+    const std::filesystem::path* getPath(celestia::util::TextureHandle) const override;
 
 private:
     std::vector<std::filesystem::path> m_paths;
-    std::unordered_map<std::filesystem::path, ResourceHandle> m_handles;
+    std::unordered_map<std::filesystem::path, celestia::util::TextureHandle> m_handles;
 };
 
 extern ModelIO* GetModelIO();

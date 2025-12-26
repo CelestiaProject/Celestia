@@ -19,10 +19,13 @@
 
 #include <celestia/qt/qtpathutil.h>
 
+#include <celutil/texhandle.h>
 #include "modelio.h"
 
 using celestia::qt::PathToQString;
 using celestia::qt::QStringToPath;
+
+using TextureHandle = celestia::util::TextureHandle;
 
 namespace cmodview
 {
@@ -74,7 +77,7 @@ selectComboBoxItem(QComboBox* combo, const std::filesystem::path &path)
 void
 selectComboBoxItem(QComboBox* combo, const cmod::Material& material, cmod::TextureSemantic semantic)
 {
-    if (auto map = material.getMap(semantic); map != ResourceHandle::InvalidResource)
+    if (auto map = material.getMap(semantic); map != TextureHandle::Invalid)
     {
         if (auto path = cmodtools::GetModelIO()->path(map); path)
         {
@@ -281,28 +284,28 @@ MaterialWidget::changeMaterialParameters()
     m_material.opacity = m_opacity->text().toFloat();
     m_material.specularPower = m_specularPower->text().toFloat();
 
-    m_material.setMap(cmod::TextureSemantic::DiffuseMap, ResourceHandle::InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::DiffuseMap, TextureHandle::Invalid);
     if (!m_baseTexture->itemData(m_baseTexture->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::DiffuseMap,
                           cmodtools::GetModelIO()->handle(QStringToPath(m_baseTexture->currentText())));
     }
 
-    m_material.setMap(cmod::TextureSemantic::SpecularMap, ResourceHandle::InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::SpecularMap, TextureHandle::Invalid);
     if (!m_specularMap->itemData(m_specularMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::SpecularMap,
                           cmodtools::GetModelIO()->handle(QStringToPath(m_specularMap->currentText())));
     }
 
-    m_material.setMap(cmod::TextureSemantic::NormalMap, ResourceHandle::InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::NormalMap, TextureHandle::Invalid);
     if (!m_normalMap->itemData(m_normalMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::NormalMap,
                           cmodtools::GetModelIO()->handle(QStringToPath(m_normalMap->currentText())));
     }
 
-    m_material.setMap(cmod::TextureSemantic::EmissiveMap, ResourceHandle::InvalidResource);
+    m_material.setMap(cmod::TextureSemantic::EmissiveMap, TextureHandle::Invalid);
     if (!m_emissiveMap->itemData(m_emissiveMap->currentIndex()).isNull())
     {
         m_material.setMap(cmod::TextureSemantic::EmissiveMap,

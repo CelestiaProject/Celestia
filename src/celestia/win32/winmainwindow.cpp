@@ -885,17 +885,17 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_RENDER_TEXTURERES_LOW:
-        appCore->getRenderer()->setResolution(TextureResolution::lores);
+        appCore->getRenderer()->setResolution(engine::TextureResolution::lores);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_MEDIUM:
-        appCore->getRenderer()->setResolution(TextureResolution::medres);
+        appCore->getRenderer()->setResolution(engine::TextureResolution::medres);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_HIGH:
-        appCore->getRenderer()->setResolution(TextureResolution::hires);
+        appCore->getRenderer()->setResolution(engine::TextureResolution::hires);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
@@ -1543,7 +1543,7 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
 {
     RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
-    TextureResolution textureRes = appCore->getRenderer()->getResolution();
+    engine::TextureResolution textureRes = appCore->getRenderer()->getResolution();
 
     setMenuItemCheck(menuBar, ID_VIEW_SHOW_FRAMES,
                      appCore->getFramesVisible());
@@ -1584,11 +1584,11 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
     CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ? MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
-                  textureRes == TextureResolution::lores ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == engine::TextureResolution::lores ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_MEDIUM,
-                  textureRes == TextureResolution::medres ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == engine::TextureResolution::medres ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_HIGH,
-                  textureRes == TextureResolution::hires ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == engine::TextureResolution::hires ? MF_CHECKED : MF_UNCHECKED);
 
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);

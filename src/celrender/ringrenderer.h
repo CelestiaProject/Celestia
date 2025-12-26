@@ -32,7 +32,7 @@ public:
     explicit RingRenderer(Renderer&);
     ~RingRenderer() = default;
 
-    void renderRings(RingSystem& rings,
+    void renderRings(const RingSystem& rings,
                      const RenderInfo& ri,
                      const LightingState& ls,
                      float planetRadius,

@@ -460,7 +460,7 @@ void
 MainWindow::saveModel(const QString& saveFileName)
 {
     auto model = m_modelView->model();
-    if (model == nullptr)
+    if (!model)
         return;
 
     std::ofstream out(QStringToPath(saveFileName), std::ios::out | std::ios::binary);

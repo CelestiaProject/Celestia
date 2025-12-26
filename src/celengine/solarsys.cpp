@@ -196,10 +196,11 @@ GetFilename(const AssociativeArray& hash,
     return result;
 }
 
-
-void FillinSurface(const AssociativeArray* surfaceData,
-                   Surface* surface,
-                   const std::filesystem::path& path)
+void
+FillinSurface(const AssociativeArray* surfaceData,
+              Surface* surface,
+              const std::filesystem::path& path,
+              engine::TexturePaths& texturePaths)
 {
     if (auto color = surfaceData->getColor("Color"); color.has_value())
         surface->color = *color;
@@ -217,10 +218,10 @@ void FillinSurface(const AssociativeArray* surfaceData,
     auto normalTexture = GetFilename(*surfaceData, "NormalMap"sv, "Invalid filename in NormalMap\n");
     auto overlayTexture = GetFilename(*surfaceData, "OverlayTexture"sv, "Invalid filename in OverlayTexture\n");
 
-    constexpr TextureFlags baseFlags = TextureFlags::WrapTexture;
-    constexpr TextureFlags bumpFlags = TextureFlags::WrapTexture | TextureFlags::LinearColorspace;
-    constexpr TextureFlags nightFlags = TextureFlags::WrapTexture;
-    constexpr TextureFlags specularFlags = TextureFlags::WrapTexture;
+    constexpr auto baseFlags = engine::TextureFlags::WrapTexture;
+    constexpr auto bumpFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
+    constexpr auto nightFlags = engine::TextureFlags::WrapTexture;
+    constexpr auto specularFlags = engine::TextureFlags::WrapTexture;
 
     auto bumpHeight = surfaceData->getNumber<float>("BumpHeight").value_or(2.5f);
 
@@ -237,20 +238,20 @@ void FillinSurface(const AssociativeArray* surfaceData,
     SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
 
     if (baseTexture.has_value())
-        surface->baseTexture.setTexture(*baseTexture, path, baseFlags);
+        surface->baseTexture = texturePaths.getHandle(*baseTexture, path, baseFlags);
     if (nightTexture.has_value())
-        surface->nightTexture.setTexture(*nightTexture, path, nightFlags);
+        surface->nightTexture = texturePaths.getHandle(*nightTexture, path, nightFlags);
     if (specularTexture.has_value())
-        surface->specularTexture.setTexture(*specularTexture, path, specularFlags);
+        surface->specularTexture = texturePaths.getHandle(*specularTexture, path, specularFlags);
 
     // If both are present, NormalMap overrides BumpMap
     if (normalTexture.has_value())
-        surface->bumpTexture.setTexture(*normalTexture, path, bumpFlags);
+        surface->bumpTexture = texturePaths.getHandle(*normalTexture, path, bumpFlags);
     else if (bumpTexture.has_value())
-        surface->bumpTexture.setTexture(*bumpTexture, path, bumpHeight, bumpFlags);
+        surface->bumpTexture = texturePaths.getHandle(*bumpTexture, path, bumpFlags, bumpHeight);
 
     if (overlayTexture.has_value())
-        surface->overlayTexture.setTexture(*overlayTexture, path, baseFlags);
+        surface->overlayTexture = texturePaths.getHandle(*overlayTexture, path, baseFlags);
 }
 
 
@@ -703,7 +704,8 @@ ReadMesh(const AssociativeArray& planetData,
 void ReadAtmosphere(Body* body,
                     const AssociativeArray* atmosData,
                     const std::filesystem::path& path,
-                    DataDisposition disposition)
+                    DataDisposition disposition,
+                    engine::TexturePaths& texturePaths)
 {
     auto bodyFeaturesManager = GetBodyFeaturesManager();
     std::unique_ptr<Atmosphere> newAtmosphere = nullptr;
@@ -749,17 +751,15 @@ void ReadAtmosphere(Body* body,
     if (auto cloudTexture = GetFilename(*atmosData, "CloudMap"sv, "Invalid filename in CloudMap\n");
         cloudTexture.has_value())
     {
-        atmosphere->cloudTexture.setTexture(*cloudTexture,
-                                            path,
-                                            TextureFlags::WrapTexture);
+        constexpr auto cloudFlags = engine::TextureFlags::WrapTexture;
+        atmosphere->cloudTexture = texturePaths.getHandle(*cloudTexture, path, cloudFlags);
     }
 
     if (auto cloudNormalMap = GetFilename(*atmosData, "CloudNormalMap"sv, "Invalid filename in CloudNormalMap\n");
         cloudNormalMap.has_value())
     {
-        atmosphere->cloudNormalMap.setTexture(*cloudNormalMap,
-                                              path,
-                                              TextureFlags::WrapTexture | TextureFlags::LinearColorspace);
+        constexpr auto cloudNormalFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
+        atmosphere->cloudNormalMap = texturePaths.getHandle(*cloudNormalMap, path, cloudNormalFlags);
     }
 
     if (auto cloudShadowDepth = atmosData->getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())
@@ -776,7 +776,8 @@ void ReadAtmosphere(Body* body,
 void ReadRings(Body* body,
                const AssociativeArray* ringsData,
                const std::filesystem::path& path,
-               DataDisposition disposition)
+               DataDisposition disposition,
+               engine::TexturePaths& texturePaths)
 {
     auto inner = ringsData->getLength<float>("Inner");
     auto outer = ringsData->getLength<float>("Outer");
@@ -812,7 +813,7 @@ void ReadRings(Body* body,
     if (auto textureName = GetFilename(*ringsData, "Texture"sv, "Invalid filename in rings Texture\n");
         textureName.has_value())
     {
-        rings->texture = MultiResTexture(*textureName, path);
+        rings->texture = texturePaths.getHandle(*textureName, path);
     }
 
     if (newRings != nullptr)
@@ -831,7 +832,8 @@ Body* CreateBody(const std::string& name,
                  const std::filesystem::path& path,
                  DataDisposition disposition,
                  BodyType bodyType,
-                 engine::GeometryPaths& geometryPaths)
+                 engine::GeometryPaths& geometryPaths,
+                 engine::TexturePaths& texturePaths)
 {
     Body* body = nullptr;
 
@@ -1017,7 +1019,7 @@ Body* CreateBody(const std::string& name,
     else
         surface.color = Color(1.0f, 1.0f, 1.0f);
 
-    FillinSurface(planetData, &surface, path);
+    FillinSurface(planetData, &surface, path, texturePaths);
     body->setSurface(surface);
 
     ReadMesh(*planetData, *body, path, geometryPaths);
@@ -1028,7 +1030,7 @@ Body* CreateBody(const std::string& name,
         if (const AssociativeArray* atmosData = atmosDataValue->getHash(); atmosData == nullptr)
             GetLogger()->error(_("Atmosphere must be an associative array.\n"));
         else
-            ReadAtmosphere(body, atmosData, path, disposition);
+            ReadAtmosphere(body, atmosData, path, disposition, texturePaths);
     }
 
     // Read the ring system
@@ -1037,7 +1039,7 @@ Body* CreateBody(const std::string& name,
         if (const AssociativeArray* ringsData = ringsDataValue->getHash(); ringsData == nullptr)
             GetLogger()->error(_("Rings must be an associative array.\n"));
         else
-            ReadRings(body, ringsData, path, disposition);
+            ReadRings(body, ringsData, path, disposition, texturePaths);
     }
 
     auto bodyFeaturesManager = GetBodyFeaturesManager();
@@ -1122,7 +1124,8 @@ Body* CreateReferencePoint(const std::string& name,
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const std::filesystem::path& directory,
-                            engine::GeometryPaths& geometryPaths)
+                            engine::GeometryPaths& geometryPaths,
+                            engine::TexturePaths& texturePaths)
 {
     Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
@@ -1266,7 +1269,7 @@ bool LoadSolarSystemObjects(std::istream& in,
                 if (bodyType == ReferencePoint)
                     body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
                 else
-                    body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType, geometryPaths);
+                    body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType, geometryPaths, texturePaths);
 
                 if (body != nullptr)
                 {
@@ -1281,7 +1284,7 @@ bool LoadSolarSystemObjects(std::istream& in,
         {
             auto surface = std::make_unique<Surface>();
             surface->color = Color(1.0f, 1.0f, 1.0f);
-            FillinSurface(objectData, surface.get(), directory);
+            FillinSurface(objectData, surface.get(), directory, texturePaths);
             if (parent.body() != nullptr)
                 GetBodyFeaturesManager()->addAlternateSurface(parent.body(), primaryName, std::move(surface));
             else

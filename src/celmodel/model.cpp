@@ -16,10 +16,13 @@
 #include <Eigen/Geometry>
 
 #include <celutil/logger.h>
+#include <celutil/texhandle.h>
 
 #include "model.h"
 
 using celestia::util::GetLogger;
+
+namespace util = celestia::util;
 
 namespace cmod
 {
@@ -71,7 +74,7 @@ Model::addMaterial(const Material& m)
     // if it forces multipass rendering when it's not required.
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
-        if (m.maps[i] != ResourceHandle::InvalidResource)
+        if (m.maps[i] != util::TextureHandle::Invalid)
         {
             textureUsage[i] = true;
         }
@@ -91,7 +94,7 @@ Model::setMaterial(unsigned int index, const Material& m)
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
         textureUsage[i] = std::any_of(materials.cbegin(), materials.cend(),
-                                      [&](const Material& mat) { return mat.maps[i] != ResourceHandle::InvalidResource; });
+                                      [&](const Material& mat) { return mat.maps[i] != util::TextureHandle::Invalid; });
     }
 
     return true;

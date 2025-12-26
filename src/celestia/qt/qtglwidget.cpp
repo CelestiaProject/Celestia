@@ -37,6 +37,7 @@
 #include <celengine/body.h>
 #include <celengine/render.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 #include <celestia/configfile.h>
 #include <celutil/gettext.h>
 #include "qtdraghandler.h"
@@ -55,7 +56,7 @@ constexpr float DEFAULT_TINT_SATURATION = 0.5f;
 constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::SunWhite);
 constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
 constexpr auto DEFAULT_STAR_STYLE = static_cast<int>(StarStyle::FuzzyPointStars);
-constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(TextureResolution::medres);
+constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(engine::TextureResolution::medres);
 
 std::pair<float, float>
 mousePosition(const QMouseEvent& m, qreal scale)
@@ -128,7 +129,13 @@ CelestiaGlWidget::initializeGL()
 
     appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
 
-    if (!appCore->initRenderer(false))
+    // Read saved settings
+    QSettings settings;
+    auto textureResolution = settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt();
+    if (textureResolution < 0 || textureResolution > static_cast<int>(engine::TextureResolution::hires))
+        textureResolution = DEFAULT_TEXTURE_RESOLUTION;
+
+    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);
@@ -136,8 +143,6 @@ CelestiaGlWidget::initializeGL()
 
     appCore->tick();
 
-    // Read saved settings
-    QSettings settings;
     appRenderer->setRenderFlags(static_cast<::RenderFlags>(settings.value("RenderFlags", DEFAULT_RENDER_FLAGS).toULongLong()));
     appRenderer->setOrbitMask(static_cast<BodyClassification>(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toUInt()));
     appRenderer->setLabelMode(static_cast<RenderLabels>(settings.value("LabelMode", DEFAULT_LABEL_MODE).toUInt()));
@@ -147,10 +152,6 @@ CelestiaGlWidget::initializeGL()
     if (starStyle < 0 || starStyle >= static_cast<int>(StarStyle::StarStyleCount))
         starStyle = DEFAULT_STAR_STYLE;
     appRenderer->setStarStyle(static_cast<StarStyle>(starStyle));
-    auto textureResolution = settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt();
-    if (textureResolution < 0 || textureResolution > static_cast<int>(TextureResolution::hires))
-        textureResolution = DEFAULT_TEXTURE_RESOLUTION;
-    appRenderer->setResolution(static_cast<TextureResolution>(textureResolution));
 
     auto colorTableType = settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt();
     if (colorTableType < 0 || colorTableType > static_cast<int>(ColorTableType::VegaWhite))

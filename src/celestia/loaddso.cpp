@@ -26,7 +26,8 @@ using DeepSkyLoader = CatalogLoader<DSODatabaseBuilder>;
 std::unique_ptr<DSODatabase>
 loadDSO(const CelestiaConfig& config,
         ProgressNotifier* progressNotifier,
-        engine::GeometryPaths& geometryPaths)
+        engine::GeometryPaths& geometryPaths,
+        engine::TexturePaths& texturePaths)
 {
     auto dsoDB = std::make_unique<DSODatabaseBuilder>(geometryPaths);
 
@@ -38,7 +39,8 @@ loadDSO(const CelestiaConfig& config,
                          ContentType::CelestiaDeepSkyCatalog,
                          progressNotifier,
                          config.paths.skipExtras,
-                         geometryPaths);
+                         geometryPaths,
+                         texturePaths);
 
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc,
     // globulars.dsc, ...):

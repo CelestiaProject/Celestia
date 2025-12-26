@@ -1806,13 +1806,13 @@ static int celestia_settextureresolution(lua_State* l)
     switch (static_cast<int>(textureResValue))
     {
         case 0:
-            renderer->setResolution(TextureResolution::lores);
+            renderer->setResolution(engine::TextureResolution::lores);
             break;
         case 1:
-            renderer->setResolution(TextureResolution::medres);
+            renderer->setResolution(engine::TextureResolution::medres);
             break;
         case 2:
-            renderer->setResolution(TextureResolution::hires);
+            renderer->setResolution(engine::TextureResolution::hires);
             break;
         default:
             assert(0);
