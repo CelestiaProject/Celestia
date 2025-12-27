@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <functional>
 #include <iosfwd>
 #include <memory>
 
@@ -21,11 +20,35 @@
 namespace cmod
 {
 
-using HandleGetter = std::function<ResourceHandle(const std::filesystem::path&)>;
-using SourceGetter = std::function<std::filesystem::path(ResourceHandle)>;
+class ModelLoader
+{
+public:
+    std::unique_ptr<Model> load(std::istream& in);
 
-std::unique_ptr<Model> LoadModel(std::istream& in, HandleGetter getHandle);
+protected:
+    ~ModelLoader() = default;
 
-bool SaveModelAscii(const Model* model, std::ostream& out, SourceGetter getSource);
-bool SaveModelBinary(const Model* model, std::ostream& out, SourceGetter getSource);
-}
+    virtual ResourceHandle getHandle(const std::filesystem::path&) = 0;
+
+private:
+    class BinaryLoader;
+    class TextLoader;
+};
+
+class ModelWriter
+{
+public:
+    bool saveBinary(const Model& model, std::ostream& out) const;
+    bool saveText(const Model& model, std::ostream& out) const;
+
+protected:
+    ~ModelWriter() = default;
+
+    virtual const std::filesystem::path* getPath(ResourceHandle) const = 0;
+
+private:
+    class BinaryWriter;
+    class TextWriter;
+};
+
+} // end namespace cmod
