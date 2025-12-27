@@ -2307,10 +2307,10 @@ void Renderer::renderObject(const Vector3f& pos,
         else
         {
             renderGeometry_GLSL_Unlit(geometry,
-                                        ri,
-                                        texOverride,
-                                        astro::daysToSecs(now - astro::J2000),
-                                        planetMVP, this);
+                                      ri,
+                                      texOverride,
+                                      astro::daysToSecs(now - astro::J2000),
+                                      planetMVP, this);
         }
         glActiveTexture(GL_TEXTURE0);
     }
