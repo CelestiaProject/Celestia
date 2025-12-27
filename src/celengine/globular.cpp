@@ -26,6 +26,7 @@
 #include "globular.h"
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -95,10 +96,13 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                   cosAngleToBoundCenter);
 }
 
-bool Globular::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
+bool Globular::load(const util::AssociativeArray* params,
+                    const std::filesystem::path& resPath,
+                    engine::GeometryPaths& geometryPaths,
+                    std::string_view name)
 {
     // Load the basic DSO parameters first
-    if (!DeepSkyObject::load(params, resPath, name))
+    if (!DeepSkyObject::load(params, resPath, geometryPaths, name))
         return false;
 
     if (auto detailVal = params->getNumber<float>("Detail"); detailVal.has_value())

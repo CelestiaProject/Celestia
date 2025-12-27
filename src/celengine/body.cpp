@@ -91,7 +91,7 @@ Body::setDefaultProperties()
     emissivity = 1.0f;
     internalHeatFlux = 0.0f;
     geometryOrientation = Eigen::Quaternionf::Identity();
-    geometry = ResourceHandle::InvalidResource;
+    geometry = engine::GeometryHandle::Invalid;
     surface = Surface(Color::White);
     auto manager = GetBodyFeaturesManager();
     manager->setAtmosphere(this, nullptr);
@@ -290,7 +290,7 @@ Body::getRotationModel(double tdb) const
 float
 Body::getBoundingRadius() const
 {
-    if (geometry == ResourceHandle::InvalidResource)
+    if (geometry == engine::GeometryHandle::Invalid)
         return radius;
 
     return radius * numbers::sqrt3_v<float>;
@@ -501,7 +501,7 @@ Body::getRadius() const
 bool
 Body::isSphere() const
 {
-    return (geometry == ResourceHandle::InvalidResource) &&
+    return (geometry == engine::GeometryHandle::Invalid) &&
            (semiAxes.x() == semiAxes.y()) &&
            (semiAxes.x() == semiAxes.z());
 }
@@ -512,7 +512,7 @@ Body::isSphere() const
 bool
 Body::isEllipsoid() const
 {
-    return geometry == ResourceHandle::InvalidResource;
+    return geometry == engine::GeometryHandle::Invalid;
 }
 
 const
@@ -534,7 +534,7 @@ Body::setSurface(const Surface& surf)
 }
 
 void
-Body::setGeometry(ResourceHandle _geometry)
+Body::setGeometry(engine::GeometryHandle _geometry)
 {
     geometry = _geometry;
 }
@@ -1398,7 +1398,7 @@ BodyFeaturesManager::hasLocations(const Body* body) const
 // defined locations; on-demand (i.e. when the object becomes visible to
 // a user) loading of meshes is preferred.
 void
-BodyFeaturesManager::computeLocations(const Body* body)
+BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager& geometryManager)
 {
     if (!util::is_set(body->features, BodyFeatures::Locations))
         return;
@@ -1414,10 +1414,10 @@ BodyFeaturesManager::computeLocations(const Body* body)
 
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     auto geometry = body->getGeometry();
-    if (geometry == ResourceHandle::InvalidResource)
+    if (geometry == engine::GeometryHandle::Invalid)
         return;
 
-    const Geometry* g = engine::GetGeometryManager()->find(geometry);
+    const Geometry* g = geometryManager.find(geometry);
     if (g == nullptr)
         return;
 

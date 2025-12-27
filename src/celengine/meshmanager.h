@@ -9,96 +9,117 @@
 
 #pragma once
 
+#include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <memory>
-#include <tuple>
-#include <utility>
+#include <unordered_map>
+#include <vector>
 
 #include <Eigen/Core>
 
-#include <celutil/resmanager.h>
+#include <celutil/classops.h>
 #include "geometry.h"
 
 namespace celestia::engine
 {
 
-class GeometryInfo
+enum class GeometryHandle : std::uint32_t
 {
-public:
-    using ResourceType = Geometry;
-
-    // Ensure that models with different centers get resolved to different objects by
-    // encoding the center, scale and normalization state in the key.
-    struct ResourceKey
-    {
-        std::filesystem::path resolvedPath;
-        Eigen::Vector3f center;
-        float scale;
-        bool isNormalized;
-        bool resolvedToPath;
-
-        ResourceKey(std::filesystem::path&& _resolvedPath,
-                    const Eigen::Vector3f& _center,
-                    float _scale,
-                    bool _isNormalized,
-                    bool _resolvedToPath) :
-            resolvedPath(std::move(_resolvedPath)),
-            center(_center),
-            scale(_scale),
-            isNormalized(_isNormalized),
-            resolvedToPath(_resolvedToPath)
-        {}
-    };
-
-    explicit GeometryInfo(const std::filesystem::path& _source,
-                          const std::filesystem::path& _path = "") :
-        source(_source),
-        path(_path)
-    {
-    }
-
-    GeometryInfo(const std::filesystem::path& _source,
-                 const std::filesystem::path& _path,
-                 const Eigen::Vector3f& _center,
-                 float _scale,
-                 bool _isNormalized) :
-        source(_source),
-        path(_path),
-        center(_center),
-        scale(_scale),
-        isNormalized(_isNormalized)
-    {
-    }
-
-    ResourceKey resolve(const std::filesystem::path&) const;
-    std::unique_ptr<Geometry> load(const ResourceKey&) const;
-
-private:
-    std::filesystem::path source;
-    std::filesystem::path path;
-    Eigen::Vector3f center{ Eigen::Vector3f::Zero() };
-    float scale{ 1.0f };
-    bool isNormalized{ true };
-
-    friend bool operator<(const GeometryInfo&, const GeometryInfo&);
+    Invalid = ~UINT32_C(0),
+    Empty = Invalid - UINT32_C(1),
 };
 
-inline bool operator<(const GeometryInfo& g0, const GeometryInfo& g1)
+struct GeometryInfo
 {
-    return std::tie(g0.source, g0.path, g0.isNormalized, g0.scale, g0.center.x(), g0.center.y(), g0.center.z()) <
-           std::tie(g1.source, g1.path, g1.isNormalized, g1.scale, g1.center.x(), g1.center.y(), g1.center.z());
-}
+    std::filesystem::path path;
+    std::filesystem::path directory;
+    Eigen::Vector3f center{ Eigen::Vector3f::Zero() };
+    bool isNormalized{ true };
+};
 
-inline bool operator<(const GeometryInfo::ResourceKey& k0,
-                      const GeometryInfo::ResourceKey& k1)
+class GeometryPaths : private util::NoCopy
 {
-    // we do not use the boolean resolvedToPath field here
-    return std::tie(k0.resolvedPath, k0.center.x(), k0.center.y(), k0.center.z(), k0.scale, k0.isNormalized) <
-           std::tie(k1.resolvedPath, k1.center.x(), k1.center.y(), k1.center.z(), k1.scale, k1.isNormalized);
-}
+public:
+    GeometryHandle getHandle(const std::filesystem::path& filename,
+                             const std::filesystem::path& directory,
+                             const Eigen::Vector3f& center = Eigen::Vector3f::Zero(),
+                             bool isNormalized = true);
+    bool getInfo(GeometryHandle, GeometryInfo&) const;
 
-using GeometryManager = ResourceManager<GeometryInfo>;
+private:
+    enum class PathIndex : std::uint32_t
+    {
+        Root = 0,
+        Invalid = ~UINT32_C(0),
+    };
 
-GeometryManager* GetGeometryManager();
+    struct Info
+    {
+        Info(PathIndex, PathIndex, const Eigen::Vector3f&, bool);
+
+        PathIndex pathIndex;
+        PathIndex directoryPathIndex;
+        Eigen::Vector3f center;
+        bool isNormalized;
+    };
+
+    struct Key
+    {
+        Key(PathIndex, const Eigen::Vector3f&, bool);
+
+        PathIndex pathIndex;
+        Eigen::Vector3f center;
+        bool isNormalized;
+    };
+
+    struct KeyHash
+    {
+        std::size_t operator()(const Key&) const;
+    };
+
+    struct KeyEqual
+    {
+        bool operator()(const Key&, const Key&) const;
+    };
+
+    using DirectoryPaths = std::unordered_map<std::filesystem::path, PathIndex>;
+
+    PathIndex getFileIndex(PathIndex&, const std::filesystem::path&);
+    bool checkPath(PathIndex, const std::filesystem::path&, PathIndex&);
+    PathIndex getPathIndex(const std::filesystem::path&);
+
+    std::vector<std::filesystem::path> m_paths{ std::filesystem::path{} };
+    std::vector<Info> m_info;
+
+    std::unordered_map<std::filesystem::path, PathIndex> m_pathMap{ { std::filesystem::path{}, PathIndex::Root } };
+    std::unordered_map<PathIndex, DirectoryPaths> m_dirPaths;
+    std::unordered_map<Key, GeometryHandle, KeyHash, KeyEqual> m_handles;
+};
+
+class GeometryManager
+{
+public:
+    explicit GeometryManager(std::shared_ptr<GeometryPaths>);
+
+    const Geometry* find(GeometryHandle);
+
+private:
+    std::shared_ptr<GeometryPaths> m_paths;
+    std::unordered_map<GeometryHandle, std::unique_ptr<const Geometry>> m_geometry;
+};
+
+class RenderGeometryManager
+{
+public:
+    explicit RenderGeometryManager(std::shared_ptr<GeometryManager>);
+
+    GeometryManager* geometryManager() const noexcept { return m_geometryManager.get(); }
+    RenderGeometry* find(GeometryHandle);
+
+private:
+    std::shared_ptr<GeometryManager> m_geometryManager;
+    std::unordered_map<GeometryHandle, std::unique_ptr<RenderGeometry>> m_geometry;
+};
 
 } // end namespace celestia::engine

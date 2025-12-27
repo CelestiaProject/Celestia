@@ -22,6 +22,11 @@ class PlanetarySystem;
 class Star;
 class Universe;
 
+namespace celestia::engine
+{
+class GeometryPaths;
+}
+
 class SolarSystem
 {
  public:
@@ -43,4 +48,5 @@ using SolarSystemCatalog = std::map<std::uint32_t, std::unique_ptr<SolarSystem>>
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
-                            const std::filesystem::path& dir = std::filesystem::path());
+                            const std::filesystem::path& dir,
+                            celestia::engine::GeometryPaths& geometryPaths);

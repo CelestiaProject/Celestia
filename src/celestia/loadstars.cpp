@@ -46,11 +46,13 @@ loadCrossIndex(StarNameDatabase& starNamesDB, StarCatalog catalog, const std::fi
 } // namespace
 
 std::unique_ptr<StarDatabase>
-loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
+loadStars(const CelestiaConfig &config,
+          ProgressNotifier *progressNotifier,
+          engine::GeometryPaths& geometryPaths)
 {
     // First load the binary star database file. The majority of stars
     // will be defined here.
-    StarDatabaseBuilder starDBBuilder;
+    StarDatabaseBuilder starDBBuilder{ geometryPaths };
     if (auto &path = config.paths.starDatabaseFile; !path.empty())
     {
         if (progressNotifier)
@@ -100,7 +102,8 @@ loadStars(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
                       typeDesc,
                       ContentType::CelestiaStarCatalog,
                       progressNotifier,
-                      config.paths.skipExtras);
+                      config.paths.skipExtras,
+                      geometryPaths);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs list.
     std::filesystem::path empty;

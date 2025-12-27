@@ -69,7 +69,7 @@ Eigen::Matrix4f directionalLightMatrix(const Eigen::Vector3f& lightDirection)
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
-void renderGeometryShadow_GLSL(Geometry* geometry,
+void renderGeometryShadow_GLSL(RenderGeometry* geometry,
                                FramebufferObject* shadowFbo,
                                const LightingState& ls,
                                int lightIndex,
@@ -363,7 +363,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
-void renderGeometry_GLSL(Geometry* geometry,
+void renderGeometry_GLSL(RenderGeometry* geometry,
                          const RenderInfo& ri,
                          ResourceHandle texOverride,
                          const LightingState& ls,
@@ -489,7 +489,7 @@ void renderGeometry_GLSL(Geometry* geometry,
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
-void renderGeometry_GLSL_Unlit(Geometry* geometry,
+void renderGeometry_GLSL_Unlit(RenderGeometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
                                double tsec,

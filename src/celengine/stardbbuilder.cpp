@@ -467,7 +467,8 @@ mergeStarDetails(boost::intrusive_ptr<StarDetails>& existingDetails,
 void
 applyMesh(const StarDatabaseBuilder::StcHeader& header,
           const AssociativeArray* starData,
-          boost::intrusive_ptr<StarDetails>& details)
+          boost::intrusive_ptr<StarDetails>& details,
+          engine::GeometryPaths& geometryPaths)
 {
     const auto* mesh = starData->getString("Mesh");
     if (mesh == nullptr)
@@ -486,10 +487,7 @@ applyMesh(const StarDatabaseBuilder::StcHeader& header,
         return;
     }
 
-    using engine::GeometryInfo;
-    using engine::GetGeometryManager;
-    GeometryInfo geometryInfo(*meshPath, *header.path, Eigen::Vector3f::Zero(), 1.0f, true);
-    ResourceHandle geometryHandle = GetGeometryManager()->getHandle(geometryInfo);
+    engine::GeometryHandle geometryHandle = geometryPaths.getHandle(*meshPath, *header.path);
     StarDetails::setGeometry(details, geometryHandle);
 }
 
@@ -542,9 +540,10 @@ void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
                    boost::intrusive_ptr<StarDetails>& details,
-                   const std::filesystem::path& resourcePath)
+                   const std::filesystem::path& resourcePath,
+                   engine::GeometryPaths& geometryPaths)
 {
-    applyMesh(header, starData, details);
+    applyMesh(header, starData, details, geometryPaths);
 
     if (const auto* texture = starData->getString("Texture"); texture != nullptr)
     {
@@ -596,6 +595,11 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
 }
 
 } // end unnamed namespace
+
+StarDatabaseBuilder::StarDatabaseBuilder(engine::GeometryPaths& _geometryPaths) :
+    geometryPaths(&_geometryPaths)
+{
+}
 
 StarDatabaseBuilder::~StarDatabaseBuilder() = default;
 
@@ -702,7 +706,8 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
  *  Modify <number>   : error
  */
 bool
-StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
+StarDatabaseBuilder::load(std::istream& in,
+                          const std::filesystem::path& resourcePath)
 {
     util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
@@ -874,7 +879,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     if (orbit != nullptr)
         StarDetails::setOrbit(star->details, orbit);
 
-    applyCustomDetails(header, starData, star->details, resourcePath);
+    applyCustomDetails(header, starData, star->details, resourcePath, *geometryPaths);
     return true;
 }
 

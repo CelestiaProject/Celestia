@@ -24,17 +24,24 @@ class DeepSkyObject;
 class DSODatabase;
 class NameDatabase;
 
+namespace celestia::engine
+{
+class GeometryPaths;
+}
+
 class DSODatabaseBuilder
 {
 public:
-    DSODatabaseBuilder() = default;
+    explicit DSODatabaseBuilder(celestia::engine::GeometryPaths&);
     ~DSODatabaseBuilder();
 
-    bool load(std::istream&, const std::filesystem::path& resourcePath = std::filesystem::path());
+    bool load(std::istream&,
+              const std::filesystem::path& resourcePath);
     std::unique_ptr<DSODatabase> finish();
 
 private:
     std::vector<std::unique_ptr<DeepSkyObject>> DSOs;
     std::unique_ptr<NameDatabase> namesDB{ std::make_unique<NameDatabase>() };
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0 };
+    celestia::engine::GeometryPaths* geometryPaths;
 };

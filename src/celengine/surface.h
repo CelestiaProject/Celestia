@@ -12,7 +12,6 @@
 #include <cstdint>
 
 #include <celutil/color.h>
-#include <celutil/reshandle.h>
 #include "multitexture.h"
 
 class Surface

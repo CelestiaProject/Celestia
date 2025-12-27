@@ -60,6 +60,7 @@ jobs:
       run: |
         $packages = @(
           'boost-container',
+          'boost-container-hash',
           'boost-smart-ptr',
           'cspice',
           'eigen3',

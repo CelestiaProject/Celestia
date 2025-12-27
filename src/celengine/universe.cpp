@@ -149,9 +149,21 @@ ApproxPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
     return true;
 }
 
+class ExactPlanetPickTraversal
+{
+public:
+    explicit ExactPlanetPickTraversal(engine::GeometryManager& manager) : geometryManager(manager) {}
+
+    bool operator()(Body* body, PlanetPickInfo& pickInfo) const;
+
+private:
+    engine::GeometryManager& geometryManager;
+};
+
 // Perform an intersection test between the pick ray and a body
 bool
-ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
+ExactPlanetPickTraversal::operator()(Body* body,
+                                     PlanetPickInfo& pickInfo) const
 {
     Eigen::Vector3d bpos = body->getAstrocentricPosition(pickInfo.jd);
     float radius = body->getRadius();
@@ -162,7 +174,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
         !math::testIntersection(pickInfo.pickRay, math::Sphered(bpos, radius), distance))
         return true;
 
-    if (body->getGeometry() == ResourceHandle::InvalidResource)
+    if (body->getGeometry() == engine::GeometryHandle::Invalid)
     {
         // There's no mesh, so the object is an ellipsoid.  If it's
         // spherical, we've already done all the work we need to. Otherwise,
@@ -187,7 +199,7 @@ ExactPlanetPickTraversal(Body* body, PlanetPickInfo& pickInfo)
         Eigen::ParametrizedLine<double, 3> r(pickInfo.pickRay.origin() - bpos, pickInfo.pickRay.direction());
         r = math::transformRay(r, m);
 
-        const Geometry* geometry = engine::GetGeometryManager()->find(body->getGeometry());
+        const Geometry* geometry = geometryManager.find(body->getGeometry());
         float scaleFactor = body->getGeometryScale();
         if (geometry != nullptr && geometry->isNormalized())
             scaleFactor = radius;
@@ -551,6 +563,11 @@ getLocationsCompletion(std::vector<celestia::engine::Completion>& completion,
 
 } // end unnamed namespace
 
+Universe::Universe(std::shared_ptr<engine::GeometryManager> _geometryManager) :
+    geometryManager(_geometryManager)
+{
+}
+
 // Needs definition of ConstellationBoundaries
 Universe::~Universe() = default;
 
@@ -756,7 +773,7 @@ Universe::pickPlanet(const SolarSystem& solarSystem,
 
     // First see if there's a planet|moon that the pick ray intersects.
     // Select the closest planet|moon intersected.
-    traverseFrameTree(solarSystem.getFrameTree(), when, &ExactPlanetPickTraversal, pickInfo);
+    traverseFrameTree(solarSystem.getFrameTree(), when, ExactPlanetPickTraversal(*geometryManager), pickInfo);
 
     if (pickInfo.closestBody != nullptr)
     {

@@ -30,9 +30,16 @@ class OpenCluster;
 class Selection;
 class Renderer;
 
-namespace celestia::util
+namespace celestia
+{
+namespace engine
+{
+class GeometryPaths;
+}
+namespace util
 {
 class AssociativeArray;
+}
 }
 
 constexpr inline float DSO_DEFAULT_ABS_MAGNITUDE = -1000.0f;
@@ -91,7 +98,10 @@ public:
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
-    virtual bool load(const celestia::util::AssociativeArray*, const std::filesystem::path& resPath, std::string_view name);
+    virtual bool load(const celestia::util::AssociativeArray*,
+                      const std::filesystem::path& resPath,
+                      celestia::engine::GeometryPaths& geometryPaths,
+                      std::string_view name);
 
     virtual RenderFlags getRenderMask() const { return RenderFlags::ShowNothing; }
     virtual RenderLabels getLabelMask() const { return RenderLabels::NoLabels; }

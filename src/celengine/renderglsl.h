@@ -22,11 +22,11 @@
 #include "renderflags.h"
 
 struct Atmosphere;
-class Geometry;
 class LightingState;
 class LODSphereMesh;
 struct Matrices;
 class Renderer;
+class RenderGeometry;
 struct RenderInfo;
 class Texture;
 
@@ -48,7 +48,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           Renderer* renderer,
                           LODSphereMesh* lodSphere);
 
-void renderGeometry_GLSL(Geometry* geometry,
+void renderGeometry_GLSL(RenderGeometry* geometry,
                          const RenderInfo& ri,
                          ResourceHandle texOverride,
                          const LightingState& ls,
@@ -75,7 +75,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Renderer* renderer,
                        LODSphereMesh* lodSphere);
 
-void renderGeometry_GLSL_Unlit(Geometry* geometry,
+void renderGeometry_GLSL_Unlit(RenderGeometry* geometry,
                                const RenderInfo& ri,
                                ResourceHandle texOverride,
                                double tsec,

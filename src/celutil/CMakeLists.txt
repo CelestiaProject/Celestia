@@ -9,6 +9,7 @@ set(CELUTIL_SOURCES
   buffile.cpp
   buffile.h
   bytes.h
+  classops.h
   color.cpp
   color.h
   dateformatter.cpp

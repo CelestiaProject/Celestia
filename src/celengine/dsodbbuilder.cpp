@@ -198,10 +198,16 @@ buildCatalogNumberIndex(const engine::DSOOctree& DSOs)
 
 } // end unnamed namespace
 
+DSODatabaseBuilder::DSODatabaseBuilder(engine::GeometryPaths& _geometryPaths) :
+    geometryPaths(&_geometryPaths)
+{
+}
+
 DSODatabaseBuilder::~DSODatabaseBuilder() = default;
 
 bool
-DSODatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
+DSODatabaseBuilder::load(std::istream& in,
+                         const std::filesystem::path& resourcePath)
 {
     util::Tokenizer tokenizer(in);
     util::Parser    parser(&tokenizer);
@@ -247,7 +253,7 @@ DSODatabaseBuilder::load(std::istream& in, const std::filesystem::path& resource
 
         std::unique_ptr<DeepSkyObject> obj = createDSO(objType);
 
-        if (obj == nullptr || !obj->load(objParams, resourcePath, objName))
+        if (obj == nullptr || !obj->load(objParams, resourcePath, *geometryPaths, objName))
         {
             GetLogger()->warn("Bad Deep Sky Object definition--will continue parsing file.\n");
             continue;

@@ -28,6 +28,7 @@
 using namespace std::string_view_literals;
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
@@ -988,7 +989,7 @@ StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, const MultiR
 }
 
 void
-StarDetails::setGeometry(boost::intrusive_ptr<StarDetails>& details, ResourceHandle rh)
+StarDetails::setGeometry(boost::intrusive_ptr<StarDetails>& details, engine::GeometryHandle rh)
 {
     unshare(details);
     details->geometry = rh;
@@ -1177,7 +1178,7 @@ Star::getTexture() const
     return details->getTexture();
 }
 
-ResourceHandle
+engine::GeometryHandle
 Star::getGeometry() const
 {
     return details->getGeometry();
