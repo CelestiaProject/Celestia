@@ -19,8 +19,8 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celutil/array_view.h>
 #include "material.h"
-
 
 namespace cmod
 {
@@ -45,7 +45,6 @@ enum class VertexAttributeSemantic : std::int16_t
     InvalidSemantic  = -1,
 };
 
-
 enum class VertexAttributeFormat : std::int16_t
 {
     Float1    = 0,
@@ -56,7 +55,6 @@ enum class VertexAttributeFormat : std::int16_t
     FormatMax = 5,
     InvalidFormat = -1,
 };
-
 
 enum class PrimitiveGroupType : std::int16_t
 {
@@ -71,19 +69,13 @@ enum class PrimitiveGroupType : std::int16_t
     InvalidPrimitiveGroupType = -1
 };
 
-
 struct VertexAttribute
 {
-    VertexAttribute() :
-        semantic(VertexAttributeSemantic::InvalidSemantic),
-        format(VertexAttributeFormat::InvalidFormat),
-        offsetWords(0)
-    {
-    }
+    constexpr VertexAttribute() = default;
 
-    VertexAttribute(VertexAttributeSemantic _semantic,
-                    VertexAttributeFormat _format,
-                    unsigned int _offsetWords) :
+    constexpr VertexAttribute(VertexAttributeSemantic _semantic,
+                              VertexAttributeFormat _format,
+                              unsigned int _offsetWords) :
         semantic(_semantic),
         format(_format),
         offsetWords(_offsetWords)
@@ -108,17 +100,17 @@ struct VertexAttribute
         }
     }
 
-    VertexAttributeSemantic semantic;
-    VertexAttributeFormat   format;
-    unsigned int            offsetWords;
+    VertexAttributeSemantic semantic{ VertexAttributeSemantic::InvalidSemantic };
+    VertexAttributeFormat   format{ VertexAttributeFormat::InvalidFormat };
+    unsigned int            offsetWords{ 0 };
 };
 
 bool operator==(const VertexAttribute& a, const VertexAttribute& b);
 bool operator<(const VertexAttribute& a, const VertexAttribute& b);
 
-
-struct VertexDescription
+class VertexDescription
 {
+public:
     VertexDescription() = default;
     explicit VertexDescription(std::vector<VertexAttribute>&& attributes);
     ~VertexDescription() = default;
@@ -127,31 +119,30 @@ struct VertexDescription
 
     VertexDescription clone() const { return *this; }
 
-    inline const VertexAttribute& getAttribute(VertexAttributeSemantic semantic) const
-    {
-        return semanticMap[static_cast<std::size_t>(semantic)];
-    }
+    const VertexAttribute& getAttribute(VertexAttributeSemantic semantic) const;
+
+    unsigned int strideBytes() const noexcept { return m_strideBytes; }
+    celestia::util::array_view<VertexAttribute> attributes() const { return m_attributes; }
 
     bool validate() const;
 
-    unsigned int strideBytes{ 0 };
-    std::vector<VertexAttribute> attributes{ };
+    VertexDescription augment(VertexAttributeSemantic, VertexAttributeFormat) const;
 
- private:
+private:
     VertexDescription(const VertexDescription&) = default;
     VertexDescription& operator=(const VertexDescription&) = default;
 
-    void clearSemanticMap();
-    void buildSemanticMap();
-
+    unsigned int m_strideBytes{ 0 };
+    std::vector<VertexAttribute> m_attributes;
     // Vertex attributes indexed by semantic
-    std::array<VertexAttribute, static_cast<std::size_t>(VertexAttributeSemantic::SemanticMax)> semanticMap;
+    std::array<int, static_cast<std::size_t>(VertexAttributeSemantic::SemanticMax)> m_semanticMap;
+
+    friend bool operator==(const VertexDescription&, const VertexDescription&);
+    friend bool operator<(const VertexDescription&, const VertexDescription&);
 };
 
-
-bool operator==(const VertexDescription& a, const VertexDescription& b);
-bool operator<(const VertexDescription& a, const VertexDescription& b);
-
+bool operator==(const VertexDescription&, const VertexDescription&);
+bool operator<(const VertexDescription&, const VertexDescription&);
 
 struct PrimitiveGroup
 {
@@ -169,13 +160,12 @@ struct PrimitiveGroup
     unsigned int materialIndex{ 0 };
     int indicesCount{ 0 };
     int indicesOffset{ 0 };
-    std::vector<Index32> indices{ };
+    std::vector<Index32> indices;
 };
-
 
 class Mesh
 {
- public:
+public:
     class PickResult
     {
     public:
@@ -229,7 +219,7 @@ class Mesh
 
     const VWord* getVertexData() const { return vertices.data(); }
     unsigned int getVertexCount() const { return nVertices; }
-    unsigned int getVertexStrideWords() const { return vertexDesc.strideBytes / sizeof(cmod::VWord); }
+    unsigned int getVertexStrideWords() const { return vertexDesc.strideBytes() / sizeof(cmod::VWord); }
     unsigned int getPrimitiveCount() const;
 
     unsigned int getIndexCount() const { return nTotalIndices; }
@@ -240,13 +230,13 @@ class Mesh
 
     void rebuildIndexMetadata();
 
- private:
+private:
     void mergePrimitiveGroups();
 
-    VertexDescription vertexDesc{ };
+    VertexDescription vertexDesc;
 
     unsigned int nVertices{ 0 };
-    std::vector<VWord> vertices{ };
+    std::vector<VWord> vertices;
 
     unsigned int nTotalIndices{ 0 };
 

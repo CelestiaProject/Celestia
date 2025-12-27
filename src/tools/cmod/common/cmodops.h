@@ -39,8 +39,5 @@ extern std::unique_ptr<cmod::Model> GenerateModelNormals(const cmod::Model& mode
                                                          float smoothAngle,
                                                          bool weldVertices,
                                                          float weldTolerance);
-#ifdef TRISTRIP
-extern bool ConvertToStrips(cmod::Mesh& mesh);
-#endif
 
 }
