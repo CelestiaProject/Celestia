@@ -24,7 +24,6 @@
 
 #include "cmodops.h"
 
-
 namespace cmodtools
 {
 
@@ -46,14 +45,12 @@ struct Vertex
     const cmod::VWord* attributes;
 };
 
-
 struct Face
 {
     Eigen::Vector3f normal;
     std::uint32_t i[3];    // vertex attribute indices
     std::uint32_t vi[3];   // vertex point indices -- same as above unless welding
 };
-
 
 struct VertexComparator
 {
@@ -65,7 +62,6 @@ struct VertexComparator
         return compare(a, b);
     }
 };
-
 
 class FullComparator : public VertexComparator
 {
@@ -85,7 +81,6 @@ private:
     int vertexSize;
 };
 
-
 class PointOrderingPredicate : public VertexComparator
 {
 public:
@@ -100,7 +95,6 @@ public:
         return p0 < p1;
     }
 };
-
 
 class PointTexCoordOrderingPredicate : public VertexComparator
 {
@@ -129,12 +123,10 @@ private:
     std::uint32_t texCoordOffset;
 };
 
-
 bool approxEqual(float x, float y, float prec)
 {
     return std::abs(x - y) <= prec * std::min(std::abs(x), std::abs(y));
 }
-
 
 class PointEquivalencePredicate : public VertexComparator
 {
@@ -196,12 +188,10 @@ private:
     float tolerance;
 };
 
-
 bool equal(const Vertex& a, const Vertex& b, std::uint32_t vertexSize)
 {
     return std::equal(a.attributes, a.attributes + vertexSize, b.attributes);
 }
-
 
 Eigen::Vector3f
 getVertex(const cmod::VWord* vertexData,
@@ -214,7 +204,6 @@ getVertex(const cmod::VWord* vertexData,
     return Eigen::Vector3f(fdata);
 }
 
-
 Eigen::Vector2f
 getTexCoord(const cmod::VWord* vertexData,
             int texCoordOffset,
@@ -225,7 +214,6 @@ getTexCoord(const cmod::VWord* vertexData,
     std::memcpy(fdata, vertexData + strideWords * index + texCoordOffset, sizeof(float) * 2);
     return Eigen::Vector2f(fdata);
 }
-
 
 Eigen::Vector3f
 averageFaceVectors(const std::vector<Face>& faces,
@@ -253,7 +241,6 @@ averageFaceVectors(const std::vector<Face>& faces,
     return v;
 }
 
-
 void
 copyVertex(cmod::VWord* newVertexData,
            const cmod::VertexDescription& newDesc,
@@ -262,57 +249,20 @@ copyVertex(cmod::VWord* newVertexData,
            std::uint32_t oldIndex,
            const std::uint32_t fromOffsets[])
 {
-    unsigned int stride = oldDesc.strideBytes / sizeof(cmod::VWord);
+    unsigned int stride = oldDesc.strideBytes() / sizeof(cmod::VWord);
     const cmod::VWord* oldVertex = oldVertexData + stride * oldIndex;
 
-    for (std::size_t i = 0; i < newDesc.attributes.size(); i++)
+    auto attributes = newDesc.attributes();
+    for (std::size_t i = 0; i < attributes.size(); i++)
     {
         if (fromOffsets[i] != ~0u)
         {
-            std::memcpy(newVertexData + newDesc.attributes[i].offsetWords,
+            std::memcpy(newVertexData + attributes[i].offsetWords,
                         oldVertex + fromOffsets[i],
-                        cmod::VertexAttribute::getFormatSizeWords(newDesc.attributes[i].format) * sizeof(cmod::VWord));
+                        cmod::VertexAttribute::getFormatSizeWords(attributes[i].format) * sizeof(cmod::VWord));
         }
     }
 }
-
-
-void
-augmentVertexDescription(cmod::VertexDescription& desc,
-                         cmod::VertexAttributeSemantic semantic,
-                         cmod::VertexAttributeFormat format)
-{
-    std::uint32_t stride = 0;
-    bool foundMatch = false;
-
-    auto it = desc.attributes.begin();
-    auto end = desc.attributes.end();
-    for (auto i = desc.attributes.begin(); i != end; ++i)
-    {
-        if (semantic == i->semantic && format != i->format)
-        {
-            // The semantic matches, but the format does not; skip this
-            // item.
-            continue;
-        }
-
-        foundMatch |= (semantic == i->semantic);
-        i->offsetWords = stride;
-        stride += cmod::VertexAttribute::getFormatSizeWords(i->format);
-        *it++ = std::move(*i);
-    }
-
-    desc.attributes.erase(it, end);
-
-    if (!foundMatch)
-    {
-        desc.attributes.emplace_back(semantic, format, stride);
-        stride += cmod::VertexAttribute::getFormatSizeWords(format);
-    }
-
-    desc.strideBytes = stride * sizeof(cmod::VWord);
-}
-
 
 void
 addGroupWithOffset(cmod::Mesh& mesh,
@@ -330,7 +280,6 @@ addGroupWithOffset(cmod::Mesh& mesh,
 
     mesh.addGroup(group.prim, group.materialIndex, std::move(newIndices));
 }
-
 
 template<typename T, typename U> void
 joinVertices(std::vector<Face>& faces,
@@ -353,7 +302,7 @@ joinVertices(std::vector<Face>& faces,
     // Initialize the array of vertices
     std::vector<Vertex> vertices(nVertices);
     std::uint32_t f;
-    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+    unsigned int stride = desc.strideBytes() / sizeof(cmod::VWord);
     for (f = 0; f < faces.size(); f++)
     {
         for (std::uint32_t j = 0; j < 3; j++)
@@ -390,9 +339,7 @@ joinVertices(std::vector<Face>& faces,
     }
 }
 
-
 } // end unnamed namespace
-
 
 /** Generate surface normals for a mesh. A new mesh with normals is returned, and
   * the original mesh is unmodified.
@@ -420,7 +367,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     }
 
     std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
-    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+    unsigned int stride = desc.strideBytes() / sizeof(cmod::VWord);
 
     std::uint32_t nFaces = 0;
     std::uint32_t i;
@@ -606,8 +553,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // Finally, create a new mesh with normals included
 
     // Create the new vertex description
-    cmod::VertexDescription newDesc = desc.clone();
-    augmentVertexDescription(newDesc, cmod::VertexAttributeSemantic::Normal, cmod::VertexAttributeFormat::Float3);
+    cmod::VertexDescription newDesc = desc.augment(cmod::VertexAttributeSemantic::Normal, cmod::VertexAttributeFormat::Float3);
 
     // We need to convert the copy the old vertex attributes to the new
     // mesh.  In order to do this, we need the old offset of each attribute
@@ -615,21 +561,24 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
     // this mapping.
     std::uint32_t normalOffset = 0;
     std::uint32_t fromOffsets[16];
-    for (i = 0; i < newDesc.attributes.size(); i++)
+    auto oldAttributes = desc.attributes();
+    auto newAttributes = newDesc.attributes();
+    for (i = 0; i < newAttributes.size(); i++)
     {
+        const auto& newAttr = newAttributes[i];
         fromOffsets[i] = ~0;
 
-        if (newDesc.attributes[i].semantic == cmod::VertexAttributeSemantic::Normal)
+        if (newAttr.semantic == cmod::VertexAttributeSemantic::Normal)
         {
-            normalOffset = newDesc.attributes[i].offsetWords;
+            normalOffset = newAttr.offsetWords;
         }
         else
         {
-            for (const auto& oldAttr : desc.attributes)
+            for (const auto& oldAttr : oldAttributes)
             {
-                if (oldAttr.semantic == newDesc.attributes[i].semantic)
+                if (oldAttr.semantic == newAttr.semantic)
                 {
-                    assert(oldAttr.format == newDesc.attributes[i].format);
+                    assert(oldAttr.format == newAttr.format);
                     fromOffsets[i] = oldAttr.offsetWords;
                     break;
                 }
@@ -639,7 +588,7 @@ GenerateNormals(const cmod::Mesh& mesh, float smoothAngle, bool weld, float weld
 
     // Copy the old vertex data along with the generated normals to the
     // new vertex data buffer.
-    unsigned int newStride = newDesc.strideBytes / sizeof(cmod::VWord);
+    unsigned int newStride = newDesc.strideBytes() / sizeof(cmod::VWord);
     std::vector<cmod::VWord> newVertexData(newStride * nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
@@ -776,7 +725,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
         }
     }
 
-    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+    unsigned int stride = desc.strideBytes() / sizeof(cmod::VWord);
     std::uint32_t posOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Position).offsetWords;
     std::uint32_t texCoordOffset = desc.getAttribute(cmod::VertexAttributeSemantic::Texture0).offsetWords;
 
@@ -877,8 +826,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     }
 
     // Create the new vertex description
-    cmod::VertexDescription newDesc = desc.clone();
-    augmentVertexDescription(newDesc, cmod::VertexAttributeSemantic::Tangent, cmod::VertexAttributeFormat::Float3);
+    cmod::VertexDescription newDesc = desc.augment(cmod::VertexAttributeSemantic::Tangent, cmod::VertexAttributeFormat::Float3);
 
     // We need to convert the copy the old vertex attributes to the new
     // mesh.  In order to do this, we need the old offset of each attribute
@@ -886,21 +834,24 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
     // this mapping.
     std::uint32_t tangentOffset = 0;
     std::uint32_t fromOffsets[16];
-    for (i = 0; i < newDesc.attributes.size(); i++)
+    auto oldAttributes = desc.attributes();
+    auto newAttributes = newDesc.attributes();
+    for (i = 0; i < newAttributes.size(); i++)
     {
+        const auto& newAttr = newAttributes[i];
         fromOffsets[i] = ~0;
 
-        if (newDesc.attributes[i].semantic == cmod::VertexAttributeSemantic::Tangent)
+        if (newAttr.semantic == cmod::VertexAttributeSemantic::Tangent)
         {
-            tangentOffset = newDesc.attributes[i].offsetWords;
+            tangentOffset = newAttr.offsetWords;
         }
         else
         {
-            for (const auto& oldAttr : desc.attributes)
+            for (const auto& oldAttr : oldAttributes)
             {
-                if (oldAttr.semantic == newDesc.attributes[i].semantic)
+                if (oldAttr.semantic == newAttr.semantic)
                 {
-                    assert(oldAttr.format == newDesc.attributes[i].format);
+                    assert(oldAttr.format == newAttr.format);
                     fromOffsets[i] = oldAttr.offsetWords;
                     break;
                 }
@@ -910,7 +861,7 @@ GenerateTangents(const cmod::Mesh& mesh, bool weld)
 
     // Copy the old vertex data along with the generated tangents to the
     // new vertex data buffer.
-    unsigned int newStride = newDesc.strideBytes / sizeof(cmod::VWord);
+    unsigned int newStride = newDesc.strideBytes() / sizeof(cmod::VWord);
     std::vector<cmod::VWord> newVertexData(newStride * nFaces * 3);
     for (f = 0; f < nFaces; f++)
     {
@@ -989,7 +940,7 @@ UniquifyVertices(cmod::Mesh& mesh)
         return false;
 
     // Initialize the array of vertices
-    unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+    unsigned int stride = desc.strideBytes() / sizeof(cmod::VWord);
     std::vector<Vertex> vertices(nVertices);
     std::uint32_t i;
     for (i = 0; i < nVertices; i++)
@@ -1026,7 +977,7 @@ UniquifyVertices(cmod::Mesh& mesh)
             assert(j < uniqueVertexCount);
             std::memcpy(newVertexData.data() + j * stride,
                         oldVertexData + vertices[i].index * stride,
-                        desc.strideBytes);
+                        desc.strideBytes());
         }
         vertexMap[vertices[i].index] = j;
     }
@@ -1060,7 +1011,7 @@ MergeModelMeshes(const cmod::Model& model)
     // Copy materials into the new model
     for (std::uint32_t i = 0; model.getMaterial(i) != nullptr; i++)
     {
-        newModel->addMaterial(model.getMaterial(i)->clone());
+        newModel->addMaterial(*model.getMaterial(i));
     }
 
     std::uint32_t meshIndex = 0;
@@ -1088,7 +1039,7 @@ MergeModelMeshes(const cmod::Model& model)
             totalVertices += meshes[j]->getVertexCount();
         }
 
-        unsigned int stride = desc.strideBytes / sizeof(cmod::VWord);
+        unsigned int stride = desc.strideBytes() / sizeof(cmod::VWord);
         std::vector<cmod::VWord> vertexData(totalVertices * stride);
 
         // Copy the vertex data
@@ -1098,7 +1049,7 @@ MergeModelMeshes(const cmod::Model& model)
             const cmod::Mesh* mesh = meshes[j];
             std::memcpy(vertexData.data() + vertexCount * stride,
                         mesh->getVertexData(),
-                        mesh->getVertexCount() * desc.strideBytes);
+                        mesh->getVertexCount() * desc.strideBytes());
             vertexCount += mesh->getVertexCount();
         }
 
@@ -1140,9 +1091,9 @@ GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVerti
     auto newModel = std::make_unique<cmod::Model>();
 
     // Copy materials
-    for (unsigned int i = 0; model.getMaterial(i) != nullptr; i++)
+    for (unsigned int i = 0; model.getMaterial(i); i++)
     {
-        newModel->addMaterial(model.getMaterial(i)->clone());
+        newModel->addMaterial(*model.getMaterial(i));
     }
 
     bool ok = true;
@@ -1170,102 +1121,5 @@ GenerateModelNormals(const cmod::Model& model, float smoothAngle, bool weldVerti
 
     return newModel;
 }
-
-
-#ifdef TRISTRIP
-bool
-ConvertToStrips(cmod::Mesh& mesh)
-{
-    std::vector<Mesh::PrimitiveGroup*> groups;
-
-    // NvTriStrip library can only handle 16-bit indices
-    if (mesh.getVertexCount() >= 0x10000)
-    {
-        return true;
-    }
-
-    // Verify that the mesh contains just tri strips
-    std::uint32_t i;
-    for (i = 0; mesh.getGroup(i) != nullptr; i++)
-    {
-        if (mesh.getGroup(i)->prim != cmod::Mesh::TriList)
-            return true;
-    }
-
-    // Convert the existing groups to triangle strips
-    for (i = 0; mesh.getGroup(i) != nullptr; i++)
-    {
-        const cmod::Mesh::PrimitiveGroup* group = mesh.getGroup(i);
-
-        // Convert the vertex indices to shorts for the TriStrip library
-        unsigned short* indices = new unsigned short[group->nIndices];
-        std::uint32_t j;
-        for (j = 0; j < group->nIndices; j++)
-        {
-            indices[j] = (unsigned short) group->indices[j];
-        }
-
-        PrimitiveGroup* strips = nullptr;
-        unsigned short nGroups;
-        bool r = GenerateStrips(indices,
-                                group->nIndices,
-                                &strips,
-                                &nGroups,
-                                false);
-        if (!r || strips == nullptr)
-        {
-            std::cerr << "Generate tri strips failed\n";
-            return false;
-        }
-
-        // Call the tristrip library to convert the lists to strips.  Then,
-        // convert from the NvTriStrip's primitive group structure to the
-        // CMOD one and add it to the collection that will be added once
-        // the mesh's original primitive groups are cleared.
-        for (j = 0; j < nGroups; j++)
-        {
-            cmod::Mesh::PrimitiveGroupType prim = cmod::Mesh::InvalidPrimitiveGroupType;
-            switch (strips[j].type)
-            {
-            case PT_LIST:
-                prim = cmod::Mesh::TriList;
-                break;
-            case PT_STRIP:
-                prim = cmod::Mesh::TriStrip;
-                break;
-            case PT_FAN:
-                prim = cmod::Mesh::TriFan;
-                break;
-            }
-
-            if (prim != cmod::Mesh::InvalidPrimitiveGroupType &&
-                strips[j].numIndices != 0)
-            {
-                cmod::Mesh::PrimitiveGroup* newGroup = new cmod::Mesh::PrimitiveGroup();
-                newGroup->prim = prim;
-                newGroup->materialIndex = group->materialIndex;
-                newGroup->nIndices = strips[j].numIndices;
-                newGroup->indices = new uint32_t[newGroup->nIndices];
-                for (uint32_t k = 0; k < newGroup->nIndices; k++)
-                    newGroup->indices[k] = strips[j].indices[k];
-
-                groups.push_back(newGroup);
-            }
-        }
-
-        delete[] strips;
-    }
-
-    mesh.clearGroups();
-
-    // Add the stripified groups to the mesh
-    for (auto iter = groups.begin(); iter != groups.end(); iter++)
-    {
-        mesh.addGroup(*iter);
-    }
-
-    return true;
-}
-#endif
 
 } // end namespace cmodtools

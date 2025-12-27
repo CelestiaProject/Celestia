@@ -82,7 +82,8 @@ convert(cmod::VertexAttributeSemantic semantic)
 void
 setVertexArrays(gl::VertexObject &vao, const gl::Buffer &vbo, const cmod::VertexDescription& desc)
 {
-    for (const auto &attribute : desc.attributes)
+    auto attributes = desc.attributes();
+    for (const auto &attribute : attributes)
     {
         if (attribute.semantic == cmod::VertexAttributeSemantic::InvalidSemantic)
             continue;
@@ -93,7 +94,7 @@ setVertexArrays(gl::VertexObject &vao, const gl::Buffer &vbo, const cmod::Vertex
             GLComponentCounts[static_cast<std::size_t>(attribute.format)],
             GLComponentTypes[static_cast<std::size_t>(attribute.format)],
             GLComponentNormalized[static_cast<std::size_t>(attribute.format)],
-            desc.strideBytes,
+            desc.strideBytes(),
             attribute.offsetWords * sizeof(cmod::VWord));
     }
 }
@@ -133,7 +134,7 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
 
         m_vbos.emplace_back(gl::Buffer::TargetHint::Array,
                             util::array_view<void>(mesh->getVertexData(),
-                                                   mesh->getVertexCount() * vertexDesc.strideBytes));
+                                                   mesh->getVertexCount() * vertexDesc.strideBytes()));
 
         indices.reserve(std::max(indices.capacity(), static_cast<std::size_t>(mesh->getIndexCount())));
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)

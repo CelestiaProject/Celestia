@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstring>
 #include <iterator>
 #include <tuple>
@@ -29,6 +30,8 @@ namespace cmod
 namespace
 {
 
+constexpr VertexAttribute InvalidAttribute;
+
 bool
 isOpaqueMaterial(const Material &material)
 {
@@ -38,84 +41,106 @@ isOpaqueMaterial(const Material &material)
 
 } // end unnamed namespace
 
-
 bool operator==(const VertexAttribute& a, const VertexAttribute& b)
 {
     return std::tie(a.semantic, a.format, a.offsetWords) == std::tie(b.semantic, b.format, b.offsetWords);
 }
-
 
 bool operator<(const VertexAttribute& a, const VertexAttribute& b)
 {
     return std::tie(a.semantic, a.format, a.offsetWords) < std::tie(b.semantic, b.format, b.offsetWords);
 }
 
-
-VertexDescription::VertexDescription(std::vector<VertexAttribute>&& _attributes) :
-    strideBytes(0),
-    attributes(std::move(_attributes))
+VertexDescription::VertexDescription(std::vector<VertexAttribute>&& attributes) :
+    m_attributes(std::move(attributes))
 {
-    for (const auto& attr : attributes)
+    m_semanticMap.fill(-1);
+    for (std::size_t i = 0; i < m_attributes.size(); ++i)
     {
-        strideBytes += VertexAttribute::getFormatSizeWords(attr.format) * sizeof(VWord);
-    }
-
-    if (!attributes.empty())
-    {
-        buildSemanticMap();
+        const auto& attr = m_attributes[i];
+        m_strideBytes += VertexAttribute::getFormatSizeWords(attr.format) * sizeof(VWord);
+        m_semanticMap[static_cast<std::size_t>(attr.semantic)] = static_cast<int>(i);
     }
 }
 
+VertexDescription
+VertexDescription::clone() const
+{
+    VertexDescription result;
+    result.m_attributes = m_attributes;
+    result.m_semanticMap = m_semanticMap;
+    result.m_strideBytes = m_strideBytes;
+    return result;
+}
+
+const VertexAttribute&
+VertexDescription::getAttribute(VertexAttributeSemantic semantic) const
+{
+    auto index = m_semanticMap[static_cast<std::size_t>(semantic)];
+    return index >= 0 ? m_attributes[static_cast<std::size_t>(index)] : InvalidAttribute;
+}
 
 // TODO: This should be called in the constructor; we should start using
 // exceptions in Celestia.
 bool
 VertexDescription::validate() const
 {
-    unsigned int stride = strideBytes / sizeof(VWord);
-    for (const VertexAttribute& attr : attributes)
+    constexpr auto wordSize = static_cast<unsigned int>(sizeof(VWord));
+    return std::none_of(m_attributes.begin(), m_attributes.end(),
+                        [stride = m_strideBytes / wordSize](const VertexAttribute& attr)
+                        {
+                            return attr.offsetWords + VertexAttribute::getFormatSizeWords(attr.format) > stride;
+                        });
+}
+
+VertexDescription
+VertexDescription::augment(cmod::VertexAttributeSemantic semantic,
+                           cmod::VertexAttributeFormat format) const
+{
+    std::uint32_t stride = 0;
+    bool foundMatch = false;
+
+    std::vector<VertexAttribute> newAttributes = m_attributes;
+    auto it = newAttributes.begin();
+    auto end = newAttributes.end();
+    for (auto &attr : newAttributes)
     {
-        // Validate the attribute
-        if (attr.offsetWords + VertexAttribute::getFormatSizeWords(attr.format) > stride)
-            return false;
-        // TODO: check for repetition of attributes
-        // if (vertexAttributeMap[attr->semantic].format != InvalidFormat)
-        //   return false;
+        if (semantic == attr.semantic && format != attr.format)
+        {
+            // The semantic matches, but the format does not; skip this
+            // item.
+            continue;
+        }
+
+        foundMatch |= (semantic == attr.semantic);
+        attr.offsetWords = stride;
+        stride += cmod::VertexAttribute::getFormatSizeWords(attr.format);
+        *it = std::move(attr);
+        ++it;
     }
 
-    return true;
-}
+    newAttributes.erase(it, end);
 
-
-void
-VertexDescription::buildSemanticMap()
-{
-    for (const VertexAttribute& attr : attributes)
+    if (!foundMatch)
     {
-        semanticMap[static_cast<std::size_t>(attr.semantic)] = attr;
+        newAttributes.emplace_back(semantic, format, stride);
+        stride += cmod::VertexAttribute::getFormatSizeWords(format);
     }
+
+    auto result = VertexDescription(std::move(newAttributes));
+    assert(result.strideBytes() == stride * sizeof(cmod::VWord));
+    return result;
 }
-
-
-void
-VertexDescription::clearSemanticMap()
-{
-    for (auto& i : semanticMap)
-        i = VertexAttribute();
-}
-
 
 bool operator==(const VertexDescription& a, const VertexDescription& b)
 {
-    return std::tie(a.strideBytes, a.attributes) == std::tie(b.strideBytes, b.attributes);
+    return std::tie(a.m_strideBytes, a.m_attributes) == std::tie(b.m_strideBytes, b.m_attributes);
 }
-
 
 bool operator<(const VertexDescription& a, const VertexDescription& b)
 {
-    return std::tie(a.strideBytes, a.attributes) < std::tie(b.strideBytes, b.attributes);
+    return std::tie(a.m_strideBytes, a.m_attributes) < std::tie(b.m_strideBytes, b.m_attributes);
 }
-
 
 PrimitiveGroup
 PrimitiveGroup::clone() const
@@ -128,7 +153,6 @@ PrimitiveGroup::clone() const
     newGroup.indicesOffset = indicesOffset;
     return newGroup;
 }
-
 
 unsigned int
 PrimitiveGroup::getPrimitiveCount() const
@@ -153,7 +177,6 @@ PrimitiveGroup::getPrimitiveCount() const
     }
 }
 
-
 Mesh
 Mesh::clone() const
 {
@@ -168,14 +191,12 @@ Mesh::clone() const
     return newMesh;
 }
 
-
 void
 Mesh::setVertices(unsigned int _nVertices, std::vector<VWord>&& vertexData)
 {
     nVertices = _nVertices;
     vertices = std::move(vertexData);
 }
-
 
 bool
 Mesh::setVertexDescription(VertexDescription&& desc)
@@ -187,12 +208,10 @@ Mesh::setVertexDescription(VertexDescription&& desc)
     return true;
 }
 
-
 const VertexDescription& Mesh::getVertexDescription() const
 {
     return vertexDesc;
 }
-
 
 const PrimitiveGroup*
 Mesh::getGroup(unsigned int index) const
@@ -203,7 +222,6 @@ Mesh::getGroup(unsigned int index) const
     return &groups[index];
 }
 
-
 PrimitiveGroup*
 Mesh::getGroup(unsigned int index)
 {
@@ -213,14 +231,12 @@ Mesh::getGroup(unsigned int index)
     return &groups[index];
 }
 
-
 unsigned int
 Mesh::addGroup(PrimitiveGroup&& group)
 {
     groups.push_back(std::move(group));
     return groups.size();
 }
-
 
 unsigned int
 Mesh::addGroup(PrimitiveGroupType prim,
@@ -235,13 +251,11 @@ Mesh::addGroup(PrimitiveGroupType prim,
     return addGroup(std::move(g));
 }
 
-
 unsigned int
 Mesh::getGroupCount() const
 {
     return groups.size();
 }
-
 
 void
 Mesh::clearGroups()
@@ -249,20 +263,17 @@ Mesh::clearGroups()
     groups.clear();
 }
 
-
 const std::string&
 Mesh::getName() const
 {
     return name;
 }
 
-
 void
 Mesh::setName(std::string&& _name)
 {
     name = std::move(_name);
 }
-
 
 void
 Mesh::remapIndices(const std::vector<Index32>& indexMap)
@@ -276,14 +287,12 @@ Mesh::remapIndices(const std::vector<Index32>& indexMap)
     }
 }
 
-
 void
 Mesh::remapMaterials(const std::vector<unsigned int>& materialMap)
 {
     for (auto& group : groups)
         group.materialIndex = materialMap[group.materialIndex];
 }
-
 
 void
 Mesh::aggregateByMaterial()
@@ -295,7 +304,6 @@ Mesh::aggregateByMaterial()
               });
     mergePrimitiveGroups();
 }
-
 
 void
 Mesh::mergePrimitiveGroups()
@@ -397,7 +405,7 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
         return false;
     }
 
-    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+    unsigned int stride = vertexDesc.strideBytes() / sizeof(VWord);
     unsigned int posOffset = vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
     const VWord* vdata = vertices.data();
 
@@ -523,7 +531,6 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
     return closest != maxDistance;
 }
 
-
 bool
 Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection, double& distance) const
 {
@@ -537,7 +544,6 @@ Mesh::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection
     return hit;
 }
 
-
 Eigen::AlignedBox<float, 3>
 Mesh::getBoundingBox() const
 {
@@ -549,7 +555,7 @@ Mesh::getBoundingBox() const
 
     const VWord* vdata = vertices.data() + vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
 
-    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+    unsigned int stride = vertexDesc.strideBytes() / sizeof(VWord);
     if (vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).format == VertexAttributeFormat::Float1)
     {
         // Handle bounding box calculation for point sprites. Unlike other
@@ -583,7 +589,6 @@ Mesh::getBoundingBox() const
     return bbox;
 }
 
-
 void
 Mesh::transform(const Eigen::Vector3f& translation, float scale)
 {
@@ -593,7 +598,7 @@ Mesh::transform(const Eigen::Vector3f& translation, float scale)
     VWord* vdata = vertices.data() + vertexDesc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
     unsigned int i;
 
-    unsigned int stride = vertexDesc.strideBytes / sizeof(VWord);
+    unsigned int stride = vertexDesc.strideBytes() / sizeof(VWord);
 
     // Scale and translate the vertex positions
     for (i = 0; i < nVertices; i++, vdata += stride)
@@ -618,7 +623,6 @@ Mesh::transform(const Eigen::Vector3f& translation, float scale)
     }
 }
 
-
 unsigned int
 Mesh::getPrimitiveCount() const
 {
@@ -640,7 +644,6 @@ Mesh::merge(const Mesh &other)
     for (auto i : oi)
         ti.push_back(i + nVertices);
 
-    vertices.reserve(vertices.size() + other.vertices.size());
     vertices.insert(vertices.end(), other.vertices.begin(), other.vertices.end());
 
     nVertices += other.nVertices;
@@ -658,9 +661,12 @@ Mesh::canMerge(const Mesh &other, const std::vector<Material> &materials) const
     if (tg.prim != PrimitiveGroupType::TriList)
         return false;
 
-    if (std::tie(tg.materialIndex, tg.prim, vertexDesc.strideBytes) !=
-        std::tie(og.materialIndex, og.prim, other.vertexDesc.strideBytes))
+    if (tg.materialIndex != og.materialIndex ||
+        tg.prim != og.prim ||
+        vertexDesc.strideBytes() != other.vertexDesc.strideBytes())
+    {
         return false;
+    }
 
     if (!isOpaqueMaterial(materials[tg.materialIndex]) || !isOpaqueMaterial(materials[og.materialIndex]))
         return false;
