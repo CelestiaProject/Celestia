@@ -28,10 +28,15 @@
 #include <celengine/asterism.h>
 #include <celutil/array_view.h>
 
+namespace celestia::engine
+{
+class GeometryManager;
+}
+
 class Universe
 {
 public:
-    Universe() = default;
+    explicit Universe(std::shared_ptr<celestia::engine::GeometryManager>);
     ~Universe();
 
     StarDatabase* getStarCatalog() const;
@@ -121,11 +126,12 @@ private:
                                 float faintest,
                                 float tolerance = 0.0f) const;
 
-    std::unique_ptr<StarDatabase> starCatalog{nullptr};
-    std::unique_ptr<DSODatabase> dsoCatalog{nullptr};
-    std::unique_ptr<SolarSystemCatalog> solarSystemCatalog{nullptr};
-    std::unique_ptr<AsterismList> asterisms{nullptr};
-    std::unique_ptr<ConstellationBoundaries> boundaries{nullptr};
+    std::unique_ptr<StarDatabase> starCatalog;
+    std::unique_ptr<DSODatabase> dsoCatalog;
+    std::unique_ptr<SolarSystemCatalog> solarSystemCatalog;
+    std::unique_ptr<AsterismList> asterisms;
+    std::unique_ptr<ConstellationBoundaries> boundaries;
+    std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
 
     celestia::MarkerList markers{ };
     std::vector<const Star*> closeStars{ };

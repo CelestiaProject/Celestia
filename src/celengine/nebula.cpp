@@ -16,7 +16,6 @@
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
 #include <fmt/format.h>
-#include "meshmanager.h"
 #include "nebula.h"
 #include "rendcontext.h"
 #include "render.h"
@@ -71,14 +70,14 @@ Nebula::getDescription() const
     return fmt::format(_("Nebula: {}"), getType());
 }
 
-ResourceHandle
+engine::GeometryHandle
 Nebula::getGeometry() const
 {
     return geometry;
 }
 
 void
-Nebula::setGeometry(ResourceHandle _geometry)
+Nebula::setGeometry(engine::GeometryHandle _geometry)
 {
     geometry = _geometry;
 }
@@ -90,11 +89,14 @@ Nebula::getObjType() const
 }
 
 bool
-Nebula::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
+Nebula::load(const util::AssociativeArray* params,
+             const std::filesystem::path& resPath,
+             engine::GeometryPaths& geometryPaths,
+             std::string_view name)
 {
     if (const std::string* typeName = params->getString("Type"); typeName != nullptr)
         setType(*typeName);
-    
+
     if (const std::string* t = params->getString("Mesh"); t != nullptr)
     {
         auto geometryFileName = util::U8FileName(*t);
@@ -104,12 +106,11 @@ Nebula::load(const util::AssociativeArray* params, const std::filesystem::path& 
             return false;
         }
 
-        ResourceHandle geometryHandle =
-            engine::GetGeometryManager()->getHandle(engine::GeometryInfo(*geometryFileName, resPath));
+        auto geometryHandle = geometryPaths.getHandle(*geometryFileName, resPath);
         setGeometry(geometryHandle);
     }
 
-    return DeepSkyObject::load(params, resPath, name);
+    return DeepSkyObject::load(params, resPath, geometryPaths, name);
 }
 
 RenderFlags

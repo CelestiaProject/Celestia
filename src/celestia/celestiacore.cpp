@@ -2419,13 +2419,15 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     if (favorites == nullptr)
         favorites = std::make_unique<FavoritesList>();
 
-    auto universe = std::make_unique<Universe>();
+    auto geometryPaths = std::make_shared<engine::GeometryPaths>();
+    geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths);
+    auto universe = std::make_unique<Universe>(geometryManager);
 
     /***** Load star catalogs *****/
 
     StarDetails::SetStarTextures(config->starTextures);
 
-    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier);
+    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier, *geometryPaths);
     if (starCatalog == nullptr)
     {
         fatalError(_("Cannot read star database."), false);
@@ -2435,7 +2437,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier);
+    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths);
     if (dsoCatalog == nullptr)
     {
         fatalError(_("Cannot read DSO database."), false);
@@ -2445,7 +2447,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the solar system catalogs *****/
 
-    loadSSO(*config, progressNotifier, universe.get());
+    loadSSO(*config, progressNotifier, universe.get(), *geometryPaths);
 
     if (!config->paths.boundariesFile.empty())
     {
@@ -2641,7 +2643,7 @@ bool CelestiaCore::initRenderer([[maybe_unused]] bool useMesaPackInvert)
 #endif
 
     // Prepare the scene for rendering.
-    if (!renderer->init(metrics.width, metrics.height, detailOptions))
+    if (!renderer->init(metrics.width, metrics.height, detailOptions, geometryManager))
     {
         fatalError(_("Failed to initialize renderer"), false);
         return false;

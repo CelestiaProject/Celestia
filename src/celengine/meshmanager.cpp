@@ -10,15 +10,20 @@
 
 #include "meshmanager.h"
 
-#include <cstdint>
+#include <cassert>
 #include <cstring>
 #include <fstream>
 #include <ios>
+#include <system_error>
+#include <tuple>
 #include <utility>
-#include <vector>
+
+#include <boost/container_hash/hash.hpp>
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
+#include <celmodel/material.h>
+#include <celmodel/mesh.h>
 #include <celmodel/model.h>
 #include <celmodel/modelfile.h>
 #include <celutil/associativearray.h>
@@ -355,113 +360,239 @@ Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
 }
 
 std::unique_ptr<cmod::Model>
-Load3DSModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path& path)
+Load3DSModel(const GeometryInfo& info)
 {
-    std::unique_ptr<M3DScene> scene = Read3DSFile(key.resolvedPath);
+    std::unique_ptr<M3DScene> scene = Read3DSFile(info.path);
     if (scene == nullptr)
         return nullptr;
 
-    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, key.resolvedToPath ? path : std::filesystem::path());
+    std::unique_ptr<cmod::Model> model = Convert3DSModel(*scene, info.directory);
 
-    if (key.isNormalized)
-        model->normalize(key.center);
+    if (info.isNormalized)
+        model->normalize(info.center);
     else
-        model->transform(key.center, key.scale);
+        model->transform(info.center, 1.0f);
 
     return model;
 }
 
 std::unique_ptr<cmod::Model>
-LoadCMODModel(const GeometryInfo::ResourceKey& key, const std::filesystem::path& path)
+LoadCMODModel(const GeometryInfo& info)
 {
-    std::ifstream in(key.resolvedPath, std::ios::binary);
+    std::ifstream in(info.path, std::ios::binary);
     if (!in.good())
         return nullptr;
 
     std::unique_ptr<cmod::Model> model = cmod::LoadModel(
         in,
-        [&path](const std::filesystem::path& name)
+        [&info](const std::filesystem::path& name)
         {
-            return GetTextureManager()->getHandle(TextureInfo(name, path, TextureFlags::WrapTexture));
+            return GetTextureManager()->getHandle(TextureInfo(name, info.directory, TextureFlags::WrapTexture));
         });
 
     if (model == nullptr)
         return nullptr;
 
-    if (key.isNormalized)
-        model->normalize(key.center);
+    if (info.isNormalized)
+        model->normalize(info.center);
     else
-        model->transform(key.center, key.scale);
+        model->transform(info.center, 1.0f);
 
     return model;
 }
 
 std::unique_ptr<cmod::Model>
-LoadCMSModel(const GeometryInfo::ResourceKey& key)
+LoadCMSModel(const GeometryInfo& info)
 {
-    std::unique_ptr<cmod::Model> model = LoadCelestiaMesh(key.resolvedPath);
+    std::unique_ptr<cmod::Model> model = LoadCelestiaMesh(info.path);
     if (model == nullptr)
         return nullptr;
 
-    if (key.isNormalized)
-        model->normalize(key.center);
+    if (info.isNormalized)
+        model->normalize(info.center);
     else
-        model->transform(key.center, key.scale);
+        model->transform(info.center, 1.0f);
 
     return model;
 }
 
 } // end unnamed namespace
 
-GeometryInfo::ResourceKey
-GeometryInfo::resolve(const std::filesystem::path& baseDir) const
+GeometryPaths::Info::Info(PathIndex _pathIndex,
+                          PathIndex _directoryPathIndex,
+                          const Eigen::Vector3f& _center,
+                          bool _isNormalized) :
+    pathIndex(_pathIndex),
+    directoryPathIndex(_directoryPathIndex),
+    center(_center),
+    isNormalized(_isNormalized)
 {
-    // All empty meshes resolve to the same resource regardless of center/scaling
-    if (source.empty())
-        return ResourceKey({}, Eigen::Vector3f::Zero(), 1.0f, true, false);
-
-    if (!path.empty())
-    {
-        std::filesystem::path filename = path / "models" / source;
-        std::ifstream in(filename);
-        if (in.good())
-        {
-            return ResourceKey(std::move(filename), center, scale, isNormalized, true);
-        }
-    }
-
-    return ResourceKey(baseDir / source, center, scale, isNormalized, false);
 }
 
-std::unique_ptr<Geometry>
-GeometryInfo::load(const ResourceKey& key) const
+GeometryPaths::Key::Key(PathIndex _pathIndex,
+                        const Eigen::Vector3f& _center,
+                        bool _isNormalized) :
+    pathIndex(_pathIndex),
+    center(_center),
+    isNormalized(_isNormalized)
 {
-    // empty mesh
-    if (key.resolvedPath.empty())
-        return std::make_unique<EmptyGeometry>();
+}
 
-    GetLogger()->info(_("Loading model: {}\n"), key.resolvedPath);
-    std::unique_ptr<cmod::Model> model = nullptr;
+std::size_t
+GeometryPaths::KeyHash::operator()(const Key& key) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, key.pathIndex);
+    boost::hash_combine(seed, key.center.x());
+    boost::hash_combine(seed, key.center.y());
+    boost::hash_combine(seed, key.center.z());
+    boost::hash_combine(seed, key.isNormalized);
+    return seed;
+}
 
-    switch (ContentType fileType = DetermineFileType(key.resolvedPath); fileType)
+bool
+GeometryPaths::KeyEqual::operator()(const Key& lhs, const Key& rhs) const
+{
+    return std::tie(lhs.pathIndex, lhs.center, lhs.isNormalized) ==
+           std::tie(rhs.pathIndex, rhs.center, rhs.isNormalized);
+}
+
+GeometryHandle
+GeometryPaths::getHandle(const std::filesystem::path& filename,
+                         const std::filesystem::path& directory,
+                         const Eigen::Vector3f& center,
+                         bool isNormalized)
+{
+    if (filename.empty())
+        return GeometryHandle::Empty;
+
+    PathIndex directoryPathIndex = getPathIndex(directory);
+    PathIndex fileIndex = getFileIndex(directoryPathIndex, filename);
+    if (fileIndex == PathIndex::Invalid)
+        return GeometryHandle::Invalid;
+
+    auto [it, inserted] = m_handles.try_emplace(Key(fileIndex, center, isNormalized),
+                                                static_cast<GeometryHandle>(m_info.size()));
+    if (inserted)
+        m_info.emplace_back(fileIndex, directoryPathIndex, center, isNormalized);
+
+    return it->second;
+}
+
+GeometryPaths::PathIndex
+GeometryPaths::getFileIndex(PathIndex& directoryPathIndex,
+                            const std::filesystem::path& filename)
+{
+    DirectoryPaths& dirPaths = m_dirPaths.try_emplace(directoryPathIndex).first->second;
+    auto [it, inserted] = dirPaths.try_emplace(filename, PathIndex::Invalid);
+    if (!inserted ||
+        checkPath(directoryPathIndex, filename, it->second) ||
+        directoryPathIndex == PathIndex::Root)
+    {
+        return it->second;
+    }
+
+    DirectoryPaths& rootPaths = m_dirPaths.try_emplace(PathIndex::Root).first->second;
+    auto [rootIt, rootInserted] = rootPaths.try_emplace(filename, PathIndex::Invalid);
+    if (!rootInserted || checkPath(PathIndex::Root, filename, rootIt->second))
+    {
+        directoryPathIndex = PathIndex::Root;
+        it->second = rootIt->second;
+    }
+
+    return it->second;
+}
+
+bool
+GeometryPaths::checkPath(PathIndex directoryPathIndex,
+                         const std::filesystem::path& filename,
+                         PathIndex& pathIndex)
+{
+    std::filesystem::path filePath = directoryPathIndex == PathIndex::Root
+        ? "models" / filename
+        : m_paths[static_cast<std::size_t>(directoryPathIndex)] / "models" / filename;
+
+    std::error_code ec;
+    if (auto status = std::filesystem::status(filePath, ec);
+        ec || !std::filesystem::is_regular_file(status))
+    {
+        return false;
+    }
+
+    pathIndex = getPathIndex(filePath);
+    return true;
+}
+
+GeometryPaths::PathIndex
+GeometryPaths::getPathIndex(const std::filesystem::path& path)
+{
+    auto [it, inserted] = m_pathMap.try_emplace(path, static_cast<PathIndex>(m_paths.size()));
+    if (inserted)
+        m_paths.push_back(path);
+    return it->second;
+}
+
+bool
+GeometryPaths::getInfo(GeometryHandle handle, GeometryInfo& info) const
+{
+    const auto index = static_cast<std::size_t>(handle);
+    if (index >= m_info.size())
+        return false;
+
+    const auto& item = m_info[index];
+    info.path = m_paths[static_cast<std::size_t>(item.pathIndex)];
+    info.directory = m_paths[static_cast<std::size_t>(item.directoryPathIndex)];
+    info.center = item.center;
+    info.isNormalized = item.isNormalized;
+    return true;
+}
+
+GeometryManager::GeometryManager(std::shared_ptr<GeometryPaths> paths) :
+    m_paths(paths)
+{
+    m_geometry.insert_or_assign(GeometryHandle::Empty, std::make_unique<EmptyGeometry>());
+}
+
+const Geometry*
+GeometryManager::find(GeometryHandle handle)
+{
+    if (handle == GeometryHandle::Invalid)
+        return nullptr;
+
+    auto [it, inserted] = m_geometry.try_emplace(handle);
+    if (!inserted)
+        return it->second.get();
+
+    // Empty geometry is already in the map - created in constructor
+    assert(handle != GeometryHandle::Empty);
+
+    GeometryInfo info;
+    if (!m_paths->getInfo(handle, info))
+        return nullptr;
+
+    std::unique_ptr<cmod::Model> model;
+    switch (DetermineFileType(info.path))
     {
     case ContentType::_3DStudio:
-        model = Load3DSModel(key, path);
+        model = Load3DSModel(info);
         break;
+
     case ContentType::CelestiaModel:
-        model = LoadCMODModel(key, path);
+        model = LoadCMODModel(info);
         break;
+
     case ContentType::CelestiaMesh:
-        model = LoadCMSModel(key);
+        model = LoadCMSModel(info);
         break;
+
     default:
-        GetLogger()->error(_("Unknown model format '{}'\n"), key.resolvedPath);
+        GetLogger()->error(_("Unknown model format '{}'\n"), info.path);
         return nullptr;
     }
 
     if (model == nullptr)
     {
-        GetLogger()->error(_("Error loading model '{}'\n"), key.resolvedPath);
+        GetLogger()->error(_("Error loading model '{}'\n"), info.path);
         return nullptr;
     }
 
@@ -488,14 +619,31 @@ GeometryInfo::load(const ResourceKey& key) const
                          originalMaterialCount,
                          model->getMaterialCount());
 
-    return std::make_unique<ModelGeometry>(std::move(model));
+    it->second = std::make_unique<ModelGeometry>(std::move(model));
+    return it->second.get();
 }
 
-GeometryManager*
-GetGeometryManager()
+RenderGeometryManager::RenderGeometryManager(std::shared_ptr<GeometryManager> geometryManager) :
+    m_geometryManager(geometryManager)
 {
-    static GeometryManager* const geometryManager = std::make_unique<GeometryManager>("models").release(); //NOSONAR
-    return geometryManager;
+}
+
+RenderGeometry*
+RenderGeometryManager::find(GeometryHandle handle)
+{
+    if (handle == GeometryHandle::Invalid)
+        return nullptr;
+
+    auto [it, inserted] = m_geometry.try_emplace(handle);
+    if (!inserted)
+        return it->second.get();
+
+    const Geometry* geometry = m_geometryManager->find(handle);
+    if (!geometry)
+        return nullptr;
+
+    it->second = geometry->createRenderGeometry();
+    return it->second.get();
 }
 
 } // end namespace celestia::engine

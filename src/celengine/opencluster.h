@@ -15,7 +15,6 @@
 
 #include <Eigen/Geometry>
 
-#include <celutil/reshandle.h>
 #include "deepskyobj.h"
 #include "renderflags.h"
 

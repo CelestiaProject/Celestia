@@ -32,6 +32,10 @@ class StarDatabase;
 
 namespace celestia
 {
+namespace engine
+{
+class GeometryPaths;
+}
 namespace ephem
 {
 class Orbit;
@@ -46,15 +50,11 @@ class AssociativeArray;
 class StarDatabaseBuilder
 {
 public:
-    StarDatabaseBuilder() = default;
+    explicit StarDatabaseBuilder(celestia::engine::GeometryPaths&);
     ~StarDatabaseBuilder();
 
-    StarDatabaseBuilder(const StarDatabaseBuilder&) = delete;
-    StarDatabaseBuilder& operator=(const StarDatabaseBuilder&) = delete;
-    StarDatabaseBuilder(StarDatabaseBuilder&&) noexcept = delete;
-    StarDatabaseBuilder& operator=(StarDatabaseBuilder&&) noexcept = delete;
-
-    bool load(std::istream&, const std::filesystem::path& resourcePath = std::filesystem::path());
+    bool load(std::istream&,
+              const std::filesystem::path& resourcePath);
     bool loadBinary(std::istream&);
 
     void setNameDatabase(std::unique_ptr<StarNameDatabase>&&);
@@ -101,4 +101,5 @@ private:
     std::map<AstroCatalog::IndexNumber, Star*> stcFileCatalogNumberIndex;
     std::map<AstroCatalog::IndexNumber, AstroCatalog::IndexNumber> barycenters;
     std::multimap<AstroCatalog::IndexNumber, UserCategoryId> categories;
+    celestia::engine::GeometryPaths* geometryPaths;
 };

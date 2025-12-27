@@ -25,8 +25,8 @@
 #include <celutil/color.h>
 #include <celutil/flag.h>
 #include <celutil/ranges.h>
-#include <celutil/reshandle.h>
 #include <celutil/utf8.h>
+#include "meshmanager.h"
 #include "multitexture.h"
 #include "surface.h"
 
@@ -267,8 +267,8 @@ public:
     float getBoundingRadius() const;
     float getCullingRadius() const;
 
-    ResourceHandle getGeometry() const { return geometry; }
-    void setGeometry(ResourceHandle);
+    celestia::engine::GeometryHandle getGeometry() const { return geometry; }
+    void setGeometry(celestia::engine::GeometryHandle);
     Eigen::Quaternionf getGeometryOrientation() const;
     void setGeometryOrientation(const Eigen::Quaternionf& orientation);
     float getGeometryScale() const { return geometryScale; }
@@ -381,7 +381,7 @@ private:
 
     float cullingRadius{ 0.0f };
 
-    ResourceHandle geometry{ ResourceHandle::InvalidResource };
+    celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
     float geometryScale{ 1.0f };
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
@@ -460,7 +460,7 @@ public:
     void addLocation(Body*, std::unique_ptr<Location>&&);
     Location* findLocation(const Body*, std::string_view, bool i18n = false) const;
     bool hasLocations(const Body*) const;
-    void computeLocations(const Body*);
+    void computeLocations(const Body*, celestia::engine::GeometryManager&);
 
     auto getLocations(const Body* body) const
     {
