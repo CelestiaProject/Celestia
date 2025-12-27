@@ -19,7 +19,7 @@
 
 #include "cmodops.h"
 #include "convert3ds.h"
-#include "pathmanager.h"
+#include "modelio.h"
 
 using celestia::util::CreateLogger;
 namespace math = celestia::math;
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     }
 
     std::cerr << "Converting...\n";
-    std::unique_ptr<cmod::Model> model = cmodtools::Convert3DSModel(*scene, cmodtools::GetPathManager()->getHandle);
+    std::unique_ptr<cmod::Model> model = cmodtools::Convert3DSModel(*scene, *cmodtools::GetModelIO());
     if (!model)
     {
         std::cerr << "Error converting 3DS file to Celestia model\n";
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
         cmodtools::UniquifyVertices(*mesh);
     }
 
-    SaveModelAscii(model.get(), std::cout, cmodtools::GetPathManager()->getSource);
+    cmodtools::GetModelIO()->saveText(*model, std::cout);
 
     return 0;
 }

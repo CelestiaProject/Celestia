@@ -20,14 +20,11 @@
 #include <QObject>
 #include <QString>
 
-
-
 namespace cmod
 {
-class Material;
+struct Material;
 class Model;
 }
-
 
 namespace cmodview
 {

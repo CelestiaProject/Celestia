@@ -1,5 +1,4 @@
 set(CELMODEL_SOURCES
-  material.cpp
   material.h
   mesh.cpp
   mesh.h
