@@ -34,14 +34,14 @@ constexpr int kGalaxyTextureSize = 128;
 constexpr float kSpriteScaleFactor = 1.0f / 1.55f;
 
 void
-galaxyTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
+galaxyTextureEval(float u, float v, std::uint8_t *pixel)
 {
     float r = std::max(0.0f, 0.9f - std::hypot(u, v));
     *pixel = static_cast<std::uint8_t>(r * 255.99f);
 }
 
 void
-colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
+colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
 {
     auto i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
 
@@ -171,10 +171,10 @@ GalaxyRenderer::bindTextures()
 {
     if (m_galaxyTex == nullptr)
     {
-        m_galaxyTex = CreateProceduralTexture(kGalaxyTextureSize,
-                                              kGalaxyTextureSize,
-                                              engine::PixelFormat::Luminance,
-                                              &galaxyTextureEval);
+        m_galaxyTex = ImageTexture::createProcedural(kGalaxyTextureSize,
+                                                     kGalaxyTextureSize,
+                                                     engine::PixelFormat::Luminance,
+                                                     &galaxyTextureEval);
     }
 
     assert(m_galaxyTex != nullptr);
@@ -183,10 +183,10 @@ GalaxyRenderer::bindTextures()
 
     if (m_colorTex == nullptr)
     {
-        m_colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
-                                             &colorTextureEval,
-                                             Texture::EdgeClamp,
-                                             Texture::NoMipMaps);
+        m_colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::RGBA,
+                                                    &colorTextureEval,
+                                                    Texture::EdgeClamp,
+                                                    Texture::NoMipMaps);
     }
 
     assert(m_colorTex != nullptr);

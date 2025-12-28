@@ -33,11 +33,6 @@ public:
     static constexpr std::int32_t MAX_DIMENSION = INT32_C(16384);
 
     Image(PixelFormat format, std::int32_t w, std::int32_t h, std::int32_t mip = 1);
-    ~Image() = default;
-    Image(Image&&) = default;
-    Image(const Image&) = delete;
-    Image& operator=(Image&&) = default;
-    Image& operator=(const Image&) = delete;
 
     bool isValid() const noexcept;
     std::int32_t getWidth() const;
