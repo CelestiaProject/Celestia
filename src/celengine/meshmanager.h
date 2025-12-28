@@ -19,6 +19,7 @@
 #include <Eigen/Core>
 
 #include <celutil/classops.h>
+#include <celutil/fsutils.h>
 #include "geometry.h"
 
 namespace celestia::engine
@@ -83,7 +84,7 @@ private:
         bool operator()(const Key&, const Key&) const;
     };
 
-    using DirectoryPaths = std::unordered_map<std::filesystem::path, PathIndex>;
+    using DirectoryPaths = std::unordered_map<std::filesystem::path, PathIndex, util::PathHasher>;
 
     PathIndex getFileIndex(PathIndex&, const std::filesystem::path&);
     bool checkPath(PathIndex, const std::filesystem::path&, PathIndex&);
@@ -92,7 +93,7 @@ private:
     std::vector<std::filesystem::path> m_paths{ std::filesystem::path{} };
     std::vector<Info> m_info;
 
-    std::unordered_map<std::filesystem::path, PathIndex> m_pathMap{ { std::filesystem::path{}, PathIndex::Root } };
+    std::unordered_map<std::filesystem::path, PathIndex, util::PathHasher> m_pathMap{ { std::filesystem::path{}, PathIndex::Root } };
     std::unordered_map<PathIndex, DirectoryPaths> m_dirPaths;
     std::unordered_map<Key, GeometryHandle, KeyHash, KeyEqual> m_handles;
 };
