@@ -330,7 +330,8 @@ endif()
 
 find_package(gperf REQUIRED)
 
-find_package(Boost REQUIRED)
+# We need Boost 1.67 for the boost/container_hash/hash.hpp header
+find_package(Boost 1.67 REQUIRED)
 link_libraries(Boost::boost)
 add_definitions(-DBOOST_NO_EXCEPTIONS)
 
