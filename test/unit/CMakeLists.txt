@@ -11,10 +11,6 @@ set(UNIT_TEST_SOURCES
   strnatcmp_test.cpp
   tokenizer_test.cpp)
 
-#if(NOT HAVE_FLOAT_CHARCONV)
-  list(APPEND UNIT_TEST_SOURCES charconv_compat_test.cpp)
-#endif()
-
 if(USE_ICU)
   list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)
 else()

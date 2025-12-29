@@ -118,6 +118,9 @@ Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
 libpng. Optional packages are gettext, Qt5, Qt6, sdl2, ffmpeg, libavif, glu.
 
+Earlier compilers may not have support for the C++17 float charconv functions.
+On these systems, you will also need to install the fast_float library.
+
 For example on modern Debian-derived system you need to install the following
 packages: libboost-dev, libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
@@ -326,7 +329,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype boost
+brew install pkg-config cmake fast_float fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype boost
 ```
 
 Install optional packages:
