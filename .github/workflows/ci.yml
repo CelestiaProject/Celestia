@@ -314,6 +314,7 @@ jobs:
                      eigen \
                      ffmpeg \
                      boost \
+                     fast_float \
                      fmt \
                      jpeg-turbo \
                      gettext \
