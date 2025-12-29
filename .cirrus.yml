@@ -10,6 +10,7 @@ task:
                    git              \
                    eigen            \
                    libepoxy         \
+                   fast_float       \
                    gettext          \
                    gperf            \
                    jpeg-turbo       \

@@ -2,14 +2,20 @@
 
 #include <config.h>
 
-#ifdef HAVE_FLOAT_CHARCONV
+#ifdef HAVE_CHARCONV
 #include <charconv>
 namespace celestia::compat
 {
-    using std::chars_format;
-    using std::from_chars_result;
-    using std::from_chars;
+    using ::std::chars_format;
+    using ::std::from_chars_result;
+    using ::std::from_chars;
 }
 #else
-#include "charconv_impl.h"
+#include <fast_float/fast_float.h>
+namespace celestia::compat
+{
+    using ::fast_float::chars_format;
+    using ::fast_float::from_chars_result;
+    using ::fast_float::from_chars;
+}
 #endif
