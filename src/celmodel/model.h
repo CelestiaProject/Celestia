@@ -19,7 +19,6 @@
 #include "material.h"
 #include "mesh.h"
 
-
 namespace cmod
 {
 
@@ -34,13 +33,12 @@ namespace cmod
  */
 class Model
 {
- public:
+public:
     Model();
-    ~Model() = default;
 
     const Material* getMaterial(unsigned int index) const;
-    bool setMaterial(unsigned int index, Material&& material);
-    unsigned int addMaterial(Material&& material);
+    bool setMaterial(unsigned int index, const Material& material);
+    unsigned int addMaterial(const Material& material);
 
     /*! Return the number of materials in the model
      */
@@ -118,44 +116,24 @@ class Model
     /*! Set the opacity flag based on material usage within the model */
     void determineOpacity();
 
-
-    class MeshComparator
-    {
-    public:
-        virtual ~MeshComparator() = default;
-
-        virtual bool operator()(const Mesh&, const Mesh&) const = 0;
-    };
-
-    /*! Sort the model's meshes in place. */
-    void sortMeshes(const MeshComparator&);
-
-    /*! Optimize the model by eliminating all duplicated materials */
-    void uniquifyMaterials();
-
-    /*! This comparator will roughly sort the model's meshes by
-     *  opacity so that transparent meshes are rendered last.  It's far
-     *  from perfect, but covers a lot of cases.  A better method of
-     *  opacity sorting would operate at the primitive group level, or
-     *  even better at the triangle level.
-     *
-     *  Standard usage for this class is:
-     *     model->sortMeshes(Model::OpacityComparator());
+    /*! Sort the model's meshes in place, roughly by opacity so that
+     *  transparent meshes are rendered last. It's far from perfect,
+     *  but covers a lot of cases. A better method of opacity sorting
+     *  would operate at the primitive group level, or even better at
+     *  the triangle level.
      *
      *  uniquifyMaterials() should be used before sortMeshes(), since
      *  the opacity comparison depends on material indices being ordered
      *  by opacity.
      */
-    class OpacityComparator : public MeshComparator
-    {
-    public:
-        OpacityComparator() = default;
-        bool operator()(const Mesh&, const Mesh&) const override;
-    };
+    void sortMeshes();
 
- private:
-    std::vector<Material> materials{ };
-    std::vector<Mesh> meshes{ };
+    /*! Optimize the model by eliminating all duplicated materials */
+    void uniquifyMaterials();
+
+private:
+    std::vector<Material> materials;
+    std::vector<Mesh> meshes;
 
     std::array<bool, static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> textureUsage;
     bool opaque{ true };
