@@ -30,7 +30,7 @@ task:
           -G Ninja                  \
           -DCMAKE_BUILD_TYPE=Debug  \
           -DENABLE_GLES=ON          \
-          -DENABLE_SPICE=ON         \
+          -DENABLE_SPICE=OFF        \
           -DENABLE_TOOLS=OFF        \
           -DENABLE_TESTS=ON         \
           -DENABLE_SDL=ON           \

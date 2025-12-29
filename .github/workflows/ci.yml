@@ -62,7 +62,6 @@ jobs:
           'boost-container',
           'boost-container-hash',
           'boost-smart-ptr',
-          'cspice',
           'eigen3',
           'ffmpeg[core,avcodec,avformat,gpl,swscale,x264]',
           'fmt',
@@ -108,7 +107,7 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows-release `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
             -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install" `
-            -DENABLE_SPICE=ON     `
+            -DENABLE_SPICE=OFF    `
             -DENABLE_TOOLS=ON     `
             -DENABLE_TESTS=ON     `
             -DENABLE_SDL=OFF      `
@@ -254,7 +253,7 @@ jobs:
         cmake -B ${{github.workspace}}/build                 \
               -G Ninja                                       \
               -DENABLE_GLES=${{matrix.config.gles}}          \
-              -DENABLE_SPICE=ON                              \
+              -DENABLE_SPICE=OFF                             \
               -DENABLE_TOOLS=OFF                             \
               -DENABLE_TESTS=ON                              \
               -DENABLE_SDL=ON                                \
@@ -315,7 +314,6 @@ jobs:
                      eigen \
                      ffmpeg \
                      boost \
-                     cspice \
                      fmt \
                      jpeg-turbo \
                      gettext \
@@ -338,7 +336,7 @@ jobs:
         cmake -B ${{github.workspace}}/build \
               -G Ninja                       \
               -DENABLE_GLES=OFF              \
-              -DENABLE_SPICE=ON              \
+              -DENABLE_SPICE=OFF             \
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=ON              \
               -DENABLE_SDL=ON                \
