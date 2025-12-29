@@ -304,6 +304,7 @@ jobs:
                      ffmpeg \
                      boost \
                      cspice \
+                     fast_float \
                      fmt \
                      jpeg-turbo \
                      gettext \
