@@ -20,7 +20,6 @@
 #include <optional>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
-#include <celutil/watcher.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/texture.h>
@@ -60,8 +59,6 @@ class ViewManager;
 class AudioSession;
 #endif
 }
-
-typedef Watcher<CelestiaCore> CelestiaWatcher;
 
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
@@ -160,22 +157,6 @@ public:
         Key_NumPad9         = 33,
         Key_BackTab         = 127,
         KeyCount            = 128,
-    };
-
-    enum
-    {
-        LabelFlagsChanged           = 0x0001,
-        RenderFlagsChanged          = 0x0002,
-        VerbosityLevelChanged       = 0x0004,
-        TimeZoneChanged             = 0x0008,
-        AmbientLightChanged         = 0x0010,
-        FaintestChanged             = 0x0020,
-        HistoryChanged              = 0x0040,
-        TextEnterModeChanged        = 0x0080,
-        GalaxyLightGainChanged      = 0x0100,
-        MeasurementSystemChanged    = 0x0200,
-        TemperatureScaleChanged     = 0x0400,
-        TintSaturationChanged       = 0x0800,
     };
 
     enum class ScriptSystemAccessPolicy
@@ -285,9 +266,6 @@ public:
     celestia::HudElements getOverlayElements() const;
     void setOverlayElements(celestia::HudElements);
 
-    void addWatcher(CelestiaWatcher*);
-    void removeWatcher(CelestiaWatcher*);
-
     void setFaintest(float);
     void setFaintestAutoMag();
 
@@ -328,8 +306,6 @@ public:
     void flash(const std::string&, double duration = 1.0);
 
     const CelestiaConfig* getConfig() const;
-
-    void notifyWatchers(int);
 
     void setLogFile(const std::filesystem::path&);
 
@@ -503,7 +479,6 @@ private:
 #endif
 
     Alerter* alerter{ nullptr };
-    std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
