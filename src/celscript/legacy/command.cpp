@@ -706,7 +706,6 @@ void CommandSetTextureResolution::processInstantaneous(ExecutionEnvironment& env
     if (env.getRenderer() != nullptr)
     {
         env.getRenderer()->setResolution(res);
-        env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
     }
 }
 

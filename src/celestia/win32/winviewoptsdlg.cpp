@@ -304,7 +304,6 @@ dlgCheckEnum(HWND hDlg, WORD item, T flags, T f)
 ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                                      HWND _parent,
                                      CelestiaCore* _appCore) :
-    CelestiaWatcher(*_appCore),
     appCore(_appCore),
     parent(_parent)
 {
@@ -313,6 +312,12 @@ ViewOptionsDialog::ViewOptionsDialog(HINSTANCE appInstance,
                              parent,
                              (DLGPROC)ViewOptionsProc,
                              reinterpret_cast<LONG_PTR>(this));
+    _appCore->getRenderer()->addWatcher(this);
+}
+
+ViewOptionsDialog::~ViewOptionsDialog()
+{
+    appCore->getRenderer()->removeWatcher(this);
 }
 
 void ViewOptionsDialog::SetControls(HWND hDlg)
@@ -405,7 +410,7 @@ void ViewOptionsDialog::RestoreSettings(HWND hDlg)
     appCore->setHudDetail(initialHudDetail);
 }
 
-void ViewOptionsDialog::notifyChange(CelestiaCore*, int)
+void ViewOptionsDialog::notifyRenderSettingsChanged(const Renderer*)
 {
     if (parent != NULL)
         SetControls(hwnd);

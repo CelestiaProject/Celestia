@@ -50,7 +50,6 @@ set(CELUTIL_SOURCES
   uniquedel.h
   utf8.cpp
   utf8.h
-  watcher.h
 )
 
 if (USE_ICU)

@@ -239,7 +239,6 @@ static int celestia_show(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setRenderFlags(r->getRenderFlags() | flags);
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -263,7 +262,6 @@ static int celestia_hide(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setRenderFlags(r->getRenderFlags() & ~flags);
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -323,7 +321,6 @@ static int celestia_setrenderflags(lua_State* l)
         lua_pop(l,1);
     }
     appCore->getRenderer()->setRenderFlags(renderFlags);
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -451,7 +448,6 @@ static int celestia_showlabel(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setLabelMode(r->getLabelMode() | flags);
-    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -473,7 +469,6 @@ static int celestia_hidelabel(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setLabelMode(r->getLabelMode() & ~flags);
-    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -530,7 +525,6 @@ static int celestia_setlabelflags(lua_State* l)
         lua_pop(l,1);
     }
     appCore->getRenderer()->setLabelMode(labelFlags);
-    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -1006,7 +1000,6 @@ static int celestia_setfaintestvisible(lua_State* l)
     {
         faintest = min(15.0f, max(1.0f, faintest));
         appCore->setFaintest(faintest);
-        appCore->notifyWatchers(CelestiaCore::FaintestChanged);
     }
 
     return 0;
@@ -1530,7 +1523,7 @@ static int celestia_dsos(lua_State* l)
 static int celestia_setambient(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setambient");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     double ambientLightLevel = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setambient must be a number");
@@ -1538,7 +1531,6 @@ static int celestia_setambient(lua_State* l)
 
     if (renderer != nullptr)
         renderer->setAmbientLightLevel(static_cast<float>(ambientLightLevel));
-    appCore->notifyWatchers(CelestiaCore::AmbientLightChanged);
 
     return 0;
 }
@@ -1562,7 +1554,7 @@ static int celestia_getambient(lua_State* l)
 static int celestia_settintsaturation(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settintsaturation");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     double tintSaturation = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settintsaturation must be a number");
@@ -1570,7 +1562,6 @@ static int celestia_settintsaturation(lua_State* l)
 
     if (renderer != nullptr)
         renderer->setTintSaturation(static_cast<float>(tintSaturation));
-    appCore->notifyWatchers(CelestiaCore::TintSaturationChanged);
 
     return 0;
 }
@@ -1688,7 +1679,7 @@ static int celestia_getstarstyle(lua_State* l)
 static int celestia_setstarstyle(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     std::string_view starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
     Renderer* renderer = appCore->getRenderer();
@@ -1707,7 +1698,6 @@ static int celestia_setstarstyle(lua_State* l)
     else
        Celx_DoError(l, "Invalid starstyle");
 
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
     return 0;
 }
 
@@ -1751,7 +1741,7 @@ static int celestia_getstarcolor(lua_State* l)
 static int celestia_setstarcolor(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarcolor");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     std::string_view starColor = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarcolor must be a string");
     Renderer* renderer = appCore->getRenderer();
@@ -1771,7 +1761,6 @@ static int celestia_setstarcolor(lua_State* l)
         renderer->setStarColorTable(ColorTableType::VegaWhite);
     else
         Celx_DoError(l, "Invalid starcolor");
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -1798,7 +1787,7 @@ static int celestia_gettextureresolution(lua_State* l)
 static int celestia_settextureresolution(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settextureresolution");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     auto textureResValue = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
     Renderer* renderer = appCore->getRenderer();
@@ -1829,8 +1818,6 @@ static int celestia_settextureresolution(lua_State* l)
             assert(0);
             break;
     }
-
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
