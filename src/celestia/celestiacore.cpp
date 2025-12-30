@@ -942,12 +942,10 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     {
     case '\001': // Ctrl+A
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowAtmospheres);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\002': // Ctrl+B
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowBoundaries);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\n':
@@ -961,7 +959,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\014': // Ctrl+L
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowNightMaps);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\013': // Ctrl+K
@@ -972,12 +969,10 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         else
             flash(_("Markers disabled"));
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\005':  // Ctrl+E
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowEclipseShadows);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\007':  // Ctrl+G
@@ -1055,18 +1050,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             break;
         }
 
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\024':  // Ctrl+T
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCometTails);
         if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowCometTails))
-        {
             flash(_("Comet tails enabled"));
-        }
         else
             flash(_("Comet tails disabled"));
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\027':  // Ctrl+W
@@ -1077,14 +1068,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '\030':  // Ctrl+X
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowSmoothLines);
         if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowSmoothLines))
-        {
             flash(_("Anti-aliasing enabled"));
-        }
         else
-        {
             flash(_("Anti-aliasing disabled"));
-        }
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '\031':  // Ctrl+Y
@@ -1098,7 +1084,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         {
             flash(_("Auto-magnitude disabled"));
         }
-        notifyWatchers(RenderFlagsChanged);
         break;
 
 
@@ -1185,38 +1170,32 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         case ColorTableType::Enhanced:
             renderer->setStarColorTable(ColorTableType::Blackbody_D65);
             flash(_("Star color: Blackbody D65"));
-            notifyWatchers(RenderFlagsChanged);
             break;
 
         case ColorTableType::Blackbody_D65:
             renderer->setStarColorTable(ColorTableType::SunWhite);
             flash(_("Star color: Blackbody (Solar Whitepoint)"));
-            notifyWatchers(RenderFlagsChanged);
             break;
 
         case ColorTableType::SunWhite:
             renderer->setStarColorTable(ColorTableType::VegaWhite);
             flash(_("Star color: Blackbody (Vega Whitepoint)"));
-            notifyWatchers(RenderFlagsChanged);
             break;
 
         case ColorTableType::VegaWhite:
             renderer->setStarColorTable(ColorTableType::Enhanced);
             flash(_("Star color: Classic"));
-            notifyWatchers(RenderFlagsChanged);
             break;
         }
         break;
 
     case '^':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowNebulae);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
 
     case '&':
         renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::LocationLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case '*':
@@ -1310,7 +1289,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '/':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowDiagrams);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '0':
@@ -1334,17 +1312,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case ';':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCelestialSphere);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case '=':
         renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::ConstellationLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'B':
         renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::StarLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'C':
@@ -1360,7 +1335,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::GalaxyLabels);
         else
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::GlobularLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'F':
@@ -1383,7 +1357,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'I':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowCloudMaps);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'J':
@@ -1426,17 +1399,14 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::MoonLabels);
         else
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::MinorMoonLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'N':
         renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::SpacecraftLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'O':
         renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowOrbits);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'P':
@@ -1444,7 +1414,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::PlanetLabels);
         else
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::DwarfPlanetLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'R':
@@ -1470,7 +1439,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             flash(_("High res textures"));
             break;
         }
-        notifyWatchers(RenderFlagsChanged); //how to synchronize with menu?
         break;
 
     case 'Q':
@@ -1494,7 +1462,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowGalaxies);
         else
             renderer->setRenderFlags(renderer->getRenderFlags() ^ RenderFlags::ShowGlobulars);
-        notifyWatchers(RenderFlagsChanged);
         break;
 
     case 'V':
@@ -1506,7 +1473,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::AsteroidLabels);
         else
             renderer->setLabelMode(renderer->getLabelMode() ^ RenderLabels::CometLabels);
-        notifyWatchers(LabelFlagsChanged);
         break;
 
     case 'X':
@@ -1537,7 +1503,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (sim->getFaintestVisible() > 1.0f)
             {
                 setFaintest(sim->getFaintestVisible() - 0.2f);
-                notifyWatchers(FaintestChanged);
                 auto buf = fmt::format(loc, fmt::runtime(_("Magnitude limit: {:.2f}")), sim->getFaintestVisible());
                 flash(buf);
             }
@@ -1562,7 +1527,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             if (sim->getFaintestVisible() < 15.0f)
             {
                 setFaintest(sim->getFaintestVisible() + 0.2f);
-                notifyWatchers(FaintestChanged);
                 auto buf = fmt::format(loc, fmt::runtime(_("Magnitude limit: {:.2f}")), sim->getFaintestVisible());
                 flash(buf);
             }
@@ -1586,7 +1550,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() - 0.05f);
             else
                 renderer->setAmbientLightLevel(0.0f);
-            notifyWatchers(AmbientLightChanged);
             auto buf = fmt::format(loc, fmt::runtime(_("Ambient light level:  {:.2f}")), renderer->getAmbientLightLevel());
             flash(buf);
         }
@@ -1598,7 +1561,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
                 renderer->setAmbientLightLevel(renderer->getAmbientLightLevel() + 0.05f);
             else
                 renderer->setAmbientLightLevel(1.0f);
-            notifyWatchers(AmbientLightChanged);
             auto buf = fmt::format(loc, fmt::runtime(_("Ambient light level:  {:.2f}")), renderer->getAmbientLightLevel());
             flash(buf);
         }
@@ -1609,7 +1571,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             Galaxy::decreaseLightGain();
             auto buf = fmt::format(loc, fmt::runtime(_("Light gain: {:3.0f} %")), Galaxy::getLightGain() * 100.0f);
             flash(buf);
-            notifyWatchers(GalaxyLightGainChanged);
         }
         break;
 
@@ -1618,7 +1579,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             Galaxy::increaseLightGain();
             auto buf = fmt::format(loc, fmt::runtime(_("Light gain: {:3.0f} %")), Galaxy::getLightGain() * 100.0f);
             flash(buf);
-            notifyWatchers(GalaxyLightGainChanged);
         }
         break;
 
@@ -2811,10 +2771,7 @@ void CelestiaCore::setLightDelayActive(bool lightDelayActive)
 void CelestiaCore::setTextEnterMode(Hud::TextEnterMode mode)
 {
     if (mode != hud->textEnterMode())
-    {
         hud->textEnterMode(mode);
-        notifyWatchers(TextEnterModeChanged);
-    }
 }
 
 Hud::TextEnterMode CelestiaCore::getTextEnterMode() const
@@ -2854,7 +2811,6 @@ int CelestiaCore::getDistanceToScreen() const
 void CelestiaCore::setTimeZoneBias(int bias)
 {
     timeInfo.timeZoneBias = bias;
-    notifyWatchers(TimeZoneChanged);
 }
 
 
@@ -2878,7 +2834,6 @@ int CelestiaCore::getHudDetail()
 void CelestiaCore::setHudDetail(int newHudDetail)
 {
     hud->detail(newHudDetail);
-    notifyWatchers(VerbosityLevelChanged);
 }
 
 
@@ -2968,29 +2923,6 @@ const CelestiaConfig* CelestiaCore::getConfig() const
 }
 
 
-void CelestiaCore::addWatcher(CelestiaWatcher* watcher)
-{
-    assert(watcher != nullptr);
-    watchers.push_back(watcher);
-}
-
-void CelestiaCore::removeWatcher(CelestiaWatcher* watcher)
-{
-    vector<CelestiaWatcher*>::iterator iter =
-        find(watchers.begin(), watchers.end(), watcher);
-    if (iter != watchers.end())
-        watchers.erase(iter);
-}
-
-void CelestiaCore::notifyWatchers(int property)
-{
-    for (const auto watcher : watchers)
-    {
-        watcher->notifyChange(this, property);
-    }
-}
-
-
 bool CelestiaCore::goToUrl(std::string_view urlStr)
 {
     Url url(this);
@@ -3000,7 +2932,6 @@ bool CelestiaCore::goToUrl(std::string_view urlStr)
         return false;
     }
     url.goTo();
-    notifyWatchers(RenderFlagsChanged | LabelFlagsChanged);
     return true;
 }
 
@@ -3015,7 +2946,6 @@ void CelestiaCore::addToHistory()
     }
     history.emplace_back(this);
     historyCurrent = history.size() - 1;
-    notifyWatchers(HistoryChanged);
 }
 
 
@@ -3031,17 +2961,15 @@ void CelestiaCore::back()
     }
     historyCurrent--;
     history[historyCurrent].goTo();
-    notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
 void CelestiaCore::forward()
 {
-    if (history.size() == 0) return;
-    if (historyCurrent == history.size()-1) return;
+    if (history.empty() || historyCurrent == history.size()-1)
+        return;
     historyCurrent++;
     history[historyCurrent].goTo();
-    notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
@@ -3063,7 +2991,6 @@ void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
     }
     historyCurrent = curr;
     history[curr].goTo();
-    notifyWatchers(HistoryChanged|RenderFlagsChanged|LabelFlagsChanged);
 }
 
 
@@ -3337,10 +3264,7 @@ void CelestiaCore::resumeAudioIfNeeded()
 void CelestiaCore::setMeasurementSystem(MeasurementSystem newMeasurement)
 {
     if (hud->hudSettings().measurementSystem != newMeasurement)
-    {
         hud->hudSettings().measurementSystem = newMeasurement;
-        notifyWatchers(MeasurementSystemChanged);
-    }
 }
 
 MeasurementSystem CelestiaCore::getMeasurementSystem() const
@@ -3351,10 +3275,7 @@ MeasurementSystem CelestiaCore::getMeasurementSystem() const
 void CelestiaCore::setTemperatureScale(TemperatureScale newScale)
 {
     if (hud->hudSettings().temperatureScale != newScale)
-    {
         hud->hudSettings().temperatureScale = newScale;
-        notifyWatchers(TemperatureScaleChanged);
-    }
 }
 
 TemperatureScale CelestiaCore::getTemperatureScale() const
