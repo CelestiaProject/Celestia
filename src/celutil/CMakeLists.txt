@@ -35,12 +35,11 @@ set(CELUTIL_SOURCES
   r128.h
   r128util.cpp
   r128util.h
-  reshandle.h
-  resmanager.h
   stringutils.cpp
   stringutils.h
   strnatcmp.cpp
   strnatcmp.h
+  texhandle.h
   timer.cpp
   timer.h
   tokenizer.cpp

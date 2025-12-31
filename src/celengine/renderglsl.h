@@ -17,8 +17,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celutil/reshandle.h>
-#include "multitexture.h"
+#include <celutil/texhandle.h>
 #include "renderflags.h"
 
 struct Atmosphere;
@@ -37,10 +36,9 @@ class Frustum;
 
 void renderEllipsoid_GLSL(const RenderInfo& ri,
                           const LightingState& ls,
-                          Atmosphere* atmosphere,
+                          const Atmosphere* atmosphere,
                           float cloudTexOffset,
                           const Eigen::Vector3f& semiAxes,
-                          TextureResolution textureRes,
                           RenderFlags renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
                           const celestia::math::Frustum& frustum,
@@ -50,7 +48,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
 void renderGeometry_GLSL(RenderGeometry* geometry,
                          const RenderInfo& ri,
-                         ResourceHandle texOverride,
+                         celestia::util::TextureHandle texOverride,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
                          float geometryScale,
@@ -62,12 +60,11 @@ void renderGeometry_GLSL(RenderGeometry* geometry,
 
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
-                       Atmosphere* atmosphere,
+                       const Atmosphere* atmosphere,
                        Texture* cloudTex,
                        Texture* cloudNormalMap,
                        float texOffset,
                        const Eigen::Vector3f& semiAxes,
-                       TextureResolution textureRes,
                        RenderFlags renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const celestia::math::Frustum& frustum,
@@ -77,7 +74,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
 void renderGeometry_GLSL_Unlit(RenderGeometry* geometry,
                                const RenderInfo& ri,
-                               ResourceHandle texOverride,
+                               celestia::util::TextureHandle texOverride,
                                double tsec,
                                const Matrices &m,
                                Renderer* renderer);

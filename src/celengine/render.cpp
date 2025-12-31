@@ -435,9 +435,12 @@ bool Renderer::OrbitPathListEntry::operator<(const OrbitPathListEntry& o) const
 
 bool Renderer::init(int winWidth, int winHeight,
                     const DetailOptions& _detailOptions,
-                    std::shared_ptr<engine::GeometryManager> geometryManager)
+                    engine::TextureResolution resolution,
+                    std::shared_ptr<engine::GeometryManager> geometryManager,
+                    std::shared_ptr<const engine::TexturePaths> texturePaths)
 {
     m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager);
+    m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution);
     detailOptions = _detailOptions;
 
     m_atmosphereRenderer->initGL();
@@ -535,7 +538,9 @@ float Renderer::getFaintestAM45deg() const
 
 TextureResolution Renderer::getResolution() const
 {
-    return textureResolution;
+    if (!m_textureManager)
+        return TextureResolution::medres;
+    return m_textureManager->resolution();
 }
 
 void Renderer::enableSelectionPointer()
@@ -560,7 +565,7 @@ bool Renderer::isRTL() const
 
 void Renderer::setResolution(TextureResolution resolution)
 {
-    textureResolution = resolution;
+    m_textureManager->resolution(resolution);
     markSettingsChanged();
 }
 
@@ -2117,18 +2122,18 @@ void Renderer::renderObject(const Vector3f& pos,
     }
 
     // Get the textures . . .
-    if (obj.surface->baseTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-        ri.baseTex = obj.surface->baseTexture.find(textureResolution);
+    if (obj.surface->baseTexture != util::TextureHandle::Invalid)
+        ri.baseTex = m_textureManager->find(obj.surface->baseTexture);
     if ((obj.surface->appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-        obj.surface->bumpTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-        ri.bumpTex = obj.surface->bumpTexture.find(textureResolution);
+        obj.surface->bumpTexture != util::TextureHandle::Invalid)
+        ri.bumpTex = m_textureManager->find(obj.surface->bumpTexture);
     if ((obj.surface->appearanceFlags & Surface::ApplyNightMap) != 0 &&
         util::is_set(renderFlags, RenderFlags::ShowNightMaps))
-        ri.nightTex = obj.surface->nightTexture.find(textureResolution);
+        ri.nightTex = m_textureManager->find(obj.surface->nightTexture);
     if ((obj.surface->appearanceFlags & Surface::SeparateSpecularMap) != 0)
-        ri.glossTex = obj.surface->specularTexture.find(textureResolution);
+        ri.glossTex = m_textureManager->find(obj.surface->specularTexture);
     if ((obj.surface->appearanceFlags & Surface::ApplyOverlay) != 0)
-        ri.overlayTex = obj.surface->overlayTexture.find(textureResolution);
+        ri.overlayTex = m_textureManager->find(obj.surface->overlayTexture);
 
     // Scaling will be nonuniform for nonspherical planets. As long as the
     // deviation from spherical isn't too large, the nonuniform scale factor
@@ -2247,17 +2252,16 @@ void Renderer::renderObject(const Vector3f& pos,
     Texture* cloudTex       = nullptr;
     Texture* cloudNormalMap = nullptr;
     float cloudTexOffset    = 0.0f;
-    // Ugly cast required because MultiResTexture::find() is non-const
-    Atmosphere* atmosphere  = const_cast<Atmosphere*>(obj.atmosphere);
+    const Atmosphere* atmosphere = obj.atmosphere;
 
     if (atmosphere != nullptr)
     {
         if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps))
         {
-            if (atmosphere->cloudTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-                cloudTex = atmosphere->cloudTexture.find(textureResolution);
-            if (atmosphere->cloudNormalMap.texture(textureResolution) != ResourceHandle::InvalidResource)
-                cloudNormalMap = atmosphere->cloudNormalMap.find(textureResolution);
+            if (atmosphere->cloudTexture != util::TextureHandle::Invalid)
+                cloudTex = m_textureManager->find(atmosphere->cloudTexture);
+            if (atmosphere->cloudNormalMap != util::TextureHandle::Invalid)
+                cloudNormalMap = m_textureManager->find(atmosphere->cloudNormalMap);
         }
         if (atmosphere->cloudSpeed != 0.0f)
             cloudTexOffset = (float) (-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
@@ -2271,7 +2275,6 @@ void Renderer::renderObject(const Vector3f& pos,
             renderEllipsoid_GLSL(ri, ls,
                                  atmosphere, cloudTexOffset,
                                  scaleFactors,
-                                 textureResolution,
                                  renderFlags,
                                  obj.orientation,
                                  viewFrustum,
@@ -2286,8 +2289,7 @@ void Renderer::renderObject(const Vector3f& pos,
     }
     else if (geometry != nullptr)
     {
-        ResourceHandle texOverride = obj.surface->baseTexture.texture(textureResolution);
-
+        util::TextureHandle texOverride = obj.surface->baseTexture;
         if (lit)
         {
             renderGeometry_GLSL(geometry,
@@ -2412,7 +2414,6 @@ void Renderer::renderObject(const Vector3f& pos,
                                   cloudNormalMap,
                                   cloudTexOffset,
                                   scaleFactors,
-                                  textureResolution,
                                   renderFlags,
                                   obj.orientation,
                                   viewFrustum,
@@ -2434,7 +2435,7 @@ void Renderer::renderObject(const Vector3f& pos,
     {
         if (lit && util::is_set(renderFlags, RenderFlags::ShowRingShadows))
         {
-            Texture* ringsTex = obj.rings->texture.find(textureResolution);
+            Texture* ringsTex = m_textureManager->find(obj.rings->texture);
             if (ringsTex != nullptr)
                 ringsTex->bind();
         }
@@ -2773,7 +2774,7 @@ void Renderer::renderPlanet(Body& body,
                 float ringWidth = rings->outerRadius - rings->innerRadius;
                 float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
                 float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
-                const Texture* ringsTex = rings->texture.find(textureResolution);
+                const Texture* ringsTex = m_textureManager->find(rings->texture);
                 if (ringsTex != nullptr)
                 {
                     // Calculate the approximate distance from the shadowed object to the rings
@@ -2891,10 +2892,10 @@ void Renderer::renderStar(const Star& star,
 
         surface.color = color;
 
-        if (MultiResTexture mtex = star.getTexture(); mtex.texture(textureResolution) != ResourceHandle::InvalidResource)
+        if (auto mtex = star.getTexture(); mtex != util::TextureHandle::Invalid)
             surface.baseTexture = mtex;
         else
-            surface.baseTexture = MultiResTexture();
+            surface.baseTexture = util::TextureHandle::Invalid;
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 
@@ -4227,32 +4228,40 @@ StarStyle Renderer::getStarStyle() const
 
 void Renderer::loadTextures(Body* body)
 {
-    Surface& surface = body->getSurface();
+    const Surface& surface = body->getSurface();
 
-    if (surface.baseTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-        surface.baseTexture.find(textureResolution);
+    if (surface.baseTexture != util::TextureHandle::Invalid)
+    {
+        m_textureManager->find(surface.baseTexture);
+    }
     if ((surface.appearanceFlags & Surface::ApplyBumpMap) != 0 &&
-        surface.bumpTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-        surface.bumpTexture.find(textureResolution);
+        surface.bumpTexture != util::TextureHandle::Invalid)
+    {
+        m_textureManager->find(surface.bumpTexture);
+    }
     if ((surface.appearanceFlags & Surface::ApplyNightMap) != 0 &&
         util::is_set(renderFlags, RenderFlags::ShowNightMaps))
-        surface.nightTexture.find(textureResolution);
+    {
+        m_textureManager->find(surface.nightTexture);
+    }
     if ((surface.appearanceFlags & Surface::SeparateSpecularMap) != 0 &&
-        surface.specularTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-        surface.specularTexture.find(textureResolution);
+        surface.specularTexture != util::TextureHandle::Invalid)
+    {
+        m_textureManager->find(surface.specularTexture);
+    }
 
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
     if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps))
     {
-        Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(body);
-        if (atmosphere != nullptr && atmosphere->cloudTexture.texture(textureResolution) != ResourceHandle::InvalidResource)
-            atmosphere->cloudTexture.find(textureResolution);
+        const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(body);
+        if (atmosphere != nullptr && atmosphere->cloudTexture != util::TextureHandle::Invalid)
+            m_textureManager->find(atmosphere->cloudTexture);
     }
 
     if (auto rings = bodyFeaturesManager->getRings(body);
-        rings != nullptr && rings->texture.texture(textureResolution) != ResourceHandle::InvalidResource)
+        rings != nullptr && rings->texture != util::TextureHandle::Invalid)
     {
-        rings->texture.find(textureResolution);
+        m_textureManager->find(rings->texture);
     }
 }
 
