@@ -189,15 +189,25 @@ jobs:
           minaudio: ON
           wayland: ON
           icu: ON
+          qt5: ON
           qt6: OFF
+        - os: ubuntu-24.04
+          avif: ON
+          gles: ON
+          minaudio: ON
+          wayland: ON
+          icu: ON
+          qt5: OFF
+          qt6: ON
+          analysis_artifacts: 1
         - os: ubuntu-24.04-arm
           avif: ON
           gles: ON
           minaudio: ON
           wayland: ON
           icu: ON
+          qt5: OFF
           qt6: ON
-          analysis_artifacts: 1
 
     runs-on: ${{matrix.config.os}}
     steps:
@@ -223,8 +233,10 @@ jobs:
                                 wayland-protocols \
                                 gettext \
                                 gperf \
-                                ninja-build \
-                                qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+                                ninja-build
+        if [ "${{matrix.config.qt5}}" = "ON" ]; then
+            sudo apt-get install -y qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+        fi
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
             sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-base-private-dev
         fi
@@ -246,7 +258,7 @@ jobs:
               -DENABLE_TOOLS=OFF                             \
               -DENABLE_TESTS=ON                              \
               -DENABLE_SDL=ON                                \
-              -DENABLE_QT5=ON                                \
+              -DENABLE_QT5=${{matrix.config.qt5}}            \
               -DENABLE_QT6=${{matrix.config.qt6}}            \
               -DUSE_WAYLAND=${{matrix.config.wayland}}       \
               -DENABLE_FFMPEG=ON                             \
