@@ -28,7 +28,7 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -245,7 +245,7 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -329,7 +329,7 @@ jobs:
                      sdl2
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true
 
