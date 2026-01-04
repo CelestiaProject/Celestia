@@ -469,7 +469,7 @@ GeometryPaths::getHandle(const std::filesystem::path& filename,
     PathIndex directoryPathIndex = getPathIndex(directory);
     PathIndex fileIndex = getFileIndex(directoryPathIndex, filename);
     if (fileIndex == PathIndex::Invalid)
-        return GeometryHandle::Invalid;
+        return GeometryHandle::Empty;
 
     auto [it, inserted] = m_handles.try_emplace(Key(fileIndex, center, isNormalized),
                                                 static_cast<GeometryHandle>(m_info.size()));
@@ -500,6 +500,7 @@ GeometryPaths::getFileIndex(PathIndex& directoryPathIndex,
         it->second = rootIt->second;
     }
 
+    GetLogger()->error("Failed to resolve model file {}\n", filename);
     return it->second;
 }
 
