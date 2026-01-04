@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <vector>
@@ -35,11 +36,13 @@ class ColorTemperatureTable
 
     Color lookupColor(float temp) const
     {
-        auto colorTableIndex = static_cast<std::size_t>(std::nearbyint(temp * tempScale));
-        if (colorTableIndex >= colors.size())
+        assert(temp >= 0.0f);
+        
+        float colorTableIndex = std::nearbyint(temp * tempScale);
+        if (colorTableIndex >= static_cast<float>(colors.size()))
             return colors.back();
-        else
-            return colors[colorTableIndex];
+
+        return colors[static_cast<std::size_t>(colorTableIndex)];
     }
 
     Color lookupTintColor(float temp, float saturation, float fadeFactor) const
