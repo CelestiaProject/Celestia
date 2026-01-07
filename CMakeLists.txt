@@ -2,7 +2,7 @@ if(WIN32)
   # Require more recent CMake on Windows because DLLs are a pain
   cmake_minimum_required(VERSION 3.19)
 else()
-  cmake_minimum_required(VERSION 3.9)
+  cmake_minimum_required(VERSION 3.10...3.19)
 endif()
 
 # Plain and keyword target_link_libraries() signatures cannot be mixed
