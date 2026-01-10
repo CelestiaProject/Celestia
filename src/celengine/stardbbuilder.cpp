@@ -541,18 +541,28 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
                    boost::intrusive_ptr<StarDetails>& details,
                    const std::filesystem::path& resourcePath,
-                   engine::GeometryPaths& geometryPaths)
+                   engine::GeometryPaths& geometryPaths,
+                   engine::TexturePaths& texturePaths)
 {
     applyMesh(header, starData, details, geometryPaths);
 
     if (const auto* texture = starData->getString("Texture"); texture != nullptr)
     {
         if (!header.isStar)
+        {
             stcWarn(header, _("Texture is ignored on Barycenters"));
+        }
         else if (auto texturePath = util::U8FileName(*texture); texturePath.has_value())
-            StarDetails::setTexture(details, MultiResTexture(*texturePath, *header.path));
+        {
+            StarDetails::setTexture(details,
+                                    texturePaths.getHandle(*texturePath,
+                                                           *header.path,
+                                                           engine::TextureFlags::WrapTexture));
+        }
         else
+        {
             stcError(header, _("invalid filename in Texture"));
+        }
     }
 
     if (auto rotationModel = CreateRotationModel(starData, *header.path, 1.0); rotationModel != nullptr)
@@ -596,8 +606,10 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
 
 } // end unnamed namespace
 
-StarDatabaseBuilder::StarDatabaseBuilder(engine::GeometryPaths& _geometryPaths) :
-    geometryPaths(&_geometryPaths)
+StarDatabaseBuilder::StarDatabaseBuilder(engine::GeometryPaths& _geometryPaths,
+                                         engine::TexturePaths& _texturePaths) :
+    geometryPaths(&_geometryPaths),
+    texturePaths(&_texturePaths)
 {
 }
 
@@ -879,7 +891,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     if (orbit != nullptr)
         StarDetails::setOrbit(star->details, orbit);
 
-    applyCustomDetails(header, starData, star->details, resourcePath, *geometryPaths);
+    applyCustomDetails(header, starData, star->details, resourcePath, *geometryPaths, *texturePaths);
     return true;
 }
 

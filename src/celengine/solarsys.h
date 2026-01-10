@@ -25,11 +25,12 @@ class Universe;
 namespace celestia::engine
 {
 class GeometryPaths;
+class TexturePaths;
 }
 
 class SolarSystem
 {
- public:
+public:
     SolarSystem(Star*);
     ~SolarSystem();
 
@@ -38,7 +39,7 @@ class SolarSystem
     PlanetarySystem* getPlanets() const;
     FrameTree* getFrameTree() const;
 
- private:
+private:
     Star* star;
     std::unique_ptr<PlanetarySystem> planets;
     std::unique_ptr<FrameTree> frameTree;
@@ -49,4 +50,5 @@ using SolarSystemCatalog = std::map<std::uint32_t, std::unique_ptr<SolarSystem>>
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const std::filesystem::path& dir,
-                            celestia::engine::GeometryPaths& geometryPaths);
+                            celestia::engine::GeometryPaths& geometryPaths,
+                            celestia::engine::TexturePaths& texturePaths);

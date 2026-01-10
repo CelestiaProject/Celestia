@@ -25,7 +25,7 @@
 #include <celutil/logger.h>
 
 #include "cmodops.h"
-#include "pathmanager.h"
+#include "modelio.h"
 
 using celestia::util::CreateLogger;
 namespace math = celestia::math;
@@ -54,9 +54,7 @@ void usage()
     std::cerr << "   --smooth (or -s) <angle> : smoothing angle for normal generation\n";
     std::cerr << "   --weld (or -w)        : join identical vertices before normal generation\n";
     std::cerr << "   --merge (or -m)       : merge submeshes to improve rendering performance\n";
-#ifdef TRISTRIP
-    std::cerr << "   --optimize (or -o)    : optimize by converting triangle lists to strips\n";
-#endif
+
 }
 
 
@@ -167,11 +165,11 @@ int main(int argc, char* argv[])
             std::cerr << "Error opening " << inputFilename << "\n";
             return 1;
         }
-        model = cmod::LoadModel(in, cmodtools::GetPathManager()->getHandle);
+        model = cmodtools::GetModelIO()->load(in);
     }
     else
     {
-        model = cmod::LoadModel(std::cin, cmodtools::GetPathManager()->getHandle);
+        model = cmodtools::GetModelIO()->load(std::cin);
     }
 
     if (model == nullptr)
@@ -185,7 +183,7 @@ int main(int argc, char* argv[])
         // Copy materials
         for (i = 0; model->getMaterial(i) != nullptr; i++)
         {
-            newModel->addMaterial(model->getMaterial(i)->clone());
+            newModel->addMaterial(*model->getMaterial(i));
         }
 
         // Generate normals and/or tangents for each model in the mesh
@@ -239,24 +237,12 @@ int main(int argc, char* argv[])
         }
     }
 
-#ifdef TRISTRIP
-    if (stripify)
-    {
-        SetCacheSize(vertexCacheSize);
-        for (std::uint32_t i = 0; model->getMesh(i) != nullptr; i++)
-        {
-            Mesh* mesh = model->getMesh(i);
-            cmodtools::ConvertToStrips(*mesh);
-        }
-    }
-#endif
-
     if (outputFilename.empty())
     {
         if (outputBinary)
-            SaveModelBinary(model.get(), std::cout, cmodtools::GetPathManager()->getSource);
+            cmodtools::GetModelIO()->saveBinary(*model, std::cout);
         else
-            SaveModelAscii(model.get(), std::cout, cmodtools::GetPathManager()->getSource);
+            cmodtools::GetModelIO()->saveText(*model, std::cout);
     }
     else
     {
@@ -275,9 +261,9 @@ int main(int argc, char* argv[])
         }
 
         if (outputBinary)
-            SaveModelBinary(model.get(), out, cmodtools::GetPathManager()->getSource);
+            cmodtools::GetModelIO()->saveBinary(*model, out);
         else
-            SaveModelAscii(model.get(), out, cmodtools::GetPathManager()->getSource);
+            cmodtools::GetModelIO()->saveText(*model, out);
     }
 
     return 0;

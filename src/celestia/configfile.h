@@ -18,6 +18,10 @@
 #include <celutil/associativearray.h>
 #endif
 
+namespace celestia::engine
+{
+class TexturePaths;
+}
 
 struct CelestiaConfig
 {
@@ -124,4 +128,6 @@ struct CelestiaConfig
 #endif
 };
 
-bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& config);
+bool ReadCelestiaConfig(const std::filesystem::path& filename,
+                        CelestiaConfig& config,
+                        celestia::engine::TexturePaths& texturePaths);

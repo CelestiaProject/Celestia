@@ -16,10 +16,13 @@
 #include <Eigen/Geometry>
 
 #include <celutil/logger.h>
+#include <celutil/texhandle.h>
 
 #include "model.h"
 
 using celestia::util::GetLogger;
+
+namespace util = celestia::util;
 
 namespace cmod
 {
@@ -40,12 +43,10 @@ getMeshMaterialIndex(const Mesh& mesh)
 
 } // end unnamed namespace
 
-
 Model::Model()
 {
     textureUsage.fill(false);
 }
-
 
 /*! Return the material with the specified index, or nullptr if
  *  the index is out of range. The returned material pointer
@@ -60,12 +61,11 @@ Model::getMaterial(unsigned int index) const
         return nullptr;
 }
 
-
 /*! Add a new material to the model's material library; the
  *  return value is the number of materials in the model.
  */
 unsigned int
-Model::addMaterial(Material&& m)
+Model::addMaterial(const Material& m)
 {
     // Update the texture map usage information for the model.  Since
     // the material being added isn't necessarily used by a mesh within
@@ -74,40 +74,37 @@ Model::addMaterial(Material&& m)
     // if it forces multipass rendering when it's not required.
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
-        if (m.maps[i] != ResourceHandle::InvalidResource)
+        if (m.maps[i] != util::TextureHandle::Invalid)
         {
             textureUsage[i] = true;
         }
     }
 
-    materials.push_back(std::move(m));
+    materials.push_back(m);
     return materials.size();
 }
 
-
 bool
-Model::setMaterial(unsigned int index, Material&& m)
+Model::setMaterial(unsigned int index, const Material& m)
 {
     if (index >= materials.size()) { return false; }
-    materials[index] = std::move(m);
+    materials[index] = m;
 
     // Regenerate the texture map usage for the model by rescanning all the meshes.
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
         textureUsage[i] = std::any_of(materials.cbegin(), materials.cend(),
-                                      [&](const Material& mat) { return mat.maps[i] != ResourceHandle::InvalidResource; });
+                                      [&](const Material& mat) { return mat.maps[i] != util::TextureHandle::Invalid; });
     }
 
     return true;
 }
-
 
 unsigned int
 Model::getMaterialCount() const
 {
     return materials.size();
 }
-
 
 unsigned int
 Model::getVertexCount() const
@@ -120,7 +117,6 @@ Model::getVertexCount() const
     return count;
 }
 
-
 unsigned int
 Model::getPrimitiveCount() const
 {
@@ -132,13 +128,11 @@ Model::getPrimitiveCount() const
     return count;
 }
 
-
 unsigned int
 Model::getMeshCount() const
 {
     return meshes.size();
 }
-
 
 Mesh*
 Model::getMesh(unsigned int index)
@@ -149,7 +143,6 @@ Model::getMesh(unsigned int index)
         return nullptr;
 }
 
-
 const Mesh*
 Model::getMesh(unsigned int index) const
 {
@@ -159,14 +152,12 @@ Model::getMesh(unsigned int index) const
         return nullptr;
 }
 
-
 unsigned int
 Model::addMesh(Mesh&& m)
 {
     meshes.push_back(std::move(m));
     return meshes.size();
 }
-
 
 bool
 Model::pick(const Eigen::Vector3d& rayOrigin,
@@ -203,7 +194,6 @@ Model::pick(const Eigen::Vector3d& rayOrigin,
     return false;
 }
 
-
 bool
 Model::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirection, double& distance) const
 {
@@ -217,7 +207,6 @@ Model::pick(const Eigen::Vector3d& rayOrigin, const Eigen::Vector3d& rayDirectio
     return hit;
 }
 
-
 /*! Translate and scale a model. The transformation applied to
  *  each vertex in the model is:
  *     v' = (v + translation) * scale
@@ -228,7 +217,6 @@ Model::transform(const Eigen::Vector3f& translation, float scale)
     for (auto& mesh : meshes)
         mesh.transform(translation, scale);
 }
-
 
 void
 Model::normalize(const Eigen::Vector3f& centerOffset)
@@ -246,7 +234,6 @@ Model::normalize(const Eigen::Vector3f& centerOffset)
 
     normalized = true;
 }
-
 
 void
 Model::uniquifyMaterials()
@@ -293,7 +280,6 @@ Model::uniquifyMaterials()
     materials = std::move(uniqueMaterials);
 }
 
-
 void
 Model::determineOpacity()
 {
@@ -310,25 +296,14 @@ Model::determineOpacity()
     opaque = true;
 }
 
-
 bool
 Model::usesTextureType(TextureSemantic t) const
 {
     return textureUsage[static_cast<std::size_t>(t)];
 }
 
-
-bool
-Model::OpacityComparator::operator()(const Mesh& a, const Mesh& b) const
-{
-    // Because materials are sorted by opacity, we can just compare
-    // the material index.
-    return getMeshMaterialIndex(a) > getMeshMaterialIndex(b);
-}
-
-
 void
-Model::sortMeshes(const MeshComparator& comparator)
+Model::sortMeshes()
 {
     // Sort submeshes by material; if materials have been uniquified,
     // then the submeshes will be ordered so that opaque ones are first.
@@ -336,7 +311,13 @@ Model::sortMeshes(const MeshComparator& comparator)
         mesh.aggregateByMaterial();
 
     // Sort the meshes so that completely opaque ones are first
-    std::sort(meshes.begin(), meshes.end(), std::ref(comparator));
+    std::sort(meshes.begin(), meshes.end(),
+              [](const Mesh& a, const Mesh& b)
+              {
+                  // Because materials are sorted by opacity, we can just
+                  // compare the material index.
+                  return getMeshMaterialIndex(a) > getMeshMaterialIndex(b);
+              });
 
     std::vector<Mesh> newMeshes;
     for (const auto &mesh : meshes)

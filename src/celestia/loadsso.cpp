@@ -26,14 +26,15 @@ using SolarSystemLoader = CatalogLoader<Universe>;
 template<> bool
 CatalogLoader<Universe>::load(std::istream &in, const std::filesystem::path &dir)
 {
-    return LoadSolarSystemObjects(in, *m_objDB, dir, m_geometryPaths);
+    return LoadSolarSystemObjects(in, *m_objDB, dir, *m_geometryPaths, *m_texturePaths);
 }
 
 void
 loadSSO(const CelestiaConfig &config,
         ProgressNotifier *progressNotifier,
         Universe *universe,
-        engine::GeometryPaths& geometryPaths)
+        engine::GeometryPaths& geometryPaths,
+        engine::TexturePaths& texturePaths)
 {
     auto solarSystem = std::make_unique<SolarSystemCatalog>();
     universe->setSolarSystemCatalog(std::move(solarSystem));
@@ -46,7 +47,8 @@ loadSSO(const CelestiaConfig &config,
                              ContentType::CelestiaCatalog,
                              progressNotifier,
                              config.paths.skipExtras,
-                             geometryPaths);
+                             geometryPaths,
+                             texturePaths);
 
     // First read the solar system files listed individually in the config file.
     std::filesystem::path empty;

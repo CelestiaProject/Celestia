@@ -16,18 +16,12 @@
 
 #include <cel3ds/3dsmodel.h>
 #include <celmodel/model.h>
-#include <celmodel/modelfile.h>
-
+#include "modelio.h"
 
 namespace cmodtools
 {
 
-extern void Convert3DSMesh(cmod::Model& model,
-                           M3DTriangleMesh& mesh3ds,
-                           const M3DScene& scene,
-                           std::string&& meshName);
-
 extern std::unique_ptr<cmod::Model> Convert3DSModel(const M3DScene& scene,
-                                                    cmod::HandleGetter handleGetter);
+                                                    ModelIO& modelIO);
 
 }

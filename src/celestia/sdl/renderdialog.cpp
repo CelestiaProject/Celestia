@@ -14,9 +14,9 @@
 
 #include <imgui.h>
 
-#include <celengine/multitexture.h>
 #include <celengine/render.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 #include <celestia/celestiacore.h>
 #include "helpers.h"
 
@@ -33,12 +33,12 @@ texturesPanel(Renderer* renderer)
     auto resolution = static_cast<int>(renderer->getResolution());
     int resolutionNew = resolution;
 
-    ImGui::RadioButton("Low##lowResolution", &resolutionNew, static_cast<int>(TextureResolution::lores));
-    ImGui::RadioButton("Medium##medResolution", &resolutionNew, static_cast<int>(TextureResolution::medres));
-    ImGui::RadioButton("High##highResolution", &resolutionNew, static_cast<int>(TextureResolution::hires));
+    ImGui::RadioButton("Low##lowResolution", &resolutionNew, static_cast<int>(engine::TextureResolution::lores));
+    ImGui::RadioButton("Medium##medResolution", &resolutionNew, static_cast<int>(engine::TextureResolution::medres));
+    ImGui::RadioButton("High##highResolution", &resolutionNew, static_cast<int>(engine::TextureResolution::hires));
 
     if (resolutionNew != resolution)
-        renderer->setResolution(static_cast<TextureResolution>(resolutionNew));
+        renderer->setResolution(static_cast<engine::TextureResolution>(resolutionNew));
 }
 
 void
