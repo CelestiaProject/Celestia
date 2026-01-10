@@ -139,7 +139,7 @@ WavefrontLoader::load()
             {
                 cmod::Material material;
                 material.diffuse = cmod::Color(1.0f, 1.0f, 1.0f);
-                currentMaterialIndex = m_model->addMaterial(std::move(material)) - 1;
+                currentMaterialIndex = m_model->addMaterial(material) - 1;
                 if (!m_materialGroups.empty())
                 {
                     if (m_materialGroups.back().firstIndex == static_cast<int>(m_indexData.size()))

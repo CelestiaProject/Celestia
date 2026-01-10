@@ -331,7 +331,7 @@ Convert3DSModel(const M3DScene& scene, const std::filesystem::path& texPath)
             newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, tex);
         }
 
-        model->addMaterial(std::move(newMaterial));
+        model->addMaterial(newMaterial);
     }
 
     // Convert all models in the scene. Some confusing terminology: a 3ds 'scene' is the same
@@ -376,6 +376,21 @@ Load3DSModel(const GeometryInfo& info)
     return model;
 }
 
+class ModelLoader final : public cmod::ModelLoader
+{
+public:
+    explicit ModelLoader(const std::filesystem::path& directory) : m_directory(directory) {}
+
+protected:
+    ResourceHandle getHandle(const std::filesystem::path& filename) override
+    {
+        return GetTextureManager()->getHandle(TextureInfo(filename, m_directory, TextureFlags::WrapTexture));
+    }
+
+private:
+    const std::filesystem::path& m_directory;
+};
+
 std::unique_ptr<cmod::Model>
 LoadCMODModel(const GeometryInfo& info)
 {
@@ -383,12 +398,7 @@ LoadCMODModel(const GeometryInfo& info)
     if (!in.good())
         return nullptr;
 
-    std::unique_ptr<cmod::Model> model = cmod::LoadModel(
-        in,
-        [&info](const std::filesystem::path& name)
-        {
-            return GetTextureManager()->getHandle(TextureInfo(name, info.directory, TextureFlags::WrapTexture));
-        });
+    std::unique_ptr<cmod::Model> model = ModelLoader(info.directory).load(in);
 
     if (model == nullptr)
         return nullptr;
@@ -609,7 +619,7 @@ GeometryManager::find(GeometryHandle handle)
     // Sort the submeshes roughly by opacity.  This will eliminate a
     // good number of the errors caused when translucent triangles are
     // rendered before geometry that they cover.
-    model->sortMeshes(cmod::Model::OpacityComparator());
+    model->sortMeshes();
 
     model->determineOpacity();
 
