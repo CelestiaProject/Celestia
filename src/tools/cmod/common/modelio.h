@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <celmodel/modelfile.h>
+#include <celutil/fsutils.h>
 #include <celutil/texhandle.h>
 
 namespace cmodtools
@@ -24,7 +25,7 @@ protected:
 
 private:
     std::vector<std::filesystem::path> m_paths;
-    std::unordered_map<std::filesystem::path, celestia::util::TextureHandle> m_handles;
+    std::unordered_map<std::filesystem::path, celestia::util::TextureHandle, celestia::util::PathHasher> m_handles;
 };
 
 extern ModelIO* GetModelIO();
