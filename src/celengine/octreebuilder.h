@@ -18,11 +18,13 @@
 #include <array>
 #include <cassert>
 #include <memory>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 #include <celutil/blockarray.h>
 #include "octree.h"
@@ -33,6 +35,8 @@ namespace celestia::engine
 namespace detail
 {
 
+constexpr inline unsigned int InvalidOctreeChildIndex = 8U;
+
 template<class PREC>
 struct DynamicOctreeNode
 {
@@ -41,7 +45,8 @@ struct DynamicOctreeNode
 
     explicit DynamicOctreeNode(const PointType&);
 
-    bool isStraddling(const PointType&, PREC);
+    bool isStraddling(const PointType&, PREC) const;
+    bool isSkippable(unsigned int& singleChild) const;
 
     PointType center;
     std::vector<OctreeObjectIndex> objIndices;
@@ -56,9 +61,59 @@ DynamicOctreeNode<PREC>::DynamicOctreeNode(const PointType& _center) :
 
 template<class PREC>
 bool
-DynamicOctreeNode<PREC>::isStraddling(const PointType& pos, PREC radius)
+DynamicOctreeNode<PREC>::isStraddling(const PointType& pos, PREC radius) const
 {
     return radius > PREC(0) && (pos - center).cwiseAbs().minCoeff() < radius;
+}
+
+template<class PREC>
+bool
+DynamicOctreeNode<PREC>::isSkippable(unsigned int& singleChild) const
+{
+    singleChild = InvalidOctreeChildIndex;
+    if (!objIndices.empty())
+        return false;
+
+    if (!children)
+        return true;
+
+    for (unsigned int childIndex = 0U; childIndex < 8U; ++childIndex)
+    {
+        if ((*children)[childIndex] == InvalidOctreeNode)
+            continue;
+
+        if (singleChild != InvalidOctreeChildIndex)
+            return false;
+
+        singleChild = childIndex;
+    }
+
+    return true;
+}
+
+template<class PREC>
+Eigen::AlignedBox<PREC, 3>
+subNodeBox(const Eigen::AlignedBox<PREC, 3>& nodeBox,
+           const Eigen::Matrix<PREC, 3, 1>& center,
+           unsigned int childIndex)
+{
+    Eigen::Matrix<PREC, 3, 1> minPos;
+    Eigen::Matrix<PREC, 3, 1> maxPos;
+    for (unsigned int axis = 0U; axis < 3U; ++axis)
+    {
+        if (childIndex & (1U << axis))
+        {
+            minPos[axis] = center[axis];
+            maxPos[axis] = nodeBox.max()[axis];
+        }
+        else
+        {
+            minPos[axis] = nodeBox.min()[axis];
+            maxPos[axis] = center[axis];
+        }
+    }
+
+    return Eigen::AlignedBox<PREC, 3>(minPos, maxPos);
 }
 
 } // end namespace celestia::engine::detail
@@ -99,20 +154,22 @@ public:
 
 private:
     using NodeType = detail::DynamicOctreeNode<PrecisionType>;
+    using BoxType = Eigen::AlignedBox<PrecisionType, 3>;
 
     void insertObject(OctreeObjectIndex);
-    void splitNode(NodeType&, OctreeDepthType);
-    OctreeNodeIndex getChild(NodeType&, OctreeDepthType, const PointType&);
+    void splitNode(NodeType&, const BoxType&, OctreeDepthType);
+    OctreeNodeIndex getChild(NodeType&, BoxType&, const PointType&);
     void buildNode(StaticOctreeType&,
                    const NodeType&,
+                   const BoxType&,
                    OctreeDepthType,
                    std::vector<OctreeNodeIndex>&);
 
     BlockArray<NodeType> m_nodes;
     STORAGE m_objects;
-    std::vector<PrecisionType> m_sizes;
     std::vector<float> m_factors;
     std::vector<OctreeObjectIndex> m_excluded;
+    BoxType m_rootBox;
     OctreeObjectIndex m_splitThreshold;
 };
 
@@ -123,10 +180,10 @@ DynamicOctree<TRAITS, STORAGE>::DynamicOctree(STORAGE&& objects,
                                               float rootExclusionFactor,
                                               OctreeObjectIndex splitThreshold) :
     m_objects(std::move(objects)),
+    m_rootBox(rootCenter - PointType::Constant(rootSize), rootCenter + PointType::Constant(rootSize)),
     m_splitThreshold(splitThreshold)
 {
     m_nodes.emplace_back(rootCenter);
-    m_sizes.emplace_back(rootSize);
     m_factors.emplace_back(rootExclusionFactor);
 
     for (OctreeObjectIndex i = 0, end = static_cast<OctreeObjectIndex>(m_objects.size()); i < end; ++i)
@@ -141,7 +198,7 @@ DynamicOctree<TRAITS, STORAGE>::insertObject(OctreeObjectIndex idx)
 {
     const ObjectType& obj = m_objects[idx];
     PointType pos = TRAITS::getPosition(obj);
-    if ((pos - m_nodes[0].center).cwiseAbs().maxCoeff() > m_sizes[0])
+    if (!m_rootBox.contains(pos))
     {
         m_excluded.push_back(idx);
         return;
@@ -149,8 +206,11 @@ DynamicOctree<TRAITS, STORAGE>::insertObject(OctreeObjectIndex idx)
 
     OctreeNodeIndex nodeIdx = 0;
     OctreeDepthType depth = 0;
+    BoxType nodeBox = m_rootBox;
     for (;;)
     {
+        assert(nodeBox.contains(pos));
+
         NodeType& node = m_nodes[nodeIdx];
 
         if (m_factors.size() <= depth)
@@ -170,7 +230,7 @@ DynamicOctree<TRAITS, STORAGE>::insertObject(OctreeObjectIndex idx)
         // object into a child node.  This is done in order
         // to avoid having the octree degenerate into one object
         // per node.
-        if (node.children == nullptr)
+        if (!node.children)
         {
             if (node.objIndices.size() < m_splitThreshold)
             {
@@ -178,19 +238,19 @@ DynamicOctree<TRAITS, STORAGE>::insertObject(OctreeObjectIndex idx)
                 return;
             }
 
-            splitNode(node, depth);
+            splitNode(node, nodeBox, depth);
         }
 
         ++depth;
-        nodeIdx = getChild(node, depth, pos);
+        nodeIdx = getChild(node, nodeBox, pos);
     }
 }
 
 template<class TRAITS, class STORAGE>
 void
-DynamicOctree<TRAITS, STORAGE>::splitNode(NodeType& node, OctreeDepthType depth)
+DynamicOctree<TRAITS, STORAGE>::splitNode(NodeType& node, const BoxType& nodeBox, OctreeDepthType depth)
 {
-    assert(node.children == nullptr);
+    assert(!node.children);
     node.children = std::make_unique<typename NodeType::ChildrenType>();
     node.children->fill(InvalidOctreeNode);
 
@@ -205,12 +265,20 @@ DynamicOctree<TRAITS, STORAGE>::splitNode(NodeType& node, OctreeDepthType depth)
         {
             *writeIt = *readIt;
             ++writeIt;
+            continue;
         }
-        else
+
+        auto childIndex =  static_cast<unsigned int>(pos.x() >= node.center.x())
+                        | (static_cast<unsigned int>(pos.y() >= node.center.y()) << 1U)
+                        | (static_cast<unsigned int>(pos.z() >= node.center.z()) << 2U);
+        OctreeNodeIndex& childNodeIndex = (*node.children)[childIndex];
+        if (childNodeIndex == InvalidOctreeNode)
         {
-            NodeType& childNode = m_nodes[getChild(node, depth + 1, pos)];
-            childNode.objIndices.push_back(*readIt);
+            childNodeIndex = static_cast<OctreeNodeIndex>(m_nodes.size());
+            m_nodes.emplace_back(detail::subNodeBox(nodeBox, node.center, childIndex).center());
         }
+
+        m_nodes[childNodeIndex].objIndices.push_back(*readIt);
     }
 
     if (writeIt == node.objIndices.begin())
@@ -226,25 +294,29 @@ DynamicOctree<TRAITS, STORAGE>::splitNode(NodeType& node, OctreeDepthType depth)
 
 template<class TRAITS, class STORAGE>
 OctreeNodeIndex
-DynamicOctree<TRAITS, STORAGE>::getChild(NodeType& node, OctreeDepthType depth, const PointType& pos)
+DynamicOctree<TRAITS, STORAGE>::getChild(NodeType& node, BoxType& nodeBox, const PointType& pos)
 {
-    assert(node.children != nullptr);
+    assert(node.children);
 
-    auto childIndex = static_cast<unsigned int>(pos.x() >= node.center.x()) |
-                      (static_cast<unsigned int>(pos.y() >= node.center.y()) << 1U) |
-                      (static_cast<unsigned int>(pos.z() >= node.center.z()) << 2U);
+    unsigned int childIndex = 0U;
+    for (unsigned int axis = 0U; axis < 3U; ++axis)
+    {
+        if (pos[axis] >= node.center[axis])
+        {
+            childIndex |= 1U << axis;
+            nodeBox.min()[axis] = node.center[axis];
+        }
+        else
+        {
+            nodeBox.max()[axis] = node.center[axis];
+        }
+    }
+
     OctreeNodeIndex& result = (*node.children)[childIndex];
     if (result == InvalidOctreeNode)
     {
         result = static_cast<OctreeNodeIndex>(m_nodes.size());
-        if (m_sizes.size() <= depth)
-            m_sizes.push_back(m_sizes.back() * PrecisionType(0.5));
-        PrecisionType scale = m_sizes[depth];
-        PointType centerPos = node.center
-                            + scale * PointType(static_cast<PrecisionType>(static_cast<int>((childIndex & 1U) << 1U) - 1),
-                                                static_cast<PrecisionType>(static_cast<int>(childIndex & 2U) - 1),
-                                                static_cast<PrecisionType>(static_cast<int>((childIndex & 4U) >> 1U) - 1));
-        m_nodes.emplace_back(centerPos);
+        m_nodes.emplace_back(nodeBox.center());
     }
 
     return result;
@@ -258,35 +330,51 @@ DynamicOctree<TRAITS, STORAGE>::build()
     staticOctree->m_nodes.reserve(m_nodes.size());
     staticOctree->m_objects.reserve(m_objects.size());
 
-    std::vector<std::pair<OctreeNodeIndex, OctreeDepthType>> nodeStack;
+    std::vector<std::tuple<OctreeNodeIndex, OctreeDepthType, BoxType>> nodeStack;
     std::vector<OctreeNodeIndex> prevByDepth;
-    nodeStack.emplace_back(0, 0);
+    nodeStack.emplace_back(0, 0, m_rootBox);
     while (!nodeStack.empty())
     {
-        auto [nodeIdx, depth] = nodeStack.back();
+        auto [nodeIdx, depth, nodeBox] = nodeStack.back();
         nodeStack.pop_back();
 
         const NodeType& node = m_nodes[nodeIdx];
-        buildNode(*staticOctree, node, depth, prevByDepth);
+        // Optimisation: any node which contains no objects and has a single
+        // child node can be replaced with its child node.
+        if (OctreeNodeIndex singleChild; node.isSkippable(singleChild))
+        {
+            if (singleChild != detail::InvalidOctreeChildIndex)
+            {
+                nodeStack.emplace_back((*node.children)[singleChild],
+                                       depth,
+                                       detail::subNodeBox(nodeBox, node.center, singleChild));
+            }
+
+            continue;
+        }
+
+        buildNode(*staticOctree, node, nodeBox, depth, prevByDepth);
         if (depth < staticOctree->m_minPopulated && !node.objIndices.empty())
             staticOctree->m_minPopulated = depth;
         if (depth > staticOctree->m_maxDepth)
             staticOctree->m_maxDepth = depth;
 
-        if (node.children == nullptr)
+        if (!node.children)
             continue;
 
-        for (OctreeNodeIndex child : *node.children)
+        for (unsigned int childIndex = 0U; childIndex < 8U; ++childIndex)
         {
-            if (child != InvalidOctreeNode)
-                nodeStack.emplace_back(child, depth + 1);
+            if (OctreeNodeIndex child = (*node.children)[childIndex]; child != InvalidOctreeNode)
+            {
+                nodeStack.emplace_back(child,
+                                       depth + 1,
+                                       detail::subNodeBox(nodeBox, node.center, childIndex));
+            }
         }
     }
 
     for (OctreeObjectIndex objIndex : m_excluded)
         staticOctree->m_objects.emplace_back(std::move(m_objects[objIndex]));
-
-    staticOctree->m_sizes = std::move(m_sizes);
 
     return staticOctree;
 }
@@ -295,6 +383,7 @@ template<class TRAITS, class STORAGE>
 void
 DynamicOctree<TRAITS, STORAGE>::buildNode(StaticOctreeType& staticOctree,
                                           const NodeType& node,
+                                          const BoxType& nodeBox,
                                           OctreeDepthType depth,
                                           std::vector<OctreeNodeIndex>& prevByDepth)
 {
@@ -309,7 +398,8 @@ DynamicOctree<TRAITS, STORAGE>::buildNode(StaticOctreeType& staticOctree,
 
     prevByDepth.push_back(staticNodeIdx);
 
-    auto& staticNode = staticOctree.m_nodes.emplace_back(node.center, depth);
+    PrecisionType nodeSize = nodeBox.sizes().maxCoeff() / PrecisionType{ 2 };
+    auto& staticNode = staticOctree.m_nodes.emplace_back(node.center, nodeSize, depth);
 
     if (node.objIndices.empty())
         return;
