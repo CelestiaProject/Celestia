@@ -1131,7 +1131,7 @@ msgstr "Кръстосаният индекс {} е зареден\n"
 
 #: ../src/celestia/loadstars.cpp:63
 msgid "Error reading stars file\n"
-msgstr "Грешка при четене на файла с звездите\n"
+msgstr "Грешка при четене на файла със звездите\n"
 
 #: ../src/celestia/loadstars.cpp:69 ../src/celestia/loadstars.cpp:85
 #, c++-format
