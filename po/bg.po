@@ -657,7 +657,7 @@ msgstr "Създаването на библиотеката SPICE се пров
 
 #: ../src/celestia/celestiacore.cpp:2399
 msgid "Cannot read star database."
-msgstr "Базата данни с звездите не може да бъде прочетена."
+msgstr "Базата данни със звездите не може да бъде прочетена."
 
 #: ../src/celestia/celestiacore.cpp:2409
 msgid "Cannot read DSO database."
