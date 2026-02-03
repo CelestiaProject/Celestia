@@ -404,7 +404,7 @@ ModelLoader::getHandle(const std::filesystem::path& filename)
 std::unique_ptr<cmod::Model>
 LoadCMODModel(const GeometryInfo& info, engine::TexturePaths& paths)
 {
-    std::ifstream in(info.path, std::ios::binary);
+    std::ifstream in(info.path, std::ios_base::binary | std::ios_base::in);
     if (!in.good())
         return nullptr;
 
@@ -568,7 +568,7 @@ GeometryPaths::getInfo(GeometryHandle handle, GeometryInfo& info) const
     return true;
 }
 
-GeometryManager::GeometryManager(std::shared_ptr<GeometryPaths> geometryPaths,
+GeometryManager::GeometryManager(std::shared_ptr<const GeometryPaths> geometryPaths,
                                  std::shared_ptr<TexturePaths> texturePaths) :
     m_geometryPaths(geometryPaths),
     m_texturePaths(texturePaths)

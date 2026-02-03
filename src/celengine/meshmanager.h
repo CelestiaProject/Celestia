@@ -102,12 +102,12 @@ private:
 class GeometryManager
 {
 public:
-    GeometryManager(std::shared_ptr<GeometryPaths>, std::shared_ptr<TexturePaths>);
+    GeometryManager(std::shared_ptr<const GeometryPaths>, std::shared_ptr<TexturePaths>);
 
     const Geometry* find(GeometryHandle);
 
 private:
-    std::shared_ptr<GeometryPaths> m_geometryPaths;
+    std::shared_ptr<const GeometryPaths> m_geometryPaths;
     std::shared_ptr<TexturePaths> m_texturePaths;
     std::unordered_map<GeometryHandle, std::unique_ptr<const Geometry>> m_geometry;
 };
