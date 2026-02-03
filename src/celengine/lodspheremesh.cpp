@@ -287,7 +287,6 @@ createVertices(std::vector<float>& vertices,
 LODSphereMesh::~LODSphereMesh()
 {
     glDeleteBuffers(vertexBuffers.size(), vertexBuffers.data());
-    glDeleteBuffers(1, &indexBuffer);
 }
 
 
@@ -416,52 +415,10 @@ void LODSphereMesh::render(unsigned int attributes,
                          GL_STREAM_DRAW);
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glGenBuffers(1, &indexBuffer);
-        if (glGetError() != GL_NO_ERROR)
-            return;
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     nIndices * sizeof(unsigned short),
-                     nullptr,
-                     GL_DYNAMIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     currentVB = 0;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
-
-    // Set up the mesh vertices
-    int nRings = phiExtent / ri.step;
-    int nSlices = thetaExtent / ri.step;
-
-    indices.clear();
-    int expectedIndices = 2 * (nRings * (nSlices + 1) + std::max(nRings - 1, 0));
-    indices.reserve(expectedIndices);
-    for (int i = 0; i < nRings; i++)
-    {
-        if (i > 0)
-        {
-            indices.push_back(static_cast<unsigned short>(i * (nSlices + 1) + 0));
-        }
-        for (int j = 0; j <= nSlices; j++)
-        {
-            indices.push_back(static_cast<unsigned short>(i * (nSlices + 1) + j));
-            indices.push_back(static_cast<unsigned short>((i + 1) * (nSlices + 1) + j));
-        }
-        if (i < nRings - 1)
-        {
-            indices.push_back(static_cast<unsigned short>((i + 1) * (nSlices + 1) + nSlices));
-        }
-    }
-
-    assert(expectedIndices == indices.size());
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 indices.size() * sizeof(unsigned short),
-                 indices.data(),
-                 GL_DYNAMIC_DRAW);
 
     // Compute the size of a vertex
     vertexSize = 3;
@@ -637,6 +594,17 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
                              const RenderInfo& ri, CelestiaGLProgram *program)
 
 {
+    // Calculate the index buffer configuration for this section
+    int thetaExtent = extent;
+    int phiExtent = extent / 2;
+    int nSlices = thetaExtent / ri.step;
+
+    // Get or create the cached index buffer
+    CachedIndexBuffer* cachedIB = getOrCreateIndexBuffer(nSlices);
+    if (cachedIB == nullptr)
+        return;
+
+    cachedIB->buffer.bind();
     auto stride = static_cast<GLsizei>(vertexSize * sizeof(float));
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
 
@@ -668,8 +636,6 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     // assert(phi0 + extent <= maxDivisions);
     // assert(theta0 + extent / 2 < maxDivisions);
     // assert(isPow2(extent));
-    int thetaExtent = extent;
-    int phiExtent = extent / 2;
     int theta1 = theta0 + thetaExtent;
     int phi1 = phi0 + phiExtent;
 
@@ -744,13 +710,11 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     assert(expectedVertices == vertices.size());
 
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), nullptr, GL_STREAM_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STREAM_DRAW);
 
-    int nRings = phiExtent / ri.step;
-    int nSlices = thetaExtent / ri.step;
+    // Use the cached index count for the draw call
     glDrawElements(GL_TRIANGLE_STRIP,
-                   nRings * (nSlices + 2) * 2 - 2,
+                   cachedIB->indexCount,
                    GL_UNSIGNED_SHORT,
                    nullptr);
 
@@ -759,4 +723,50 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     if (currentVB == NUM_SPHERE_VERTEX_BUFFERS)
         currentVB = 0;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
+}
+
+
+// getOrCreateIndexBuffer - Cache index buffers for common configurations
+LODSphereMesh::CachedIndexBuffer*
+LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
+{
+    // Check if we already have this configuration cached
+    if (auto it = indexBufferCache.find(nSlices); it != indexBufferCache.end())
+    {
+        return &it->second;
+    }
+
+    // Create new index buffer
+    // nRings is always nSlices / 2
+    int nRings = nSlices / 2;
+    std::vector<unsigned short> indices;
+    int expectedIndices = 2 * (nRings * (nSlices + 1) + std::max(nRings - 1, 0));
+    indices.reserve(expectedIndices);
+
+    for (int i = 0; i < nRings; i++)
+    {
+        if (i > 0)
+        {
+            indices.push_back(static_cast<unsigned short>(i * (nSlices + 1) + 0));
+        }
+        for (int j = 0; j <= nSlices; j++)
+        {
+            indices.push_back(static_cast<unsigned short>(i * (nSlices + 1) + j));
+            indices.push_back(static_cast<unsigned short>((i + 1) * (nSlices + 1) + j));
+        }
+        if (i < nRings - 1)
+        {
+            indices.push_back(static_cast<unsigned short>((i + 1) * (nSlices + 1) + nSlices));
+        }
+    }
+
+    assert(expectedIndices == static_cast<int>(indices.size()));
+
+    celestia::gl::Buffer buffer(celestia::gl::Buffer::TargetHint::ElementArray,
+                                celestia::util::array_view<void>(indices.data(), indices.size() * sizeof(unsigned short)),
+                                celestia::gl::Buffer::BufferUsage::StaticDraw);
+    CachedIndexBuffer cached{ std::move(buffer), static_cast<int>(indices.size()) };
+    const auto& [it, inserted] = indexBufferCache.try_emplace(nSlices, std::move(cached));
+    assert(inserted);
+    return &it->second;
 }
