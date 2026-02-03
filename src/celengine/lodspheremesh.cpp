@@ -249,6 +249,7 @@ createVertices(std::vector<float>& vertices,
                int step,
                const TextureCoords& tc)
 {
+    std::vector<float>::size_type index = 0;
     for (int phi = phi0; phi <= phi1; phi += step)
     {
         float cphi = trigArrays.cosPhi[phi];
@@ -259,22 +260,25 @@ createVertices(std::vector<float>& vertices,
             float ctheta = trigArrays.cosTheta[theta];
             float stheta = trigArrays.sinTheta[theta];
 
-            vertices.push_back(cphi * ctheta);
-            vertices.push_back(sphi);
-            vertices.push_back(cphi * stheta);
+            vertices[index] = cphi * ctheta;
+            vertices[index + 1] = sphi;
+            vertices[index + 2] = cphi * stheta;
+            index += 3;
 
             if constexpr (HasTangents)
             {
                 // Compute the tangent--required for bump mapping
-                vertices.push_back(stheta);
-                vertices.push_back(0.0f);
-                vertices.push_back(-ctheta);
+                vertices[index] = stheta;
+                vertices[index + 1] = 0.0f;
+                vertices[index + 2] = -ctheta;
+                index += 3;
             }
 
             if (tc.nTexturesUsed > 0)
             {
-                vertices.push_back(static_cast<float>(theta));
-                vertices.push_back(static_cast<float>(phi));
+                vertices[index] = static_cast<float>(theta);
+                vertices[index + 1] = static_cast<float>(phi);
+                index += 2;
             }
         }
     }
@@ -697,18 +701,15 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
         }
     }
 
-    vertices.clear();
     int perVertexFloats = (ri.attributes & Tangents) == 0 ? 3 : 6;
     int expectedVertices = ((phi1 - phi0) / ri.step + 1) *
                            ((theta1 - theta0) / ri.step + 1) * (perVertexFloats + (nTexturesUsed > 0 ? 2 : 0));
     assert(expectedVertices <= maxVertices * MaxVertexSize);
-    vertices.reserve(expectedVertices);
+    vertices.resize(expectedVertices);
     if ((ri.attributes & Tangents) == 0)
         createVertices<false>(vertices, phi0, phi1, theta0, theta1, ri.step, tc);
     else
         createVertices<true>(vertices, phi0, phi1, theta0, theta1, ri.step, tc);
-
-    assert(expectedVertices == vertices.size());
 
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STREAM_DRAW);
 
@@ -741,26 +742,28 @@ LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
     int nRings = nSlices / 2;
     std::vector<unsigned short> indices;
     int expectedIndices = 2 * (nRings * (nSlices + 1) + std::max(nRings - 1, 0));
-    indices.reserve(expectedIndices);
+    indices.resize(expectedIndices);
 
+    std::vector<unsigned short>::size_type index = 0;
     for (int i = 0; i < nRings; i++)
     {
         if (i > 0)
         {
-            indices.push_back(static_cast<unsigned short>(i * (nSlices + 1) + 0));
+            indices[index] = static_cast<unsigned short>(i * (nSlices + 1) + 0);
+            index += 1;
         }
         for (int j = 0; j <= nSlices; j++)
         {
-            indices.push_back(static_cast<unsigned short>(i * (nSlices + 1) + j));
-            indices.push_back(static_cast<unsigned short>((i + 1) * (nSlices + 1) + j));
+            indices[index] = static_cast<unsigned short>(i * (nSlices + 1) + j);
+            indices[index + 1] = static_cast<unsigned short>((i + 1) * (nSlices + 1) + j);
+            index += 2;
         }
         if (i < nRings - 1)
         {
-            indices.push_back(static_cast<unsigned short>((i + 1) * (nSlices + 1) + nSlices));
+            indices[index] = static_cast<unsigned short>((i + 1) * (nSlices + 1) + nSlices);
+            index += 1;
         }
     }
-
-    assert(expectedIndices == static_cast<int>(indices.size()));
 
     celestia::gl::Buffer buffer(celestia::gl::Buffer::TargetHint::ElementArray,
                                 celestia::util::array_view<void>(indices.data(), indices.size() * sizeof(unsigned short)),
