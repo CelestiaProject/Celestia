@@ -605,8 +605,6 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
 
     // Get or create the cached index buffer
     CachedIndexBuffer* cachedIB = getOrCreateIndexBuffer(nSlices);
-    if (cachedIB == nullptr)
-        return;
 
     cachedIB->buffer.bind();
     auto stride = static_cast<GLsizei>(vertexSize * sizeof(float));
