@@ -46,6 +46,8 @@ public:
     inline std::int32_t check(char c) { return check(static_cast<unsigned char>(c)); }
     inline bool isInitial() const { return state == State::Initial; }
 
+    static bool validate(std::string_view str);
+
     static constexpr std::int32_t PartialSequence = -1;
     static constexpr std::int32_t InvalidStarter = -2;
     static constexpr std::int32_t InvalidTrailing = -3;

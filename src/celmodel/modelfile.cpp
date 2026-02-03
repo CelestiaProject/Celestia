@@ -25,8 +25,10 @@
 
 #include <celutil/binaryread.h>
 #include <celutil/binarywrite.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/tokenizer.h>
+#include <celutil/utf8.h>
 #include "mesh.h"
 #include "model.h"
 #include "modelfile.h"
@@ -475,15 +477,20 @@ ModelLoader::TextLoader::loadMaterial(Material& material) //NOSONAR
         if (texType != TextureSemantic::InvalidTextureSemantic)
         {
             tok.nextToken();
-            if (auto tokenValue = tok.getStringValue(); tokenValue.has_value())
-            {
-                celestia::util::TextureHandle tex = loader.getHandle(std::filesystem::u8path(*tokenValue));
-                material.setMap(texType, tex);
-            }
-            else
+            auto tokenValue = tok.getStringValue();
+            if (!tokenValue.has_value())
             {
                 reportError("Texture name expected");
                 return false;
+            }
+
+            if (auto texFile = util::U8FileName(*tokenValue); texFile.has_value())
+            {
+                material.setMap(texType, loader.getHandle(*texFile));
+            }
+            else
+            {
+                reportError("Invalid texture filename");
             }
         }
         else if (property == "blend")
@@ -1374,7 +1381,7 @@ ModelLoader::BinaryLoader::load() //NOSONAR
     bool seenMeshes = false;
     bool hasNormalMap = false;
 
-    util::GetLogger()->info("start loading\n");
+    util::GetLogger()->debug("start loading\n");
 
     // Parse material and mesh definitions
     for (;;)
@@ -1405,7 +1412,7 @@ ModelLoader::BinaryLoader::load() //NOSONAR
                 hasNormalMap = true;
 
 
-            util::GetLogger()->info("has normal map: {}\n", hasNormalMap);
+            util::GetLogger()->debug("has normal map: {}\n", hasNormalMap);
 
             model->addMaterial(material);
         }
@@ -1419,7 +1426,7 @@ ModelLoader::BinaryLoader::load() //NOSONAR
                 return nullptr;
             }
 
-            util::GetLogger()->info("has tangents: {}\n", hasTangents(mesh));
+            util::GetLogger()->debug("has tangents: {}\n", hasTangents(mesh));
 
             if (hasNormalMap && !hasTangents(mesh))
                 model->addMesh(GenerateTangents(mesh));
@@ -1497,15 +1504,16 @@ ModelLoader::BinaryLoader::loadMaterial(Material& material) //NOSONAR
             break;
 
         case CmodToken::Blend:
+            if (std::int16_t blendMode;
+                util::readLE<std::int16_t>(*in, blendMode) &&
+                blendMode >= 0 && blendMode < static_cast<std::int16_t>(BlendMode::BlendMax))
             {
-                std::int16_t blendMode;
-                if (!util::readLE<std::int16_t>(*in, blendMode)
-                    || blendMode < 0 || blendMode >= static_cast<std::int16_t>(BlendMode::BlendMax))
-                {
-                    reportError("Bad blend mode");
-                    return false;
-                }
                 material.blend = static_cast<BlendMode>(blendMode);
+            }
+            else
+            {
+                reportError("Bad blend mode");
+                return false;
             }
             break;
 
@@ -1529,11 +1537,19 @@ ModelLoader::BinaryLoader::loadMaterial(Material& material) //NOSONAR
                 if (texfile.empty())
                 {
                     reportError("Zero length texture name in material definition");
-                    return false;
+                    continue;
                 }
 
-                celestia::util::TextureHandle tex = loader.getHandle(std::filesystem::u8path(texfile));
-                material.maps[texType] = tex;
+                if (!UTF8Validator::validate(texfile))
+                {
+                    reportError("Invalid UTF-8 in texture filename");
+                    continue;
+                }
+
+                if (auto texfilePath = util::U8FileName(texfile); texfilePath.has_value())
+                    material.maps[texType] = loader.getHandle(*texfilePath);
+                else
+                    reportError("Invalid texture filename in material definition");
             }
             break;
 
@@ -2021,4 +2037,3 @@ ModelWriter::saveBinary(const Model& model, std::ostream& out) const
 }
 
 } // end namespace cmod
-

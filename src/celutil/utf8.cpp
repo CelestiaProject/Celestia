@@ -555,3 +555,16 @@ UTF8Validator::check(unsigned char c)
         return InvalidStarter;
     }
 }
+
+bool
+UTF8Validator::validate(std::string_view str)
+{
+    UTF8Validator validator;
+    for (char c : str)
+    {
+        if (validator.check(c) < 0)
+            return false;
+    }
+
+    return true;
+}
