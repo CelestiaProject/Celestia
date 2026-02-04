@@ -12,11 +12,13 @@
 
 #include <array>
 #include <cstddef>
+#include <unordered_map>
 #include <vector>
 
 #include <Eigen/Core>
 
 #include <celengine/glsupport.h>
+#include <celrender/gl/buffer.h>
 
 class Texture;
 
@@ -79,12 +81,19 @@ public:
                        const RenderInfo&,
                        CelestiaGLProgram *);
 
+    struct CachedIndexBuffer
+    {
+        celestia::gl::Buffer buffer{ celestia::util::NoCreateT{} };
+        int indexCount{ 0 };
+    };
+
+    CachedIndexBuffer* getOrCreateIndexBuffer(int nSlices);
+
     void renderSection(int phi0, int theta0, int extent, const RenderInfo&, CelestiaGLProgram *);
 
     int vertexSize{ 0 };
 
     std::vector<float> vertices{};
-    std::vector<unsigned short> indices{};
 
     int nTexturesUsed{ 0 };
     std::array<Texture*, MAX_SPHERE_MESH_TEXTURES> textures{};
@@ -93,5 +102,7 @@ public:
     bool vertexBuffersInitialized{ false };
     GLuint currentVB{ 0 };
     std::array<GLuint, NUM_SPHERE_VERTEX_BUFFERS> vertexBuffers{};
-    GLuint indexBuffer{ 0 };
+
+    // Index buffer cache (key = nSlices)
+    std::unordered_map<int, CachedIndexBuffer> indexBufferCache{};
 };
