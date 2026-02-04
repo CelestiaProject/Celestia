@@ -107,6 +107,27 @@ TexturePaths::InfoEqual::operator()(const Info& lhs, const Info& rhs) const
            std::tie(rhs.pathSet, rhs.flags, rhs.bumpHeight);
 }
 
+TexturePaths::Location::Location(const std::filesystem::path& filename, const std::filesystem::path& directory) :
+    filename(filename),
+    directory(directory)
+{
+}
+
+std::size_t
+TexturePaths::LocationHash::operator()(const Location& location) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, std::filesystem::hash_value(location.filename));
+    boost::hash_combine(seed, std::filesystem::hash_value(location.directory));
+    return seed;
+}
+
+bool
+TexturePaths::LocationEqual::operator()(const Location& lhs, const Location& rhs) const
+{
+    return std::tie(lhs.filename, lhs.directory) == std::tie(rhs.filename, rhs.directory);
+}
+
 util::TextureHandle
 TexturePaths::getHandle(const std::filesystem::path& filename,
                         const std::filesystem::path& directory,
@@ -132,7 +153,7 @@ TexturePaths::PathSetIndex
 TexturePaths::getPathSetIndex(const std::filesystem::path& filename,
                               const std::filesystem::path& directory)
 {
-    DirectoryPaths& dirPaths = m_dirPaths.try_emplace(filename).first->second;
+    DirectoryPaths& dirPaths = m_dirPaths.try_emplace({ filename, directory }).first->second;
     auto [it, inserted] = dirPaths.try_emplace(filename, PathSetIndex::Invalid);
     if (!inserted ||
         checkPath(filename, directory, it->second) ||
@@ -141,7 +162,7 @@ TexturePaths::getPathSetIndex(const std::filesystem::path& filename,
         return it->second;
     }
 
-    DirectoryPaths& rootPaths = m_dirPaths.try_emplace({}).first->second;
+    DirectoryPaths& rootPaths = m_dirPaths.try_emplace({{}, {}}).first->second;
     auto [rootIt, rootInserted] = rootPaths.try_emplace(filename, PathSetIndex::Invalid);
     if (!rootInserted || checkPath(filename, {}, rootIt->second))
         it->second = rootIt->second;

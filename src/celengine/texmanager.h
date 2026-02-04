@@ -89,6 +89,24 @@ private:
         bool operator()(const Info&, const Info&) const;
     };
 
+    struct Location
+    {
+        std::filesystem::path filename;
+        std::filesystem::path directory;
+
+        Location(const std::filesystem::path&, const std::filesystem::path&);
+    };
+
+    struct LocationHash
+    {
+        std::size_t operator()(const Location&) const;
+    };
+
+    struct LocationEqual
+    {
+        bool operator()(const Location&, const Location&) const;
+    };
+
     using DirectoryPaths = std::unordered_map<std::filesystem::path, PathSetIndex, util::PathHasher>;
 
     PathSetIndex getPathSetIndex(const std::filesystem::path&, const std::filesystem::path&);
@@ -98,7 +116,7 @@ private:
     std::vector<PathSet> m_pathSets;
     std::vector<Info> m_info;
 
-    std::unordered_map<std::filesystem::path, DirectoryPaths, util::PathHasher> m_dirPaths;
+    std::unordered_map<Location, DirectoryPaths, LocationHash, LocationEqual> m_dirPaths;
     std::unordered_map<Info, util::TextureHandle, InfoHash, InfoEqual> m_handles;
 };
 
