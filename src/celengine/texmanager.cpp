@@ -132,7 +132,7 @@ TexturePaths::PathSetIndex
 TexturePaths::getPathSetIndex(const std::filesystem::path& filename,
                               const std::filesystem::path& directory)
 {
-    DirectoryPaths& dirPaths = m_dirPaths.try_emplace(filename).first->second;
+    DirectoryPaths& dirPaths = m_dirPaths.try_emplace(directory).first->second;
     auto [it, inserted] = dirPaths.try_emplace(filename, PathSetIndex::Invalid);
     if (!inserted ||
         checkPath(filename, directory, it->second) ||
