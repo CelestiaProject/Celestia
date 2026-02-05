@@ -51,6 +51,11 @@ bool operator<(const VertexAttribute& a, const VertexAttribute& b)
     return std::tie(a.semantic, a.format, a.offsetWords) < std::tie(b.semantic, b.format, b.offsetWords);
 }
 
+VertexDescription::VertexDescription()
+{
+    m_semanticMap.fill(-1);
+}
+
 VertexDescription::VertexDescription(std::vector<VertexAttribute>&& attributes) :
     m_attributes(std::move(attributes))
 {

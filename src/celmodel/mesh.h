@@ -112,7 +112,7 @@ bool operator<(const VertexAttribute& a, const VertexAttribute& b);
 class VertexDescription : private celestia::util::NoCopy
 {
 public:
-    VertexDescription() = default;
+    VertexDescription();
     explicit VertexDescription(std::vector<VertexAttribute>&& attributes);
 
     VertexDescription clone() const;
