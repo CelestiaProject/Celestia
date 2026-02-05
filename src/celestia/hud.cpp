@@ -450,7 +450,7 @@ displayStarInfo(const util::NumberFormatter& formatter,
         overlay.printf(_("Class: %s\n"), star_class);
 
         if (star.getLuminosity() > 1.0e-10f)
-            overlay.print(loc, fmt::runtime(_("Luminosity: {}x Sun\n")),
+            overlay.print(loc, fmt::runtime(_("Luminosity: {}× Sun\n")),
                           formatter.format(star.getLuminosity(), 3, SigDigitNum));
 
         if (detail > 1)
