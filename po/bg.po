@@ -4,8 +4,8 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Hleb Valoshka <375gnu@gmail.com>, 2023
-# Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2025
+# 375gnu <375gnu@gmail.com>, 2023
+# Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2025-03-16 12:31+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2025\n"
+"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026\n"
 "Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -266,7 +266,7 @@ msgstr "Невалидна информационна връзка"
 #: ../src/celengine/stardbbuilder.cpp:635
 #, c++-format
 msgid "Bad spectral type in star database, star #{}\n"
-msgstr "Неточен спектрален клас в базата данни с звездите, звезда №{}\n"
+msgstr "Неточен спектрален клас в базата данни със звездите, звезда №{}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:655
 #, c++-format
@@ -657,7 +657,7 @@ msgstr "Създаването на библиотеката SPICE се пров
 
 #: ../src/celestia/celestiacore.cpp:2399
 msgid "Cannot read star database."
-msgstr "Базата данни с звездите не може да бъде прочетена."
+msgstr "Базата данни със звездите не може да бъде прочетена."
 
 #: ../src/celestia/celestiacore.cpp:2409
 msgid "Cannot read DSO database."
@@ -1131,7 +1131,7 @@ msgstr "Кръстосаният индекс {} е зареден\n"
 
 #: ../src/celestia/loadstars.cpp:63
 msgid "Error reading stars file\n"
-msgstr "Грешка при четене на файла с звездите\n"
+msgstr "Грешка при четене на файла със звездите\n"
 
 #: ../src/celestia/loadstars.cpp:69 ../src/celestia/loadstars.cpp:85
 #, c++-format
