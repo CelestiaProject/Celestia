@@ -70,7 +70,7 @@ DSOOctreeVisibleObjectsProcessor::process(const std::unique_ptr<DeepSkyObject>& 
         return;
 
     double distance = (m_obsPosition - obj->getPosition()).norm() - obj->getBoundingSphereRadius();
-    auto appMag = static_cast<float>((distance >= 32.6167) ? astro::absToAppMag(static_cast<double>(absMag), distance) : absMag);
+    auto appMag = static_cast<float>((distance >= astro::LY_PER_10PARSEC) ? astro::absToAppMag(static_cast<double>(absMag), distance) : absMag);
 
     if (appMag <= m_limitingFactor)
         m_dsoHandler->process(obj, distance, absMag);
