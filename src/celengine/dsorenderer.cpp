@@ -78,10 +78,10 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
         return;
 
     float appMag;
-    if (distanceToDSO >= LY_PER_10PARSEC)
+    if (distanceToDSO >= astro::LY_PER_10PARSEC)
         appMag = (float) astro::absToAppMag((double) absMag, distanceToDSO);
     else
-        appMag = absMag + (float) (enhance * tanh(distanceToDSO/LY_PER_10PARSEC - 1.0));
+        appMag = absMag + (float) (enhance * tanh(distanceToDSO/astro::LY_PER_10PARSEC - 1.0));
 
     if (util::is_set(renderFlags, dso->getRenderMask()))
     {
