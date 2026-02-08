@@ -496,7 +496,12 @@ CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
 bool
 CelestiaGlWidget::event(QEvent* event)
 {
-    if (event->type() == QEvent::ScreenChangeInternal)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    constexpr QEvent::Type dpiChangeEventType = QEvent::DevicePixelRatioChange;
+#else
+    constexpr QEvent::Type dpiChangeEventType = QEvent::ScreenChangeInternal;
+#endif
+    if (event->type() == dpiChangeEventType)
     {
         appCore->setScreenDpi(static_cast<int>(logicalDpiY() * devicePixelRatioF()));
         // resizeGL is not called on screen change, we need to manually call it to update drawable size
