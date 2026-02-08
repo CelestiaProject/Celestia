@@ -56,6 +56,7 @@ public:
     void bind();
     void unbind();
     void flush();
+    bool update();
 
 private:
     std::unique_ptr<TextureFontPrivate> impl;

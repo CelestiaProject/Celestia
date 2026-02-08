@@ -79,6 +79,7 @@ public:
     inline int titleFontHeight() const noexcept { return m_titleFontHeight; }
     inline int emWidth() const noexcept { return m_emWidth; }
     inline int titleEmWidth() const noexcept { return m_titleEmWidth; }
+    void update();
 
 private:
     std::shared_ptr<TextureFont> m_font;
@@ -144,6 +145,7 @@ public:
     const std::shared_ptr<TextureFont>& titleFont() const;
     void titleFont(const std::shared_ptr<TextureFont>&);
     std::tuple<int, int> titleMetrics() const;
+    void updateFonts();
 
     void renderOverlay(const WindowMetrics&,
                        const Simulation*,

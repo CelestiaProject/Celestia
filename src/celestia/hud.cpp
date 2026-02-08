@@ -739,6 +739,23 @@ HudFonts::setTitleFont(const std::shared_ptr<TextureFont>& f)
     m_titleEmWidth = engine::TextLayout::getTextWidth("M", f.get());
 }
 
+void
+HudFonts::update()
+{
+    if (m_font != nullptr)
+    {
+        m_font->update();
+        m_fontHeight = m_font->getHeight();
+        m_emWidth = engine::TextLayout::getTextWidth("M", m_font.get());
+    }
+    if (m_titleFont != nullptr)
+    {
+        m_titleFont->update();
+        m_titleFontHeight = m_titleFont->getHeight();
+        m_titleEmWidth = engine::TextLayout::getTextWidth("M", m_titleFont.get());
+    }
+}
+
 Hud::Hud(const std::locale& loc) :
     loc(loc),
 #ifdef USE_ICU
@@ -854,6 +871,13 @@ std::tuple<int, int>
 Hud::titleMetrics() const
 {
     return std::make_tuple(m_hudFonts.titleEmWidth(), m_hudFonts.titleFontHeight());
+}
+
+void
+Hud::updateFonts()
+{
+    m_hudFonts.update();
+    m_dateStrWidth = 0;
 }
 
 #ifdef USE_ICU
