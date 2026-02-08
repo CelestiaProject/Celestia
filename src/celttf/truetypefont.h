@@ -45,7 +45,6 @@ public:
     std::pair<float, float> render(std::u16string_view line, float xoffset = 0.0f, float yoffset = 0.0f) const;
 
     int getWidth(std::u16string_view) const;
-    int getMaxWidth() const;
     int getHeight() const;
 
     int  getMaxAscent() const;

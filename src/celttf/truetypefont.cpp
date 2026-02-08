@@ -77,6 +77,12 @@ struct FontDescriptor
     int screenDpi;
 };
 
+struct FontMetrics
+{
+    int maxAscent;;
+    int maxDescent;
+};
+
 constexpr Glyph g_badGlyph = { 0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f };
 constexpr auto INVALID_POS = static_cast<std::size_t>(-1);
 
@@ -126,11 +132,8 @@ struct TextureFontPrivate
 
     FT_Face m_face; // font face
 
-    FontDescriptor m_fontDescriptor;
-
-    int m_maxAscent{ 0 };
-    int m_maxDescent{ 0 };
-    int m_maxWidth{ 0 };
+    FontDescriptor m_descriptor;
+    FontMetrics m_metrics;
 
     int m_texWidth{ 0 };
     int m_texHeight{ 0 };
@@ -280,23 +283,23 @@ TextureFontPrivate::loadFont(const std::filesystem::path &filename, int index, i
     int   pindex    = 0;
     auto  nameonly  = ParseFontName(filename, pindex, psize);
     auto  face      = LoadFontFace(ftlib, nameonly,
-                                   index > 0 ? index : pindex,
-                                   size > 0 ? size : psize,
-                                   static_cast<int>(scale * static_cast<float>(screenDpi)));
+                                   index > 0 ? index : 0,
+                                   static_cast<int>(scale * static_cast<float>(size > 0 ? size : psize)),
+                                   screenDpi);
     if (face == nullptr)
         return false;
 
     m_face = face;
-    m_fontDescriptor.path = filename;
-    m_fontDescriptor.index = index;
-    m_fontDescriptor.size = size;
-    m_fontDescriptor.scale = scale;
-    m_fontDescriptor.screenDpi = screenDpi;
+    m_descriptor.path = filename;
+    m_descriptor.index = index;
+    m_descriptor.size = size;
+    m_descriptor.scale = scale;
+    m_descriptor.screenDpi = screenDpi;
 
     buildAtlas();
 
-    m_maxAscent = static_cast<int>(face->size->metrics.ascender >> 6);
-    m_maxDescent = static_cast<int>(-face->size->metrics.descender >> 6);
+    m_metrics.maxAscent = static_cast<int>(face->size->metrics.ascender >> 6);
+    m_metrics.maxDescent = static_cast<int>(-face->size->metrics.descender >> 6);
     return true;
 }
 
@@ -591,16 +594,7 @@ TextureFont::getWidth(std::u16string_view line) const
 int
 TextureFont::getHeight() const
 {
-    return impl->m_maxAscent + impl->m_maxDescent;
-}
-
-/**
- * Return the maximal character width for the current font.
- */
-int
-TextureFont::getMaxWidth() const
-{
-    return impl->m_maxWidth;
+    return impl->m_metrics.maxAscent + impl->m_metrics.maxDescent;
 }
 
 /**
@@ -609,7 +603,7 @@ TextureFont::getMaxWidth() const
 int
 TextureFont::getMaxAscent() const
 {
-    return impl->m_maxAscent;
+    return impl->m_metrics.maxAscent;
 }
 
 /**
@@ -618,7 +612,7 @@ TextureFont::getMaxAscent() const
 void
 TextureFont::setMaxAscent(int _maxAscent)
 {
-    impl->m_maxAscent = _maxAscent;
+    impl->m_metrics.maxAscent = _maxAscent;
 }
 
 /**
@@ -627,7 +621,7 @@ TextureFont::setMaxAscent(int _maxAscent)
 int
 TextureFont::getMaxDescent() const
 {
-    return impl->m_maxDescent;
+    return impl->m_metrics.maxDescent;
 }
 
 /**
@@ -636,7 +630,7 @@ TextureFont::getMaxDescent() const
 void
 TextureFont::setMaxDescent(int _maxDescent)
 {
-    impl->m_maxDescent = _maxDescent;
+    impl->m_metrics.maxDescent = _maxDescent;
 }
 
 /**
@@ -695,10 +689,10 @@ TextureFont::flush()
 bool
 TextureFont::update()
 {
-    if (auto [currentDpi, currentScale] = std::make_tuple(impl->m_fontDescriptor.screenDpi, impl->m_fontDescriptor.scale);
+    if (auto [currentDpi, currentScale] = std::make_tuple(impl->m_descriptor.screenDpi, impl->m_descriptor.scale);
         currentDpi != impl->m_renderer->getScreenDpi() || currentScale != impl->m_renderer->getTextScaleFactor())
     {
-        if (auto newImpl = std::make_unique<TextureFontPrivate>(impl->m_renderer); newImpl->loadFont(impl->m_fontDescriptor.path, impl->m_fontDescriptor.index, impl->m_fontDescriptor.size))
+        if (auto newImpl = std::make_unique<TextureFontPrivate>(impl->m_renderer); newImpl->loadFont(impl->m_descriptor.path, impl->m_descriptor.index, impl->m_descriptor.size))
         {
             impl = std::move(newImpl);
             return true;
