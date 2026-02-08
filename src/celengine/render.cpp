@@ -510,14 +510,14 @@ void Renderer::setScreenDpi(int _dpi)
     projectionMode->setScreenDpi(_dpi);
 }
 
-float Renderer::getFontScale() const
+float Renderer::getTextScaleFactor() const
 {
-    return fontScale;
+    return textScaleFactor;
 }
 
-void Renderer::setFontScale(float scale)
+void Renderer::setTextScaleFactor(float scale)
 {
-    fontScale = scale;
+    textScaleFactor = scale;
 }
 
 float Renderer::getScaleFactor() const
@@ -593,7 +593,7 @@ void Renderer::setFont(FontStyle fs, const std::shared_ptr<TextureFont>& font)
 
 void Renderer::updateFonts()
 {
-    for (auto &font : fonts)
+    for (const auto& font : fonts)
     {
         if (font != nullptr)
         {

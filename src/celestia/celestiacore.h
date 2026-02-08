@@ -291,8 +291,8 @@ public:
     void setAltAzimuthMode(bool);
     int getScreenDpi() const;
     void setScreenDpi(int);
-    void setFontScale(float);
-    float getFontScale() const;
+    void setTextScaleFactor(float);
+    float getTextScaleFactor() const;
     void setPickTolerance(float);
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);

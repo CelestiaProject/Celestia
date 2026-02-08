@@ -127,7 +127,7 @@ CelestiaGlWidget::initializeGL()
     }
 #endif
 
-    appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
+    appCore->setScreenDpi(static_cast<int>(logicalDpiY() * devicePixelRatioF()));
 
     // Read saved settings
     QSettings settings;
@@ -491,6 +491,18 @@ CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
 #endif
     dragHandler->clearButton(modifiers);
     handleSpecialKey(e, false);
+}
+
+bool
+CelestiaGlWidget::event(QEvent* event)
+{
+    if (event->type() == QEvent::ScreenChangeInternal)
+    {
+        appCore->setScreenDpi(static_cast<int>(logicalDpiY() * devicePixelRatioF()));
+        // resizeGL is not called on screen change, we need to manually call it to update drawable size
+        resizeGL(width(), height());
+    }
+    return QOpenGLWidget::event(event);
 }
 
 void

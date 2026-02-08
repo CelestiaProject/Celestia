@@ -179,8 +179,8 @@ class Renderer
     void setOrbitMask(BodyClassification);
     int getScreenDpi() const;
     void setScreenDpi(int);
-    float getFontScale() const;
-    void setFontScale(float);
+    float getTextScaleFactor() const;
+    void setTextScaleFactor(float);
     int getWindowWidth() const;
     int getWindowHeight() const;
 
@@ -606,7 +606,7 @@ class Renderer
     float fov{ celestia::engine::standardFOV };
     double cosViewConeAngle{ 0.0 };
     int screenDpi{ 96 };
-    float fontScale{ 1.0f };
+    float textScaleFactor{ 1.0f };
     float corrFac{ 1.12f };
     float pixelSize{ 1.0f };
     float faintestAutoMag45deg{ 8.0f };

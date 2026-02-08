@@ -2803,18 +2803,18 @@ int CelestiaCore::getScreenDpi() const
     return metrics.screenDpi;
 }
 
-float CelestiaCore::getFontScale() const
+float CelestiaCore::getTextScaleFactor() const
 {
-    return metrics.fontScale;
+    return metrics.textScaleFactor;
 }
 
-void CelestiaCore::setFontScale(float scale)
+void CelestiaCore::setTextScaleFactor(float scale)
 {
-    if (metrics.fontScale == scale)
+    if (metrics.textScaleFactor == scale)
         return;
 
-    metrics.fontScale = scale;
-    renderer->setFontScale(scale);
+    metrics.textScaleFactor = scale;
+    renderer->setTextScaleFactor(scale);
     needsUpdateFonts = true;
 }
 

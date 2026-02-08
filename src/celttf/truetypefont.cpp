@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <memory>
 #include <system_error>
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -108,7 +109,7 @@ struct TextureFontPrivate
     std::pair<float, float> render(std::u16string_view line, float x, float y);
 
     bool                       loadFont(const std::filesystem::path &filename, int index, int size);
-    bool                       buildAtlas();
+    void                       buildAtlas();
     void                       computeTextureSize();
     bool                       loadGlyphInfo(FT_ULong /*ch*/, Glyph & /*c*/) const;
     void                       initCommonGlyphs();
@@ -273,7 +274,7 @@ TextureFontPrivate::loadFont(const std::filesystem::path &filename, int index, i
         return false;
     }
 
-    float scale     = m_renderer->getFontScale();
+    float scale     = m_renderer->getTextScaleFactor();
     int   screenDpi = m_renderer->getScreenDpi();
     int   psize     = TextureFont::kDefaultSize;
     int   pindex    = 0;
@@ -292,18 +293,14 @@ TextureFontPrivate::loadFont(const std::filesystem::path &filename, int index, i
     m_fontDescriptor.scale = scale;
     m_fontDescriptor.screenDpi = screenDpi;
 
-    if (!buildAtlas())
-    {
-        FT_Done_Face(face);
-        return false;
-    }
+    buildAtlas();
 
     m_maxAscent = static_cast<int>(face->size->metrics.ascender >> 6);
     m_maxDescent = static_cast<int>(-face->size->metrics.descender >> 6);
     return true;
 }
 
-bool
+void
 TextureFontPrivate::buildAtlas()
 {
     initCommonGlyphs();
@@ -355,8 +352,6 @@ TextureFontPrivate::buildAtlas()
     }
 
     m_tex = std::make_unique<ImageTexture>(*img, Texture::EdgeClamp, Texture::NoMipMaps);
-
-    return true;
 }
 
 int
@@ -700,12 +695,10 @@ TextureFont::flush()
 bool
 TextureFont::update()
 {
-    int currentDpi = impl->m_fontDescriptor.screenDpi;
-    int currentScale = impl->m_fontDescriptor.scale;
-    if (currentDpi != impl->m_renderer->getScreenDpi() || currentScale != impl->m_renderer->getFontScale())
+    if (auto [currentDpi, currentScale] = std::make_tuple(impl->m_fontDescriptor.screenDpi, impl->m_fontDescriptor.scale);
+        currentDpi != impl->m_renderer->getScreenDpi() || currentScale != impl->m_renderer->getTextScaleFactor())
     {
-        auto newImpl = std::make_unique<TextureFontPrivate>(impl->m_renderer);
-        if (newImpl->loadFont(impl->m_fontDescriptor.path, impl->m_fontDescriptor.index, impl->m_fontDescriptor.size))
+        if (auto newImpl = std::make_unique<TextureFontPrivate>(impl->m_renderer); newImpl->loadFont(impl->m_fontDescriptor.path, impl->m_fontDescriptor.index, impl->m_fontDescriptor.size))
         {
             impl = std::move(newImpl);
             return true;

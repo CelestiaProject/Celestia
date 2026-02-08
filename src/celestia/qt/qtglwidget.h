@@ -58,6 +58,7 @@ protected:
     void wheelEvent(QWheelEvent* w) override;
     void keyPressEvent(QKeyEvent* e) override;
     void keyReleaseEvent(QKeyEvent* e ) override;
+    bool event(QEvent* event) override;
 
     QSize sizeHint() const override;
 
