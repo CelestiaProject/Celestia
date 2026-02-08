@@ -58,7 +58,7 @@ constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
 
 // Approximately 10 parsecs in light-years
 // used to determine when to switch from AppMag to AbsMag
-constexpr inline float LY_PER_10PARSEC = 32.6156;
+constexpr inline double LY_PER_10PARSEC = 32.615637771674336;
 
 namespace detail
 {
