@@ -130,7 +130,7 @@ struct TextureFontPrivate
     const Renderer    *m_renderer;
     CelestiaGLProgram *m_prog{ nullptr };
 
-    FT_Face m_face; // font face
+    FT_Face m_face{ nullptr }; // font face
 
     FontDescriptor m_descriptor;
     FontMetrics m_metrics;
