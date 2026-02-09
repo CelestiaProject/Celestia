@@ -533,26 +533,24 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
     Eigen::Vector3f p3 = spherePoint(theta0, phi0 + phiExtent);
     Eigen::Vector3f v0 = p1 - p0;
     Eigen::Vector3f v2 = p3 - p2;
-    Eigen::Vector3f normal;
-
-    if (v0.squaredNorm() > v2.squaredNorm())
-        normal = (p0 - p3).cross(v0);
-    else
-        normal = (p2 - p1).cross(v2);
+    Eigen::Vector3f normal = v0.squaredNorm() > v2.squaredNorm()
+        ? (p0 - p3).cross(v0)
+        : (p2 - p1).cross(v2);
 
     // If the normal is near zero length, something's going wrong
     assert(normal.norm() != 0.0f);
     normal.normalize();
-    math::Frustum::PlaneType separatingPlane(normal, p0);
 
-    for (int k = 0; k < 8; k++)
+    // First cull test - if all frustum points are on the wrong side of the
+    // separating plane, cull the patch
+    if (math::Frustum::PlaneType separatingPlane(normal, p0);
+        std::all_of(ri.fp.cbegin(), ri.fp.cend(),
+                    [&separatingPlane](const Eigen::Vector3f& fp)
+                    {
+                        return separatingPlane.signedDistance(fp) <= 0.0f;
+                    }))
     {
-        if (separatingPlane.absDistance(ri.fp[k]) <= 0.0f)
-        {
-            // If this patch is outside the view frustum,
-            // so are all of its subpatches
-            return;
-        }
+        return;
     }
 
     // Second cull test uses the bounding sphere of the patch
@@ -565,12 +563,14 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
     Eigen::Vector3f patchCenter = (p0 + p1 + p2 + p3) * 0.25f;
 #endif
 
-    if (float boundingRadius = std::max({(patchCenter - p0).norm(),
-                                     (patchCenter - p1).norm(),
-                                     (patchCenter - p2).norm(),
-                                     (patchCenter - p3).norm()});
-        ri.frustum.testSphere(patchCenter, boundingRadius) == math::FrustumAspect::Outside)
+    if (float boundingRadius2 = std::max({(patchCenter - p0).squaredNorm(),
+                                          (patchCenter - p1).squaredNorm(),
+                                          (patchCenter - p2).squaredNorm(),
+                                          (patchCenter - p3).squaredNorm()});
+        ri.frustum.testSphere(patchCenter, std::sqrt(boundingRadius2)) == math::FrustumAspect::Outside)
+    {
         return;
+    }
 
     if (level == 1)
     {
