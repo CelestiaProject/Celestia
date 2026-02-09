@@ -2165,12 +2165,19 @@ void Renderer::renderObject(const Vector3f& pos,
     Vector3f scaleFactors;
     float ringsScaleFactor;
     float geometryScale;
+    Matrix4f invMV;
     if (geometry == nullptr || geometry->isNormalized())
     {
         geometryScale = obj.radius;
         scaleFactors = obj.radius * obj.semiAxes;
         ringsScaleFactor = obj.radius * obj.semiAxes.maxCoeff();
         ri.pointScale = 2.0f * obj.radius / pixelSize;
+        // Compute the inverse model/view matrix
+        Affine3f invModelView = Scaling(obj.semiAxes).inverse() *
+                                obj.orientation *
+                                Translation3f(-pos / obj.radius) *
+                                getCameraOrientationf().conjugate();
+        invMV = invModelView.matrix();
     }
     else
     {
@@ -2178,6 +2185,11 @@ void Renderer::renderObject(const Vector3f& pos,
         scaleFactors = Vector3f::Constant(geometryScale);
         ringsScaleFactor = geometryScale;
         ri.pointScale = 2.0f * geometryScale / pixelSize;
+        // Compute the inverse model/view matrix
+        Affine3f invModelView = obj.orientation *
+                                Translation3f(-pos / obj.radius) *
+                                getCameraOrientationf().conjugate();
+        invMV = invModelView.matrix();
     }
     // Apply the modelview transform for the object
     Affine3f transform = Translation3f(pos) * obj.orientation.conjugate();
@@ -2216,12 +2228,6 @@ void Renderer::renderObject(const Vector3f& pos,
 
     // See if the surface should be lit
     bool lit = (obj.surface->appearanceFlags & Surface::Emissive) == 0;
-
-    // Compute the inverse model/view matrix
-    Affine3f invModelView = obj.orientation *
-                            Translation3f(-pos / obj.radius) *
-                            getCameraOrientationf().conjugate();
-    Matrix4f invMV = invModelView.matrix();
 
     // The sphere rendering code uses the view frustum to determine which
     // patches are visible. In order to avoid rendering patches that can't
