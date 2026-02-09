@@ -179,6 +179,8 @@ class Renderer
     void setOrbitMask(BodyClassification);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    float getTextScaleFactor() const;
+    void setTextScaleFactor(float);
     int getWindowWidth() const;
     int getWindowHeight() const;
 
@@ -364,15 +366,16 @@ class Renderer
         bool operator<(const OrbitPathListEntry&) const;
     };
 
-    enum FontStyle
+    enum class FontStyle : std::uint8_t
     {
-        FontNormal = 0,
-        FontLarge  = 1,
-        FontCount  = 2,
+        Normal = 0,
+        Large  = 1,
+        Count  = 2,
     };
 
     void setFont(FontStyle, const std::shared_ptr<TextureFont>&);
     std::shared_ptr<TextureFont> getFont(FontStyle) const;
+    void updateFonts();
 
     bool settingsHaveChanged() const;
     void markSettingsChanged();
@@ -603,10 +606,11 @@ class Renderer
     float fov{ celestia::engine::standardFOV };
     double cosViewConeAngle{ 0.0 };
     int screenDpi{ 96 };
+    float textScaleFactor{ 1.0f };
     float corrFac{ 1.12f };
     float pixelSize{ 1.0f };
     float faintestAutoMag45deg{ 8.0f };
-    std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
+    std::array<std::shared_ptr<TextureFont>, static_cast<std::size_t>(FontStyle::Count)> fonts;
 
     std::shared_ptr<celestia::engine::ProjectionMode> projectionMode;
     int renderMode;

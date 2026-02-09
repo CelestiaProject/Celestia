@@ -14,6 +14,7 @@
 #include <cstddef>
 #include <memory>
 #include <system_error>
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -67,8 +68,26 @@ struct UnicodeBlock
     FT_ULong last;
 };
 
+struct FontDescriptor
+{
+    std::filesystem::path path;
+    int index;
+    int size;
+    float scale;
+    int screenDpi;
+};
+
+struct FontMetrics
+{
+    int maxAscent;;
+    int maxDescent;
+};
+
 constexpr Glyph g_badGlyph = { 0, 0, 0, 0, 0, 0, 0, 0.0f, 0.0f };
 constexpr auto INVALID_POS = static_cast<std::size_t>(-1);
+
+FT_Face
+LoadFontFace(FT_Library ft, const std::filesystem::path &path, int index, int size, int dpi);
 
 } // end unnamed namespace
 
@@ -95,7 +114,8 @@ struct TextureFontPrivate
 
     std::pair<float, float> render(std::u16string_view line, float x, float y);
 
-    bool                       buildAtlas();
+    bool                       loadFont(const std::filesystem::path &filename, int index, int size);
+    void                       buildAtlas();
     void                       computeTextureSize();
     bool                       loadGlyphInfo(FT_ULong /*ch*/, Glyph & /*c*/) const;
     void                       initCommonGlyphs();
@@ -112,9 +132,8 @@ struct TextureFontPrivate
 
     FT_Face m_face; // font face
 
-    int m_maxAscent{ 0 };
-    int m_maxDescent{ 0 };
-    int m_maxWidth{ 0 };
+    FontDescriptor m_descriptor;
+    FontMetrics m_metrics;
 
     int m_texWidth{ 0 };
     int m_texHeight{ 0 };
@@ -246,6 +265,45 @@ TextureFontPrivate::computeTextureSize()
 }
 
 bool
+TextureFontPrivate::loadFont(const std::filesystem::path &filename, int index, int size)
+{
+    assert(m_face == nullptr);
+
+    // Init FreeType library
+    static FT_Library ftlib = nullptr;
+    if (ftlib == nullptr && FT_Init_FreeType(&ftlib) != 0)
+    {
+        GetLogger()->error("Could not init freetype library\n");
+        return false;
+    }
+
+    float scale     = m_renderer->getTextScaleFactor();
+    int   screenDpi = m_renderer->getScreenDpi();
+    int   psize     = TextureFont::kDefaultSize;
+    int   pindex    = 0;
+    auto  nameonly  = ParseFontName(filename, pindex, psize);
+    auto  face      = LoadFontFace(ftlib, nameonly,
+                                   index > 0 ? index : 0,
+                                   static_cast<int>(scale * static_cast<float>(size > 0 ? size : psize)),
+                                   screenDpi);
+    if (face == nullptr)
+        return false;
+
+    m_face = face;
+    m_descriptor.path = filename;
+    m_descriptor.index = index;
+    m_descriptor.size = size;
+    m_descriptor.scale = scale;
+    m_descriptor.screenDpi = screenDpi;
+
+    buildAtlas();
+
+    m_metrics.maxAscent = static_cast<int>(face->size->metrics.ascender >> 6);
+    m_metrics.maxDescent = static_cast<int>(-face->size->metrics.descender >> 6);
+    return true;
+}
+
+void
 TextureFontPrivate::buildAtlas()
 {
     initCommonGlyphs();
@@ -297,8 +355,6 @@ TextureFontPrivate::buildAtlas()
     }
 
     m_tex = std::make_unique<ImageTexture>(*img, Texture::EdgeClamp, Texture::NoMipMaps);
-
-    return true;
 }
 
 int
@@ -538,16 +594,7 @@ TextureFont::getWidth(std::u16string_view line) const
 int
 TextureFont::getHeight() const
 {
-    return impl->m_maxAscent + impl->m_maxDescent;
-}
-
-/**
- * Return the maximal character width for the current font.
- */
-int
-TextureFont::getMaxWidth() const
-{
-    return impl->m_maxWidth;
+    return impl->m_metrics.maxAscent + impl->m_metrics.maxDescent;
 }
 
 /**
@@ -556,7 +603,7 @@ TextureFont::getMaxWidth() const
 int
 TextureFont::getMaxAscent() const
 {
-    return impl->m_maxAscent;
+    return impl->m_metrics.maxAscent;
 }
 
 /**
@@ -565,7 +612,7 @@ TextureFont::getMaxAscent() const
 void
 TextureFont::setMaxAscent(int _maxAscent)
 {
-    impl->m_maxAscent = _maxAscent;
+    impl->m_metrics.maxAscent = _maxAscent;
 }
 
 /**
@@ -574,7 +621,7 @@ TextureFont::setMaxAscent(int _maxAscent)
 int
 TextureFont::getMaxDescent() const
 {
-    return impl->m_maxDescent;
+    return impl->m_metrics.maxDescent;
 }
 
 /**
@@ -583,7 +630,7 @@ TextureFont::getMaxDescent() const
 void
 TextureFont::setMaxDescent(int _maxDescent)
 {
-    impl->m_maxDescent = _maxDescent;
+    impl->m_metrics.maxDescent = _maxDescent;
 }
 
 /**
@@ -637,6 +684,25 @@ void
 TextureFont::flush()
 {
     impl->flush();
+}
+
+bool
+TextureFont::update()
+{
+    if (auto [currentDpi, currentScale] = std::make_tuple(impl->m_descriptor.screenDpi, impl->m_descriptor.scale);
+        currentDpi != impl->m_renderer->getScreenDpi() || currentScale != impl->m_renderer->getTextScaleFactor())
+    {
+        if (auto newImpl = std::make_unique<TextureFontPrivate>(impl->m_renderer); newImpl->loadFont(impl->m_descriptor.path, impl->m_descriptor.index, impl->m_descriptor.size))
+        {
+            impl = std::move(newImpl);
+            return true;
+        }
+        else
+        {
+            GetLogger()->warn("Could not update font for dpi or font scale change\n");
+        }
+    }
+    return false;
 }
 
 namespace
@@ -698,11 +764,10 @@ struct FontCacheKey
     std::filesystem::path filename;
     int index;
     int size;
-    int screenDpi;
 
     bool operator==(const FontCacheKey &other) const
     {
-        return filename == other.filename && index == other.index && size == other.size && screenDpi == other.screenDpi;
+        return filename == other.filename && index == other.index && size == other.size;
     }
 };
 
@@ -710,7 +775,7 @@ template<> struct std::hash<FontCacheKey>
 {
     std::size_t operator()(const FontCacheKey &k) const
     {
-        return std::hash<std::string>()(k.filename.string()) ^ std::hash<int>()(k.index) ^ std::hash<int>()(k.size) ^ std::hash<int>()(k.screenDpi);
+        return std::hash<std::string>()(k.filename.string()) ^ std::hash<int>()(k.index) ^ std::hash<int>()(k.size);
     }
 };
 
@@ -719,47 +784,22 @@ using FontCache = std::unordered_map<FontCacheKey, std::weak_ptr<TextureFont>>;
 std::shared_ptr<TextureFont>
 LoadTextureFont(const Renderer *r, const std::filesystem::path &filename, int index, int size)
 {
-    // Init FreeType library
-    static FT_Library ftlib = nullptr;
-    if (ftlib == nullptr && FT_Init_FreeType(&ftlib) != 0)
-    {
-        GetLogger()->error("Could not init freetype library\n");
-        return nullptr;
-    }
-
     // Init FontCache
     static FontCache *fontCache = nullptr;
     if (fontCache == nullptr)
         fontCache = new FontCache;
 
-    int screenDpi = r->getScreenDpi();
-
     // Lookup for an existing cached font
-    std::weak_ptr<TextureFont> &font = (*fontCache)[{ filename, index, size, screenDpi }];
+    std::weak_ptr<TextureFont> &font = (*fontCache)[{ filename, index, size }];
     std::shared_ptr<TextureFont> ret = font.lock();
     if (ret == nullptr)
     {
-        int  psize    = TextureFont::kDefaultSize;
-        int  pindex   = 0;
-        auto nameonly = ParseFontName(filename, pindex, psize);
-        auto face     = LoadFontFace(ftlib, nameonly,
-                                     index > 0 ? index : pindex,
-                                     size > 0 ? size : psize,
-                                     screenDpi);
-        if (face == nullptr)
-            return nullptr;
-
         ret = std::make_shared<TextureFont>(r);
-        ret->impl->m_face = face;
-
-        if (!ret->impl->buildAtlas())
+        if (!ret->impl->loadFont(filename, index, size))
         {
-            FT_Done_Face(face);
+            GetLogger()->error("Could not load font at path: {} index: {} size: {}\n", filename, index, size);
             return nullptr;
         }
-
-        ret->setMaxAscent(static_cast<int>(face->size->metrics.ascender >> 6));
-        ret->setMaxDescent(static_cast<int>(-face->size->metrics.descender >> 6));
 
         font = ret;
     }

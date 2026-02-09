@@ -291,6 +291,8 @@ public:
     void setAltAzimuthMode(bool);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    void setTextScaleFactor(float);
+    float getTextScaleFactor() const;
     void setPickTolerance(float);
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);
@@ -510,6 +512,7 @@ private:
 
     std::unique_ptr<ViewportEffect> viewportEffect;
     bool isViewportEffectUsed { false };
+    bool needsUpdateFonts{ false };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
 

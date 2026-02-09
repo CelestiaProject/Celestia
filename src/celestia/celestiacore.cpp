@@ -1910,6 +1910,13 @@ void CelestiaCore::draw()
     if (!viewUpdateRequired())
         return;
 
+    if (needsUpdateFonts)
+    {
+        needsUpdateFonts = false;
+        renderer->updateFonts();
+        hud->updateFonts();
+    }
+
     // Render each view
     for (const auto view : viewManager->views())
         draw(view);
@@ -2646,15 +2653,15 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
 
     if (config->fonts.labelFont.empty())
     {
-        renderer->setFont(Renderer::FontNormal, hud->font());
+        renderer->setFont(Renderer::FontStyle::Normal, hud->font());
     }
     else
     {
         auto labelFont = LoadFontHelper(renderer, config->fonts.labelFont);
-        renderer->setFont(Renderer::FontNormal, labelFont == nullptr ? hud->font() : labelFont);
+        renderer->setFont(Renderer::FontStyle::Normal, labelFont == nullptr ? hud->font() : labelFont);
     }
 
-    renderer->setFont(Renderer::FontLarge, hud->titleFont());
+    renderer->setFont(Renderer::FontStyle::Large, hud->titleFont());
     renderer->setRTL(metrics.layoutDirection == LayoutDirection::RightToLeft);
     return true;
 }
@@ -2782,14 +2789,33 @@ Hud::TextEnterMode CelestiaCore::getTextEnterMode() const
 
 void CelestiaCore::setScreenDpi(int dpi)
 {
+    if (metrics.screenDpi == dpi)
+        return;
+
     metrics.screenDpi = dpi;
     renderer->setScreenDpi(dpi);
     setFOVFromZoom();
+    needsUpdateFonts = true;
 }
 
 int CelestiaCore::getScreenDpi() const
 {
     return metrics.screenDpi;
+}
+
+float CelestiaCore::getTextScaleFactor() const
+{
+    return metrics.textScaleFactor;
+}
+
+void CelestiaCore::setTextScaleFactor(float scale)
+{
+    if (metrics.textScaleFactor == scale)
+        return;
+
+    metrics.textScaleFactor = scale;
+    renderer->setTextScaleFactor(scale);
+    needsUpdateFonts = true;
 }
 
 void CelestiaCore::setDistanceToScreen(int dts)

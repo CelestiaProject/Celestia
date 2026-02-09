@@ -38,6 +38,7 @@ struct WindowMetrics
     int insetTop{ 0 };
     int insetBottom{ 0 };
     int screenDpi{ 96 };
+    float textScaleFactor{ 1.0f };
     LayoutDirection layoutDirection { LayoutDirection::LeftToRight };
 };
 
