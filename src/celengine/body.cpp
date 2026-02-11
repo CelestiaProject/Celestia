@@ -43,7 +43,7 @@ namespace util = celestia::util;
 namespace
 {
 
-const Color defaultCometTailColor(0.75f, 0.75f, 0.75f);
+const Color defaultCometTailColor(0.65f, 0.65f, 0.65f);
 
 constexpr auto CLASSES_VISIBLE_AS_POINT = ~(BodyClassification::Invisible      |
                                             BodyClassification::SurfaceFeature |
