@@ -318,7 +318,7 @@ displayApparentMagnitude(Overlay& overlay,
                          double distance,
                          const std::locale& loc)
 {
-    if (distance > 32.6167)
+    if (distance > astro::LY_PER_10PARSEC)
     {
         float appMag = astro::absToAppMag(absMag, static_cast<float>(distance));
         overlay.print(loc, fmt::runtime(_("Apparent magnitude: {:.1f}\n")), appMag);
@@ -428,13 +428,12 @@ displayStarInfo(const util::NumberFormatter& formatter,
     }
     else
     {
+        displayApparentDiameter(overlay, star.getRadius(),
+                                astro::lightYearsToKilometers(distance), loc);
+
         overlay.print(loc, fmt::runtime(_("Abs (app) mag: {:.2f} ({:.2f})\n")),
                       star.getAbsoluteMagnitude(),
                       star.getApparentMagnitude(float(distance)));
-
-        if (star.getLuminosity() > 1.0e-10f)
-            overlay.print(loc, fmt::runtime(_("Luminosity: {}x Sun\n")),
-                          formatter.format(star.getLuminosity(), 3, SigDigitNum));
 
         const char* star_class;
         switch (star.getSpectralType()[0])
@@ -450,14 +449,12 @@ displayStarInfo(const util::NumberFormatter& formatter,
         }
         overlay.printf(_("Class: %s\n"), star_class);
 
-        displayApparentDiameter(overlay, star.getRadius(),
-                                astro::lightYearsToKilometers(distance), loc);
+        if (star.getLuminosity() > 1.0e-10f)
+            overlay.print(loc, fmt::runtime(_("Luminosity: {}× Sun\n")),
+                          formatter.format(star.getLuminosity(), 3, SigDigitNum));
 
         if (detail > 1)
         {
-            overlay.printf(_("Surface temp: %s\n"),
-                           KelvinToStr(formatter, star.getTemperature(), 3, hudSettings.temperatureScale));
-
             if (float solarRadii = star.getRadius() / 6.96e5f; solarRadii > 0.01f)
             {
                 overlay.print(fmt::runtime(_("Radius: {} Rsun ({})\n")),
@@ -469,6 +466,9 @@ displayStarInfo(const util::NumberFormatter& formatter,
                 overlay.print(fmt::runtime(_("Radius: {}\n")),
                               DistanceKmToStr(formatter, star.getRadius(), 3, hudSettings.measurementSystem));
             }
+
+            overlay.printf(_("Temperature: %s\n"),
+                           KelvinToStr(formatter, star.getTemperature(), 3, hudSettings.temperatureScale));
 
             if (star.getRotationModel()->isPeriodic())
             {
@@ -505,11 +505,10 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
     {
         overlay.printf(_("Distance from center: %s\n"),
                      DistanceLyToStr(formatter, distance + dso.getRadius(), 5, measurement));
-     }
-    overlay.printf(_("Radius: %s\n"),
-                 DistanceLyToStr(formatter, dso.getRadius(), 5, measurement));
+    }
 
     displayApparentDiameter(overlay, dso.getRadius(), distance, loc);
+    
     if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
     {
         displayApparentMagnitude(overlay,
@@ -517,6 +516,9 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
                                  distance,
                                  loc);
     }
+    
+    overlay.printf(_("Radius: %s\n"),
+                 DistanceLyToStr(formatter, dso.getRadius(), 5, measurement));
 }
 
 void
@@ -533,42 +535,6 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     double distance = distanceKm - body.getRadius();
     overlay.printf(_("Distance: %s\n"),
                    DistanceKmToStr(formatter, distance, 5, hudSettings.measurementSystem));
-
-    if (body.getClassification() == BodyClassification::Invisible)
-    {
-        return;
-    }
-    else if (body.isEllipsoid()) // show mean radius along with triaxial semi-axes
-    {
-        Eigen::Vector3f semiAxes = body.getSemiAxes();
-        if (semiAxes.x() == semiAxes.z())
-        {
-            if (semiAxes.x() == semiAxes.y())
-            {
-                overlay.print(fmt::runtime(_("Radius: {}\n")),
-                              DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
-            }
-            else
-            {
-                overlay.print(fmt::runtime(_("Equatorial radius: {}\n")),
-                              DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem));
-                overlay.print(fmt::runtime(_("Polar radius: {}\n")),
-                              DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
-            }
-        }
-        else
-        {
-            overlay.print(fmt::runtime(_("Radii: {} × {} × {}\n")),
-                          DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
-                          DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
-                          DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
-        }
-    }
-    else
-    {
-        overlay.print(fmt::runtime(_("Radius: {}\n")),
-                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
-    }
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
 
@@ -617,11 +583,44 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         }
     }
 
+    // Display radii
+    if (body.getClassification() == BodyClassification::Invisible)
+    {
+        return;
+    }
+    else if (body.isEllipsoid()) // show mean radius along with triaxial semi-axes
+    {
+        Eigen::Vector3f semiAxes = body.getSemiAxes();
+        if (semiAxes.x() == semiAxes.z())
+        {
+            if (semiAxes.x() == semiAxes.y())
+            {
+                overlay.print(fmt::runtime(_("Radius: {}\n")),
+                              DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+            }
+            else
+            {
+                overlay.print(fmt::runtime(_("Equatorial (polar) radii: {} ({})\n")),
+                              DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
+                              DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+            }
+        }
+        else
+        {
+            overlay.print(fmt::runtime(_("Radii: {} × {} × {}\n")),
+                          DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+        }
+    }
+    else
+    {
+        overlay.print(fmt::runtime(_("Radius: {}\n")),
+                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+    }
+
     if (detail > 1)
     {
-        if (body.getRotationModel(t)->isPeriodic())
-            displayRotationPeriod(formatter, overlay, body.getRotationModel(t)->getPeriod());
-
         if (body.getMass() > 0)
             displayMass(formatter, overlay, body.getMass(), hudSettings.measurementSystem);
 
@@ -642,6 +641,9 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
             overlay.printf(_("Temperature: %s\n"), KelvinToStr(formatter, planetTemp, 3, hudSettings.temperatureScale));
+
+        if (body.getRotationModel(t)->isPeriodic())
+            displayRotationPeriod(formatter, overlay, body.getRotationModel(t)->getPeriod());
     }
 }
 

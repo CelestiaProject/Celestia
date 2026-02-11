@@ -56,6 +56,10 @@ constexpr inline float LN_MAG             = 1.0857362f; // 5/ln(100)
 constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
 //                                        = 1.0f / (255.0f * 12.92f); after implementing gamma correction
 
+// Approximately 10 parsecs in light-years
+// used to determine when to switch from AppMag to AbsMag
+constexpr inline double LY_PER_10PARSEC = 32.615637771674336;
+
 namespace detail
 {
 template<typename T>
