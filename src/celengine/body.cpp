@@ -19,6 +19,7 @@
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/mathlib.h>
+#include <celmath/ray.h>
 #include <celutil/gettext.h>
 #include "atmosphere.h"
 #include "frame.h"
@@ -1423,8 +1424,9 @@ BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager&
 
     // TODO: Implement separate radius and bounding radius so that this hack is
     // not necessary.
-    double boundingRadius = 2.0;
+    constexpr float boundingRadius = 2.0f;
     auto radius = body->getRadius();
+    Eigen::Quaterniond orientation = body->getGeometryOrientation().cast<double>();
     for (const auto& location : bodyLocations.locations)
     {
         Location* loc = location.get();
@@ -1434,13 +1436,13 @@ BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager&
             continue;
         if (alt != -radius)
             v.normalize();
-        v *= (float) boundingRadius;
+        v *= boundingRadius;
 
         Eigen::ParametrizedLine<double, 3> ray(v.cast<double>(), -v.cast<double>());
         double t = 0.0;
-        if (g->pick(ray, t))
+        if (g->pick(math::transformRay(ray, orientation), t))
         {
-            v *= (float) ((1.0 - t) * radius + alt);
+            v *= static_cast<float>((1.0 - t) * radius + alt);
             loc->setPosition(v);
         }
     }

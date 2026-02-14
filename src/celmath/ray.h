@@ -18,15 +18,25 @@ namespace celestia::math
 // removing at least one of the below overloads.
 
 template<typename T>
-Eigen::ParametrizedLine<T, 3> transformRay(const Eigen::ParametrizedLine<T, 3>& line,
-                                            const Eigen::Matrix<T, 3, 3>& m)
+Eigen::ParametrizedLine<T, 3>
+transformRay(const Eigen::ParametrizedLine<T, 3>& line,
+             const Eigen::Quaternion<T>& q)
+{
+    return Eigen::ParametrizedLine<T, 3>(q * line.origin(), q * line.direction());
+}
+
+template<typename T>
+Eigen::ParametrizedLine<T, 3>
+transformRay(const Eigen::ParametrizedLine<T, 3>& line,
+             const Eigen::Matrix<T, 3, 3>& m)
 {
     return Eigen::ParametrizedLine<T, 3>(m * line.origin(), m * line.direction());
 }
 
 template<typename T>
-Eigen::ParametrizedLine<T, 3> transformRay(const Eigen::ParametrizedLine<T, 3>& line,
-                                            const Eigen::Matrix<T, 4, 4>& m)
+Eigen::ParametrizedLine<T, 3>
+transformRay(const Eigen::ParametrizedLine<T, 3>& line,
+             const Eigen::Matrix<T, 4, 4>& m)
 {
     Eigen::Matrix<T, 4, 1> o(Eigen::Matrix<T, 4, 1>::Ones());
     o.head(3) = line.origin();
