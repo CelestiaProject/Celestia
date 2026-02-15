@@ -60,6 +60,8 @@ private:
 
     void toggleFullscreen();
 
+    void updateScreenDpi();
+
     // Important! Members destroyed in reverse order of declaration
     std::shared_ptr<Environment> m_environment;
     UniqueWindow m_window;
@@ -70,6 +72,7 @@ private:
 
     int m_width{ 0 };
     int m_height{ 0 };
+    float m_scale{ 0.0f };
 
     // mouse drag data
     Sint32 m_lastX{ 0 };

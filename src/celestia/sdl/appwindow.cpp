@@ -196,9 +196,6 @@ AppWindow::run(const Settings& settings)
     if (!m_appCore->initSimulation())
         return false;
 
-    if (float screenDpi = 96.0f; SDL_GetDisplayDPI(0, &screenDpi, nullptr, nullptr) == 0)
-        m_appCore->setScreenDpi(static_cast<int>(screenDpi));
-
     m_appCore->initRenderer(settings.textureResolution);
 
     auto renderer = m_appCore->getRenderer();
@@ -219,6 +216,8 @@ AppWindow::run(const Settings& settings)
     m_gui = Gui::create(m_window.get(), m_context.get(), m_appCore.get(), *m_environment);
     if (m_gui == nullptr)
         return false;
+
+    updateScreenDpi();
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop_arg(&mainRunLoopHandler, this, 0, 1);
@@ -490,6 +489,7 @@ AppWindow::handleWindowEvent(const SDL_WindowEvent& event)
     {
         SDL_GL_GetDrawableSize(m_window.get(), &m_width, &m_height);
         m_appCore->resize(m_width, m_height);
+        updateScreenDpi();
     }
 }
 
@@ -510,8 +510,27 @@ AppWindow::toggleFullscreen()
 
     int width;
     int height;
-    SDL_GetWindowSize(m_window.get(), &width, &height);
+    SDL_GL_GetDrawableSize(m_window.get(), &width, &height);
     m_appCore->resize(width, height);
+    updateScreenDpi();
+}
+
+void
+AppWindow::updateScreenDpi()
+{
+    int windowWidth{ 0 };
+    int windowHeight{ 0 };
+    SDL_GetWindowSize(m_window.get(), &windowWidth, &windowHeight);
+    if (windowHeight == 0)
+        return;
+
+    float scale = static_cast<float>(m_height) / static_cast<float>(windowHeight);
+    if (scale == m_scale)
+        return;
+
+    m_scale = scale;
+    m_appCore->setScreenDpi(static_cast<int>(96.0f * scale));
+    m_gui->updateScreenDpi(scale);
 }
 
 void
