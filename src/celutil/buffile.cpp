@@ -10,6 +10,7 @@
 
 #include "buffile.h"
 
+#include <cassert>
 #include <cstring>
 #include <istream>
 #include <string>
@@ -61,30 +62,42 @@ BufferedFile::next()
             return std::char_traits<char>::eof();
     }
 
-    auto ch = m_buffer[m_position];
-    if (ch == '\n')
+    return std::char_traits<char>::to_int_type(m_buffer[m_position]);
+}
+
+void
+BufferedFile::advance(bool consume) noexcept
+{
+    assert(m_position < m_length);
+    if (auto ch = m_buffer[m_position]; ch == '\n')
     {
-        if (m_state != State::CR)
+        if (m_state == State::CR)
+        {
+            m_state = State::Normal;
+        }
+        else
+        {
             ++m_lineNumber;
-        m_state = State::LF;
+            m_state = State::LF;
+        }
     }
     else if (ch == '\r')
     {
-        if (m_state != State::LF)
+        if (m_state == State::LF)
+        {
+            m_state = State::Normal;
+        }
+        else
+        {
             ++m_lineNumber;
-        m_state = State::CR;
+            m_state = State::CR;
+        }
     }
     else
     {
         m_state = State::Normal;
     }
 
-    return std::char_traits<char>::to_int_type(ch);
-}
-
-void
-BufferedFile::advance(bool consume) noexcept
-{
     ++m_position;
     if (consume)
         m_consumed = m_position;

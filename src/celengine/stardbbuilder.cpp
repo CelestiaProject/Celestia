@@ -222,6 +222,8 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
 {
     header.lineNumber = tokenizer.getLineNumber();
 
+    header.catalogNumber = AstroCatalog::InvalidIndex;
+    header.names.clear();
     header.isStar = true;
 
     // Parse the disposition--either Add, Replace, or Modify. The disposition
@@ -267,14 +269,17 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
     }
 
     // Parse the catalog number; it may be omitted if a name is supplied.
-    header.catalogNumber = AstroCatalog::InvalidIndex;
     if (auto tokenValue = tokenizer.getNumberValue<AstroCatalog::IndexNumber>(); tokenValue.has_value())
     {
         header.catalogNumber = *tokenValue;
         tokenizer.nextToken();
     }
+    else if (tokenizer.getTokenType() == util::TokenType::Number)
+    {
+        stcError(header, _("invalid catalog number"));
+        tokenizer.nextToken();
+    }
 
-    header.names.clear();
     if (auto tokenValue = tokenizer.getStringValue(); tokenValue.has_value())
     {
         for (std::string_view remaining = *tokenValue; !remaining.empty();)
