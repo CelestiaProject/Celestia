@@ -482,7 +482,7 @@ displayStarInfo(const util::NumberFormatter& formatter,
     {
         const SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != nullptr && sys->getPlanets()->getSystemSize() != 0)
-            overlay.print(_("Planetary companions present\n"));
+            overlay.print(_("Planetary system present\n"));
     }
 }
 
