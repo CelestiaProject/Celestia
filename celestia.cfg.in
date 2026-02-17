@@ -29,17 +29,17 @@ Configuration
 #------------------------------------------------------------------------
   StarDatabase                 "data/stars.dat"
   StarNameDatabase             "data/starnames.dat"
-  StarCatalogs               [ "data/revised.stc"
-                               "data/extrasolar.stc"
-                               "data/nearstars.stc"
-                               "data/visualbins.stc"
-                               "data/spectbins.stc"
-                               "data/charm2.stc"
+  StarCatalogs               [ "data/stars-charm2.stc"
+                               "data/stars-visualbins.stc"
+                               "data/stars-spectbins.stc"
                                "data/whitedwarfs.stc"
-                               "data/pulsars.stc" ]
+                               "data/pulsars.stc"
+                               "data/extrasolar.stc"
+                               "data/stars-revised.stc"
+                               "data/stars-near.stc" ]
 
-  HDCrossIndex                 "data/hdxindex.dat"
-  SAOCrossIndex                "data/saoxindex.dat"
+  HDCrossIndex                 "data/starxindex-hd.dat"
+  SAOCrossIndex                "data/starxindex-sao.dat"
 
   SolarSystemCatalogs        [ "data/solarsys.ssc"
                                "data/dwarfplanets.ssc"
