@@ -2,11 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # 375gnu <375gnu@gmail.com>, 2023
 # Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,14 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2026-02-16 22:38+0100\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, "
-"2026\n"
-"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/"
-"bg/)\n"
-"Language: bg\n"
+"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026\n"
+"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/celastro/date.cpp:487
@@ -43,9 +41,9 @@ msgid "Loaded {} deep space objects\n"
 msgstr "Заредени са {} обекта от дълбокия космос\n"
 
 #: ../src/celengine/galaxy.cpp:100
-#, fuzzy, c++-format
+#, c++-format
 msgid "Galaxy (Hubble type: {})"
-msgstr "Галактика (тип: %s)"
+msgstr "Галактика (тип: {})"
 
 #: ../src/celengine/globular.cpp:72
 #, c-format, qt-format
@@ -71,8 +69,7 @@ msgstr "Грешка при зареждане на модела „{}“\n"
 #, c++-format
 msgid ""
 "   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
-msgstr ""
-"Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
+msgstr "Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
 
 #: ../src/celengine/modelgeometry.cpp:171
 #, c++-format
@@ -80,9 +77,9 @@ msgid "Mesh index {} is higher than VBO count {}!"
 msgstr "Индексът на мрежата {} е по-голям от броя на VBO {}!"
 
 #: ../src/celengine/nebula.cpp:70
-#, fuzzy, c++-format
+#, c++-format
 msgid "Nebula: {}"
-msgstr "Мъглявина"
+msgstr "Мъглявина: {}"
 
 #: ../src/celengine/opencluster.cpp:28
 msgid "Open cluster"
@@ -163,9 +160,8 @@ msgid "unrecognized object type"
 msgstr "неразпознат формат на обекта"
 
 #: ../src/celengine/stardbbuilder.cpp:279
-#, fuzzy
 msgid "invalid catalog number"
-msgstr "името и каталожния номер на записа липсват"
+msgstr "каталожният номер е невалиден"
 
 #: ../src/celengine/stardbbuilder.cpp:304
 msgid "entry missing name and catalog number"
@@ -361,12 +357,12 @@ msgstr "Грешка при четене на примерния файл {}.\n"
 #: ../src/celephem/sampfile.cpp:74
 #, c++-format
 msgid "Error opening ASCII sample file {}.\n"
-msgstr "Грешка при отваряне на примерния файл ASCII {}.\n"
+msgstr "Грешка при отваряне на примерния ASCII файл {}.\n"
 
 #: ../src/celephem/sampfile.cpp:81
 #, c++-format
 msgid "Error finding data in ASCII sample file {}.\n"
-msgstr "Грешка при четене на данните в примерния файл ASCII {}.\n"
+msgstr "Грешка при четене на данните в примерния ASCII файл {}.\n"
 
 #: ../src/celephem/samporbit.cpp:571 ../src/tools/xyzv2bin/bin2xyzv.cpp:35
 #, c++-format
@@ -376,7 +372,7 @@ msgstr "Грешка при четене на заглавката от {}.\n"
 #: ../src/celephem/samporbit.cpp:577 ../src/tools/xyzv2bin/bin2xyzv.cpp:41
 #, c++-format
 msgid "Bad binary xyzv file {}.\n"
-msgstr "Неточен двоичен файл xyzv {}.\n"
+msgstr "Неточен двоичен xyzv файл {}.\n"
 
 #: ../src/celephem/samporbit.cpp:585
 #, c++-format
@@ -405,11 +401,11 @@ msgstr "Двоичният файл XYZV не може да бъде проче�
 
 #: ../src/celestia/catalogloader.h:64
 msgid "Skipping {} catalog: {}\n"
-msgstr "Пропускане на каталога с {}: {}\n"
+msgstr "Пропускане на каталога със {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:67
 msgid "Loading {} catalog: {}\n"
-msgstr "Зареждане на каталога с {}: {}\n"
+msgstr "Зареждане на каталога със {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:74
 msgid "Error reading {} catalog file: {}\n"
@@ -933,9 +929,9 @@ msgid "Class: %s\n"
 msgstr "Спектрален клас: %s\n"
 
 #: ../src/celestia/hud.cpp:453
-#, fuzzy, c++-format
+#, c++-format
 msgid "Luminosity: {}× Sun\n"
-msgstr "Яркост: {} слънца\n"
+msgstr "Яркост: {}× слънца\n"
 
 #: ../src/celestia/hud.cpp:460
 #, c++-format
@@ -954,9 +950,8 @@ msgid "Temperature: %s\n"
 msgstr "Температура: %s\n"
 
 #: ../src/celestia/hud.cpp:485
-#, fuzzy
 msgid "Planetary system present\n"
-msgstr "Присъстват планетарни спътници\n"
+msgstr "Има планетна система\n"
 
 #: ../src/celestia/hud.cpp:506
 #, c-format
@@ -974,9 +969,9 @@ msgid "Phase angle: {:.1f}°\n"
 msgstr "Фазов ъгъл: {:.1f}°\n"
 
 #: ../src/celestia/hud.cpp:603
-#, fuzzy, c++-format
+#, c++-format
 msgid "Equatorial (polar) radii: {} ({})\n"
-msgstr "Екваториален радиус: {}\n"
+msgstr "Екваториален (полярен) радиус: {} ({})\n"
 
 #: ../src/celestia/hud.cpp:610
 #, c++-format
@@ -1100,13 +1095,15 @@ msgstr "Записване"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:35
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "обектите от дълбокото небе"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:43
 msgctxt "catalog"
 msgid "solar system"
@@ -1136,7 +1133,8 @@ msgstr "Грешка при отваряне на {}\n"
 msgid "Error reading star names file {}\n"
 msgstr "Грешка при четене на файла с имената на звездите {}\n"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:100
 msgctxt "catalog"
 msgid "star"
@@ -1744,29 +1742,22 @@ msgstr "Грешка при получаване на пътя за името �
 
 #: ../src/celestia/qt/qtappwin.cpp:270
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "„Celestia“ не успя да стартира, защото папката с данни липсва, вероятната "
 "причина е неправилна инсталация."
 
 #: ../src/celestia/qt/qtappwin.cpp:296
-#, fuzzy
 msgid "Script System Access"
-msgstr "Обекти в Слънчевата система"
+msgstr "Достъп до скриптовата система"
 
 #: ../src/celestia/qt/qtappwin.cpp:297
-#, fuzzy
 msgid ""
-"This script requests permission to read/write files and execute external "
-"programs. Allowing this can be dangerous.\n"
+"This script requests permission to read/write files and execute external programs. Allowing this can be dangerous.\n"
 "Do you trust the script and want to allow this?"
 msgstr ""
-"ВНИМАНИЕ:\n"
-"\n"
-"Този скрипт се нуждае от разрешение за четене и записване на файлове,\n"
-"както и за изпълнение на външни програми.\n"
-"Това може да доведе до потенциален риск за сигурността.\n"
+"Този скрипт се нуждае от разрешение за четене и записване на файлове, както и за изпълнение на външни програми. Това може да доведе до потенциален риск за сигурността.\n"
 "Сигурни ли сте, че искате да продължите?"
 
 #: ../src/celestia/qt/qtappwin.cpp:362
@@ -1787,7 +1778,8 @@ msgstr "Слънчева система"
 msgid "Deep Sky Objects"
 msgstr "Обекти от дълбокото небе"
 
-#: ../src/celestia/qt/qtappwin.cpp:404 ../src/celestia/qt/qteventfinder.cpp:379
+#: ../src/celestia/qt/qtappwin.cpp:404
+#: ../src/celestia/qt/qteventfinder.cpp:379
 #: ../src/celestia/qt/qteventfinder.cpp:389
 msgid "Event Finder"
 msgstr "Търсач на събития"
@@ -1893,31 +1885,33 @@ msgstr "Нова отметка"
 #: ../src/celestia/qt/qtappwin.cpp:1183
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2025 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2025 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация <b>%1</"
-"b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt: "
-"%5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: %6</"
-"p><p>Авторско право (C) 2001-2025, Екипът на „Celestia“.<br>„Celestia“ е "
-"безплатен софтуер. Може да се разпространява и/или променя под условията на "
-"„GNU General Public License“, който е публикуван от „Фондацията за свободен "
-"софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша преценка).</"
-"p><p>Сайт: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Форум: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация "
+"<b>%1</b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt:"
+" %5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: "
+"%6</p><p>Авторско право (C) 2001-2025, Екипът на „Celestia“.<br>„Celestia“ е"
+" безплатен софтуер. Може да се разпространява и/или променя под условията на"
+" „GNU General Public License“, който е публикуван от „Фондацията за свободен"
+" софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша "
+"преценка).</p><p>Сайт: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“:"
+" <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1219
 msgid "Unknown compiler"
@@ -3359,12 +3353,14 @@ msgid "No guide destinations were found."
 msgstr "Няма намерени дестинации на екскурзовода."
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:605
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:605
 msgid "Select your destination:"
 msgstr "Избери дестинация:"
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:432
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
 msgstr "Отиди до"
@@ -4088,7 +4084,8 @@ msgstr "Изображението не може да бъде запазено.
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Скрипт на „Celestia“ (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -4535,15 +4532,3 @@ msgstr "Неподдържан ред на байтовете {}, очакван
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Неподдържан брой числа {}, очакван {}.\n"
-
-#, c++-format
-#~ msgid "Loading model: {}\n"
-#~ msgstr "Зареждане на модел: {}\n"
-
-#, c-format
-#~ msgid "Surface temp: %s\n"
-#~ msgstr "Температура на повърхността: %s\n"
-
-#, c++-format
-#~ msgid "Polar radius: {}\n"
-#~ msgstr "Полярен радиус: {}\n"
