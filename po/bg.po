@@ -401,7 +401,7 @@ msgstr "Двоичният файл XYZV не може да бъде проче�
 
 #: ../src/celestia/catalogloader.h:64
 msgid "Skipping {} catalog: {}\n"
-msgstr "Пропускане на каталога с {}: {}\n"
+msgstr "Пропускане на каталога със {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:67
 msgid "Loading {} catalog: {}\n"
