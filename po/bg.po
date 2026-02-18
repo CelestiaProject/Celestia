@@ -405,7 +405,7 @@ msgstr "Пропускане на каталога с {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:67
 msgid "Loading {} catalog: {}\n"
-msgstr "Зареждане на каталога с {}: {}\n"
+msgstr "Зареждане на каталога със {}: {}\n"
 
 #: ../src/celestia/catalogloader.h:74
 msgid "Error reading {} catalog file: {}\n"
