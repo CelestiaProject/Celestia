@@ -357,7 +357,7 @@ msgstr "Грешка при четене на примерния файл {}.\n"
 #: ../src/celephem/sampfile.cpp:74
 #, c++-format
 msgid "Error opening ASCII sample file {}.\n"
-msgstr "Грешка при отваряне на примерния файл ASCII {}.\n"
+msgstr "Грешка при отваряне на примерния ASCII файл {}.\n"
 
 #: ../src/celephem/sampfile.cpp:81
 #, c++-format
