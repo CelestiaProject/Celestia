@@ -362,7 +362,7 @@ msgstr "Грешка при отваряне на примерния ASCII фа�
 #: ../src/celephem/sampfile.cpp:81
 #, c++-format
 msgid "Error finding data in ASCII sample file {}.\n"
-msgstr "Грешка при четене на данните в примерния файл ASCII {}.\n"
+msgstr "Грешка при четене на данните в примерния ASCII файл {}.\n"
 
 #: ../src/celephem/samporbit.cpp:571 ../src/tools/xyzv2bin/bin2xyzv.cpp:35
 #, c++-format
