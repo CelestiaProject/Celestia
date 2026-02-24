@@ -4233,7 +4233,7 @@ msgstr "Matroska (*.mkv)"
 
 #: ../src/celestia/win32/winmoviecapture.cpp:240
 msgid "Save As - Specify Output File for Capture Movie"
-msgstr "Salvar Como - Especificar Arquivo de Saída para Captura de Vídeo"
+msgstr "Salvar como - Especificar Arquivo de Saída para Captura de Vídeo"
 
 #. Invalid file extension specified.
 #: ../src/celestia/win32/winmoviecapture.cpp:290
