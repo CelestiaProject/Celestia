@@ -1624,7 +1624,7 @@ msgstr "Outras características"
 #. ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/preferences.ui:735
 msgid "Minimum labelled feature size:"
-msgstr "Tamanho mínimo de característica legendada:"
+msgstr "Tamanho mínimo de característica nomeada:"
 
 #. ectx: attribute (title), widget (QWidget, renderTab)
 #: ../src/celestia/qt/preferences.ui:801
@@ -3877,7 +3877,7 @@ msgstr "Mostrar Nome"
 
 #: ../src/celestia/win32/res/celestia.rc:479
 msgid "Minimum Labeled Feature Size"
-msgstr "Tamanho Mínimo de Característica Legendada"
+msgstr "Tamanho Mínimo de Característica Nomeada"
 
 #: ../src/celestia/win32/res/celestia.rc:490
 msgid "Size:"
