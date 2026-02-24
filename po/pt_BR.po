@@ -751,7 +751,7 @@ msgstr "Tamanho máximo de mapa cúbico: %s\n"
 #: ../src/celestia/helper.cpp:157
 #, c-format
 msgid "Number of interpolators: %s\n"
-msgstr "Número de interpoladores: %s\n"
+msgstr "Quantidade de interpoladores: %s\n"
 
 #: ../src/celestia/helper.cpp:160
 #, c-format
@@ -1977,7 +1977,7 @@ msgstr "<b>Tamanho máximo de mapa cúbico:</b> %1"
 #: ../src/celestia/qt/qtappwin.cpp:1308
 #, qt-format
 msgid "<b>Number of interpolators:</b> %1"
-msgstr "<b>Número de interpoladores:</b> %1"
+msgstr "<b>Quantidade de interpoladores:</b> %1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1314
 #, qt-format
