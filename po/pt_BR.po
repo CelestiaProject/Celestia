@@ -1547,7 +1547,7 @@ msgstr "Linha da eclíptica"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:173
 #: ../src/celestia/win32/res/celestia.rc:674
 msgid "Labels"
-msgstr "Legendas"
+msgstr "Nomes"
 
 #. ectx: property (title), widget (QGroupBox, locationsGroupBox)
 #: ../src/celestia/qt/preferences.ui:606
@@ -3974,7 +3974,7 @@ msgstr "Linha da Eclíptica"
 
 #: ../src/celestia/win32/res/celestia.rc:650
 msgid "Body / Orbit / Label display"
-msgstr "Exibição de Corpo / Órbita / Legenda"
+msgstr "Exibição de Corpo / Órbita / Nome"
 
 #: ../src/celestia/win32/res/celestia.rc:675
 msgid "Latin Names"
