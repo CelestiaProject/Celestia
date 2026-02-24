@@ -3918,7 +3918,7 @@ msgstr "Navegador do Sistema Solar"
 #: ../src/celestia/win32/res/celestia.rc:566
 #: ../src/celestia/win32/res/celestia.rc:586
 msgid "&Go To"
-msgstr "&Ir Para"
+msgstr "&Ir para"
 
 #: ../src/celestia/win32/res/celestia.rc:567
 msgid "Solar System Objects"
