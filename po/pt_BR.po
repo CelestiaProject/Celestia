@@ -2642,7 +2642,7 @@ msgstr "Clique para selecionar a cor do marcador"
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:582
 #: ../src/celestia/qt/qtsolarsystembrowser.cpp:843
 msgid "Label"
-msgstr "Legenda"
+msgstr "Nome"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:585
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:654
