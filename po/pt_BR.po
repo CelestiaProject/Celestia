@@ -4295,7 +4295,7 @@ msgstr "Falha na leitura do BMP '{}' - altura fora do intervalo\n"
 #: ../src/celimage/bmp.cpp:157
 #, c++-format
 msgid "BMP read failure '{}' - number of planes must be 1\n"
-msgstr "Falha na leitura do BMP '{}' - número de planos deve ser 1\n"
+msgstr "Falha na leitura do BMP '{}' - quantidade de planos deve ser 1\n"
 
 #: ../src/celimage/bmp.cpp:165
 #, c++-format
