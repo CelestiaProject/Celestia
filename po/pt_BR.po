@@ -681,7 +681,7 @@ msgstr "URL inválido"
 
 #: ../src/celestia/celestiacore.cpp:3173
 msgid "Unable to capture a frame!\n"
-msgstr "Não foi possível capturar um quadro!\n"
+msgstr "Não foi possível capturar um frame!\n"
 
 #: ../src/celestia/celestiacore.cpp:3184
 #, c++-format
@@ -1830,7 +1830,7 @@ msgstr "%1 x %2"
 #: ../src/celestia/qt/qtappwin.cpp:745
 #: ../src/celestia/win32/res/celestia.rc:492
 msgid "Frame rate:"
-msgstr "Quadros por segundo:"
+msgstr "Frames por segundo:"
 
 #: ../src/celestia/qt/qtappwin.cpp:751
 msgid "Video codec:"
