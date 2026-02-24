@@ -3484,11 +3484,11 @@ msgstr "&Buscador de Eclipses"
 
 #: ../src/celestia/win32/res/celestia.rc:196
 msgid "10x &Faster\tL"
-msgstr "10x Mais &Rápido\tL"
+msgstr "10x mais &Rápido\tL"
 
 #: ../src/celestia/win32/res/celestia.rc:197
 msgid "10x &Slower\tK"
-msgstr "10x Mais &Devagar"
+msgstr "10x mais &Devagar"
 
 #: ../src/celestia/win32/res/celestia.rc:198
 msgid "Free&ze\tSpace"
