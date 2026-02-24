@@ -3192,7 +3192,7 @@ msgstr "Tempo Universal"
 #: ../src/celestia/qt/qtsettimedialog.cpp:75
 #: ../src/celestia/win32/wintime.cpp:96
 msgid "Local Time"
-msgstr "Tempo Local"
+msgstr "Hora Local"
 
 #: ../src/celestia/qt/qtsettimedialog.cpp:80
 msgid "Select Time Zone"
