@@ -3368,7 +3368,7 @@ msgstr "Escolha o seu destino:"
 #: ../src/celestia/win32/res/celestia.rc:432
 #: ../src/celestia/win32/res/celestia.rc:603
 msgid "Go To"
-msgstr "Ir Para"
+msgstr "Ir para"
 
 #: ../src/celestia/qt/xbel.cpp:75
 msgid "Not an XBEL version 1.0 file."
