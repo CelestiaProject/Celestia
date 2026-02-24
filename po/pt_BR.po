@@ -2474,11 +2474,11 @@ msgstr "Tipo"
 #. Buttons to select filtering criterion for stars
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:422
 msgid "Closest Stars"
-msgstr "Estrelas mais Próximas"
+msgstr "Estrelas Mais Próximas"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:426
 msgid "Brightest Stars"
-msgstr "Estrelas mais Brilhantes"
+msgstr "Estrelas Mais Brilhantes"
 
 #. Additional filtering controls
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:436
