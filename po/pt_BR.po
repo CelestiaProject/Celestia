@@ -3865,7 +3865,7 @@ msgstr "Terrae (Massas de Terra)"
 
 #: ../src/celestia/win32/res/celestia.rc:473
 msgid "Label Features"
-msgstr "Legendar as Características"
+msgstr "Nomear as Características"
 
 #: ../src/celestia/win32/res/celestia.rc:477
 msgid "Show Features"
@@ -3873,7 +3873,7 @@ msgstr "Mostrar as Características"
 
 #: ../src/celestia/win32/res/celestia.rc:478
 msgid "Show Label"
-msgstr "Mostrar Legenda"
+msgstr "Mostrar Nome"
 
 #: ../src/celestia/win32/res/celestia.rc:479
 msgid "Minimum Labeled Feature Size"
