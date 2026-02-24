@@ -3078,7 +3078,7 @@ msgstr "&Centralizar"
 #: ../src/celestia/win32/wincontextmenu.cpp:292
 #: ../src/celestia/win32/wincontextmenu.cpp:313
 msgid "&Goto"
-msgstr "&Ir Para"
+msgstr "&Ir para"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:167
 #: ../src/celestia/win32/wincontextmenu.cpp:246
