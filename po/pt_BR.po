@@ -3508,7 +3508,7 @@ msgstr "Definir &Hora..."
 
 #: ../src/celestia/win32/res/celestia.rc:203
 msgid "Show Local Time"
-msgstr "Mostrar Tempo Local"
+msgstr "Mostrar a Hora Local"
 
 #: ../src/celestia/win32/res/celestia.rc:205
 msgid "&Render"
