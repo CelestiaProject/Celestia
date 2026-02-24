@@ -2489,7 +2489,7 @@ msgstr "Filtrar"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:439
 msgid "With Planets"
-msgstr "Com Planetas"
+msgstr "com Planetas"
 
 #: ../src/celestia/qt/qtcelestialbrowser.cpp:443
 msgid "Multiple Stars"
