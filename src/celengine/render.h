@@ -707,6 +707,10 @@ class Renderer
     std::unique_ptr<celestia::gl::Buffer> m_markerBO;
     bool m_markerDataInitialized{ false };
 
+    std::unique_ptr<celestia::gl::VertexObject> m_rectVO;
+    std::unique_ptr<celestia::gl::Buffer> m_rectBO;
+    mutable bool m_rectInitialized{ false };
+
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
