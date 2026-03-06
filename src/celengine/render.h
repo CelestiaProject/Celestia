@@ -306,6 +306,7 @@ class Renderer
         Eigen::Vector3f position;
         LabelHorizontalAlignment halign : 3;
         LabelVerticalAlignment valign : 3;
+        float depth;
         float size;
 
         bool operator<(const Annotation&) const;
@@ -536,6 +537,7 @@ class Renderer
                              const Observer& observer);
 
     void getLabelAlignmentInfo(const Annotation &annotation, const TextureFont *font, celestia::engine::TextLayout::HorizontalAlignment &halign, float &hOffset, float &vOffset) const;
+    Eigen::Matrix4f computeTangentPlaneMV(const Eigen::Vector3f& worldPos) const;
 
     void addAnnotation(std::vector<Annotation>&,
                        const celestia::MarkerRepresentation*,
@@ -549,13 +551,15 @@ class Renderer
     void renderAnnotationMarker(const Annotation &a,
                                 celestia::engine::TextLayout &layout,
                                 float depth,
-                                const Matrices&);
+                                const Matrices&,
+                                bool tangentMode);
     void renderAnnotationLabel(const Annotation &a,
                                celestia::engine::TextLayout &layout,
                                float hOffset,
                                float vOffset,
                                float depth,
-                               const Matrices&);
+                               const Matrices&,
+                               bool tangentMode);
     void renderAnnotations(const std::vector<Annotation>&,
                            FontStyle fs);
     void renderBackgroundAnnotations(FontStyle fs);

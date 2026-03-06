@@ -73,6 +73,7 @@ enum class RenderFlags : std::uint64_t
     ShowSpacecrafts         = 0x0000000100000000,
     ShowFadingOrbits        = 0x0000000200000000,
     ShowPlanetRings         = 0x0000000400000000,
+    ShowTangentAnnotations  = 0x0000000800000000,
     ShowSolarSystemObjects  = ShowPlanets           |
                               ShowDwarfPlanets      |
                               ShowMoons             |

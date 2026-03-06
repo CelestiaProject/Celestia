@@ -422,7 +422,7 @@ translateLabelModeToClassMask(RenderLabels labelMode)
 bool Renderer::Annotation::operator<(const Annotation& a) const
 {
     // Operation is reversed because -z axis points into the screen
-    return position.z() > a.position.z();
+    return depth > a.depth;
 }
 
 // Depth comparison for orbit paths
@@ -799,32 +799,39 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              bool special)
 {
     std::array<int, 4> view{ 0, 0, windowWidth, windowHeight };
-    Vector3f win;
-    bool success = projectionMode->project(pos, m_modelMatrix, m_projMatrix, m_MVPMatrix, view, win);
-    if (success)
+    bool isTangentMode = util::is_set(renderFlags, RenderFlags::ShowTangentAnnotations);
+
+    Eigen::Vector3f annotationPos = pos;
+    if (!isTangentMode)
     {
-        float depth = pos.x() * m_modelMatrix(2, 0) +
-                      pos.y() * m_modelMatrix(2, 1) +
-                      pos.z() * m_modelMatrix(2, 2);
-        win.z() = -depth;
+        Vector3f win;
+        if (!projectionMode->project(pos, m_modelMatrix, m_projMatrix, m_MVPMatrix, view, win))
+            return;
+
         // use round to remove precision error (+/- 0.0000x)
         // which causes label jittering
-        float x = round(win.x());
-        float y = round(win.y());
-        if (abs(x - win.x()) < 0.001) win.x() = x;
-        if (abs(y - win.y()) < 0.001) win.y() = y;
-
-        Annotation a;
-        if (!special || markerRep == nullptr)
-             a.labelText = labelText;
-        a.markerRep = markerRep;
-        a.color = color;
-        a.position = win;
-        a.halign = halign;
-        a.valign = valign;
-        a.size = size;
-        annotations.push_back(a);
+        float x = std::round(win.x());
+        float y = std::round(win.y());
+        if (std::abs(x - win.x()) < 0.001f) win.x() = x;
+        if (std::abs(y - win.y()) < 0.001f) win.y() = y;
+        annotationPos = win;
     }
+
+    float depth = pos.x() * m_modelMatrix(2, 0) +
+                  pos.y() * m_modelMatrix(2, 1) +
+                  pos.z() * m_modelMatrix(2, 2);
+
+    Annotation a;
+    if (!special || markerRep == nullptr)
+         a.labelText = labelText;
+    a.markerRep = markerRep;
+    a.color = color;
+    a.depth = -depth;
+    a.position = annotationPos;
+    a.halign = halign;
+    a.valign = valign;
+    a.size = size;
+    annotations.push_back(a);
 }
 
 
@@ -3997,18 +4004,65 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 }
 
 
+// Compute a model-view matrix that places the annotation origin at worldPos on
+// its own tangent plane.  The plane passes through worldPos and is tangent to
+// the sphere centred on the observer (i.e. its normal is the view ray from the
+// observer to worldPos).  The X/Y columns of the matrix are scaled so that one
+// "pixel unit" in annotation-local coordinates equals one screen pixel.
+Eigen::Matrix4f Renderer::computeTangentPlaneMV(const Eigen::Vector3f& worldPos) const
+{
+    // Move worldPos into camera space.
+    Vector4f p4 = m_modelMatrix * worldPos.homogeneous();
+    Vector3f p  = p4.head<3>();
+
+    // Normal pointing from the annotation back toward the observer (origin).
+    Vector3f n = -p.normalized();
+
+    // Build a screen-aligned basis in the tangent plane.
+    Vector3f up_hint(0.0f, 1.0f, 0.0f);
+    if (std::abs(n.dot(up_hint)) > 0.99f)
+        up_hint = Vector3f(1.0f, 0.0f, 0.0f);
+
+    Vector3f right = up_hint.cross(n).normalized();
+    Vector3f up    = n.cross(right);           // already unit length
+
+    // Scale: one pixel unit → one screen pixel at this depth.
+    //   screen_y  = world_y * m_projMatrix(1,1) / (-p.z) * windowHeight/2
+    //   => scale = 2 * (-p.z) / (windowHeight * m_projMatrix(1,1))
+    float scale = 2.0f * (-p.z()) / (static_cast<float>(windowHeight) * m_projMatrix(1, 1));
+
+    // Assemble the 4×4 camera-space matrix:
+    //   col 0 = right * scale   (local +X  = screen right, in pixels)
+    //   col 1 = up    * scale   (local +Y  = screen up,    in pixels)
+    //   col 2 = n               (local +Z  = toward observer, for depth)
+    //   col 3 = p               (translation to the annotation's camera-space position)
+    Matrix4f mv;
+    mv << right.x() * scale, up.x() * scale, n.x(), p.x(),
+          right.y() * scale, up.y() * scale, n.y(), p.y(),
+          right.z() * scale, up.z() * scale, n.z(), p.z(),
+          0.0f,              0.0f,           0.0f,  1.0f;
+    return mv;
+}
+
+
 void
 Renderer::renderAnnotationMarker(const Annotation &a,
                                  TextLayout &layout,
                                  float depth,
-                                 const Matrices &m)
+                                 const Matrices &m,
+                                 bool tangentMode)
 {
     const celestia::MarkerRepresentation& markerRep = *a.markerRep;
     float size = a.size > 0.0f ? a.size : markerRep.size();
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
-    Matrix4f mv = math::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
+    // In tangent mode the modelview is already positioned at the annotation's
+    // 3D location (computeTangentPlaneMV), so no further position translation
+    // is needed.  In normal (2D) mode we translate by the screen-pixel position.
+    Matrix4f mv = tangentMode
+        ? *m.modelview
+        : math::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
     Matrices mm = { m.projection, &mv };
 
     if (markerRep.symbol() == celestia::MarkerRepresentation::Crosshair)
@@ -4037,14 +4091,20 @@ Renderer::renderAnnotationLabel(const Annotation &a,
                                 float hOffset,
                                 float vOffset,
                                 float depth,
-                                const Matrices &m)
+                                const Matrices &m,
+                                bool tangentMode)
 {
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
 
-    Matrix4f mv = math::translate(*m.modelview,
-                                     std::trunc(a.position.x()) + hOffset + PixelOffset,
-                                     std::trunc(a.position.y()) + vOffset + PixelOffset,
-                                     depth);
+    // In tangent mode the modelview is already the tangent-plane matrix
+    // (position + orientation + pixel scale), so we only apply the alignment
+    // offsets.  In normal mode we translate by the 2D screen-pixel position.
+    Matrix4f mv = tangentMode
+        ? math::translate(*m.modelview, hOffset + PixelOffset, vOffset + PixelOffset, 0.0f)
+        : math::translate(*m.modelview,
+                          std::trunc(a.position.x()) + hOffset + PixelOffset,
+                          std::trunc(a.position.y()) + vOffset + PixelOffset,
+                          depth);
 
     layout.begin(*m.projection, mv);
     layout.moveAbsolute(0.0f, 0.0f);
@@ -4063,26 +4123,54 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
     TextLayout layout{ screenDpi };
     layout.setFont(font);
 
+    bool isTangentMode = util::is_set(renderFlags, RenderFlags::ShowTangentAnnotations);
+
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
 
     for (const auto &annotation : annotations)
     {
-        if (annotation.markerRep != nullptr)
+        if (isTangentMode)
         {
-            renderAnnotationMarker(annotation, layout, 0.0f, m);
+            // Each annotation lives on its own plane that passes through
+            // annotation.position and is tangent to the sphere centred on the
+            // observer.  computeTangentPlaneMV builds a camera-space matrix
+            // whose X/Y axes lie in that plane and are scaled so that one local
+            // unit equals one screen pixel.
+            Matrix4f tangentMV = computeTangentPlaneMV(annotation.position);
+            Matrices tangentM = { &m_projMatrix, &tangentMV };
+
+            if (annotation.markerRep != nullptr)
+                renderAnnotationMarker(annotation, layout, 0.0f, tangentM, isTangentMode);
+
+            if (!annotation.labelText.empty())
+            {
+                TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
+                float hOffset = 0.0f;
+                float vOffset = 0.0f;
+
+                getLabelAlignmentInfo(annotation, font.get(), alignment, hOffset, vOffset);
+
+                layout.setHorizontalAlignment(alignment);
+                renderAnnotationLabel(annotation, layout, hOffset, vOffset, 0.0f, tangentM, isTangentMode);
+            }
         }
-
-        if (!annotation.labelText.empty())
+        else
         {
-            TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
-            float hOffset = 0.0f;
-            float vOffset = 0.0f;
+            if (annotation.markerRep != nullptr)
+                renderAnnotationMarker(annotation, layout, 0.0f, m, isTangentMode);
 
-            getLabelAlignmentInfo(annotation, font.get(), alignment, hOffset, vOffset);
+            if (!annotation.labelText.empty())
+            {
+                TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
+                float hOffset = 0.0f;
+                float vOffset = 0.0f;
 
-            layout.setHorizontalAlignment(alignment);
-            renderAnnotationLabel(annotation, layout, hOffset, vOffset, 0.0f, m);
+                getLabelAlignmentInfo(annotation, font.get(), alignment, hOffset, vOffset);
+
+                layout.setHorizontalAlignment(alignment);
+                renderAnnotationLabel(annotation, layout, hOffset, vOffset, 0.0f, m, isTangentMode);
+            }
         }
     }
 }
@@ -4152,6 +4240,8 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     TextLayout layout{ screenDpi };
     layout.setFont(font);
 
+    bool isTangentMode = util::is_set(renderFlags, RenderFlags::ShowTangentAnnotations);
+
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
 
@@ -4161,27 +4251,62 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     // the depth coordinate generation of a projection.
 
     vector<Annotation>::iterator iter = startIter;
-    for (; iter != endIter && iter->position.z() > nearDist; ++iter)
+    for (; iter != endIter && iter->depth > nearDist; ++iter)
     {
-        // Compute normalized device z
-        float z = getProjectionMode()->getNormalizedDeviceZ(nearDist, farDist, iter->position.z());
-        float ndc_z = std::clamp(z, -1.0f, 1.0f);
-
-        if (iter->markerRep != nullptr)
+        if (isTangentMode)
         {
-            renderAnnotationMarker(*iter, layout, ndc_z, m);
+            // Each annotation lives on its own plane that passes through
+            // iter->position and is tangent to the sphere centred on the
+            // observer.  computeTangentPlaneMV builds a camera-space matrix
+            // whose X/Y axes lie in that plane and are scaled so that one local
+            // unit equals one screen pixel.
+            //
+            // Use m_projectionPtr (the current active projection) rather than
+            // m_projMatrix: inside the depth-partition loop the interval-specific
+            // projection has been installed via setCurrentProjectionMatrix(), so
+            // the NDC z values it produces are directly comparable to the depth
+            // buffer values written by the planet/object geometry in that
+            // interval (both share the same glDepthRange slice).
+            Matrix4f tangentMV = computeTangentPlaneMV(iter->position);
+            Matrices tangentM = { m_projectionPtr, &tangentMV };
+
+            if (iter->markerRep != nullptr)
+                renderAnnotationMarker(*iter, layout, 0.0f, tangentM, isTangentMode);
+
+            if (!iter->labelText.empty())
+            {
+                TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
+                float labelHOffset = 0.0f;
+                float labelVOffset = 0.0f;
+
+                getLabelAlignmentInfo(*iter, font.get(), alignment, labelHOffset, labelVOffset);
+
+                layout.setHorizontalAlignment(alignment);
+                renderAnnotationLabel(*iter, layout, labelHOffset, labelVOffset, 0.0f, tangentM, isTangentMode);
+            }
         }
-
-        if (!iter->labelText.empty())
+        else
         {
-            TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
-            float labelHOffset = 0.0f;
-            float labelVOffset = 0.0f;
+            // Compute normalized device z
+            float z = getProjectionMode()->getNormalizedDeviceZ(nearDist, farDist, iter->depth);
+            float ndc_z = std::clamp(z, -1.0f, 1.0f);
 
-            getLabelAlignmentInfo(*iter, font.get(), alignment, labelHOffset, labelVOffset);
+            if (iter->markerRep != nullptr)
+            {
+                renderAnnotationMarker(*iter, layout, ndc_z, m, isTangentMode);
+            }
 
-            layout.setHorizontalAlignment(alignment);
-            renderAnnotationLabel(*iter, layout, labelHOffset, labelVOffset, ndc_z, m);
+            if (!iter->labelText.empty())
+            {
+                TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
+                float labelHOffset = 0.0f;
+                float labelVOffset = 0.0f;
+
+                getLabelAlignmentInfo(*iter, font.get(), alignment, labelHOffset, labelVOffset);
+
+                layout.setHorizontalAlignment(alignment);
+                renderAnnotationLabel(*iter, layout, labelHOffset, labelVOffset, ndc_z, m, isTangentMode);
+            }
         }
     }
 
@@ -5123,8 +5248,8 @@ Renderer::buildDepthPartitions()
         // Factor of 0.999 makes sure ensures that the near plane does not fall
         // exactly at the marker's z coordinate (in which case the marker
         // would be susceptible to getting clipped.)
-        if (-depthSortedAnnotations[0].position.z() > zNearest)
-            zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
+        if (-depthSortedAnnotations[0].depth > zNearest)
+            zNearest = -depthSortedAnnotations[0].depth * 0.999f;
     }
 
 #if DEBUG_COALESCE
