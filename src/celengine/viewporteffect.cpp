@@ -28,6 +28,12 @@ bool ViewportEffect::preprocess(Renderer* renderer, FramebufferObject* fbo)
 
 bool ViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo)
 {
+    // For renderbuffer MSAA (desktop GL / GLES3), blit the MSAA color buffer into
+    // the resolve texture before unbinding.  For the GLES2 EXT path the resolve
+    // happens implicitly when the FBO is unbound, so this is a no-op there.
+    if (!fbo->resolve())
+        return false;
+
     if (!fbo->unbind(oldFboId))
         return false;
 

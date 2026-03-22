@@ -21,7 +21,7 @@ class FramebufferObject
         DepthAttachment = 0x2
     };
     FramebufferObject() = delete;
-    FramebufferObject(GLuint width, GLuint height, unsigned int attachments);
+    FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples = 1);
     FramebufferObject(const FramebufferObject&) = delete;
     FramebufferObject(FramebufferObject&&) noexcept;
     FramebufferObject& operator=(const FramebufferObject&) = delete;
@@ -39,16 +39,23 @@ class FramebufferObject
         return m_height;
     }
 
+    int samples() const
+    {
+        return m_samples;
+    }
+
     GLuint colorTexture() const;
     GLuint depthTexture() const;
 
     bool bind();
     bool unbind(GLint oldfboId);
+    bool resolve();
 
  private:
     void generateColorTexture();
     void generateDepthTexture();
     void generateFbo(unsigned int attachments);
+    void generateMSAAFbo(unsigned int attachments);
     void cleanup();
 
  private:
@@ -57,5 +64,9 @@ class FramebufferObject
     GLuint m_colorTexId;
     GLuint m_depthTexId;
     GLuint m_fboId;
+    GLuint m_msaaFboId;
+    GLuint m_colorRboId;
+    GLuint m_depthRboId;
+    int    m_samples;
     GLenum m_status;
 };

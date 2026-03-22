@@ -265,12 +265,25 @@ View::updateFBO(int gWidth, int gHeight)
 {
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
-    if (fbo && fbo.get()->width() == newWidth && fbo.get()->height() == newHeight)
+
+    // Query the sample count of the currently bound (output) framebuffer so the
+    // viewport-effect FBO matches it.  glGetIntegerv(GL_SAMPLES) returns 0 on
+    // some drivers when multisampling is off, so clamp to at least 1.
+    GLint currentSamples = 0;
+    glGetIntegerv(GL_SAMPLES, &currentSamples);
+    if (currentSamples < 1)
+        currentSamples = 1;
+
+    if (fbo
+        && fbo->width()   == newWidth
+        && fbo->height()  == newHeight
+        && fbo->samples() == currentSamples)
         return;
 
-    // recreate FBO when FBO not exisits or on size change
+    // Recreate FBO when it doesn't exist, on size change, or on sample-count change.
     fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
-                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment);
+                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment,
+                                              currentSamples);
     if (!fbo->isValid())
     {
         GetLogger()->error("Error creating view FBO.\n");
