@@ -1983,14 +1983,19 @@ void CelestiaCore::draw(View* view)
 
     bool viewportEffectUsed = false;
 
+    int nEffects = static_cast<int>(viewportEffects.size());
     FramebufferObject *fbo = nullptr;
-    if (viewportEffect != nullptr)
+    // Capture the screen framebuffer before any binding changes so we can
+    // restore it after the effect chain without relying on preprocess to save it.
+    auto screenFbo = nEffects > 0 ? std::make_optional(FramebufferObject::wrapCurrentBinding())
+                                  : std::nullopt;
+    if (nEffects > 0)
     {
-        // create/update FBO for viewport effect
-        view->updateFBO(metrics.width, metrics.height);
-        fbo = view->getFBO();
+        // create/update FBOs for viewport effect chain
+        view->updateFBOs(nEffects, metrics.width, metrics.height);
+        fbo = view->getFBO(0);
     }
-    bool process = fbo != nullptr && viewportEffect->preprocess(renderer, fbo);
+    bool process = fbo != nullptr && viewportEffects[0]->preprocess(renderer, fbo);
 
     auto x = static_cast<int>(view->x * static_cast<float>(metrics.width));
     auto y = static_cast<int>(view->y * static_cast<float>(metrics.height));
@@ -2008,12 +2013,26 @@ void CelestiaCore::draw(View* view)
     if (process && (x != 0 || y != 0))
         renderer->setRenderRegion(x, y, viewWidth, viewHeight);
 
-    if (process && viewportEffect->prerender(renderer, fbo))
+    if (process)
     {
-        if (viewportEffect->render(renderer, fbo, viewWidth, viewHeight))
-            viewportEffectUsed = true;
-        else
-            GetLogger()->error("Unable to render viewport effect.\n");
+        bool ok = true;
+        for (int i = 0; i < nEffects && ok; i++)
+        {
+            FramebufferObject* src = view->getFBO(i);
+            // Last effect renders to the screen FBO; intermediate effects render to the next FBO.
+            FramebufferObject* dst = (i + 1 < nEffects) ? view->getFBO(i + 1) : &screenFbo.value();
+            if (!viewportEffects[i]->prerender(renderer, src, dst))
+            {
+                ok = false;
+                break;
+            }
+            if (!viewportEffects[i]->render(renderer, src, viewWidth, viewHeight))
+            {
+                GetLogger()->error("Unable to render viewport effect.\n");
+                ok = false;
+            }
+        }
+        viewportEffectUsed = ok;
     }
     isViewportEffectUsed = viewportEffectUsed;
 }
@@ -2248,7 +2267,8 @@ Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View 
                           pickX, pickY);
     pickX *= aspectRatio;
     if (isViewportEffectUsed)
-        viewportEffect->distortXY(pickX, pickY);
+        for (const auto& effect : viewportEffects)
+            effect->distortXY(pickX, pickY);
 
     // Pick ray depends on view size, setting the size from the view
     // and then restore to the size of the window
@@ -2463,8 +2483,11 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")
     {
+        std::unique_ptr<ViewportEffect> effect;
         if (config->viewportEffect == "passthrough")
-            viewportEffect = std::make_unique<PassthroughViewportEffect>();
+        {
+            effect = std::make_unique<PassthroughViewportEffect>();
+        }
         else if (config->viewportEffect == "warpmesh")
         {
             if (config->paths.warpMeshFile.empty())
@@ -2475,7 +2498,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
             {
                 auto mesh = WarpMesh::load(config->paths.warpMeshFile);
                 if (mesh != nullptr)
-                    viewportEffect = std::make_unique<WarpMeshViewportEffect>(std::move(mesh));
+                    effect = std::make_unique<WarpMeshViewportEffect>(std::move(mesh));
                 else
                     GetLogger()->error("Failed to read warp mesh file {}\n", config->paths.warpMeshFile);
             }
@@ -2484,6 +2507,8 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
         {
             GetLogger()->warn("Unknown viewport effect {}\n", config->viewportEffect);
         }
+        if (effect != nullptr)
+            viewportEffects.push_back(std::move(effect));
     }
 
     if (!config->measurementSystem.empty())

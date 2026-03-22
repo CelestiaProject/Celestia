@@ -28,6 +28,10 @@ class FramebufferObject
     FramebufferObject& operator=(FramebufferObject&&) noexcept;
     ~FramebufferObject();
 
+    // Create a non-owning wrapper around the currently bound GL framebuffer.
+    // Only bind() is valid on the resulting object; other methods will assert.
+    static FramebufferObject wrapCurrentBinding();
+
     bool isValid() const;
     GLuint width() const
     {
@@ -52,6 +56,8 @@ class FramebufferObject
     bool resolve();
 
  private:
+    explicit FramebufferObject(GLuint fboId); // non-owning wrapper; only bind() is valid
+
     void generateColorTexture();
     void generateDepthTexture();
     void generateFbo(unsigned int attachments);
@@ -69,4 +75,5 @@ class FramebufferObject
     GLuint m_depthRboId;
     int    m_samples;
     GLenum m_status;
+    bool   m_owned{ true };
 };

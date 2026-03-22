@@ -26,12 +26,10 @@ public:
     virtual ~ViewportEffect() = default;
 
     virtual bool preprocess(Renderer*, FramebufferObject*);
-    virtual bool prerender(Renderer*, FramebufferObject*);
+    virtual bool prerender(Renderer*, FramebufferObject* fbo, FramebufferObject* dst);
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
 
-private:
-    GLint oldFboId;
 };
 
 class PassthroughViewportEffect : public ViewportEffect
@@ -57,7 +55,7 @@ public:
     explicit WarpMeshViewportEffect(std::unique_ptr<WarpMesh>&& mesh);
     ~WarpMeshViewportEffect() override;
 
-    bool prerender(Renderer*, FramebufferObject* fbo) override;
+    bool prerender(Renderer*, FramebufferObject* fbo, FramebufferObject* dst) override;
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
     bool distortXY(float& x, float& y) override;
 

@@ -10,6 +10,8 @@
 
 #include "framebuffer.h"
 
+#include <cassert>
+
 FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples) :
     m_width(width),
     m_height(height),
@@ -28,6 +30,28 @@ FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int a
     }
 }
 
+FramebufferObject::FramebufferObject(GLuint fboId) :
+    m_width(0),
+    m_height(0),
+    m_colorTexId(0),
+    m_depthTexId(0),
+    m_fboId(fboId),
+    m_msaaFboId(0),
+    m_colorRboId(0),
+    m_depthRboId(0),
+    m_samples(1),
+    m_status(GL_FRAMEBUFFER_COMPLETE),
+    m_owned(false)
+{
+}
+
+FramebufferObject FramebufferObject::wrapCurrentBinding()
+{
+    GLint id;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &id);
+    return FramebufferObject(static_cast<GLuint>(id));
+}
+
 FramebufferObject::FramebufferObject(FramebufferObject &&other) noexcept:
     m_width(other.m_width),
     m_height(other.m_height),
@@ -38,8 +62,10 @@ FramebufferObject::FramebufferObject(FramebufferObject &&other) noexcept:
     m_colorRboId(other.m_colorRboId),
     m_depthRboId(other.m_depthRboId),
     m_samples(other.m_samples),
-    m_status(other.m_status)
+    m_status(other.m_status),
+    m_owned(other.m_owned)
 {
+    other.m_owned      = false;
     other.m_fboId      = 0;
     other.m_msaaFboId  = 0;
     other.m_colorRboId = 0;
@@ -59,7 +85,9 @@ FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other) noexc
     m_depthRboId  = other.m_depthRboId;
     m_samples     = other.m_samples;
     m_status      = other.m_status;
+    m_owned       = other.m_owned;
 
+    other.m_owned      = false;
     other.m_fboId      = 0;
     other.m_msaaFboId  = 0;
     other.m_colorRboId = 0;
@@ -82,12 +110,14 @@ FramebufferObject::isValid() const
 GLuint
 FramebufferObject::colorTexture() const
 {
+    assert(m_owned && "colorTexture() called on non-owning FBO wrapper");
     return m_colorTexId;
 }
 
 GLuint
 FramebufferObject::depthTexture() const
 {
+    assert(m_owned && "depthTexture() called on non-owning FBO wrapper");
     return m_depthTexId;
 }
 
@@ -321,6 +351,9 @@ FramebufferObject::generateMSAAFbo(unsigned int attachments)
 void
 FramebufferObject::cleanup()
 {
+    if (!m_owned)
+        return;
+
     if (m_msaaFboId != 0)
     {
         glDeleteFramebuffers(1, &m_msaaFboId);
@@ -363,8 +396,9 @@ FramebufferObject::bind()
 {
     if (isValid())
     {
-        // Render into the MSAA FBO when available; otherwise use the texture FBO directly.
-        glBindFramebuffer(GL_FRAMEBUFFER, m_msaaFboId != 0 ? m_msaaFboId : m_fboId);
+        // For non-owning wrappers (e.g. the screen framebuffer), bind the stored ID directly.
+        // For owned FBOs, prefer the MSAA renderbuffer FBO when available.
+        glBindFramebuffer(GL_FRAMEBUFFER, (!m_owned || m_msaaFboId == 0) ? m_fboId : m_msaaFboId);
         return true;
     }
 

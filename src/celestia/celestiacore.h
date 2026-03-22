@@ -18,6 +18,7 @@
 #include <string_view>
 #include <tuple>
 #include <optional>
+#include <vector>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celengine/solarsys.h>
@@ -510,7 +511,7 @@ private:
     std::optional<bool> dragStartFromSurface { std::nullopt };
     std::optional<Eigen::Vector2f> dragStart{ std::nullopt };
 
-    std::unique_ptr<ViewportEffect> viewportEffect;
+    std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
     bool isViewportEffectUsed { false };
     bool needsUpdateFonts{ false };
 
