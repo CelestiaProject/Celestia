@@ -410,7 +410,7 @@ private:
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     void renderOverlay();
-    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
+    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view) const;
     void updateFOV(float fov, const std::optional<Eigen::Vector2f> &focus, const celestia::View *view);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);

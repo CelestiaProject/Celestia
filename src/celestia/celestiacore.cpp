@@ -2016,20 +2016,17 @@ void CelestiaCore::draw(View* view)
     if (process)
     {
         bool ok = true;
-        for (int i = 0; i < nEffects && ok; i++)
+        for (int i = 0; i < nEffects; i++)
         {
             FramebufferObject* src = view->getFBO(i);
             // Last effect renders to the screen FBO; intermediate effects render to the next FBO.
-            FramebufferObject* dst = (i + 1 < nEffects) ? view->getFBO(i + 1) : &screenFbo.value();
-            if (!viewportEffects[i]->prerender(renderer, src, dst))
-            {
-                ok = false;
-                break;
-            }
-            if (!viewportEffects[i]->render(renderer, src, viewWidth, viewHeight))
+            if (FramebufferObject* dst = (i + 1 < nEffects) ? view->getFBO(i + 1) : &screenFbo.value();
+                !viewportEffects[i]->prerender(renderer, src, dst) ||
+                !viewportEffects[i]->render(renderer, src, viewWidth, viewHeight))
             {
                 GetLogger()->error("Unable to render viewport effect.\n");
                 ok = false;
+                break;
             }
         }
         viewportEffectUsed = ok;
@@ -2254,7 +2251,7 @@ void CelestiaCore::renderOverlay()
 }
 
 
-Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View *view)
+Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View *view) const
 {
     float pickX;
     float pickY;

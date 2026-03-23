@@ -53,7 +53,7 @@ class FramebufferObject
 
     bool bind();
     bool unbind(GLint oldfboId);
-    bool resolve();
+    bool resolve() const;
 
  private:
     explicit FramebufferObject(GLuint fboId); // non-owning wrapper; only bind() is valid
@@ -70,10 +70,10 @@ class FramebufferObject
     GLuint m_colorTexId;
     GLuint m_depthTexId;
     GLuint m_fboId;
-    GLuint m_msaaFboId;
-    GLuint m_colorRboId;
-    GLuint m_depthRboId;
+    GLuint m_msaaFboId{ 0 };
+    GLuint m_colorRboId{ 0 };
+    GLuint m_depthRboId{ 0 };
     int    m_samples;
     GLenum m_status;
-    bool   m_owned{ true };
+    bool   m_owned;
 };

@@ -18,11 +18,9 @@ FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int a
     m_colorTexId(0),
     m_depthTexId(0),
     m_fboId(0),
-    m_msaaFboId(0),
-    m_colorRboId(0),
-    m_depthRboId(0),
     m_samples(samples > 1 ? samples : 1),
-    m_status(GL_FRAMEBUFFER_UNSUPPORTED)
+    m_status(GL_FRAMEBUFFER_UNSUPPORTED),
+    m_owned(true)
 {
     if (attachments != 0)
     {
@@ -36,9 +34,6 @@ FramebufferObject::FramebufferObject(GLuint fboId) :
     m_colorTexId(0),
     m_depthTexId(0),
     m_fboId(fboId),
-    m_msaaFboId(0),
-    m_colorRboId(0),
-    m_depthRboId(0),
     m_samples(1),
     m_status(GL_FRAMEBUFFER_COMPLETE),
     m_owned(false)
@@ -413,7 +408,7 @@ FramebufferObject::unbind(GLint oldfboId)
 }
 
 bool
-FramebufferObject::resolve()
+FramebufferObject::resolve() const
 {
     assert(m_owned && "resolve() called on non-owning FBO wrapper");
     // No explicit resolve needed for non-MSAA FBOs (m_msaaFboId == 0, m_samples == 1).
