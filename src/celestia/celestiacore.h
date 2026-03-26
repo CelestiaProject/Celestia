@@ -18,6 +18,7 @@
 #include <string_view>
 #include <tuple>
 #include <optional>
+#include <vector>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
 #include <celengine/solarsys.h>
@@ -409,7 +410,7 @@ private:
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     void renderOverlay();
-    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
+    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view) const;
     void updateFOV(float fov, const std::optional<Eigen::Vector2f> &focus, const celestia::View *view);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
@@ -510,7 +511,7 @@ private:
     std::optional<bool> dragStartFromSurface { std::nullopt };
     std::optional<Eigen::Vector2f> dragStart{ std::nullopt };
 
-    std::unique_ptr<ViewportEffect> viewportEffect;
+    std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
     bool isViewportEffectUsed { false };
     bool needsUpdateFonts{ false };
 

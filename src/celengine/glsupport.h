@@ -47,6 +47,7 @@ extern CELAPI bool MESA_pack_invert; //NOSONAR
 extern CELAPI bool OES_vertex_array_object; //NOSONAR
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
+extern CELAPI bool OES_depth24; //NOSONAR
 #else
 extern CELAPI bool ARB_vertex_array_object; //NOSONAR
 #endif

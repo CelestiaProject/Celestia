@@ -8,9 +8,10 @@ namespace celestia::gl
 {
 
 #ifdef GL_ES
-CELAPI bool OES_vertex_array_object        = false;
-CELAPI bool OES_texture_border_clamp       = false;
-CELAPI bool OES_geometry_shader            = false;
+CELAPI bool OES_vertex_array_object              = false;
+CELAPI bool OES_texture_border_clamp             = false;
+CELAPI bool OES_geometry_shader                  = false;
+CELAPI bool OES_depth24                          = false;
 #else
 CELAPI bool ARB_vertex_array_object        = false;
 CELAPI bool ARB_framebuffer_object         = false;
@@ -78,9 +79,10 @@ void enable_workarounds()
 bool init(util::array_view<std::string> ignore) noexcept
 {
 #ifdef GL_ES
-    OES_vertex_array_object        = check_extension(ignore, "GL_OES_vertex_array_object");
-    OES_texture_border_clamp       = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
-    OES_geometry_shader            = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
+    OES_vertex_array_object            = check_extension(ignore, "GL_OES_vertex_array_object");
+    OES_texture_border_clamp           = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
+    OES_geometry_shader                = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
+    OES_depth24                        = check_extension(ignore, "GL_OES_depth24");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     if (!has_extension("GL_ARB_framebuffer_object"))

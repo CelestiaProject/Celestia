@@ -22,13 +22,18 @@ static const Renderer::PipelineState ps;
 
 bool ViewportEffect::preprocess(Renderer* renderer, FramebufferObject* fbo)
 {
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
     return fbo->bind();
 }
 
-bool ViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo)
+bool ViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo, FramebufferObject* dst)
 {
-    if (!fbo->unbind(oldFboId))
+    // For renderbuffer MSAA (desktop GL / GLES3), blit the MSAA color buffer into
+    // the resolve texture before switching to the destination framebuffer.
+    // For the GLES2 EXT path the resolve happens implicitly when the FBO is unbound.
+    if (!fbo->resolve())
+        return false;
+
+    if (!dst->bind())
         return false;
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -110,12 +115,12 @@ WarpMeshViewportEffect::WarpMeshViewportEffect(std::unique_ptr<WarpMesh>&& _mesh
 
 WarpMeshViewportEffect::~WarpMeshViewportEffect() = default;
 
-bool WarpMeshViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo)
+bool WarpMeshViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo, FramebufferObject* dst)
 {
     if (mesh == nullptr)
         return false;
 
-    return ViewportEffect::prerender(renderer, fbo);
+    return ViewportEffect::prerender(renderer, fbo, dst);
 }
 
 bool WarpMeshViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, int width, int height)
