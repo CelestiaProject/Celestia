@@ -267,21 +267,29 @@ ParseResult parseSelectCommand(const AssociativeArray& paramList, const ScriptMa
 
 ParseResult parseSetFrameCommand(const AssociativeArray& paramList, const ScriptMaps&)
 {
-    const std::string* refName = paramList.getString("ref");
-    if (refName == nullptr)
-        return makeError("Missing ref parameter to setframe");
-
-    const std::string* targetName = paramList.getString("target");
-    if (targetName == nullptr)
-        return makeError("Missing target parameter to setframe");
-
     ObserverFrame::CoordinateSystem coordSys;
     if (const std::string* coordSysName = paramList.getString("coordsys"); coordSysName == nullptr)
         coordSys = ObserverFrame::CoordinateSystem::Universal;
     else
         coordSys = parseCoordinateSystem(*coordSysName);
 
-    return std::make_unique<CommandSetFrame>(coordSys, *refName, *targetName);
+    const std::string* refName = nullptr;
+    if (coordSys != ObserverFrame::CoordinateSystem::Universal)
+    {
+        refName = paramList.getString("ref");
+        if (refName == nullptr)
+            return makeError("Missing ref parameter to setframe");
+    }
+
+    const std::string* targetName = nullptr;
+    if (coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
+    {
+        targetName = paramList.getString("target");
+        if (targetName == nullptr)
+            return makeError("Missing target parameter to setframe");
+    }
+
+    return std::make_unique<CommandSetFrame>(coordSys, refName != nullptr ? *refName : "", targetName != nullptr ? *targetName : "");
 }
 
 

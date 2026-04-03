@@ -245,8 +245,10 @@ CommandSetFrame::CommandSetFrame(ObserverFrame::CoordinateSystem _coordSys,
 
 void CommandSetFrame::processInstantaneous(ExecutionEnvironment& env)
 {
-    Selection ref = env.getSimulation()->findObjectFromPath(refObjectName);
+    Selection ref;
     Selection target;
+    if (coordSys != ObserverFrame::CoordinateSystem::Universal)
+        ref = env.getSimulation()->findObjectFromPath(refObjectName);
     if (coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
         target = env.getSimulation()->findObjectFromPath(targetObjectName);
     env.getSimulation()->setFrame(coordSys, ref, target);
