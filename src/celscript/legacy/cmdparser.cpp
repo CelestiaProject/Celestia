@@ -289,7 +289,7 @@ ParseResult parseSetFrameCommand(const AssociativeArray& paramList, const Script
             return makeError("Missing target parameter to setframe");
     }
 
-    return std::make_unique<CommandSetFrame>(coordSys, refName != nullptr ? *refName : "", targetName != nullptr ? *targetName : "");
+    return std::make_unique<CommandSetFrame>(coordSys, refName != nullptr ? *refName : std::string{}, targetName != nullptr ? *targetName : std::string{});
 }
 
 
