@@ -45,8 +45,27 @@ PNGWarn(png_structp pngPtr, png_const_charp warning) //NOSONAR
     util::GetLogger()->warn(_("PNG warning in '{}': {}\n"), *filename, warning);
 }
 
+// Detect whether the PNG's metadata marks it as linear-light data.
+// Returns true if the image should be treated as linear (not sRGB).
+bool
+IsLinearPNG(png_const_structp pngPtr, png_const_infop infoPtr)
+{
+    // An explicit sRGB chunk takes priority.
+    if (int srgbIntent; png_get_sRGB(pngPtr, infoPtr, &srgbIntent))
+        return false;
+
+    // A gAMA chunk with gamma == 1.0 (stored as 100000 in the file) means
+    // the data is linear.  Any other gamma value is treated as sRGB.
+    if (double gamma; png_get_gAMA(pngPtr, infoPtr, &gamma))
+        return gamma > 0.99; // gamma ≈ 1.0 → linear
+
+    // No colorspace metadata: assume sRGB (the modern default for PNG).
+    return false;
+}
+
 PixelFormat
-GetPixelFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int colorType)
+GetPixelFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int colorType,
+               bool isLinear)
 {
     if (colorType == PNG_COLOR_TYPE_PALETTE)
     {
@@ -54,10 +73,10 @@ GetPixelFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int co
         if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))
         {
             png_set_tRNS_to_alpha(pngPtr);
-            return PixelFormat::RGBA;
+            return isLinear ? PixelFormat::RGBA : PixelFormat::sRGBA;
         }
 
-        return PixelFormat::RGB;
+        return isLinear ? PixelFormat::RGB : PixelFormat::sRGB;
     }
 
     if (bitDepth < 8)
@@ -88,9 +107,9 @@ GetPixelFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int co
     case PNG_COLOR_TYPE_GRAY_ALPHA:
         return PixelFormat::LumAlpha;
     case PNG_COLOR_TYPE_RGB:
-        return PixelFormat::RGB;
+        return isLinear ? PixelFormat::RGB : PixelFormat::sRGB;
     case PNG_COLOR_TYPE_RGB_ALPHA:
-        return PixelFormat::RGBA;
+        return isLinear ? PixelFormat::RGBA : PixelFormat::sRGBA;
     default:
         png_error(pngPtr, _("Unsupported color type"));
     }
@@ -156,7 +175,8 @@ LoadPNGImage(std::FILE* in, const std::filesystem::path& filename)
     if (height == 0 || height > Image::MAX_DIMENSION)
         png_error(pngPtr, _("Image height out of range"));
 
-    format = GetPixelFormat(pngPtr, infoPtr, bitDepth, colorType);
+    bool isLinear = IsLinearPNG(pngPtr, infoPtr);
+    format = GetPixelFormat(pngPtr, infoPtr, bitDepth, colorType, isLinear);
     img = new Image(format, static_cast<std::int32_t>(width), static_cast<std::int32_t>(height)); //NOSONAR
     pitch = img->getPitch();
 

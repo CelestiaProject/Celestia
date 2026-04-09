@@ -214,13 +214,13 @@ AtmosphereRenderer::computeLegacy(
         m_skyContour.push_back(p);
     }
 
-    Eigen::Vector3f botColor = atmosphere.lowerColor.toVector3();
-    Eigen::Vector3f topColor = atmosphere.upperColor.toVector3();
-    Eigen::Vector3f sunsetColor = atmosphere.sunsetColor.toVector3();
+    Eigen::Vector3f botColor = atmosphere.lowerColor.linearize().toVector3();
+    Eigen::Vector3f topColor = atmosphere.upperColor.linearize().toVector3();
+    Eigen::Vector3f sunsetColor = atmosphere.sunsetColor.linearize().toVector3();
 
     if (within)
     {
-        Eigen::Vector3f skyColor = atmosphere.skyColor.toVector3();
+        Eigen::Vector3f skyColor = atmosphere.skyColor.linearize().toVector3();
         if (ellipDist < 0.0f)
             topColor = skyColor;
         else

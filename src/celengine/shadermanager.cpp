@@ -3056,12 +3056,16 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
 
         // Include a phase-based normalization factor to prevent planets from appearing
         // too dim when rendered with non-Lambertian photometric functions.
+        // Disabled: this was a gamma-space compensation that over-brightens planets
+        // in the linear-light rendering pipeline.
+#if 0
         float cosPhaseAngle = light.direction_obj.dot(ls.eyeDir_obj);
         if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
         {
             float photometricNormFactor = std::max(1.0f, 1.0f + cosPhaseAngle * 0.5f);
             lightColor *= photometricNormFactor;
         }
+#endif
 
         lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
         lights[i].brightness = lightColor.maxCoeff();

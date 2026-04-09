@@ -183,7 +183,9 @@ GalaxyRenderer::bindTextures()
 
     if (m_colorTex == nullptr)
     {
-        m_colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::RGBA,
+        // Color values are authored in sRGB; mark the texture accordingly so
+        // GL linearizes them when the shader samples the colour lookup table.
+        m_colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::sRGBA,
                                                     &colorTextureEval,
                                                     Texture::EdgeClamp,
                                                     Texture::NoMipMaps);
