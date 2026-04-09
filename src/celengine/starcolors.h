@@ -40,15 +40,15 @@ class ColorTemperatureTable
         
         float colorTableIndex = std::nearbyint(temp * tempScale);
         if (colorTableIndex >= static_cast<float>(colors.size()))
-            return colors.back();
+            return colors.back().linearize();
 
-        return colors[static_cast<std::size_t>(colorTableIndex)];
+        return colors[static_cast<std::size_t>(colorTableIndex)].linearize();
     }
 
     Color lookupTintColor(float temp, float saturation, float fadeFactor) const
     {
         Eigen::Vector3f color = celestia::math::mix(Eigen::Vector3f::Ones(),
-                                                    lookupColor(temp).toVector3(),
+                                                    lookupColor(temp).linearize().toVector3(),
                                                     saturation) * fadeFactor;
         return Color(color);
     }
