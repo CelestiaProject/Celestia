@@ -35,9 +35,11 @@ Binder::unbind(const Buffer &bo)
     case Buffer::TargetHint::Array:
         if (m_boundVbo == bo.id())
             return bindVBO(Buffer::TargetHint::Array, 0u);
+        break;
     case Buffer::TargetHint::ElementArray:
         if (m_boundIbo == bo.id())
             return bindVBO(Buffer::TargetHint::ElementArray, 0u);
+        break;
     default:
         break;
     }
