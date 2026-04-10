@@ -46,6 +46,11 @@ if(POLICY CMP0177)
   cmake_policy(SET CMP0177 NEW)
 endif()
 
+# Normalize file(GET_RUNTIME_DEPENDENCIES) paths
+if(POLICY CMP0207)
+  cmake_policy(SET CMP0207 NEW)
+endif()
+
 project(celestia VERSION 1.7.0 LANGUAGES C CXX)
 set(DISPLAY_NAME "Celestia")
 #
