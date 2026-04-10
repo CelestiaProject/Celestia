@@ -135,8 +135,9 @@ Buffer::setTargetHint(Buffer::TargetHint targetHint)
 Buffer
 Buffer::wrap(GLuint id, Buffer::TargetHint targetHint)
 {
-    Buffer bo(targetHint);
+    Buffer bo(util::NoCreateT{});
     bo.m_id = id;
+    bo.m_targetHint = targetHint;
     bo.m_wrapped = true;
     return bo;
 }
