@@ -36,7 +36,8 @@ Buffer::Buffer(Buffer &&other) noexcept :
     m_bufferSize(other.m_bufferSize),
     m_id(other.m_id),
     m_targetHint(other.m_targetHint),
-    m_usage(other.m_usage)
+    m_usage(other.m_usage),
+    m_wrapped(other.m_wrapped)
 {
     other.clear();
 }
@@ -49,6 +50,7 @@ Buffer& Buffer::operator=(Buffer &&other) noexcept
     m_id         = other.m_id;
     m_targetHint = other.m_targetHint;
     m_usage      = other.m_usage;
+    m_wrapped    = other.m_wrapped;
 
     other.clear();
 
@@ -133,8 +135,9 @@ Buffer::setTargetHint(Buffer::TargetHint targetHint)
 Buffer
 Buffer::wrap(GLuint id, Buffer::TargetHint targetHint)
 {
-    Buffer bo(targetHint);
+    Buffer bo(util::NoCreateT{});
     bo.m_id = id;
+    bo.m_targetHint = targetHint;
     bo.m_wrapped = true;
     return bo;
 }
