@@ -520,6 +520,8 @@ private:
     std::unique_ptr<Console> console;
     std::ofstream m_logfile;
     teestream m_tee;
+    std::streambuf* m_savedClogBuf{ nullptr };
+    std::streambuf* m_savedCerrBuf{ nullptr };
 
     std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
 
