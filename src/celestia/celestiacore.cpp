@@ -206,8 +206,8 @@ CelestiaCore::CelestiaCore() :
     std::fill(std::begin(shiftKeysPressed), std::end(shiftKeysPressed), false);
     std::fill(std::begin(joyButtonsPressed), std::end(joyButtonsPressed), false);
 
-    clog.rdbuf(console->rdbuf());
-    cerr.rdbuf(console->rdbuf());
+    m_savedClogBuf = clog.rdbuf(console->rdbuf());
+    m_savedCerrBuf = cerr.rdbuf(console->rdbuf());
     console->setWindowHeight(Console::PageRows);
 }
 
@@ -223,6 +223,14 @@ CelestiaCore::~CelestiaCore()
         m_logfile.close();
 
     DestroyLogger();
+
+    // Restore std::clog and std::cerr rdbuf before console is destroyed by
+    // its member destructor. Without this, the dangling rdbuf causes a crash
+    // in DoIOSInit::~DoIOSInit() which flushes std::clog during C++ teardown.
+    if (m_savedClogBuf != nullptr)
+        clog.rdbuf(m_savedClogBuf);
+    if (m_savedCerrBuf != nullptr)
+        cerr.rdbuf(m_savedCerrBuf);
 }
 
 void CelestiaCore::readFavoritesFile()
