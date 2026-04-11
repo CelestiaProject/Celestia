@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <string_view>
 
@@ -118,6 +119,26 @@ class Color
     static Color fromHSV(float h, float s, float v);
 
     static bool parse(std::string_view, Color&);
+
+    // Return a copy with RGB components converted from sRGB encoding to linear
+    // light (IEC 61966-2-1).  Use this when passing designer-specified sRGB
+    // Linearize a single scalar component from sRGB to linear light.
+    static float linearizeScalar(float c) noexcept
+    {
+        return c <= 0.04045f
+            ? c / 12.92f
+            : std::pow((c + 0.055f) / 1.055f, 2.4f);
+    }
+
+    // colors as GL uniforms into a linear-light rendering pipeline.
+    // Alpha is passed through unchanged.
+    Color linearize() const noexcept
+    {
+        return Color(linearizeScalar(red()),
+                     linearizeScalar(green()),
+                     linearizeScalar(blue()),
+                     alpha());
+    }
 };
 
 constexpr bool operator==(Color a, Color b)

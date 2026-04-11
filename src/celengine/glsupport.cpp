@@ -12,6 +12,7 @@ CELAPI bool OES_vertex_array_object              = false;
 CELAPI bool OES_texture_border_clamp             = false;
 CELAPI bool OES_geometry_shader                  = false;
 CELAPI bool OES_depth24                          = false;
+CELAPI bool OES_texture_half_float               = false;
 #else
 CELAPI bool ARB_vertex_array_object        = false;
 CELAPI bool ARB_framebuffer_object         = false;
@@ -83,6 +84,7 @@ bool init(util::array_view<std::string> ignore) noexcept
     OES_texture_border_clamp           = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
     OES_geometry_shader                = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
     OES_depth24                        = check_extension(ignore, "GL_OES_depth24");
+    OES_texture_half_float             = check_extension(ignore, "GL_OES_texture_half_float");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     if (!has_extension("GL_ARB_framebuffer_object"))

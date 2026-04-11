@@ -14,6 +14,7 @@
 #include <celengine/overlay.h>
 #include <celengine/rectangle.h>
 #include <celengine/shadermanager.h>
+#include <celengine/viewporteffect.h>
 #include <celutil/logger.h>
 
 using celestia::util::GetLogger;
@@ -261,8 +262,9 @@ View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, 
 
 
 void
-View::updateFBOs(int count, int gWidth, int gHeight)
+View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, int gWidth, int gHeight)
 {
+    int count = static_cast<int>(effects.size());
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
 
@@ -274,6 +276,12 @@ View::updateFBOs(int count, int gWidth, int gHeight)
     if (currentSamples < 1)
         currentSamples = 1;
 
+#ifdef GL_ES
+    int samplesToRequest = celestia::gl::checkVersion(celestia::gl::GLES_3_0) ? currentSamples : 1;
+#else
+    int samplesToRequest = currentSamples;
+#endif
+
     if (static_cast<int>(fbos.size()) != count)
         fbos.resize(count);
 
@@ -281,18 +289,29 @@ View::updateFBOs(int count, int gWidth, int gHeight)
     {
         // Only the first FBO needs MSAA to match the output framebuffer.
         // Subsequent FBOs receive already-resolved blits so samples=1 suffices.
-        int samples = (i == 0) ? currentSamples : 1;
+        int samples = (i == 0) ? samplesToRequest : 1;
+
+        // Use a float color buffer only when the consuming effect requires it
+        // (e.g. the sRGB tonemap needs linear-light precision).
+        bool useFloat = effects[i]->needsFloatSource();
+#ifdef GL_ES
+        if (useFloat && !celestia::gl::checkVersion(celestia::gl::GLES_3_0) && !celestia::gl::OES_texture_half_float)
+            useFloat = false;
+#endif
+
         auto& fbo = fbos[i];
 
         if (fbo
-            && fbo->width()   == newWidth
-            && fbo->height()  == newHeight
-            && fbo->samples() == samples)
+            && fbo->width()         == newWidth
+            && fbo->height()        == newHeight
+            && fbo->samples()       == samples
+            && fbo->useFloatColor() == useFloat)
             continue;
 
         fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
                                                   FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment,
-                                                  samples);
+                                                  samples,
+                                                  useFloat);
         if (!fbo->isValid())
         {
             GetLogger()->error("Error creating view FBO {}.\n", i);

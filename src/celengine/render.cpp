@@ -2886,13 +2886,14 @@ void Renderer::renderPlanet(Body& body,
 
     if (body.isVisibleAsPoint())
     {
-        if (float maxCoeff = body.getSurface().color.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
+        const auto& surfaceColor = body.getSurface().color;
+        if (float maxCoeff = surfaceColor.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
             renderObjectAsPoint(pos,
                                 body.getRadius(),
                                 appMag,
                                 discSizeInPixels,
-                                body.getSurface().color * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
+                                surfaceColor * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
                                 false, false, m);
         }
     }

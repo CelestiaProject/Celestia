@@ -30,6 +30,9 @@ public:
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
 
+    // Whether this effect needs its source FBO to use a floating-point
+    // color buffer (GL_RGBA16F) instead of the default GL_RGBA8.
+    virtual bool needsFloatSource() const { return false; }
 };
 
 class PassthroughViewportEffect : public ViewportEffect

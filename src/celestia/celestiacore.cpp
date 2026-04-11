@@ -2000,7 +2000,7 @@ void CelestiaCore::draw(View* view)
     if (nEffects > 0)
     {
         // create/update FBOs for viewport effect chain
-        view->updateFBOs(nEffects, metrics.width, metrics.height);
+        view->updateFBOs(viewportEffects, metrics.width, metrics.height);
         fbo = view->getFBO(0);
     }
     bool process = fbo != nullptr && viewportEffects[0]->preprocess(renderer, fbo);

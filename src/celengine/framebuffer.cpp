@@ -12,13 +12,14 @@
 
 #include <cassert>
 
-FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples) :
+FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples, bool useFloatColor) :
     m_width(width),
     m_height(height),
     m_colorTexId(0),
     m_depthTexId(0),
     m_fboId(0),
     m_samples(samples > 1 ? samples : 1),
+    m_useFloatColor(useFloatColor),
     m_status(GL_FRAMEBUFFER_UNSUPPORTED),
     m_owned(true)
 {
@@ -35,6 +36,7 @@ FramebufferObject::FramebufferObject(GLuint fboId) :
     m_depthTexId(0),
     m_fboId(fboId),
     m_samples(1),
+    m_useFloatColor(false),
     m_status(GL_FRAMEBUFFER_COMPLETE),
     m_owned(false)
 {
@@ -57,6 +59,7 @@ FramebufferObject::FramebufferObject(FramebufferObject &&other) noexcept:
     m_colorRboId(other.m_colorRboId),
     m_depthRboId(other.m_depthRboId),
     m_samples(other.m_samples),
+    m_useFloatColor(other.m_useFloatColor),
     m_status(other.m_status),
     m_owned(other.m_owned)
 {
@@ -70,17 +73,18 @@ FramebufferObject::FramebufferObject(FramebufferObject &&other) noexcept:
 
 FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other) noexcept
 {
-    m_width       = other.m_width;
-    m_height      = other.m_height;
-    m_colorTexId  = other.m_colorTexId;
-    m_depthTexId  = other.m_depthTexId;
-    m_fboId       = other.m_fboId;
-    m_msaaFboId   = other.m_msaaFboId;
-    m_colorRboId  = other.m_colorRboId;
-    m_depthRboId  = other.m_depthRboId;
-    m_samples     = other.m_samples;
-    m_status      = other.m_status;
-    m_owned       = other.m_owned;
+    m_width         = other.m_width;
+    m_height        = other.m_height;
+    m_colorTexId    = other.m_colorTexId;
+    m_depthTexId    = other.m_depthTexId;
+    m_fboId         = other.m_fboId;
+    m_msaaFboId     = other.m_msaaFboId;
+    m_colorRboId    = other.m_colorRboId;
+    m_depthRboId    = other.m_depthRboId;
+    m_samples       = other.m_samples;
+    m_useFloatColor = other.m_useFloatColor;
+    m_status        = other.m_status;
+    m_owned         = other.m_owned;
 
     other.m_owned      = false;
     other.m_fboId      = 0;
@@ -132,10 +136,25 @@ FramebufferObject::generateColorTexture()
 
     // Set the texture dimensions
 #ifdef GL_ES
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    GLenum format = GL_RGBA;
+    GLint internalFormat;
+    GLenum type;
+    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+    {
+        internalFormat = m_useFloatColor ? GL_RGBA16F : GL_RGBA8;
+        type = m_useFloatColor ? GL_HALF_FLOAT : GL_UNSIGNED_BYTE;
+    }
+    else
+    {
+        internalFormat = GL_RGBA;
+        type = m_useFloatColor ? GL_HALF_FLOAT_OES : GL_UNSIGNED_BYTE;
+    }
 #else
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    GLint internalFormat = m_useFloatColor ? GL_RGBA16F : GL_RGB8;
+    GLenum format = m_useFloatColor ? GL_RGBA : GL_RGB;
+    GLenum type = m_useFloatColor ? GL_FLOAT : GL_UNSIGNED_BYTE;
 #endif
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, type, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -165,13 +184,23 @@ FramebufferObject::generateDepthTexture()
 
     // Set the texture dimensions
 #ifdef GL_ES
-    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0) || celestia::gl::OES_depth24)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+    GLint internalFormat;
+    GLenum type;
+    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+    {
+        internalFormat = GL_DEPTH_COMPONENT24;
+        type = GL_UNSIGNED_INT;
+    }
     else
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, nullptr);
+    {
+        internalFormat = GL_DEPTH_COMPONENT;
+        type = celestia::gl::OES_depth24 ? GL_UNSIGNED_INT :  GL_UNSIGNED_SHORT;
+    }
 #else
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+    GLint internalFormat = GL_DEPTH_COMPONENT;
+    GLenum type = GL_UNSIGNED_BYTE;
 #endif
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, GL_DEPTH_COMPONENT, type, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -180,29 +209,7 @@ FramebufferObject::generateDepthTexture()
 void
 FramebufferObject::generateFbo(unsigned int attachments)
 {
-    // Determine MSAA strategy.
-    //
-    // Desktop GL:  renderbuffer MSAA + glBlitFramebuffer (ARB_framebuffer_object is required)
-    // GLES 3.0+:   same as desktop GL
-    // GLES 2.0:    no MSAA support
-    //
-    // The "renderbuffer MSAA" strategy uses two FBOs:
-    //   m_msaaFboId  – MSAA renderbuffers, scene is rendered here
-    //   m_fboId      – plain textures, used as resolve target and sampled by the effect shader
-
-    bool useRenderbufferMSAA = false;
-
-    if (m_samples > 1 && (attachments & ColorAttachment) != 0)
-    {
-#ifdef GL_ES
-        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-            useRenderbufferMSAA = true;
-        else
-            m_samples = 1; // no MSAA support on GLES2
-#else
-        useRenderbufferMSAA = true;
-#endif
-    }
+    bool useRenderbufferMSAA = m_samples > 1 && (attachments & ColorAttachment) != 0;
 
     // Create the texture-based FBO (resolve target for renderbuffer MSAA,
     // or the sole FBO for non-MSAA paths).
@@ -291,10 +298,11 @@ FramebufferObject::generateMSAAFbo(unsigned int attachments)
         glGenRenderbuffers(1, &m_colorRboId);
         glBindRenderbuffer(GL_RENDERBUFFER, m_colorRboId);
 #ifdef GL_ES
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, GL_RGBA8, m_width, m_height);
+        GLenum fmt = m_useFloatColor ? GL_RGBA16F : GL_RGBA8;
 #else
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, GL_RGB8, m_width, m_height);
+        GLenum fmt = m_useFloatColor ? GL_RGBA16F : GL_RGB8;
 #endif
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, fmt, m_width, m_height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorRboId);
     }
 
