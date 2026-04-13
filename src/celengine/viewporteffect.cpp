@@ -45,14 +45,16 @@ bool ViewportEffect::distortXY(float &x, float &y)
     return true;
 }
 
-PassthroughViewportEffect::PassthroughViewportEffect() :
-    ViewportEffect()
+PassthroughViewportEffect::PassthroughViewportEffect(std::string_view shaderName,
+                                                     bool needsFloatSource) :
+    m_shaderName(shaderName),
+    m_needsFloatSource(needsFloatSource)
 {
 }
 
 bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, int width, int height)
 {
-    auto *prog = renderer->getShaderManager().getShader("passthrough");
+    auto *prog = renderer->getShaderManager().getShader(m_shaderName);
     if (prog == nullptr)
         return false;
 

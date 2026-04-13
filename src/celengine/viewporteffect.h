@@ -11,6 +11,8 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <string_view>
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
@@ -38,12 +40,17 @@ public:
 class PassthroughViewportEffect : public ViewportEffect
 {
 public:
-    PassthroughViewportEffect();
+    explicit PassthroughViewportEffect(std::string_view shaderName = "passthrough",
+                                       bool needsFloatSource = false);
     ~PassthroughViewportEffect() override = default;
 
+    bool needsFloatSource() const override { return m_needsFloatSource; }
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
 private:
+    std::string m_shaderName;
+    bool m_needsFloatSource;
+
     celestia::gl::VertexObject vo{ celestia::util::NoCreateT{} };
     celestia::gl::Buffer bo{ celestia::util::NoCreateT{} };
 

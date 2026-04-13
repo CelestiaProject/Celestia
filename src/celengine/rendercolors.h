@@ -2,7 +2,7 @@
 
 // rendercolors.h
 //
-// Copyright (C) 2001-2025, the Celestia Development Team
+// Copyright (C) 2026-present, the Celestia Development Team
 //
 // Centralized default colors for the renderer.  All values are authored as
 // sRGB.
