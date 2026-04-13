@@ -155,7 +155,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
     prog->use();
     Eigen::Vector3f center = cameraMatrix.col(2);
     prog->setMVPMatrices(getProjectionMatrix(), getModelViewMatrix() * math::translate(Eigen::Vector3f(-center)));
-    prog->vec4Param("color") = Color(SelectionCursorColor, 0.6f).toVector4();
+    prog->vec4Param("color") = Color(colors.SelectionCursor, 0.6f).toVector4();
     prog->floatParam("pixelSize") = pixelSize * getScaleFactor();
     prog->floatParam("s") = s;
     prog->floatParam("c") = c;

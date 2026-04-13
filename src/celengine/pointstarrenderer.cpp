@@ -119,7 +119,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 if (starDir.dot(viewNormal) > cosFOV)
                 {
                     float distr = min(1.0f, 3.5f * (labelThresholdMag - appMag)/labelThresholdMag);
-                    Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
+                    Color color = Color(renderer->colors.StarLabel, distr * renderer->colors.StarLabel.alpha());
                     renderer->addBackgroundAnnotation(nullptr,
                                                       starDB->getStarName(star, true),
                                                       color,
@@ -158,7 +158,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 
                 renderer->addSortedAnnotation(nullptr,
                                               starDB->getStarName(star, true),
-                                              Renderer::StarLabelColor,
+                                              renderer->colors.StarLabel,
                                               pos);
             }
         }

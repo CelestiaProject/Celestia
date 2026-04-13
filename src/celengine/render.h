@@ -33,6 +33,7 @@
 #include <celengine/textlayout.h>
 #include <celimage/pixelformat.h>
 #include <celrender/rendererfwd.h>
+#include "rendercolors.h"
 #include "renderflags.h"
 
 class RendererWatcher;
@@ -751,47 +752,7 @@ class Renderer
     std::list<RendererWatcher*> watchers;
 
     // Colors for all lines and labels
-    static Color StarLabelColor;
-    static Color PlanetLabelColor;
-    static Color DwarfPlanetLabelColor;
-    static Color MoonLabelColor;
-    static Color MinorMoonLabelColor;
-    static Color AsteroidLabelColor;
-    static Color CometLabelColor;
-    static Color SpacecraftLabelColor;
-    static Color LocationLabelColor;
-    static Color GalaxyLabelColor;
-    static Color GlobularLabelColor;
-    static Color NebulaLabelColor;
-    static Color OpenClusterLabelColor;
-    static Color ConstellationLabelColor;
-    static Color EquatorialGridLabelColor;
-    static Color PlanetographicGridLabelColor;
-    static Color GalacticGridLabelColor;
-    static Color EclipticGridLabelColor;
-    static Color HorizonGridLabelColor;
-
-    static Color StarOrbitColor;
-    static Color PlanetOrbitColor;
-    static Color DwarfPlanetOrbitColor;
-    static Color MoonOrbitColor;
-    static Color MinorMoonOrbitColor;
-    static Color AsteroidOrbitColor;
-    static Color CometOrbitColor;
-    static Color SpacecraftOrbitColor;
-    static Color SelectionOrbitColor;
-
-    static Color ConstellationColor;
-    static Color BoundaryColor;
-    static Color EquatorialGridColor;
-    static Color PlanetographicGridColor;
-    static Color PlanetEquatorColor;
-    static Color GalacticGridColor;
-    static Color EclipticGridColor;
-    static Color HorizonGridColor;
-    static Color EclipticColor;
-
-    static Color SelectionCursorColor;
+    celestia::engine::RendererColors colors{ celestia::engine::RendererColors::defaults() };
 
     friend class celestia::render::AtmosphereRenderer;
     friend class PointStarRenderer;

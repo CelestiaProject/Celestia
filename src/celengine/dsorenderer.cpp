@@ -150,25 +150,25 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
         {
         case RenderLabels::NebulaLabels:
             rep = &renderer->nebulaRep;
-            labelColor = Renderer::NebulaLabelColor;
+            labelColor = renderer->colors.NebulaLabel;
             appMagEff = astro::absToAppMag(-7.5f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 6.0f;
             break;
         case RenderLabels::OpenClusterLabels:
             rep = &renderer->openClusterRep;
-            labelColor = Renderer::OpenClusterLabelColor;
+            labelColor = renderer->colors.OpenClusterLabel;
             appMagEff = astro::absToAppMag(-6.0f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 4.0f;
             break;
         case RenderLabels::GalaxyLabels:
-            labelColor = Renderer::GalaxyLabelColor;
+            labelColor = renderer->colors.GalaxyLabel;
             appMagEff = appMag;
             step = 6.0f;
             break;
         case RenderLabels::GlobularLabels:
-            labelColor = Renderer::GlobularLabelColor;
+            labelColor = renderer->colors.GlobularLabel;
             appMagEff = appMag;
             step = 3.0f;
             break;
