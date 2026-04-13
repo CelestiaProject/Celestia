@@ -200,7 +200,8 @@ void
 FillinSurface(const AssociativeArray* surfaceData,
               Surface* surface,
               const std::filesystem::path& path,
-              engine::TexturePaths& texturePaths)
+              engine::TexturePaths& texturePaths,
+              DataDisposition disposition)
 {
     if (auto color = surfaceData->getColor("Color"); color.has_value())
         surface->color = *color;
@@ -228,14 +229,14 @@ FillinSurface(const AssociativeArray* surfaceData,
     bool blendTexture = surfaceData->getBoolean("BlendTexture").value_or(false);
     bool emissive = surfaceData->getBoolean("Emissive").value_or(false);
 
-    SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
-    SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, baseTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (bumpTexture.has_value() || normalTexture.has_value()));
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, nightTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, specularTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, overlayTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
+    if (disposition != DataDisposition::Modify || blendTexture) SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
+    if (disposition != DataDisposition::Modify || emissive) SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
+    if (disposition != DataDisposition::Modify || baseTexture.has_value()) SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, baseTexture.has_value());
+    if (disposition != DataDisposition::Modify || (bumpTexture.has_value() || normalTexture.has_value())) SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (bumpTexture.has_value() || normalTexture.has_value()));
+    if (disposition != DataDisposition::Modify || nightTexture.has_value()) SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, nightTexture.has_value());
+    if (disposition != DataDisposition::Modify || specularTexture.has_value()) SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, specularTexture.has_value());
+    if (disposition != DataDisposition::Modify || overlayTexture.has_value()) SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, overlayTexture.has_value());
+    if (disposition != DataDisposition::Modify || surface->specularColor != Color(0.0f, 0.0f, 0.0f)) SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
 
     if (baseTexture.has_value())
         surface->baseTexture = texturePaths.getHandle(*baseTexture, path, baseFlags);
@@ -1016,10 +1017,11 @@ Body* CreateBody(const std::string& name,
     Surface surface;
     if (disposition == DataDisposition::Modify)
         surface = body->getSurface();
-    else
+    else 
         surface.color = Color(1.0f, 1.0f, 1.0f);
 
-    FillinSurface(planetData, &surface, path, texturePaths);
+    FillinSurface(planetData, &surface, path, texturePaths, disposition);
+    
     body->setSurface(surface);
 
     ReadMesh(*planetData, *body, path, geometryPaths);
@@ -1284,7 +1286,7 @@ bool LoadSolarSystemObjects(std::istream& in,
         {
             auto surface = std::make_unique<Surface>();
             surface->color = Color(1.0f, 1.0f, 1.0f);
-            FillinSurface(objectData, surface.get(), directory, texturePaths);
+            FillinSurface(objectData, surface.get(), directory, texturePaths, disposition);
             if (parent.body() != nullptr)
                 GetBodyFeaturesManager()->addAlternateSurface(parent.body(), primaryName, std::move(surface));
             else
