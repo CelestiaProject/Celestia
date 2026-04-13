@@ -21,7 +21,7 @@ class FramebufferObject
         DepthAttachment = 0x2
     };
     FramebufferObject() = delete;
-    FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples = 1);
+    FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples = 1, bool useFloatColor = false);
     FramebufferObject(const FramebufferObject&) = delete;
     FramebufferObject(FramebufferObject&&) noexcept;
     FramebufferObject& operator=(const FramebufferObject&) = delete;
@@ -46,6 +46,11 @@ class FramebufferObject
     int samples() const
     {
         return m_samples;
+    }
+
+    bool useFloatColor() const
+    {
+        return m_useFloatColor;
     }
 
     GLuint colorTexture() const;
@@ -74,6 +79,7 @@ class FramebufferObject
     GLuint m_colorRboId{ 0 };
     GLuint m_depthRboId{ 0 };
     int    m_samples;
+    bool   m_useFloatColor;
     GLenum m_status;
     bool   m_owned;
 };

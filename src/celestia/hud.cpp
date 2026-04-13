@@ -59,6 +59,12 @@ namespace celestia
 namespace
 {
 
+constexpr Color InfoColor        = Color(0.7f, 0.7f, 1.0f, 1.0f);
+constexpr Color FrameInfoColor   = Color(0.6f, 0.6f, 1.0f, 1.0f);
+constexpr Color LightTravelColor = Color(0.42f, 1.0f, 1.0f, 1.0f);
+constexpr Color WarningColor     = Color(1.0f, 0.0f, 0.0f, 1.0f);
+constexpr Color EditModeColor    = Color(1.0f, 0.0f, 1.0f, 1.0f);
+
 // Ye olde wolde conſtantes for ye olde wolde units
 constexpr double OneMiInKm = 1.609344;
 constexpr double OneFtInKm = 0.0003048;
@@ -943,7 +949,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         m_overlay->savePos();
         m_overlay->moveBy(metrics.getSafeAreaStart(),
                           metrics.getSafeAreaBottom(m_hudFonts.fontHeight() * 2 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
-        m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+        m_overlay->setColor(InfoColor);
 
         m_overlay->beginText();
         m_overlay->print("\n");
@@ -983,7 +989,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         m_overlay->beginText();
         int x = (metrics.getSafeAreaWidth() - engine::TextLayout::getTextWidth(_("Edit Mode"), m_hudFonts.font().get())) / 2;
         m_overlay->moveBy(metrics.getSafeAreaStart(x), metrics.getSafeAreaTop(m_hudFonts.fontHeight()));
-        m_overlay->setColor(1, 0, 1, 1);
+        m_overlay->setColor(EditModeColor);
         m_overlay->print(_("Edit Mode"));
         m_overlay->endText();
         m_overlay->restorePos();
@@ -1014,7 +1020,7 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     // Time and date
     m_overlay->savePos();
-    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(InfoColor);
     m_overlay->moveBy(metrics.getSafeAreaEnd(m_dateStrWidth), metrics.getSafeAreaTop(m_hudFonts.fontHeight()));
     m_overlay->beginText();
 
@@ -1022,9 +1028,9 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     if (timeInfo.lightTravelFlag && lt > 0.0)
     {
-        m_overlay->setColor(0.42f, 1.0f, 1.0f, 1.0f);
+        m_overlay->setColor(LightTravelColor);
         m_overlay->print(_("  LT"));
-        m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+        m_overlay->setColor(InfoColor);
     }
     m_overlay->print("\n");
 
@@ -1050,7 +1056,7 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     if (sim->getPauseState() == true)
     {
-        m_overlay->setColor(1.0f, 0.0f, 0.0f, 1.0f);
+        m_overlay->setColor(WarningColor);
         m_overlay->print(_(" (Paused)"));
     }
 
@@ -1067,7 +1073,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
                       metrics.getSafeAreaBottom(m_hudFonts.fontHeight() * 3 +
                           static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
     m_overlay->beginText();
-    m_overlay->setColor(0.6f, 0.6f, 1.0f, 1);
+    m_overlay->setColor(FrameInfoColor);
 
     if (sim->getObserverMode() == Observer::ObserverMode::Travelling)
     {
@@ -1116,7 +1122,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
         break;
     }
 
-    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(InfoColor);
 
     // Field of view
     const Observer* activeObserver = sim->getActiveObserver();
@@ -1133,7 +1139,7 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                          const Eigen::Vector3d& v)
 {
     m_overlay->savePos();
-    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(InfoColor);
     m_overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaTop(m_hudFonts.titleFontHeight()));
 
     m_overlay->beginText();
@@ -1282,7 +1288,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     int movieWidth = movieCapture.getWidth();
     int movieHeight = movieCapture.getHeight();
     m_overlay->savePos();
-    Color color(1.0f, 0.0f, 0.0f, 1.0f);
+    const Color& color = WarningColor;
     m_overlay->setColor(color);
     celestia::Rect r(static_cast<float>((metrics.width - movieWidth) / 2 - 1),
                      static_cast<float>((metrics.height - movieHeight) / 2 - 1),

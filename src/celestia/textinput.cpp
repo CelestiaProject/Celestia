@@ -30,7 +30,9 @@ namespace celestia
 
 namespace
 {
-constexpr Color consoleColor{ 0.7f, 0.7f, 1.0f, 0.2f };
+constexpr Color consoleColor       = Color(0.7f, 0.7f, 1.0f, 0.2f);
+constexpr Color inputTextColor     = Color(0.6f, 0.6f, 1.0f, 1.0f);
+constexpr Color selectedCompletion = Color(1.0f, 0.6f, 0.6f, 1.0f);
 }
 
 std::string_view
@@ -188,7 +190,7 @@ TextInput::render(Overlay* overlay,
     r.setColor(consoleColor);
     overlay->drawRectangle(r);
     overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaBottom(rectHeight - hudFonts.titleFontHeight()));
-    overlay->setColor(0.6f, 0.6f, 1.0f, 1.0f);
+    overlay->setColor(inputTextColor);
     overlay->beginText();
     overlay->print(fmt::runtime(_("Target name: {}")), m_text);
     overlay->endText();
@@ -224,9 +226,9 @@ TextInput::renderCompletion(Overlay* overlay, const WindowMetrics& metrics, int 
         for (int j = 0; iter < m_completion.end() && j < nb_lines; iter++, j++)
         {
             if (i * nb_lines + j == typedTextCompletionIdx - start)
-                overlay->setColor(1.0f, 0.6f, 0.6f, 1);
+                overlay->setColor(selectedCompletion);
             else
-                overlay->setColor(0.6f, 0.6f, 1.0f, 1);
+                overlay->setColor(inputTextColor);
             overlay->print(iter->getName());
             overlay->print("\n");
         }
