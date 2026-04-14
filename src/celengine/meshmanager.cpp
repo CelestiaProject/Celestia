@@ -322,7 +322,7 @@ Convert3DSModel(const M3DScene& scene,
         // range that OpenGL uses for the specular exponent. The
         // current equation is just a guess at the mapping that
         // 3DS actually uses.
-        newMaterial.specularPower = std::pow(2.0f, 1.0f + 0.1f * shininess);
+        newMaterial.specularPower = std::exp2(1.0f + 0.1f * shininess);
         if (newMaterial.specularPower > 128.0f)
             newMaterial.specularPower = 128.0f;
 

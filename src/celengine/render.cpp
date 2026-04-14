@@ -344,11 +344,11 @@ BuildGaussianDiscTexture(unsigned int log2size)
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
-        float fwhm = std::pow(2.0f, (float) (log2size - mipLevel)) * 0.3f;
+        float fwhm = std::exp2(static_cast<float>(log2size - mipLevel)) * 0.3f;
         BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
                                   log2size - mipLevel,
                                   fwhm,
-                                  std::pow(2.0f, (float) (log2size - mipLevel)));
+                                  std::exp2(static_cast<float>(log2size - mipLevel)));
     }
 
     return std::make_unique<ImageTexture>(*img,
@@ -364,24 +364,24 @@ BuildGaussianGlareTexture(unsigned int log2size)
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
-        /*
+#if 0
         // Optional gaussian glare
-        float fwhm = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
-        float power = (float) pow(2.0f, (float) (log2size - mipLevel)) * 0.15f;
+        float fwhm = std::exp2(static_cast<float>(log2size - mipLevel)) * 0.15f;
+        float power = std::exp2(static_cast<float>(log2size - mipLevel)) * 0.15f;
         BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
                                   log2size - mipLevel,
                                   fwhm,
                                   power);
-        */
+#endif
         BuildGlareMipLevel(img->getMipLevel(mipLevel),
                            log2size - mipLevel,
-                           25.0f / (float) pow(2.0f, (float) (log2size - mipLevel)),
+                           25.0f / std::exp2(static_cast<float>(log2size - mipLevel)),
                            0.66f);
-        /*
+#if 0
         BuildGlareMipLevel2(img->getMipLevel(mipLevel),
                             log2size - mipLevel,
-                            1.0f / (float) pow(2.0f, (float) (log2size - mipLevel)));
-        */
+                            1.0f / std::exp2(static_cast<float>(log2size - mipLevel)));
+#endif
     }
 
     return std::make_unique<ImageTexture>(*img,
@@ -1615,7 +1615,7 @@ Renderer::calculatePointSize(float appMag,
     {
         if (alpha > 1.0f)
         {
-            float discScale = std::min(MaxScaledDiscStarSize, pow(2.0f, 0.3f * (satPoint - appMag)));
+            float discScale = std::min(MaxScaledDiscStarSize, std::exp2(0.3f * (satPoint - appMag)));
             discSize *= std::max(1.0f, discScale);
 
             glareAlpha = std::min(0.5f, discScale / 4.0f);

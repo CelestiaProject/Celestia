@@ -613,7 +613,7 @@ ModelViewWidget::wheelEvent(QWheelEvent* event)
     double newDistance = m_cameraPosition.norm() + adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
 #else
-    double adjust = std::pow(2.0, numDegrees.y() / 1000.0);
+    double adjust = std::exp2(numDegrees.y() / 1000.0);
     double newDistance = m_cameraPosition.norm() * adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
 #endif
