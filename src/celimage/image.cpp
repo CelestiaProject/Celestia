@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cmath>
 #include <tuple>
+#include <vector>
 
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
@@ -360,6 +361,34 @@ Image::computeNormalMap(float scale, bool wrap) const
 void Image::forceLinear()
 {
     format = getLinearFormat(format);
+}
+
+std::vector<std::uint8_t>
+expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
+{
+    std::vector<std::uint8_t> dst(width * height * 4);
+    for (std::int32_t i = 0; i < width * height; ++i)
+    {
+        dst[i * 4 + 0] = src[i];
+        dst[i * 4 + 1] = src[i];
+        dst[i * 4 + 2] = src[i];
+        dst[i * 4 + 3] = 255;
+    }
+    return dst;
+}
+
+std::vector<std::uint8_t>
+expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
+{
+    std::vector<std::uint8_t> dst(width * height * 4);
+    for (std::int32_t i = 0; i < width * height; ++i)
+    {
+        dst[i * 4 + 0] = src[i * 2];
+        dst[i * 4 + 1] = src[i * 2];
+        dst[i * 4 + 2] = src[i * 2];
+        dst[i * 4 + 3] = src[i * 2 + 1];
+    }
+    return dst;
 }
 
 bool Image::canSave(ContentType type)

@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
 #include "glsupport.h"
 
@@ -26,6 +27,8 @@ using namespace celestia;
 using celestia::util::GetLogger;
 using celestia::engine::Image;
 using celestia::engine::PixelFormat;
+using celestia::engine::expandLuminanceToRGBA;
+using celestia::engine::expandLuminanceAlphaToRGBA;
 
 namespace
 {
@@ -59,8 +62,57 @@ GetTextureCaps()
     return texCaps;
 }
 
+#ifdef GL_ES
+bool
+needsToRGBAExpansion(PixelFormat format, bool needsMipmap)
+{
+    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+    {
+        // GLES3 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap generation. If we
+        // don't need mipmap, we can use the format as is. sLuminance/sLumAlpha are not natively
+        // supported and always needs expansion.
+        if (!needsMipmap)
+            return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
+        return format == PixelFormat::sRGB
+            || format == PixelFormat::sRGB8
+            || format == PixelFormat::sLuminance
+            || format == PixelFormat::sLumAlpha;
+    }
+    else if (celestia::gl::EXT_sRGB)
+    {
+        // GLES2 with sRGB. All sRGB formats should have mipmap disabled.
+        return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
+    }
+    else
+    {
+        // sRGB not supported at all, no need for expansion.
+        return false;
+    }
+}
+
+std::vector<std::uint8_t>
+expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
+{
+    if (format == PixelFormat::sLuminance)
+        return expandLuminanceToRGBA(src, width, height);
+    if (format == PixelFormat::sLumAlpha)
+        return expandLuminanceAlphaToRGBA(src, width, height);
+
+    // RGB → RGBA
+    std::vector<std::uint8_t> dst(width * height * 4);
+    for (int i = 0; i < width * height; ++i)
+    {
+        dst[i * 4 + 0] = src[i * 3 + 0];
+        dst[i * 4 + 1] = src[i * 3 + 1];
+        dst[i * 4 + 2] = src[i * 3 + 2];
+        dst[i * 4 + 3] = 255;
+    }
+    return dst;
+}
+#endif
+
 GLenum
-getInternalFormat(PixelFormat format)
+getInternalFormat(PixelFormat format, bool needsMipmap)
 {
 #ifdef GL_ES
     switch (format)
@@ -73,7 +125,28 @@ getInternalFormat(PixelFormat format)
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT1_sRGBA:
+    case PixelFormat::DXT3_sRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return static_cast<GLenum>(format);
+    case PixelFormat::sRGB:
+        if (!needsToRGBAExpansion(format, needsMipmap))
+        {
+            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+                return static_cast<GLenum>(PixelFormat::sRGB8);
+            if (celestia::gl::EXT_sRGB)
+                return GL_SRGB_EXT;
+            return static_cast<GLenum>(PixelFormat::RGB);
+        }
+        [[fallthrough]];
+    case PixelFormat::sRGBA:
+    case PixelFormat::sLuminance:
+    case PixelFormat::sLumAlpha:
+        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+            return static_cast<GLenum>(PixelFormat::sRGBA8);
+        if (celestia::gl::EXT_sRGB)
+            return GL_SRGB_ALPHA_EXT;
+        return static_cast<GLenum>(PixelFormat::RGBA);
     default:
         return GL_NONE;
     }
@@ -105,10 +178,34 @@ getInternalFormat(PixelFormat format)
 }
 
 GLenum
-getExternalFormat(PixelFormat format)
+getExternalFormat(PixelFormat format, bool needsMipmap)
 {
 #ifdef GL_ES
-    return getInternalFormat(format);
+    switch (format)
+    {
+    case PixelFormat::sRGB:
+    case PixelFormat::sRGB8:
+        if (!needsToRGBAExpansion(format, needsMipmap))
+        {
+            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+                return static_cast<GLenum>(PixelFormat::RGB);
+            if (celestia::gl::EXT_sRGB)
+                return GL_SRGB_EXT;
+            return static_cast<GLenum>(PixelFormat::RGB);
+        }
+        [[fallthrough]];
+    case PixelFormat::sRGBA:
+    case PixelFormat::sRGBA8:
+    case PixelFormat::sLuminance:
+    case PixelFormat::sLumAlpha:
+        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+            return static_cast<GLenum>(PixelFormat::RGBA);
+        if (celestia::gl::EXT_sRGB)
+            return GL_SRGB_ALPHA_EXT;
+        return static_cast<GLenum>(PixelFormat::RGBA);
+    default:
+        return getInternalFormat(format, needsMipmap);
+    }
 #else
     switch (format)
     {
@@ -224,12 +321,37 @@ SetBorderColor(Color borderColor, GLenum target)
 #endif
 }
 
+bool
+canGenerateMipmaps([[maybe_unused]] PixelFormat format)
+{
+#ifdef GL_ES
+    // All sRGB formats can generate mipmap (after expansion if necessary) on GLES3
+    // No sRGB format can generate mipmap on GLES2
+    if (!celestia::gl::checkVersion(celestia::gl::GLES_3_0) && celestia::gl::EXT_sRGB)
+    {
+        switch (format)
+        {
+        case PixelFormat::sRGB:
+        case PixelFormat::sRGB8:
+        case PixelFormat::sRGBA:
+        case PixelFormat::sRGBA8:
+        case PixelFormat::sLuminance:
+        case PixelFormat::sLumAlpha:
+            return false;
+        default:
+            break;
+        }
+    }
+#endif
+    return true;
+}
+
 // Load a prebuilt set of mipmaps; assumes that the image contains
 // a complete set of mipmap levels.
 void
-LoadMipmapSet(const Image& img, GLenum target)
+LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
 {
-    int internalFormat = getInternalFormat(img.getFormat());
+    int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
 #ifndef GL_ES
     glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount()-1);
 #endif
@@ -251,23 +373,28 @@ LoadMipmapSet(const Image& img, GLenum target)
         }
         else
         {
-            glTexImage2D(target,
-                         mip,
-                         internalFormat,
-                         mipWidth, mipHeight,
-                         0,
-                         getExternalFormat(img.getFormat()),
-                         GL_UNSIGNED_BYTE,
-                         img.getMipLevel(mip));
+#ifdef GL_ES
+            if (needsToRGBAExpansion(img.getFormat(), needsMipmap))
+            {
+                auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
+                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.data());
+            }
+            else
+#endif
+            {
+                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(mip));
+            }
         }
     }
 }
 
 // Load a texture without any mipmaps
 void
-LoadMiplessTexture(const Image& img, GLenum target)
+LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
 {
-    int internalFormat = getInternalFormat(img.getFormat());
+    int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
 
     if (img.isCompressed())
     {
@@ -281,14 +408,19 @@ LoadMiplessTexture(const Image& img, GLenum target)
     }
     else
     {
-        glTexImage2D(target,
-                     0,
-                     internalFormat,
-                     img.getWidth(), img.getHeight(),
-                     0,
-                     getExternalFormat(img.getFormat()),
-                     GL_UNSIGNED_BYTE,
-                     img.getMipLevel(0));
+#ifdef GL_ES
+        if (needsToRGBAExpansion(img.getFormat(), needsMipmap))
+        {
+            auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
+            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.data());
+        }
+        else
+#endif
+        {
+            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(0));
+        }
     }
 }
 
@@ -376,7 +508,7 @@ LoadPrecomputedTileMipMaps(const Image& img, Image& tile,
         // TODO: Handle uncompressed textures with prebuilt mipmaps
     }
 
-    LoadMipmapSet(tile, GL_TEXTURE_2D);
+    LoadMipmapSet(tile, GL_TEXTURE_2D, false);
 }
 
 void
@@ -416,8 +548,14 @@ ComputeTileMipMaps(const Image& img, Image& tile,
         }
     }
 
-    LoadMiplessTexture(tile, GL_TEXTURE_2D);
-    if (mipmap)
+    bool genMipmaps = mipmap && canGenerateMipmaps(img.getFormat());
+
+    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
+    if (mipmap && !genMipmaps)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    LoadMiplessTexture(tile, GL_TEXTURE_2D, genMipmaps);
+    if (genMipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
 }
 
@@ -524,17 +662,24 @@ ImageTexture::ImageTexture(const Image& img,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
     }
 
-    bool genMipmaps = mipmap && !precomputedMipMaps;
+    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(img.getFormat());
+
+    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
+    if (mipmap && !precomputedMipMaps && !genMipmaps)
+    {
+        mipmap = false;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
 
     if (mipmap)
     {
         if (precomputedMipMaps)
         {
-            LoadMipmapSet(img, GL_TEXTURE_2D);
+            LoadMipmapSet(img, GL_TEXTURE_2D, genMipmaps);
         }
         else if (mipMapMode == DefaultMipMaps)
         {
-            LoadMiplessTexture(img, GL_TEXTURE_2D);
+            LoadMiplessTexture(img, GL_TEXTURE_2D, genMipmaps);
 #ifndef GL_ES
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, expectedCount-1);
 #endif
@@ -542,7 +687,7 @@ ImageTexture::ImageTexture(const Image& img,
     }
     else
     {
-        LoadMiplessTexture(img, GL_TEXTURE_2D);
+        LoadMiplessTexture(img, GL_TEXTURE_2D, genMipmaps);
 #ifndef GL_ES
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 #endif
@@ -742,7 +887,14 @@ CubeMap::CubeMap(celestia::util::array_view<Image> faces) :
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    bool genMipmaps = mipmap && !precomputedMipMaps;
+    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(faces[0].getFormat());
+
+    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
+    if (mipmap && !precomputedMipMaps && !genMipmaps)
+    {
+        mipmap = false;
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
 
     for (int i = 0; i < 6; ++i)
     {
@@ -750,9 +902,9 @@ CubeMap::CubeMap(celestia::util::array_view<Image> faces) :
         const Image& face = faces[i];
 
         if (mipmap && precomputedMipMaps)
-            LoadMipmapSet(face, targetFace);
+            LoadMipmapSet(face, targetFace, genMipmaps);
         else
-            LoadMiplessTexture(face, targetFace);
+            LoadMiplessTexture(face, targetFace, genMipmaps);
     }
     if (genMipmaps)
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
