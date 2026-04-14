@@ -2647,6 +2647,8 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
         return false;
     }
 
+    m_scriptMaps.initColorMaps(renderer->colors);
+
     if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
     {
         renderer->setFaintestAM45deg(renderer->getFaintestAM45deg());

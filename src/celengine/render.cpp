@@ -129,47 +129,6 @@ static constexpr unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
 static constexpr std::uint32_t OrbitCacheRetireAge = 16;
 
-Color Renderer::StarLabelColor          (0.471f, 0.356f, 0.682f);
-Color Renderer::PlanetLabelColor        (0.407f, 0.333f, 0.964f);
-Color Renderer::DwarfPlanetLabelColor   (0.557f, 0.235f, 0.576f);
-Color Renderer::MoonLabelColor          (0.231f, 0.733f, 0.792f);
-Color Renderer::MinorMoonLabelColor     (0.231f, 0.733f, 0.792f);
-Color Renderer::AsteroidLabelColor      (0.596f, 0.305f, 0.164f);
-Color Renderer::CometLabelColor         (0.768f, 0.607f, 0.227f);
-Color Renderer::SpacecraftLabelColor    (0.93f,  0.93f,  0.93f);
-Color Renderer::LocationLabelColor      (0.24f,  0.89f,  0.43f);
-Color Renderer::GalaxyLabelColor        (0.0f,   0.45f,  0.5f);
-Color Renderer::GlobularLabelColor      (0.8f,   0.45f,  0.5f);
-Color Renderer::NebulaLabelColor        (0.541f, 0.764f, 0.278f);
-Color Renderer::OpenClusterLabelColor   (0.239f, 0.572f, 0.396f);
-Color Renderer::ConstellationLabelColor (0.225f, 0.301f, 0.36f);
-Color Renderer::EquatorialGridLabelColor(0.64f,  0.72f,  0.88f);
-Color Renderer::PlanetographicGridLabelColor(0.8f, 0.8f, 0.8f);
-Color Renderer::GalacticGridLabelColor  (0.88f,  0.72f,  0.64f);
-Color Renderer::EclipticGridLabelColor  (0.72f,  0.64f,  0.88f);
-Color Renderer::HorizonGridLabelColor   (0.72f,  0.72f,  0.72f);
-
-Color Renderer::StarOrbitColor          (0.5f,   0.5f,   0.8f);
-Color Renderer::PlanetOrbitColor        (0.3f,   0.323f, 0.833f);
-Color Renderer::DwarfPlanetOrbitColor   (0.557f, 0.235f, 0.576f);
-Color Renderer::MoonOrbitColor          (0.08f,  0.407f, 0.392f);
-Color Renderer::MinorMoonOrbitColor     (0.08f,  0.407f, 0.392f);
-Color Renderer::AsteroidOrbitColor      (0.58f,  0.152f, 0.08f);
-Color Renderer::CometOrbitColor         (0.639f, 0.487f, 0.168f);
-Color Renderer::SpacecraftOrbitColor    (0.4f,   0.4f,   0.4f);
-Color Renderer::SelectionOrbitColor     (1.0f,   0.0f,   0.0f);
-
-Color Renderer::ConstellationColor      (0.0f,   0.24f,  0.36f);
-Color Renderer::BoundaryColor           (0.24f,  0.10f,  0.12f);
-Color Renderer::EquatorialGridColor     (0.28f,  0.28f,  0.38f);
-Color Renderer::PlanetographicGridColor (0.8f,   0.8f,   0.8f);
-Color Renderer::PlanetEquatorColor      (0.5f,   1.0f,   1.0f);
-Color Renderer::GalacticGridColor       (0.38f,  0.38f,  0.28f);
-Color Renderer::EclipticGridColor       (0.38f,  0.28f,  0.38f);
-Color Renderer::HorizonGridColor        (0.38f,  0.38f,  0.38f);
-Color Renderer::EclipticColor           (0.5f,   0.1f,   0.1f);
-
-Color Renderer::SelectionCursorColor    (1.0f,   0.0f,   0.0f);
 
 // Some useful unit conversions
 inline float mmToInches(float mm)
@@ -943,14 +902,15 @@ void Renderer::addObjectAnnotation(const celestia::MarkerRepresentation* markerR
     }
 }
 
-Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
+Vector4f renderOrbitColor(const Body *body, bool selected, float opacity,
+                          const celestia::engine::RendererColors& colors)
 {
     Color orbitColor;
 
     if (selected)
     {
         // Highlight the orbit of the selected object in red
-        orbitColor = Renderer::SelectionOrbitColor;
+        orbitColor = colors.SelectionOrbit;
     }
     else if (body == nullptr || !GetBodyFeaturesManager()->getOrbitColor(body, orbitColor))
     {
@@ -961,30 +921,30 @@ Vector4f renderOrbitColor(const Body *body, bool selected, float opacity)
         switch (classification)
         {
         case BodyClassification::Moon:
-            orbitColor = Renderer::MoonOrbitColor;
+            orbitColor = colors.MoonOrbit;
             break;
         case BodyClassification::MinorMoon:
-            orbitColor = Renderer::MinorMoonOrbitColor;
+            orbitColor = colors.MinorMoonOrbit;
             break;
         case BodyClassification::Asteroid:
-            orbitColor = Renderer::AsteroidOrbitColor;
+            orbitColor = colors.AsteroidOrbit;
             break;
         case BodyClassification::Comet:
-            orbitColor = Renderer::CometOrbitColor;
+            orbitColor = colors.CometOrbit;
             break;
         case BodyClassification::Spacecraft:
-            orbitColor = Renderer::SpacecraftOrbitColor;
+            orbitColor = colors.SpacecraftOrbit;
             break;
         case BodyClassification::Stellar:
-            orbitColor = Renderer::StarOrbitColor;
+            orbitColor = colors.StarOrbit;
             break;
         case BodyClassification::DwarfPlanet:
-            orbitColor = Renderer::DwarfPlanetOrbitColor;
+            orbitColor = colors.DwarfPlanetOrbit;
             break;
         case BodyClassification::Planet:
             [[fallthrough]];
         default:
-            orbitColor = Renderer::PlanetOrbitColor;
+            orbitColor = colors.PlanetOrbit;
             break;
         }
     }
@@ -1144,7 +1104,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     }
 
     bool highlight = body != nullptr ? highlightObject.body() == body : highlightObject.star() == orbitPath.star;
-    Vector4f orbitColor = renderOrbitColor(body, highlight, orbitPath.opacity);
+    Vector4f orbitColor = renderOrbitColor(body, highlight, orbitPath.opacity, colors);
 
 #ifdef STIPPLED_LINES
     glLineStipple(3, 0x5555);
@@ -1897,7 +1857,7 @@ Renderer::locationsToAnnotations(const Body& body,
 
         Color labelColor = location->isLabelColorOverridden()
             ? location->getLabelColor()
-            : LocationLabelColor;
+            : colors.LocationLabel;
 
         addObjectAnnotation(locationMarker,
                             location->getName(true),
@@ -2871,11 +2831,11 @@ void Renderer::renderPlanet(Body& body,
         {
             // Set up location markers for this body
             using namespace celestia;
-            mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, LocationLabelColor);
-            craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, LocationLabelColor);
-            observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, LocationLabelColor);
-            cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, LocationLabelColor);
-            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, LocationLabelColor);
+            mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, colors.LocationLabel);
+            craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, colors.LocationLabel);
+            observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, colors.LocationLabel);
+            cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, colors.LocationLabel);
+            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, colors.LocationLabel);
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
@@ -3048,7 +3008,7 @@ void Renderer::renderAsterisms(const Universe& universe, float dist, const Matri
     ps.smoothLines = true;
     setPipelineState(ps);
 
-    m_asterismRenderer->render(Color(ConstellationColor, opacity), mvp);
+    m_asterismRenderer->render(Color(colors.Constellation, opacity), mvp);
 }
 
 
@@ -3087,7 +3047,7 @@ void Renderer::renderBoundaries(const Universe& universe, float dist, const Matr
     ps.smoothLines = true;
     setPipelineState(ps);
 
-    m_boundariesRenderer->render(Color(BoundaryColor, opacity), mvp);
+    m_boundariesRenderer->render(Color(colors.Boundary, opacity), mvp);
 }
 
 
@@ -3538,24 +3498,25 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
 }
 
 
-static Color getBodyLabelColor(BodyClassification classification)
+static Color getBodyLabelColor(BodyClassification classification,
+                               const celestia::engine::RendererColors& colors)
 {
     switch (classification)
     {
     case BodyClassification::Planet:
-        return Renderer::PlanetLabelColor;
+        return colors.PlanetLabel;
     case BodyClassification::DwarfPlanet:
-        return Renderer::DwarfPlanetLabelColor;
+        return colors.DwarfPlanetLabel;
     case BodyClassification::Moon:
-        return Renderer::MoonLabelColor;
+        return colors.MoonLabel;
     case BodyClassification::MinorMoon:
-        return Renderer::MinorMoonLabelColor;
+        return colors.MinorMoonLabel;
     case BodyClassification::Asteroid:
-        return Renderer::AsteroidLabelColor;
+        return colors.AsteroidLabel;
     case BodyClassification::Comet:
-        return Renderer::CometLabelColor;
+        return colors.CometLabel;
     case BodyClassification::Spacecraft:
-        return Renderer::SpacecraftLabelColor;
+        return colors.SpacecraftLabel;
     default:
         return Color::Black;
     }
@@ -3667,7 +3628,7 @@ void Renderer::buildLabelLists(const math::InfiniteFrustum& viewFrustum,
             }
         }
 
-        Color labelColor = getBodyLabelColor(ri.body->getOrbitClassification());
+        Color labelColor = getBodyLabelColor(ri.body->getOrbitClassification(), colors);
         float opacity = sizeFade(boundingRadiusSize, minOrbitSize, 2.0f);
         labelColor.alpha(opacity * labelColor.alpha());
         addSortedAnnotation(nullptr, body->getName(true), labelColor, pos);
@@ -3841,10 +3802,10 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
 
     using namespace celestia;
-    galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, GalaxyLabelColor);
-    nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, NebulaLabelColor);
-    openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, OpenClusterLabelColor);
-    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, GlobularLabelColor);
+    galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, colors.GalaxyLabel);
+    nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, colors.NebulaLabel);
+    openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, colors.OpenClusterLabel);
+    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, colors.GlobularLabel);
 
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
@@ -3875,8 +3836,8 @@ void Renderer::renderSkyGrids(const Observer& observer)
     {
         SkyGrid grid;
         grid.orientation = Quaterniond(AngleAxis<double>(astro::J2000Obliquity, Vector3d::UnitX()));
-        grid.lineColor = EquatorialGridColor;
-        grid.labelColor = EquatorialGridLabelColor;
+        grid.lineColor = colors.EquatorialGrid;
+        grid.labelColor = colors.EquatorialGridLabel;
         m_skyGridRenderer->render(grid, observer.getZoom());
     }
 
@@ -3884,8 +3845,8 @@ void Renderer::renderSkyGrids(const Observer& observer)
     {
         SkyGrid galacticGrid;
         galacticGrid.orientation = (astro::eclipticToEquatorial() * astro::equatorialToGalactic()).conjugate();
-        galacticGrid.lineColor = GalacticGridColor;
-        galacticGrid.labelColor = GalacticGridLabelColor;
+        galacticGrid.lineColor = colors.GalacticGrid;
+        galacticGrid.labelColor = colors.GalacticGridLabel;
         galacticGrid.longitudeUnits = SkyGrid::LongitudeDegrees;
         m_skyGridRenderer->render(galacticGrid, observer.getZoom());
     }
@@ -3894,8 +3855,8 @@ void Renderer::renderSkyGrids(const Observer& observer)
     {
         SkyGrid grid;
         grid.orientation = Quaterniond::Identity();
-        grid.lineColor = EclipticGridColor;
-        grid.labelColor = EclipticGridLabelColor;
+        grid.lineColor = colors.EclipticGrid;
+        grid.labelColor = colors.EclipticGridLabel;
         grid.longitudeUnits = SkyGrid::LongitudeDegrees;
         m_skyGridRenderer->render(grid, observer.getZoom());
     }
@@ -3909,8 +3870,8 @@ void Renderer::renderSkyGrids(const Observer& observer)
         if (body != nullptr)
         {
             SkyGrid grid;
-            grid.lineColor = HorizonGridColor;
-            grid.labelColor = HorizonGridLabelColor;
+            grid.lineColor = colors.HorizonGrid;
+            grid.labelColor = colors.HorizonGridLabel;
             grid.longitudeUnits = SkyGrid::LongitudeDegrees;
             grid.longitudeDirection = SkyGrid::IncreasingClockwise;
 
@@ -3984,7 +3945,7 @@ void Renderer::labelConstellations(const AsterismList& asterisms,
 
             // Use the default label color unless the constellation has an
             // override color set.
-            Color labelColor = ConstellationLabelColor;
+            Color labelColor = colors.ConstellationLabel;
             if (ast.isColorOverridden())
                 labelColor = ast.getOverrideColor();
 
@@ -4904,20 +4865,20 @@ Renderer::selectionToAnnotation(const Selection &sel,
     // both markers are drawn and cursor appears much brighter as a result.
     if (distance < astro::lightYearsToKilometers(1.0))
     {
-        addSortedAnnotation(&cursorRep, "", SelectionCursorColor,
+        addSortedAnnotation(&cursorRep, "", colors.SelectionCursor,
                             offset.cast<float>(),
                             LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
     }
     else
     {
-        addBackgroundAnnotation(&cursorRep, "", SelectionCursorColor,
+        addBackgroundAnnotation(&cursorRep, "", colors.SelectionCursor,
                                 offset.cast<float>(),
                                 LabelHorizontalAlignment::Start, LabelVerticalAlignment::Top, symbolSize);
     }
 
-    Color occludedCursorColor(SelectionCursorColor.red(),
-                              SelectionCursorColor.green() + 0.3f,
-                              SelectionCursorColor.blue(),
+    Color occludedCursorColor(colors.SelectionCursor.red(),
+                              colors.SelectionCursor.green() + 0.3f,
+                              colors.SelectionCursor.blue(),
                               0.4f);
     addForegroundAnnotation(&cursorRep, "", occludedCursorColor,
                             offset.cast<float>(),

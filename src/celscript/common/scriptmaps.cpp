@@ -3,6 +3,7 @@
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/render.h>
+#include <celengine/rendercolors.h>
 #include <celestia/celestiacore.h>
 #include <celestia/hud.h>
 
@@ -164,50 +165,49 @@ void initOrbitVisibilityMap(ScriptMap<std::uint32_t>& OrbitVisibilityMap)
     OrbitVisibilityMap["always"sv]         = Body::AlwaysVisible;
 }
 
-void initLabelColorMap(ScriptMap<Color*>& LabelColorMap)
+void initLabelColorMap(ScriptMap<Color*>& LabelColorMap, engine::RendererColors& colors)
 {
-    LabelColorMap["stars"sv]               = &Renderer::StarLabelColor;
-    LabelColorMap["planets"sv]             = &Renderer::PlanetLabelColor;
-    LabelColorMap["dwarfplanets"sv]        = &Renderer::DwarfPlanetLabelColor;
-    LabelColorMap["moons"sv]               = &Renderer::MoonLabelColor;
-    LabelColorMap["minormoons"sv]          = &Renderer::MinorMoonLabelColor;
-    LabelColorMap["asteroids"sv]           = &Renderer::AsteroidLabelColor;
-    LabelColorMap["comets"sv]              = &Renderer::CometLabelColor;
-    LabelColorMap["spacecraft"sv]          = &Renderer::SpacecraftLabelColor;
-    LabelColorMap["locations"sv]           = &Renderer::LocationLabelColor;
-    LabelColorMap["galaxies"sv]            = &Renderer::GalaxyLabelColor;
-    LabelColorMap["globulars"sv]           = &Renderer::GlobularLabelColor;
-    LabelColorMap["nebulae"sv]             = &Renderer::NebulaLabelColor;
-    LabelColorMap["openclusters"sv]        = &Renderer::OpenClusterLabelColor;
-    LabelColorMap["constellations"sv]      = &Renderer::ConstellationLabelColor;
-    LabelColorMap["equatorialgrid"sv]      = &Renderer::EquatorialGridLabelColor;
-    LabelColorMap["galacticgrid"sv]        = &Renderer::GalacticGridLabelColor;
-    LabelColorMap["eclipticgrid"sv]        = &Renderer::EclipticGridLabelColor;
-    LabelColorMap["horizontalgrid"sv]      = &Renderer::HorizonGridLabelColor;
-    LabelColorMap["planetographicgrid"sv]  = &Renderer::PlanetographicGridLabelColor;
-
+    LabelColorMap["stars"sv]               = &colors.StarLabel;
+    LabelColorMap["planets"sv]             = &colors.PlanetLabel;
+    LabelColorMap["dwarfplanets"sv]        = &colors.DwarfPlanetLabel;
+    LabelColorMap["moons"sv]               = &colors.MoonLabel;
+    LabelColorMap["minormoons"sv]          = &colors.MinorMoonLabel;
+    LabelColorMap["asteroids"sv]           = &colors.AsteroidLabel;
+    LabelColorMap["comets"sv]              = &colors.CometLabel;
+    LabelColorMap["spacecraft"sv]          = &colors.SpacecraftLabel;
+    LabelColorMap["locations"sv]           = &colors.LocationLabel;
+    LabelColorMap["galaxies"sv]            = &colors.GalaxyLabel;
+    LabelColorMap["globulars"sv]           = &colors.GlobularLabel;
+    LabelColorMap["nebulae"sv]             = &colors.NebulaLabel;
+    LabelColorMap["openclusters"sv]        = &colors.OpenClusterLabel;
+    LabelColorMap["constellations"sv]      = &colors.ConstellationLabel;
+    LabelColorMap["equatorialgrid"sv]      = &colors.EquatorialGridLabel;
+    LabelColorMap["galacticgrid"sv]        = &colors.GalacticGridLabel;
+    LabelColorMap["eclipticgrid"sv]        = &colors.EclipticGridLabel;
+    LabelColorMap["horizontalgrid"sv]      = &colors.HorizonGridLabel;
+    LabelColorMap["planetographicgrid"sv]  = &colors.PlanetographicGridLabel;
 }
 
-void initLineColorMap(ScriptMap<Color*>& LineColorMap)
+void initLineColorMap(ScriptMap<Color*>& LineColorMap, engine::RendererColors& colors)
 {
-    LineColorMap["starorbits"sv]           = &Renderer::StarOrbitColor;
-    LineColorMap["planetorbits"sv]         = &Renderer::PlanetOrbitColor;
-    LineColorMap["dwarfplanetorbits"sv]    = &Renderer::DwarfPlanetOrbitColor;
-    LineColorMap["moonorbits"sv]           = &Renderer::MoonOrbitColor;
-    LineColorMap["minormoonorbits"sv]      = &Renderer::MinorMoonOrbitColor;
-    LineColorMap["asteroidorbits"sv]       = &Renderer::AsteroidOrbitColor;
-    LineColorMap["cometorbits"sv]          = &Renderer::CometOrbitColor;
-    LineColorMap["spacecraftorbits"sv]     = &Renderer::SpacecraftOrbitColor;
-    LineColorMap["constellations"sv]       = &Renderer::ConstellationColor;
-    LineColorMap["boundaries"sv]           = &Renderer::BoundaryColor;
-    LineColorMap["equatorialgrid"sv]       = &Renderer::EquatorialGridColor;
-    LineColorMap["galacticgrid"sv]         = &Renderer::GalacticGridColor;
-    LineColorMap["eclipticgrid"sv]         = &Renderer::EclipticGridColor;
-    LineColorMap["horizontalgrid"sv]       = &Renderer::HorizonGridColor;
-    LineColorMap["planetographicgrid"sv]   = &Renderer::PlanetographicGridColor;
-    LineColorMap["planetequator"sv]        = &Renderer::PlanetEquatorColor;
-    LineColorMap["ecliptic"sv]             = &Renderer::EclipticColor;
-    LineColorMap["selectioncursor"sv]      = &Renderer::SelectionCursorColor;
+    LineColorMap["starorbits"sv]           = &colors.StarOrbit;
+    LineColorMap["planetorbits"sv]         = &colors.PlanetOrbit;
+    LineColorMap["dwarfplanetorbits"sv]    = &colors.DwarfPlanetOrbit;
+    LineColorMap["moonorbits"sv]           = &colors.MoonOrbit;
+    LineColorMap["minormoonorbits"sv]      = &colors.MinorMoonOrbit;
+    LineColorMap["asteroidorbits"sv]       = &colors.AsteroidOrbit;
+    LineColorMap["cometorbits"sv]          = &colors.CometOrbit;
+    LineColorMap["spacecraftorbits"sv]     = &colors.SpacecraftOrbit;
+    LineColorMap["constellations"sv]       = &colors.Constellation;
+    LineColorMap["boundaries"sv]           = &colors.Boundary;
+    LineColorMap["equatorialgrid"sv]       = &colors.EquatorialGrid;
+    LineColorMap["galacticgrid"sv]         = &colors.GalacticGrid;
+    LineColorMap["eclipticgrid"sv]         = &colors.EclipticGrid;
+    LineColorMap["horizontalgrid"sv]       = &colors.HorizonGrid;
+    LineColorMap["planetographicgrid"sv]   = &colors.PlanetographicGrid;
+    LineColorMap["planetequator"sv]        = &colors.PlanetEquator;
+    LineColorMap["ecliptic"sv]             = &colors.Ecliptic;
+    LineColorMap["selectioncursor"sv]      = &colors.SelectionCursor;
 }
 
 ScriptMaps::ScriptMaps()
@@ -218,8 +218,12 @@ ScriptMaps::ScriptMaps()
     initLocationFlagMap(LocationFlagMap);
     initOverlayElementMap(OverlayElementMap);
     initOrbitVisibilityMap(OrbitVisibilityMap);
-    initLabelColorMap(LabelColorMap);
-    initLineColorMap(LineColorMap);
+}
+
+void ScriptMaps::initColorMaps(engine::RendererColors& colors)
+{
+    initLabelColorMap(LabelColorMap, colors);
+    initLineColorMap(LineColorMap, colors);
 }
 
 } // end namespace celestia::scripts
