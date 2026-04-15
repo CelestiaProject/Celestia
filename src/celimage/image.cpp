@@ -13,7 +13,6 @@
 #include <cassert>
 #include <cmath>
 #include <tuple>
-#include <vector>
 
 #include <celutil/filetype.h>
 #include <celutil/gettext.h>
@@ -363,10 +362,10 @@ void Image::forceLinear()
     format = getLinearFormat(format);
 }
 
-std::vector<std::uint8_t>
+std::unique_ptr<std::uint8_t[]>
 expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
 {
-    std::vector<std::uint8_t> dst(width * height * 4);
+    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
     for (std::int32_t i = 0; i < width * height; ++i)
     {
         dst[i * 4 + 0] = src[i];
@@ -377,10 +376,10 @@ expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t 
     return dst;
 }
 
-std::vector<std::uint8_t>
+std::unique_ptr<std::uint8_t[]>
 expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
 {
-    std::vector<std::uint8_t> dst(width * height * 4);
+    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
     for (std::int32_t i = 0; i < width * height; ++i)
     {
         dst[i * 4 + 0] = src[i * 2];

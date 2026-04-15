@@ -13,7 +13,6 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
-#include <vector>
 
 #include <celutil/filetype.h>
 #include "pixelformat.h"
@@ -74,10 +73,10 @@ private:
     std::unique_ptr<std::uint8_t[]> pixels;
 };
 
-std::vector<std::uint8_t>
+std::unique_ptr<std::uint8_t[]>
 expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height);
 
-std::vector<std::uint8_t>
+std::unique_ptr<std::uint8_t[]>
 expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height);
 
 } // namespace celestia::engine

@@ -64,7 +64,7 @@ GetTextureCaps()
 
 #ifdef GL_ES
 bool
-needsToRGBAExpansion(PixelFormat format, bool needsMipmap)
+needsRGBAExpansion(PixelFormat format, bool needsMipmap)
 {
     if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
     {
@@ -90,7 +90,7 @@ needsToRGBAExpansion(PixelFormat format, bool needsMipmap)
     }
 }
 
-std::vector<std::uint8_t>
+std::unique_ptr<std::uint8_t[]>
 expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
 {
     if (format == PixelFormat::sLuminance)
@@ -99,7 +99,7 @@ expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
         return expandLuminanceAlphaToRGBA(src, width, height);
 
     // RGB → RGBA
-    std::vector<std::uint8_t> dst(width * height * 4);
+    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
     for (int i = 0; i < width * height; ++i)
     {
         dst[i * 4 + 0] = src[i * 3 + 0];
@@ -130,7 +130,7 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT5_sRGBA:
         return static_cast<GLenum>(format);
     case PixelFormat::sRGB:
-        if (!needsToRGBAExpansion(format, needsMipmap))
+        if (!needsRGBAExpansion(format, needsMipmap))
         {
             if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
                 return static_cast<GLenum>(PixelFormat::sRGB8);
@@ -185,7 +185,7 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     {
     case PixelFormat::sRGB:
     case PixelFormat::sRGB8:
-        if (!needsToRGBAExpansion(format, needsMipmap))
+        if (!needsRGBAExpansion(format, needsMipmap))
         {
             if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
                 return static_cast<GLenum>(PixelFormat::RGB);
@@ -374,11 +374,11 @@ LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
         else
         {
 #ifdef GL_ES
-            if (needsToRGBAExpansion(img.getFormat(), needsMipmap))
+            if (needsRGBAExpansion(img.getFormat(), needsMipmap))
             {
                 auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
                 glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
-                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.data());
+                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
             }
             else
 #endif
@@ -409,11 +409,11 @@ LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
     else
     {
 #ifdef GL_ES
-        if (needsToRGBAExpansion(img.getFormat(), needsMipmap))
+        if (needsRGBAExpansion(img.getFormat(), needsMipmap))
         {
             auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
             glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
-                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.data());
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
         }
         else
 #endif
