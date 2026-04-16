@@ -362,6 +362,34 @@ void Image::forceLinear()
     format = getLinearFormat(format);
 }
 
+std::unique_ptr<std::uint8_t[]>
+expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
+{
+    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
+    for (std::int32_t i = 0; i < width * height; ++i)
+    {
+        dst[i * 4 + 0] = src[i];
+        dst[i * 4 + 1] = src[i];
+        dst[i * 4 + 2] = src[i];
+        dst[i * 4 + 3] = 255;
+    }
+    return dst;
+}
+
+std::unique_ptr<std::uint8_t[]>
+expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
+{
+    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
+    for (std::int32_t i = 0; i < width * height; ++i)
+    {
+        dst[i * 4 + 0] = src[i * 2];
+        dst[i * 4 + 1] = src[i * 2];
+        dst[i * 4 + 2] = src[i * 2];
+        dst[i * 4 + 3] = src[i * 2 + 1];
+    }
+    return dst;
+}
+
 bool Image::canSave(ContentType type)
 {
     return type == ContentType::PNG || type == ContentType::JPEG;

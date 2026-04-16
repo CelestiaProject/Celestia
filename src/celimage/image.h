@@ -73,4 +73,10 @@ private:
     std::unique_ptr<std::uint8_t[]> pixels;
 };
 
+std::unique_ptr<std::uint8_t[]>
+expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height);
+
+std::unique_ptr<std::uint8_t[]>
+expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height);
+
 } // namespace celestia::engine

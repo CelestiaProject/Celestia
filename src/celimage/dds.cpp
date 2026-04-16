@@ -89,7 +89,10 @@ IsCompressedFormat(PixelFormat format)
 {
     return format == PixelFormat::DXT1 ||
            format == PixelFormat::DXT3 ||
-           format == PixelFormat::DXT5;
+           format == PixelFormat::DXT5 ||
+           format == PixelFormat::DXT1_sRGBA ||
+           format == PixelFormat::DXT3_sRGBA ||
+           format == PixelFormat::DXT5_sRGBA;
 }
 
 PixelFormat
@@ -176,10 +179,13 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
     switch (format)
     {
     case PixelFormat::DXT1:
+    case PixelFormat::DXT1_sRGBA:
         blocksize = 8;
         break;
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT3_sRGBA:
+    case PixelFormat::DXT5_sRGBA:
         blocksize = 16;
         break;
     default:
@@ -199,12 +205,15 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
             switch (format)
             {
             case PixelFormat::DXT1:
+            case PixelFormat::DXT1_sRGBA:
                 DecompressBlockDXT1(x, y, width, block.data(), transparent0, pixels.get());
                 break;
             case PixelFormat::DXT3:
+            case PixelFormat::DXT3_sRGBA:
                 DecompressBlockDXT3(x, y, width, block.data(), transparent0, pixels.get());
                 break;
             case PixelFormat::DXT5:
+            case PixelFormat::DXT5_sRGBA:
                 DecompressBlockDXT5(x, y, width, block.data(), transparent0, pixels.get());
                 break;
             default:
@@ -221,7 +230,7 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
 {
     // DXTc texture not supported, decompress DXTc to RGB/RGBA
     std::unique_ptr<std::uint32_t[]>pixels = nullptr;
-    bool transparent0 = format == PixelFormat::DXT1;
+    bool transparent0 = format == PixelFormat::DXT1 || format == PixelFormat::DXT1_sRGBA;
     if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
     {
         std::uint32_t nw = std::max(ddsd.width, 4u);
