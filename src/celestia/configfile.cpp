@@ -201,6 +201,7 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     renderDetails.SolarSystemMaxDistance = std::clamp(renderDetails.SolarSystemMaxDistance, 1.0f, 10.0f);
     applyNumber(renderDetails.ShadowMapSize, hash, "ShadowMapSize"sv);
     applyStringArray(renderDetails.ignoreGLExtensions, hash, "IgnoreGLExtensions"sv);
+    applyBoolean(renderDetails.sRGBRendering, hash, "SRGBRendering"sv);
 }
 
 void

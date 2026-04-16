@@ -1255,7 +1255,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                 continue;
 
             if (tintColors == nullptr)
-                ls.color = legacyTintColor(temp).linearize();
+                ls.color = legacyTintColor(temp).linearize(gl::sRGBRendering);
             else
             {
                 float fadeFactor = temp < FADE_POINT
@@ -1458,7 +1458,7 @@ void Renderer::render(const Observer& observer,
     // Calculate saturation magnitude
     satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale;
 
-    ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel).linearize();
+    ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel).linearize(gl::sRGBRendering);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1995,7 +1995,7 @@ setupObjectLighting(const vector<LightSource>& suns,
             ls.lights[i].direction_eye = toIllum.cast<float>();
             ls.lights[i].direction_eye.normalize();
             ls.lights[i].irradiance = maxIrr;
-            ls.lights[i].color = secondaryIlluminators[maxIrrSource].body->getSurface().color.linearize();
+            ls.lights[i].color = secondaryIlluminators[maxIrrSource].body->getSurface().color.linearize(gl::sRGBRendering);
             ls.lights[i].apparentSize = 0.0f;
             ls.lights[i].castsShadows = false;
             i++;
@@ -2023,16 +2023,45 @@ setupObjectLighting(const vector<LightSource>& suns,
 
     Matrix3f m = objOrientation.toRotationMatrix();
 
-    // Normalize light source irradiance so the brightest light is ~1.0.
-    ls.nLights = 0;
-    for (i = 0; i < nLights; i++)
+    if (gl::sRGBRendering)
     {
-        ls.lights[i].irradiance /= totalIrradiance;
+        // Normalize light source irradiance so the brightest light is ~1.0.
+        ls.nLights = 0;
+        for (i = 0; i < nLights; i++)
+        {
+            ls.lights[i].irradiance /= totalIrradiance;
 
-        // Compute the direction of the light in object space
-        ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
+            // Compute the direction of the light in object space
+            ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
 
-        ls.nLights++;
+            ls.nLights++;
+        }
+    }
+    else
+    {
+        // Compute a gamma factor to make dim light sources visible.  This is
+        // intended to approximate what we see with our eyes--for example,
+        // Earth-shine is visible on the night side of the Moon, even though
+        // the amount of reflected light from the Earth is 1/10000 of what
+        // the Moon receives directly from the Sun.
+        float minVisibleFraction = 1.0f / 10000.0f;
+        float minDisplayableValue = 1.0f / 255.0f;
+        float gamma = log(minDisplayableValue) / log(minVisibleFraction);
+        float minVisibleIrradiance = minVisibleFraction * totalIrradiance;
+
+        // Gamma scale and normalize the light sources; cull light sources that
+        // aren't bright enough to contribute the final pixels rendered into the
+        // frame buffer.
+        ls.nLights = 0;
+        for (i = 0; i < nLights && ls.lights[i].irradiance > minVisibleIrradiance; i++)
+        {
+            ls.lights[i].irradiance = pow(ls.lights[i].irradiance / totalIrradiance, gamma);
+
+            // Compute the direction of the light in object space
+            ls.lights[i].direction_obj = m * ls.lights[i].direction_eye;
+
+            ls.nLights++;
+        }
     }
 
     Matrix3f invScale = objScale.cwiseInverse().asDiagonal();
@@ -2166,11 +2195,11 @@ void Renderer::renderObject(const Vector3f& pos,
     if (ri.baseTex == nullptr ||
         (obj.surface->appearanceFlags & Surface::BlendTexture) != 0)
     {
-        ri.color = obj.surface->color.linearize();
+        ri.color = obj.surface->color.linearize(gl::sRGBRendering);
     }
 
     ri.ambientColor = ambientColor;
-    ri.specularColor = obj.surface->specularColor.linearize();
+    ri.specularColor = obj.surface->specularColor.linearize(gl::sRGBRendering);
     ri.specularPower = obj.surface->specularPower;
     ri.lunarLambert = obj.surface->lunarLambert;
 
@@ -2831,7 +2860,7 @@ void Renderer::renderPlanet(Body& body,
 
     if (body.isVisibleAsPoint())
     {
-        const auto& surfaceColor = body.getSurface().color.linearize();
+        const auto surfaceColor = body.getSurface().color.linearize(gl::sRGBRendering);
         if (float maxCoeff = surfaceColor.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
             renderObjectAsPoint(pos,

@@ -2516,13 +2516,6 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
             viewportEffects.push_back(std::move(effect));
     }
 
-    // Apply sRGB output correction via software post-process.
-    // The SRGBViewportEffect shader performs the linear→sRGB conversion
-    // as the final rendering step, keeping the pipeline consistent across
-    // all GL variants without relying on GL_FRAMEBUFFER_SRGB or
-    // platform-specific sRGB surface negotiation.
-    viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>("srgb", true));
-
     if (!config->measurementSystem.empty())
     {
         if (compareIgnoringCase(config->measurementSystem, "imperial") == 0)
@@ -2624,6 +2617,28 @@ LoadFontHelper(const Renderer *renderer, const std::filesystem::path &p)
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
+    // Resolve the effective sRGB rendering flag.
+    // On GLES 2.0, sRGB requires the EXT_sRGB extension.
+    // GLES 3.0+ has native sRGB support.
+    gl::sRGBRendering = config->renderDetails.sRGBRendering;
+#ifdef GL_ES
+    if (gl::sRGBRendering && !gl::checkVersion(gl::GLES_3_0) && !gl::EXT_sRGB)
+    {
+        GetLogger()->warn("sRGB rendering requested but GL_EXT_sRGB is not available; disabling.\n");
+        gl::sRGBRendering = false;
+    }
+#endif
+
+    if (gl::sRGBRendering)
+    {
+        // Apply sRGB output correction via software post-process.
+        // The SRGBViewportEffect shader performs the linear→sRGB conversion
+        // as the final rendering step, keeping the pipeline consistent across
+        // all GL variants without relying on GL_FRAMEBUFFER_SRGB or
+        // platform-specific sRGB surface negotiation.
+        viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>("srgb", true));
+    }
+
     renderer->setRenderFlags(RenderFlags::ShowStars |
                              RenderFlags::ShowPlanets |
                              RenderFlags::ShowAtmospheres |
@@ -2654,7 +2669,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
         return false;
     }
 
-    renderer->colors = renderer->colors.linearize();
+    renderer->colors = renderer->colors.linearize(gl::sRGBRendering);
     m_scriptMaps.initColorMaps(renderer->colors);
 
     if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
