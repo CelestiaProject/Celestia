@@ -117,8 +117,9 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
  *     SemiMajorAxis <number>
  *     PericenterDistance <number>
  *
- *     # Required
+ *     # One of the following is required:
  *     Period <number>
+ *     AnomalisticPeriod <number>
  *
  *     Eccentricity <number>   (default: 0.0)
  *     Inclination <degrees>   (default: 0.0)
@@ -134,18 +135,19 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
  *     MeanAnomaly <degrees>     (default: 0.0)
  *     MeanLongitude <degrees>   (default: 0.0)
  * 
- *     # For precessing orbits (default unit is Julian years):
+ *     # One or both of the following for a precessing orbit:
  *     # Default values result in no precession
  *     NodalPrecessionPeriod <number>   (default: 0.0)
  *     ApsidalPrecessionPeriod <number> (default: 0.0)
  * } \endcode
  *
  * If usePlanetUnits is true:
- *     Period is in Julian years
+ *     Period or AnomalisticPeriod is in Julian years
  *     SemiMajorAxis or PericenterDistance is in AU
  * Otherwise:
- *     Period is in Julian days
+ *     Period or AnomalisticPeriod is in Julian days
  *     SemiMajorAxis or PericenterDistance is in kilometers.
+ * The default unit for precession periods is Julian years.
  */
 std::shared_ptr<const ephem::Orbit>
 CreateKeplerianOrbit(const AssociativeArray* orbitData,
@@ -188,6 +190,9 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
         return nullptr;
     }
 
+    elements.nodalPeriod = orbitData->getTime<double>("NodalPrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
+    elements.apsidalPeriod = orbitData->getTime<double>("ApsidalPrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
+
     if (auto periodValue = orbitData->getTime<double>("Period", 1.0, timeScale); periodValue.has_value())
     {
         elements.period = *periodValue;
@@ -197,15 +202,26 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
             return nullptr;
         }
     }
+    else if (auto anomPeriodValue = orbitData->getTime<double>("AnomalisticPeriod", 1.0, timeScale); anomPeriodValue.has_value())
+    {
+        double periodCorrection = 0.0;
+        if (elements.nodalPeriod != 0.0)
+            periodCorrection += 1.0 / elements.nodalPeriod;
+        if (elements.apsidalPeriod != 0.0)
+            periodCorrection += 1.0 / elements.apsidalPeriod;
+
+        elements.period = 1.0 / (1.0 / *anomPeriodValue + periodCorrection);
+        if (elements.period == 0.0)
+        {
+            GetLogger()->error("AnomalisticPeriod cannot be zero.\n");
+            return nullptr;
+        }
+    }
     else
     {
         GetLogger()->error("Period must be specified in EllipticalOrbit.\n");
         return nullptr;
     }
-
-    elements.nodalPeriod = orbitData->getTime<double>("NodalPrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
-
-    elements.apsidalPeriod = orbitData->getTime<double>("ApsidalPrecessionPeriod", 1.0, astro::DAYS_PER_YEAR).value_or(0.0);
 
     elements.inclination = orbitData->getAngle<double>("Inclination").value_or(0.0);
 
@@ -238,9 +254,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
     if (elements.eccentricity < 1.0)
     {
         if (elements.nodalPeriod == 0.0 && elements.apsidalPeriod == 0.0)
-        {
             return std::make_shared<ephem::EllipticalOrbit>(elements, epoch);
-        }
 
         return std::make_shared<ephem::PrecessingOrbit>(elements, epoch);
     }
