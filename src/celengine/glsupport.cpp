@@ -27,6 +27,7 @@ CELAPI GLint maxPointSize                  = 0;
 CELAPI GLint maxTextureSize                = 0;
 CELAPI GLfloat maxLineWidth                = 0.0f;
 CELAPI GLint maxTextureAnisotropy          = 0;
+CELAPI bool sRGBRendering                  = false;
 
 namespace
 {

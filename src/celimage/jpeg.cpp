@@ -219,7 +219,9 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // Here we use the library's state variable cinfo.output_scanline as the
     // loop counter, so that we don't have to keep track ourselves.
 
-    PixelFormat format = PixelFormat::RGB;
+    // JPEG color images are always sRGB-encoded; grayscale channels are
+    // treated as linear (they're typically used as height/alpha data).
+    PixelFormat format = PixelFormat::sRGB;
     if (cinfo.output_components == 1)
         format = PixelFormat::Luminance;
 

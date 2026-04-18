@@ -20,6 +20,7 @@
 
 #include <celmath/vecgl.h>
 #include <celutil/color.h>
+#include "glsupport.h"
 
 enum class ColorTableType
 {
@@ -37,12 +38,12 @@ class ColorTemperatureTable
     Color lookupColor(float temp) const
     {
         assert(temp >= 0.0f);
-        
-        float colorTableIndex = std::nearbyint(temp * tempScale);
-        if (colorTableIndex >= static_cast<float>(colors.size()))
-            return colors.back();
 
-        return colors[static_cast<std::size_t>(colorTableIndex)];
+        float colorTableIndex = std::nearbyint(temp * tempScale);
+        Color c = colorTableIndex >= static_cast<float>(colors.size())
+            ? colors.back()
+            : colors[static_cast<std::size_t>(colorTableIndex)];
+        return c.linearize(celestia::gl::sRGBRendering);
     }
 
     Color lookupTintColor(float temp, float saturation, float fadeFactor) const

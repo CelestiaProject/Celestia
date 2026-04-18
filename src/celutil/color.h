@@ -139,6 +139,14 @@ class Color
                      linearizeScalar(blue()),
                      alpha());
     }
+
+    // Conditionally linearize: when \p enabled is true, returns linearize();
+    // otherwise returns *this unchanged.  Convenience for call sites that
+    // gate linearization on a runtime sRGB-rendering flag.
+    Color linearize(bool enabled) const noexcept
+    {
+        return enabled ? linearize() : *this;
+    }
 };
 
 constexpr bool operator==(Color a, Color b)

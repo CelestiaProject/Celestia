@@ -58,6 +58,7 @@ extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR
 extern CELAPI GLfloat maxLineWidth; //NOSONAR
 extern CELAPI GLint maxTextureAnisotropy; //NOSONAR
+extern CELAPI bool sRGBRendering; //NOSONAR
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
