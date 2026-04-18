@@ -274,6 +274,12 @@ Eigen::Vector3d Orbit::velocityAtTime(double tdb) const
 }
 
 
+const Orbit* Orbit::getOrbitForSampling(double /*t*/, bool /*isFadingEnabled*/) const
+{
+    return this;
+}
+
+
 EllipticalOrbitBase::EllipticalOrbitBase(const astro::KeplerElements& _elements, double _epoch) :
     semiMajorAxis(_elements.semimajorAxis),
     eccentricity(_elements.eccentricity),
@@ -392,6 +398,12 @@ Eigen::Vector3d EllipticalOrbit::velocityAtTime(double t) const
 }
 
 
+void EllipticalOrbit::setOrientation(const Eigen::Matrix3d& _orbitPlaneRotation)
+{
+    orbitPlaneRotation = _orbitPlaneRotation;
+}
+
+
 PrecessingOrbit::PrecessingOrbit(const astro::KeplerElements& _elements, double _epoch) :
     EllipticalOrbitBase(_elements, _epoch),
     longAscendingNodeAtEpoch(_elements.longAscendingNode),
@@ -475,6 +487,40 @@ Eigen::Vector3d PrecessingOrbit::velocityAtTime(double t) const
     double E = eccentricAnomaly(meanAnomaly);
 
     return velocityAtE(E, longAscendingNode, argPericenter, meanMotion);
+}
+
+
+// For precessing orbits, get the osculating orbit when fading is disabled
+const Orbit* PrecessingOrbit::getOrbitForSampling(double t, bool isFadingEnabled) const
+{
+    if (!isFadingEnabled)
+    {
+        t = t - epoch;
+        double meanMotion = 2.0 * celestia::numbers::pi / period;
+        double nodalPrecessionRate = nodalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / -nodalPeriod : 0.0;
+        double apsidalPrecessionRate = apsidalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / apsidalPeriod : 0.0;
+
+        double longAscendingNode = longAscendingNodeAtEpoch + t * nodalPrecessionRate;
+        double argPericenter = argPericenterAtEpoch + t * apsidalPrecessionRate;
+        double meanAnomaly = meanAnomalyAtEpoch + t * (meanMotion - apsidalPrecessionRate - nodalPrecessionRate);
+
+        astro::KeplerElements elements;
+        elements.semimajorAxis = semiMajorAxis;
+        elements.eccentricity = eccentricity;
+        elements.meanAnomaly = meanAnomaly;
+        elements.period = period;
+
+        Eigen::Matrix3d orbitPlaneRotation = (math::ZRotation(longAscendingNode) *
+                                              inclinationRotation *
+                                              math::ZRotation(argPericenter)).toRotationMatrix();
+
+        auto* orbit = new EllipticalOrbit(elements, t);
+        orbit->setOrientation(orbitPlaneRotation);
+
+        return orbit;
+    }
+
+    return this;
 }
 
 

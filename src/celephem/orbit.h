@@ -42,6 +42,8 @@ public:
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
 
+    virtual const Orbit* getOrbitForSampling(double, bool) const;
+
     virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
 
     virtual bool isPeriodic() const { return true; };
@@ -99,6 +101,8 @@ public:
     Eigen::Vector3d positionAtTime(double) const override;
     Eigen::Vector3d velocityAtTime(double) const override;
 
+    void setOrientation(const Eigen::Matrix3d& _orbitPlaneRotation);
+
 private:
     Eigen::Vector3d positionAtE(double) const;
     Eigen::Vector3d velocityAtE(double, double) const;
@@ -116,6 +120,7 @@ public:
     // Compute the orbit for a specified Julian date
     Eigen::Vector3d positionAtTime(double) const override;
     Eigen::Vector3d velocityAtTime(double) const override;
+    const Orbit* getOrbitForSampling(double t, bool isFadingEnabled) const override;
 
 private:
     Eigen::Vector3d positionAtE(double, double, double) const;
