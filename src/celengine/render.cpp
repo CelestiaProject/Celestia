@@ -962,8 +962,11 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
     const Body* body = orbitPath.body;
     double nearZ = -nearDist;  // negate, becase z is into the screen in camera space
     double farZ = -farDist;
+    bool isFadingEnabled = util::is_set(renderFlags, RenderFlags::ShowFadingOrbits);
 
-    const auto* orbit = body != nullptr ? body->getOrbit(t) : orbitPath.star->getOrbit();
+    const auto* orbit = body != nullptr ?
+                        body->getOrbit(t)->getOrbitForSampling(t, isFadingEnabled) :
+                        orbitPath.star->getOrbit()->getOrbitForSampling(t, isFadingEnabled);
 
     CurvePlot* cachedOrbit = nullptr;
     if (auto cached = orbitCache.lower_bound(orbit);
@@ -1134,7 +1137,7 @@ void Renderer::renderOrbit(const OrbitPathListEntry& orbitPath,
         double windowStart = windowEnd - period * OrbitPeriodsShown;
         double windowDuration = windowEnd - windowStart;
 
-        if (LinearFadeFraction == 0.0f || !util::is_set(renderFlags, RenderFlags::ShowFadingOrbits))
+        if (LinearFadeFraction == 0.0f || !isFadingEnabled)
         {
             cachedOrbit->render(modelview,
                                 nearZ, farZ, viewFrustumPlaneNormals,

@@ -42,6 +42,8 @@ public:
     virtual double getPeriod() const = 0;
     virtual double getBoundingRadius() const = 0;
 
+    virtual const Orbit* getOrbitForSampling(double, bool) const;
+
     virtual void sample(double startTime, double endTime, OrbitSampleProc& proc) const;
 
     virtual bool isPeriodic() const { return true; };
@@ -67,7 +69,29 @@ protected:
 };
 
 
-class EllipticalOrbit final : public Orbit
+class EllipticalOrbitBase : public Orbit
+{
+public:
+    ~EllipticalOrbitBase() override = default;
+
+    double getPeriod() const override;
+    double getBoundingRadius() const override;
+
+protected:
+    EllipticalOrbitBase(const astro::KeplerElements&, double _epoch = 2451545.0);
+
+    double eccentricAnomaly(double) const;
+
+    double semiMajorAxis;
+    double semiMinorAxis;
+    double eccentricity;
+    double meanAnomalyAtEpoch;
+    double period;
+    double epoch;
+};
+
+
+class EllipticalOrbit final : public EllipticalOrbitBase
 {
 public:
     EllipticalOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
@@ -76,22 +100,38 @@ public:
     // Compute the orbit for a specified Julian date
     Eigen::Vector3d positionAtTime(double) const override;
     Eigen::Vector3d velocityAtTime(double) const override;
-    double getPeriod() const override;
-    double getBoundingRadius() const override;
+
+    void setOrientation(const Eigen::Matrix3d& _orbitPlaneRotation);
 
 private:
-    double eccentricAnomaly(double) const;
     Eigen::Vector3d positionAtE(double) const;
     Eigen::Vector3d velocityAtE(double, double) const;
 
-    double semiMajorAxis;
-    double semiMinorAxis;
-    double eccentricity;
-    double meanAnomalyAtEpoch;
-    double period;
-    double epoch;
-
     Eigen::Matrix3d orbitPlaneRotation;
+};
+
+
+class PrecessingOrbit final : public EllipticalOrbitBase
+{
+public:
+    PrecessingOrbit(const astro::KeplerElements&, double _epoch = 2451545.0);
+    ~PrecessingOrbit() override = default;
+
+    // Compute the orbit for a specified Julian date
+    Eigen::Vector3d positionAtTime(double) const override;
+    Eigen::Vector3d velocityAtTime(double) const override;
+    const Orbit* getOrbitForSampling(double t, bool isFadingEnabled) const override;
+
+private:
+    Eigen::Vector3d positionAtE(double, double, double) const;
+    Eigen::Vector3d velocityAtE(double, double, double, double) const;
+
+    double longAscendingNodeAtEpoch;
+    double argPericenterAtEpoch;
+    double nodalPeriod;
+    double apsidalPeriod;
+
+    Eigen::Quaterniond inclinationRotation;
 };
 
 

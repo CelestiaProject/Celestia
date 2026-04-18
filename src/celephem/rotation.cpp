@@ -276,7 +276,9 @@ PrecessingRotationModel::getPeriod() const
 Eigen::Quaterniond
 PrecessingRotationModel::spin(double tjd) const
 {
-    double rotations = (tjd - epoch) / period;
+    // Correct the sidereal rotation period for precession of the node
+    double periodCorrection = precessionPeriod != 0.0 ? 1.0 / precessionPeriod : 0.0;
+    double rotations = (tjd - epoch) / (1.0 / (1.0 / period - periodCorrection));
     double wholeRotations = std::floor(rotations);
     double remainder = rotations - wholeRotations;
 
