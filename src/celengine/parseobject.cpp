@@ -206,7 +206,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
     {
         double periodCorrection = 0.0;
         if (elements.nodalPeriod != 0.0)
-            periodCorrection += 1.0 / elements.nodalPeriod;
+            periodCorrection -= 1.0 / elements.nodalPeriod;
         if (elements.apsidalPeriod != 0.0)
             periodCorrection += 1.0 / elements.apsidalPeriod;
 
