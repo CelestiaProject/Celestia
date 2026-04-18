@@ -10,6 +10,8 @@
 
 #include "astro.h"
 
+#include <algorithm>
+
 #include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 
@@ -317,13 +319,13 @@ StateVectorToElements(const Eigen::Vector3d& r,
         // handle face-on orbit: by convention Omega = 0.0
         if (result.eccentricity >= tolerance)
         {
-            result.argPericenter = std::acos(evec.x() / result.eccentricity);
+            result.argPericenter = std::acos(std::clamp(evec.x() / result.eccentricity, -1.0, 1.0));
             negateIf(result.argPericenter, evec.z() >= 0.0);
         }
     }
     else
     {
-        result.longAscendingNode = std::acos(nvec.x() / nNorm);
+        result.longAscendingNode = std::acos(std::clamp(nvec.x() / nNorm, -1.0, 1.0));
         negateIf(result.longAscendingNode, nvec.z() >= 0.0);
         if (result.eccentricity >= tolerance)
         {
