@@ -20,6 +20,7 @@ enum class LengthUnit : std::uint8_t
     Default = 0,
     Kilometer,
     Meter,
+    Centimeter,
     EarthRadius,
     JupiterRadius,
     SolarRadius,
