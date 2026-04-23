@@ -29,7 +29,8 @@ Configuration
 #------------------------------------------------------------------------
   StarDatabase                 "data/stars.dat"
   StarNameDatabase             "data/starnames.dat"
-  StarCatalogs               [ "data/stars-charm2.stc"
+  StarCatalogs               [ "data/stars-named.stc"
+                               "data/stars-charm2.stc"
                                "data/stars-visualbins.stc"
                                "data/stars-spectbins.stc"
                                "data/whitedwarfs.stc"
