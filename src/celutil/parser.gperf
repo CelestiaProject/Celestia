@@ -10,6 +10,7 @@ struct UnitsMapEntry { const char* name; MeasurementUnit unit; };
 # Length units
 "km",     astro::LengthUnit::Kilometer
 "m",      astro::LengthUnit::Meter
+"cm",     astro::LengthUnit::Centimeter
 "rE",     astro::LengthUnit::EarthRadius
 "rJ",     astro::LengthUnit::JupiterRadius
 "rS",     astro::LengthUnit::SolarRadius
