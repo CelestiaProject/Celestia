@@ -224,23 +224,25 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
                                       float fwhm,
                                       float power)
 {
-    unsigned int size = 1U << log2size;
-    float sigma = fwhm / 2.3548f;
-    float isig2 = 1.0f / (2.0f * sigma * sigma);
+    const unsigned int size = 1U << log2size;
+    const float sigma = fwhm / 2.3548f;
+    const float isig2 = 1.0f / (2.0f * sigma * sigma);
     // Store 1/sqrt(2*pi) in constexpr sfactor
     constexpr auto sfactor = static_cast<float>(0.5 * celestia::numbers::sqrt2 * celestia::numbers::inv_sqrtpi);
-    float s = sfactor / sigma;
+    const float s = sfactor / sigma;
 
-    for (unsigned int i = 0; i < size; i++)
+    const float center = static_cast<float>(size - 1U) * 0.5f;
+    for (unsigned int i = 0U; i < size; ++i)
     {
-        float y = (float) i - size / 2;
-        for (unsigned int j = 0; j < size; j++)
+        float y = static_cast<float>(i) - center;
+        for (unsigned int j = 0U; j < size; ++j)
         {
-            float x = (float) j - size / 2;
+            float x = static_cast<float>(j) - center;
             float r2 = x * x + y * y;
             float f = s * std::exp(-r2 * isig2) * power;
 
-            mipPixels[i * size + j] = (unsigned char) (255.99f * std::min(f, 1.0f));
+            constexpr float colorScale = 0x1.fffffep+7f; // next float below 256
+            mipPixels[i * size + j] = static_cast<unsigned char>(colorScale * std::min(f, 1.0f));
         }
     }
 }
@@ -251,17 +253,18 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
                                float scale,
                                float base)
 {
-    unsigned int size = 1U << log2size;
-
-    for (unsigned int i = 0; i < size; i++)
+    const unsigned int size = 1U << log2size;
+    const float center = static_cast<float>(size - 1U) * 0.5f;
+    for (unsigned int i = 0U; i < size; ++i)
     {
-        float y = (float) i - size / 2;
-        for (unsigned int j = 0; j < size; j++)
+        float y = static_cast<float>(i) - center;
+        for (unsigned int j = 0U; j < size; ++j)
         {
-            float x = (float) j - size / 2;
-            float r = std::sqrt(x * x + y * y);
+            float x = static_cast<float>(j) - center;
+            float r = std::hypot(x, y);
             float f = std::pow(base, r * scale);
-            mipPixels[i * size + j] = (unsigned char) (255.99f * std::min(f, 1.0f));
+            constexpr float colorScale = 0x1.fffffep+7f; // next float below 256
+            mipPixels[i * size + j] = static_cast<unsigned char>(colorScale * std::min(f, 1.0f));
         }
     }
 }
@@ -299,18 +302,18 @@ static std::unique_ptr<Texture>
 BuildGaussianDiscTexture(unsigned int log2size)
 {
     unsigned int size = 1U << log2size;
-    auto img = std::make_unique<Image>(PixelFormat::Luminance, size, size, log2size + 1);
+    Image img(PixelFormat::Luminance, size, size, log2size + 1);
 
-    for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
+    for (unsigned int mipLevel = 0; mipLevel <= log2size; ++mipLevel)
     {
         float fwhm = std::exp2(static_cast<float>(log2size - mipLevel)) * 0.3f;
-        BuildGaussianDiscMipLevel(img->getMipLevel(mipLevel),
+        BuildGaussianDiscMipLevel(img.getMipLevel(mipLevel),
                                   log2size - mipLevel,
                                   fwhm,
                                   std::exp2(static_cast<float>(log2size - mipLevel)));
     }
 
-    return std::make_unique<ImageTexture>(*img,
+    return std::make_unique<ImageTexture>(img,
                                           Texture::EdgeClamp,
                                           Texture::DefaultMipMaps);
 }
@@ -319,7 +322,7 @@ static std::unique_ptr<Texture>
 BuildGaussianGlareTexture(unsigned int log2size)
 {
     unsigned int size = 1U << log2size;
-    auto img = std::make_unique<Image>(PixelFormat::Luminance, size, size, log2size + 1);
+    Image img(PixelFormat::Luminance, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
@@ -332,7 +335,7 @@ BuildGaussianGlareTexture(unsigned int log2size)
                                   fwhm,
                                   power);
 #endif
-        BuildGlareMipLevel(img->getMipLevel(mipLevel),
+        BuildGlareMipLevel(img.getMipLevel(mipLevel),
                            log2size - mipLevel,
                            25.0f / std::exp2(static_cast<float>(log2size - mipLevel)),
                            0.66f);
@@ -343,7 +346,7 @@ BuildGaussianGlareTexture(unsigned int log2size)
 #endif
     }
 
-    return std::make_unique<ImageTexture>(*img,
+    return std::make_unique<ImageTexture>(img,
                                           Texture::EdgeClamp,
                                           Texture::DefaultMipMaps);
 }
