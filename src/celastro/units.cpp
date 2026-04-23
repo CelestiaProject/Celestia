@@ -24,6 +24,7 @@ getLengthScale(LengthUnit unit)
     {
     case LengthUnit::Kilometer: return 1.0;
     case LengthUnit::Meter: return 1e-3;
+    case LengthUnit::Centimeter: return 1e-5;
     case LengthUnit::EarthRadius: return EARTH_RADIUS<double>;
     case LengthUnit::JupiterRadius: return JUPITER_RADIUS<double>;
     case LengthUnit::SolarRadius: return SOLAR_RADIUS<double>;
