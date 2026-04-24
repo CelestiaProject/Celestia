@@ -141,91 +141,141 @@ ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
     return bestFormat;
 }
 
+bool
+SetPreferredPixelFormat(HDC hDC, int aaSamples)
+{
+    PIXELFORMATDESCRIPTOR pfd;
+
+    int ifmtList[] = {
+        WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+        WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+        WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
+        WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
+        WGL_DEPTH_BITS_ARB,     24,
+        WGL_COLOR_BITS_ARB,     24,
+        WGL_SAMPLE_BUFFERS_ARB, aaSamples > 1 ? GL_TRUE : GL_FALSE,
+        0 // end
+    };
+
+    int             pixelFormatIndex;
+    int             pixFormats[256];
+    unsigned int    numFormats;
+
+    wglChoosePixelFormatARB(hDC, ifmtList, NULL, 256, pixFormats, &numFormats);
+
+    pixelFormatIndex = ChooseBestMSAAPixelFormat(hDC, pixFormats,
+                                                 numFormats,
+                                                 aaSamples);
+
+    DescribePixelFormat(hDC, pixelFormatIndex,
+                        sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
+    return SetPixelFormat(hDC, pixelFormatIndex, &pfd);
+}
+
 // Select the pixel format for a given device context
 bool
 SetDCPixelFormat(HDC hDC, const CelestiaCore* appCore)
 {
-    bool msaa = false;
-    if (appCore->getConfig()->renderDetails.aaSamples > 1 &&
-        epoxy_has_wgl_extension(hDC, "WGL_ARB_pixel_format") &&
-        epoxy_has_wgl_extension(hDC, "WGL_ARB_multisample"))
+    // We can't check WGL extensions without having an OpenGL context
+    // So create a dummy context
+    bool result = false;
+    WNDCLASS dummyClass;
+    HWND dummyWindow;
+    HDC dummyDC;
+    PIXELFORMATDESCRIPTOR pfd;
+    int dummyPixelFormat;
+    HGLRC dummyContext;
+    int aaSamples;
+
+    dummyClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    dummyClass.lpfnWndProc = &DefWindowProc;
+    dummyClass.cbClsExtra = 0;
+    dummyClass.cbWndExtra = 0;
+    dummyClass.hInstance = GetModuleHandle(nullptr);
+    dummyClass.hIcon = nullptr;
+    dummyClass.hCursor = nullptr;
+    dummyClass.hbrBackground = nullptr;
+    dummyClass.lpszMenuName = nullptr;
+    dummyClass.lpszClassName = L"Celestia-dummy-OpenGL";
+
+    if (RegisterClass(&dummyClass) == 0)
+        return result;
+
+    dummyWindow = CreateWindow(
+        dummyClass.lpszClassName,
+        L"Celestia OpenGL feature detection",
+        0,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        nullptr, nullptr,
+        dummyClass.hInstance,
+        0);
+    if (!dummyWindow)
+        goto unregisterDummyClass;
+
+    dummyDC = GetDC(dummyWindow);
+    if (!dummyDC)
+        goto destroyWindow;
+
+    pfd.nSize = static_cast<WORD>(sizeof(PIXELFORMATDESCRIPTOR));
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = static_cast<BYTE>(GetDeviceCaps(dummyDC, BITSPIXEL));
+    pfd.cRedBits = 0;
+    pfd.cRedShift = 0;
+    pfd.cGreenBits = 0;
+    pfd.cGreenShift = 0;
+    pfd.cBlueBits = 0;
+    pfd.cBlueShift = 0;
+    pfd.cAlphaBits = 8;
+    pfd.cAlphaShift = 0;
+    pfd.cAccumBits = 0;
+    pfd.cAccumRedBits = 0;
+    pfd.cAccumGreenBits = 0;
+    pfd.cAccumBlueBits = 0;
+    pfd.cAccumAlphaBits = 0;
+    pfd.cDepthBits = 24;
+    pfd.cStencilBits = 8;
+    pfd.cAuxBuffers = 0;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+    pfd.bReserved = 0;
+    pfd.dwLayerMask = 0;
+    pfd.dwVisibleMask = 0;
+    pfd.dwDamageMask = 0;
+
+    dummyPixelFormat = ChoosePixelFormat(dummyDC, &pfd);
+    if (!dummyPixelFormat || !SetPixelFormat(dummyDC, dummyPixelFormat, &pfd))
+        goto releaseDC;
+
+    dummyContext = wglCreateContext(dummyDC);
+    if (!dummyContext)
+        goto releaseDC;
+
+    if (!wglMakeCurrent(dummyDC, dummyContext) ||
+        !epoxy_has_wgl_extension(dummyDC, "WGL_ARB_pixel_format"))
     {
-        msaa = true;
+        goto destroyContext;
     }
 
-    if (!msaa)
-    {
-        static PIXELFORMATDESCRIPTOR pfd = {
-            sizeof(PIXELFORMATDESCRIPTOR),    // Size of this structure
-            1,                // Version of this structure
-            PFD_DRAW_TO_WINDOW |    // Draw to Window (not to bitmap)
-            PFD_SUPPORT_OPENGL |    // Support OpenGL calls in window
-            PFD_DOUBLEBUFFER,        // Double buffered mode
-            PFD_TYPE_RGBA,        // RGBA Color mode
-            (BYTE)GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
-            0,0,0,0,0,0,          // Not used to select mode
-            0,0,            // Not used to select mode
-            0,0,0,0,0,            // Not used to select mode
-            24,                // Size of depth buffer
-            0,                // Not used to select mode
-            0,                // Not used to select mode
-            PFD_MAIN_PLANE,             // Draw in main plane
-            0,                          // Not used to select mode
-            0,0,0                       // Not used to select mode
-        };
+    aaSamples = epoxy_has_wgl_extension(dummyDC, "WGL_ARB_multisample")
+        ? static_cast<int>(appCore->getConfig()->renderDetails.aaSamples)
+        : 1;
 
-        // Choose a pixel format that best matches that described in pfd
-        int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
-        if (nPixelFormat == 0)
-        {
-            // Uh oh . . . looks like we can't handle OpenGL on this device.
-            return false;
-        }
-        else
-        {
-            // Set the pixel format for the device context
-            SetPixelFormat(hDC, nPixelFormat, &pfd);
-            return true;
-        }
-    }
-    else
-    {
-        PIXELFORMATDESCRIPTOR pfd;
+    result = SetPreferredPixelFormat(hDC, aaSamples);
 
-        int ifmtList[] = {
-            WGL_DRAW_TO_WINDOW_ARB, TRUE,
-            WGL_SUPPORT_OPENGL_ARB, TRUE,
-            WGL_DOUBLE_BUFFER_ARB,  TRUE,
-            WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
-            WGL_DEPTH_BITS_ARB,     24,
-            WGL_COLOR_BITS_ARB,     24,
-            WGL_RED_BITS_ARB,       8,
-            WGL_GREEN_BITS_ARB,     8,
-            WGL_BLUE_BITS_ARB,      8,
-            WGL_ALPHA_BITS_ARB,     0,
-            WGL_ACCUM_BITS_ARB,     0,
-            WGL_STENCIL_BITS_ARB,   0,
-            WGL_SAMPLE_BUFFERS_ARB, appCore->getConfig()->renderDetails.aaSamples > 1,
-            0
-        };
-
-        int             pixelFormatIndex;
-        int             pixFormats[256];
-        unsigned int    numFormats;
-
-        wglChoosePixelFormatARB(hDC, ifmtList, NULL, 256, pixFormats, &numFormats);
-
-        pixelFormatIndex = ChooseBestMSAAPixelFormat(hDC, pixFormats,
-                                                     numFormats,
-                                                     appCore->getConfig()->renderDetails.aaSamples);
-
-        DescribePixelFormat(hDC, pixelFormatIndex,
-                            sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-        if (!SetPixelFormat(hDC, pixelFormatIndex, &pfd))
-            return false;
-
-        return true;
-    }
+destroyContext:
+    wglMakeCurrent(dummyDC, nullptr);
+    wglDeleteContext(dummyContext);
+releaseDC:
+    ReleaseDC(dummyWindow, dummyDC);
+destroyWindow:
+    DestroyWindow(dummyWindow);
+unregisterDummyClass:
+    UnregisterClass(dummyClass.lpszClassName, dummyClass.hInstance);
+    return result;
 }
 
 bool
