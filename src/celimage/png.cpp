@@ -103,9 +103,9 @@ GetPixelFormat(png_structp pngPtr, png_const_infop infoPtr, int bitDepth, int co
     switch (colorType)
     {
     case PNG_COLOR_TYPE_GRAY:
-        return PixelFormat::Luminance;
+        return isLinear ? PixelFormat::Luminance : PixelFormat::sLuminance;
     case PNG_COLOR_TYPE_GRAY_ALPHA:
-        return PixelFormat::LumAlpha;
+        return isLinear ? PixelFormat::LumAlpha : PixelFormat::sLumAlpha;
     case PNG_COLOR_TYPE_RGB:
         return isLinear ? PixelFormat::RGB : PixelFormat::sRGB;
     case PNG_COLOR_TYPE_RGB_ALPHA:
