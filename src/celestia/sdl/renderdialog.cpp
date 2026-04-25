@@ -107,7 +107,7 @@ miscellaneousPanel(Renderer* renderer)
     ImGui::Text("Render path: OpenGL");
 #endif
 
-    enumCheckbox("Anti-aliased lines", rf, RenderFlags::ShowSmoothLines);
+    enumCheckbox("Anti-aliased lines", rfNew, RenderFlags::ShowSmoothLines);
 
     if (rfNew != rf)
         renderer->setRenderFlags(rfNew);
