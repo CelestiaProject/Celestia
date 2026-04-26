@@ -27,6 +27,7 @@ namespace celestia::sdl
 
 using UniqueWindow = util::UniquePtrDel<SDL_Window, &SDL_DestroyWindow>;
 
+class Alerter;
 class Gui;
 class Settings;
 
@@ -35,7 +36,13 @@ class AppWindow //NOSONAR
     struct Private { explicit Private() = default; };
 
 public:
-    AppWindow(Private, const std::shared_ptr<Environment>&, UniqueWindow&&, UniqueGLContext&&, bool);
+    AppWindow(Private,
+              const std::shared_ptr<Environment>&,
+              std::unique_ptr<CelestiaCore>&&,
+              std::unique_ptr<Alerter>&&,
+              UniqueWindow&&,
+              UniqueGLContext&&,
+              bool);
     ~AppWindow();
 
     void dumpGLInfo() const;
@@ -47,8 +54,6 @@ public:
     inline bool isFullscreen() const { return m_isFullscreen; }
 
 private:
-    class Alerter;
-
     void handleTextInputEvent(const SDL_TextInputEvent&);
     void handleKeyDownEvent(const SDL_KeyboardEvent&);
     void handleKeyUpEvent(const SDL_KeyboardEvent&);

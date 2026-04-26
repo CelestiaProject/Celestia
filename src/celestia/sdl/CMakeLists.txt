@@ -40,6 +40,8 @@ target_include_directories(imgui PUBLIC "${IMGUI_DIR}" "${IMGUI_DIR}/backends" "
 set(SDL_SOURCES
     aboutdialog.cpp
     aboutdialog.h
+    alerter.cpp
+    alerter.h
     appwindow.cpp
     appwindow.h
     clipboard.cpp

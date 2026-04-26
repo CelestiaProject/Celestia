@@ -382,7 +382,7 @@ StarTextures
 # 1. "Asterism": The lines connecting the stars in the constellation.
 # 2. "Boundary": The boundary of the constellation.
 # 3. "Label": The name of the constellation.
-# 
+#
 # "FadeStartDist" ->
 # The maximum distance of the observer to the origin of coordinates
 # before the specified component starts to linearly fade out.
@@ -410,7 +410,7 @@ StarTextures
 # rendering speed.  4 is a sensible setting for recent, higher-end
 # graphics hardware; 2 is probably better mid-range graphics.  The
 # default value is 1, which disables antialiasing.
-# AntialiasingSamples        4
+  AntialiasingSamples        4
 
 
 #------------------------------------------------------------------------

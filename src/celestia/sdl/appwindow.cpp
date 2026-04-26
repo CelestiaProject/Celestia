@@ -27,6 +27,7 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include <celutil/tzutil.h>
+#include "alerter.h"
 #include "clipboard.h"
 #include "gui.h"
 #include "settings.h"
@@ -135,33 +136,21 @@ mainRunLoopHandler(void* arg)
 
 } // end unnamed namespace
 
-class AppWindow::Alerter : public CelestiaCore::Alerter
-{
-public:
-    explicit Alerter(SDL_Window* win) : window(win) {}
-
-    void fatalError(const std::string& msg) override;
-
-private:
-    SDL_Window* window;
-};
-
-void
-AppWindow::Alerter::fatalError(const std::string& msg)
-{
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", msg.c_str(), window);
-}
-
 AppWindow::AppWindow(Private,
                      const std::shared_ptr<Environment>& environment,
+                     std::unique_ptr<CelestiaCore>&& celestiaCore,
+                     std::unique_ptr<Alerter>&& alerter,
                      UniqueWindow&& window,
                      UniqueGLContext&& context,
                      bool isFullscreen) :
     m_environment(environment),
     m_window(std::move(window)),
     m_context(std::move(context)),
+    m_appCore(std::move(celestiaCore)),
+    m_alerter(std::move(alerter)),
     m_isFullscreen(isFullscreen)
 {
+    m_alerter->setWindow(m_window.get());
 }
 
 AppWindow::~AppWindow() = default;
@@ -190,12 +179,6 @@ AppWindow::dumpGLInfo() const
 bool
 AppWindow::run(const Settings& settings)
 {
-    m_appCore = std::make_unique<CelestiaCore>();
-    m_alerter = std::make_unique<Alerter>(m_window.get());
-    m_appCore->setAlerter(m_alerter.get());
-    if (!m_appCore->initSimulation())
-        return false;
-
     m_appCore->initRenderer(settings.textureResolution);
 
     auto renderer = m_appCore->getRenderer();

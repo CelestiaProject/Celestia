@@ -10,9 +10,11 @@
 #include <cerrno>
 #include <cstdlib>
 #include <system_error>
+#include <utility>
 
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
+#include "alerter.h"
 #include "appwindow.h"
 #include "environment.h"
 #include "settings.h"
@@ -68,7 +70,14 @@ main(int argc, char **argv)
     if (!environment)
         return EXIT_FAILURE;
 
-    if (!environment->setGLAttributes())
+    auto celestiaCore = std::make_unique<CelestiaCore>();
+    auto alerter = std::make_unique<celestia::sdl::Alerter>();
+    celestiaCore->setAlerter(alerter.get());
+
+    if (!celestiaCore->initSimulation())
+        return EXIT_FAILURE;
+
+    if (!environment->setGLAttributes(celestiaCore->getConfig()->renderDetails.aaSamples))
         return EXIT_FAILURE;
 
     std::filesystem::path dataDir = getDataDir();
@@ -80,7 +89,7 @@ main(int argc, char **argv)
 
     Settings settings = Settings::load(environment->getSettingsPath());
 
-    auto window = environment->createAppWindow(settings);
+    auto window = environment->createAppWindow(settings, std::move(celestiaCore), std::move(alerter));
     if (!window)
         return EXIT_FAILURE;
 
