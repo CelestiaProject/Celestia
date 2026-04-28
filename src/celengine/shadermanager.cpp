@@ -152,6 +152,7 @@ constexpr std::string_view LineVertexPosition = R"glsl(
     vec2 transform = normalize(nextPos.xy - thisPos.xy);
     transform = vec2(transform.y * lineWidthX, -transform.x * lineWidthY) * in_ScaleFactor;
     gl_Position = vec4((thisPos.xy + transform) * thisPos.w, thisPos.zw);
+    lineU = in_LineSide;
 )glsl"sv;
 
 std::string_view
@@ -964,14 +965,25 @@ StaticPointSize()
     return source;
 }
 
-static std::string
+std::string
 LineDeclaration()
 {
     std::string source;
     source += DeclareAttribute("in_PositionNext", Shader_Vector4);
     source += DeclareAttribute("in_ScaleFactor", Shader_Float);
+    source += DeclareAttribute("in_LineSide", Shader_Float);
     source += DeclareUniform("lineWidthX", Shader_Float);
     source += DeclareUniform("lineWidthY", Shader_Float);
+    source += DeclareOutput("lineU", Shader_Float);
+    return source;
+}
+
+std::string
+LineFragmentDeclaration()
+{
+    std::string source;
+    source += DeclareInput("lineU", Shader_Float);
+    source += DeclareUniform("lineEdge", Shader_Float);
     return source;
 }
 
@@ -1031,6 +1043,7 @@ BindAttribLocations(const GLProgramBuilder& prog)
     prog.bindAttribute(CelestiaGLProgram::IntensityAttributeIndex,     "in_Intensity");
     prog.bindAttribute(CelestiaGLProgram::NextVCoordAttributeIndex,    "in_PositionNext");
     prog.bindAttribute(CelestiaGLProgram::ScaleFactorAttributeIndex,   "in_ScaleFactor");
+    prog.bindAttribute(CelestiaGLProgram::LineSideAttributeIndex,      "in_LineSide");
     prog.bindAttribute(CelestiaGLProgram::TangentAttributeIndex,       "in_Tangent");
     prog.bindAttribute(CelestiaGLProgram::PointSizeAttributeIndex,     "in_PointSize");
 }
@@ -1400,11 +1413,26 @@ R"glsl(
 GLFragmentShader
 buildFragmentShader(const ShaderProperties& props)
 {
+    // Whether the analytical line-edge AA path is available. Desktop GL has
+    // fwidth() in core (#version 110+); GLSL ES 1.0 needs the optional
+    // GL_OES_standard_derivatives extension. If the extension is missing on
+    // a GLES2 device we fall back silently to the original (unaliased)
+    // triangulated lines.
+    const bool emitLineAA = util::is_set(props.texUsage, TexUsage::LineAsTriangles)
+#ifdef GL_ES
+                            && gl::OES_standard_derivatives
+#endif
+        ;
+
     std::string source(VersionHeader);
     // Without GL_ARB_shader_texture_lod enabled one can use texture2DLod
     // in vertext shaders only
     if (gl::ARB_shader_texture_lod)
         source += "#extension GL_ARB_shader_texture_lod : enable\n";
+#ifdef GL_ES
+    if (emitLineAA)
+        source += "#extension GL_OES_standard_derivatives : enable\n";
+#endif
     source += CommonHeader;
 
     std::string diffTexCoord("diffTexCoord");
@@ -1490,6 +1518,9 @@ buildFragmentShader(const ShaderProperties& props)
 
     if (props.usePointSize())
         source += DeclareInput("pointFade", Shader_Float);
+
+    if (emitLineAA)
+        source += LineFragmentDeclaration();
 
     if (props.hasShadowMap())
     {
@@ -1745,6 +1776,16 @@ buildFragmentShader(const ShaderProperties& props)
         source += DeclareLocal("scatterColor", Shader_Vector3);
         source += AtmosphericEffects(props);
         source += "gl_FragColor.rgb = gl_FragColor.rgb * scatterEx + scatterColor;\n";
+    }
+
+    if (emitLineAA)
+    {
+        // Analytical edge anti-aliasing. Geometry is inflated 1px past the
+        // visible edge (lineEdge < 1.0). Feather is 1px wide centered on the
+        // visible edge — fwidth(lineU) is ~2/inflatedPx, so 0.5*fwidth gives
+        // a half-pixel half-width.
+        source += "float lineHalfPx = fwidth(lineU) * 0.5;\n";
+        source += "gl_FragColor.a *= 1.0 - smoothstep(lineEdge - lineHalfPx, lineEdge + lineHalfPx, abs(lineU));\n";
     }
 
     source += "}\n";
@@ -2960,6 +3001,7 @@ CelestiaGLProgram::initParameters()
     {
         lineWidthX           = floatParam("lineWidthX");
         lineWidthY           = floatParam("lineWidthY");
+        lineEdge             = floatParam("lineEdge");
     }
 }
 

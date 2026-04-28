@@ -228,6 +228,7 @@ public:
         IntensityAttributeIndex     = 9,
         NextVCoordAttributeIndex    = 10,
         ScaleFactorAttributeIndex   = 11,
+        LineSideAttributeIndex      = 12,
     };
 
     CelestiaGLProgramLight lights[MaxShaderLights];
@@ -292,6 +293,9 @@ public:
     // Used to draw line as triangles
     FloatShaderParameter lineWidthX;
     FloatShaderParameter lineWidthY;
+    // Position of the visible edge in lineU varying space (visibleHalf / inflatedHalf).
+    // Used by the analytical AA in the fragment shader.
+    FloatShaderParameter lineEdge;
 
     // Color sent as a uniform
     Vec4ShaderParameter color;

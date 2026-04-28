@@ -101,8 +101,36 @@ LineRenderer::setup_shader()
 
     if (m_useTriangles)
     {
-        m_prog->lineWidthX = m_width * width_multiplyer() * m_renderer.getPointWidth();
-        m_prog->lineWidthY = m_width * width_multiplyer() * m_renderer.getPointHeight();
+        // The fragment-shader analytical AA needs fwidth(), which is core on
+        // desktop GL but optional on GLES2. If the extension isn't there,
+        // skip the inflation and emit the visible width — the FS in that
+        // build won't reference lineEdge either, so we fall back to the
+        // pre-AA behavior cleanly.
+#ifdef GL_ES
+        const bool aaSupported = celestia::gl::OES_standard_derivatives;
+#else
+        const bool aaSupported = true;
+#endif
+        if (aaSupported)
+        {
+            // Inflate the rendered quad by 1 device pixel on each side so the
+            // analytical AA in the fragment shader has room to fade to zero
+            // before hitting the geometry boundary. lineEdge tells the FS where
+            // the visible edge sits inside the inflated quad (in lineU space,
+            // which spans [-1, +1] across the inflated width).
+            float visiblePx    = rasterized_width();
+            float inflateRatio = (visiblePx + 2.0f) / visiblePx;
+            float w = m_width * width_multiplyer() * inflateRatio;
+            m_prog->lineWidthX = w * m_renderer.getPointWidth();
+            m_prog->lineWidthY = w * m_renderer.getPointHeight();
+            m_prog->lineEdge   = 1.0f / inflateRatio;
+        }
+        else
+        {
+            float w =  m_width * width_multiplyer();
+            m_prog->lineWidthX = w * m_renderer.getPointWidth();
+            m_prog->lineWidthY = w * m_renderer.getPointHeight();
+        }
     }
     else
     {
@@ -166,7 +194,7 @@ LineRenderer::create_vbo_triangles()
     m_trBO = std::make_unique<gl::Buffer>();
 
     GLsizei                    stride;
-    std::array<std::size_t, 4> offset;
+    std::array<std::size_t, 5> offset;
     if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
     {
         stride = static_cast<GLsizei>(sizeof(LineSegment));
@@ -175,6 +203,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineSegment, point1),
             offsetof(LineSegment, point2),
             offsetof(LineSegment, scale),
+            offsetof(LineSegment, side),
             offsetof(LineSegment, point1) + offsetof(Vertex, color)
         };
 
@@ -189,6 +218,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineVertex, point),
             2 * stride + offsetof(LineVertex, point),
             offsetof(LineVertex, scale),
+            offsetof(LineVertex, side),
             offsetof(LineVertex, point) + offsetof(Vertex, color)
         };
 
@@ -219,6 +249,14 @@ LineRenderer::create_vbo_triangles()
         false,
         stride,
         static_cast<GLsizeiptr>(offset[2]));
+    m_trVO->addVertexBuffer(
+        *m_trBO,
+        CelestiaGLProgram::LineSideAttributeIndex,
+        1,
+        gl::VertexObject::DataType::Float,
+        false,
+        stride,
+        static_cast<GLsizeiptr>(offset[3]));
     if (color_count() != 0)
     {
         m_trVO->addVertexBuffer(
@@ -228,7 +266,7 @@ LineRenderer::create_vbo_triangles()
             color_type() == VF_UBYTE ? gl::VertexObject::DataType::UnsignedByte : gl::VertexObject::DataType::Float,
             color_type() == VF_UBYTE,
             stride,
-            static_cast<GLsizeiptr>(offset[3]));
+            static_cast<GLsizeiptr>(offset[4]));
     }
 }
 
@@ -269,15 +307,22 @@ LineRenderer::setup_vbo()
 }
 
 //! Add new triagles for a line segment (when primitive is Lines).
+//!
+//! Vertices for the (point2)-end use a reversed (this, next) pair so that
+//! the vertex shader can compute a tangent direction from in_PositionNext -
+//! in_Position. That reverses the perpendicular as well, so a `scale` of
+//! -0.5 at point2 actually puts the vertex on the "+" physical side of the
+//! line. The `side` argument is the *physical* side regardless of that
+//! tangent flip and is what the AA shader interpolates as `lineU`.
 void
 LineRenderer::add_segment_points(const Vertex &point1, const Vertex &point2)
 {
-    m_segments.emplace_back(point1, point2, -0.5f);
-    m_segments.emplace_back(point1, point2,  0.5f);
-    m_segments.emplace_back(point2, point1, -0.5f);
-    m_segments.emplace_back(point2, point1, -0.5f);
-    m_segments.emplace_back(point2, point1,  0.5f);
-    m_segments.emplace_back(point1, point2, -0.5f);
+    m_segments.emplace_back(point1, point2, -0.5f, -1.0f); // P1, "-" side
+    m_segments.emplace_back(point1, point2,  0.5f,  1.0f); // P1, "+" side
+    m_segments.emplace_back(point2, point1, -0.5f,  1.0f); // P2, "+" side (tangent flipped)
+    m_segments.emplace_back(point2, point1, -0.5f,  1.0f); // P2, "+" side
+    m_segments.emplace_back(point2, point1,  0.5f, -1.0f); // P2, "-" side
+    m_segments.emplace_back(point1, point2, -0.5f, -1.0f); // P1, "-" side
 }
 
 //! Convert line segments into triangles.

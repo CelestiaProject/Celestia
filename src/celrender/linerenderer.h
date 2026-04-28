@@ -225,28 +225,38 @@ public:
     void render(const Matrices &mvp, const Color &color, int count, int offset = 0);
 
 private:
-    //! LineVertex is used to draw lines with triangles with GL_TRIANGLE_STRIP
+    //! LineVertex is used to draw lines with triangles with GL_TRIANGLE_STRIP.
+    //! `side` is the signed normalized perpendicular position used by the AA
+    //! shader (-1 / +1 for the two physical edges of the line). It is tracked
+    //! separately from `scale` because close_strip flips `scale` on the last
+    //! two vertices to compensate for a reversed tangent — but the *physical*
+    //! side of those vertices is unchanged, so `side` must stay put.
     struct LineVertex
     {
         LineVertex(const Vertex &point, float scale) :
             point(point),
-            scale(scale)
+            scale(scale),
+            side(scale * 2.0f)
         {}
         Vertex point;
         float  scale;
+        float  side;
     };
 
-    //! LineSegment is used to draw lines with triangles with GL_TRIANGLES
+    //! LineSegment is used to draw lines with triangles with GL_TRIANGLES.
+    //! See LineVertex for why `side` is tracked separately from `scale`.
     struct LineSegment
     {
-        LineSegment(const Vertex &point1, const Vertex &point2, float scale) :
+        LineSegment(const Vertex &point1, const Vertex &point2, float scale, float side) :
             point1(point1),
             point2(point2),
-            scale(scale)
+            scale(scale),
+            side(side)
         {}
         Vertex point1;
         Vertex point2;
         float  scale;
+        float  side;
     };
 
     void draw_lines(int count, int offset) const;
