@@ -40,6 +40,7 @@ enum Version
 };
 
 extern CELAPI bool ARB_shader_texture_lod; //NOSONAR
+extern CELAPI bool ARB_texture_compression_bptc; //NOSONAR
 extern CELAPI bool EXT_texture_compression_s3tc; //NOSONAR
 extern CELAPI bool EXT_texture_filter_anisotropic; //NOSONAR
 extern CELAPI bool MESA_pack_invert; //NOSONAR

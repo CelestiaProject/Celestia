@@ -52,6 +52,7 @@ effectiveFormat(PixelFormat format)
     case PixelFormat::DXT1_sRGBA: return PixelFormat::DXT1;
     case PixelFormat::DXT3_sRGBA: return PixelFormat::DXT3;
     case PixelFormat::DXT5_sRGBA: return PixelFormat::DXT5;
+    case PixelFormat::BC7_sRGBA:  return PixelFormat::BC7;
     default:                      return format;
     }
 }
@@ -188,6 +189,7 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
+    case PixelFormat::BC7:
     case PixelFormat::sLumAlpha:
     case PixelFormat::sLuminance:
     case PixelFormat::sRGB:
@@ -195,6 +197,7 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT1_sRGBA:
     case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5_sRGBA:
+    case PixelFormat::BC7_sRGBA:
         return static_cast<GLenum>(format);
     default:
         return GL_NONE;
@@ -245,6 +248,7 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
+    case PixelFormat::BC7:
         return static_cast<GLenum>(format);
     case PixelFormat::sLumAlpha:
         return static_cast<GLenum>(PixelFormat::LumAlpha);
@@ -262,6 +266,8 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
         return static_cast<GLenum>(PixelFormat::DXT3);
     case PixelFormat::DXT5_sRGBA:
         return static_cast<GLenum>(PixelFormat::DXT5);
+    case PixelFormat::BC7_sRGBA:
+        return static_cast<GLenum>(PixelFormat::BC7);
     default:
         return GL_NONE;
     }
