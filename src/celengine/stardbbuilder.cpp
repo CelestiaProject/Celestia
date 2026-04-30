@@ -528,8 +528,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                 // Astronomical Society of Canada, Vol 92. p36.
 
                 double logT = std::log10(static_cast<double>(*temperature)) - 4.0;
-                double bc = -8.499 * std::pow(logT, 4) + 13.421 * std::pow(logT, 3)
-                            - 8.131 * logT * logT - 3.901 * logT - 0.438;
+                double bc = -0.438 + logT * (-3.901 + logT * (-8.131 + logT * (13.421 - logT * 8.499)));
 
                 StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
             }
