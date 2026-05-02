@@ -828,17 +828,29 @@ static int observer_getspeed(lua_State* l)
     return 1;
 }
 
+// observer:setfov(fov [, syncZoom])
+//
+// Sets the observer's field of view (radians). When `syncZoom` is true
+// (the default), also runs CelestiaCore::setZoomFromFOV so each view's
+// zoom field is recomputed from its FOV via the projection mode -- this
+// is the long-standing celx behavior. Pass `false` to skip the sync,
+// matching the legacy `set{name "FOV"}` cel command which only writes
+// Observer::fov and leaves Observer::zoom alone.
 static int observer_setfov(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 2, "One argument expected to observer:setfov()");
+    celx.checkArgs(2, 3, "One or two arguments expected to observer:setfov(fov [, syncZoom])");
 
     Observer* obs = this_observer(l);
     double fov = celx.safeGetNumber(2, AllErrors, "Argument to observer:setfov() must be a number");
+    bool syncZoom = celx.safeGetBoolean(3, WrongType,
+                                        "Second argument to observer:setfov() must be a boolean",
+                                        true);
     if ((fov >= 0.001_deg) && (fov <= 120.0_deg))
     {
-        obs->setFOV((float) fov);
-        celx.appCore(AllErrors)->setZoomFromFOV();
+        obs->setFOV(static_cast<float>(fov));
+        if (syncZoom)
+            celx.appCore(AllErrors)->setZoomFromFOV();
     }
     return 0;
 }
