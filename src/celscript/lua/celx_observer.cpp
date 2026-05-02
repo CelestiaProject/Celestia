@@ -414,15 +414,12 @@ static int observer_gotolonglat(lua_State* l)
     return 0;
 }
 
-// observer:gotolocation(position [, rotation] [, duration])
+// observer:gotolocation(position [, duration [, rotation]])
 //
-// Travels to `position` over `duration` seconds, optionally also rotating
-// to a final `rotation`. Equivalent to the legacy gotoloc{} command,
-// including its xrot/yrot/zrot Euler form (build the rotation script-side
-// as an intrinsic-XYZ chain of celestia:newrotation factories).
-//
-// For backward compatibility the second argument may be either a Rotation
-// or a number (treated as the duration, the original 2-argument form).
+// Travels to `position` over `duration` seconds (default 5), optionally
+// also rotating to a final `rotation`. Equivalent to the legacy gotoloc{}
+// command, including its xrot/yrot/zrot Euler form (build the rotation
+// script-side as an intrinsic-XYZ chain of celestia:newrotation factories).
 //
 // NOTE: `position` is interpreted in the observer's *current* reference
 // frame, not in universal coordinates -- this matches the legacy gotoloc
@@ -449,22 +446,15 @@ static int observer_gotolocation(lua_State* l)
         return 0;
     }
 
-    Quaterniond orientation = o->getOrientation();
-    int durationArg = 3;
-
-    // Disambiguate the optional second argument: a Rotation userdata
-    // means "final orientation", a number means "duration" (legacy form).
-    if (Quaterniond* rot = celx.toRotation(3); rot != nullptr)
-    {
-        orientation = *rot;
-        durationArg = 4;
-    }
-
-    double travelTime = celx.safeGetNumber(durationArg, WrongType,
-                                           "Duration argument to observer:gotolocation must be a number",
+    double travelTime = celx.safeGetNumber(3, WrongType,
+                                           "Second argument to observer:gotolocation must be a number",
                                            5.0);
     if (travelTime < 0)
         travelTime = 0.0;
+
+    Quaterniond orientation = o->getOrientation();
+    if (Quaterniond* rot = celx.toRotation(4); rot != nullptr)
+        orientation = *rot;
 
     o->gotoLocation(*uc, orientation, travelTime);
 
@@ -496,7 +486,7 @@ static int observer_gotodistance(lua_State* l)
     double travelTime = celx.safeGetNumber(4, WrongType, "Third arg to observer:gotodistance must be a number", 5.0);
 
     Vector3f up = Vector3f::UnitY();
-    if (lua_gettop(l) > 4 && !lua_isnil(l, 5))
+    if (lua_gettop(l) > 4)
     {
         auto up_arg = celx.toVector(5);
         if (up_arg == nullptr)
