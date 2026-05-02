@@ -244,6 +244,47 @@ double LuaState::getTime() const
 }
 
 
+void LuaState::addTimedAction(double duration, TimedActionFn fn)
+{
+    if (duration > 0.0 && fn)
+        timedActions.push_back({ duration, std::move(fn) });
+}
+
+
+void LuaState::clearTimedActions()
+{
+    timedActions.clear();
+}
+
+
+void LuaState::processTimedActions(double dt)
+{
+    if (dt <= 0.0 || timedActions.empty())
+        return;
+
+    // Iterate by index; the step closure is allowed to mutate the list
+    // (e.g. cancelMotion via cancelgoto clears it), so re-check size each
+    // iteration and stop if we fall off the end.
+    for (std::size_t i = 0; i < timedActions.size(); )
+    {
+        TimedAction& a = timedActions[i];
+        const double step = (dt < a.remaining) ? dt : a.remaining;
+        if (a.fn)
+            a.fn(step);
+        // The closure may have invoked clearTimedActions() during the
+        // call, in which case the queue is now empty.
+        if (i >= timedActions.size())
+            break;
+        TimedAction& b = timedActions[i];
+        b.remaining -= step;
+        if (b.remaining <= 0.0)
+            timedActions.erase(timedActions.begin() + i);
+        else
+            ++i;
+    }
+}
+
+
 // Check if the running script has exceeded its allowed timeslice
 // and terminate it if it has:
 static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
@@ -802,6 +843,12 @@ bool LuaState::tick(double dt)
 
         return false;
     }
+
+    // Drive any in-flight timed observer commands (moveover/rotateover/...)
+    // before deciding whether to resume the coroutine. They have to keep
+    // running while the script is sleeping inside its own wait(), which is
+    // exactly what the legacy TimedCommand model does in Execution::tick.
+    processTimedActions(dt);
 
     if (dt == 0 || scriptAwakenTime > getTime())
         return false;

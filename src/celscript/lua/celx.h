@@ -12,6 +12,7 @@
 #pragma once
 
 #include <filesystem>
+#include <functional>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -79,6 +80,14 @@ public:
     bool callLuaHook(void* obj, const char* method, float x, float y, int b);
     bool callLuaHook(void* obj, const char* method, double dt);
 
+    // Per-frame timed actions, used by the legacy-style timed observer
+    // commands (moveover/rotateover/orbitover/changedistanceover). Each
+    // action is invoked once per frame from tick() until its remaining
+    // duration is exhausted, mirroring the legacy TimedCommand semantics.
+    using TimedActionFn = std::function<void(double dt)>;
+    void addTimedAction(double duration, TimedActionFn fn);
+    void clearTimedActions();
+
     enum class IOMode
     {
         NotDetermined  = 1,
@@ -88,6 +97,14 @@ public:
     };
 
 private:
+    void processTimedActions(double dt);
+
+    struct TimedAction
+    {
+        double remaining;
+        TimedActionFn fn;
+    };
+
     lua_State* state;
     lua_State* costate{ nullptr }; // coroutine stack
     bool alive{ false };
@@ -95,6 +112,7 @@ private:
     double scriptAwakenTime{ 0.0 };
     IOMode ioMode{ IOMode::NotDetermined };
     bool eventHandlerEnabled{ false };
+    std::vector<TimedAction> timedActions;
 };
 
 celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);

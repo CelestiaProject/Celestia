@@ -1020,6 +1020,49 @@ static int celestia_getfaintestvisible(lua_State* l)
     return 1;
 }
 
+// celestia:setfaintest(mag)
+//
+// Set the simulation's faintest-visible-magnitude (the value used when
+// AutoMag is off), unconditionally and without clamping. Equivalent to
+// the legacy setvisibilitylimit{} command. Note: celestia:setfaintestvisible
+// branches on the current AutoMag state and clamps -- prefer this one
+// when you specifically want the non-AutoMag handle.
+static int celestia_setfaintest(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintest()");
+    CelestiaCore* appCore = this_celestia(l);
+    float mag = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors,
+                                                      "Argument to celestia:setfaintest() must be a number"));
+    appCore->setFaintest(mag);
+    return 0;
+}
+
+// celestia:setfaintestam45deg(mag)
+//
+// Set the renderer's faintest-visible magnitude at 45-degree FOV (the
+// value used when AutoMag is on), unconditionally and without clamping.
+// Equivalent to the legacy setfaintestautomag45deg{} command. Unlike
+// celestia:setfaintestvisible, this works even when AutoMag is currently
+// off, so scripts can prime the value before flipping AutoMag on.
+static int celestia_setfaintestam45deg(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestam45deg()");
+    CelestiaCore* appCore = this_celestia(l);
+    float mag = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors,
+                                                      "Argument to celestia:setfaintestam45deg() must be a number"));
+    appCore->getRenderer()->setFaintestAM45deg(mag);
+    return 0;
+}
+
+// celestia:getfaintestam45deg()
+static int celestia_getfaintestam45deg(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestam45deg()");
+    const CelestiaCore* appCore = this_celestia(l);
+    lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
+    return 1;
+}
+
 static int celestia_setgalaxylightgain(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setgalaxylightgain()");
@@ -2566,6 +2609,9 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
     Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
     Celx_RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    Celx_RegisterMethod(l, "setfaintest", celestia_setfaintest);
+    Celx_RegisterMethod(l, "setfaintestam45deg", celestia_setfaintestam45deg);
+    Celx_RegisterMethod(l, "getfaintestam45deg", celestia_getfaintestam45deg);
     Celx_RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
     Celx_RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
     Celx_RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
