@@ -2388,7 +2388,7 @@ static int celestia_isplayingaudio(lua_State* l)
 static int celestia_playaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
-    Celx_CheckArgs(l, 3, 7, "Function celestia:playaudio requires two to seven arguments");
+    Celx_CheckArgs(l, 3, 8, "Function celestia:playaudio requires two to seven arguments");
     int channel = celestia_getchannel(l, "First argument for celestia:playaudio must be a number");
 
     const char* path = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:playaudio must be a string");
@@ -2402,7 +2402,7 @@ static int celestia_playaudio(lua_State* l)
     float volume = clamp(static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:playaudio must be a number", static_cast<lua_Number>(defaultAudioVolume))), minAudioVolume, maxAudioVolume);
     float pan = clamp(static_cast<float>(Celx_SafeGetNumber(l, 6, WrongType, "Fifth argument to celestia:playaudio must be a number", static_cast<lua_Number>(defaultAudioPan))), minAudioPan, maxAudioPan);
     bool loop = Celx_SafeGetBoolean(l, 7, WrongType, "Sixth argument to celestia:playaudio must be a boolean", false);
-    bool nopause = Celx_SafeGetBoolean(l, 7, WrongType, "Seventh argument to celestia:playaudio must be a number(nopause)", false);
+    bool nopause = Celx_SafeGetBoolean(l, 8, WrongType, "Seventh argument to celestia:playaudio must be a boolean", false);
     CelestiaCore* appCore = this_celestia(l);
     lua_pushboolean(l, appCore->playAudio(channel, path, startTime, volume, pan, loop, nopause));
 #else
