@@ -333,7 +333,8 @@ class CommandOrbit : public TimedCommand
     void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
-    Eigen::Vector3f spin;
+    float spinMag;
+    Eigen::Vector3f spinAxis;
 };
 
 
@@ -345,7 +346,8 @@ class CommandRotate : public TimedCommand
     void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
-    Eigen::Vector3f spin;
+    float spinMag;
+    Eigen::Vector3f spinAxis;
 };
 
 

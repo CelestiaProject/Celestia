@@ -1072,21 +1072,23 @@ static int observer_rotateover(lua_State* l)
                                      "Third argument to observer:rotateover must be a number");
 
     Vector3f spin = axis->cast<float>() * static_cast<float>(rate);
+    float spinMag = spin.norm();
     CelestiaCore* appCore = celx.appCore(AllErrors);
     LuaState* state = getLuaStateObject(l);
     if (state == nullptr)
         return 0;
 
-    state->addTimedAction(duration, [appCore, o, spin](double dt)
+    if (spinMag != 0.0f)
     {
-        if (getViewByObserver(appCore, o) == nullptr)
-            return;
-        float v = spin.norm();
-        if (v == 0.0f)
-            return;
-        Quaternionf q(AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
-        o->rotate(q);
-    });
+        Vector3f spinAxis = spin / spinMag;
+        state->addTimedAction(duration, [appCore, o, spinMag, spinAxis](double dt)
+        {
+            if (getViewByObserver(appCore, o) == nullptr)
+                return;
+            Quaternionf q(AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
+            o->rotate(q);
+        });
+    }
 
     lua_pushnumber(l, duration);
     return lua_yield(l, 1);
@@ -1115,21 +1117,23 @@ static int observer_orbitover(lua_State* l)
                                      "Third argument to observer:orbitover must be a number");
 
     Vector3f spin = axis->cast<float>() * static_cast<float>(rate);
+    float spinMag = spin.norm();
     CelestiaCore* appCore = celx.appCore(AllErrors);
     LuaState* state = getLuaStateObject(l);
     if (state == nullptr)
         return 0;
 
-    state->addTimedAction(duration, [appCore, o, spin](double dt)
+    if (spinMag != 0.0f)
     {
-        if (getViewByObserver(appCore, o) == nullptr)
-            return;
-        float v = spin.norm();
-        if (v == 0.0f)
-            return;
-        Quaternionf q(AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
-        o->orbit(appCore->getSimulation()->getSelection(), q);
-    });
+        Vector3f spinAxis = spin / spinMag;
+        state->addTimedAction(duration, [appCore, o, spinMag, spinAxis](double dt)
+        {
+            if (getViewByObserver(appCore, o) == nullptr)
+                return;
+            Quaternionf q(AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
+            o->orbit(appCore->getSimulation()->getSelection(), q);
+        });
+    }
 
     lua_pushnumber(l, duration);
     return lua_yield(l, 1);

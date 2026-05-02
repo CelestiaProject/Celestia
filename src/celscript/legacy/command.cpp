@@ -362,34 +362,36 @@ void CommandChangeDistance::process(ExecutionEnvironment& env, double /*unused*/
 // Orbit command: rotate about the selected object
 
 CommandOrbit::CommandOrbit(double _duration, const Eigen::Vector3f& axis, float rate) :
-    TimedCommand(_duration),
-    spin(axis * rate)
+    TimedCommand(_duration)
 {
+    Eigen::Vector3f spin = axis * rate;
+    spinMag = spin.norm();
+    spinAxis = spinMag != 0.0f ? Eigen::Vector3f(spin / spinMag) : Eigen::Vector3f::Zero();
 }
 
 void CommandOrbit::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
-    float v = spin.norm();
-    if (v != 0.0f)
+    if (spinMag != 0.0f)
     {
-       auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
-       env.getSimulation()->orbit(q);
+        auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
+        env.getSimulation()->orbit(q);
     }
 }
 
 CommandRotate::CommandRotate(double _duration, const Eigen::Vector3f& axis, float rate) :
-    TimedCommand(_duration),
-    spin(axis * rate)
+    TimedCommand(_duration)
 {
+    Eigen::Vector3f spin = axis * rate;
+    spinMag = spin.norm();
+    spinAxis = spinMag != 0.0f ? Eigen::Vector3f(spin / spinMag) : Eigen::Vector3f::Zero();
 }
 
 void CommandRotate::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
-    float v = spin.norm();
-    if (v != 0.0f)
+    if (spinMag != 0.0f)
     {
-       auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
-       env.getSimulation()->rotate(q);
+        auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
+        env.getSimulation()->rotate(q);
     }
 }
 
