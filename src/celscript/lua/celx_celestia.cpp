@@ -2714,7 +2714,7 @@ static int celestia_log(lua_State* l)
 static int celestia_getparamstring(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to celestia:getparamstring()");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
     const CelestiaConfig* config = appCore->getConfig();
     if (auto params = config->configParams.getHash(); params != nullptr)
