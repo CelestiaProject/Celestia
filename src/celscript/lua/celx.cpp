@@ -267,12 +267,13 @@ void LuaState::processTimedActions(double dt)
     // iteration and stop if we fall off the end.
     for (std::size_t i = 0; i < timedActions.size(); )
     {
-        TimedAction& a = timedActions[i];
+        const TimedAction& a = timedActions[i];
         const double step = (dt < a.remaining) ? dt : a.remaining;
         if (a.fn)
             a.fn(step);
-        // The closure may have invoked clearTimedActions() during the
-        // call, in which case the queue is now empty.
+        // The closure may have invoked clearTimedActions() (or otherwise
+        // mutated the vector and invalidated `a`) during the call, so
+        // re-check the size and take a fresh reference before mutating.
         if (i >= timedActions.size())
             break;
         TimedAction& b = timedActions[i];

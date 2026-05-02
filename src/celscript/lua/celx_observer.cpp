@@ -453,7 +453,7 @@ static int observer_gotolocation(lua_State* l)
         travelTime = 0.0;
 
     Quaterniond orientation = o->getOrientation();
-    if (Quaterniond* rot = celx.toRotation(4); rot != nullptr)
+    if (const Quaterniond* rot = celx.toRotation(4); rot != nullptr)
         orientation = *rot;
 
     o->gotoLocation(*uc, orientation, travelTime);
@@ -1025,7 +1025,7 @@ static int observer_moveover(lua_State* l)
     Observer* o = this_observer(l);
     double duration = celx.safeGetNumber(2, AllErrors,
                                          "First argument to observer:moveover must be a number");
-    Vector3d* v = celx.toVector(3);
+    const Vector3d* v = celx.toVector(3);
     if (v == nullptr)
     {
         celx.doError("Second argument to observer:moveover must be a vector");
@@ -1033,7 +1033,7 @@ static int observer_moveover(lua_State* l)
     }
 
     Vector3d velocity = *v;
-    CelestiaCore* appCore = celx.appCore(AllErrors);
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
     LuaState* state = getLuaStateObject(l);
     if (state == nullptr)
         return 0;
@@ -1062,7 +1062,7 @@ static int observer_rotateover(lua_State* l)
     Observer* o = this_observer(l);
     double duration = celx.safeGetNumber(2, AllErrors,
                                          "First argument to observer:rotateover must be a number");
-    Vector3d* axis = celx.toVector(3);
+    const Vector3d* axis = celx.toVector(3);
     if (axis == nullptr)
     {
         celx.doError("Second argument to observer:rotateover must be a vector");
@@ -1073,7 +1073,7 @@ static int observer_rotateover(lua_State* l)
 
     Vector3f spin = axis->cast<float>() * static_cast<float>(rate);
     float spinMag = spin.norm();
-    CelestiaCore* appCore = celx.appCore(AllErrors);
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
     LuaState* state = getLuaStateObject(l);
     if (state == nullptr)
         return 0;
@@ -1107,7 +1107,7 @@ static int observer_orbitover(lua_State* l)
     Observer* o = this_observer(l);
     double duration = celx.safeGetNumber(2, AllErrors,
                                          "First argument to observer:orbitover must be a number");
-    Vector3d* axis = celx.toVector(3);
+    const Vector3d* axis = celx.toVector(3);
     if (axis == nullptr)
     {
         celx.doError("Second argument to observer:orbitover must be a vector");
@@ -1118,7 +1118,7 @@ static int observer_orbitover(lua_State* l)
 
     Vector3f spin = axis->cast<float>() * static_cast<float>(rate);
     float spinMag = spin.norm();
-    CelestiaCore* appCore = celx.appCore(AllErrors);
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
     LuaState* state = getLuaStateObject(l);
     if (state == nullptr)
         return 0;
@@ -1154,7 +1154,7 @@ static int observer_changedistanceover(lua_State* l)
     double rate = celx.safeGetNumber(3, AllErrors,
                                      "Second argument to observer:changedistanceover must be a number");
 
-    CelestiaCore* appCore = celx.appCore(AllErrors);
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
     LuaState* state = getLuaStateObject(l);
     if (state == nullptr)
         return 0;
@@ -1185,7 +1185,7 @@ static int observer_changeorbitdistance(lua_State* l)
     double d = celx.safeGetNumber(2, AllErrors,
                                   "Argument to observer:changeorbitdistance must be a number");
 
-    CelestiaCore* appCore = celx.appCore(AllErrors);
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
     o->changeOrbitDistance(appCore->getSimulation()->getSelection(), static_cast<float>(d));
     return 0;
 }
