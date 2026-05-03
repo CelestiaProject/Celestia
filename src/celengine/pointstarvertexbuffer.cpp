@@ -33,7 +33,7 @@ PointStarVertexBuffer::PointStarVertexBuffer(const Renderer &renderer,
 
 void PointStarVertexBuffer::startSprites()
 {
-    m_prog = m_renderer.getShaderManager().getShader("star");
+    m_prog = m_renderer.getShaderManager().getShader(StaticShader::Star);
     m_pointSizeFromVertex = true;
 }
 

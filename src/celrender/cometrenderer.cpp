@@ -62,7 +62,7 @@ CometRenderer::initGL()
     if (m_initialized)
         return true;
 
-    m_prog = m_renderer.getShaderManager().getShader("comet");
+    m_prog = m_renderer.getShaderManager().getShader(StaticShader::Comet);
     if (m_prog == nullptr)
         return false;
 

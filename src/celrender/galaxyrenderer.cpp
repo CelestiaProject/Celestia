@@ -197,7 +197,7 @@ GalaxyRenderer::bindTextures()
 void
 GalaxyRenderer::renderGL2()
 {
-    CelestiaGLProgram *prog =  m_renderer.getShaderManager().getShader("galaxy");
+    CelestiaGLProgram *prog =  m_renderer.getShaderManager().getShader(StaticShader::Galaxy);
     if (prog == nullptr)
         return;
 
@@ -352,7 +352,7 @@ void
 GalaxyRenderer::renderGL3()
 {
     ShaderManager::GeomShaderParams params = {GL_POINTS, GL_TRIANGLE_STRIP, 4};
-    CelestiaGLProgram *prog = m_renderer.getShaderManager().getShaderGL3("galaxy150", &params);
+    CelestiaGLProgram *prog = m_renderer.getShaderManager().getShaderGL3(StaticShader::Galaxy150, &params);
     if (prog == nullptr)
         return;
 

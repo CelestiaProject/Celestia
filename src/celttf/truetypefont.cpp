@@ -510,7 +510,7 @@ CelestiaGLProgram *
 TextureFontPrivate::getProgram()
 {
     if (m_prog == nullptr)
-        m_prog = m_renderer->getShaderManager().getShader("text");
+        m_prog = m_renderer->getShaderManager().getShader(StaticShader::Text);
     return m_prog;
 }
 

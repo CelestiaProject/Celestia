@@ -24,7 +24,7 @@ LargeStarRenderer::render(
     float                  size,
     const Matrices        &mvp)
 {
-    auto *prog = m_renderer.getShaderManager().getShader("largestar");
+    auto *prog = m_renderer.getShaderManager().getShader(StaticShader::LargeStar);
     if (prog == nullptr)
         return;
 

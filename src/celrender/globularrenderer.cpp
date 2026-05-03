@@ -530,8 +530,8 @@ GlobularRenderer::render()
     if (m_objects.empty())
         return;
 
-    auto *tidalProg = m_renderer.getShaderManager().getShader("tidal");
-    auto *globProg  = m_renderer.getShaderManager().getShader("globular");
+    auto *tidalProg = m_renderer.getShaderManager().getShader(StaticShader::Tidal);
+    auto *globProg  = m_renderer.getShaderManager().getShader(StaticShader::Globular);
     if (tidalProg == nullptr || globProg == nullptr)
         return;
 

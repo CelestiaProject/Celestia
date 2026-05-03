@@ -113,7 +113,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
         return;
 
     assert(shaderManager != nullptr);
-    auto* prog = shaderManager->getShader("selpointer");
+    auto* prog = shaderManager->getShader(StaticShader::SelPointer);
     if (prog == nullptr)
         return;
 
@@ -173,7 +173,7 @@ Renderer::renderCrosshair(float selectionSizeInPixels,
                           const Matrices &m)
 {
     assert(shaderManager != nullptr);
-    auto* prog = shaderManager->getShader("crosshair");
+    auto* prog = shaderManager->getShader(StaticShader::Crosshair);
     if (prog == nullptr)
         return;
 

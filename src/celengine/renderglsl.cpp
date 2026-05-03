@@ -77,7 +77,7 @@ void renderGeometryShadow_GLSL(RenderGeometry* geometry,
                                Renderer* renderer,
                                Eigen::Matrix4f *lightMatrix)
 {
-    auto *prog = renderer->getShaderManager().getShader("depth");
+    auto *prog = renderer->getShaderManager().getShader(StaticShader::Depth);
     if (prog == nullptr)
         return;
 
@@ -613,7 +613,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 #endif
 
-    if (shadprop.shadowCounts != 0)
+    if (shadprop.usesShadows())
         prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 
     unsigned int attributes = LODSphereMesh::Normals;

@@ -50,6 +50,30 @@ constexpr E operator~(E f)                                              \
     return static_cast<E>(~static_cast<std::underlying_type_t<E>>(f));  \
 }
 
+#define ENUM_CLASS_BITSHIFT_OPS(E)                                      \
+constexpr E& operator<<=(E& f1, int f2)                                 \
+{                                                                       \
+    using type = std::underlying_type_t<E>;                             \
+    f1 = static_cast<E>(static_cast<type>(f1) << f2);                   \
+    return f1;                                                          \
+}                                                                       \
+constexpr E& operator>>=(E& f1, int f2)                                 \
+{                                                                       \
+    using type = std::underlying_type_t<E>;                             \
+    f1 = static_cast<E>(static_cast<type>(f1) << f2);                   \
+    return f1;                                                          \
+}                                                                       \
+constexpr E operator<<(E f1, int f2)                                    \
+{                                                                       \
+    f1 <<= f2;                                                          \
+    return f1;                                                          \
+}                                                                       \
+constexpr E operator>>(E f1, int f2)                                    \
+{                                                                       \
+    f1 >>= f2;                                                          \
+    return f1;                                                          \
+}
+
 namespace celestia::util
 {
 

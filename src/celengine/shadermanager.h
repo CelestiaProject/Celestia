@@ -12,10 +12,10 @@
 #include <array>
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -26,6 +26,24 @@
 
 struct Atmosphere;
 class LightingState;
+
+enum class StaticShader
+{
+    Comet = 0,
+    Crosshair,
+    Depth,
+    Galaxy,
+    Galaxy150,
+    Globular,
+    LargeStar,
+    Passthrough,
+    SelPointer,
+    Star,
+    Text,
+    Tidal,
+    WarpMesh,
+    _Count,
+};
 
 enum class TexUsage : std::uint32_t
 {
@@ -84,9 +102,24 @@ enum class FisheyeOverrideMode : int
     Disabled = 2,
 };
 
-class ShaderProperties
+enum class ShadowMask : std::uint32_t
 {
-public:
+    None       = 0,
+    Eclipse    = 0x3,
+    Ring       = 0x4,
+    Self       = 0x8,
+    Cloud      = 0x10,
+    AnyEclipse = 0x03030303,
+    AnyRing    = 0x04040404,
+    AnySelf    = 0x08080808,
+    AnyCloud   = 0x10101010,
+};
+
+ENUM_CLASS_BITWISE_OPS(ShadowMask)
+ENUM_CLASS_BITSHIFT_OPS(ShadowMask)
+
+struct ShaderProperties
+{
     ShaderProperties() = default;
     bool usesShadows() const;
     bool usesTangentSpaceLighting() const;
@@ -126,26 +159,9 @@ public:
     //   Bit  2,   on if there are ring shadows
     //   Bit  3,   on for self shadowing
     //   Bit  4,   on for cloud shadows
-    std::uint32_t shadowCounts{ 0 };
+    ShadowMask shadowCounts{ ShadowMask::None };
 
     FisheyeOverrideMode fishEyeOverride { FisheyeOverrideMode::None };
-
-private:
-    static constexpr unsigned int ShadowBitsPerLight = 8;
-
-    enum
-    {
-        EclipseShadowMask = 0x3,
-        RingShadowMask    = 0x4,
-        SelfShadowMask    = 0x8,
-        CloudShadowMask   = 0x10,
-        AnyEclipseShadowMask = 0x03030303,
-        AnyRingShadowMask    = 0x04040404,
-        AnySelfShadowMask    = 0x08080808,
-        AnyCloudShadowMask   = 0x10101010,
-    };
-
-    friend class ShaderManager;
 };
 
 bool
@@ -154,17 +170,11 @@ operator==(const ShaderProperties& lhs, const ShaderProperties& rhs);
 inline bool
 operator!=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(lhs == rhs); }
 
-bool
-operator<(const ShaderProperties& lhs, const ShaderProperties& rhs);
-
-inline bool
-operator>(const ShaderProperties& lhs, const ShaderProperties& rhs) { return rhs < lhs; }
-
-inline bool
-operator<=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(rhs < lhs); }
-
-inline bool
-operator>=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(lhs < rhs); }
+template<>
+struct std::hash<ShaderProperties>
+{
+    std::size_t operator()(const ShaderProperties&) const;
+};
 
 constexpr inline unsigned int MaxShaderLights = 4;
 constexpr inline unsigned int MaxShaderEclipseShadows = 3;
@@ -343,16 +353,19 @@ public:
     ~ShaderManager() = default;
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
-    CelestiaGLProgram* getShader(std::string_view);
-    CelestiaGLProgram* getShader(std::string_view, std::string_view, std::string_view);
-    CelestiaGLProgram* getShaderGL3(std::string_view, const GeomShaderParams* = nullptr);
-    CelestiaGLProgram* getShaderGL3(std::string_view, std::string_view, std::string_view, std::string_view);
+    CelestiaGLProgram* getShader(StaticShader);
+    CelestiaGLProgram* getShaderGL3(StaticShader, const GeomShaderParams* = nullptr);
 
     void setFisheyeEnabled(bool enabled);
 
 private:
-    std::map<ShaderProperties, std::unique_ptr<CelestiaGLProgram>> dynamicShaders;
-    std::map<std::string, std::unique_ptr<CelestiaGLProgram>, std::less<>> staticShaders;
+    std::shared_ptr<CelestiaGLProgram> loadShader(StaticShader);
+    std::shared_ptr<CelestiaGLProgram> loadShaderGL3(StaticShader, const GeomShaderParams*);
+    std::shared_ptr<CelestiaGLProgram> getErrorProgram();
 
-    bool fisheyeEnabled { false };
+    std::unordered_map<ShaderProperties, std::shared_ptr<CelestiaGLProgram>> m_dynamicShaders;
+    std::array<std::shared_ptr<CelestiaGLProgram>, static_cast<std::size_t>(StaticShader::_Count)> m_staticShaders;
+
+    std::shared_ptr<CelestiaGLProgram> m_errorProgram;
+    bool m_fisheyeEnabled { false };
 };
