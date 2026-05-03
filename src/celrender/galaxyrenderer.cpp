@@ -124,7 +124,7 @@ GalaxyRenderer::render()
 }
 
 bool
-GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightness, float &size, float minimumFeatureSize, Eigen::Matrix4f &m, Eigen::Matrix4f &pr, int &nPoints) const
+GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightness, float &size, float &minimumFeatureSize, Eigen::Matrix4f &m, Eigen::Matrix4f &pr, int &nPoints) const
 {
     const auto* galacticForm = GalacticFormManager::get()->getForm(obj.galaxy->getFormId());
     if (galacticForm == nullptr)

@@ -44,7 +44,7 @@ private:
     bool getRenderInfo(const GalaxyRenderer::Object &obj,
                        float &brightness,
                        float &size,
-                       float minimumFeatureSize,
+                       float &minimumFeatureSize,
                        Eigen::Matrix4f &m,
                        Eigen::Matrix4f &pr,
                        int &nPoints) const;
