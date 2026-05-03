@@ -67,9 +67,9 @@ struct Blob
 
 struct GlobularForm
 {
-    std::vector<Blob> gblobs{ };
-    mutable gl::Buffer bo{ util::NoCreateT{} };
-    mutable gl::VertexObject vo{ util::NoCreateT{} };
+    std::vector<Blob> gblobs;
+    mutable gl::Buffer bo;
+    mutable gl::VertexObject vo;
     mutable bool GLDataInitialized{ false };
 };
 
@@ -416,7 +416,7 @@ public:
 private:
     void initializeForms();
 
-    std::array<GlobularForm, Globular::GlobularBuckets> globularForms{ };
+    std::array<GlobularForm, Globular::GlobularBuckets> globularForms;
     std::array<std::unique_ptr<Texture>, Globular::GlobularBuckets> centerTex;
     std::unique_ptr<Texture> globularTex;
     std::unique_ptr<Texture> colorTex;

@@ -154,7 +154,6 @@ struct TextureFontPrivate
 
     gl::VertexObject m_vao{ gl::VertexObject::Primitive::Triangles };
     gl::Buffer       m_vbo{ gl::Buffer::TargetHint::Array };
-    gl::Buffer       m_vio{ gl::Buffer::TargetHint::ElementArray };
 
     bool m_shaderInUse{ false };
 
@@ -184,7 +183,20 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(re
         false,
         sizeof(FontVertex),
         offsetof(FontVertex, u));
-    m_vao.setIndexBuffer(m_vio, 0, gl::VertexObject::IndexType::UnsignedShort);
+
+    std::vector<std::uint16_t> indexes;
+    indexes.reserve(MaxIndices);
+    for (std::uint16_t index = 0; index < static_cast<std::uint16_t>(MaxIndices); index += 4)
+    {
+        indexes.push_back(index + 0);
+        indexes.push_back(index + 1);
+        indexes.push_back(index + 2);
+        indexes.push_back(index + 1);
+        indexes.push_back(index + 3);
+        indexes.push_back(index + 2);
+    }
+
+    m_vao.setIndexBuffer(gl::Buffer(gl::Buffer::TargetHint::ElementArray, indexes), 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 TextureFontPrivate::~TextureFontPrivate()
@@ -520,23 +532,11 @@ TextureFontPrivate::flush()
     if (m_fontVertices.size() < 4)
         return;
 
-    std::vector<std::uint16_t> indexes;
-    indexes.reserve(MaxIndices);
-    for (std::uint16_t index = 0; index < static_cast<std::uint16_t>(m_fontVertices.size()); index += 4)
-    {
-        indexes.push_back(index + 0);
-        indexes.push_back(index + 1);
-        indexes.push_back(index + 2);
-        indexes.push_back(index + 1);
-        indexes.push_back(index + 3);
-        indexes.push_back(index + 2);
-    }
-
     m_vbo.invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_vio.invalidateData().setData(indexes, gl::Buffer::BufferUsage::StreamDraw);
-    m_vao.draw(static_cast<int>(indexes.size()));
+    m_vao.getIndexBuffer().bind();
+    m_vao.draw(static_cast<GLsizei>(m_fontVertices.size() / 4 * 6));
     m_vbo.unbind();
-    m_vio.unbind();
+    m_vao.getIndexBuffer().unbind();
 
     m_fontVertices.clear();
 }

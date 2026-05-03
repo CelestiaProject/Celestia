@@ -88,7 +88,7 @@ ArrowReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
     Eigen::Affine3f transform = Eigen::Translation3f(position) * q.cast<float>() * Eigen::Scaling(size);
     Eigen::Matrix4f mv = (*m.modelview) * transform.matrix();
 
-    const render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
+    render::ArrowRenderer& arrowRenderer = refMarkRenderer->arrowRenderer();
     CelestiaGLProgram* prog = arrowRenderer.program();
     if (prog == nullptr)
         return;
@@ -98,7 +98,7 @@ ArrowReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex,
 		             color.red(), color.green(), color.blue(), 1.0f);
 
-    arrowRenderer.vertexObject()->draw();
+    arrowRenderer.vertexObject().draw();
 }
 
 
@@ -164,19 +164,19 @@ AxesReferenceMark::render(render::ReferenceMarkRenderer* refMarkRenderer,
     Eigen::Matrix4f xModelView = modelView * math::YRot90Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 1.0f, 0.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, xModelView);
-    arrowRenderer.vertexObject()->draw();
+    arrowRenderer.vertexObject().draw();
 
     // y-axis
     Eigen::Matrix4f yModelView = modelView * math::YRot180Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 1.0f, 0.0f, opacity);
     prog->setMVPMatrices(projection, yModelView);
-    arrowRenderer.vertexObject()->draw();
+    arrowRenderer.vertexObject().draw();
 
     // z-axis
     Eigen::Matrix4f zModelView = modelView * math::XRot270Matrix<float>;
     glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, 0.0f, 0.0f, 1.0f, opacity);
     prog->setMVPMatrices(projection, zModelView);
-    arrowRenderer.vertexObject()->draw();
+    arrowRenderer.vertexObject().draw();
 
     LineRenderer& lr = arrowRenderer.lineRenderer();
     lr.clear();

@@ -12,20 +12,13 @@
 #include <memory>
 #include <vector>
 
+#include "gl/buffer.h"
+#include "gl/vertexobject.h"
 #include "linerenderer.h"
 
 class CelestiaGLProgram;
 
-namespace celestia
-{
-
-namespace gl
-{
-class Buffer;
-class VertexObject;
-}
-
-namespace render
+namespace celestia::render
 {
 
 class ArrowRenderer //NOSONAR
@@ -35,13 +28,13 @@ public:
     ~ArrowRenderer();
 
     CelestiaGLProgram* program() const { return m_prog; }
-    gl::VertexObject* vertexObject() const { return m_vo.get(); }
+    gl::VertexObject& vertexObject() noexcept { return m_vo; }
     LineRenderer& lineRenderer() { return m_lineRenderer; }
 
 private:
     CelestiaGLProgram* m_prog;
-    std::unique_ptr<gl::Buffer> m_buffer;
-    std::unique_ptr<gl::VertexObject> m_vo;
+    gl::Buffer m_buffer{ gl::Buffer::TargetHint::Array };
+    gl::VertexObject m_vo{ gl::VertexObject::Primitive::Triangles };
     LineRenderer m_lineRenderer;
 };
 
@@ -78,5 +71,3 @@ private:
 };
 
 } // end namespace celestia::render
-
-} // end namespace celestia

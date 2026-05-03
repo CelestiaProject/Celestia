@@ -112,7 +112,6 @@ public:
 private:
     std::shared_ptr<const cmod::Model> m_model;
     std::vector<gl::Buffer> m_vbos;
-    std::vector<gl::Buffer> m_vios;
     std::vector<gl::VertexObject> m_vaos;
 };
 
@@ -143,12 +142,12 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
             std::copy(group->indices.begin(), group->indices.end(), std::back_inserter(indices));
         }
 
-        m_vios.emplace_back(gl::Buffer::TargetHint::ElementArray, indices);
+        gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
         indices.clear();
 
-        gl::VertexObject& vao = m_vaos.emplace_back();
+        gl::VertexObject& vao = m_vaos.emplace_back(gl::VertexObject::Primitive::Triangles);
         setVertexArrays(vao, m_vbos.back(), mesh->getVertexDescription());
-        vao.setIndexBuffer(m_vios.back(), 0, gl::VertexObject::IndexType::UnsignedInt);
+        vao.setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedInt);
     }
 }
 

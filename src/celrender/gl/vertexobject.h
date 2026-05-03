@@ -14,7 +14,6 @@
 #include <cstdint>
 #include <vector>
 #include <celengine/glsupport.h>
-#include <celutil/nocreate.h>
 
 #include "buffer.h"
 
@@ -79,7 +78,7 @@ public:
      *
      * Create a C++ object but don't create OpenGL objects.
      */
-    explicit VertexObject(util::NoCreateT);
+    VertexObject();
 
     /**
      * @brief Construct a new VertexObject object.
@@ -90,7 +89,7 @@ public:
      *
      * @see @ref Primitive
      */
-    explicit VertexObject(Primitive primitive = Primitive::Triangles);
+    explicit VertexObject(Primitive primitive);
 
     //! Copying is prohibited.
     VertexObject(const VertexObject&) = delete;
@@ -219,15 +218,9 @@ public:
     VertexObject& addVertexBuffer(const Buffer &buffer, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0);
 
     /**
-     * @brief Add index buffer. The buffer is not owned by VertexObject.
-     *
-     * @param buffer Buffer with index data.
-     * @param offset Unused.
-     * @param type Index type.
-     *
-     * @see @ref IndexType
+     * @brief Gets the index buffer
      */
-    VertexObject& setIndexBuffer(const Buffer &buffer, std::ptrdiff_t offset, IndexType type);
+    Buffer& getIndexBuffer() noexcept;
 
     /**
      * @brief Add index buffer and become its owner.
@@ -260,7 +253,7 @@ private:
     std::vector<BufferDesc> m_bufferDesc;
 
     //! Index buffer
-    Buffer m_indexBuffer{ util::NoCreateT{} };
+    Buffer m_indexBuffer;
 
     //! Index type
     IndexType m_indexType{ IndexType::UnsignedShort };

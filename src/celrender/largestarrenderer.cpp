@@ -1,9 +1,10 @@
+#include "largestarrenderer.h"
+
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
-#include "largestarrenderer.h"
 
 namespace util = celestia::util;
 
@@ -66,7 +67,7 @@ LargeStarRenderer::initialize()
     };
 
     m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array, texCoords);
-    m_vo = std::make_unique<gl::VertexObject>();
+    m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Triangles);
 
     m_vo->setCount(6);
     m_vo->addVertexBuffer(

@@ -341,7 +341,7 @@ GalaxyRenderer::initializeGL2(const CelestiaGLProgram *prog)
         }
         else
         {
-            m_renderData.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
+            m_renderData.emplace_back(gl::Buffer{}, gl::VertexObject{});
         }
         glVertices.clear();
         indices.clear();
@@ -466,7 +466,7 @@ GalaxyRenderer::initializeGL3(const CelestiaGLProgram *prog)
         }
         else
         {
-            m_renderData.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
+            m_renderData.emplace_back(gl::Buffer{}, gl::VertexObject{});
         }
         glVertices.clear();
     }

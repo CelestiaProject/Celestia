@@ -17,8 +17,6 @@
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
-#include <celrender/gl/buffer.h>
-#include <celrender/gl/vertexobject.h>
 
 namespace celestia::render
 {
@@ -60,23 +58,23 @@ LineRenderer::color_type() const
 
 //! Draw triangles defined with segments.
 void
-LineRenderer::draw_triangles(int count, int offset) const
+LineRenderer::draw_triangles(int count, int offset)
 {
-    m_trVO->draw(gl::VertexObject::Primitive::Triangles, count, offset);
+    m_trVO.draw(gl::VertexObject::Primitive::Triangles, count, offset);
 }
 
 //! Draw triangle strips.
 void
-LineRenderer::draw_triangle_strip(int count, int offset) const
+LineRenderer::draw_triangle_strip(int count, int offset)
 {
-    m_trVO->draw(gl::VertexObject::Primitive::TriangleStrip, count, offset);
+    m_trVO.draw(gl::VertexObject::Primitive::TriangleStrip, count, offset);
 }
 
 //! Draw lines defained with segments.
 void
-LineRenderer::draw_lines(int count, int offset) const
+LineRenderer::draw_lines(int count, int offset)
 {
-    m_lnVO->draw(static_cast<gl::VertexObject::Primitive>(m_primType), count, offset);
+    m_lnVO.draw(static_cast<gl::VertexObject::Primitive>(m_primType), count, offset);
 }
 
 //! Enable GPU shader and set it's uniform values. Set line width.
@@ -142,13 +140,13 @@ LineRenderer::setup_shader()
 void
 LineRenderer::create_vbo_lines()
 {
-    m_lnVO = std::make_unique<gl::VertexObject>();
-    m_lnBO = std::make_unique<gl::Buffer>();
+    m_lnVO = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
+    m_lnBO = gl::Buffer(gl::Buffer::TargetHint::Array);
 
-    m_lnBO->setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+    m_lnBO.setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
 
-    m_lnVO->addVertexBuffer(
-        *m_lnBO,
+    m_lnVO.addVertexBuffer(
+        m_lnBO,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         pos_count(),
         gl::VertexObject::DataType::Float,
@@ -158,8 +156,8 @@ LineRenderer::create_vbo_lines()
 
     if (color_count() != 0)
     {
-        m_lnVO->addVertexBuffer(
-            *m_lnBO,
+        m_lnVO.addVertexBuffer(
+            m_lnBO,
             CelestiaGLProgram::ColorAttributeIndex,
             color_count(),
             color_type() == VF_UBYTE ? gl::VertexObject::DataType::UnsignedByte : gl::VertexObject::DataType::Float,
@@ -173,11 +171,11 @@ LineRenderer::create_vbo_lines()
 void
 LineRenderer::setup_vbo_lines()
 {
-    if (m_lnVO != nullptr)
+    if (m_lnVO.id() != 0)
     {
         if (m_storageType != StorageType::Static)
         {
-            m_lnBO->invalidateData().setData(m_vertices);
+            m_lnBO.invalidateData().setData(m_vertices);
         }
     }
     else
@@ -190,8 +188,8 @@ LineRenderer::setup_vbo_lines()
 void
 LineRenderer::create_vbo_triangles()
 {
-    m_trVO = std::make_unique<gl::VertexObject>();
-    m_trBO = std::make_unique<gl::Buffer>();
+    m_trVO = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
+    m_trBO = gl::Buffer(gl::Buffer::TargetHint::Array);
 
     GLsizei                    stride;
     std::array<std::size_t, 5> offset;
@@ -207,7 +205,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineSegment, point1) + offsetof(Vertex, color)
         };
 
-        m_trBO->setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO.setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_segments.clear();
     }
     else
@@ -222,35 +220,35 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineVertex, point) + offsetof(Vertex, color)
         };
 
-        m_trBO->setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO.setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_verticesTr.clear();
     }
-    m_trVO->addVertexBuffer(
-        *m_trBO,
+    m_trVO.addVertexBuffer(
+        m_trBO,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         pos_count(),
         gl::VertexObject::DataType::Float,
         false,
         stride,
         static_cast<GLsizeiptr>(offset[0]));
-    m_trVO->addVertexBuffer(
-        *m_trBO,
+    m_trVO.addVertexBuffer(
+        m_trBO,
         CelestiaGLProgram::NextVCoordAttributeIndex,
         pos_count(),
         gl::VertexObject::DataType::Float,
         false,
         stride,
         static_cast<GLsizeiptr>(offset[1]));
-    m_trVO->addVertexBuffer(
-        *m_trBO,
+    m_trVO.addVertexBuffer(
+        m_trBO,
         CelestiaGLProgram::ScaleFactorAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
         false,
         stride,
         static_cast<GLsizeiptr>(offset[2]));
-    m_trVO->addVertexBuffer(
-        *m_trBO,
+    m_trVO.addVertexBuffer(
+        m_trBO,
         CelestiaGLProgram::LineSideAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
@@ -259,8 +257,8 @@ LineRenderer::create_vbo_triangles()
         static_cast<GLsizeiptr>(offset[3]));
     if (color_count() != 0)
     {
-        m_trVO->addVertexBuffer(
-            *m_trBO,
+        m_trVO.addVertexBuffer(
+            m_trBO,
             CelestiaGLProgram::ColorAttributeIndex,
             color_count(),
             color_type() == VF_UBYTE ? gl::VertexObject::DataType::UnsignedByte : gl::VertexObject::DataType::Float,
@@ -274,19 +272,19 @@ LineRenderer::create_vbo_triangles()
 void
 LineRenderer::setup_vbo_triangles()
 {
-    if (m_trVO != nullptr)
+    if (m_trVO.id() != 0)
     {
         if (m_storageType != StorageType::Static)
         {
-            m_trBO->invalidateData();
+            m_trBO.invalidateData();
 
             if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
             {
-                m_trBO->setData(m_segments);
+                m_trBO.setData(m_segments);
             }
             else
             {
-                m_trBO->setData(m_verticesTr);
+                m_trBO.setData(m_verticesTr);
             }
         }
     }
@@ -478,21 +476,21 @@ LineRenderer::clear()
 }
 
 void
-LineRenderer::orphan() const
+LineRenderer::orphan()
 {
-    if (m_lnBO != nullptr)
-        m_lnBO->invalidateData();
-    if (m_trBO != nullptr)
-        m_trBO->invalidateData();
+    if (m_lnBO.id() != 0)
+        m_lnBO.invalidateData();
+    if (m_trBO.id() != 0)
+        m_trBO.invalidateData();
 }
 
 void
 LineRenderer::finish()
 {
-    if (m_lnBO != nullptr)
-        m_lnBO->unbind();
-    if (m_trBO != nullptr)
-        m_trBO->unbind();
+    if (m_lnBO.id() != 0)
+        m_lnBO.unbind();
+    if (m_trBO.id() != 0)
+        m_trBO.unbind();
     m_inUse = false;
     m_prog = nullptr;
 }

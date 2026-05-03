@@ -37,7 +37,7 @@ public:
      * @param bo Buffer to bind.
      * @return self
      */
-    Binder &bind(const Buffer &bo);
+    Binder &bind(const BufferRef &bo);
 
     /**
      * @brief Unbind the currently bound Buffer.
@@ -47,7 +47,7 @@ public:
      * @param bo a Buffer to unbind.
      * @return self
      */
-    Binder &unbind(const Buffer &bo);
+    Binder &unbind(const BufferRef &bo);
 
     /**
      * @brief Bind a VertexObject.

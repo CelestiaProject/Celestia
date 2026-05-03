@@ -12,11 +12,14 @@
 
 #include <array>
 #include <cstdint>
-#include <memory>
 #include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+
+#include <celutil/color.h>
+#include "gl/buffer.h"
+#include "gl/vertexobject.h"
 
 struct Atmosphere;
 class Renderer;
@@ -27,12 +30,6 @@ struct Matrices;
 namespace celestia::math
 {
 class Frustum;
-}
-
-namespace celestia::gl
-{
-class Buffer;
-class VertexObject;
 }
 
 namespace celestia::render
@@ -96,14 +93,13 @@ private:
         float cosSkyCapAltitude;
     };
 
-    Renderer                         &m_renderer;
-    std::vector<SkyVertex>            m_skyVertices;
-    std::vector<unsigned short>       m_skyIndices;
-    std::vector<SkyContourPoint>      m_skyContour;
-    std::unique_ptr<gl::Buffer>       m_bo;
-    std::unique_ptr<gl::Buffer>       m_io;
-    std::unique_ptr<gl::VertexObject> m_vo;
-    bool                              m_initialized{ false };
+    Renderer                     &m_renderer;
+    std::vector<SkyVertex>        m_skyVertices;
+    std::vector<unsigned short>   m_skyIndices;
+    std::vector<SkyContourPoint>  m_skyContour;
+    gl::Buffer                    m_bo;
+    gl::VertexObject              m_vo;
+    bool                          m_initialized{ false };
 };
 
 } // namespace celestia::render

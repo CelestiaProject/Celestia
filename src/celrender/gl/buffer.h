@@ -13,7 +13,6 @@
 
 #include <celengine/glsupport.h>
 #include <celutil/array_view.h>
-#include <celutil/nocreate.h>
 
 namespace celestia::gl
 {
@@ -62,7 +61,7 @@ public:
      *
      * Create a C++ object but don't create OpenGL objects.
      */
-    explicit Buffer(util::NoCreateT);
+    Buffer() = default;
 
     /**
      * @brief Construct a new Buffer object.
@@ -73,7 +72,7 @@ public:
      *
      * @see @ref TargetHint
      */
-    explicit Buffer(TargetHint targetHint = TargetHint::Array);
+    explicit Buffer(TargetHint targetHint);
 
     /**
      * @brief Construct a new Buffer object.
@@ -135,17 +134,11 @@ public:
     //! Invalidate buffer data.
     Buffer& invalidateData();
 
-    //! Set buffer target. @see @ref TargetHint
-    Buffer& setTargetHint(TargetHint hint);
-
     //! Return target, @see @ref TargetHint.
     TargetHint targetHint() const;
 
     //! Bind the default buffer (0) to target. @see @ref TargetHint @ref bind()
     static void unbind(TargetHint target);
-
-    //! Wrap an existing OpenGL buffer. @see @ref TargetHint @ref Buffer(TargetHint)
-    static Buffer wrap(GLuint id, TargetHint targetHint = TargetHint::Array);
 
 private:
     //! Reset object to initial state
@@ -165,9 +158,6 @@ private:
 
     BufferUsage m_usage{ BufferUsage::StaticDraw };
 
-    //! Wrapped objects are managed externally
-    bool m_wrapped{ false };
-
     friend class VertexObject;
 };
 
@@ -182,5 +172,26 @@ Buffer::targetHint() const
 {
     return m_targetHint;
 }
+
+class BufferRef
+{
+public:
+    BufferRef(const Buffer& buffer) : //NOSONAR
+        m_id(buffer.id()), m_targetHint(buffer.targetHint())
+    {
+    }
+
+    BufferRef(GLuint id, Buffer::TargetHint targetHint) :
+        m_id(id), m_targetHint(targetHint)
+    {
+    }
+
+    GLuint id() const noexcept { return m_id; }
+    Buffer::TargetHint targetHint() const noexcept { return m_targetHint; }
+
+private:
+    GLuint m_id;
+    Buffer::TargetHint m_targetHint;
+};
 
 } // namespace celestia::gl

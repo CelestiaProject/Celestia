@@ -138,22 +138,20 @@ constexpr unsigned int circleSubdivisions = 100U;
 ArrowRenderer::~ArrowRenderer() = default;
 
 ArrowRenderer::ArrowRenderer(const Renderer& renderer) :
-    m_vo(std::make_unique<gl::VertexObject>()), //NOSONAR
     m_lineRenderer(renderer)
 {
     auto vertices = getArrowVertices();
     auto indices = getArrowIndices();
 
-    m_buffer = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
-    m_buffer->setData(vertices, gl::Buffer::BufferUsage::StaticDraw);
+    m_buffer.setData(vertices, gl::Buffer::BufferUsage::StaticDraw);
 
-    m_vo->addVertexBuffer(*m_buffer,
-                          CelestiaGLProgram::VertexCoordAttributeIndex,
-                          3,
-                          gl::VertexObject::DataType::Float);
+    m_vo.addVertexBuffer(m_buffer,
+                         CelestiaGLProgram::VertexCoordAttributeIndex,
+                         3,
+                         gl::VertexObject::DataType::Float);
     gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
-    m_vo->setCount(static_cast<int>(indices.size()));
-    m_vo->setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
+    m_vo.setCount(static_cast<int>(indices.size()));
+    m_vo.setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
 
     ShaderProperties shaderProperties;
     shaderProperties.texUsage = TexUsage::VertexColors;

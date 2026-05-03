@@ -15,10 +15,6 @@
 namespace celestia::gl
 {
 
-Buffer::Buffer(util::NoCreateT)
-{
-}
-
 Buffer::Buffer(Buffer::TargetHint targetHint) :
     m_targetHint(targetHint)
 {
@@ -36,23 +32,24 @@ Buffer::Buffer(Buffer &&other) noexcept :
     m_bufferSize(other.m_bufferSize),
     m_id(other.m_id),
     m_targetHint(other.m_targetHint),
-    m_usage(other.m_usage),
-    m_wrapped(other.m_wrapped)
+    m_usage(other.m_usage)
 {
     other.clear();
 }
 
 Buffer& Buffer::operator=(Buffer &&other) noexcept
 {
-    destroy();
+    if (this != &other)
+    {
+        destroy();
 
-    m_bufferSize = other.m_bufferSize;
-    m_id         = other.m_id;
-    m_targetHint = other.m_targetHint;
-    m_usage      = other.m_usage;
-    m_wrapped    = other.m_wrapped;
+        m_bufferSize = other.m_bufferSize;
+        m_id         = other.m_id;
+        m_targetHint = other.m_targetHint;
+        m_usage      = other.m_usage;
 
-    other.clear();
+        other.clear();
+    }
 
     return *this;
 }
@@ -65,7 +62,7 @@ Buffer::~Buffer()
 void
 Buffer::destroy() noexcept
 {
-    if (m_id != 0 && !m_wrapped)
+    if (m_id != 0)
     {
         unbind(); // bind operations for wrapped buffers are performed externally
         glDeleteBuffers(1, &m_id);
@@ -118,28 +115,10 @@ Buffer::setSubData(GLintptr offset, util::array_view<void> data)
     return *this;
 }
 
-
 Buffer&
 Buffer::invalidateData()
 {
     return setData(util::array_view<void>(nullptr, m_bufferSize), m_usage);
-}
-
-Buffer&
-Buffer::setTargetHint(Buffer::TargetHint targetHint)
-{
-    m_targetHint = targetHint;
-    return *this;
-}
-
-Buffer
-Buffer::wrap(GLuint id, Buffer::TargetHint targetHint)
-{
-    Buffer bo(util::NoCreateT{});
-    bo.m_id = id;
-    bo.m_targetHint = targetHint;
-    bo.m_wrapped = true;
-    return bo;
 }
 
 } // namespace celestia::gl

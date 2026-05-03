@@ -25,9 +25,6 @@
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celutil/indexlist.h>
-#include <celrender/gl/buffer.h>
-#include <celrender/gl/vertexobject.h>
-
 
 using celestia::util::BuildIndexList;
 using celestia::util::IndexListCapacity;
@@ -68,12 +65,12 @@ CometRenderer::initGL()
 
     m_brightnessLoc = m_prog->attribIndex("in_Brightness");
 
-    m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::TriangleStrip);
-    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
-    m_io = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::ElementArray);
+    m_vo = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
+    m_bo = gl::Buffer(gl::Buffer::TargetHint::Array);
 
-    m_vo->addVertexBuffer(
-            *m_bo,
+    m_vo
+        .addVertexBuffer(
+            m_bo,
             CelestiaGLProgram::VertexCoordAttributeIndex,
             3,
             gl::VertexObject::DataType::Float,
@@ -81,7 +78,7 @@ CometRenderer::initGL()
             sizeof(CometTailVertex),
             offsetof(CometTailVertex, point))
         .addVertexBuffer(
-            *m_bo,
+            m_bo,
             CelestiaGLProgram::NormalAttributeIndex,
             3,
             gl::VertexObject::DataType::Float,
@@ -89,14 +86,14 @@ CometRenderer::initGL()
             sizeof(CometTailVertex),
             offsetof(CometTailVertex, normal))
         .addVertexBuffer(
-            *m_bo,
+            m_bo,
             m_brightnessLoc,
             1,
             gl::VertexObject::DataType::Float,
             false,
             sizeof(CometTailVertex),
             offsetof(CometTailVertex, brightness))
-        .setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
+        .setIndexBuffer(gl::Buffer(gl::Buffer::TargetHint::ElementArray), 0, gl::VertexObject::IndexType::UnsignedShort);
 
     m_initialized = true;
     return true;
@@ -248,17 +245,17 @@ CometRenderer::render(const Body &body,
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
-    m_bo->invalidateData().setData(
+    m_bo.invalidateData().setData(
         util::array_view(m_vertices.get(), MaxVertices),
         gl::Buffer::BufferUsage::StreamDraw);
 
-    m_io->invalidateData().setData(
+    m_vo.getIndexBuffer().invalidateData().setData(
         util::array_view(m_indices.get(), MaxIndices),
         gl::Buffer::BufferUsage::StreamDraw);
 
     glDisable(GL_CULL_FACE);
     int count = IndexListCapacity(nTailSlices, nTailPoints);
-    m_vo->draw(count);
+    m_vo.draw(count);
     glEnable(GL_CULL_FACE);
 }
 

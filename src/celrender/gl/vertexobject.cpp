@@ -61,9 +61,7 @@ struct VertexObject::BufferDesc
     bool          normalized;
 };
 
-VertexObject::VertexObject(util::NoCreateT)
-{
-}
+VertexObject::VertexObject() = default;
 
 VertexObject::VertexObject(VertexObject::Primitive primitive) :
     m_primitive(primitive)
@@ -191,16 +189,10 @@ VertexObject::draw(VertexObject::Primitive primitive, GLsizei count, GLint first
     return *this;
 }
 
-VertexObject&
-VertexObject::setIndexBuffer(const Buffer &buffer, std::ptrdiff_t /*offset*/, VertexObject::IndexType type)
+Buffer&
+VertexObject::getIndexBuffer() noexcept
 {
-    if (buffer.targetHint() != Buffer::TargetHint::ElementArray)
-        return *this;
-
-    m_indexBuffer = Buffer::wrap(buffer.id(), Buffer::TargetHint::ElementArray);
-    m_indexType = type;
-
-    return *this;
+    return m_indexBuffer;
 }
 
 VertexObject&
@@ -222,7 +214,7 @@ VertexObject::enableAttribArrays() const
 
     for (const auto &p : m_bufferDesc)
     {
-        binder.bind(Buffer::wrap(p.bufferId, Buffer::TargetHint::Array));
+        binder.bind(BufferRef(p.bufferId, Buffer::TargetHint::Array));
 
         glEnableVertexAttribArray(p.location);
         glVertexAttribPointer(p.location, p.elemSize, p.type, p.normalized ? GL_TRUE : GL_FALSE, p.stride, PTR(p.offset));

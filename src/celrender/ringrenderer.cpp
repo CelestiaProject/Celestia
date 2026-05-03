@@ -231,8 +231,10 @@ RingRenderer::initializeLOD(unsigned int level, std::uint32_t nSections)
         ringCoord.push_back(vertex);
     }
 
-    const auto& bo = buffers[level].emplace(gl::Buffer::TargetHint::Array, ringCoord);
-    auto& vo = vertexObjects[level].emplace(gl::VertexObject::Primitive::TriangleStrip);
+    auto& bo = buffers[level];
+    bo = gl::Buffer(gl::Buffer::TargetHint::Array, ringCoord);
+    auto& vo = vertexObjects[level];
+    vo = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
     vo.setCount(static_cast<int>((nSections + 1) * 2))
       .addVertexBuffer(bo,
                        CelestiaGLProgram::TextureCoord0AttributeIndex,
@@ -254,10 +256,10 @@ RingRenderer::initializeLOD(unsigned int level, std::uint32_t nSections)
 void
 RingRenderer::renderLOD(unsigned int level, std::uint32_t nSections)
 {
-    if (!vertexObjects[level].has_value())
+    if (vertexObjects[level].id() == 0)
         initializeLOD(level, nSections);
     glDisable(GL_CULL_FACE);
-    vertexObjects[level]->draw();
+    vertexObjects[level].draw();
     glEnable(GL_CULL_FACE);
 }
 

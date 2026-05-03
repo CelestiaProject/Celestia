@@ -447,8 +447,8 @@ SkyGridRenderer::RenderInfo::RenderInfo(double vfov, double viewAspectRatio,
 }
 
 SkyGridRenderer::SkyGridRenderer(Renderer& renderer) :
-    m_gridRenderer(std::make_unique<LineRenderer>(renderer, 1.0f, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Stream)),
-    m_crossRenderer(std::make_unique<LineRenderer>(renderer, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Stream)),
+    m_gridRenderer(renderer, 1.0f, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Stream),
+    m_crossRenderer(renderer, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Stream),
     m_renderer(renderer)
 {
 }
@@ -456,7 +456,7 @@ SkyGridRenderer::SkyGridRenderer(Renderer& renderer) :
 SkyGridRenderer::~SkyGridRenderer() = default;
 
 void
-SkyGridRenderer::render(const engine::SkyGrid& grid, float zoom) const
+SkyGridRenderer::render(const engine::SkyGrid& grid, float zoom)
 {
     auto vfov = static_cast<double>(m_renderer.getProjectionMode()->getFOV(zoom));
     double viewAspectRatio = static_cast<double>(m_renderer.getWindowWidth()) / static_cast<double>(m_renderer.getWindowHeight());
@@ -467,7 +467,7 @@ SkyGridRenderer::render(const engine::SkyGrid& grid, float zoom) const
     int decIncrement = parallelSpacing(renderInfo.idealParallelSpacing);
     Eigen::Matrix3f cameraMatrix = cameraOrientation.cast<float>().toRotationMatrix();
 
-    m_gridRenderer->startUpdate();
+    m_gridRenderer.startUpdate();
 
     int count = drawParallels(renderInfo, cameraMatrix, grid.labelColor, decIncrement) +
                 drawMeridians(renderInfo, cameraMatrix, grid, decIncrement);
@@ -489,33 +489,33 @@ SkyGridRenderer::render(const engine::SkyGrid& grid, float zoom) const
 
     for (int offset = 0, i = 0; i < count; ++i)
     {
-        m_gridRenderer->render(matrices, grid.lineColor, ARC_SUBDIVISIONS + 1, offset);
+        m_gridRenderer.render(matrices, grid.lineColor, ARC_SUBDIVISIONS + 1, offset);
         offset += ARC_SUBDIVISIONS + 1;
     }
 
     // Draw crosses indicating the north and south poles
-    m_crossRenderer->startUpdate();
-    m_crossRenderer->addVertex(-renderInfo.polarCrossSize,  1.0f,  0.0f);
-    m_crossRenderer->addVertex( renderInfo.polarCrossSize,  1.0f,  0.0f);
-    m_crossRenderer->addVertex( 0.0f,                       1.0f, -renderInfo.polarCrossSize);
-    m_crossRenderer->addVertex( 0.0f,                       1.0f,  renderInfo.polarCrossSize);
-    m_crossRenderer->addVertex(-renderInfo.polarCrossSize, -1.0f,  0.0f);
-    m_crossRenderer->addVertex( renderInfo.polarCrossSize, -1.0f,  0.0f);
-    m_crossRenderer->addVertex( 0.0f,                      -1.0f, -renderInfo.polarCrossSize);
-    m_crossRenderer->addVertex( 0.0f,                      -1.0f,  renderInfo.polarCrossSize);
-    m_crossRenderer->render(matrices, grid.lineColor, 8);
+    m_crossRenderer.startUpdate();
+    m_crossRenderer.addVertex(-renderInfo.polarCrossSize,  1.0f,  0.0f);
+    m_crossRenderer.addVertex( renderInfo.polarCrossSize,  1.0f,  0.0f);
+    m_crossRenderer.addVertex( 0.0f,                       1.0f, -renderInfo.polarCrossSize);
+    m_crossRenderer.addVertex( 0.0f,                       1.0f,  renderInfo.polarCrossSize);
+    m_crossRenderer.addVertex(-renderInfo.polarCrossSize, -1.0f,  0.0f);
+    m_crossRenderer.addVertex( renderInfo.polarCrossSize, -1.0f,  0.0f);
+    m_crossRenderer.addVertex( 0.0f,                      -1.0f, -renderInfo.polarCrossSize);
+    m_crossRenderer.addVertex( 0.0f,                      -1.0f,  renderInfo.polarCrossSize);
+    m_crossRenderer.render(matrices, grid.lineColor, 8);
 
-    m_gridRenderer->clear();
-    m_crossRenderer->clear();
-    m_gridRenderer->finish();
-    m_crossRenderer->finish();
+    m_gridRenderer.clear();
+    m_crossRenderer.clear();
+    m_gridRenderer.finish();
+    m_crossRenderer.finish();
 }
 
 int
 SkyGridRenderer::drawParallels(const RenderInfo& renderInfo,
                                const Eigen::Matrix3f& cameraMatrix,
                                const Color& labelColor,
-                               int decIncrement) const
+                               int decIncrement)
 {
     double arcStep = (renderInfo.maxTheta - renderInfo.minTheta) / static_cast<double>(ARC_SUBDIVISIONS);
     double theta0 = renderInfo.minTheta;
@@ -541,7 +541,7 @@ SkyGridRenderer::drawParallels(const RenderInfo& renderInfo,
             auto x = static_cast<float>(cosPhi * cosTheta);
             auto y = static_cast<float>(cosPhi * sinTheta);
             auto z = static_cast<float>(sinPhi);
-            m_gridRenderer->addVertex(x, z, -y);  // convert to Celestia coords
+            m_gridRenderer.addVertex(x, z, -y);  // convert to Celestia coords
         }
 
         // Place labels at the intersections of the view frustum planes
@@ -582,7 +582,7 @@ int
 SkyGridRenderer::drawMeridians(const RenderInfo& renderInfo,
                                const Eigen::Matrix3f& cameraMatrix,
                                const engine::SkyGrid& grid,
-                               int decIncrement) const
+                               int decIncrement)
 {
     int totalLongitudeUnits = grid.longitudeUnits == engine::SkyGrid::LongitudeDegrees ? (DEG_MIN_SEC_TOTAL * 2) : HOUR_MIN_SEC_TOTAL;
     int raIncrement  = meridianSpacing(renderInfo.idealMeridianSpacing, grid.longitudeUnits);
@@ -617,7 +617,7 @@ SkyGridRenderer::drawMeridians(const RenderInfo& renderInfo,
             auto x = static_cast<float>(cosPhi * cosTheta);
             auto y = static_cast<float>(cosPhi * sinTheta);
             auto z = static_cast<float>(sinPhi);
-            m_gridRenderer->addVertex(x, z, -y);  // convert to Celestia coords
+            m_gridRenderer.addVertex(x, z, -y);  // convert to Celestia coords
         }
 
         // Place labels at the intersections of the view frustum planes

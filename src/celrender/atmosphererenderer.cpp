@@ -24,10 +24,7 @@
 #include <celengine/shadermanager.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
-#include <celutil/color.h>
 #include <celutil/indexlist.h>
-#include <celrender/gl/buffer.h>
-#include <celrender/gl/vertexobject.h>
 
 using celestia::util::BuildIndexList;
 using celestia::util::IndexListCapacity;
@@ -64,27 +61,26 @@ void AtmosphereRenderer::initGL()
     m_skyIndices.reserve(MaxIndices);
     m_skyContour.reserve(MaxSkySlices + 1);
 
-    m_vo = std::make_unique<gl::VertexObject>();
-    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
-    m_io = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::ElementArray);
+    m_vo = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
+    m_bo = gl::Buffer(gl::Buffer::TargetHint::Array);
 
-    m_vo->addVertexBuffer(
-        *m_bo,
+    m_vo.addVertexBuffer(
+        m_bo,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         3,
         gl::VertexObject::DataType::Float,
         false,
         sizeof(SkyVertex),
         offsetof(SkyVertex, position));
-    m_vo->addVertexBuffer(
-        *m_bo,
+    m_vo.addVertexBuffer(
+        m_bo,
         CelestiaGLProgram::ColorAttributeIndex,
         4,
         gl::VertexObject::DataType::UnsignedByte,
         true,
         sizeof(SkyVertex),
         offsetof(SkyVertex, color));
-    m_vo->setIndexBuffer(*m_io, 0, gl::VertexObject::IndexType::UnsignedShort);
+    m_vo.setIndexBuffer(gl::Buffer(gl::Buffer::TargetHint::ElementArray), 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 void
@@ -329,12 +325,12 @@ AtmosphereRenderer::renderLegacy(
     ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
     m_renderer.setPipelineState(ps);
 
-    m_bo->invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_io->invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
+    m_bo.invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
+    m_vo.getIndexBuffer().invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
 
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);
-    m_vo->draw(gl::VertexObject::Primitive::TriangleStrip, static_cast<int>(m_skyIndices.size()));
+    m_vo.draw(gl::VertexObject::Primitive::TriangleStrip, static_cast<int>(m_skyIndices.size()));
 
     m_skyIndices.clear();
     m_skyVertices.clear();

@@ -409,11 +409,11 @@ bool Renderer::init(int winWidth, int winHeight,
     if (!m_cometRenderer->initGL())
         return false;
 
-    m_markerVO = std::make_unique<celestia::gl::VertexObject>();
-    m_markerBO = std::make_unique<celestia::gl::Buffer>();
+    m_markerVO = std::make_unique<celestia::gl::VertexObject>(celestia::gl::VertexObject::Primitive::Triangles);
+    m_markerBO = std::make_unique<celestia::gl::Buffer>(celestia::gl::Buffer::TargetHint::Array);
 
     m_rectVO = std::make_unique<celestia::gl::VertexObject>(celestia::gl::VertexObject::Primitive::TriangleFan);
-    m_rectBO = std::make_unique<celestia::gl::Buffer>();
+    m_rectBO = std::make_unique<celestia::gl::Buffer>(celestia::gl::Buffer::TargetHint::Array);
 
     m_lodSphere = std::make_unique<LODSphereMesh>();
 
