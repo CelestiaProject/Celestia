@@ -28,7 +28,6 @@ using celestia::util::GetLogger;
 namespace astro = celestia::astro;
 
 // Defined in celx.cpp.
-LuaState* getLuaStateObject(lua_State*);
 ObserverFrame::CoordinateSystem parseCoordSys(std::string_view);
 
 // ==================== Observer ====================
@@ -579,12 +578,6 @@ static int observer_cancelgoto(lua_State* l)
     Observer* o = this_observer(l);
     o->cancelMotion();
 
-    // Drop any in-flight timed observer commands so they don't keep
-    // ticking past the cancel. Mirrors the legacy CommandCancel which
-    // stops all motion.
-    if (LuaState* state = getLuaStateObject(l); state != nullptr)
-        state->clearTimedActions();
-
     return 0;
 }
 
@@ -1003,179 +996,10 @@ static int observer_getlocationflags(lua_State* l)
     return 1;
 }
 
-// ===== Timed observer commands =====
-//
-// These mirror the legacy .cel script TimedCommands (move/rotate/orbit/
-// changedistance): each method enqueues a per-frame step closure on the
-// LuaState's timed-action queue, then yields the duration back to the
-// script runtime so the calling script blocks just like a legacy command
-// would. LuaState::tick(dt) drives the queue every frame -- the same
-// wall-clock dt the legacy executor feeds to its commands -- so behavior
-// is frame-for-frame equivalent.
-
-// observer:moveover(duration, velocity)
-//
-// `velocity` is a vector measured in micro-light-years per second, the
-// same unit the legacy `move{}` command uses.
-static int observer_moveover(lua_State* l)
-{
-    CelxLua celx(l);
-    celx.checkArgs(3, 3, "Two arguments required for observer:moveover (duration, velocity)");
-
-    Observer* o = this_observer(l);
-    double duration = celx.safeGetNumber(2, AllErrors,
-                                         "First argument to observer:moveover must be a number");
-    const Vector3d* v = celx.toVector(3);
-    if (v == nullptr)
-    {
-        celx.doError("Second argument to observer:moveover must be a vector");
-        return 0;
-    }
-
-    Vector3d velocity = *v;
-    const CelestiaCore* appCore = celx.appCore(AllErrors);
-    LuaState* state = getLuaStateObject(l);
-    if (state == nullptr)
-        return 0;
-
-    state->addTimedAction(duration, [appCore, o, velocity](double dt)
-    {
-        if (getViewByObserver(appCore, o) == nullptr)
-            return;
-        Vector3d offsetKm = velocity * dt * astro::microLightYearsToKilometers(1.0);
-        o->setPosition(o->getPosition().offsetKm(offsetKm));
-    });
-
-    lua_pushnumber(l, duration);
-    return lua_yield(l, 1);
-}
-
-// observer:rotateover(duration, axis, rate)
-//
-// Equivalent to the legacy `rotate{}` command: applies an `axis * rate * dt`
-// rotation each frame.
-static int observer_rotateover(lua_State* l)
-{
-    CelxLua celx(l);
-    celx.checkArgs(4, 4, "Three arguments required for observer:rotateover (duration, axis, rate)");
-
-    Observer* o = this_observer(l);
-    double duration = celx.safeGetNumber(2, AllErrors,
-                                         "First argument to observer:rotateover must be a number");
-    const Vector3d* axis = celx.toVector(3);
-    if (axis == nullptr)
-    {
-        celx.doError("Second argument to observer:rotateover must be a vector");
-        return 0;
-    }
-    double rate = celx.safeGetNumber(4, AllErrors,
-                                     "Third argument to observer:rotateover must be a number");
-
-    Vector3f spin = axis->cast<float>() * static_cast<float>(rate);
-    float spinMag = spin.norm();
-    const CelestiaCore* appCore = celx.appCore(AllErrors);
-    LuaState* state = getLuaStateObject(l);
-    if (state == nullptr)
-        return 0;
-
-    if (spinMag != 0.0f)
-    {
-        Vector3f spinAxis = spin / spinMag;
-        state->addTimedAction(duration, [appCore, o, spinMag, spinAxis](double dt)
-        {
-            if (getViewByObserver(appCore, o) == nullptr)
-                return;
-            Quaternionf q(AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
-            o->rotate(q);
-        });
-    }
-
-    lua_pushnumber(l, duration);
-    return lua_yield(l, 1);
-}
-
-// observer:orbitover(duration, axis, rate)
-//
-// Equivalent to the legacy `orbit{}` command. The orbit is taken about
-// the simulation's current selection, fetched at each tick so it tracks
-// any selection changes during the animation.
-static int observer_orbitover(lua_State* l)
-{
-    CelxLua celx(l);
-    celx.checkArgs(4, 4, "Three arguments required for observer:orbitover (duration, axis, rate)");
-
-    Observer* o = this_observer(l);
-    double duration = celx.safeGetNumber(2, AllErrors,
-                                         "First argument to observer:orbitover must be a number");
-    const Vector3d* axis = celx.toVector(3);
-    if (axis == nullptr)
-    {
-        celx.doError("Second argument to observer:orbitover must be a vector");
-        return 0;
-    }
-    double rate = celx.safeGetNumber(4, AllErrors,
-                                     "Third argument to observer:orbitover must be a number");
-
-    Vector3f spin = axis->cast<float>() * static_cast<float>(rate);
-    float spinMag = spin.norm();
-    const CelestiaCore* appCore = celx.appCore(AllErrors);
-    LuaState* state = getLuaStateObject(l);
-    if (state == nullptr)
-        return 0;
-
-    if (spinMag != 0.0f)
-    {
-        Vector3f spinAxis = spin / spinMag;
-        state->addTimedAction(duration, [appCore, o, spinMag, spinAxis](double dt)
-        {
-            if (getViewByObserver(appCore, o) == nullptr)
-                return;
-            Quaternionf q(AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
-            o->orbit(appCore->getSimulation()->getSelection(), q);
-        });
-    }
-
-    lua_pushnumber(l, duration);
-    return lua_yield(l, 1);
-}
-
-// observer:changedistanceover(duration, rate)
-//
-// Equivalent to the legacy `changedistance{}` command: exponential dolly
-// toward/away from the simulation's selection, fetched at each tick.
-static int observer_changedistanceover(lua_State* l)
-{
-    CelxLua celx(l);
-    celx.checkArgs(3, 3, "Two arguments required for observer:changedistanceover (duration, rate)");
-
-    Observer* o = this_observer(l);
-    double duration = celx.safeGetNumber(2, AllErrors,
-                                         "First argument to observer:changedistanceover must be a number");
-    double rate = celx.safeGetNumber(3, AllErrors,
-                                     "Second argument to observer:changedistanceover must be a number");
-
-    const CelestiaCore* appCore = celx.appCore(AllErrors);
-    LuaState* state = getLuaStateObject(l);
-    if (state == nullptr)
-        return 0;
-
-    state->addTimedAction(duration, [appCore, o, rate](double dt)
-    {
-        if (getViewByObserver(appCore, o) == nullptr)
-            return;
-        o->changeOrbitDistance(appCore->getSimulation()->getSelection(),
-                               static_cast<float>(rate * dt));
-    });
-
-    lua_pushnumber(l, duration);
-    return lua_yield(l, 1);
-}
-
 // observer:changeorbitdistance(d)
 //
-// One-shot exposure of Observer::changeOrbitDistance against the
-// simulation's current selection -- the same primitive
-// `changedistanceover` integrates over time.
+// Exponential dolly toward (d > 0) or away from (d < 0) the current
+// selection.
 static int observer_changeorbitdistance(lua_State* l)
 {
     CelxLua celx(l);
@@ -1216,10 +1040,6 @@ void CreateObserverMetaTable(lua_State* l)
     celx.registerMethod("setfov", observer_setfov);
     celx.registerMethod("rotate", observer_rotate);
     celx.registerMethod("orbit", observer_orbit);
-    celx.registerMethod("moveover", observer_moveover);
-    celx.registerMethod("rotateover", observer_rotateover);
-    celx.registerMethod("orbitover", observer_orbitover);
-    celx.registerMethod("changedistanceover", observer_changedistanceover);
     celx.registerMethod("changeorbitdistance", observer_changeorbitdistance);
     celx.registerMethod("center", observer_center);
     celx.registerMethod("centerorbit", observer_centerorbit);
