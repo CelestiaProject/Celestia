@@ -68,7 +68,7 @@ struct AudioBackend
     AudioBackend &operator=(AudioBackend&&)      = delete;
 };
 
-std::weak_ptr<AudioBackend> g_audioBackend;
+std::weak_ptr<AudioBackend> g_audioBackend; //NOSONAR
 
 // Returns the live shared backend, creating it on demand. The caller
 // pins it for the lifetime of its session by holding the returned
