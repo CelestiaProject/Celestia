@@ -2567,6 +2567,16 @@ static int celestia_version(lua_State* l)
     return 1;
 }
 
+static int celestia_language(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:language");
+
+    const char* orig = N_("LANGUAGE");
+    const char* lang = _(orig);
+    lua_pushstring(l, lang == orig ? "en" : lang);
+    return 1;
+}
+
 void CreateCelestiaMetaTable(lua_State* l)
 {
     Celx_CreateClassMetatable(l, Celx_Celestia);
@@ -2696,6 +2706,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setaudionopause", celestia_setaudionopause);
 
     Celx_RegisterMethod(l, "version", celestia_version);
+    Celx_RegisterMethod(l, "language", celestia_language);
 
     lua_pop(l, 1);
 }
