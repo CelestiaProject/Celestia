@@ -8,26 +8,26 @@ namespace celestia::gl
 {
 
 #ifdef GL_ES
-CELAPI bool OES_vertex_array_object              = false;
-CELAPI bool OES_texture_border_clamp             = false;
-CELAPI bool OES_geometry_shader                  = false;
-CELAPI bool OES_depth24                          = false;
-CELAPI bool OES_texture_half_float               = false;
-CELAPI bool OES_standard_derivatives             = false;
-CELAPI bool EXT_sRGB                             = false;
-CELAPI bool EXT_sRGB_write_control               = false;
+CELAPI bool OES_vertex_array_object              = false; //NOSONAR
+CELAPI bool OES_texture_border_clamp             = false; //NOSONAR
+CELAPI bool OES_geometry_shader                  = false; //NOSONAR
+CELAPI bool OES_depth24                          = false; //NOSONAR
+CELAPI bool OES_texture_half_float               = false; //NOSONAR
+CELAPI bool OES_standard_derivatives             = false; //NOSONAR
+CELAPI bool EXT_sRGB                             = false; //NOSONAR
+CELAPI bool EXT_sRGB_write_control               = false; //NOSONAR
 #else
-CELAPI bool ARB_vertex_array_object        = false;
-CELAPI bool ARB_framebuffer_object         = false;
+CELAPI bool ARB_vertex_array_object        = false; //NOSONAR
+CELAPI bool ARB_framebuffer_object         = false; //NOSONAR
 #endif
-CELAPI bool ARB_shader_texture_lod         = false;
-CELAPI bool EXT_texture_compression_s3tc   = false;
-CELAPI bool EXT_texture_filter_anisotropic = false;
-CELAPI bool MESA_pack_invert               = false;
-CELAPI GLint maxPointSize                  = 0;
-CELAPI GLint maxTextureSize                = 0;
-CELAPI GLfloat maxLineWidth                = 0.0f;
-CELAPI GLint maxTextureAnisotropy          = 0;
+CELAPI bool ARB_shader_texture_lod         = false; //NOSONAR
+CELAPI bool EXT_texture_compression_s3tc   = false; //NOSONAR
+CELAPI bool EXT_texture_filter_anisotropic = false; //NOSONAR
+CELAPI bool MESA_pack_invert               = false; //NOSONAR
+CELAPI GLint maxPointSize                  = 0; //NOSONAR
+CELAPI GLint maxTextureSize                = 0; //NOSONAR
+CELAPI GLfloat maxLineWidth                = 0.0f; //NOSONAR
+CELAPI GLint maxTextureAnisotropy          = 0; //NOSONAR
 
 namespace
 {
