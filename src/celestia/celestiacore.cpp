@@ -2636,7 +2636,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
         // as the final rendering step, keeping the pipeline consistent across
         // all GL variants without relying on GL_FRAMEBUFFER_SRGB or
         // platform-specific sRGB surface negotiation.
-        viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>("srgb", true));
+        viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>(StaticShader::sRGB, true));
     }
 
     renderer->setRenderFlags(RenderFlags::ShowStars |
