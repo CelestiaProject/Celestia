@@ -67,7 +67,7 @@ private:
 
     void populateTileTree();
     void addTileToTree(std::unique_ptr<Tile> tile, unsigned int lod, unsigned int u, unsigned int v);
-    void requestLoad(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
+    void requestLoad(Tile* tile, unsigned int lod, unsigned int u, unsigned int v) const;
 
 private:
     std::filesystem::path tilePath;

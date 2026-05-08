@@ -115,22 +115,23 @@ public:
 
     std::uint64_t registerOwner(ResultQueueImpl* rq)
     {
-        std::lock_guard<std::mutex> lock(ownersMutex);
-        std::uint64_t id = nextId++;
+        std::scoped_lock lock(ownersMutex);
+        std::uint64_t id = nextId;
+        ++nextId;
         owners.emplace(id, rq);
         return id;
     }
 
     void unregisterOwner(std::uint64_t id)
     {
-        std::lock_guard<std::mutex> lock(ownersMutex);
+        std::scoped_lock lock(ownersMutex);
         owners.erase(id);
     }
 
     void enqueue(TileRequest req)
     {
         {
-            std::lock_guard<std::mutex> lock(requestsMutex);
+            std::scoped_lock lock(requestsMutex);
             requests.push(std::move(req));
         }
         requestsCv.notify_one();
@@ -145,13 +146,13 @@ private:
     ~TileLoader()
     {
         {
-            std::lock_guard<std::mutex> lock(requestsMutex);
+            std::scoped_lock lock(requestsMutex);
             exitRequested = true;
         }
         requestsCv.notify_all();
         if (worker.joinable())
             worker.join();
-        shutdownFlag().store(true, std::memory_order_release);
+        shutdownFlag().store(true);
     }
 
     void workerLoop()
@@ -178,13 +179,13 @@ private:
             // either sees the entry (and we deliver) or removes it before we
             // look it up (and we drop). The owner cannot be destroyed while
             // we hold this mutex, because unregisterOwner blocks on it.
-            std::lock_guard<std::mutex> lock(ownersMutex);
+            std::scoped_lock lock(ownersMutex);
             auto it = owners.find(req.ownerId);
             if (it == owners.end())
                 continue;
 
             ResultQueueImpl* rq = it->second;
-            std::lock_guard<std::mutex> rqLock(rq->mutex);
+            std::scoped_lock rqLock(rq->mutex);
             rq->queue.push(TileResult{ req.tile, req.lod, std::move(img) });
         }
     }
@@ -335,7 +336,8 @@ VirtualTexture::VirtualTexture(const std::filesystem::path& _tilePath,
     tilePath(_tilePath),
     tilePrefix(_tilePrefix),
     baseSplit(_baseSplit),
-    nResolutionLevels(0),
+    // resultQueue cannot use an in-class initializer because TileResultQueue
+    // is forward-declared in the header.
     resultQueue(std::make_unique<TileResultQueue>())
 {
     assert(_tileSize != 0 && isPow2(_tileSize));
@@ -360,7 +362,7 @@ VirtualTexture::~VirtualTexture()
     //
     // The shutdown-flag check guards against the (unlikely) case of a
     // VirtualTexture outliving the loader at static teardown.
-    if (loaderId != 0 && !TileLoader::shutdownFlag().load(std::memory_order_acquire))
+    if (loaderId != 0 && !TileLoader::shutdownFlag().load())
         TileLoader::instance().unregisterOwner(loaderId);
 }
 
@@ -380,7 +382,7 @@ VirtualTexture::getTile(int lod, int u, int v)
     }
 
     const TileQuadtreeNode* node = &tileTree[u >> lod];
-    Tile* readyTile = nullptr;
+    const Tile* readyTile = nullptr;
     Tile* requestedTile = nullptr;
     unsigned int readyLOD = 0;
     unsigned int requestedLOD = 0;
@@ -490,7 +492,7 @@ VirtualTexture::beginUsage()
     // GL work happens with the result-queue mutex released.
     std::vector<TileResult> drained;
     {
-        std::lock_guard<std::mutex> lock(resultQueue->mutex);
+        std::scoped_lock lock(resultQueue->mutex);
         while (!resultQueue->queue.empty())
         {
             drained.push_back(std::move(resultQueue->queue.front()));
@@ -500,10 +502,11 @@ VirtualTexture::beginUsage()
 
     unsigned int uploadsThisFrame = 0;
     std::size_t i = 0;
-    for (; i < drained.size() && uploadsThisFrame < kMaxUploadsPerFrame; ++i)
+    while (i < drained.size() && uploadsThisFrame < kMaxUploadsPerFrame)
     {
-        TileResult& result = drained[i];
-        Tile* tile = static_cast<Tile*>(result.tile);
+        auto& result = drained[i];
+        auto* tile = static_cast<Tile*>(result.tile);
+        ++i;
 
         if (result.image == nullptr)
         {
@@ -538,7 +541,7 @@ VirtualTexture::beginUsage()
     // is fine since the render thread treats per-frame results as a set.
     if (i < drained.size())
     {
-        std::lock_guard<std::mutex> lock(resultQueue->mutex);
+        std::scoped_lock lock(resultQueue->mutex);
         std::queue<TileResult> rebuilt;
         for (; i < drained.size(); ++i)
             rebuilt.push(std::move(drained[i]));
@@ -560,7 +563,7 @@ VirtualTexture::endUsage()
 
 
 void
-VirtualTexture::requestLoad(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
+VirtualTexture::requestLoad(Tile* tile, unsigned int lod, unsigned int u, unsigned int v) const
 {
     if (tile->state != Tile::State::NotLoaded)
         return;
