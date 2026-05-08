@@ -104,7 +104,7 @@ public:
     // unreachable in normal use.
     static std::atomic<bool>& shutdownFlag()
     {
-        static std::atomic<bool> flag{ false };
+        static std::atomic flag{ false };
         return flag;
     }
 
@@ -161,7 +161,7 @@ private:
         {
             TileRequest req;
             {
-                std::unique_lock<std::mutex> lock(requestsMutex);
+                std::unique_lock lock(requestsMutex);
                 requestsCv.wait(lock, [this] {
                     return exitRequested || !requests.empty();
                 });
