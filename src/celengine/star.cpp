@@ -36,10 +36,6 @@ namespace util = celestia::util;
 namespace
 {
 
-// https://arxiv.org/abs/1510.07674
-constexpr float SOLAR_TEMPERATURE = 5772.0f;
-constexpr float SOLAR_BOLOMETRIC_MAG = 4.75f;
-
 using SubclassValues = std::array<float, 10>;
 
 // Star temperature data for main-sequence stars from Eric Mamajek,
@@ -1173,7 +1169,7 @@ Star::getRadius() const
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
     return astro::SOLAR_RADIUS<float> * std::sqrt(lum) *
-        math::square(SOLAR_TEMPERATURE / getTemperature());
+        math::square(astro::SOLAR_TEMPERATURE / getTemperature());
 }
 
 util::TextureHandle
@@ -1235,7 +1231,7 @@ Star::getBolometricLuminosity() const
 #else
     // Calculate the luminosity of the star from the bolometric, not the
     // visual magnitude of the star.
-    float solarBMag = SOLAR_BOLOMETRIC_MAG;
+    float solarBMag = astro::SOLAR_BOLOMETRIC_MAG;
     float bmag = getBolometricMagnitude();
     return std::exp((solarBMag - bmag) / astro::LN_MAG);
 #endif
