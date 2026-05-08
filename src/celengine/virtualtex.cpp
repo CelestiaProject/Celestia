@@ -10,12 +10,20 @@
 
 #include "virtualtex.h"
 
+#include <atomic>
 #include <cassert>
+#include <condition_variable>
+#include <cstdint>
 #include <cstdio>
 #include <fstream>
+#include <mutex>
 #include <optional>
+#include <queue>
 #include <system_error>
+#include <thread>
+#include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include <fmt/format.h>
 
@@ -34,11 +42,166 @@ namespace
 
 constexpr int MaxResolutionLevels = 13;
 
+// Per-VirtualTexture upload budget. Bounded GL upload work performed at the
+// start of beginUsage(). Tune here if uploads become a frame-time spike.
+constexpr unsigned int kMaxUploadsPerFrame = 4;
+
 constexpr bool
 isPow2(int x)
 {
     return ((x & (x - 1)) == 0);
 }
+
+// Async tile loader: a single worker thread services every VirtualTexture in
+// the process. Render threads call enqueue() to schedule a disk read + image
+// decode; results are delivered back via a per-owner result queue keyed by id
+// so a destroyed VirtualTexture can never receive a stale callback.
+
+// We carry the owner-side Tile* through the request/result pair as an opaque
+// pointer. The worker never dereferences it; only the render-thread code in
+// VirtualTexture (which knows the real type) does.
+using TileHandle = void*;
+
+struct TileRequest
+{
+    std::uint64_t          ownerId{ 0 };
+    TileHandle             tile{ nullptr };
+    unsigned int           lod{ 0 };
+    std::filesystem::path  path;
+};
+
+struct TileResult
+{
+    TileHandle             tile{ nullptr };
+    unsigned int           lod{ 0 };
+    std::unique_ptr<Image> image; // null on failure
+};
+
+struct ResultQueueImpl
+{
+    std::mutex             mutex;
+    std::queue<TileResult> queue;
+};
+
+class TileLoader
+{
+public:
+    static TileLoader& instance()
+    {
+        // Meyers singleton: lazy init, joined at static teardown via dtor.
+        // First use is always a VirtualTexture constructor calling
+        // registerOwner(); the singleton is therefore guaranteed to outlive
+        // every VirtualTexture whose construction triggered it. (Static
+        // destruction order: function-local statics are destroyed in reverse
+        // of their construction order.)
+        static TileLoader loader;
+        return loader;
+    }
+
+    // Set true in the destructor so any VirtualTexture that somehow outlives
+    // the singleton (e.g. a static container) can short-circuit its
+    // unregisterOwner call. Defensive: the path described above keeps this
+    // unreachable in normal use.
+    static std::atomic<bool>& shutdownFlag()
+    {
+        static std::atomic<bool> flag{ false };
+        return flag;
+    }
+
+    TileLoader(const TileLoader&) = delete;
+    TileLoader& operator=(const TileLoader&) = delete;
+    TileLoader(TileLoader&&) = delete;
+    TileLoader& operator=(TileLoader&&) = delete;
+
+    std::uint64_t registerOwner(ResultQueueImpl* rq)
+    {
+        std::lock_guard<std::mutex> lock(ownersMutex);
+        std::uint64_t id = nextId++;
+        owners.emplace(id, rq);
+        return id;
+    }
+
+    void unregisterOwner(std::uint64_t id)
+    {
+        std::lock_guard<std::mutex> lock(ownersMutex);
+        owners.erase(id);
+    }
+
+    void enqueue(TileRequest req)
+    {
+        {
+            std::lock_guard<std::mutex> lock(requestsMutex);
+            requests.push(std::move(req));
+        }
+        requestsCv.notify_one();
+    }
+
+private:
+    TileLoader() :
+        worker([this] { workerLoop(); })
+    {
+    }
+
+    ~TileLoader()
+    {
+        {
+            std::lock_guard<std::mutex> lock(requestsMutex);
+            exitRequested = true;
+        }
+        requestsCv.notify_all();
+        if (worker.joinable())
+            worker.join();
+        shutdownFlag().store(true, std::memory_order_release);
+    }
+
+    void workerLoop()
+    {
+        for (;;)
+        {
+            TileRequest req;
+            {
+                std::unique_lock<std::mutex> lock(requestsMutex);
+                requestsCv.wait(lock, [this] {
+                    return exitRequested || !requests.empty();
+                });
+                if (exitRequested)
+                    return;
+                req = std::move(requests.front());
+                requests.pop();
+            }
+
+            // CPU-only work: file open + image decode. No GL.
+            std::unique_ptr<Image> img = Image::load(req.path);
+
+            // Deliver back to the owner if it is still alive. Held under the
+            // owners mutex so that an unregisterOwner() racing with delivery
+            // either sees the entry (and we deliver) or removes it before we
+            // look it up (and we drop). The owner cannot be destroyed while
+            // we hold this mutex, because unregisterOwner blocks on it.
+            std::lock_guard<std::mutex> lock(ownersMutex);
+            auto it = owners.find(req.ownerId);
+            if (it == owners.end())
+                continue;
+
+            ResultQueueImpl* rq = it->second;
+            std::lock_guard<std::mutex> rqLock(rq->mutex);
+            rq->queue.push(TileResult{ req.tile, req.lod, std::move(img) });
+        }
+    }
+
+    std::mutex                                          requestsMutex;
+    std::condition_variable                             requestsCv;
+    std::queue<TileRequest>                             requests;
+    bool                                                exitRequested{ false };
+
+    std::mutex                                          ownersMutex;
+    std::unordered_map<std::uint64_t, ResultQueueImpl*> owners;
+    std::uint64_t                                       nextId{ 1 };
+
+    // worker is constructed last so the other members are fully alive when
+    // workerLoop() starts running.
+    std::thread                                         worker;
+};
 
 std::unique_ptr<VirtualTexture>
 CreateVirtualTexture(const util::AssociativeArray* texParams,
@@ -122,12 +285,39 @@ LoadVirtualTexture(std::istream& in, const std::filesystem::path& path)
     return CreateVirtualTexture(texParams, path);
 }
 
+std::filesystem::path
+buildTilePath(const std::filesystem::path& tilePath,
+              const std::filesystem::path& tileExt,
+              const std::string& tilePrefix,
+              unsigned int lod,
+              unsigned int u,
+              unsigned int v,
+              unsigned int baseSplit)
+{
+    unsigned int level = lod >> baseSplit;
+    assert(level < (unsigned)MaxResolutionLevels);
+
+    auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
+    filename += tileExt;
+
+    return tilePath / fmt::format("level{:d}", level) / filename;
+}
+
 } // end unnamed namespace
 
 
+// Make TileResultQueue a typedef of the internal type so the unique_ptr in the
+// header has a complete type at this translation unit's destruction site.
+struct VirtualTexture::TileResultQueue : public ResultQueueImpl {};
+
+
 // Virtual textures are composed of tiles that are loaded from the hard drive
-// as they become visible.  Hidden tiles may be evicted from graphics memory
-// to make room for other tiles when they become visible.
+// as they become visible. File I/O and image decoding happen on a shared
+// worker thread (TileLoader, in the anonymous namespace above); the render
+// thread performs only the GL upload, with a per-frame budget enforced in
+// beginUsage(). Hidden tiles may eventually be evicted from graphics memory to
+// make room for other tiles when they become visible -- eviction is tracked by
+// issue #2447 and is not implemented in this revision.
 //
 // The virtual texture consists of one or more levels of detail.  Each level
 // of detail is twice as wide and twice as high as the previous one, therefore
@@ -145,8 +335,8 @@ VirtualTexture::VirtualTexture(const std::filesystem::path& _tilePath,
     tilePath(_tilePath),
     tilePrefix(_tilePrefix),
     baseSplit(_baseSplit),
-    ticks(0),
-    nResolutionLevels(0)
+    nResolutionLevels(0),
+    resultQueue(std::make_unique<TileResultQueue>())
 {
     assert(_tileSize != 0 && isPow2(_tileSize));
     tileExt = fmt::format(".{:s}", _tileType);
@@ -154,6 +344,24 @@ VirtualTexture::VirtualTexture(const std::filesystem::path& _tilePath,
 
     if (DetermineFileType(tileExt, true) == ContentType::DXT5NormalMap)
         setFormatOptions(Texture::DXT5NormalMap);
+
+    // Register only after the tile tree exists so any delivery from the
+    // worker can find a valid destination queue.
+    loaderId = TileLoader::instance().registerOwner(resultQueue.get());
+}
+
+
+VirtualTexture::~VirtualTexture()
+{
+    // Unregister first so that no in-flight worker result lands in a result
+    // queue that is about to be destroyed. After unregisterOwner() returns,
+    // the worker can still hold a TileRequest with our id, but on completion
+    // it will fail to find us in the registry and drop the result.
+    //
+    // The shutdown-flag check guards against the (unlikely) case of a
+    // VirtualTexture outliving the loader at static teardown.
+    if (loaderId != 0 && !TileLoader::shutdownFlag().load(std::memory_order_acquire))
+        TileLoader::instance().unregisterOwner(loaderId);
 }
 
 
@@ -172,8 +380,24 @@ VirtualTexture::getTile(int lod, int u, int v)
     }
 
     const TileQuadtreeNode* node = &tileTree[u >> lod];
-    Tile* tile = node->tile.get();
-    unsigned int tileLOD = 0;
+    Tile* readyTile = nullptr;
+    Tile* requestedTile = nullptr;
+    unsigned int readyLOD = 0;
+    unsigned int requestedLOD = 0;
+
+    // Track the deepest Ready ancestor (for the returned subrect) and the
+    // deepest existing Tile along the descent path (the "requested" tile we
+    // may need to enqueue).
+    if (node->tile != nullptr)
+    {
+        requestedTile = node->tile.get();
+        requestedLOD = 0;
+        if (node->tile->state == Tile::State::Ready)
+        {
+            readyTile = node->tile.get();
+            readyLOD = 0;
+        }
+    }
 
     for (int n = 0; n < lod; n++)
     {
@@ -185,41 +409,45 @@ VirtualTexture::getTile(int lod, int u, int v)
         node = node->children[child].get();
         if (node->tile != nullptr)
         {
-            tile = node->tile.get();
-            tileLOD = n + 1;
+            requestedTile = node->tile.get();
+            requestedLOD = n + 1;
+            if (node->tile->state == Tile::State::Ready)
+            {
+                readyTile = node->tile.get();
+                readyLOD = n + 1;
+            }
         }
     }
 
-    // No tile was found at all--not even the base texture was found
-    if (!tile)
+    // If the deepest existing tile along the path is not yet Ready, ask the
+    // loader to fetch it. The function is a no-op for tiles that are already
+    // Queued, Ready, or Failed.
+    if (requestedTile != nullptr && requestedTile->state == Tile::State::NotLoaded)
+    {
+        unsigned int reqU = u >> (lod - requestedLOD);
+        unsigned int reqV = v >> (lod - requestedLOD);
+        requestLoad(requestedTile, requestedLOD, reqU, reqV);
+    }
+
+    // No Ready tile is available yet -- caller sees a null name. Falls back to
+    // whatever is already on the GPU once the worker delivers.
+    if (readyTile == nullptr)
         return TextureTile(0);
 
-    // Make the tile resident.
-    unsigned int tileU = u >> (lod - tileLOD);
-    unsigned int tileV = v >> (lod - tileLOD);
-    makeResident(tile, tileLOD, tileU, tileV);
-
-    // It's possible that we failed to make the tile resident, either
-    // because the texture file was bad, or there was an unresolvable
-    // out of memory situation.  In that case there is nothing else to
-    // do but return a texture tile with a null texture name.
-    if (!tile->tex)
-        return TextureTile(0);
-
-    // Set up the texture subrect to be the entire texture
+    // Set up the texture subrect to be the entire texture.
     float texU = 0.0f;
     float texV = 0.0f;
     float texDU = 1.0f;
     float texDV = 1.0f;
 
-    // If the tile came from a lower LOD than the requested one,
-    // we'll only use a subsection of it.
-    unsigned int lodDiff = lod - tileLOD;
+    // If the tile came from a lower LOD than the requested one, we'll only
+    // use a subsection of it.
+    unsigned int lodDiff = lod - readyLOD;
     texDU = texDV = 1.0f / (float) (1 << lodDiff);
     texU = (u & ((1 << lodDiff) - 1)) * texDU;
     texV = (v & ((1 << lodDiff) - 1)) * texDV;
 
-    return TextureTile(tile->tex->getName(), texU, texV, texDU, texDV);
+    return TextureTile(readyTile->tex->getName(), texU, texV, texDU, texDV);
 }
 
 
@@ -257,56 +485,96 @@ VirtualTexture::beginUsage()
 {
     ticks++;
     tilesRequested = 0;
+
+    // Drain everything the worker has delivered into a local vector so that
+    // GL work happens with the result-queue mutex released.
+    std::vector<TileResult> drained;
+    {
+        std::lock_guard<std::mutex> lock(resultQueue->mutex);
+        while (!resultQueue->queue.empty())
+        {
+            drained.push_back(std::move(resultQueue->queue.front()));
+            resultQueue->queue.pop();
+        }
+    }
+
+    unsigned int uploadsThisFrame = 0;
+    std::size_t i = 0;
+    for (; i < drained.size() && uploadsThisFrame < kMaxUploadsPerFrame; ++i)
+    {
+        TileResult& result = drained[i];
+        Tile* tile = static_cast<Tile*>(result.tile);
+
+        if (result.image == nullptr)
+        {
+            tile->state = Tile::State::Failed;
+            continue;
+        }
+
+        // Mirrors the original loadTileTexture mip-mode logic: only level 0
+        // file tiles get a generated mipmap; higher LODs already act as the
+        // mip of their coarser ancestors. Preserve the exact >>= shift the
+        // original used.
+        unsigned int fileLevel = result.lod >> baseSplit;
+        MipMapMode mipMapMode = fileLevel == 0 ? DefaultMipMaps : NoMipMaps;
+
+        if (isPow2(result.image->getWidth()) && isPow2(result.image->getHeight()))
+        {
+            tile->tex = std::make_unique<ImageTexture>(*result.image, EdgeClamp, mipMapMode);
+            tile->state = Tile::State::Ready;
+        }
+        else
+        {
+            tile->state = Tile::State::Failed;
+        }
+
+        ++uploadsThisFrame;
+    }
+
+    // Anything we didn't process this frame goes back on the queue, ahead of
+    // anything the worker may have delivered in the meantime. The order is
+    // simply "what the worker delivered, in delivery order"; per-tile request
+    // order is not preserved (loads complete out-of-order anyway), and that
+    // is fine since the render thread treats per-frame results as a set.
+    if (i < drained.size())
+    {
+        std::lock_guard<std::mutex> lock(resultQueue->mutex);
+        std::queue<TileResult> rebuilt;
+        for (; i < drained.size(); ++i)
+            rebuilt.push(std::move(drained[i]));
+        while (!resultQueue->queue.empty())
+        {
+            rebuilt.push(std::move(resultQueue->queue.front()));
+            resultQueue->queue.pop();
+        }
+        resultQueue->queue = std::move(rebuilt);
+    }
 }
 
 
 void
 VirtualTexture::endUsage()
 {
+    // Reserved for the eviction task (issue #2447).
 }
 
 
-std::unique_ptr<ImageTexture>
-VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v)
+void
+VirtualTexture::requestLoad(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
 {
-    lod >>= baseSplit;
-    assert(lod < (unsigned)MaxResolutionLevels);
+    if (tile->state != Tile::State::NotLoaded)
+        return;
 
-    auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
-    filename += tileExt;
+    tile->state = Tile::State::Queued;
 
-    auto path = tilePath /
-                fmt::format("level{:d}", lod) /
-                filename;
+    auto path = buildTilePath(tilePath, tileExt, tilePrefix, lod, u, v, baseSplit);
 
-    auto img = Image::load(path);
-    if (img == nullptr)
-        return nullptr;
-
-    std::unique_ptr<ImageTexture> tex = nullptr;
-
-    // Only use mip maps for the LOD 0; for higher LODs, the function of mip
-    // mapping is built into the texture.
-    MipMapMode mipMapMode = lod == 0 ? DefaultMipMaps : NoMipMaps;
-
-    if (isPow2(img->getWidth()) && isPow2(img->getHeight()))
-        tex = std::make_unique<ImageTexture>(*img, EdgeClamp, mipMapMode);
-
-    return tex;
-}
-
-
-void VirtualTexture::makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
-{
-    if (tile->tex == nullptr && !tile->loadFailed)
-    {
-        // Potentially evict other tiles in order to make this one fit
-        tile->tex = loadTileTexture(lod, u, v);
-        if (tile->tex == nullptr)
-        {
-            tile->loadFailed = true;
-        }
-    }
+    TileRequest req;
+    req.ownerId = loaderId;
+    req.tile    = tile; // implicit Tile* -> void* (TileHandle)
+    req.lod     = lod;
+    req.path    = std::move(path);
+    TileLoader::instance().enqueue(std::move(req));
 }
 
 

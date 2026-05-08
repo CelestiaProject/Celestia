@@ -10,6 +10,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -24,7 +25,7 @@ public:
                    unsigned int _tileSize,
                    const std::string& _tilePrefix,
                    const std::string& _tileType);
-    ~VirtualTexture() = default;
+    ~VirtualTexture() override;
 
     TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
@@ -38,10 +39,21 @@ public:
 private:
     struct Tile
     {
+        // State of the tile in the async load pipeline. Read AND written
+        // exclusively on the render thread (in getTile / beginUsage /
+        // requestLoad). The worker thread treats Tile* as an opaque cookie
+        // and never dereferences it, so no atomic is needed.
+        enum class State : std::uint8_t
+        {
+            NotLoaded,
+            Queued,
+            Ready,
+            Failed,
+        };
+
         Tile() = default;
-        unsigned int lastUsed{ 0 };
         std::unique_ptr<ImageTexture> tex{ nullptr };
-        bool loadFailed{ false };
+        State state{ State::NotLoaded };
     };
 
     struct TileQuadtreeNode
@@ -51,25 +63,24 @@ private:
         std::array<std::unique_ptr<TileQuadtreeNode>, 4> children{ nullptr, nullptr, nullptr, nullptr };
     };
 
+    struct TileResultQueue;
+
     void populateTileTree();
     void addTileToTree(std::unique_ptr<Tile> tile, unsigned int lod, unsigned int u, unsigned int v);
-    void makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
-    std::unique_ptr<ImageTexture> loadTileTexture(unsigned int lod, unsigned int u, unsigned int v);
+    void requestLoad(Tile* tile, unsigned int lod, unsigned int u, unsigned int v);
 
 private:
     std::filesystem::path tilePath;
     std::filesystem::path tileExt;
     std::string tilePrefix;
     unsigned int baseSplit{ 0 };
+    // ticks / tilesRequested are reserved for the upcoming eviction task
+    // (issue #2447); kept here to avoid churn when eviction lands.
     unsigned int ticks{ 0 };
     unsigned int tilesRequested{ 0 };
     unsigned int nResolutionLevels{ 0 };
-
-    enum
-    {
-        TileNotLoaded  = -1,
-        TileLoadFailed = -2,
-    };
+    std::uint64_t loaderId{ 0 };
+    std::unique_ptr<TileResultQueue> resultQueue;
 
     std::array<TileQuadtreeNode, 2> tileTree{};
 };
