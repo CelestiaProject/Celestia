@@ -4152,7 +4152,7 @@ msgstr "Carregando arquivos de dados..."
 
 #: ../src/celestia/win32/winmain.cpp:628 ../src/celutil/fsutils.cpp:103
 msgid "LANGUAGE"
-msgstr "pt"
+msgstr "pt_BR"
 
 #: ../src/celestia/win32/winmain.cpp:648
 #, c++-format

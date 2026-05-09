@@ -4320,7 +4320,7 @@ msgstr "Laster inn bilde fra fil "
 
 #: ../src/celestia/win32/winmain.cpp:628 ../src/celutil/fsutils.cpp:103
 msgid "LANGUAGE"
-msgstr "Språk"
+msgstr "nb"
 
 #: ../src/celestia/win32/winmain.cpp:648
 #, c++-format

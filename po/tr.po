@@ -4167,7 +4167,7 @@ msgstr "Veri dosyaları yükleniyor.."
 
 #: ../src/celestia/win32/winmain.cpp:628 ../src/celutil/fsutils.cpp:103
 msgid "LANGUAGE"
-msgstr "DİL"
+msgstr "tr"
 
 #: ../src/celestia/win32/winmain.cpp:648
 #, c++-format
