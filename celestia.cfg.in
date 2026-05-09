@@ -484,7 +484,7 @@ StarTextures
 # before shading and a final linear-to-sRGB conversion is applied as a
 # post-process.  This produces physically correct blending and lighting.
 # On OpenGL ES, the GL_EXT_sRGB extension is required; if it is not
-# available the setting is silently ignored.
+# available the setting is ignored.
 # The default value is false.
 #------------------------------------------------------------------------
 # SRGBRendering true
