@@ -10,6 +10,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <Eigen/Core>
 
@@ -146,7 +147,7 @@ public:
  */
 class CachingOrbit : public Orbit
 {
- public:
+public:
     CachingOrbit() = default;
     ~CachingOrbit() override = default;
 
@@ -156,7 +157,7 @@ class CachingOrbit : public Orbit
     Eigen::Vector3d positionAtTime(double jd) const override;
     Eigen::Vector3d velocityAtTime(double jd) const override;
 
- private:
+private:
     mutable Eigen::Vector3d lastPosition;
     mutable Eigen::Vector3d lastVelocity;
     mutable double lastTime{ -1.0e30 };
@@ -173,7 +174,7 @@ class CachingOrbit : public Orbit
  */
 class MixedOrbit : public Orbit
 {
- public:
+public:
     MixedOrbit(const std::shared_ptr<const Orbit>& orbit, double t0, double t1, double mass);
     ~MixedOrbit() override = default;
 
@@ -183,7 +184,7 @@ class MixedOrbit : public Orbit
     double getBoundingRadius() const override;
     void sample(double startTime, double endTime, OrbitSampleProc& proc) const override;
 
- private:
+private:
     std::shared_ptr<const Orbit> primary;
     std::shared_ptr<const Orbit> afterApprox;
     std::shared_ptr<const Orbit> beforeApprox;
@@ -193,36 +194,14 @@ class MixedOrbit : public Orbit
 };
 
 
-// TODO: eliminate this once body-fixed reference frames are implemented
-/*! An object in a synchronous orbit will always hover of the same spot on
- *  the surface of the body it orbits.  Only equatorial orbits of a certain
- *  radius are stable in the real world.  In Celestia, synchronous orbits are
- *  a convenient way to fix objects to a planet surface.
- */
-class SynchronousOrbit : public Orbit
-{
- public:
-    SynchronousOrbit(const Body& _body, const Eigen::Vector3d& _position);
-    ~SynchronousOrbit() override = default;
-
-    Eigen::Vector3d positionAtTime(double jd) const override;
-    double getPeriod() const override;
-    double getBoundingRadius() const override;
-    void sample(double, double, OrbitSampleProc& proc) const override;
-
- private:
-    const Body& body;
-    Eigen::Vector3d position;
-};
-
-
 /*! A FixedOrbit is used for an object that remains at a constant
- *  position within its reference frame.
+ *  position within its reference frame. The period is only used to
+ *  set default rotations for child objects.
  */
 class FixedOrbit : public Orbit
 {
- public:
-    FixedOrbit(const Eigen::Vector3d& pos);
+public:
+    explicit FixedOrbit(const Eigen::Vector3d& pos, std::optional<double> p = std::nullopt);
     ~FixedOrbit() override = default;
 
     Eigen::Vector3d positionAtTime(double) const override;
@@ -232,8 +211,9 @@ class FixedOrbit : public Orbit
     double getBoundingRadius() const override;
     void sample(double, double, OrbitSampleProc&) const override;
 
- private:
-    Eigen::Vector3d position;
+private:
+    Eigen::Vector3d m_position;
+    std::optional<double> m_period;
 };
 
 }
