@@ -636,36 +636,37 @@ void MixedOrbit::sample(double startTime, double endTime, OrbitSampleProc& proc)
 
 /*** FixedOrbit ***/
 
-FixedOrbit::FixedOrbit(const Eigen::Vector3d& pos) :
-    position(pos)
+FixedOrbit::FixedOrbit(const Eigen::Vector3d& position, std::optional<double> period) :
+    m_position(position),
+    m_period(period)
 {
 }
 
 Eigen::Vector3d
 FixedOrbit::positionAtTime(double /*tjd*/) const
 {
-    return position;
+    return m_position;
 }
 
 
 bool
 FixedOrbit::isPeriodic() const
 {
-    return false;
+    return m_period.has_value();
 }
 
 
 double
 FixedOrbit::getPeriod() const
 {
-    return 1.0;
+    return m_period.value_or(1.0);
 }
 
 
 double
 FixedOrbit::getBoundingRadius() const
 {
-    return position.norm() * 1.1;
+    return m_position.norm() * 1.1;
 }
 
 
@@ -674,40 +675,6 @@ FixedOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc
 {
     // Don't add any samples. This will prevent a fixed trajectory from
     // every being drawn when orbit visualization is enabled.
-}
-
-
-/*** SynchronousOrbit ***/
-// TODO: eliminate this class once body-fixed reference frames are implemented
-SynchronousOrbit::SynchronousOrbit(const Body& _body,
-                                   const Eigen::Vector3d& _position) :
-    body(_body),
-    position(_position)
-{
-}
-
-
-Eigen::Vector3d SynchronousOrbit::positionAtTime(double jd) const
-{
-    return body.getEquatorialToBodyFixed(jd).conjugate() * position;
-}
-
-
-double SynchronousOrbit::getPeriod() const
-{
-    return body.getRotationModel(0.0)->getPeriod();
-}
-
-
-double SynchronousOrbit::getBoundingRadius() const
-{
-    return position.norm();
-}
-
-
-void SynchronousOrbit::sample(double /* startTime */, double /* endTime */, OrbitSampleProc& /*proc*/) const
-{
-    // Empty method--we never want to show a synchronous orbit.
 }
 
 } // end namespace celestia::ephem

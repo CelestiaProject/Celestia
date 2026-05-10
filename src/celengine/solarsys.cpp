@@ -267,6 +267,31 @@ Selection GetParentObject(PlanetarySystem* system)
     return parent;
 }
 
+std::shared_ptr<const ephem::Orbit>
+CreateLongLat(const AssociativeArray& planetData, ReferenceFrame::SharedConstPtr& frame)
+{
+    // LongLat will make an object fixed relative to the surface of its center
+    // object. This is done by creating an orbit with a period equal to the
+    // rotation rate of the parent object. A body-fixed reference frame is a
+    // much better way to accomplish this.
+    auto longlat = planetData.getSphericalTuple("LongLat");
+    if (!longlat.has_value())
+        return nullptr;
+
+    Body* centralBody = frame->getCenter().body();
+    if (!centralBody)
+        return nullptr;
+
+#if 0 // TODO: This should be enabled after #542 is fixed
+    Eigen::Vector3d pos = centralBody->geodeticToCartesian(*longlat);
+#else
+    Eigen::Vector3d pos = centralBody->planetocentricToCartesian(180.0 + longlat->x(), longlat->y(), longlat->z());
+#endif
+
+    frame = std::make_shared<BodyFixedFrame>(centralBody, centralBody);
+    double period = centralBody->getRotationModel(0.0)->getPeriod(); // backwards compatibility use t=0
+    return std::make_shared<ephem::FixedOrbit>(pos, period);
+}
 
 std::unique_ptr<TimelinePhase>
 CreateTimelinePhase(Body* body,
@@ -340,6 +365,9 @@ CreateTimelinePhase(Body* body,
 
     // Get the orbit
     auto orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
+    if (!orbit)
+        orbit = CreateLongLat(*phaseData, orbitFrame);
+
     if (!orbit)
     {
         GetLogger()->error("Error: missing orbit in timeline phase.\n");
@@ -557,6 +585,8 @@ bool CreateTimeline(Body* body,
     orbitsPlanet = orbitFrame->getCenter().star() == nullptr;
 
     auto newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
+    if (!newOrbit)
+        newOrbit = CreateLongLat(*planetData, orbitFrame);
     if (newOrbit == nullptr && orbit == nullptr)
     {
         if (body->getTimeline() && disposition == DataDisposition::Modify)
