@@ -33,6 +33,29 @@ using celestia::engine::expandLuminanceAlphaToRGBA;
 namespace
 {
 
+// When sRGB rendering is disabled, strip sRGB pixel formats to their
+// non-sRGB equivalents so the GPU does not linearize on sample.
+PixelFormat
+effectiveFormat(PixelFormat format)
+{
+    if (gl::sRGBRendering)
+        return format;
+
+    switch (format)
+    {
+    case PixelFormat::sRGB:       return PixelFormat::RGB;
+    case PixelFormat::sRGB8:      return PixelFormat::RGB8;
+    case PixelFormat::sRGBA:      return PixelFormat::RGBA;
+    case PixelFormat::sRGBA8:     return PixelFormat::RGBA8;
+    case PixelFormat::sLuminance: return PixelFormat::Luminance;
+    case PixelFormat::sLumAlpha:  return PixelFormat::LumAlpha;
+    case PixelFormat::DXT1_sRGBA: return PixelFormat::DXT1;
+    case PixelFormat::DXT3_sRGBA: return PixelFormat::DXT3;
+    case PixelFormat::DXT5_sRGBA: return PixelFormat::DXT5;
+    default:                      return format;
+    }
+}
+
 struct TextureCaps
 {
     GLint preferredAnisotropy;
@@ -66,6 +89,7 @@ GetTextureCaps()
 bool
 needsRGBAExpansion(PixelFormat format, bool needsMipmap)
 {
+    format = effectiveFormat(format);
     if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
     {
         // GLES3 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap generation. If we
@@ -114,6 +138,7 @@ expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
 GLenum
 getInternalFormat(PixelFormat format, bool needsMipmap)
 {
+    format = effectiveFormat(format);
 #ifdef GL_ES
     switch (format)
     {
@@ -180,6 +205,7 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
 GLenum
 getExternalFormat(PixelFormat format, bool needsMipmap)
 {
+    format = effectiveFormat(format);
 #ifdef GL_ES
     switch (format)
     {
@@ -324,6 +350,7 @@ SetBorderColor(Color borderColor, GLenum target)
 bool
 canGenerateMipmaps([[maybe_unused]] PixelFormat format)
 {
+    format = effectiveFormat(format);
 #ifdef GL_ES
     // All sRGB formats can generate mipmap (after expansion if necessary) on GLES3
     // No sRGB format can generate mipmap on GLES2

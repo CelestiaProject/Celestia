@@ -179,6 +179,8 @@ float Galaxy::getBrightnessCorrection(const Eigen::Vector3f &offset) const
     }
 
     float btot = (type == GalaxyType::Irr || type >= GalaxyType::E0) ? 2.5f : 5.0f;
+    if (celestia::gl::sRGBRendering)
+        btot /= 7.0f; // sRGB rendering causes galaxies to appear excessively bright; scale down to match original appearance
     return (4.0f * lightGain + 1.0f) * btot * brightness_corr;
 }
 

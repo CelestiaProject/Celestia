@@ -93,6 +93,7 @@ struct CelestiaConfig
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
+        bool sRGBRendering{ false };
     };
 
     CelestiaConfig() = default;

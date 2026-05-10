@@ -72,6 +72,7 @@ struct RendererColors
     // Returns a copy of this RendererColors with every color converted from
     // sRGB to linear light, ready for use in a linear-light rendering pipeline.
     RendererColors linearize() const;
+    RendererColors linearize(bool enabled) const { return enabled ? linearize() : *this; }
 };
 
 } // namespace celestia::engine

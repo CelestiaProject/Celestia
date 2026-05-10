@@ -462,7 +462,9 @@ GlobularRenderer::FormManager::getColorTex()
 {
     if (colorTex == nullptr)
     {
-        colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::RGBA,
+        // Color values are authored in sRGB; mark the texture accordingly so
+        // GL linearizes them when the shader samples the colour lookup table.
+        colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::sRGBA,
                                                   &colorTextureEval,
                                                   Texture::EdgeClamp,
                                                   Texture::NoMipMaps);
