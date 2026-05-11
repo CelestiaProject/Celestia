@@ -13,7 +13,6 @@
 #include <cstdint>
 #include <filesystem>
 #include <iostream>
-#include <optional>
 #include <string_view>
 
 #include <fmt/format.h>
@@ -2282,27 +2281,60 @@ static int celestia_geturl(lua_State* l)
 }
 
 
+// Read overlay table slot `slot` (assumed to be a table) and return the
+// per-corner palette. Raises a Lua error if a recognized key is present
+// but has the wrong type or fails to parse as a color.
+static std::array<Color, 4>
+parseOverlayColors(lua_State* l, int slot, std::string_view methodName)
+{
+    auto readColor = [l, slot, methodName](const char* key, Color& out) {
+        lua_getfield(l, slot, key);
+        int type = lua_type(l, -1);
+        if (type == LUA_TNIL || type == LUA_TNONE)
+        {
+            lua_pop(l, 1);
+            return false;
+        }
+        // Use lua_type instead of lua_isstring -- the latter coerces
+        // numbers, which we don't want for color slots.
+        if (type != LUA_TSTRING)
+            Celx_DoError(l, fmt::format("colors.{} in celestia:{} must be a string", key, methodName).c_str());
+        const char* s = lua_tostring(l, -1);
+        Color parsed;
+        if (!Color::parse(s, parsed))
+            Celx_DoError(l, fmt::format("colors.{} in celestia:{} is not a valid color: \"{}\"", key, methodName, s).c_str());
+        out = parsed;
+        lua_pop(l, 1);
+        return true;
+    };
+
+    std::array<Color, 4> colors;
+    colors.fill(Color::White);
+    Color c;
+    if (readColor("color", c))            colors.fill(c);
+    if (readColor("colortop", c))         { colors[0] = c; colors[1] = c; }
+    if (readColor("colorbottom", c))      { colors[2] = c; colors[3] = c; }
+    if (readColor("colortopleft", c))       colors[0] = c;
+    if (readColor("colortopright", c))      colors[1] = c;
+    if (readColor("colorbottomright", c))   colors[2] = c;
+    if (readColor("colorbottomleft", c))    colors[3] = c;
+    return colors;
+}
+
 // Build an OverlayImage from celestia:overlay / celestia:addoverlay args.
 // Returns nullptr if the filename argument was missing or invalid.
 // `methodName` is used for argc/error messages so each method reports its
 // own name.
 static std::unique_ptr<OverlayImage>
-buildOverlayImage(lua_State* l, CelestiaCore* appCore, std::string_view methodName)
+buildOverlayImage(lua_State* l, const CelestiaCore* appCore, std::string_view methodName)
 {
-    float duration = static_cast<float>(Celx_SafeGetNumber(l, 2, WrongType, fmt::format("First argument to celestia:{} must be a number (duration)", methodName).c_str(), 3.0));
-    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, fmt::format("Second argument to celestia:{} must be a number (xoffset)", methodName).c_str(), 0.0));
-    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, fmt::format("Third argument to celestia:{} must be a number (yoffset)", methodName).c_str(), 0.0));
-    // alpha is optional: when omitted (or nil), the corner colors keep
-    // their own alpha channels, matching parseOverlayCommand which only
-    // overrides alpha when the user explicitly passed it.
-    std::optional<float> alpha = std::nullopt;
-    if (lua_gettop(l) >= 5 && !lua_isnil(l, 5))
-    {
-        alpha = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, fmt::format("Fourth argument to celestia:{} must be a number (alpha)", methodName).c_str(), 1.0));
-    }
     const char* filename = Celx_SafeGetString(l, 6, AllErrors, fmt::format("Fifth argument to celestia:{} must be a string (filename)", methodName).c_str());
     if (filename == nullptr)
         return nullptr;
+
+    float duration = static_cast<float>(Celx_SafeGetNumber(l, 2, WrongType, fmt::format("First argument to celestia:{} must be a number (duration)", methodName).c_str(), 3.0));
+    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, fmt::format("Second argument to celestia:{} must be a number (xoffset)", methodName).c_str(), 0.0));
+    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, fmt::format("Third argument to celestia:{} must be a number (yoffset)", methodName).c_str(), 0.0));
     bool fitscreen;
     if (lua_isboolean(l, 7))
         fitscreen = lua_toboolean(l, 7) != 0;
@@ -2333,47 +2365,19 @@ buildOverlayImage(lua_State* l, CelestiaCore* appCore, std::string_view methodNa
     if (lua_gettop(l) >= 11 && !lua_isnil(l, 11))
     {
         if (lua_istable(l, 11))
-        {
-            auto readColor = [l, methodName](const char* key, Color& out) -> bool {
-                lua_getfield(l, 11, key);
-                int type = lua_type(l, -1);
-                if (type == LUA_TNIL || type == LUA_TNONE)
-                {
-                    lua_pop(l, 1);
-                    return false;
-                }
-                // Use lua_type instead of lua_isstring -- the latter coerces
-                // numbers, which we don't want for color slots.
-                if (type != LUA_TSTRING)
-                    Celx_DoError(l, fmt::format("colors.{} in celestia:{} must be a string", key, methodName).c_str());
-                const char* s = lua_tostring(l, -1);
-                Color parsed;
-                if (!Color::parse(s, parsed))
-                    Celx_DoError(l, fmt::format("colors.{} in celestia:{} is not a valid color: \"{}\"", key, methodName, s).c_str());
-                out = parsed;
-                lua_pop(l, 1);
-                return true;
-            };
-
-            Color c;
-            if (readColor("color", c))            colors.fill(c);
-            if (readColor("colortop", c))         { colors[0] = c; colors[1] = c; }
-            if (readColor("colorbottom", c))      { colors[2] = c; colors[3] = c; }
-            if (readColor("colortopleft", c))       colors[0] = c;
-            if (readColor("colortopright", c))      colors[1] = c;
-            if (readColor("colorbottomright", c))   colors[2] = c;
-            if (readColor("colorbottomleft", c))    colors[3] = c;
-        }
+            colors = parseOverlayColors(l, 11, methodName);
         else
-        {
             Celx_DoError(l, fmt::format("Tenth argument to celestia:{} must be a table (colors)", methodName).c_str());
-        }
     }
 
-    if (alpha.has_value())
+    // alpha is optional: when omitted (or nil), the corner colors keep
+    // their own alpha channels, matching parseOverlayCommand which only
+    // overrides alpha when the user explicitly passed it.
+    if (lua_gettop(l) >= 5 && !lua_isnil(l, 5))
     {
+        float alpha = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, fmt::format("Fourth argument to celestia:{} must be a number (alpha)", methodName).c_str(), 1.0));
         for (Color& color : colors)
-            color.alpha(*alpha);
+            color.alpha(alpha);
     }
 
     auto image = std::make_unique<OverlayImage>(filename, appCore->getRenderer());
@@ -2395,8 +2399,7 @@ static int celestia_overlay(lua_State* l)
     Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:overlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    auto image = buildOverlayImage(l, appCore, "overlay");
-    if (image != nullptr)
+    if (auto image = buildOverlayImage(l, appCore, "overlay"); image != nullptr)
     {
         appCore->clearScriptImages();
         appCore->addScriptImage(std::move(image));

@@ -1371,10 +1371,10 @@ Hud::addImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
 {
     if (_image == nullptr) return 0;
     _image->setStartTime(static_cast<float>(currentTime));
-    OverlayImage::Id id = ++m_nextImageId;
-    _image->setId(id);
+    ++m_nextImageId;
+    _image->setId(m_nextImageId);
     m_images.push_back(std::move(_image));
-    return id;
+    return m_nextImageId;
 }
 
 bool
