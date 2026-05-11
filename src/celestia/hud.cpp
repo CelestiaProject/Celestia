@@ -951,7 +951,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
             // in insertion order (newest on top).
             m_images.erase(
                 std::remove_if(m_images.begin(), m_images.end(),
-                               [now](const auto& img) { return img == nullptr || img->isExpired(now); }),
+                               [now](const auto& img) { return img->isExpired(now); }),
                 m_images.end());
             for (const auto& img : m_images)
                 img->render(now, metrics.width, metrics.height);
@@ -1366,12 +1366,27 @@ Hud::showText(const TextPrintPosition& position,
     m_messageDuration = duration;
 }
 
-void
+OverlayImage::Id
 Hud::addImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
 {
-    if (_image == nullptr) return;
+    if (_image == nullptr) return 0;
     _image->setStartTime(static_cast<float>(currentTime));
+    OverlayImage::Id id = ++m_nextImageId;
+    _image->setId(id);
     m_images.push_back(std::move(_image));
+    return id;
+}
+
+bool
+Hud::removeImage(OverlayImage::Id id)
+{
+    if (id == 0) return false;
+    auto before = m_images.size();
+    m_images.erase(
+        std::remove_if(m_images.begin(), m_images.end(),
+                       [id](const auto& img) { return img->id() == id; }),
+        m_images.end());
+    return m_images.size() != before;
 }
 
 void

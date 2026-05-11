@@ -2387,7 +2387,9 @@ buildOverlayImage(lua_State* l, CelestiaCore* appCore, std::string_view methodNa
 }
 
 // celestia:overlay(...) -- replace any currently-displayed overlay images
-// with the new one. Matches the historical single-image behavior.
+// with the new one. Matches the historical single-image behavior; returns
+// nothing (use celestia:addoverlay if you need the image id for later
+// removal).
 static int celestia_overlay(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:overlay");
@@ -2403,16 +2405,34 @@ static int celestia_overlay(lua_State* l)
 }
 
 // celestia:addoverlay(...) -- append an overlay image without clearing the
-// existing ones. Same argument list as celestia:overlay.
+// existing ones. Same argument list as celestia:overlay. Returns the id of
+// the freshly-added image so callers can later remove it via removeoverlay.
 static int celestia_addoverlay(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:addoverlay");
 
     CelestiaCore* appCore = this_celestia(l);
     auto image = buildOverlayImage(l, appCore, "addoverlay");
-    if (image != nullptr)
-        appCore->addScriptImage(std::move(image));
-    return 0;
+    if (image == nullptr)
+    {
+        lua_pushnil(l);
+        return 1;
+    }
+    auto id = appCore->addScriptImage(std::move(image));
+    lua_pushnumber(l, static_cast<lua_Number>(id));
+    return 1;
+}
+
+// celestia:removeoverlay(id) -- drop a single overlay image previously added
+// by overlay()/addoverlay(). Returns true if an image was removed.
+static int celestia_removeoverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:removeoverlay");
+    auto id = static_cast<OverlayImage::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:removeoverlay must be a number (overlay id)"));
+    lua_pushboolean(l, this_celestia(l)->removeScriptImage(id) ? 1 : 0);
+    return 1;
 }
 
 // celestia:clearoverlays() -- drop every currently-displayed overlay image.
@@ -2804,6 +2824,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "geturl", celestia_geturl);
     Celx_RegisterMethod(l, "overlay", celestia_overlay);
     Celx_RegisterMethod(l, "addoverlay", celestia_addoverlay);
+    Celx_RegisterMethod(l, "removeoverlay", celestia_removeoverlay);
     Celx_RegisterMethod(l, "clearoverlays", celestia_clearoverlays);
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 

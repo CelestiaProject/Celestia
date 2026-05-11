@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <filesystem>
 #include <memory>
 
@@ -11,6 +12,11 @@ class Renderer;
 class OverlayImage
 {
  public:
+    // Opaque handle assigned by Hud::addImage at insertion time. Returned to
+    // celx callers so they can remove a specific image later. 0 is reserved
+    // as "no id."
+    using Id = std::uint64_t;
+
     OverlayImage(const std::filesystem::path&, Renderer*);
     OverlayImage()               = delete;
     ~OverlayImage()              = default;
@@ -24,6 +30,8 @@ class OverlayImage
     {
         return curr_time >= start + duration;
     }
+    Id id() const { return imageId; }
+    void setId(Id i) { imageId = i; }
     void setStartTime(float t)
     {
         start = t;
@@ -67,6 +75,7 @@ class OverlayImage
     float overrideWidth  { 0.0f };
     float overrideHeight { 0.0f };
     bool  fitscreen      { false };
+    Id    imageId        { 0 };
     std::array<Color, 4> colors;
 
     std::unique_ptr<Texture> texture;

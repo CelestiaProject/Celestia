@@ -360,7 +360,11 @@ public:
 
     // Append an overlay image. Each call adds another image without
     // displacing existing ones; expired images are pruned automatically.
-    void addScriptImage(std::unique_ptr<OverlayImage>&&);
+    // Returns the freshly-assigned image id (0 means the image was null).
+    OverlayImage::Id addScriptImage(std::unique_ptr<OverlayImage>&&);
+    // Remove a specific overlay image by id. Returns true when an image
+    // was actually removed.
+    bool removeScriptImage(OverlayImage::Id);
     // Remove every currently-displayed overlay image.
     void clearScriptImages();
 

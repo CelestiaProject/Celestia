@@ -2244,9 +2244,14 @@ int CelestiaCore::getTextWidth(std::string_view s) const
 }
 
 
-void CelestiaCore::addScriptImage(std::unique_ptr<OverlayImage>&& _image)
+OverlayImage::Id CelestiaCore::addScriptImage(std::unique_ptr<OverlayImage>&& _image)
 {
-    hud->addImage(std::move(_image), timeInfo.currentTime);
+    return hud->addImage(std::move(_image), timeInfo.currentTime);
+}
+
+bool CelestiaCore::removeScriptImage(OverlayImage::Id id)
+{
+    return hud->removeImage(id);
 }
 
 void CelestiaCore::clearScriptImages()
