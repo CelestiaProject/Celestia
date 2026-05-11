@@ -2450,21 +2450,21 @@ static int celestia_clearimageoverlays(lua_State* l)
 }
 
 #ifdef USE_VIDEO_OVERLAY
-// celestia:addvideo(xoffset, yoffset, width, height, filename) -- start
+// celestia:addvideooverlay(xoffset, yoffset, width, height, filename) -- start
 // playing a video file as a screen overlay. xoffset/yoffset follow the same
 // convention as addoverlay (0 = centred, ±1 = edge). width/height are in
 // pixels; 0 means use the video's native dimension. Returns a numeric id that
-// can be passed to removevideo(), or nil on failure.
-static int celestia_addvideo(lua_State* l)
+// can be passed to removevideooverlay(), or nil on failure.
+static int celestia_addvideooverlay(lua_State* l)
 {
-    Celx_CheckArgs(l, 6, 6, "Five arguments expected for celestia:addvideo");
+    Celx_CheckArgs(l, 6, 6, "Five arguments expected for celestia:addvideooverlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:addvideo must be a number (xoffset)", 0.0));
-    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:addvideo must be a number (yoffset)", 0.0));
-    float width   = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:addvideo must be a number (width)", 0.0));
-    float height  = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:addvideo must be a number (height)", 0.0));
-    const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:addvideo must be a string (filename)");
+    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:addvideooverlay must be a number (xoffset)", 0.0));
+    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:addvideooverlay must be a number (yoffset)", 0.0));
+    float width   = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:addvideooverlay must be a number (width)", 0.0));
+    float height  = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:addvideooverlay must be a number (height)", 0.0));
+    const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:addvideooverlay must be a string (filename)");
     if (filename == nullptr)
     {
         lua_pushnil(l);
@@ -2485,22 +2485,22 @@ static int celestia_addvideo(lua_State* l)
     return 1;
 }
 
-// celestia:removevideo(id) -- stop and remove a video overlay previously
-// started with addvideo(). Returns true if a video was removed.
-static int celestia_removevideo(lua_State* l)
+// celestia:removevideooverlay(id) -- stop and remove a video overlay previously
+// started with addvideooverlay(). Returns true if a video was removed.
+static int celestia_removevideooverlay(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:removevideo");
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:removevideooverlay");
     auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
         l, 2, AllErrors,
-        "First argument to celestia:removevideo must be a number (video id)"));
+        "First argument to celestia:removevideooverlay must be a number (video id)"));
     lua_pushboolean(l, this_celestia(l)->removeVideoOverlay(id) ? 1 : 0);
     return 1;
 }
 
-// celestia:clearvideoverlays() -- remove all active video overlays.
-static int celestia_clearvideoverlays(lua_State* l)
+// celestia:clearvideooverlays() -- remove all active video overlays.
+static int celestia_clearvideooverlays(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearvideoverlays");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearvideooverlays");
     this_celestia(l)->clearVideoOverlays();
     return 0;
 }
@@ -2890,9 +2890,9 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "removeimageoverlay", celestia_removeimageoverlay);
     Celx_RegisterMethod(l, "clearimageoverlays", celestia_clearimageoverlays);
 #ifdef USE_VIDEO_OVERLAY
-    Celx_RegisterMethod(l, "addvideo", celestia_addvideo);
-    Celx_RegisterMethod(l, "removevideo", celestia_removevideo);
-    Celx_RegisterMethod(l, "clearvideoverlays", celestia_clearvideoverlays);
+    Celx_RegisterMethod(l, "addvideooverlay", celestia_addvideooverlay);
+    Celx_RegisterMethod(l, "removevideooverlay", celestia_removevideooverlay);
+    Celx_RegisterMethod(l, "clearvideooverlays", celestia_clearvideooverlays);
 #endif
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 
