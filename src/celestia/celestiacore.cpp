@@ -2615,12 +2615,13 @@ LoadFontHelper(const Renderer *renderer, const std::filesystem::path &p)
 }
 
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
+                                std::optional<bool> sRGBRendering,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
     // Resolve the effective sRGB rendering flag.
     // On GLES 2.0, sRGB requires the EXT_sRGB extension.
     // GLES 3.0+ has native sRGB support.
-    gl::sRGBRendering = config->renderDetails.sRGBRendering;
+    gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.sRGBRendering);
 #ifdef GL_ES
     if (gl::sRGBRendering && !gl::checkVersion(gl::GLES_3_0) && !gl::EXT_sRGB)
     {

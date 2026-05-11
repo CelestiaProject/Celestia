@@ -135,7 +135,7 @@ CelestiaGlWidget::initializeGL()
     if (textureResolution < 0 || textureResolution > static_cast<int>(engine::TextureResolution::hires))
         textureResolution = DEFAULT_TEXTURE_RESOLUTION;
 
-    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), false))
+    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), std::nullopt, false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);
