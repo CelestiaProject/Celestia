@@ -11,7 +11,14 @@
 
 #ifdef USE_VIDEO_OVERLAY
 
+#include <array>
+#include <atomic>
+#include <condition_variable>
 #include <cstdint>
+#include <cstring>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 extern "C"
 {
@@ -32,9 +39,6 @@ using celestia::util::GetLogger;
 namespace
 {
 
-// Minimal Texture subclass wrapping a caller-owned GL texture name.
-// The GL texture is owned by VideoOverlay::Impl; this wrapper exists only
-// to flow through Renderer::drawRectangle without any image data copy.
 class VideoFrameTexture : public Texture
 {
 public:
@@ -55,55 +59,97 @@ private:
     GLuint m_glName;
 };
 
+// Number of decoded RGBA frames kept in the ring buffer.  3 gives the decoder
+// one slot to write into while the render thread holds one for display and one
+// is free as a spare.
+constexpr int RING_SIZE = 3;
+
+struct DecodedFrame
+{
+    std::vector<uint8_t> pixels;
+    double pts    { -1.0 };
+    bool   ready  { false };
+    // Set on the first frame decoded after seeking back to the start so the
+    // render thread knows to reset its playback clock.
+    bool   looped { false };
+};
+
 } // namespace
 
 struct VideoOverlay::Impl
 {
+    // FFmpeg resources — owned and used exclusively by the decoder thread
+    // after startDecoder() is called.
     AVFormatContext* fmtCtx    { nullptr };
     AVCodecContext*  codecCtx  { nullptr };
     AVFrame*         frame     { nullptr };
     AVFrame*         rgbaFrame { nullptr };
     AVPacket*        packet    { nullptr };
     SwsContext*      swsCtx    { nullptr };
-    int         videoStream { -1 };
-    int         videoWidth  { 0 };
-    int         videoHeight { 0 };
-    AVRational  timeBase    {};
+    int        videoStream { -1 };
+    int        videoWidth  { 0 };
+    int        videoHeight { 0 };
+    AVRational timeBase    {};
 
+    // Ring buffer shared between the decoder thread (writer) and the render
+    // thread (reader).  Access is serialised by `mutex`.
+    std::array<DecodedFrame, RING_SIZE> ring;
+    // Scratch buffer used by the render thread to copy a frame out of the ring
+    // before handing it to GL.  Owned exclusively by the render thread.
+    std::vector<uint8_t>    uploadBuffer;
+    std::mutex              mutex;
+    std::condition_variable slotFree;   // decoder waits here when ring is full
+
+    // GL resources — render thread only.
     GLuint glName { 0 };
     std::unique_ptr<VideoFrameTexture> texture;
 
-    double currentPts { -1.0 };  // PTS of last decoded frame, in seconds
+    // Decoder thread.
+    std::thread       decoderThread;
+    std::atomic<bool> stop { false };
 
     ~Impl();
 
     bool open(const std::filesystem::path& path);
-    bool decodeNextFrame();
+    void startDecoder();
+    void decoderLoop();
+    // Decode one video frame into rgbaFrame; returns false at EOF/error.
+    // Called from the decoder thread only.
+    bool decodeOneFrame(double& outPts);
+
+    // Render thread helpers.
     void ensureTexture();
-    void uploadFrame();
+    void uploadToGL();   // uploads uploadBuffer into the GL texture
 };
+
+// ---------------------------------------------------------------------------
+// Impl lifecycle
+// ---------------------------------------------------------------------------
 
 VideoOverlay::Impl::~Impl()
 {
+    // Signal the decoder thread to exit and wait for it.
+    stop.store(true, std::memory_order_relaxed);
+    slotFree.notify_all();
+    if (decoderThread.joinable())
+        decoderThread.join();
+
+    // GL cleanup (render thread is the caller of ~VideoOverlay).
     texture.reset();
     if (glName != 0)
         glDeleteTextures(1, &glName);
 
-    if (swsCtx)
-        sws_freeContext(swsCtx);
+    // FFmpeg cleanup.
+    if (swsCtx)   sws_freeContext(swsCtx);
     if (rgbaFrame)
     {
         av_freep(&rgbaFrame->data[0]);
         av_frame_free(&rgbaFrame);
     }
-    if (frame)
-        av_frame_free(&frame);
-    if (packet)
-        av_packet_free(&packet);
-    if (codecCtx)
-        avcodec_free_context(&codecCtx);
-    if (fmtCtx)
-        avformat_close_input(&fmtCtx);
+    if (frame)  av_frame_free(&frame);
+    if (packet) av_packet_free(&packet);
+    if (codecCtx) avcodec_free_context(&codecCtx);
+    if (fmtCtx)   avformat_close_input(&fmtCtx);
 }
 
 bool VideoOverlay::Impl::open(const std::filesystem::path& path)
@@ -139,11 +185,9 @@ bool VideoOverlay::Impl::open(const std::filesystem::path& path)
     }
 
     codecCtx = avcodec_alloc_context3(codec);
-    if (!codecCtx)
-        return false;
+    if (!codecCtx) return false;
 
-    if (avcodec_parameters_to_context(codecCtx, stream->codecpar) < 0)
-        return false;
+    if (avcodec_parameters_to_context(codecCtx, stream->codecpar) < 0) return false;
 
     if (avcodec_open2(codecCtx, codec, nullptr) < 0)
     {
@@ -157,13 +201,11 @@ bool VideoOverlay::Impl::open(const std::filesystem::path& path)
     frame     = av_frame_alloc();
     rgbaFrame = av_frame_alloc();
     packet    = av_packet_alloc();
-    if (!frame || !rgbaFrame || !packet)
-        return false;
+    if (!frame || !rgbaFrame || !packet) return false;
 
     int bufSize = av_image_get_buffer_size(AV_PIX_FMT_RGBA, videoWidth, videoHeight, 1);
     auto* buf = static_cast<uint8_t*>(av_malloc(static_cast<size_t>(bufSize)));
-    if (!buf)
-        return false;
+    if (!buf) return false;
 
     av_image_fill_arrays(rgbaFrame->data, rgbaFrame->linesize,
                          buf, AV_PIX_FMT_RGBA, videoWidth, videoHeight, 1);
@@ -177,10 +219,26 @@ bool VideoOverlay::Impl::open(const std::filesystem::path& path)
         return false;
     }
 
+    // Pre-allocate ring-buffer pixel storage and the render-thread upload
+    // buffer now that we know the frame size.
+    auto frameBytes = static_cast<std::size_t>(videoWidth * videoHeight * 4);
+    for (auto& f : ring)
+        f.pixels.resize(frameBytes);
+    uploadBuffer.resize(frameBytes);
+
     return true;
 }
 
-bool VideoOverlay::Impl::decodeNextFrame()
+void VideoOverlay::Impl::startDecoder()
+{
+    decoderThread = std::thread(&Impl::decoderLoop, this);
+}
+
+// ---------------------------------------------------------------------------
+// Decoder thread
+// ---------------------------------------------------------------------------
+
+bool VideoOverlay::Impl::decodeOneFrame(double& outPts)
 {
     while (true)
     {
@@ -196,27 +254,77 @@ bool VideoOverlay::Impl::decodeNextFrame()
 
         ret = avcodec_send_packet(codecCtx, packet);
         av_packet_unref(packet);
-        if (ret < 0)
-            continue;
+        if (ret < 0) continue;
 
         ret = avcodec_receive_frame(codecCtx, frame);
-        if (ret == AVERROR(EAGAIN))
-            continue;
-        if (ret < 0)
-            return false;
+        if (ret == AVERROR(EAGAIN)) continue;
+        if (ret < 0) return false;
 
         sws_scale(swsCtx,
                   frame->data, frame->linesize, 0, videoHeight,
                   rgbaFrame->data, rgbaFrame->linesize);
 
-        if (frame->pts != AV_NOPTS_VALUE)
-            currentPts = frame->pts * av_q2d(timeBase);
-        else
-            currentPts += av_q2d(timeBase);  // fallback: advance by one time-base unit
+        outPts = (frame->pts != AV_NOPTS_VALUE)
+            ? frame->pts * av_q2d(timeBase)
+            : outPts + av_q2d(timeBase);  // fallback: advance by one time-base unit
 
         return true;
     }
 }
+
+void VideoOverlay::Impl::decoderLoop()
+{
+    // The very first frame is not considered a "loop" — the render thread
+    // initialises its clock on the first render() call independently.
+    bool afterSeek = false;
+    double lastPts = 0.0;
+
+    while (!stop.load(std::memory_order_relaxed))
+    {
+        // Wait until a free slot is available in the ring buffer.
+        DecodedFrame* slot = nullptr;
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            slotFree.wait(lock, [&]
+            {
+                if (stop.load()) return true;
+                for (auto& f : ring)
+                    if (!f.ready) { slot = &f; return true; }
+                return false;
+            });
+        }
+
+        if (stop.load()) break;
+
+        // Decode one frame outside the lock — all FFmpeg resources are
+        // exclusively owned by this thread.
+        double pts = lastPts;
+        if (!decodeOneFrame(pts))
+        {
+            // EOF — seek back to the beginning and flag the next frame.
+            av_seek_frame(fmtCtx, videoStream, 0, AVSEEK_FLAG_BACKWARD);
+            avcodec_flush_buffers(codecCtx);
+            lastPts   = 0.0;
+            afterSeek = true;
+            continue;
+        }
+        lastPts = pts;
+
+        // Copy the decoded RGBA data into the ring slot and mark it ready.
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            std::memcpy(slot->pixels.data(), rgbaFrame->data[0], slot->pixels.size());
+            slot->pts    = pts;
+            slot->looped = afterSeek;
+            slot->ready  = true;
+        }
+        afterSeek = false;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Render thread helpers
+// ---------------------------------------------------------------------------
 
 void VideoOverlay::Impl::ensureTexture()
 {
@@ -229,12 +337,12 @@ void VideoOverlay::Impl::ensureTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, videoWidth, videoHeight,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaFrame->data[0]);
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, uploadBuffer.data());
 
     texture = std::make_unique<VideoFrameTexture>(glName, videoWidth, videoHeight);
 }
 
-void VideoOverlay::Impl::uploadFrame()
+void VideoOverlay::Impl::uploadToGL()
 {
     if (glName == 0)
     {
@@ -243,14 +351,20 @@ void VideoOverlay::Impl::uploadFrame()
     }
     glBindTexture(GL_TEXTURE_2D, glName);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoWidth, videoHeight,
-                    GL_RGBA, GL_UNSIGNED_BYTE, rgbaFrame->data[0]);
+                    GL_RGBA, GL_UNSIGNED_BYTE, uploadBuffer.data());
 }
+
+// ---------------------------------------------------------------------------
+// VideoOverlay public API
+// ---------------------------------------------------------------------------
 
 VideoOverlay::VideoOverlay(const std::filesystem::path& path, Renderer* renderer)
     : m_impl(std::make_unique<Impl>())
     , m_renderer(renderer)
 {
     m_valid = m_impl->open(path);
+    if (m_valid)
+        m_impl->startDecoder();
 }
 
 VideoOverlay::~VideoOverlay() = default;
@@ -264,21 +378,50 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
 
     double elapsed = currentTime - m_startTime;
 
-    // Decode frames until the video has caught up with elapsed time.
-    while (m_impl->currentPts < elapsed)
+    // Find the ready frame with the highest PTS that does not exceed elapsed.
+    // Copy its pixels out of the ring buffer so the decoder thread can reuse
+    // the slot immediately without contending with the GL upload.
+    bool haveFrame = false;
     {
-        if (!m_impl->decodeNextFrame())
+        std::lock_guard<std::mutex> lock(m_impl->mutex);
+
+        DecodedFrame* best = nullptr;
+        for (auto& f : m_impl->ring)
         {
-            // EOF — seek back to the beginning and loop.
-            av_seek_frame(m_impl->fmtCtx, m_impl->videoStream, 0, AVSEEK_FLAG_BACKWARD);
-            avcodec_flush_buffers(m_impl->codecCtx);
-            m_startTime    = currentTime;
-            elapsed        = 0.0;
-            m_impl->currentPts = -1.0;
-            if (!m_impl->decodeNextFrame())
-                return;
+            if (!f.ready) continue;
+            if (f.pts > elapsed && !f.looped) continue;
+            if (best == nullptr || f.pts > best->pts)
+                best = &f;
         }
-        m_impl->uploadFrame();
+
+        if (best != nullptr)
+        {
+            if (best->looped)
+            {
+                // Align the playback clock so that PTS=0 maps to now.
+                m_startTime = currentTime - best->pts;
+                elapsed     = best->pts;
+            }
+
+            std::memcpy(m_impl->uploadBuffer.data(),
+                        best->pixels.data(),
+                        best->pixels.size());
+
+            // Free this slot and every older one so the decoder can proceed.
+            double uploadedPts = best->pts;
+            for (auto& f : m_impl->ring)
+                if (f.ready && f.pts <= uploadedPts)
+                    f.ready = false;
+
+            haveFrame = true;
+        }
+    }
+
+    if (haveFrame)
+    {
+        m_impl->slotFree.notify_all();
+        m_impl->ensureTexture();
+        m_impl->uploadToGL();
     }
 
     if (m_impl->glName == 0) return;
@@ -286,7 +429,6 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
     float xSize = (m_displayWidth  > 0.0f) ? m_displayWidth  : static_cast<float>(m_impl->videoWidth);
     float ySize = (m_displayHeight > 0.0f) ? m_displayHeight : static_cast<float>(m_impl->videoHeight);
 
-    // Positioning mirrors OverlayImage: offset 0 centres, ±1 aligns to edges.
     float left   = (static_cast<float>(vpWidth)  * (1.0f + m_offsetX) - xSize) / 2.0f;
     float bottom = (static_cast<float>(vpHeight) * (1.0f + m_offsetY) - ySize) / 2.0f;
 
