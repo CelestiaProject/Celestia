@@ -2415,6 +2415,14 @@ static int celestia_addoverlay(lua_State* l)
     return 0;
 }
 
+// celestia:clearoverlays() -- drop every currently-displayed overlay image.
+static int celestia_clearoverlays(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearoverlays");
+    this_celestia(l)->clearScriptImages();
+    return 0;
+}
+
 static int celestia_verbosity(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:verbosity");
@@ -2796,6 +2804,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "geturl", celestia_geturl);
     Celx_RegisterMethod(l, "overlay", celestia_overlay);
     Celx_RegisterMethod(l, "addoverlay", celestia_addoverlay);
+    Celx_RegisterMethod(l, "clearoverlays", celestia_clearoverlays);
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 
     // Compatibility audio playback
