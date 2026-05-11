@@ -31,6 +31,9 @@
 #include <celengine/observer.h>
 #include <celengine/overlay.h>
 #include <celengine/overlayimage.h>
+#ifdef USE_VIDEO_OVERLAY
+#include <celengine/videooverlay.h>
+#endif
 #include <celengine/rectangle.h>
 #include <celengine/simulation.h>
 #include <celengine/star.h>
@@ -958,6 +961,17 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         }
     }
 
+#ifdef USE_VIDEO_OVERLAY
+    if (!m_videoOverlays.empty())
+    {
+        if (!m_hudSettings.showOverlayImage || !isScriptRunning)
+            m_videoOverlays.clear();
+        else
+            for (const auto& v : m_videoOverlays)
+                v->render(timeInfo.currentTime, metrics.width, metrics.height);
+    }
+#endif
+
     views.renderBorders(m_overlay.get(), metrics, timeInfo.currentTime);
 
     if (m_hudDetail > 0 && util::is_set(m_hudSettings.overlayElements, HudElements::ShowTime))
@@ -1394,5 +1408,35 @@ Hud::clearImages()
 {
     m_images.clear();
 }
+
+#ifdef USE_VIDEO_OVERLAY
+VideoOverlay::Id
+Hud::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
+{
+    if (!overlay) return 0;
+    ++m_nextVideoId;
+    overlay->setId(m_nextVideoId);
+    m_videoOverlays.push_back(std::move(overlay));
+    return m_nextVideoId;
+}
+
+bool
+Hud::removeVideoOverlay(VideoOverlay::Id id)
+{
+    if (id == 0) return false;
+    auto before = m_videoOverlays.size();
+    m_videoOverlays.erase(
+        std::remove_if(m_videoOverlays.begin(), m_videoOverlays.end(),
+                       [id](const auto& v) { return v->id() == id; }),
+        m_videoOverlays.end());
+    return m_videoOverlays.size() != before;
+}
+
+void
+Hud::clearVideoOverlays()
+{
+    m_videoOverlays.clear();
+}
+#endif
 
 } // end namespace celestia

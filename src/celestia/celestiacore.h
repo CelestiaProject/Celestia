@@ -28,6 +28,9 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
+#ifdef USE_VIDEO_OVERLAY
+#include <celengine/videooverlay.h>
+#endif
 #include <celengine/viewporteffect.h>
 #include <celimage/pixelformat.h>
 #include <celutil/flag.h>
@@ -369,6 +372,12 @@ public:
     bool removeScriptImage(OverlayImage::Id);
     // Remove every currently-displayed overlay image.
     void clearScriptImages();
+
+#ifdef USE_VIDEO_OVERLAY
+    VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
+    bool removeVideoOverlay(VideoOverlay::Id);
+    void clearVideoOverlays();
+#endif
 
     std::string_view getTypedText() const;
     void setTypedText(const char *);

@@ -19,6 +19,9 @@
 
 #include <celengine/category.h>
 #include <celengine/texture.h>
+#ifdef USE_VIDEO_OVERLAY
+#include <celengine/videooverlay.h>
+#endif
 #include <celestia/audiosession.h>
 #include <celestia/configfile.h>
 #include <celestia/hud.h>
@@ -2446,6 +2449,63 @@ static int celestia_clearimageoverlays(lua_State* l)
     return 0;
 }
 
+#ifdef USE_VIDEO_OVERLAY
+// celestia:addvideo(xoffset, yoffset, width, height, filename) -- start
+// playing a video file as a screen overlay. xoffset/yoffset follow the same
+// convention as addoverlay (0 = centred, ±1 = edge). width/height are in
+// pixels; 0 means use the video's native dimension. Returns a numeric id that
+// can be passed to removevideo(), or nil on failure.
+static int celestia_addvideo(lua_State* l)
+{
+    Celx_CheckArgs(l, 6, 6, "Five arguments expected for celestia:addvideo");
+
+    CelestiaCore* appCore = this_celestia(l);
+    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:addvideo must be a number (xoffset)", 0.0));
+    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:addvideo must be a number (yoffset)", 0.0));
+    float width   = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:addvideo must be a number (width)", 0.0));
+    float height  = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:addvideo must be a number (height)", 0.0));
+    const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:addvideo must be a string (filename)");
+    if (filename == nullptr)
+    {
+        lua_pushnil(l);
+        return 1;
+    }
+
+    auto video = std::make_unique<VideoOverlay>(std::filesystem::path(filename), appCore->getRenderer());
+    if (!video->isValid())
+    {
+        lua_pushnil(l);
+        return 1;
+    }
+    video->setOffset(xoffset, yoffset);
+    video->setSize(width, height);
+
+    auto id = appCore->addVideoOverlay(std::move(video));
+    lua_pushnumber(l, static_cast<lua_Number>(id));
+    return 1;
+}
+
+// celestia:removevideo(id) -- stop and remove a video overlay previously
+// started with addvideo(). Returns true if a video was removed.
+static int celestia_removevideo(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:removevideo");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:removevideo must be a number (video id)"));
+    lua_pushboolean(l, this_celestia(l)->removeVideoOverlay(id) ? 1 : 0);
+    return 1;
+}
+
+// celestia:clearvideoverlays() -- remove all active video overlays.
+static int celestia_clearvideoverlays(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearvideoverlays");
+    this_celestia(l)->clearVideoOverlays();
+    return 0;
+}
+#endif // USE_VIDEO_OVERLAY
+
 static int celestia_verbosity(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:verbosity");
@@ -2829,6 +2889,11 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "addimageoverlay", celestia_addimageoverlay);
     Celx_RegisterMethod(l, "removeimageoverlay", celestia_removeimageoverlay);
     Celx_RegisterMethod(l, "clearimageoverlays", celestia_clearimageoverlays);
+#ifdef USE_VIDEO_OVERLAY
+    Celx_RegisterMethod(l, "addvideo", celestia_addvideo);
+    Celx_RegisterMethod(l, "removevideo", celestia_removevideo);
+    Celx_RegisterMethod(l, "clearvideoverlays", celestia_clearvideoverlays);
+#endif
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 
     // Compatibility audio playback

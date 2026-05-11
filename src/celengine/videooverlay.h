@@ -1,0 +1,66 @@
+// videooverlay.h
+//
+// Copyright (C) 2026, the Celestia Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
+#pragma once
+
+#ifdef USE_VIDEO_OVERLAY
+
+#include <cstdint>
+#include <filesystem>
+#include <memory>
+
+class Renderer;
+
+// VideoOverlay plays a video file as a 2D screen overlay using FFmpeg for
+// decoding. Frames are decoded synchronously on demand during render() and
+// uploaded to a GL texture via glTexSubImage2D. The video loops automatically
+// when it reaches EOF. Audio is not handled here.
+class VideoOverlay
+{
+public:
+    // Opaque handle assigned by Hud::addVideoOverlay at insertion time.
+    // 0 is reserved as "no id."
+    using Id = std::uint64_t;
+
+    VideoOverlay(const std::filesystem::path& path, Renderer* renderer);
+    ~VideoOverlay();
+
+    VideoOverlay()               = delete;
+    VideoOverlay(VideoOverlay&)  = delete;
+    VideoOverlay(VideoOverlay&&) = delete;
+
+    // Advance playback to currentTime and draw the current frame. currentTime
+    // is Celestia's real-time clock (seconds), matching what OverlayImage
+    // receives.
+    void render(double currentTime, int vpWidth, int vpHeight);
+
+    void setOffset(float x, float y) { m_offsetX = x; m_offsetY = y; }
+    // Override the drawn size in pixels. 0 on either axis uses the video's
+    // native dimension for that axis.
+    void setSize(float w, float h) { m_displayWidth = w; m_displayHeight = h; }
+
+    void setId(Id id) { m_id = id; }
+    Id   id()    const { return m_id; }
+    bool isValid() const { return m_valid; }
+
+private:
+    struct Impl;
+    std::unique_ptr<Impl> m_impl;
+
+    float  m_offsetX       { 0.0f };
+    float  m_offsetY       { 0.0f };
+    float  m_displayWidth  { 0.0f };
+    float  m_displayHeight { 0.0f };
+    double m_startTime     { -1.0 };  // currentTime of first render() call
+    Id     m_id            { 0 };
+    bool   m_valid         { false };
+    Renderer* m_renderer   { nullptr };
+};
+
+#endif // USE_VIDEO_OVERLAY

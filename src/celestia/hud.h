@@ -25,6 +25,9 @@
 
 #include <celastro/date.h>
 #include <celengine/overlayimage.h>
+#ifdef USE_VIDEO_OVERLAY
+#include <celengine/videooverlay.h>
+#endif
 #include <celengine/selection.h>
 #include <celestia/textinput.h>
 #include <celestia/textprintposition.h>
@@ -169,6 +172,12 @@ public:
     // Drop every currently-displayed overlay image immediately.
     void clearImages();
 
+#ifdef USE_VIDEO_OVERLAY
+    VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
+    bool removeVideoOverlay(VideoOverlay::Id);
+    void clearVideoOverlays();
+#endif
+
     HudSettings& hudSettings() noexcept { return m_hudSettings; }
     const HudSettings& hudSettings() const noexcept { return m_hudSettings; }
 
@@ -190,6 +199,11 @@ private:
     // Counter for assigning image ids; pre-incremented so the first id is 1
     // and the sentinel 0 is reserved for "no id."
     OverlayImage::Id m_nextImageId { 0 };
+
+#ifdef USE_VIDEO_OVERLAY
+    std::vector<std::unique_ptr<VideoOverlay>> m_videoOverlays;
+    VideoOverlay::Id m_nextVideoId { 0 };
+#endif
 
     std::locale loc;
 

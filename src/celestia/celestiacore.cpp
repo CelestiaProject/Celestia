@@ -2259,6 +2259,23 @@ void CelestiaCore::clearScriptImages()
     hud->clearImages();
 }
 
+#ifdef USE_VIDEO_OVERLAY
+VideoOverlay::Id CelestiaCore::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
+{
+    return hud->addVideoOverlay(std::move(overlay));
+}
+
+bool CelestiaCore::removeVideoOverlay(VideoOverlay::Id id)
+{
+    return hud->removeVideoOverlay(id);
+}
+
+void CelestiaCore::clearVideoOverlays()
+{
+    hud->clearVideoOverlays();
+}
+#endif
+
 
 void CelestiaCore::renderOverlay()
 {
