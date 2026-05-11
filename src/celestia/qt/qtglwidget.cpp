@@ -135,7 +135,11 @@ CelestiaGlWidget::initializeGL()
     if (textureResolution < 0 || textureResolution > static_cast<int>(engine::TextureResolution::hires))
         textureResolution = DEFAULT_TEXTURE_RESOLUTION;
 
-    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), false))
+    std::optional<bool> sRGBOverride;
+    if (settings.contains("sRGBRendering"))
+        sRGBOverride = settings.value("sRGBRendering").toBool();
+
+    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), sRGBOverride, false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);

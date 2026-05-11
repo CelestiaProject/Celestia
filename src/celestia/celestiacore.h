@@ -188,7 +188,9 @@ public:
     bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
                         const std::vector<std::filesystem::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
-    bool initRenderer(celestia::engine::TextureResolution, bool useMesaPackInvert = true);
+    bool initRenderer(celestia::engine::TextureResolution,
+                      std::optional<bool> sRGBRendering = std::nullopt,
+                      bool useMesaPackInvert = true);
     void start(double t);
     void start();
     void getLightTravelDelay(double distanceKm, int&, int&, float&);
