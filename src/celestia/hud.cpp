@@ -935,8 +935,28 @@ Hud::renderOverlay(const WindowMetrics& metrics,
 
     m_overlay->begin();
 
-    if (m_hudSettings.showOverlayImage && isScriptRunning && m_image != nullptr)
-        m_image->render(static_cast<float>(timeInfo.currentTime), metrics.width, metrics.height);
+    if (!m_images.empty())
+    {
+        if (!m_hudSettings.showOverlayImage || !isScriptRunning)
+        {
+            // Overlays are gated off (preference toggled or script ended).
+            // Drop the queue rather than letting it accumulate silently.
+            m_images.clear();
+        }
+        else
+        {
+            auto now = static_cast<float>(timeInfo.currentTime);
+            // Drop fully-faded images first so the loop doesn't pile up
+            // state across many short-lived overlays; render the survivors
+            // in insertion order (newest on top).
+            m_images.erase(
+                std::remove_if(m_images.begin(), m_images.end(),
+                               [now](const auto& img) { return img == nullptr || img->isExpired(now); }),
+                m_images.end());
+            for (const auto& img : m_images)
+                img->render(now, metrics.width, metrics.height);
+        }
+    }
 
     views.renderBorders(m_overlay.get(), metrics, timeInfo.currentTime);
 
@@ -1347,10 +1367,17 @@ Hud::showText(const TextPrintPosition& position,
 }
 
 void
-Hud::setImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
+Hud::addImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
 {
-    m_image = std::move(_image);
-    m_image->setStartTime(static_cast<float>(currentTime));
+    if (_image == nullptr) return;
+    _image->setStartTime(static_cast<float>(currentTime));
+    m_images.push_back(std::move(_image));
+}
+
+void
+Hud::clearImages()
+{
+    m_images.clear();
 }
 
 } // end namespace celestia

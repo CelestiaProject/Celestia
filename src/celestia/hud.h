@@ -19,6 +19,7 @@
 #include <string_view>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 #include <Eigen/Core>
 
@@ -156,7 +157,12 @@ public:
                        bool editMode);
 
     void showText(const TextPrintPosition&, std::string_view, double duration, double currentTime);
-    void setImage(std::unique_ptr<OverlayImage>&&, double);
+    // Push an overlay image onto the stack of currently-displayed images.
+    // Each image is rendered until its own duration elapses, then dropped
+    // from the stack; calling this never replaces existing images.
+    void addImage(std::unique_ptr<OverlayImage>&&, double);
+    // Drop every currently-displayed overlay image immediately.
+    void clearImages();
 
     HudSettings& hudSettings() noexcept { return m_hudSettings; }
     const HudSettings& hudSettings() const noexcept { return m_hudSettings; }
@@ -173,7 +179,9 @@ private:
 
     std::unique_ptr<Overlay> m_overlay;
 
-    std::unique_ptr<OverlayImage> m_image;
+    // Active script overlays. New images are appended in `addImage`;
+    // expired ones are pruned during renderOverlay.
+    std::vector<std::unique_ptr<OverlayImage>> m_images;
 
     std::locale loc;
 

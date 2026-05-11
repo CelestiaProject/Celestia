@@ -358,7 +358,11 @@ public:
 
     void fatalError(const std::string&, bool visual = true);
 
-    void setScriptImage(std::unique_ptr<OverlayImage>&&);
+    // Append an overlay image. Each call adds another image without
+    // displacing existing ones; expired images are pruned automatically.
+    void addScriptImage(std::unique_ptr<OverlayImage>&&);
+    // Remove every currently-displayed overlay image.
+    void clearScriptImages();
 
     std::string_view getTypedText() const;
     void setTypedText(const char *);
