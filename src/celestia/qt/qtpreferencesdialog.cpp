@@ -19,6 +19,7 @@
 #include <Qt>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QSettings>
 #include <QRadioButton>
 #include <QSlider>
 #include <QSpinBox>
@@ -220,6 +221,17 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.renderPathBox->addItem(_("OpenGL 2.1"), 0);
 
     ui.antialiasLinesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowSmoothLines));
+
+    ui.sRGBRenderingCombo->addItem(_("Use config default"));
+    ui.sRGBRenderingCombo->addItem(_("Enabled"));
+    ui.sRGBRenderingCombo->addItem(_("Disabled"));
+    {
+        QSettings settings;
+        if (!settings.contains("sRGBRendering"))
+            ui.sRGBRenderingCombo->setCurrentIndex(0);
+        else
+            ui.sRGBRenderingCombo->setCurrentIndex(settings.value("sRGBRendering").toBool() ? 1 : 2);
+    }
 
     switch (renderer->getResolution())
     {
@@ -726,6 +738,16 @@ void
 PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
 {
     setRenderFlag(appCore, ::RenderFlags::ShowSmoothLines, state);
+}
+
+void
+PreferencesDialog::on_sRGBRenderingCombo_currentIndexChanged(int index)
+{
+    QSettings settings;
+    if (index == 0)
+        settings.remove("sRGBRendering");
+    else
+        settings.setValue("sRGBRendering", index == 1);
 }
 
 // Texture resolution

@@ -107,6 +107,7 @@ private slots:
 
     void on_renderPathBox_currentIndexChanged(int index) const;
     void on_antialiasLinesCheck_stateChanged(int state);
+    void on_sRGBRenderingCombo_currentIndexChanged(int index);
 
     void on_lowResolutionButton_clicked() const;
     void on_mediumResolutionButton_clicked() const;
