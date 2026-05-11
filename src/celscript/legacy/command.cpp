@@ -945,8 +945,9 @@ void CommandScriptImage::processInstantaneous(ExecutionEnvironment& env)
     // Preserve that contract by clearing existing images before adding
     // the new one; scripts that want multiple should use the celx
     // celestia:addoverlay method instead.
-    env.getCelestiaCore()->clearScriptImages();
-    env.getCelestiaCore()->addScriptImage(std::move(image));
+    auto* core = env.getCelestiaCore();
+    core->clearScriptImages();
+    core->addScriptImage(std::move(image));
 }
 
 // Verbosity command
