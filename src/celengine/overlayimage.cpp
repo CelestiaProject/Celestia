@@ -5,11 +5,11 @@
 #include "render.h"
 
 OverlayImage::OverlayImage(const std::filesystem::path& f, Renderer *r) :
+    texture(LoadTextureFromFile(f.is_relative() ? "images" / f : f,
+                                Texture::EdgeClamp,
+                                Texture::NoMipMaps)),
     renderer(r)
 {
-    texture = LoadTextureFromFile(f.is_relative() ? "images" / f : f,
-                                  Texture::EdgeClamp,
-                                  Texture::NoMipMaps);
 }
 
 void OverlayImage::setColor(const Color& c)
