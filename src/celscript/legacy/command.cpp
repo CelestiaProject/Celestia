@@ -944,7 +944,7 @@ void CommandScriptImage::processInstantaneous(ExecutionEnvironment& env)
     // Legacy `overlay {}` historically allowed only one image on screen.
     // Preserve that contract by clearing existing images before adding
     // the new one; scripts that want multiple should use the celx
-    // celestia:addoverlay method instead.
+    // celestia:addimageoverlay method instead.
     auto* core = env.getCelestiaCore();
     core->clearScriptImages();
     core->addScriptImage(std::move(image));

@@ -2321,7 +2321,7 @@ parseOverlayColors(lua_State* l, int slot, std::string_view methodName)
     return colors;
 }
 
-// Build an OverlayImage from celestia:overlay / celestia:addoverlay args.
+// Build an OverlayImage from celestia:overlay / celestia:addimageoverlay args.
 // Returns nullptr if the filename argument was missing or invalid.
 // `methodName` is used for argc/error messages so each method reports its
 // own name.
@@ -2392,7 +2392,7 @@ buildOverlayImage(lua_State* l, const CelestiaCore* appCore, std::string_view me
 
 // celestia:overlay(...) -- replace any currently-displayed overlay images
 // with the new one. Matches the historical single-image behavior; returns
-// nothing (use celestia:addoverlay if you need the image id for later
+// nothing (use celestia:addimageoverlay if you need the image id for later
 // removal).
 static int celestia_overlay(lua_State* l)
 {
@@ -2407,15 +2407,15 @@ static int celestia_overlay(lua_State* l)
     return 0;
 }
 
-// celestia:addoverlay(...) -- append an overlay image without clearing the
+// celestia:addimageoverlay(...) -- append an overlay image without clearing the
 // existing ones. Same argument list as celestia:overlay. Returns the id of
-// the freshly-added image so callers can later remove it via removeoverlay.
-static int celestia_addoverlay(lua_State* l)
+// the freshly-added image so callers can later remove it via removeimageoverlay.
+static int celestia_addimageoverlay(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:addoverlay");
+    Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:addimageoverlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    auto image = buildOverlayImage(l, appCore, "addoverlay");
+    auto image = buildOverlayImage(l, appCore, "addimageoverlay");
     if (image == nullptr)
     {
         lua_pushnil(l);
@@ -2426,22 +2426,22 @@ static int celestia_addoverlay(lua_State* l)
     return 1;
 }
 
-// celestia:removeoverlay(id) -- drop a single overlay image previously added
-// by overlay()/addoverlay(). Returns true if an image was removed.
-static int celestia_removeoverlay(lua_State* l)
+// celestia:removeimageoverlay(id) -- drop a single overlay image previously added
+// by overlay()/addimageoverlay(). Returns true if an image was removed.
+static int celestia_removeimageoverlay(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:removeoverlay");
+    Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:removeimageoverlay");
     auto id = static_cast<OverlayImage::Id>(Celx_SafeGetNumber(
         l, 2, AllErrors,
-        "First argument to celestia:removeoverlay must be a number (overlay id)"));
+        "First argument to celestia:removeimageoverlay must be a number (overlay id)"));
     lua_pushboolean(l, this_celestia(l)->removeScriptImage(id) ? 1 : 0);
     return 1;
 }
 
-// celestia:clearoverlays() -- drop every currently-displayed overlay image.
-static int celestia_clearoverlays(lua_State* l)
+// celestia:clearimageoverlays() -- drop every currently-displayed overlay image.
+static int celestia_clearimageoverlays(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearoverlays");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearimageoverlays");
     this_celestia(l)->clearScriptImages();
     return 0;
 }
@@ -2826,9 +2826,9 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "seturl", celestia_seturl);
     Celx_RegisterMethod(l, "geturl", celestia_geturl);
     Celx_RegisterMethod(l, "overlay", celestia_overlay);
-    Celx_RegisterMethod(l, "addoverlay", celestia_addoverlay);
-    Celx_RegisterMethod(l, "removeoverlay", celestia_removeoverlay);
-    Celx_RegisterMethod(l, "clearoverlays", celestia_clearoverlays);
+    Celx_RegisterMethod(l, "addimageoverlay", celestia_addimageoverlay);
+    Celx_RegisterMethod(l, "removeimageoverlay", celestia_removeimageoverlay);
+    Celx_RegisterMethod(l, "clearimageoverlays", celestia_clearimageoverlays);
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 
     // Compatibility audio playback
