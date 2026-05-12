@@ -96,6 +96,12 @@ bool init(util::array_view<std::string> ignore) noexcept
                                          || checkVersion(celestia::gl::GLES_3_0);
     EXT_sRGB                           = check_extension(ignore, "GL_EXT_sRGB");
     EXT_sRGB_write_control             = check_extension(ignore, "GL_EXT_sRGB_write_control");
+    // BPTC on GLES is exposed via GL_EXT_texture_compression_bptc and requires
+    // ES 3.0+. The compressed format tokens (0x8E8C / 0x8E8D) are identical to
+    // the desktop GL_ARB_texture_compression_bptc extension, so the same
+    // ARB_texture_compression_bptc flag can drive both upload paths.
+    ARB_texture_compression_bptc   = checkVersion(celestia::gl::GLES_3_0)
+                                     && check_extension(ignore, "GL_EXT_texture_compression_bptc");
 #else
     ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
     if (!has_extension("GL_ARB_framebuffer_object"))
@@ -103,9 +109,9 @@ bool init(util::array_view<std::string> ignore) noexcept
         fmt::print("{}", _("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
         return false;
     }
+    ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
 #endif
     ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
-    ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
     EXT_texture_filter_anisotropic = check_extension(ignore, "GL_EXT_texture_filter_anisotropic") || check_extension(ignore, "GL_ARB_texture_filter_anisotropic");
     MESA_pack_invert               = check_extension(ignore, "GL_MESA_pack_invert");

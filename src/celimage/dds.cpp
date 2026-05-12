@@ -403,7 +403,7 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
     // BC7 must be uploaded as-is to the GPU; there is no software fallback.
     if (IsBPTCFormat(format) && !gl::ARB_texture_compression_bptc)
     {
-        util::GetLogger()->error("DDS texture {} is BC7 but GL_ARB_texture_compression_bptc is not supported.\n", filename);
+        util::GetLogger()->error("DDS texture {} is BC7 but BPTC texture compression is not supported (requires GL_ARB_texture_compression_bptc on desktop GL, or ES 3.0 with GL_EXT_texture_compression_bptc on GLES).\n", filename);
         return nullptr;
     }
 
