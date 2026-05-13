@@ -14,9 +14,12 @@
 
 #include <SDL_video.h>
 
+class CelestiaCore;
+
 namespace celestia::sdl
 {
 
+class Alerter;
 class AppWindow;
 class Settings;
 
@@ -35,8 +38,10 @@ public:
 
     static std::shared_ptr<Environment> init();
 
-    bool setGLAttributes() const;
-    std::unique_ptr<AppWindow> createAppWindow(const Settings&);
+    bool setGLAttributes(int aaSamples) const;
+    std::unique_ptr<AppWindow> createAppWindow(const Settings&,
+                                               std::unique_ptr<CelestiaCore>&&,
+                                               std::unique_ptr<Alerter>&&);
 
     std::filesystem::path getSettingsPath() const;
     std::filesystem::path getImguiSettingsPath() const;

@@ -91,7 +91,13 @@ Gui::create(SDL_Window* window, SDL_GLContext context, CelestiaCore* appCore, co
         return nullptr;
     }
 
-    if (!ImGui_ImplOpenGL3_Init())
+    #if defined(__APPLE__) && !defined(GL_ES)
+    // Celestia uses legacy profile, on macOS we cannot use core profile shaders with a legacy profile context
+    const char *glslVersion = "#version 120";
+    #else
+    const char *glslVersion = nullptr;
+    #endif
+    if (!ImGui_ImplOpenGL3_Init(glslVersion))
     {
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext(ctx);
@@ -142,7 +148,7 @@ Gui::menuBar()
 {
     ImGui::BeginMainMenuBar();
 
-    if (float menuBarHeight = ImGui::GetFrameHeight(); menuBarHeight != m_menuBarHeight)
+    if (float menuBarHeight = ImGui::GetFrameHeight() * m_scale; menuBarHeight != m_menuBarHeight)
     {
         m_appCore->setSafeAreaInsets(0, static_cast<int>(menuBarHeight), 0, 0);
         m_menuBarHeight = menuBarHeight;
@@ -208,6 +214,28 @@ Gui::scriptMenu()
         if (ImGui::MenuItem(item.title.c_str()))
             m_appCore->runScript(item.filename);
     }
+}
+
+void
+Gui::updateScreenDpi(float scale)
+{
+    if (scale == m_scale)
+        return;
+
+    ImGuiIO& io = ImGui::GetIO();
+
+    ImFontConfig fontConfig;
+    fontConfig.SizePixels = 13.0f * scale;
+    io.Fonts->Clear();
+    io.Fonts->AddFontDefault(&fontConfig);
+    io.Fonts->Build();
+    io.FontGlobalScale = 1.0f / scale;
+    io.DisplayFramebufferScale = ImVec2(scale, scale);
+
+    ImGui_ImplOpenGL3_DestroyFontsTexture();
+    ImGui_ImplOpenGL3_CreateFontsTexture();
+
+    m_scale = scale;
 }
 
 } // end namespace celestia::sdl

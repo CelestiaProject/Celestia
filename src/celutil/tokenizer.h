@@ -1,6 +1,6 @@
 // tokenizer.h
 //
-// Copyright (C) 2001-2009, the Celestia Development Team
+// Copyright (C) 2001-2025, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -13,56 +13,81 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
-#include <memory>
 #include <optional>
+#include <string>
 #include <string_view>
+#include <system_error>
+
+#include <celcompat/charconv.h>
+#include "buffile.h"
 
 namespace celestia::util
 {
 
-class TokenizerImpl;
+enum class TokenType
+{
+    Begin,
+    End,
+    Error,
+    BeginGroup,
+    EndGroup,
+    BeginArray,
+    EndArray,
+    BeginUnits,
+    EndUnits,
+    Name,
+    String,
+    Number,
+    Equals,
+    Bar,
+};
 
 class Tokenizer
 {
 public:
-    enum TokenType
-    {
-        TokenName           = 0,
-        TokenString         = 1,
-        TokenNumber         = 2,
-        TokenBegin          = 3,
-        TokenEnd            = 4,
-        TokenNull           = 5,
-        TokenBeginGroup     = 6,
-        TokenEndGroup       = 7,
-        TokenBeginArray     = 8,
-        TokenEndArray       = 9,
-        TokenEquals         = 10,
-        TokenError          = 11,
-        TokenBar            = 12,
-        TokenBeginUnits     = 13,
-        TokenEndUnits       = 14,
-    };
-
     static constexpr std::size_t DEFAULT_BUFFER_SIZE = 4096;
 
-    Tokenizer(std::istream*, std::size_t = DEFAULT_BUFFER_SIZE);
-    ~Tokenizer();
+    explicit Tokenizer(std::istream&, std::size_t = DEFAULT_BUFFER_SIZE);
 
     TokenType nextToken();
-    TokenType getTokenType() const;
-    void pushBack();
-    std::optional<double> getNumberValue() const;
-    std::optional<std::int32_t> getIntegerValue() const;
+    TokenType getTokenType() const noexcept { return m_tokenType; }
+    void pushBack() noexcept { m_pushedBack = true; }
     std::optional<std::string_view> getNameValue() const;
     std::optional<std::string_view> getStringValue() const;
 
-    int getLineNumber() const;
+    template<typename T>
+    std::optional<T> getNumberValue() const;
+
+    std::uint64_t getLineNumber() const noexcept { return m_file.lineNumber(); }
 
 private:
-    std::unique_ptr<TokenizerImpl> impl;
-    TokenType tokenType{ TokenType::TokenBegin };
-    bool isPushedBack{ false };
+    TokenType processToken(char);
+    TokenType processName();
+
+    BufferedFile m_file;
+    mutable std::string m_escaped;
+    TokenType m_tokenType{ TokenType::Begin };
+    bool m_pushedBack{ false };
+    bool m_needsEscape{ false };
 };
+
+template<typename T>
+std::optional<T>
+Tokenizer::getNumberValue() const
+{
+    if (m_tokenType != TokenType::Number)
+        return std::nullopt;
+
+    std::string_view value = m_file.value();
+    const auto end = value.data() + value.size();
+    T result;
+    if (auto [ptr, ec] = compat::from_chars(value.data(), end, result);
+        ec == std::errc{} && ptr == end)
+    {
+        return result;
+    }
+
+    return std::nullopt;
+}
 
 } // end namespace celestia::util

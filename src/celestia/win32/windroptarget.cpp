@@ -19,8 +19,6 @@
 
 #include <celestia/celestiacore.h>
 
-#include "tstring.h"
-
 using namespace std::string_view_literals;
 
 namespace celestia::win32
@@ -29,7 +27,7 @@ namespace celestia::win32
 namespace
 {
 
-constexpr tstring_view UniformResourceLocatorFormat = TEXT("UniformResourceLocator"sv);
+constexpr std::wstring_view UniformResourceLocatorFormat = L"UniformResourceLocator"sv;
 
 } // end unnamed namespace
 
@@ -111,9 +109,9 @@ CelestiaDropTarget::Drop(IDataObject* pDataObject,
     ULONG nFetched;
     while (enumFormat->Next(1, &format, &nFetched) == S_OK)
     {
-        std::array<TCHAR, 512> buf;
+        std::array<wchar_t, 512> buf;
         if (GetClipboardFormatName(format.cfFormat, buf.data(), static_cast<int>(buf.size() - 1)) == 0 ||
-            tstring_view(buf.data()) != UniformResourceLocatorFormat)
+            std::wstring_view(buf.data()) != UniformResourceLocatorFormat)
         {
             continue;
         }

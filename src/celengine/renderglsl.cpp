@@ -69,7 +69,7 @@ Eigen::Matrix4f directionalLightMatrix(const Eigen::Vector3f& lightDirection)
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
-void renderGeometryShadow_GLSL(Geometry* geometry,
+void renderGeometryShadow_GLSL(RenderGeometry* geometry,
                                FramebufferObject* shadowFbo,
                                const LightingState& ls,
                                int lightIndex,
@@ -77,7 +77,7 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
                                Renderer* renderer,
                                Eigen::Matrix4f *lightMatrix)
 {
-    auto *prog = renderer->getShaderManager().getShader("depth");
+    auto *prog = renderer->getShaderManager().getShader(StaticShader::Depth);
     if (prog == nullptr)
         return;
 
@@ -123,10 +123,9 @@ void renderGeometryShadow_GLSL(Geometry* geometry,
 // Render a planet sphere with GLSL shaders
 void renderEllipsoid_GLSL(const RenderInfo& ri,
                           const LightingState& ls,
-                          Atmosphere* atmosphere,
+                          const Atmosphere* atmosphere,
                           float cloudTexOffset,
                           const Eigen::Vector3f& semiAxes,
-                          TextureResolution textureRes,
                           RenderFlags renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
                           const math::Frustum& frustum,
@@ -201,8 +200,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             util::is_set(renderFlags, RenderFlags::ShowCloudShadows))
         {
             Texture* cloudTex = nullptr;
-            if (atmosphere->cloudTexture.texture(textureRes) != InvalidResource)
-                cloudTex = atmosphere->cloudTexture.find(textureRes);
+            if (atmosphere->cloudTexture != util::TextureHandle::Invalid)
+                cloudTex = renderer->getTextureManager()->find(atmosphere->cloudTexture);
 
             // The current implementation of cloud shadows is not compatible
             // with virtual or split textures.
@@ -255,7 +254,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     if (ls.shadowingRingSystem)
     {
-        Texture* ringsTex = ls.shadowingRingSystem->texture.find(textureRes);
+        Texture* ringsTex = renderer->getTextureManager()->findShadow(ls.shadowingRingSystem->texture);
         if (ringsTex != nullptr)
         {
             glActiveTexture(GL_TEXTURE0 + textures.size());
@@ -363,9 +362,9 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
-void renderGeometry_GLSL(Geometry* geometry,
+void renderGeometry_GLSL(RenderGeometry* geometry,
                          const RenderInfo& ri,
-                         ResourceHandle texOverride,
+                         util::TextureHandle texOverride,
                          const LightingState& ls,
                          const Atmosphere* atmosphere,
                          float geometryScale,
@@ -466,7 +465,7 @@ void renderGeometry_GLSL(Geometry* geometry,
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the geometry file.
-    if (texOverride != InvalidResource)
+    if (texOverride != util::TextureHandle::Invalid)
     {
         cmod::Material m;
         m.diffuse = cmod::Color(ri.color);
@@ -489,17 +488,14 @@ void renderGeometry_GLSL(Geometry* geometry,
  *  Parameters:
  *    tsec : animation clock time in seconds
  */
-void renderGeometry_GLSL_Unlit(Geometry* geometry,
+void renderGeometry_GLSL_Unlit(RenderGeometry* geometry,
                                const RenderInfo& ri,
-                               ResourceHandle texOverride,
-                               float geometryScale,
-                               RenderFlags /* renderFlags */,
-                               const Eigen::Quaternionf& /* planetOrientation */,
+                               util::TextureHandle texOverride,
                                double tsec,
                                const Matrices &m,
                                Renderer* renderer)
 {
-    GLSLUnlit_RenderContext rc(renderer, geometryScale, m.modelview, m.projection);
+    GLSLUnlit_RenderContext rc(renderer, m.modelview, m.projection);
     rc.setPointScale(ri.pointScale);
 
     Renderer::PipelineState ps;
@@ -509,7 +505,7 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
 
     // Handle material override; a texture specified in an ssc file will
     // override all materials specified in the model file.
-    if (texOverride != InvalidResource)
+    if (texOverride != util::TextureHandle::Invalid)
     {
         cmod::Material m;
         m.diffuse = cmod::Color(ri.color);
@@ -531,12 +527,11 @@ void renderGeometry_GLSL_Unlit(Geometry* geometry,
 // Render the cloud sphere for a world a cloud layer defined
 void renderClouds_GLSL(const RenderInfo& ri,
                        const LightingState& ls,
-                       Atmosphere* atmosphere,
+                       const Atmosphere* atmosphere,
                        Texture* cloudTex,
                        Texture* cloudNormalMap,
                        float texOffset,
                        const Eigen::Vector3f& semiAxes,
-                       TextureResolution /*textureRes*/,
                        RenderFlags renderFlags,
                        const Eigen::Quaternionf& planetOrientation,
                        const math::Frustum& frustum,
@@ -618,7 +613,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 #endif
 
-    if (shadprop.shadowCounts != 0)
+    if (shadprop.usesShadows())
         prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
 
     unsigned int attributes = LODSphereMesh::Normals;

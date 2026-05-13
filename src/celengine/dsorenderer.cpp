@@ -33,7 +33,6 @@ namespace
 // brightness appMag  ~ absMag - enhance. 'enhance' thus serves to uniformly
 // enhance the too low sprite luminosity at close distance.
 constexpr double enhance = 4.0;
-constexpr double pc10 = 32.6167; // 10 parsecs
 constexpr float CubeCornerToCenterDistance = 1.7320508075688772f;
 
 float
@@ -83,10 +82,10 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
         return;
 
     float appMag;
-    if (distanceToDSO >= pc10)
+    if (distanceToDSO >= astro::LY_PER_10PARSEC)
         appMag = (float) astro::absToAppMag((double) absMag, distanceToDSO);
     else
-        appMag = absMag + (float) (enhance * tanh(distanceToDSO/pc10 - 1.0));
+        appMag = absMag + (float) (enhance * tanh(distanceToDSO/astro::LY_PER_10PARSEC - 1.0));
 
     if (util::is_set(renderFlags, dso->getRenderMask()))
     {
@@ -158,25 +157,25 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
         {
         case RenderLabels::NebulaLabels:
             rep = &renderer->nebulaRep;
-            labelColor = Renderer::NebulaLabelColor;
+            labelColor = renderer->colors.NebulaLabel;
             appMagEff = astro::absToAppMag(-7.5f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 6.0f;
             break;
         case RenderLabels::OpenClusterLabels:
             rep = &renderer->openClusterRep;
-            labelColor = Renderer::OpenClusterLabelColor;
+            labelColor = renderer->colors.OpenClusterLabel;
             appMagEff = astro::absToAppMag(-6.0f, (float)distanceToDSO);
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 4.0f;
             break;
         case RenderLabels::GalaxyLabels:
-            labelColor = Renderer::GalaxyLabelColor;
+            labelColor = renderer->colors.GalaxyLabel;
             appMagEff = appMag;
             step = 6.0f;
             break;
         case RenderLabels::GlobularLabels:
-            labelColor = Renderer::GlobularLabelColor;
+            labelColor = renderer->colors.GlobularLabel;
             appMagEff = appMag;
             step = 3.0f;
             break;

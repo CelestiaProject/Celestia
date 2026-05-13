@@ -26,18 +26,22 @@
 
 #include <celengine/framebuffer.h>
 #include <celengine/texture.h>
+#include <celestia/qt/qtpathutil.h>
 #include <celimage/image.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/model.h>
+#include <celutil/texhandle.h>
 
-#include "pathmanager.h"
-#include "utils.h"
+#include "modelio.h"
 
 #define DEBUG_SHADOWS 0
 
 namespace math = celestia::math;
 using celestia::engine::Image;
+using celestia::qt::PathToQString;
+using celestia::qt::QStringToPath;
+using celestia::util::TextureHandle;
 
 namespace cmodview
 {
@@ -129,7 +133,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
 
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, desc.strideBytes, vertexData + position.offsetWords);
+    glVertexPointer(3, GL_FLOAT, desc.strideBytes(), vertexData + position.offsetWords);
 
     // Set up the normal array
     switch (normal.format)
@@ -137,7 +141,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
     case cmod::VertexAttributeFormat::Float3:
         glEnableClientState(GL_NORMAL_ARRAY);
         glNormalPointer(GLComponentTypes[static_cast<std::size_t>(normal.format)],
-                        desc.strideBytes, vertexData + normal.offsetWords);
+                        desc.strideBytes(), vertexData + normal.offsetWords);
         break;
     default:
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -153,7 +157,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
         glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(GLComponentCounts[static_cast<std::size_t>(color0.format)],
                        GLComponentTypes[static_cast<std::size_t>(color0.format)],
-                       desc.strideBytes, vertexData + color0.offsetWords);
+                       desc.strideBytes(), vertexData + color0.offsetWords);
         break;
     default:
         glDisableClientState(GL_COLOR_ARRAY);
@@ -170,7 +174,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(GLComponentCounts[static_cast<std::size_t>(texCoord0.format)],
                           GLComponentTypes[static_cast<std::size_t>(texCoord0.format)],
-                          desc.strideBytes, vertexData + texCoord0.offsetWords);
+                          desc.strideBytes(), vertexData + texCoord0.offsetWords);
         break;
     default:
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -185,7 +189,7 @@ setVertexArrays(const cmod::VertexDescription& desc, const cmod::VWord* vertexDa
                               GLComponentCounts[static_cast<std::size_t>(tangent.format)],
                               GLComponentTypes[static_cast<std::size_t>(tangent.format)],
                               GL_FALSE,
-                              desc.strideBytes,
+                              desc.strideBytes(),
                               vertexData + tangent.offsetWords);
         break;
     default:
@@ -206,7 +210,7 @@ setVertexPointer(const cmod::VertexDescription& desc, const cmod::VWord* vertexD
 
     // Set up the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, desc.strideBytes,
+    glVertexPointer(3, GL_FLOAT, desc.strideBytes(),
                     vertexData + position.offsetWords);
 
     glDisableClientState(GL_NORMAL_ARRAY);
@@ -290,6 +294,15 @@ setSampler(const GLProgram& program, const char* name, GLint value)
         glUniform1i(location, value);
 }
 
+QString
+handleToQString(TextureHandle handle)
+{
+    if (auto path = cmodtools::GetModelIO()->path(handle); path)
+        return PathToQString(*path);
+
+    return {};
+}
+
 } // end unnamed namespace
 
 class MaterialLibrary
@@ -355,12 +368,7 @@ MaterialLibrary::loadTexture(const QString& fileName)
     if (!info.exists())
         return nullptr;
 
-    std::unique_ptr<Image> image;
-    if constexpr (std::is_same_v<std::filesystem::path::value_type, wchar_t>)
-        image = Image::load(fileName.toStdWString());
-    else
-        image = Image::load(fileName.toStdString());
-
+    std::unique_ptr<Image> image = Image::load(QStringToPath(fileName));
     if (image == nullptr)
         return nullptr;
 
@@ -399,21 +407,20 @@ ShaderKey::Create(const cmod::Material* material, const LightingEnvironment* lig
     // Bits 8-15 are texture map info
     if (hasTexCoords)
     {
-        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::DiffuseMap) != TextureHandle::Invalid)
             info |= DiffuseMapMask;
-        if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::SpecularMap) != TextureHandle::Invalid)
             info |= SpecularMapMask;
-        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::NormalMap) != TextureHandle::Invalid)
             info |= NormalMapMask;
-        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
+        if (material->getMap(cmod::TextureSemantic::EmissiveMap) != TextureHandle::Invalid)
             info |= EmissiveMapMask;
 
         // Bit 16 is set if the normal map is compressed
-        if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource &&
-            hasTangents &&
-            cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).extension() == ".dxt5nm")
+        if (auto map = material->getMap(cmod::TextureSemantic::NormalMap); map != TextureHandle::Invalid && hasTangents)
         {
-            info |= CompressedNormalMapMask;
+            if (auto path = cmodtools::GetModelIO()->path(map); path && path->extension() == ".dxt5nm")
+                info |= CompressedNormalMapMask;
         }
     }
 
@@ -453,26 +460,17 @@ ModelViewWidget::setModel(std::unique_ptr<cmod::Model>&& model, const QString& m
         for (unsigned int i = 0; i < m_model->getMaterialCount(); ++i)
         {
             const cmod::Material* material = m_model->getMaterial(i);
-            if (material->getMap(cmod::TextureSemantic::DiffuseMap) != InvalidResource)
-            {
-                m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
-            }
-            if (material->getMap(cmod::TextureSemantic::NormalMap) != InvalidResource)
-            {
-                m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
-            }
-            if (material->getMap(cmod::TextureSemantic::SpecularMap) != InvalidResource)
-            {
-                m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
-            }
-            if (material->getMap(cmod::TextureSemantic::EmissiveMap) != InvalidResource)
-            {
-                m_materialLibrary->getTexture(
-                    toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
-            }
+            if (auto map = material->getMap(cmod::TextureSemantic::DiffuseMap); map != TextureHandle::Invalid)
+                m_materialLibrary->getTexture(handleToQString(map));
+
+            if (auto map = material->getMap(cmod::TextureSemantic::NormalMap); map != TextureHandle::Invalid)
+                m_materialLibrary->getTexture(handleToQString(map));
+
+            if (auto map = material->getMap(cmod::TextureSemantic::SpecularMap); map != TextureHandle::Invalid)
+                m_materialLibrary->getTexture(handleToQString(map));
+
+            if (auto map = material->getMap(cmod::TextureSemantic::EmissiveMap); map != TextureHandle::Invalid)
+                m_materialLibrary->getTexture(handleToQString(map));
         }
     }
 
@@ -615,7 +613,7 @@ ModelViewWidget::wheelEvent(QWheelEvent* event)
     double newDistance = m_cameraPosition.norm() + adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
 #else
-    double adjust = std::pow(2.0, numDegrees.y() / 1000.0);
+    double adjust = std::exp2(numDegrees.y() / 1000.0);
     double newDistance = m_cameraPosition.norm() * adjust;
     m_cameraPosition = m_cameraPosition.normalized() * newDistance;
 #endif
@@ -673,7 +671,7 @@ ModelViewWidget::setMaterial(unsigned int index, const cmod::Material& material)
     }
 
     // Copy material parameters
-    m_model->setMaterial(index, material.clone());
+    m_model->setMaterial(index, material);
     update();
 }
 
@@ -915,7 +913,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasDiffuseMap())
     {
         GLuint diffuseMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::DiffuseMap)).c_str()));
+            handleToQString(material->getMap(cmod::TextureSemantic::DiffuseMap)));
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, diffuseMapId);
         setSampler(shader, "diffuseMap", 0);
@@ -924,7 +922,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasNormalMap())
     {
         GLuint normalMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::NormalMap)).c_str()));
+            handleToQString(material->getMap(cmod::TextureSemantic::NormalMap)));
         glActiveTexture(GL_TEXTURE1);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, normalMapId);
@@ -935,7 +933,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasSpecularMap())
     {
         GLuint specularMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::SpecularMap)).c_str()));
+            handleToQString(material->getMap(cmod::TextureSemantic::SpecularMap)));
         glActiveTexture(GL_TEXTURE2);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, specularMapId);
@@ -946,7 +944,7 @@ ModelViewWidget::bindMaterial(const cmod::Material* material,
     if (shaderKey.hasEmissiveMap())
     {
         GLuint emissiveMapId = m_materialLibrary->getTexture(
-            toQString(cmodtools::GetPathManager()->getSource(material->getMap(cmod::TextureSemantic::EmissiveMap)).c_str()));
+            handleToQString(material->getMap(cmod::TextureSemantic::EmissiveMap)));
         glActiveTexture(GL_TEXTURE3);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, emissiveMapId);

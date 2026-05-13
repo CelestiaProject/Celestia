@@ -1594,25 +1594,6 @@ CreateOrbit(const Selection& centralObject,
         GetLogger()->error("Object has incorrect FixedPosition syntax.\n");
     }
 
-    // LongLat will make an object fixed relative to the surface of its center
-    // object. This is done by creating an orbit with a period equal to the
-    // rotation rate of the parent object. A body-fixed reference frame is a
-    // much better way to accomplish this.
-    if (auto longlat = planetData->getSphericalTuple("LongLat"); longlat.has_value())
-    {
-        if (const Body* centralBody = centralObject.body(); centralBody != nullptr)
-        {
-#if 0 // TODO: This should be enabled after #542 is fixed
-            Eigen::Vector3d pos = centralBody->geodeticToCartesian(*longlat);
-#else
-            Eigen::Vector3d pos = centralBody->planetocentricToCartesian(longlat->x(), longlat->y(), longlat->z());
-#endif
-            return std::make_shared<ephem::SynchronousOrbit>(*centralBody, pos);
-        }
-        // TODO: Allow fixing objects to the surface of stars.
-        return nullptr;
-    }
-
     return nullptr;
 }
 
@@ -1663,39 +1644,36 @@ CreateLegacyRotationModel(const AssociativeArray* planetData,
         precessionRate = *precessionVal;
     }
 
-    if (specified)
-    {
-        if (period == 0.0)
-        {
-            // No period was specified, and the default synchronous
-            // rotation period is zero, indicating that the object
-            // doesn't have a periodic orbit. Default to a constant
-            // orientation instead.
-            return CreateFixedRotationModel(offset, inclination, ascendingNode);
-        }
-
-        if (precessionRate == 0.0)
-        {
-            return std::make_shared<ephem::UniformRotationModel>(period,
-                                                                 offset,
-                                                                 epoch,
-                                                                 inclination,
-                                                                 ascendingNode);
-        }
-
-        return std::make_shared<ephem::PrecessingRotationModel>(period,
-                                                                offset,
-                                                                epoch,
-                                                                inclination,
-                                                                ascendingNode,
-                                                                -360.0 / precessionRate);
-    }
-    else
+    if (!specified)
     {
         // No rotation fields specified
         return nullptr;
     }
 
+    if (period == 0.0)
+    {
+        // No period was specified, and the default synchronous
+        // rotation period is zero, indicating that the object
+        // doesn't have a periodic orbit. Default to a constant
+        // orientation instead.
+        return CreateFixedRotationModel(offset, inclination, ascendingNode);
+    }
+
+    if (precessionRate == 0.0)
+    {
+        return std::make_shared<ephem::UniformRotationModel>(period,
+                                                                offset,
+                                                                epoch,
+                                                                inclination,
+                                                                ascendingNode);
+    }
+
+    return std::make_shared<ephem::PrecessingRotationModel>(period,
+                                                            offset,
+                                                            epoch,
+                                                            inclination,
+                                                            ascendingNode,
+                                                            -360.0 / precessionRate);
 }
 
 /**

@@ -22,7 +22,7 @@
 #include <celestia/destination.h>
 
 #include "res/resource.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -46,8 +46,6 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                 return EndDialog(hDlg, 0);
             SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
-//          guide->selectedDest = NULL;
-
             HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_TOURGUIDE);
             const DestinationList* destinations = guide->appCore->getDestinations();
             if (hwnd != NULL && destinations != NULL)
@@ -60,7 +58,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                         continue;
 
                     SendMessage(hwnd, CB_INSERTSTRING, -1,
-                                reinterpret_cast<LPARAM>(UTF8ToTString(dest->name).c_str()));
+                                reinterpret_cast<LPARAM>(UTF8ToWideString(dest->name).c_str()));
                 }
 
                 if (!destinations->empty())
@@ -68,7 +66,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                     SendMessage(hwnd, CB_SETCURSEL, 0, 0);
                     SetDlgItemText(hDlg,
                                    IDC_TEXT_DESCRIPTION,
-                                   UTF8ToTString(destinations->front()->description).c_str());
+                                   UTF8ToWideString(destinations->front()->description).c_str());
                 }
             }
         }
@@ -132,7 +130,7 @@ BOOL APIENTRY TourGuideProc(HWND hDlg,
                     Destination* dest = (*destinations)[item];
                     SetDlgItemText(hDlg,
                                    IDC_TEXT_DESCRIPTION,
-                                   UTF8ToTString(dest->description).c_str());
+                                   UTF8ToWideString(dest->description).c_str());
                     tourGuide->selectedDest = dest;
                 }
             }

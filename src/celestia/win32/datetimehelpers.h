@@ -11,12 +11,13 @@
 
 #pragma once
 
+#include <string>
+
 #include <celutil/array_view.h>
-#include "tstring.h"
 
 namespace celestia::win32
 {
 
-util::array_view<tstring> GetLocalizedMonthNames();
+util::array_view<std::wstring> GetLocalizedMonthNames();
 
 } // end namespace celestia::win32

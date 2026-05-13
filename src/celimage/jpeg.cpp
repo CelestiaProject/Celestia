@@ -219,9 +219,12 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // Here we use the library's state variable cinfo.output_scanline as the
     // loop counter, so that we don't have to keep track ourselves.
 
-    PixelFormat format = PixelFormat::RGB;
+    // JPEG images are sRGB-encoded by default. Callers that use the data as
+    // linear (bump/height maps, alpha masks) force a linear reinterpretation
+    // via Image::forceLinear() after load.
+    PixelFormat format = PixelFormat::sRGB;
     if (cinfo.output_components == 1)
-        format = PixelFormat::Luminance;
+        format = PixelFormat::sLuminance;
 
     img = new Image(format, cinfo.image_width, cinfo.image_height);
 

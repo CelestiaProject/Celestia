@@ -7,14 +7,48 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <cerrno>
 #include <cstdlib>
 #include <system_error>
+#include <utility>
 
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
+#include "alerter.h"
 #include "appwindow.h"
 #include "environment.h"
 #include "settings.h"
+
+#ifdef _WIN32
+#include <fmt/format.h>
+#include <windows.h>
+#endif
+
+namespace
+{
+
+std::filesystem::path
+getDataDir()
+{
+#ifdef _WIN32
+    fmt::basic_memory_buffer<wchar_t, MAX_PATH + 1> buffer;
+    buffer.resize(MAX_PATH + 1);
+
+    std::size_t size;
+    errno_t result;
+    while ((result = _wgetenv_s(&size, buffer.data(), buffer.size(), L"CELESTIA_DATA_DIR")) == ERANGE)
+        buffer.resize(size);
+    if (result == 0 && size > 0)
+        return buffer.data();
+#else
+    if (const char* dataDirEnv = std::getenv("CELESTIA_DATA_DIR"); dataDirEnv)
+        return dataDirEnv;
+#endif
+
+    return CONFIG_DATA_DIR;
+}
+
+}
 
 int
 main(int argc, char **argv)
@@ -36,18 +70,17 @@ main(int argc, char **argv)
     if (!environment)
         return EXIT_FAILURE;
 
-    if (!environment->setGLAttributes())
+    auto celestiaCore = std::make_unique<CelestiaCore>();
+    auto alerter = std::make_unique<celestia::sdl::Alerter>();
+    celestiaCore->setAlerter(alerter.get());
+
+    if (!celestiaCore->initSimulation())
         return EXIT_FAILURE;
 
-    std::filesystem::path dataDir;
-#ifdef _WIN32
-    if (const wchar_t* dataDirEnv = _wgetenv(L"CELESTIA_DATA_DIR"); dataDirEnv == nullptr)
-#else
-    if (const char* dataDirEnv = std::getenv("CELESTIA_DATA_DIR"); dataDirEnv == nullptr)
-#endif
-        dataDir = CONFIG_DATA_DIR;
-    else
-        dataDir = dataDirEnv;
+    if (!environment->setGLAttributes(celestiaCore->getConfig()->renderDetails.aaSamples))
+        return EXIT_FAILURE;
+
+    std::filesystem::path dataDir = getDataDir();
 
     std::error_code ec;
     std::filesystem::current_path(dataDir, ec);
@@ -56,7 +89,7 @@ main(int argc, char **argv)
 
     Settings settings = Settings::load(environment->getSettingsPath());
 
-    auto window = environment->createAppWindow(settings);
+    auto window = environment->createAppWindow(settings, std::move(celestiaCore), std::move(alerter));
     if (!window)
         return EXIT_FAILURE;
 

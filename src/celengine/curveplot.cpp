@@ -29,8 +29,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <memory>
-#include <vector>
 #include <celrender/linerenderer.h>
 
 #include "curveplot.h"
@@ -116,96 +114,16 @@ cubicHermiteCoefficients(const Eigen::Vector4d& p0,
 
 const Eigen::Matrix4f ModelViewMatrix(Eigen::Matrix4f::Identity());
 
-class HighPrec_VertexBuffer
-{
-public:
-    void setup(const Renderer& _renderer, const Color& _color)
-    {
-        stripLengths.clear();
-        currentStripLength = 0;
-        color = _color;
-        renderer = &_renderer;
-
-        if (lr == nullptr)
-        {
-            lr = new LineRenderer(*renderer, OrbitThickness, LineRenderer::PrimType::LineStrip, LineRenderer::StorageType::Stream, LineRenderer::VertexFormat::P3F_C4UB);
-            lr->setVertexCount(VertexBufferCapacity);
-        }
-        lr->startUpdate();
-    }
-
-    void finish()
-    {
-        lr->finish();
-    }
-
-    inline void vertex(const Eigen::Vector4d& v, float opacity = 1.0f)
-    {
-        Eigen::Vector3f pos = v.head(3).cast<float>();
-        lr->addVertex(pos, {color, color.alpha() * opacity});
-        ++currentStripLength;
-    }
-
-    inline void end()
-    {
-        if (currentStripLength > 1)
-            stripLengths.push_back(currentStripLength);
-        else if (currentStripLength == 1)
-            lr->dropLast(); // Abandon line strips that contains only one point
-        currentStripLength = 0;
-    }
-
-    inline void flush()
-    {
-        if (currentStripLength > 1)
-            end();
-
-        Matrices m = { &renderer->getCurrentProjectionMatrix(), &ModelViewMatrix };
-        unsigned int startIndex = 0;
-        lr->prerender(); // this will allocate a new GPU buffer if required
-        for (unsigned int lineCount : stripLengths)
-        {
-            lr->render(m, lineCount, startIndex);
-            startIndex += lineCount;
-        }
-        stripLengths.clear();
-        lr->clear();
-        currentStripLength = 0;
-    }
-
-    void deinit()
-    {
-        delete lr;
-        lr = nullptr;
-    }
-
-private:
-    unsigned int currentStripLength { 0 };
-    std::vector<unsigned int> stripLengths;
-    LineRenderer *lr { nullptr };
-    const Renderer *renderer { nullptr };
-    Color color;
-};
-
-
 class HighPrec_RenderContext
 {
 public:
-    HighPrec_RenderContext(HighPrec_VertexBuffer& vbuf,
+    HighPrec_RenderContext(CurvePlotVertexBuffer& vbuf,
                            HighPrec_Frustum& viewFrustum,
                            double subdivisionThreshold) :
         m_vbuf(vbuf),
         m_viewFrustum(viewFrustum),
         m_subdivisionThreshold(subdivisionThreshold)
     {
-    }
-
-    ~HighPrec_RenderContext()
-    {
-        /*
-        vbuf.flush();
-        vbuf.finish();
-        */
     }
 
     // Return the GL restart status: true if the last segment of the
@@ -327,26 +245,83 @@ public:
     }
 
 private:
-    HighPrec_VertexBuffer& m_vbuf;
+    CurvePlotVertexBuffer& m_vbuf;
     HighPrec_Frustum& m_viewFrustum;
     double m_subdivisionThreshold;
 };
 
-
-HighPrec_VertexBuffer vbuf;
-
 } // end unnamed namespace
 
-
-CurvePlot::CurvePlot(const Renderer &renderer) :
-    m_renderer(renderer)
+CurvePlotVertexBuffer::CurvePlotVertexBuffer(const Renderer& _renderer) :
+    renderer(&_renderer)
 {
 }
 
 void
-CurvePlot::deinit()
+CurvePlotVertexBuffer::setup(const Color& _color)
 {
-    vbuf.deinit();
+    stripLengths.clear();
+    currentStripLength = 0;
+    color = _color;
+
+    if (lr == nullptr)
+    {
+        lr = std::make_unique<LineRenderer>(*renderer,
+                                            OrbitThickness,
+                                            LineRenderer::PrimType::LineStrip,
+                                            LineRenderer::StorageType::Stream,
+                                            LineRenderer::VertexFormat::P3F_C4UB);
+        lr->setVertexCount(VertexBufferCapacity);
+    }
+    lr->startUpdate();
+}
+
+void
+CurvePlotVertexBuffer::finish()
+{
+    lr->finish();
+}
+
+void
+CurvePlotVertexBuffer::vertex(const Eigen::Vector4d& v, float opacity)
+{
+    Eigen::Vector3f pos = v.head(3).cast<float>();
+    lr->addVertex(pos, {color, color.alpha() * opacity});
+    ++currentStripLength;
+}
+
+void
+CurvePlotVertexBuffer::end()
+{
+    if (currentStripLength > 1)
+        stripLengths.push_back(currentStripLength);
+    else if (currentStripLength == 1)
+        lr->dropLast(); // Abandon line strips that contains only one point
+    currentStripLength = 0;
+}
+
+void
+CurvePlotVertexBuffer::flush()
+{
+    if (currentStripLength > 1)
+        end();
+
+    Matrices m = { &renderer->getCurrentProjectionMatrix(), &ModelViewMatrix };
+    unsigned int startIndex = 0;
+    lr->prerender(); // this will allocate a new GPU buffer if required
+    for (unsigned int lineCount : stripLengths)
+    {
+        lr->render(m, lineCount, startIndex);
+        startIndex += lineCount;
+    }
+    stripLengths.clear();
+    lr->clear();
+    currentStripLength = 0;
+}
+
+CurvePlot::CurvePlot(CurvePlotVertexBuffer& vbuf) :
+    m_vbuf(vbuf)
+{
 }
 
 /** Add a new sample to the path. If the sample time is less than the first time,
@@ -469,9 +444,11 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
     Eigen::Vector4d v0 = modelview * Eigen::Vector4d(v0_.x(), v0_.y(), v0_.z(), 0.0);
 
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
-    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
+    HighPrec_RenderContext rc(m_vbuf,
+                              viewFrustum,
+                              subdivisionThreshold);
 
-    vbuf.setup(m_renderer, color);
+    m_vbuf.setup(color);
 
     for (unsigned int i = 1; i < m_samples.size(); i++)
     {
@@ -510,7 +487,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (!restartCurve)
                 {
-                    vbuf.end();
+                    m_vbuf.end();
                     restartCurve = true;
                 }
             }
@@ -532,7 +509,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (!restartCurve)
                 {
-                    vbuf.end();
+                    m_vbuf.end();
                     restartCurve = true;
                 }
             }
@@ -540,10 +517,10 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.vertex(p0);
+                    m_vbuf.vertex(p0);
                     restartCurve = false;
                 }
-                vbuf.vertex(p1);
+                m_vbuf.vertex(p1);
             }
         }
 
@@ -553,11 +530,11 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
 
     if (!restartCurve)
     {
-        vbuf.end();
+        m_vbuf.end();
     }
 
-    vbuf.flush();
-    vbuf.finish();
+    m_vbuf.flush();
+    m_vbuf.finish();
 }
 
 
@@ -602,9 +579,9 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
     Eigen::Vector4d v0 = modelview * Eigen::Vector4d(v0_.x(), v0_.y(), v0_.z(), 0.0);
 
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
-    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
+    HighPrec_RenderContext rc(m_vbuf, viewFrustum, subdivisionThreshold);
 
-    vbuf.setup(m_renderer, color);
+    m_vbuf.setup(color);
 
     bool firstSegment = true;
     bool lastSegment = false;
@@ -636,7 +613,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
         // render it. Otherwise, it should be a performance win
         // to do a sphere-frustum cull test before subdividing and
         // rendering segment.
-        double minDistance = abs(p0.z()) - curveBoundingRadius;
+        double minDistance = std::abs(p0.z()) - curveBoundingRadius;
 
         // Render close segments as splines with adaptive subdivision. The
         // subdivisions eliminates kinks between line segments and also
@@ -651,7 +628,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (!restartCurve)
                 {
-                    vbuf.end();
+                    m_vbuf.end();
                     restartCurve = true;
                 }
             }
@@ -689,7 +666,7 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (!restartCurve)
                 {
-                    vbuf.end();
+                    m_vbuf.end();
                     restartCurve = true;
                 }
             }
@@ -697,10 +674,10 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.vertex(p0);
+                    m_vbuf.vertex(p0);
                     restartCurve = false;
                 }
-                vbuf.vertex(p1);
+                m_vbuf.vertex(p1);
             }
         }
 
@@ -710,11 +687,11 @@ CurvePlot::render(const Eigen::Affine3d& modelview,
 
     if (!restartCurve)
     {
-        vbuf.end();
+        m_vbuf.end();
     }
 
-    vbuf.flush();
-    vbuf.finish();
+    m_vbuf.flush();
+    m_vbuf.finish();
 }
 
 
@@ -772,9 +749,9 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
     opacity0 = std::clamp(opacity0, 0.0, 1.0);
 
     HighPrec_Frustum viewFrustum(nearZ, farZ, viewFrustumPlaneNormals);
-    HighPrec_RenderContext rc(vbuf, viewFrustum, subdivisionThreshold);
+    HighPrec_RenderContext rc(m_vbuf, viewFrustum, subdivisionThreshold);
 
-    vbuf.setup(m_renderer, color);
+    m_vbuf.setup(color);
 
     bool firstSegment = true;
     bool lastSegment = false;
@@ -823,7 +800,7 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
             {
                 if (!restartCurve)
                 {
-                    vbuf.end();
+                    m_vbuf.end();
                     restartCurve = true;
                 }
             }
@@ -865,7 +842,7 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
             {
                 if (!restartCurve)
                 {
-                    vbuf.end();
+                    m_vbuf.end();
                     restartCurve = true;
                 }
             }
@@ -873,10 +850,10 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
             {
                 if (restartCurve)
                 {
-                    vbuf.vertex(p0, static_cast<float>(opacity0));
+                    m_vbuf.vertex(p0, static_cast<float>(opacity0));
                     restartCurve = false;
                 }
-                vbuf.vertex(p1, static_cast<float>(opacity1));
+                m_vbuf.vertex(p1, static_cast<float>(opacity1));
             }
         }
 
@@ -887,9 +864,9 @@ CurvePlot::renderFaded(const Eigen::Affine3d& modelview,
 
     if (!restartCurve)
     {
-        vbuf.end();
+        m_vbuf.end();
     }
 
-    vbuf.flush();
-    vbuf.finish();
+    m_vbuf.flush();
+    m_vbuf.finish();
 }

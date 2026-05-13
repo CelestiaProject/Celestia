@@ -6,7 +6,6 @@ endif()
 set(WIN32_SOURCES
   datetimehelpers.cpp
   odmenu.cpp
-  tstring.cpp
   winbookmarks.cpp
   wincontextmenu.cpp
   windatepicker.cpp
@@ -29,13 +28,13 @@ set(WIN32_SOURCES
   wintourguide.cpp
   winuiutils.cpp
   winviewoptsdlg.cpp
+  wstringutils.cpp
 )
 
 set(WIN32_HEADERS
   datetimehelpers.h
   odmenu.h
-  tcharconv.h
-  tstring.h
+  wcharconv.h
   winbookmarks.h
   wincontextmenu.h
   windatepicker.h
@@ -57,6 +56,7 @@ set(WIN32_HEADERS
   wintourguide.h
   winuiutils.h
   winviewoptsdlg.h
+  wstringutils.h
 )
 
 if(ENABLE_FFMPEG)

@@ -2,10 +2,9 @@
 
 #include <array>
 #include <map>
+#include <string>
 
 #include <Windows.h>
-
-#include "tstring.h"
 
 namespace celestia::win32
 {
@@ -16,10 +15,10 @@ typedef struct tagODMENUITEM
 {
     UINT dwType;
     UINT wID;
-    tstring rawText;
-    tstring displayText;
-    tstring rawDisplayText;
-    tstring shortcutText;
+    std::wstring rawText;
+    std::wstring displayText;
+    std::wstring rawDisplayText;
+    std::wstring shortcutText;
     HBITMAP hBitmap;
     bool topMost;
 
@@ -76,7 +75,7 @@ private:
 
     UINT m_seqNumber;
     HMENU m_hRootMenu;
-    std::array<TCHAR, 256> m_szItemText;
+    std::array<wchar_t, 256> m_szItemText;
     ODMENUITEMS m_menuItems;
 
     void EnumMenuItems(HMENU hMenu);

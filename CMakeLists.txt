@@ -2,7 +2,7 @@ if(WIN32)
   # Require more recent CMake on Windows because DLLs are a pain
   cmake_minimum_required(VERSION 3.19)
 else()
-  cmake_minimum_required(VERSION 3.9)
+  cmake_minimum_required(VERSION 3.10...3.19)
 endif()
 
 # Plain and keyword target_link_libraries() signatures cannot be mixed
@@ -44,6 +44,11 @@ endif()
 # Normalize install(DESTINATION) paths
 if(POLICY CMP0177)
   cmake_policy(SET CMP0177 NEW)
+endif()
+
+# Normalize file(GET_RUNTIME_DEPENDENCIES) paths
+if(POLICY CMP0207)
+  cmake_policy(SET CMP0207 NEW)
 endif()
 
 project(celestia VERSION 1.7.0 LANGUAGES C CXX)
@@ -197,17 +202,8 @@ else()
 endif()
 
 if(ENABLE_SPICE)
-  find_package(CSPICE)
-  if(NOT CSPICE_FOUND)
-    message(STATUS "Using cspice submodule")
-    add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/Spice")
-    get_target_property(SPICE_INCLUDE_DIR spice INCLUDE_DIRECTORIES)
-    include_directories(${SPICE_INCLUDE_DIR})
-    message(STATUS "Spice include directories: ${SPICE_INCLUDE_DIR}")
-    add_library(CSPICE::CSPICE ALIAS spice)
-  else()
-    include_directories(${CSPICE_INCLUDE_DIR})
-  endif()
+  find_package(CSPICE REQUIRED)
+  include_directories(${CSPICE_INCLUDE_DIR})
   add_definitions(-DUSE_SPICE)
 else()
   message(STATUS "NAIF SPICE is disabled. Not looking for cspice library.")
@@ -261,8 +257,15 @@ find_package(Libepoxy REQUIRED)
 link_libraries(libepoxy::libepoxy)
 include_directories(${LIBEPOXY_INCLUDE_DIR})
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE) # -DEigen3_DIR=...
-message(STATUS "Found Eigen3 ${EIGEN3_VERSION_STRING}")
+find_package(Eigen3 CONFIG REQUIRED NO_MODULE) # -DEigen3_DIR=...
+message(STATUS "Found Eigen3 ${Eigen3_VERSION}")
+# version range in find_package is only supported in CMake 3.19 or later
+# so do the check manually here
+if(Eigen3_VERSION VERSION_LESS "3.3" OR
+   Eigen3_VERSION VERSION_GREATER_EQUAL "6.0")
+   message(FATAL_ERROR "Eigen3 version is not supported")
+endif()
+
 link_libraries(Eigen3::Eigen)
 
 find_package(fmt 8.1.0 CONFIG QUIET)
@@ -323,7 +326,8 @@ endif()
 
 find_package(gperf REQUIRED)
 
-find_package(Boost REQUIRED)
+# We need Boost 1.67 for the boost/container_hash/hash.hpp header
+find_package(Boost 1.67 REQUIRED)
 link_libraries(Boost::boost)
 add_definitions(-DBOOST_NO_EXCEPTIONS)
 
@@ -473,14 +477,14 @@ endif()
 find_package(Filesystem REQUIRED COMPONENTS Final)
 link_libraries(std::filesystem)
 
-try_compile(HAVE_CHARCONV ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxccint.cpp")
+message(STATUS "Checking for float charconv support")
+try_compile(HAVE_CHARCONV ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxccfloat.cpp")
 if(HAVE_CHARCONV)
-  try_compile(HAVE_FLOAT_CHARCONV ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/checks/cxxccfloat.cpp")
-  if(NOT HAVE_FLOAT_CHARCONV)
-    message(WARNING "C++ charconv lacks floating point support!\nWill use own implementation.")
-  endif()
+  message(STATUS "Checking for float charconv support - success")
 else()
-  message(WARNING "C++ charconv is unusable!\nWill use own implementation.")
+  message(STATUS "Checking for float charconv support - failed, using fast_float")
+  find_package(FastFloat CONFIG REQUIRED)
+  link_libraries(FastFloat::fast_float)
 endif()
 
 configure_file("config.h.in" "config.h")

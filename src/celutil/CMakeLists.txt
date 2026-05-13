@@ -6,7 +6,10 @@ set(CELUTIL_SOURCES
   binaryread.h
   binarywrite.h
   blockarray.h
+  buffile.cpp
+  buffile.h
   bytes.h
+  classops.h
   color.cpp
   color.h
   dateformatter.cpp
@@ -32,12 +35,11 @@ set(CELUTIL_SOURCES
   r128.h
   r128util.cpp
   r128util.h
-  reshandle.h
-  resmanager.h
   stringutils.cpp
   stringutils.h
   strnatcmp.cpp
   strnatcmp.h
+  texhandle.h
   timer.cpp
   timer.h
   tokenizer.cpp
@@ -47,7 +49,6 @@ set(CELUTIL_SOURCES
   uniquedel.h
   utf8.cpp
   utf8.h
-  watcher.h
 )
 
 if (USE_ICU)

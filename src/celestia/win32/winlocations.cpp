@@ -174,7 +174,6 @@ dlgCheck(HWND hDlg, WORD item, T flags, T testFlag)
 LocationsDialog::LocationsDialog(HINSTANCE appInstance,
                                  HWND _parent,
                                  CelestiaCore* _appCore) :
-    CelestiaWatcher(*_appCore),
     appCore(_appCore),
     parent(_parent)
 {
@@ -183,6 +182,12 @@ LocationsDialog::LocationsDialog(HINSTANCE appInstance,
                              parent,
                              (DLGPROC)LocationsProc,
                              reinterpret_cast<LPARAM>(this));
+    appCore->getRenderer()->addWatcher(this);
+}
+
+LocationsDialog::~LocationsDialog()
+{
+    appCore->getRenderer()->removeWatcher(this);
 }
 
 void
@@ -230,9 +235,9 @@ LocationsDialog::RestoreSettings(HWND hDlg)
 }
 
 void
-LocationsDialog::notifyChange(CelestiaCore*, int)
+LocationsDialog::notifyRenderSettingsChanged(const Renderer*)
 {
-    if (parent != NULL)
+    if (parent != nullptr)
         SetControls(hwnd);
 }
 

@@ -28,16 +28,13 @@
 using namespace std::string_view_literals;
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
 namespace
 {
-
-// https://arxiv.org/abs/1510.07674
-constexpr float SOLAR_TEMPERATURE = 5772.0f;
-constexpr float SOLAR_BOLOMETRIC_MAG = 4.75f;
 
 using SubclassValues = std::array<float, 10>;
 
@@ -780,8 +777,10 @@ StarDetailsManager::createNormalStarDetails(StellarClass::SpectralClass specClas
     auto details = createStandardStarType(name, temp, period);
     details->bolometricCorrection = bmagCorrection;
 
-    const MultiResTexture& starTex = starTextures.starTex[specClass];
-    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
+    details->texture = starTextures.starTex[specClass];
+    if (details->texture == util::TextureHandle::Invalid)
+        details->texture = starTextures.defaultTex;
+
     return details;
 }
 
@@ -813,9 +812,10 @@ StarDetailsManager::createWhiteDwarfDetails(std::size_t scIndex,
     float period = 1.0f / 48.0f;
 
     auto details = createStandardStarType(name, temp, period);
-    const MultiResTexture& starTex = starTextures.starTex[StellarClass::Spectral_D];
     details->bolometricCorrection = bmagCorrection;
-    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
+    details->texture = starTextures.starTex[StellarClass::Spectral_D];
+    if (details->texture == util::TextureHandle::Invalid)
+        details->texture = starTextures.defaultTex;
     return details;
 }
 
@@ -828,8 +828,9 @@ StarDetailsManager::createNeutronStarDetails()
                                           1.0f / 86400.0f);
     details->radius = 10.0f;
     details->knowledge = StarDetails::Knowledge::KnowRadius;
-    const MultiResTexture& starTex = starTextures.neutronStarTex;
-    details->texture = starTex.isValid() ? starTex : starTextures.defaultTex;
+    details->texture = starTextures.neutronStarTex;
+    if (details->texture == util::TextureHandle::Invalid)
+        details->texture = starTextures.defaultTex;
     return details;
 }
 
@@ -980,7 +981,7 @@ StarDetails::setBolometricCorrection(boost::intrusive_ptr<StarDetails>& details,
 }
 
 void
-StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, const MultiResTexture& tex)
+StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, util::TextureHandle tex)
 {
     unshare(details);
     details->texture = tex;
@@ -988,7 +989,7 @@ StarDetails::setTexture(boost::intrusive_ptr<StarDetails>& details, const MultiR
 }
 
 void
-StarDetails::setGeometry(boost::intrusive_ptr<StarDetails>& details, ResourceHandle rh)
+StarDetails::setGeometry(boost::intrusive_ptr<StarDetails>& details, engine::GeometryHandle rh)
 {
     unshare(details);
     details->geometry = rh;
@@ -1168,16 +1169,16 @@ Star::getRadius() const
     // Use the Stefan-Boltzmann law to estimate the radius of a
     // star from surface temperature and luminosity
     return astro::SOLAR_RADIUS<float> * std::sqrt(lum) *
-        math::square(SOLAR_TEMPERATURE / getTemperature());
+        math::square(astro::SOLAR_TEMPERATURE / getTemperature());
 }
 
-MultiResTexture
+util::TextureHandle
 Star::getTexture() const
 {
     return details->getTexture();
 }
 
-ResourceHandle
+engine::GeometryHandle
 Star::getGeometry() const
 {
     return details->getGeometry();
@@ -1243,7 +1244,7 @@ Star::getBolometricLuminosity() const
 #else
     // Calculate the luminosity of the star from the bolometric, not the
     // visual magnitude of the star.
-    float solarBMag = SOLAR_BOLOMETRIC_MAG;
+    float solarBMag = astro::SOLAR_BOLOMETRIC_MAG;
     float bmag = getBolometricMagnitude();
     return std::exp((solarBMag - bmag) / astro::LN_MAG);
 #endif

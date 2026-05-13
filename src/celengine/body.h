@@ -26,12 +26,12 @@
 #include <celutil/color.h>
 #include <celutil/flag.h>
 #include <celutil/ranges.h>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
 #include <celutil/utf8.h>
-#include "multitexture.h"
+#include "meshmanager.h"
 #include "surface.h"
 
-class Atmosphere;
+struct Atmosphere;
 class Body;
 class FrameTree;
 class Location;
@@ -95,20 +95,15 @@ private:
 
 struct RingSystem
 {
+    RingSystem(float inner, float outer) :
+        innerRadius(inner), outerRadius(outer)
+    {
+    }
+
     float innerRadius;
     float outerRadius;
-    Color color;
-    MultiResTexture texture;
-
-    RingSystem(float inner, float outer) :
-        innerRadius(inner), outerRadius(outer),
-        color(1.0f, 1.0f, 1.0f),
-        texture()
-        { };
-
-    RingSystem(float inner, float outer, Color _color, const MultiResTexture& _texture) :
-        innerRadius(inner), outerRadius(outer), color(_color), texture(_texture)
-        { };
+    Color color{ 1.0f, 1.0f, 1.0f };
+    celestia::util::TextureHandle texture{ celestia::util::TextureHandle::Invalid };
 };
 
 // Object class enumeration:
@@ -268,8 +263,8 @@ public:
     float getBoundingRadius() const;
     float getCullingRadius() const;
 
-    ResourceHandle getGeometry() const { return geometry; }
-    void setGeometry(ResourceHandle);
+    celestia::engine::GeometryHandle getGeometry() const { return geometry; }
+    void setGeometry(celestia::engine::GeometryHandle);
     Eigen::Quaternionf getGeometryOrientation() const;
     void setGeometryOrientation(const Eigen::Quaternionf& orientation);
     float getGeometryScale() const { return geometryScale; }
@@ -395,7 +390,7 @@ private:
 
     float cullingRadius{ 0.0f };
 
-    ResourceHandle geometry{ InvalidResource };
+    celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
     float geometryScale{ 1.0f };
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
@@ -474,7 +469,7 @@ public:
     void addLocation(Body*, std::unique_ptr<Location>&&);
     Location* findLocation(const Body*, std::string_view, bool i18n = false) const;
     bool hasLocations(const Body*) const;
-    void computeLocations(const Body*);
+    void computeLocations(const Body*, celestia::engine::GeometryManager&);
 
     auto getLocations(const Body* body) const
     {

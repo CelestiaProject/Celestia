@@ -16,22 +16,24 @@
 #include <windows.h>
 #include <commctrl.h>
 
+#include <celengine/render.h>
 #include <celestia/celestiacore.h>
 
 namespace celestia::win32
 {
 
-class LocationsDialog : public CelestiaWatcher
+class LocationsDialog : public RendererWatcher
 {
- public:
+public:
     LocationsDialog(HINSTANCE, HWND, CelestiaCore*);
+    ~LocationsDialog();
 
     void SetControls(HWND);
     void RestoreSettings(HWND);
 
-    virtual void notifyChange(CelestiaCore*, int);
+    void notifyRenderSettingsChanged(const Renderer*) override;
 
- public:
+public:
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;

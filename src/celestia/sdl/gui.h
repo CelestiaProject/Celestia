@@ -48,6 +48,8 @@ public:
     inline bool wantCaptureMouse() const { return m_io->WantCaptureMouse; }
     inline bool isQuitRequested() const { return m_isQuitRequested; }
 
+    void updateScreenDpi(float scale);
+
 private:
     void menuBar();
     void scriptMenu();
@@ -68,6 +70,7 @@ private:
     bool m_isTimeDialogOpen{ false };
 
     float m_menuBarHeight{ 0.0f };
+    float m_scale{ 1.0f };
 
     bool m_isQuitRequested{ false };
 };

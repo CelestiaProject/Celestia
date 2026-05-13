@@ -56,7 +56,7 @@ EclipticLineRenderer::render()
     ps.smoothLines = true;
     m_renderer.setPipelineState(ps);
 
-    m_lineRenderer.render({&m_renderer.getProjectionMatrix(), &m_renderer.getModelViewMatrix()}, Renderer::EclipticColor, kEclipticCount);
+    m_lineRenderer.render({&m_renderer.getProjectionMatrix(), &m_renderer.getModelViewMatrix()}, m_renderer.colors.Ecliptic, kEclipticCount);
     m_lineRenderer.finish();
 }
 

@@ -59,6 +59,12 @@ namespace celestia
 namespace
 {
 
+constexpr Color InfoColor        = Color(0.7f, 0.7f, 1.0f, 1.0f);
+constexpr Color FrameInfoColor   = Color(0.6f, 0.6f, 1.0f, 1.0f);
+constexpr Color LightTravelColor = Color(0.42f, 1.0f, 1.0f, 1.0f);
+constexpr Color WarningColor     = Color(1.0f, 0.0f, 0.0f, 1.0f);
+constexpr Color EditModeColor    = Color(1.0f, 0.0f, 1.0f, 1.0f);
+
 // Ye olde wolde conſtantes for ye olde wolde units
 constexpr double OneMiInKm = 1.609344;
 constexpr double OneFtInKm = 0.0003048;
@@ -318,7 +324,7 @@ displayApparentMagnitude(Overlay& overlay,
                          double distance,
                          const std::locale& loc)
 {
-    if (distance > 32.6167)
+    if (distance > astro::LY_PER_10PARSEC)
     {
         float appMag = astro::absToAppMag(absMag, static_cast<float>(distance));
         overlay.print(loc, fmt::runtime(_("Apparent magnitude: {:.1f}\n")), appMag);
@@ -428,13 +434,12 @@ displayStarInfo(const util::NumberFormatter& formatter,
     }
     else
     {
+        displayApparentDiameter(overlay, star.getRadius(),
+                                astro::lightYearsToKilometers(distance), loc);
+
         overlay.print(loc, fmt::runtime(_("Abs (app) mag: {:.2f} ({:.2f})\n")),
                       star.getAbsoluteMagnitude(),
                       star.getApparentMagnitude(float(distance)));
-
-        if (star.getLuminosity() > 1.0e-10f)
-            overlay.print(loc, fmt::runtime(_("Luminosity: {}x Sun\n")),
-                          formatter.format(star.getLuminosity(), 3, SigDigitNum));
 
         const char* star_class;
         switch (star.getSpectralType()[0])
@@ -450,14 +455,12 @@ displayStarInfo(const util::NumberFormatter& formatter,
         }
         overlay.printf(_("Class: %s\n"), star_class);
 
-        displayApparentDiameter(overlay, star.getRadius(),
-                                astro::lightYearsToKilometers(distance), loc);
+        if (star.getBolometricLuminosity() > 1.0e-10f)
+            overlay.print(loc, fmt::runtime(_("Luminosity: {}× Sun\n")),
+                          formatter.format(star.getBolometricLuminosity(), 3, SigDigitNum));
 
         if (detail > 1)
         {
-            overlay.printf(_("Surface temp: %s\n"),
-                           KelvinToStr(formatter, star.getTemperature(), 3, hudSettings.temperatureScale));
-
             if (float solarRadii = star.getRadius() / 6.96e5f; solarRadii > 0.01f)
             {
                 overlay.print(fmt::runtime(_("Radius: {} Rsun ({})\n")),
@@ -469,6 +472,9 @@ displayStarInfo(const util::NumberFormatter& formatter,
                 overlay.print(fmt::runtime(_("Radius: {}\n")),
                               DistanceKmToStr(formatter, star.getRadius(), 3, hudSettings.measurementSystem));
             }
+
+            overlay.printf(_("Temperature: %s\n"),
+                           KelvinToStr(formatter, star.getTemperature(), 3, hudSettings.temperatureScale));
 
             if (star.getRotationModel()->isPeriodic())
             {
@@ -482,7 +488,7 @@ displayStarInfo(const util::NumberFormatter& formatter,
     {
         const SolarSystem* sys = universe.getSolarSystem(&star);
         if (sys != nullptr && sys->getPlanets()->getSystemSize() != 0)
-            overlay.print(_("Planetary companions present\n"));
+            overlay.print(_("Planetary system present\n"));
     }
 }
 
@@ -505,11 +511,10 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
     {
         overlay.printf(_("Distance from center: %s\n"),
                      DistanceLyToStr(formatter, distance + dso.getRadius(), 5, measurement));
-     }
-    overlay.printf(_("Radius: %s\n"),
-                 DistanceLyToStr(formatter, dso.getRadius(), 5, measurement));
+    }
 
     displayApparentDiameter(overlay, dso.getRadius(), distance, loc);
+    
     if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
     {
         displayApparentMagnitude(overlay,
@@ -517,6 +522,9 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
                                  distance,
                                  loc);
     }
+    
+    overlay.printf(_("Radius: %s\n"),
+                 DistanceLyToStr(formatter, dso.getRadius(), 5, measurement));
 }
 
 void
@@ -533,42 +541,6 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
     double distance = distanceKm - body.getRadius();
     overlay.printf(_("Distance: %s\n"),
                    DistanceKmToStr(formatter, distance, 5, hudSettings.measurementSystem));
-
-    if (body.getClassification() == BodyClassification::Invisible)
-    {
-        return;
-    }
-    else if (body.isEllipsoid()) // show mean radius along with triaxial semi-axes
-    {
-        Eigen::Vector3f semiAxes = body.getSemiAxes();
-        if (semiAxes.x() == semiAxes.z())
-        {
-            if (semiAxes.x() == semiAxes.y())
-            {
-                overlay.print(fmt::runtime(_("Radius: {}\n")),
-                              DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
-            }
-            else
-            {
-                overlay.print(fmt::runtime(_("Equatorial radius: {}\n")),
-                              DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem));
-                overlay.print(fmt::runtime(_("Polar radius: {}\n")),
-                              DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
-            }
-        }
-        else
-        {
-            overlay.print(fmt::runtime(_("Radii: {} × {} × {}\n")),
-                          DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
-                          DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
-                          DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
-        }
-    }
-    else
-    {
-        overlay.print(fmt::runtime(_("Radius: {}\n")),
-                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
-    }
 
     displayApparentDiameter(overlay, body.getRadius(), distanceKm, loc);
 
@@ -617,11 +589,44 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         }
     }
 
+    // Display radii
+    if (body.getClassification() == BodyClassification::Invisible)
+    {
+        return;
+    }
+    else if (body.isEllipsoid()) // show mean radius along with triaxial semi-axes
+    {
+        Eigen::Vector3f semiAxes = body.getSemiAxes();
+        if (semiAxes.x() == semiAxes.z())
+        {
+            if (semiAxes.x() == semiAxes.y())
+            {
+                overlay.print(fmt::runtime(_("Radius: {}\n")),
+                              DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+            }
+            else
+            {
+                overlay.print(fmt::runtime(_("Equatorial (polar) radii: {} ({})\n")),
+                              DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
+                              DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+            }
+        }
+        else
+        {
+            overlay.print(fmt::runtime(_("Radii: {} × {} × {}\n")),
+                          DistanceKmToStr(formatter, semiAxes.x(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.z(), 5, hudSettings.measurementSystem),
+                          DistanceKmToStr(formatter, semiAxes.y(), 5, hudSettings.measurementSystem));
+        }
+    }
+    else
+    {
+        overlay.print(fmt::runtime(_("Radius: {}\n")),
+                      DistanceKmToStr(formatter, body.getRadius(), 5, hudSettings.measurementSystem));
+    }
+
     if (detail > 1)
     {
-        if (body.getRotationModel(t)->isPeriodic())
-            displayRotationPeriod(formatter, overlay, body.getRotationModel(t)->getPeriod());
-
         if (body.getMass() > 0)
             displayMass(formatter, overlay, body.getMass(), hudSettings.measurementSystem);
 
@@ -642,6 +647,9 @@ displayPlanetInfo(const util::NumberFormatter& formatter,
         float planetTemp = body.getTemperature(t);
         if (planetTemp > 0)
             overlay.printf(_("Temperature: %s\n"), KelvinToStr(formatter, planetTemp, 3, hudSettings.temperatureScale));
+
+        if (body.getRotationModel(t)->isPeriodic())
+            displayRotationPeriod(formatter, overlay, body.getRotationModel(t)->getPeriod());
     }
 }
 
@@ -737,6 +745,23 @@ HudFonts::setTitleFont(const std::shared_ptr<TextureFont>& f)
     m_titleFont = f;
     m_titleFontHeight = f->getHeight();
     m_titleEmWidth = engine::TextLayout::getTextWidth("M", f.get());
+}
+
+void
+HudFonts::update()
+{
+    if (m_font != nullptr)
+    {
+        m_font->update();
+        m_fontHeight = m_font->getHeight();
+        m_emWidth = engine::TextLayout::getTextWidth("M", m_font.get());
+    }
+    if (m_titleFont != nullptr)
+    {
+        m_titleFont->update();
+        m_titleFontHeight = m_titleFont->getHeight();
+        m_titleEmWidth = engine::TextLayout::getTextWidth("M", m_titleFont.get());
+    }
 }
 
 Hud::Hud(const std::locale& loc) :
@@ -856,6 +881,13 @@ Hud::titleMetrics() const
     return std::make_tuple(m_hudFonts.titleEmWidth(), m_hudFonts.titleFontHeight());
 }
 
+void
+Hud::updateFonts()
+{
+    m_hudFonts.update();
+    m_dateStrWidth = 0;
+}
+
 #ifdef USE_ICU
 MeasurementSystem
 defaultMeasurementSystem()
@@ -917,7 +949,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         m_overlay->savePos();
         m_overlay->moveBy(metrics.getSafeAreaStart(),
                           metrics.getSafeAreaBottom(m_hudFonts.fontHeight() * 2 + static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
-        m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+        m_overlay->setColor(InfoColor);
 
         m_overlay->beginText();
         m_overlay->print("\n");
@@ -957,7 +989,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         m_overlay->beginText();
         int x = (metrics.getSafeAreaWidth() - engine::TextLayout::getTextWidth(_("Edit Mode"), m_hudFonts.font().get())) / 2;
         m_overlay->moveBy(metrics.getSafeAreaStart(x), metrics.getSafeAreaTop(m_hudFonts.fontHeight()));
-        m_overlay->setColor(1, 0, 1, 1);
+        m_overlay->setColor(EditModeColor);
         m_overlay->print(_("Edit Mode"));
         m_overlay->endText();
         m_overlay->restorePos();
@@ -988,7 +1020,7 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     // Time and date
     m_overlay->savePos();
-    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(InfoColor);
     m_overlay->moveBy(metrics.getSafeAreaEnd(m_dateStrWidth), metrics.getSafeAreaTop(m_hudFonts.fontHeight()));
     m_overlay->beginText();
 
@@ -996,9 +1028,9 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     if (timeInfo.lightTravelFlag && lt > 0.0)
     {
-        m_overlay->setColor(0.42f, 1.0f, 1.0f, 1.0f);
+        m_overlay->setColor(LightTravelColor);
         m_overlay->print(_("  LT"));
-        m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+        m_overlay->setColor(InfoColor);
     }
     m_overlay->print("\n");
 
@@ -1024,7 +1056,7 @@ Hud::renderTimeInfo(const WindowMetrics& metrics, const Simulation* sim, const T
 
     if (sim->getPauseState() == true)
     {
-        m_overlay->setColor(1.0f, 0.0f, 0.0f, 1.0f);
+        m_overlay->setColor(WarningColor);
         m_overlay->print(_(" (Paused)"));
     }
 
@@ -1041,7 +1073,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
                       metrics.getSafeAreaBottom(m_hudFonts.fontHeight() * 3 +
                           static_cast<int>(static_cast<float>(metrics.screenDpi) / 25.4f * 1.3f)));
     m_overlay->beginText();
-    m_overlay->setColor(0.6f, 0.6f, 1.0f, 1);
+    m_overlay->setColor(FrameInfoColor);
 
     if (sim->getObserverMode() == Observer::ObserverMode::Travelling)
     {
@@ -1090,7 +1122,7 @@ Hud::renderFrameInfo(const WindowMetrics& metrics, const Simulation* sim)
         break;
     }
 
-    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(InfoColor);
 
     // Field of view
     const Observer* activeObserver = sim->getActiveObserver();
@@ -1107,7 +1139,7 @@ Hud::renderSelectionInfo(const WindowMetrics& metrics,
                          const Eigen::Vector3d& v)
 {
     m_overlay->savePos();
-    m_overlay->setColor(0.7f, 0.7f, 1.0f, 1.0f);
+    m_overlay->setColor(InfoColor);
     m_overlay->moveBy(metrics.getSafeAreaStart(), metrics.getSafeAreaTop(m_hudFonts.titleFontHeight()));
 
     m_overlay->beginText();
@@ -1256,7 +1288,7 @@ Hud::renderMovieCapture(const WindowMetrics& metrics, const MovieCapture& movieC
     int movieWidth = movieCapture.getWidth();
     int movieHeight = movieCapture.getHeight();
     m_overlay->savePos();
-    Color color(1.0f, 0.0f, 0.0f, 1.0f);
+    const Color& color = WarningColor;
     m_overlay->setColor(color);
     celestia::Rect r(static_cast<float>((metrics.width - movieWidth) / 2 - 1),
                      static_cast<float>((metrics.height - movieHeight) / 2 - 1),

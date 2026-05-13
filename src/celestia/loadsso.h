@@ -17,7 +17,15 @@ struct CelestiaConfig;
 
 namespace celestia
 {
+namespace engine
+{
+class GeometryPaths;
+}
 
-void loadSSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier, Universe *universe);
+void loadSSO(const CelestiaConfig& config,
+             ProgressNotifier* progressNotifier,
+             Universe* universe,
+             engine::GeometryPaths& geometryPaths,
+             engine::TexturePaths& texturePaths);
 
 } // namespace celestia

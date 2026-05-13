@@ -21,7 +21,7 @@
 
 #include <celengine/body.h>
 #include <celengine/lightenv.h>
-#include <celengine/multitexture.h>
+#include <celengine/meshmanager.h>
 #include <celengine/universe.h>
 #include <celengine/selection.h>
 #include <celengine/shadermanager.h>
@@ -29,9 +29,11 @@
 #include <celengine/projectionmode.h>
 #include <celengine/rendcontext.h>
 #include <celengine/renderlistentry.h>
+#include <celengine/texmanager.h>
 #include <celengine/textlayout.h>
 #include <celimage/pixelformat.h>
 #include <celrender/rendererfwd.h>
+#include "rendercolors.h"
 #include "renderflags.h"
 
 class RendererWatcher;
@@ -39,9 +41,11 @@ class FrameTree;
 class LODSphereMesh;
 class ReferenceMark;
 class CurvePlot;
+class CurvePlotVertexBuffer;
 class StarVertexBuffer;
 class Observer;
-class Surface;
+struct Surface;
+class Texture;
 class TextureFont;
 class FramebufferObject;
 
@@ -135,7 +139,9 @@ class Renderer
 #endif
     };
 
-    bool init(int, int, const DetailOptions&);
+    bool init(int, int, const DetailOptions&, celestia::engine::TextureResolution,
+              std::shared_ptr<celestia::engine::GeometryManager>,
+              std::shared_ptr<const celestia::engine::TexturePaths>);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
@@ -171,6 +177,8 @@ class Renderer
     void setOrbitMask(BodyClassification);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    float getTextScaleFactor() const;
+    void setTextScaleFactor(float);
     int getWindowWidth() const;
     int getWindowHeight() const;
 
@@ -264,8 +272,10 @@ class Renderer
 
     void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const;
 
-    void setResolution(TextureResolution resolution);
-    TextureResolution getResolution() const;
+    void setStarStyle(StarStyle);
+    StarStyle getStarStyle() const;
+    void setResolution(celestia::engine::TextureResolution resolution);
+    celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
     void disableSelectionPointer();
 
@@ -354,15 +364,16 @@ class Renderer
         bool operator<(const OrbitPathListEntry&) const;
     };
 
-    enum FontStyle
+    enum class FontStyle : std::uint8_t
     {
-        FontNormal = 0,
-        FontLarge  = 1,
-        FontCount  = 2,
+        Normal = 0,
+        Large  = 1,
+        Count  = 2,
     };
 
     void setFont(FontStyle, const std::shared_ptr<TextureFont>&);
     std::shared_ptr<TextureFont> getFont(FontStyle) const;
+    void updateFonts();
 
     bool settingsHaveChanged() const;
     void markSettingsChanged();
@@ -372,6 +383,9 @@ class Renderer
     void notifyWatchers() const;
 
     FramebufferObject* getShadowFBO(int) const;
+
+    celestia::engine::RenderGeometryManager* getGeometryManager() const noexcept { return m_geometryManager.get(); }
+    celestia::engine::TextureManager* getTextureManager() const noexcept { return m_textureManager.get(); }
 
  public:
     struct RenderProperties
@@ -386,7 +400,7 @@ class Renderer
         float radius{ 1.0f };
         float geometryScale{ 1.0f };
 
-        ResourceHandle geometry{ InvalidResource };
+        celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
         bool isStar{ false };
     };
 
@@ -576,8 +590,11 @@ class Renderer
     float fov{ celestia::engine::standardFOV };
     double cosViewConeAngle{ 0.0 };
     int screenDpi{ 96 };
+    float textScaleFactor{ 1.0f };
+    float corrFac{ 1.12f };
     float pixelSize{ 1.0f };
-    std::vector<std::shared_ptr<TextureFont>> fonts{FontCount, nullptr};
+    float faintestAutoMag45deg{ 8.0f };
+    std::array<std::shared_ptr<TextureFont>, static_cast<std::size_t>(FontStyle::Count)> fonts;
 
     std::shared_ptr<celestia::engine::ProjectionMode> projectionMode;
     int renderMode;
@@ -619,8 +636,6 @@ class Renderer
     const Eigen::Matrix4f *m_modelViewPtr  { &m_modelMatrix };
     const Eigen::Matrix4f *m_projectionPtr { &m_projMatrix };
 
-    bool useCompressedTextures{ false };
-    TextureResolution textureResolution{ TextureResolution::medres };
     DetailOptions detailOptions;
 
     std::uint32_t frameCount{ 0 };
@@ -632,6 +647,7 @@ class Renderer
     std::array<int, 4> m_viewport { 0, 0, 0, 0 };
 
     using OrbitCache = std::map<const celestia::ephem::Orbit*, std::unique_ptr<CurvePlot>>;
+    std::unique_ptr<CurvePlotVertexBuffer> curvePlotVertexBuffer;
     OrbitCache orbitCache;
     std::uint32_t lastOrbitCacheFlush{ 0 };
 
@@ -669,6 +685,10 @@ class Renderer
     std::unique_ptr<celestia::gl::Buffer> m_markerBO;
     bool m_markerDataInitialized{ false };
 
+    std::unique_ptr<celestia::gl::VertexObject> m_rectVO;
+    std::unique_ptr<celestia::gl::Buffer> m_rectBO;
+    mutable bool m_rectInitialized{ false };
+
     // Saturation magnitude used to calculate a point star size
     float satPoint;
 
@@ -690,6 +710,9 @@ class Renderer
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
+    std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
+    std::unique_ptr<celestia::engine::TextureManager> m_textureManager;
+
     // Location markers
  public:
     celestia::MarkerRepresentation mountainRep;
@@ -705,47 +728,7 @@ class Renderer
     std::list<RendererWatcher*> watchers;
 
     // Colors for all lines and labels
-    static Color StarLabelColor;
-    static Color PlanetLabelColor;
-    static Color DwarfPlanetLabelColor;
-    static Color MoonLabelColor;
-    static Color MinorMoonLabelColor;
-    static Color AsteroidLabelColor;
-    static Color CometLabelColor;
-    static Color SpacecraftLabelColor;
-    static Color LocationLabelColor;
-    static Color GalaxyLabelColor;
-    static Color GlobularLabelColor;
-    static Color NebulaLabelColor;
-    static Color OpenClusterLabelColor;
-    static Color ConstellationLabelColor;
-    static Color EquatorialGridLabelColor;
-    static Color PlanetographicGridLabelColor;
-    static Color GalacticGridLabelColor;
-    static Color EclipticGridLabelColor;
-    static Color HorizonGridLabelColor;
-
-    static Color StarOrbitColor;
-    static Color PlanetOrbitColor;
-    static Color DwarfPlanetOrbitColor;
-    static Color MoonOrbitColor;
-    static Color MinorMoonOrbitColor;
-    static Color AsteroidOrbitColor;
-    static Color CometOrbitColor;
-    static Color SpacecraftOrbitColor;
-    static Color SelectionOrbitColor;
-
-    static Color ConstellationColor;
-    static Color BoundaryColor;
-    static Color EquatorialGridColor;
-    static Color PlanetographicGridColor;
-    static Color PlanetEquatorColor;
-    static Color GalacticGridColor;
-    static Color EclipticGridColor;
-    static Color HorizonGridColor;
-    static Color EclipticColor;
-
-    static Color SelectionCursorColor;
+    celestia::engine::RendererColors colors{ celestia::engine::RendererColors::defaults() };
 
     friend class celestia::render::AtmosphereRenderer;
     friend class StarRenderer;

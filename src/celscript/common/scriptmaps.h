@@ -10,6 +10,8 @@
 class Color;
 enum class BodyClassification : std::uint32_t;
 
+namespace celestia::engine { struct RendererColors; }
+
 namespace celestia::scripts
 {
 
@@ -23,6 +25,9 @@ struct ScriptMaps
 {
     ScriptMaps();
     ~ScriptMaps() = default;
+
+    void initColorMaps(celestia::engine::RendererColors&);
+
     ScriptMaps(const ScriptMaps&) = delete;
     ScriptMaps(ScriptMaps&&) = delete;
     ScriptMaps& operator=(const ScriptMaps&) = delete;

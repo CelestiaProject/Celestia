@@ -14,9 +14,9 @@
 #include <SDL_video.h>
 
 #include <celengine/body.h>
-#include <celengine/multitexture.h>
 #include <celengine/renderflags.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 
 class CelestiaCore;
 
@@ -41,7 +41,7 @@ struct Settings
     bool lokTextures{ false };
     RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
     RenderLabels labelMode{ RenderLabels::I18nConstellationLabels };
-    TextureResolution textureResolution{ TextureResolution::medres };
+    engine::TextureResolution textureResolution{ engine::TextureResolution::medres };
     BodyClassification orbitMask{ BodyClassification::DefaultOrbitMask };
     int ambientLight{ 0 }; // None
     int tintSaturation{ 50 };

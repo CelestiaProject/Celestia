@@ -22,9 +22,7 @@
 #include <string_view>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celastro/date.h>
 #include <celutil/array_view.h>
@@ -33,7 +31,7 @@
 #include <commctrl.h>
 
 #include "datetimehelpers.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 
@@ -190,7 +188,7 @@ private:
 
     std::array<RECT, NumFields> fieldRects;
     RECT clientRect;
-    util::array_view<tstring> monthNames{ GetLocalizedMonthNames() };
+    util::array_view<std::wstring> monthNames{ GetLocalizedMonthNames() };
 };
 
 DatePicker::DatePicker(HWND _hwnd, CREATESTRUCT& cs) :
@@ -240,17 +238,17 @@ DatePicker::redraw(HDC hdc)
     SetTextColor(hdc, RGB(0, 0, 0));
     SetBkMode(hdc, TRANSPARENT);
 
-    fmt::basic_memory_buffer<TCHAR, 32> dayBuf;
-    fmt::basic_memory_buffer<TCHAR, 32> yearBuf;
+    fmt::basic_memory_buffer<wchar_t, 32> dayBuf;
+    fmt::basic_memory_buffer<wchar_t, 32> yearBuf;
 
-    fmt::format_to(std::back_inserter(dayBuf), TEXT("{:02d}"), date.day);
-    fmt::format_to(std::back_inserter(yearBuf), TEXT("{:>5d}"), date.year);
+    fmt::format_to(std::back_inserter(dayBuf), L"{:02d}", date.day);
+    fmt::format_to(std::back_inserter(yearBuf), L"{:>5d}", date.year);
 
-    std::array<tstring_view, 3> fieldText
+    std::array<std::wstring_view, 3> fieldText
     {
-        tstring_view(dayBuf.data(), dayBuf.size()),
+        std::wstring_view(dayBuf.data(), dayBuf.size()),
         monthNames[static_cast<std::size_t>(date.month - 1)],
-        tstring_view(yearBuf.begin(), yearBuf.size()),
+        std::wstring_view(yearBuf.begin(), yearBuf.size()),
     };
 
     int right = 2;
@@ -515,12 +513,12 @@ DatePicker::notifyDateChanged()
 int
 DatePicker::getFieldWidth(DatePickerField field, HDC hdc)
 {
-    constexpr std::array<tstring_view, 3> fieldTexts
+    constexpr std::array<std::wstring_view, 3> fieldTexts
     {
-        TEXT("22 "sv), TEXT(" Oct "sv), TEXT("-2222 "sv)
+        L"22 "sv, L" Oct "sv, L"-2222 "sv
     };
 
-    tstring_view maxWidthText = fieldTexts[static_cast<std::size_t>(field)];
+    std::wstring_view maxWidthText = fieldTexts[static_cast<std::size_t>(field)];
 
     SIZE size;
     GetTextExtentPoint32(hdc, maxWidthText.data(), static_cast<int>(maxWidthText.size()), &size);
@@ -727,7 +725,7 @@ RegisterDatePicker()
     wc.cbWndExtra      = sizeof(DatePicker*);
     wc.hCursor         = LoadCursor(0, IDC_ARROW);
     wc.hbrBackground   = reinterpret_cast<HBRUSH>(INT_PTR(COLOR_WINDOW + 1));
-    wc.lpszClassName   = TEXT("CelestiaDatePicker");
+    wc.lpszClassName   = L"CelestiaDatePicker";
 
     RegisterClass(&wc);
 }

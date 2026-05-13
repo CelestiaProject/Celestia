@@ -109,7 +109,7 @@ void StarRenderer::process(const Star& star, float distance, float irradiance)
                     if (starDir.dot(viewNormal) > cosFOV)
                     {
                         float distr = 1.0f - labelLowestIrradiation / irradiation;
-                        Color color = Color(Renderer::StarLabelColor, distr * Renderer::StarLabelColor.alpha());
+                        Color color = Color(renderer->colors.StarLabel, distr * renderer->colors.StarLabel.alpha());
                         renderer->addBackgroundAnnotation(nullptr,
                                                         starDB->getStarName(star, true),
                                                         color,
@@ -148,7 +148,7 @@ void StarRenderer::process(const Star& star, float distance, float irradiance)
 
                 renderer->addSortedAnnotation(nullptr,
                                               starDB->getStarName(star, true),
-                                              Renderer::StarLabelColor,
+                                              renderer->colors.StarLabel,
                                               pos);
             }
         }

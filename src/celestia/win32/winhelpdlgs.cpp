@@ -32,8 +32,8 @@
 #include <shellapi.h>
 
 #include "res/resource.h"
-#include "tstring.h"
 #include "winhyperlinks.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 
@@ -46,7 +46,7 @@ namespace
 constexpr std::string_view licenseUrl = "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"sv;
 
 void
-AppendConvertEOL(std::string_view src, tstring& dest)
+AppendConvertEOL(std::string_view src, std::wstring& dest)
 {
     // Replace LF with CRLF and convert to wchar_t/CP_ACP
     for (;;)
@@ -54,18 +54,18 @@ AppendConvertEOL(std::string_view src, tstring& dest)
         auto pos = src.find('\n');
         if (pos == std::string_view::npos)
         {
-            AppendUTF8ToTChar(src, dest);
+            AppendUTF8ToWide(src, dest);
             return;
         }
 
-        AppendUTF8ToTChar(src.substr(0, pos), dest);
-        dest += TEXT("\r\n");
+        AppendUTF8ToWide(src.substr(0, pos), dest);
+        dest += L"\r\n";
         src = src.substr(pos + 1);
     }
 }
 
 bool
-LoadItemTextFromFile(const std::filesystem::path& filename, tstring& message)
+LoadItemTextFromFile(const std::filesystem::path& filename, std::wstring& message)
 {
     constexpr std::size_t bufferSize = 4096;
     std::ifstream f(filename, std::ios::in | std::ios::binary);
@@ -92,7 +92,7 @@ ControlsHelpProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM)
     switch (message)
     {
     case WM_INITDIALOG:
-        if (tstring message; LoadItemTextFromFile(util::LocaleFilename("controls.txt"), message))
+        if (std::wstring message; LoadItemTextFromFile(util::LocaleFilename("controls.txt"), message))
         {
             SetDlgItemText(hDlg, IDC_TEXT_CONTROLSHELP, message.c_str());
             return TRUE;
@@ -129,7 +129,7 @@ AboutProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM)
             return TRUE;
 
         case IDC_CELESTIALINK:
-            ShellExecute(hDlg, TEXT("open"), CELESTIA_URL, nullptr, nullptr, SW_SHOWNORMAL);
+            ShellExecute(hDlg, L"open", CELESTIA_URL, nullptr, nullptr, SW_SHOWNORMAL);
             return TRUE;
 
         default:
@@ -150,7 +150,7 @@ LicenseProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_INITDIALOG:
         {
-            tstring message;
+            std::wstring message;
             if (!LoadItemTextFromFile(util::LocaleFilename("COPYING"), message))
             {
                 message.clear();
@@ -182,7 +182,7 @@ GLInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         {
             auto appCore = reinterpret_cast<const CelestiaCore*>(lParam);
             std::string s = Helper::getRenderInfo(appCore->getRenderer());
-            tstring message;
+            std::wstring message;
             AppendConvertEOL(s, message);
             SetDlgItemText(hDlg, IDC_GLINFO_TEXT, message.c_str());
         }

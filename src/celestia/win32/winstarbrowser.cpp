@@ -20,9 +20,7 @@
 #include <string_view>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celengine/observer.h>
 #include <celengine/selection.h>
@@ -37,8 +35,8 @@
 #include <commctrl.h>
 
 #include "res/resource.h"
-#include "tstring.h"
 #include "winuiutils.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -50,13 +48,13 @@ bool
 InitStarBrowserColumns(HWND listView)
 {
     constexpr std::size_t numColumns = 5;
-    std::array<tstring, numColumns> headers
+    std::array<std::wstring, numColumns> headers
     {
-        UTF8ToTString(_("Name")),
-        UTF8ToTString(_("Distance (ly)")),
-        UTF8ToTString(_("App. mag")),
-        UTF8ToTString(_("Abs. mag")),
-        UTF8ToTString(_("Type")),
+        UTF8ToWideString(_("Name")),
+        UTF8ToWideString(_("Distance (ly)")),
+        UTF8ToWideString(_("App. mag")),
+        UTF8ToWideString(_("Abs. mag")),
+        UTF8ToWideString(_("Type")),
     };
 
     constexpr std::array<int, numColumns> widths
@@ -75,7 +73,7 @@ InitStarBrowserColumns(HWND listView)
         lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
         lvc.fmt = formats[i];
         lvc.cx = DpToPixels(widths[i], listView);
-        lvc.pszText = const_cast<TCHAR*>(headers[i].c_str());
+        lvc.pszText = const_cast<wchar_t*>(headers[i].c_str());
         lvc.iSubItem = static_cast<int>(i);
         if (ListView_InsertColumn(listView, static_cast<int>(i), &lvc) == -1)
             return false;
@@ -198,7 +196,7 @@ void StarBrowserDisplayItem(NMLVDISPINFO* nm, StarBrowser* browser)
     auto record = reinterpret_cast<const engine::StarBrowserRecord*>(nm->item.lParam);
     if (record == nullptr)
     {
-        nm->item.pszText[0] = TEXT('\0');
+        nm->item.pszText[0] = L'\0';
         return;
     }
 
@@ -207,32 +205,32 @@ void StarBrowserDisplayItem(NMLVDISPINFO* nm, StarBrowser* browser)
     case 0:
         {
             Universe* u = browser->appCore->getSimulation()->getUniverse();
-            int length = UTF8ToTChar(u->getStarCatalog()->getStarName(*record->star, true), nm->item.pszText, nm->item.cchTextMax - 1);
-            nm->item.pszText[length] = TEXT('\0');
+            int length = UTF8ToWide(u->getStarCatalog()->getStarName(*record->star, true), nm->item.pszText, nm->item.cchTextMax - 1);
+            nm->item.pszText[length] = L'\0';
             break;
         }
     case 1:
         {
-            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, TEXT("{:.4g}"), record->distance).out;
-            *out = TEXT('\0');
+            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, L"{:.4g}", record->distance).out;
+            *out = L'\0';
             break;
         }
     case 2:
         {
-            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, TEXT("{:.2f}"), record->appMag).out;
-            *out = TEXT('\0');
+            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, L"{:.2f}", record->appMag).out;
+            *out = L'\0';
             break;
         }
     case 3:
         {
-            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, TEXT("{:.2f}"), record->star->getAbsoluteMagnitude()).out;
-            *out = TEXT('\0');
+            auto out = fmt::format_to_n(nm->item.pszText, nm->item.cchTextMax - 1, L"{:.2f}", record->star->getAbsoluteMagnitude()).out;
+            *out = L'\0';
             break;
         }
     case 4:
         {
-            int length = UTF8ToTChar(record->star->getSpectralType(), nm->item.pszText, nm->item.cchTextMax - 1);
-            nm->item.pszText[length] = TEXT('\0');
+            int length = UTF8ToWide(record->star->getSpectralType(), nm->item.pszText, nm->item.cchTextMax - 1);
+            nm->item.pszText[length] = L'\0';
             break;
         }
     }

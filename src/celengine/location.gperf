@@ -14,6 +14,7 @@ struct FeatureNameEntry { const char* name; Location::FeatureType featureType; }
 "CA",           Location::Catena
 "CB",           Location::Cavus
 "CH",           Location::Chaos
+"CL",           Location::Collum
 "CM",           Location::Chasma
 "CO",           Location::Colles
 "CR",           Location::Corona
@@ -71,7 +72,5 @@ struct FeatureNameEntry { const char* name; Location::FeatureType featureType; }
 "Observatory",  Location::Observatory
 "Landing Site", Location::LandingSite
 "Crater",       Location::Crater
-"Capital",      Location::Capital
 "Cosmodrome",   Location::Cosmodrome
 "Ring",         Location::Ring
-"Historical",   Location::Historical

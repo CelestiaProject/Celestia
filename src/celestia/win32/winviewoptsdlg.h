@@ -15,23 +15,24 @@
 
 #include <windows.h>
 
-#include <celengine/renderflags.h>
+#include <celengine/render.h>
 #include <celestia/celestiacore.h>
 
 namespace celestia::win32
 {
 
-class ViewOptionsDialog : public CelestiaWatcher
+class ViewOptionsDialog : public RendererWatcher
 {
- public:
+public:
     ViewOptionsDialog(HINSTANCE, HWND, CelestiaCore*);
+    ~ViewOptionsDialog();
 
     void SetControls(HWND);
     void RestoreSettings(HWND);
 
-    virtual void notifyChange(CelestiaCore*, int);
+    void notifyRenderSettingsChanged(const Renderer*) override;
 
- public:
+public:
     CelestiaCore* appCore;
     HWND parent;
     HWND hwnd;

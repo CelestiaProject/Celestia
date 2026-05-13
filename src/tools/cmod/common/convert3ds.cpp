@@ -28,7 +28,7 @@ namespace
 {
 
 cmod::Material
-convert3dsMaterial(const M3DMaterial* material3ds, cmod::HandleGetter& handleGetter)
+convert3dsMaterial(const M3DMaterial* material3ds, ModelIO& modelIO)
 {
     cmod::Material newMaterial;
 
@@ -45,21 +45,18 @@ convert3dsMaterial(const M3DMaterial* material3ds, cmod::HandleGetter& handleGet
     // range that OpenGL uses for the specular exponent. The
     // current equation is just a guess at the mapping that
     // 3DS actually uses.
-    newMaterial.specularPower = std::pow(2.0f, 1.0f + 0.1f * shininess);
+    newMaterial.specularPower = std::exp2(1.0f + 0.1f * shininess);
     if (newMaterial.specularPower > 128.0f)
         newMaterial.specularPower = 128.0f;
 
     if (!material3ds->getTextureMap().empty())
     {
-        newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, handleGetter(material3ds->getTextureMap()));
+        newMaterial.setMap(cmod::TextureSemantic::DiffuseMap, modelIO.handle(material3ds->getTextureMap()));
 
     }
 
     return newMaterial;
 }
-
-} // end unnamed namespace
-
 
 void
 Convert3DSMesh(cmod::Model& model,
@@ -179,9 +176,10 @@ Convert3DSMesh(cmod::Model& model,
     model.addMesh(std::move(mesh));
 }
 
+} // end unnamed namespace
 
 std::unique_ptr<cmod::Model>
-Convert3DSModel(const M3DScene& scene, cmod::HandleGetter handleGetter)
+Convert3DSModel(const M3DScene& scene, ModelIO& modelIO)
 {
     auto model = std::make_unique<cmod::Model>();
 
@@ -189,7 +187,7 @@ Convert3DSModel(const M3DScene& scene, cmod::HandleGetter handleGetter)
     for (unsigned int i = 0; i < scene.getMaterialCount(); i++)
     {
         const M3DMaterial* material = scene.getMaterial(i);
-        model->addMaterial(convert3dsMaterial(material, handleGetter));
+        model->addMaterial(convert3dsMaterial(material, modelIO));
     }
 
     // Convert meshes

@@ -18,9 +18,9 @@
 #include <string>
 
 #include <celengine/body.h>
-#include <celengine/multitexture.h>
 #include <celengine/renderflags.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 
 #include <windows.h>
 
@@ -42,7 +42,7 @@ struct AppPreferences
     RenderLabels labelMode{ RenderLabels::NoLabels };
     std::uint64_t locationFilter{ 0 };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon };
-    float exposure{ 1.0f };
+    float visualMagnitude{ 8.0f };
     float ambientLight{ 0.0f }; // None
     float galaxyLightGain{ 0.0f };
     int showLocalTime{ 0 };
@@ -52,7 +52,8 @@ struct AppPreferences
     int starsColor{ static_cast<int>(ColorTableType::SunWhite) };
     std::uint32_t lastVersion{ 0 };
     std::string altSurfaceName;
-    TextureResolution textureResolution{ TextureResolution::medres };
+    engine::TextureResolution textureResolution{ engine::TextureResolution::medres };
+    StarStyle starStyle{ StarStyle::PointStars };
 #ifndef PORTABLE_BUILD
     bool ignoreOldFavorites{ false };
 #endif

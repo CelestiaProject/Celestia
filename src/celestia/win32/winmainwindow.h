@@ -39,7 +39,7 @@ class StarBrowser;
 class TourGuide;
 class ViewOptionsDialog;
 
-constexpr inline TCHAR AppName[] = TEXT("Celestia");
+constexpr inline wchar_t AppName[] = L"Celestia";
 
 class MainWindow
 {

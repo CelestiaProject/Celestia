@@ -11,9 +11,12 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <string_view>
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include "shadermanager.h"
 
 class FramebufferObject;
 class Renderer;
@@ -26,25 +29,31 @@ public:
     virtual ~ViewportEffect() = default;
 
     virtual bool preprocess(Renderer*, FramebufferObject*);
-    virtual bool prerender(Renderer*, FramebufferObject*);
+    virtual bool prerender(Renderer*, FramebufferObject* fbo, FramebufferObject* dst);
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
 
-private:
-    GLint oldFboId;
+    // Whether this effect needs its source FBO to use a floating-point
+    // color buffer (GL_RGBA16F) instead of the default GL_RGBA8.
+    virtual bool needsFloatSource() const { return false; }
 };
 
 class PassthroughViewportEffect : public ViewportEffect
 {
 public:
-    PassthroughViewportEffect();
+    explicit PassthroughViewportEffect(StaticShader shaderName = StaticShader::Passthrough,
+                                       bool needsFloatSource = false);
     ~PassthroughViewportEffect() override = default;
 
+    bool needsFloatSource() const override { return m_needsFloatSource; }
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
 private:
-    celestia::gl::VertexObject vo{ celestia::util::NoCreateT{} };
-    celestia::gl::Buffer bo{ celestia::util::NoCreateT{} };
+    StaticShader m_shaderName;
+    bool m_needsFloatSource;
+
+    celestia::gl::VertexObject vo;
+    celestia::gl::Buffer bo;
 
     void initialize();
 
@@ -57,13 +66,13 @@ public:
     explicit WarpMeshViewportEffect(std::unique_ptr<WarpMesh>&& mesh);
     ~WarpMeshViewportEffect() override;
 
-    bool prerender(Renderer*, FramebufferObject* fbo) override;
+    bool prerender(Renderer*, FramebufferObject* fbo, FramebufferObject* dst) override;
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
     bool distortXY(float& x, float& y) override;
 
 private:
-    celestia::gl::VertexObject vo{ celestia::util::NoCreateT{} };
-    celestia::gl::Buffer bo{ celestia::util::NoCreateT{} };
+    celestia::gl::VertexObject vo;
+    celestia::gl::Buffer bo;
 
     std::unique_ptr<WarpMesh> mesh;
 

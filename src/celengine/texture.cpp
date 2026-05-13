@@ -8,12 +8,11 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
-#include <Eigen/Core>
 #include "glsupport.h"
 
 #include <celutil/filetype.h>
@@ -28,17 +27,42 @@ using namespace celestia;
 using celestia::util::GetLogger;
 using celestia::engine::Image;
 using celestia::engine::PixelFormat;
+using celestia::engine::expandLuminanceToRGBA;
+using celestia::engine::expandLuminanceAlphaToRGBA;
 
 namespace
 {
+
+// When sRGB rendering is disabled, strip sRGB pixel formats to their
+// non-sRGB equivalents so the GPU does not linearize on sample.
+PixelFormat
+effectiveFormat(PixelFormat format)
+{
+    if (gl::sRGBRendering)
+        return format;
+
+    switch (format)
+    {
+    case PixelFormat::sRGB:       return PixelFormat::RGB;
+    case PixelFormat::sRGB8:      return PixelFormat::RGB8;
+    case PixelFormat::sRGBA:      return PixelFormat::RGBA;
+    case PixelFormat::sRGBA8:     return PixelFormat::RGBA8;
+    case PixelFormat::sLuminance: return PixelFormat::Luminance;
+    case PixelFormat::sLumAlpha:  return PixelFormat::LumAlpha;
+    case PixelFormat::DXT1_sRGBA: return PixelFormat::DXT1;
+    case PixelFormat::DXT3_sRGBA: return PixelFormat::DXT3;
+    case PixelFormat::DXT5_sRGBA: return PixelFormat::DXT5;
+    default:                      return format;
+    }
+}
 
 struct TextureCaps
 {
     GLint preferredAnisotropy;
 };
 
-const
-TextureCaps& GetTextureCaps()
+const TextureCaps&
+GetTextureCaps()
 {
     static TextureCaps texCaps;
     static bool texCapsInitialized = false;
@@ -61,9 +85,60 @@ TextureCaps& GetTextureCaps()
     return texCaps;
 }
 
-GLenum
-getInternalFormat(PixelFormat format)
+#ifdef GL_ES
+bool
+needsRGBAExpansion(PixelFormat format, bool needsMipmap)
 {
+    format = effectiveFormat(format);
+    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+    {
+        // GLES3 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap generation. If we
+        // don't need mipmap, we can use the format as is. sLuminance/sLumAlpha are not natively
+        // supported and always needs expansion.
+        if (!needsMipmap)
+            return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
+        return format == PixelFormat::sRGB
+            || format == PixelFormat::sRGB8
+            || format == PixelFormat::sLuminance
+            || format == PixelFormat::sLumAlpha;
+    }
+    else if (celestia::gl::EXT_sRGB)
+    {
+        // GLES2 with sRGB. All sRGB formats should have mipmap disabled.
+        return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
+    }
+    else
+    {
+        // sRGB not supported at all, no need for expansion.
+        return false;
+    }
+}
+
+std::unique_ptr<std::uint8_t[]>
+expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
+{
+    if (format == PixelFormat::sLuminance)
+        return expandLuminanceToRGBA(src, width, height);
+    if (format == PixelFormat::sLumAlpha)
+        return expandLuminanceAlphaToRGBA(src, width, height);
+
+    // RGB → RGBA
+    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
+    for (int i = 0; i < width * height; ++i)
+    {
+        dst[i * 4 + 0] = src[i * 3 + 0];
+        dst[i * 4 + 1] = src[i * 3 + 1];
+        dst[i * 4 + 2] = src[i * 3 + 2];
+        dst[i * 4 + 3] = 255;
+    }
+    return dst;
+}
+#endif
+
+GLenum
+getInternalFormat(PixelFormat format, bool needsMipmap)
+{
+    format = effectiveFormat(format);
 #ifdef GL_ES
     switch (format)
     {
@@ -75,7 +150,28 @@ getInternalFormat(PixelFormat format)
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
+    case PixelFormat::DXT1_sRGBA:
+    case PixelFormat::DXT3_sRGBA:
+    case PixelFormat::DXT5_sRGBA:
         return static_cast<GLenum>(format);
+    case PixelFormat::sRGB:
+        if (!needsRGBAExpansion(format, needsMipmap))
+        {
+            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+                return static_cast<GLenum>(PixelFormat::sRGB8);
+            if (celestia::gl::EXT_sRGB)
+                return GL_SRGB_EXT;
+            return static_cast<GLenum>(PixelFormat::RGB);
+        }
+        [[fallthrough]];
+    case PixelFormat::sRGBA:
+    case PixelFormat::sLuminance:
+    case PixelFormat::sLumAlpha:
+        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+            return static_cast<GLenum>(PixelFormat::sRGBA8);
+        if (celestia::gl::EXT_sRGB)
+            return GL_SRGB_ALPHA_EXT;
+        return static_cast<GLenum>(PixelFormat::RGBA);
     default:
         return GL_NONE;
     }
@@ -107,10 +203,35 @@ getInternalFormat(PixelFormat format)
 }
 
 GLenum
-getExternalFormat(PixelFormat format)
+getExternalFormat(PixelFormat format, bool needsMipmap)
 {
+    format = effectiveFormat(format);
 #ifdef GL_ES
-    return getInternalFormat(format);
+    switch (format)
+    {
+    case PixelFormat::sRGB:
+    case PixelFormat::sRGB8:
+        if (!needsRGBAExpansion(format, needsMipmap))
+        {
+            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+                return static_cast<GLenum>(PixelFormat::RGB);
+            if (celestia::gl::EXT_sRGB)
+                return GL_SRGB_EXT;
+            return static_cast<GLenum>(PixelFormat::RGB);
+        }
+        [[fallthrough]];
+    case PixelFormat::sRGBA:
+    case PixelFormat::sRGBA8:
+    case PixelFormat::sLuminance:
+    case PixelFormat::sLumAlpha:
+        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
+            return static_cast<GLenum>(PixelFormat::RGBA);
+        if (celestia::gl::EXT_sRGB)
+            return GL_SRGB_ALPHA_EXT;
+        return static_cast<GLenum>(PixelFormat::RGBA);
+    default:
+        return getInternalFormat(format, needsMipmap);
+    }
 #else
     switch (format)
     {
@@ -226,12 +347,38 @@ SetBorderColor(Color borderColor, GLenum target)
 #endif
 }
 
+bool
+canGenerateMipmaps([[maybe_unused]] PixelFormat format)
+{
+    format = effectiveFormat(format);
+#ifdef GL_ES
+    // All sRGB formats can generate mipmap (after expansion if necessary) on GLES3
+    // No sRGB format can generate mipmap on GLES2
+    if (!celestia::gl::checkVersion(celestia::gl::GLES_3_0) && celestia::gl::EXT_sRGB)
+    {
+        switch (format)
+        {
+        case PixelFormat::sRGB:
+        case PixelFormat::sRGB8:
+        case PixelFormat::sRGBA:
+        case PixelFormat::sRGBA8:
+        case PixelFormat::sLuminance:
+        case PixelFormat::sLumAlpha:
+            return false;
+        default:
+            break;
+        }
+    }
+#endif
+    return true;
+}
+
 // Load a prebuilt set of mipmaps; assumes that the image contains
 // a complete set of mipmap levels.
 void
-LoadMipmapSet(const Image& img, GLenum target)
+LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
 {
-    int internalFormat = getInternalFormat(img.getFormat());
+    int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
 #ifndef GL_ES
     glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount()-1);
 #endif
@@ -253,23 +400,28 @@ LoadMipmapSet(const Image& img, GLenum target)
         }
         else
         {
-            glTexImage2D(target,
-                         mip,
-                         internalFormat,
-                         mipWidth, mipHeight,
-                         0,
-                         getExternalFormat(img.getFormat()),
-                         GL_UNSIGNED_BYTE,
-                         img.getMipLevel(mip));
+#ifdef GL_ES
+            if (needsRGBAExpansion(img.getFormat(), needsMipmap))
+            {
+                auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
+                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
+            }
+            else
+#endif
+            {
+                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(mip));
+            }
         }
     }
 }
 
 // Load a texture without any mipmaps
 void
-LoadMiplessTexture(const Image& img, GLenum target)
+LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
 {
-    int internalFormat = getInternalFormat(img.getFormat());
+    int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
 
     if (img.isCompressed())
     {
@@ -283,17 +435,21 @@ LoadMiplessTexture(const Image& img, GLenum target)
     }
     else
     {
-        glTexImage2D(target,
-                     0,
-                     internalFormat,
-                     img.getWidth(), img.getHeight(),
-                     0,
-                     getExternalFormat(img.getFormat()),
-                     GL_UNSIGNED_BYTE,
-                     img.getMipLevel(0));
+#ifdef GL_ES
+        if (needsRGBAExpansion(img.getFormat(), needsMipmap))
+        {
+            auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
+            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
+        }
+        else
+#endif
+        {
+            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(0));
+        }
     }
 }
-
 
 int
 ilog2(unsigned int x)
@@ -313,40 +469,6 @@ int
 CalcMipLevelCount(int w, int h)
 {
     return std::max(ilog2(w), ilog2(h)) + 1;
-}
-
-// Helper function for CreateProceduralCubeMap; return the normalized
-// vector pointing to (s, t) on the specified face.
-Eigen::Vector3f
-cubeVector(int face, float s, float t)
-{
-    Eigen::Vector3f v;
-    switch (face)
-    {
-    case 0:
-        v = Eigen::Vector3f(1.0f, -t, -s);
-        break;
-    case 1:
-        v = Eigen::Vector3f(-1.0f, -t, s);
-        break;
-    case 2:
-        v = Eigen::Vector3f(s, 1.0f, t);
-        break;
-    case 3:
-        v = Eigen::Vector3f(s, -1.0f, -t);
-        break;
-    case 4:
-        v = Eigen::Vector3f(s, -t, 1.0f);
-        break;
-    case 5:
-        v = Eigen::Vector3f(-s, -t, -1.0f);
-        break;
-    default:
-        assert(false);
-        break;
-    }
-
-    return v.normalized();
 }
 
 std::unique_ptr<Texture>
@@ -376,79 +498,162 @@ CreateTextureFromImage(const Image& img,
     return tex;
 }
 
+void
+LoadPrecomputedTileMipMaps(const Image& img, Image& tile,
+                           int u, int v,
+                           int mipLevelCount, int tileMipLevelCount)
+{
+    if (img.isCompressed())
+    {
+        for (int mip = 0; mip < tileMipLevelCount; mip++)
+        {
+            int blockSize = getCompressedBlockSize(img.getFormat());
+            int mipWidth  = std::max(img.getWidth() >> mip, 1);
+            int tileMipWidth  = std::max(tile.getWidth() >> mip, 1);
+            int tileMipHeight = std::max(tile.getHeight() >> mip, 1);
+            int uBlocks = std::max(tileMipWidth / 4, 1);
+            int vBlocks = std::max(tileMipHeight / 4, 1);
+            int destBytesPerRow = uBlocks * blockSize;
+            int srcBytesPerRow = std::max(mipWidth / 4, 1) * blockSize;
+            int srcU = u * tileMipWidth / 4;
+            int srcV = v * tileMipHeight / 4;
+            int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
+
+            const std::uint8_t *imgMip = img.getMipLevel(std::min(mip, mipLevelCount));
+            std::uint8_t *tileMip = tile.getMipLevel(mip);
+
+            for (int y = 0; y < vBlocks; y++)
+            {
+                std::memcpy(tileMip + y * destBytesPerRow,
+                            imgMip + tileOffset + y * srcBytesPerRow,
+                            destBytesPerRow);
+            }
+        }
+    }
+    else
+    {
+        // TODO: Handle uncompressed textures with prebuilt mipmaps
+    }
+
+    LoadMipmapSet(tile, GL_TEXTURE_2D, false);
 }
 
-Texture::Texture(int w, int h, int d) :
-    width(w),
-    height(h),
-    depth(d)
+void
+ComputeTileMipMaps(const Image& img, Image& tile,
+                   int components,
+                   int u, int v, bool mipmap)
+{
+    const auto tileWidth = tile.getWidth();
+    const auto tileHeight = tile.getHeight();
+    if (img.isCompressed())
+    {
+        int blockSize = getCompressedBlockSize(img.getFormat());
+        int uBlocks = std::max(tileWidth / 4, 1);
+        int vBlocks = std::max(tileHeight / 4, 1);
+        int destBytesPerRow = uBlocks * blockSize;
+        int srcBytesPerRow = std::max(img.getWidth() / 4, 1) * blockSize;
+        int srcU = u * tileWidth / 4;
+        int srcV = v * tileHeight / 4;
+        int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
+
+        for (int y = 0; y < vBlocks; y++)
+        {
+            std::memcpy(tile.getPixels() + y * destBytesPerRow,
+                        img.getPixels() + tileOffset + y * srcBytesPerRow,
+                        destBytesPerRow);
+        }
+    }
+    else
+    {
+        const std::uint8_t* tilePixels = img.getPixels() +
+            (v * tileHeight * img.getWidth() + u * tileWidth) * components;
+        for (int y = 0; y < tileHeight; y++)
+        {
+            std::memcpy(tile.getPixels() + y * tileWidth * components,
+                        tilePixels + y * img.getWidth() * components,
+                        tileWidth * components);
+        }
+    }
+
+    bool genMipmaps = mipmap && canGenerateMipmaps(img.getFormat());
+
+    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
+    if (mipmap && !genMipmaps)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    LoadMiplessTexture(tile, GL_TEXTURE_2D, genMipmaps);
+    if (genMipmaps)
+        glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+} // end unnamed namespace
+
+Texture::Texture(int _width, int _height, bool _alpha) :
+    width(_width),
+    height(_height),
+    alpha(_alpha)
 {
 }
 
+int
+Texture::getLODCount() const
+{
+    return 1;
+}
 
-int Texture::getLODCount() const
+int
+Texture::getUTileCount(int) const
+{
+    return 1;
+}
+
+int
+Texture::getVTileCount(int) const
 {
     return 1;
 }
 
 
-int Texture::getUTileCount(int /*unused*/) const
+int
+Texture::getWTileCount(int) const
 {
     return 1;
 }
 
-
-int Texture::getVTileCount(int /*unused*/) const
+void
+Texture::setBorderColor(Color)
 {
-    return 1;
+    // no-op
 }
 
-
-int Texture::getWTileCount(int /*unused*/) const
-{
-    return 1;
-}
-
-
-void Texture::setBorderColor(Color /*unused*/)
-{
-}
-
-
-int Texture::getWidth() const
+int
+Texture::getWidth() const
 {
     return width;
 }
 
-
-int Texture::getHeight() const
+int
+Texture::getHeight() const
 {
     return height;
 }
 
-
-int Texture::getDepth() const
-{
-    return depth;
-}
-
-
-unsigned int Texture::getFormatOptions() const
+unsigned int
+Texture::getFormatOptions() const
 {
     return formatOptions;
 }
 
-
-void Texture::setFormatOptions(unsigned int opts)
+void
+Texture::setFormatOptions(unsigned int opts)
 {
     formatOptions = opts;
 }
 
-
 ImageTexture::ImageTexture(const Image& img,
                            AddressMode addressMode,
                            MipMapMode mipMapMode) :
-    Texture(img.getWidth(), img.getHeight()),
+    Texture(img.getWidth(), img.getHeight(), img.hasAlpha()),
     glName(0)
 {
     glGenTextures(1, &glName);
@@ -484,17 +689,24 @@ ImageTexture::ImageTexture(const Image& img,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
     }
 
-    bool genMipmaps = mipmap && !precomputedMipMaps;
+    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(img.getFormat());
+
+    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
+    if (mipmap && !precomputedMipMaps && !genMipmaps)
+    {
+        mipmap = false;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
 
     if (mipmap)
     {
         if (precomputedMipMaps)
         {
-            LoadMipmapSet(img, GL_TEXTURE_2D);
+            LoadMipmapSet(img, GL_TEXTURE_2D, genMipmaps);
         }
         else if (mipMapMode == DefaultMipMaps)
         {
-            LoadMiplessTexture(img, GL_TEXTURE_2D);
+            LoadMiplessTexture(img, GL_TEXTURE_2D, genMipmaps);
 #ifndef GL_ES
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, expectedCount-1);
 #endif
@@ -502,33 +714,28 @@ ImageTexture::ImageTexture(const Image& img,
     }
     else
     {
-        LoadMiplessTexture(img, GL_TEXTURE_2D);
+        LoadMiplessTexture(img, GL_TEXTURE_2D, genMipmaps);
 #ifndef GL_ES
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 #endif
     }
     if (genMipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
-
-    alpha = img.hasAlpha();
-    compressed = img.isCompressed();
 }
-
 
 ImageTexture::~ImageTexture()
 {
-    if (glName != 0)
-        glDeleteTextures(1, &glName);
+    glDeleteTextures(1, &glName);
 }
 
-
-void ImageTexture::bind()
+void
+ImageTexture::bind()
 {
     glBindTexture(GL_TEXTURE_2D, glName);
 }
 
-
-TextureTile ImageTexture::getTile(int lod, int u, int v)
+TextureTile
+ImageTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u != 0 || v != 0)
         return TextureTile(0);
@@ -536,36 +743,28 @@ TextureTile ImageTexture::getTile(int lod, int u, int v)
     return TextureTile(glName);
 }
 
-
-unsigned int ImageTexture::getName() const
+unsigned int
+ImageTexture::getName() const
 {
     return glName;
 }
 
-
-void ImageTexture::setBorderColor(Color borderColor)
+void
+ImageTexture::setBorderColor(Color borderColor)
 {
     bind();
     SetBorderColor(borderColor, GL_TEXTURE_2D);
 }
 
-
 TiledTexture::TiledTexture(const Image& img,
                            int _uSplit, int _vSplit,
                            MipMapMode mipMapMode) :
-    Texture(img.getWidth(), img.getHeight()),
+    Texture(img.getWidth(), img.getHeight(), img.hasAlpha()),
     uSplit(std::max(1, _uSplit)),
-    vSplit(std::max(1, _vSplit)),
-    glNames(nullptr)
+    vSplit(std::max(1, _vSplit))
 {
-    glNames = new unsigned int[uSplit * vSplit];
-    {
-        for (int i = 0; i < uSplit * vSplit; i++)
-            glNames[i] = 0;
-    }
-
-    alpha = img.hasAlpha();
-    compressed = img.isCompressed();
+    // make_unique performs value-initialization -> sets to 0
+    glNames = std::make_unique<unsigned int[]>(uSplit * vSplit);
 
     bool mipmap = mipMapMode != NoMipMaps;
     bool precomputedMipMaps = false;
@@ -591,16 +790,16 @@ TiledTexture::TiledTexture(const Image& img,
     int tileWidth = img.getWidth() / uSplit;
     int tileHeight = img.getHeight() / vSplit;
     int tileMipLevelCount = CalcMipLevelCount(tileWidth, tileHeight);
-    Image* tile = new Image(img.getFormat(),
-                            tileWidth, tileHeight,
-                            tileMipLevelCount);
+    Image tile(img.getFormat(),
+               tileWidth, tileHeight,
+               tileMipLevelCount);
 
-    for (int v = 0; v < vSplit; v++)
+    glGenTextures(uSplit * vSplit, glNames.get());
+    for (int v = 0; v < vSplit; ++v)
     {
-        for (int u = 0; u < uSplit; u++)
+        for (int u = 0; u < uSplit; ++u)
         {
-            // Create the texture and set up sampling and addressing
-            glGenTextures(1, &glNames[v * uSplit + u]);
+            // Set up sampling and addressing
             glBindTexture(GL_TEXTURE_2D, glNames[v * uSplit + u]);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texAddress);
@@ -610,116 +809,37 @@ TiledTexture::TiledTexture(const Image& img,
                             mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
             if (gl::EXT_texture_filter_anisotropic && GetTextureCaps().preferredAnisotropy > 1)
-            {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
-            }
 
             // Copy texels from the subtexture area to the pixel buffer.  This
             // is straightforward for normal textures, but an immense headache
             // for compressed textures with prebuilt mipmaps.
             if (precomputedMipMaps)
-            {
-                if (img.isCompressed())
-                {
-                    for (int mip = 0; mip < tileMipLevelCount; mip++)
-                    {
-                        int blockSize = getCompressedBlockSize(img.getFormat());
-                        int mipWidth  = std::max(img.getWidth() >> mip, 1);
-                        int tileMipWidth  = std::max(tile->getWidth() >> mip, 1);
-                        int tileMipHeight = std::max(tile->getHeight() >> mip, 1);
-                        int uBlocks = std::max(tileMipWidth / 4, 1);
-                        int vBlocks = std::max(tileMipHeight / 4, 1);
-                        int destBytesPerRow = uBlocks * blockSize;
-                        int srcBytesPerRow = std::max(mipWidth / 4, 1) * blockSize;
-                        int srcU = u * tileMipWidth / 4;
-                        int srcV = v * tileMipHeight / 4;
-                        int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
-
-                        const std::uint8_t *imgMip = img.getMipLevel(std::min(mip, mipLevelCount));
-                        std::uint8_t *tileMip = tile->getMipLevel(mip);
-
-                        for (int y = 0; y < vBlocks; y++)
-                        {
-                            std::memcpy(tileMip + y * destBytesPerRow,
-                                        imgMip + tileOffset + y * srcBytesPerRow,
-                                        destBytesPerRow);
-                        }
-                    }
-                }
-                else
-                {
-                    // TODO: Handle uncompressed textures with prebuilt mipmaps
-                }
-
-                LoadMipmapSet(*tile, GL_TEXTURE_2D);
-            }
+                LoadPrecomputedTileMipMaps(img, tile, u, v, mipLevelCount, tileMipLevelCount);
             else
-            {
-                if (img.isCompressed())
-                {
-                    int blockSize = getCompressedBlockSize(img.getFormat());
-                    int uBlocks = std::max(tileWidth / 4, 1);
-                    int vBlocks = std::max(tileHeight / 4, 1);
-                    int destBytesPerRow = uBlocks * blockSize;
-                    int srcBytesPerRow = std::max(img.getWidth() / 4, 1) * blockSize;
-                    int srcU = u * tileWidth / 4;
-                    int srcV = v * tileHeight / 4;
-                    int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
-
-                    for (int y = 0; y < vBlocks; y++)
-                    {
-                        memcpy(tile->getPixels() + y * destBytesPerRow,
-                               img.getPixels() + tileOffset + y * srcBytesPerRow,
-                               destBytesPerRow);
-                    }
-                }
-                else
-                {
-                    const std::uint8_t* tilePixels = img.getPixels() +
-                        (v * tileHeight * img.getWidth() + u * tileWidth) * components;
-                    for (int y = 0; y < tileHeight; y++)
-                    {
-                        memcpy(tile->getPixels() + y * tileWidth * components,
-                               tilePixels + y * img.getWidth() * components,
-                               tileWidth * components);
-                    }
-                }
-
-                LoadMiplessTexture(*tile, GL_TEXTURE_2D);
-                if (mipmap)
-                    glGenerateMipmap(GL_TEXTURE_2D);
-            }
+                ComputeTileMipMaps(img, tile, components, u, v, mipmap);
         }
     }
-
-    delete tile;
 }
-
 
 TiledTexture::~TiledTexture()
 {
-    if (glNames != nullptr)
-    {
-        for (int i = 0; i < uSplit * vSplit; i++)
-        {
-            if (glNames[i] != 0)
-                glDeleteTextures(1, &glNames[i]);
-        }
-        delete[] glNames;
-    }
+    if (glNames)
+        glDeleteTextures(uSplit * vSplit, glNames.get());
 }
 
-
-void TiledTexture::bind()
+void
+TiledTexture::bind()
 {
+    // nothing to do
 }
 
-
-void TiledTexture::setBorderColor(Color borderColor)
+void
+TiledTexture::setBorderColor(Color borderColor)
 {
-    for (int i = 0; i < vSplit; i++)
+    for (int i = 0; i < vSplit; ++i)
     {
-        for (int j = 0; j < uSplit; j++)
+        for (int j = 0; j < uSplit; ++j)
         {
             glBindTexture(GL_TEXTURE_2D, glNames[i * uSplit + j]);
             SetBorderColor(borderColor, GL_TEXTURE_2D);
@@ -727,20 +847,20 @@ void TiledTexture::setBorderColor(Color borderColor)
     }
 }
 
-
-int TiledTexture::getUTileCount(int /*lod*/) const
+int
+TiledTexture::getUTileCount(int /*lod*/) const
 {
     return uSplit;
 }
 
-
-int TiledTexture::getVTileCount(int /*lod*/) const
+int
+TiledTexture::getVTileCount(int /*lod*/) const
 {
     return vSplit;
 }
 
-
-TextureTile TiledTexture::getTile(int lod, int u, int v)
+TextureTile
+TiledTexture::getTile(int lod, int u, int v)
 {
     if (lod != 0 || u >= uSplit || u < 0 || v >= vSplit || v < 0)
         return TextureTile(0);
@@ -748,20 +868,26 @@ TextureTile TiledTexture::getTile(int lod, int u, int v)
     return TextureTile(glNames[v * uSplit + u]);
 }
 
-
-CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
-    Texture(faces[0]->getWidth(), faces[0]->getHeight()),
+CubeMap::CubeMap(celestia::util::array_view<Image> faces) :
+    Texture(faces[0].getWidth(), faces[0].getHeight()),
     glName(0)
 {
     // Verify that all the faces are square and have the same size
-    int width = faces[0]->getWidth();
-    PixelFormat format = faces[0]->getFormat();
-    for (int i = 0; i < 6; i++)
+    assert(faces.size() == 6);
+    const Image& firstFace = faces[0];
+    std::int32_t width = firstFace.getWidth();
+    if (firstFace.getHeight() != width ||
+        std::any_of(faces.begin() + 1, faces.end(),
+                    [&firstFace](const Image& face)
+                    {
+                        return face.getWidth() != firstFace.getWidth() ||
+                               face.getHeight() != firstFace.getHeight() ||
+                               face.getFormat() != firstFace.getFormat() ||
+                               face.getMipLevelCount() != firstFace.getMipLevelCount() ||
+                               face.isCompressed() != firstFace.isCompressed();
+                    }))
     {
-        if (faces[i]->getWidth() != width ||
-            faces[i]->getHeight() != width ||
-            faces[i]->getFormat() != format)
-            return;
+        return;
     }
 
     // For now, always enable mipmaps; in the future, it should be possible to
@@ -770,13 +896,13 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
     bool precomputedMipMaps = false;
 
     // Require a complete set of mipmaps
-    int mipLevelCount = faces[0]->getMipLevelCount();
+    int mipLevelCount = firstFace.getMipLevelCount();
     if (mipmap && mipLevelCount == CalcMipLevelCount(width, width))
         precomputedMipMaps = true;
 
     // We can't automatically generate mipmaps for compressed textures.
     // If a precomputed mipmap set isn't provided, turn of mipmapping entirely.
-    if (!precomputedMipMaps && faces[0]->isCompressed())
+    if (!precomputedMipMaps && firstFace.isCompressed())
         mipmap = false;
 
     glGenTextures(1, &glName);
@@ -788,35 +914,39 @@ CubeMap::CubeMap(celestia::util::array_view<const Image*> faces) :
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    bool genMipmaps = mipmap && !precomputedMipMaps;
+    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(faces[0].getFormat());
 
-    for (int i = 0; i < 6; i++)
+    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
+    if (mipmap && !precomputedMipMaps && !genMipmaps)
+    {
+        mipmap = false;
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+
+    for (int i = 0; i < 6; ++i)
     {
         auto targetFace = static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-        const Image* face = faces[i];
+        const Image& face = faces[i];
 
         if (mipmap && precomputedMipMaps)
-            LoadMipmapSet(*face, targetFace);
+            LoadMipmapSet(face, targetFace, genMipmaps);
         else
-            LoadMiplessTexture(*face, targetFace);
+            LoadMiplessTexture(face, targetFace, genMipmaps);
     }
     if (genMipmaps)
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 }
 
-
 CubeMap::~CubeMap()
 {
-    if (glName != 0)
-        glDeleteTextures(1, &glName);
+    glDeleteTextures(1, &glName);
 }
 
-
-void CubeMap::bind()
+void
+CubeMap::bind()
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, glName);
 }
-
 
 TextureTile CubeMap::getTile(int lod, int u, int v)
 {
@@ -826,93 +956,45 @@ TextureTile CubeMap::getTile(int lod, int u, int v)
     return TextureTile(glName);
 }
 
-
 void CubeMap::setBorderColor(Color borderColor)
 {
     bind();
     SetBorderColor(borderColor, GL_TEXTURE_CUBE_MAP);
 }
 
-
-
-std::unique_ptr<Texture>
-CreateProceduralTexture(int width, int height,
-                        PixelFormat format,
-                        ProceduralTexEval func,
-                        Texture::AddressMode addressMode,
-                        Texture::MipMapMode mipMode)
+// Helper function for createProcedural; return the normalized
+// vector pointing to (s, t) on the specified face.
+Eigen::Vector3f
+CubeMap::cubeVector(int face, float s, float t)
 {
-    auto img = std::make_unique<Image>(format, width, height);
-
-    for (int y = 0; y < height; y++)
+    Eigen::Vector3f v;
+    switch (face)
     {
-        for (int x = 0; x < width; x++)
-        {
-            float u = ((float) x + 0.5f) / (float) width * 2 - 1;
-            float v = ((float) y + 0.5f) / (float) height * 2 - 1;
-            func(u, v, 0, img->getPixelRow(y) + x * img->getComponents());
-        }
+    case 0:
+        v = Eigen::Vector3f(1.0f, -t, -s);
+        break;
+    case 1:
+        v = Eigen::Vector3f(-1.0f, -t, s);
+        break;
+    case 2:
+        v = Eigen::Vector3f(s, 1.0f, t);
+        break;
+    case 3:
+        v = Eigen::Vector3f(s, -1.0f, -t);
+        break;
+    case 4:
+        v = Eigen::Vector3f(s, -t, 1.0f);
+        break;
+    case 5:
+        v = Eigen::Vector3f(-s, -t, -1.0f);
+        break;
+    default:
+        assert(false);
+        break;
     }
 
-    return std::make_unique<ImageTexture>(*img, addressMode, mipMode);
+    return v.normalized();
 }
-
-
-std::unique_ptr<Texture>
-CreateProceduralTexture(int width, int height,
-                        PixelFormat format,
-                        TexelFunctionObject& func,
-                        Texture::AddressMode addressMode,
-                        Texture::MipMapMode mipMode)
-{
-    auto img = std::make_unique<Image>(format, width, height);
-
-    for (int y = 0; y < height; y++)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            float u = ((float) x + 0.5f) / (float) width * 2 - 1;
-            float v = ((float) y + 0.5f) / (float) height * 2 - 1;
-            func(u, v, 0, img->getPixelRow(y) + x * img->getComponents());
-        }
-    }
-
-    return std::make_unique<ImageTexture>(*img, addressMode, mipMode);
-}
-
-
-std::unique_ptr<Texture>
-CreateProceduralCubeMap(int size,
-                        PixelFormat format,
-                        ProceduralTexEval func)
-{
-    std::array<std::unique_ptr<Image>, 6> faces{ };
-
-    for (int i = 0; i < 6; i++)
-    {
-        faces[i] = std::make_unique<Image>(format, size, size);
-
-        Image* face = faces[i].get();
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 0; x < size; x++)
-            {
-                float s = ((float) x + 0.5f) / (float) size * 2 - 1;
-                float t = ((float) y + 0.5f) / (float) size * 2 - 1;
-                Eigen::Vector3f v = cubeVector(i, s, t);
-                func(v.x(), v.y(), v.z(),
-                     face->getPixelRow(y) + x * face->getComponents());
-            }
-        }
-    }
-
-    std::array<const Image*, 6> facePtrs;
-    std::transform(faces.begin(), faces.end(), facePtrs.begin(),
-                   [](const std::unique_ptr<Image>& iptr) { return iptr.get(); });
-
-    return std::make_unique<CubeMap>(facePtrs);
-}
-
 
 std::unique_ptr<Texture>
 LoadTextureFromFile(const std::filesystem::path& filename,
@@ -951,7 +1033,6 @@ LoadTextureFromFile(const std::filesystem::path& filename,
 
     return tex;
 }
-
 
 // Load a height map texture from a file and convert it to a normal map.
 std::unique_ptr<Texture>

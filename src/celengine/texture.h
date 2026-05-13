@@ -10,47 +10,40 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <filesystem>
 #include <memory>
 #include <string>
 
+#include <Eigen/Core>
+
 #include <celimage/image.h>
 #include <celutil/array_view.h>
+#include <celutil/classops.h>
 #include <celutil/color.h>
 
 typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 
-
 struct TextureTile
 {
     TextureTile(unsigned int _texID) :
-        u(0.0f), v(0.0f), du(1.0f), dv(1.0f), texID(_texID) {};
+        texID(_texID) {}
     TextureTile(unsigned int _texID, float _u, float _v) :
-        u(_u), v(_v), du(1.0f), dv(1.0f), texID(_texID) {};
+        u(_u), v(_v), texID(_texID) {}
     TextureTile(unsigned int _texID, float _u, float _v, float _du, float _dv) :
-        u(_u), v(_v), du(_du), dv(_dv), texID(_texID) {};
+        u(_u), v(_v), du(_du), dv(_dv), texID(_texID) {}
 
-    float u, v;
-    float du, dv;
+    float u{ 0.0f };
+    float v{ 0.0f };
+    float du{ 1.0f };
+    float dv{ 1.0f };
     unsigned int texID;
 };
 
-
-class TexelFunctionObject
+class Texture : private celestia::util::NoCopy
 {
- public:
-    TexelFunctionObject() = default;
-    virtual ~TexelFunctionObject() = default;
-    virtual void operator()(float u, float v, float w,
-                            std::uint8_t* pixel) = 0;
-};
-
-
-class Texture
-{
- public:
-    Texture(int w, int h, int d = 1);
+public:
     virtual ~Texture() = default;
 
     virtual TextureTile getTile(int lod, int u, int v) = 0;
@@ -71,10 +64,8 @@ class Texture
 
     int getWidth() const;
     int getHeight() const;
-    int getDepth() const;
 
     bool hasAlpha() const { return alpha; }
-    bool isCompressed() const { return compressed; }
 
     /*! Identical formats may need to be treated in slightly different
      *  fashions. One (and currently the only) example is the DXT5 compressed
@@ -112,24 +103,29 @@ class Texture
         sRGBColorspace    = 2
     };
 
- protected:
-    bool alpha{ false };
-    bool compressed{ false };
+protected:
+    Texture(int _w, int _h, bool _alpha = false);
 
- private:
+private:
     int width;
     int height;
-    int depth;
+    bool alpha;
 
     unsigned int formatOptions{ 0 };
 };
 
-
 class ImageTexture : public Texture
 {
- public:
+public:
     ImageTexture(const celestia::engine::Image& img, AddressMode, MipMapMode);
     ~ImageTexture();
+
+    template<typename F>
+    static std::unique_ptr<ImageTexture> createProcedural(int width, int height,
+                                                          celestia::engine::PixelFormat format,
+                                                          F func,
+                                                          Texture::AddressMode addressMode = Texture::EdgeClamp,
+                                                          Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
 
     TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
@@ -137,14 +133,39 @@ class ImageTexture : public Texture
 
     unsigned int getName() const;
 
- private:
+private:
     unsigned int glName;
 };
 
+template<typename F>
+std::unique_ptr<ImageTexture>
+ImageTexture::createProcedural(int width, int height,
+                               celestia::engine::PixelFormat format,
+                               F func,
+                               Texture::AddressMode addressMode,
+                               Texture::MipMapMode mipMode)
+{
+    celestia::engine::Image img(format, width, height);
+    const auto fwidth = static_cast<float>(width);
+    const auto fheight = static_cast<float>(height);
+    for (int y = 0; y < height; ++y)
+    {
+        float v = (static_cast<float>(y) + 0.5f) / fheight * 2 - 1;
+        std::uint8_t* ptr = img.getPixelRow(y);
+        for (int x = 0; x < width; ++x)
+        {
+            float u = (static_cast<float>(x) + 0.5f) / fwidth * 2 - 1;
+            func(u, v, ptr);
+            ptr += img.getComponents();
+        }
+    }
+
+    return std::make_unique<ImageTexture>(img, addressMode, mipMode);
+}
 
 class TiledTexture : public Texture
 {
- public:
+public:
     TiledTexture(const celestia::engine::Image& img, int _uSplit, int _vSplit, MipMapMode);
     ~TiledTexture();
 
@@ -155,45 +176,64 @@ class TiledTexture : public Texture
     int getUTileCount(int lod) const override;
     int getVTileCount(int lod) const override;
 
- private:
+private:
     int uSplit;
     int vSplit;
-    unsigned int* glNames;
+    std::unique_ptr<unsigned int[]> glNames; //NOSONAR
 };
-
 
 class CubeMap : public Texture
 {
- public:
-    explicit CubeMap(celestia::util::array_view<const celestia::engine::Image*>);
+public:
+    explicit CubeMap(celestia::util::array_view<celestia::engine::Image>);
     ~CubeMap();
+
+    template<typename F>
+    static std::unique_ptr<CubeMap> createProcedural(int size,
+                                                     celestia::engine::PixelFormat format,
+                                                     F func);
 
     TextureTile getTile(int lod, int u, int v) override;
     void bind() override;
     void setBorderColor(Color) override;
 
- private:
+private:
+    static Eigen::Vector3f cubeVector(int face, float s, float t);
+
     unsigned int glName;
 };
 
+template<typename F>
+std::unique_ptr<CubeMap>
+CubeMap::createProcedural(int size, celestia::engine::PixelFormat format, F func)
+{
+    using celestia::engine::Image;
+    std::array<Image, 6> faces
+    {
+        Image(format, size, size), Image(format, size, size), Image(format, size, size),
+        Image(format, size, size), Image(format, size, size), Image(format, size, size),
+    };
 
-std::unique_ptr<Texture>
-CreateProceduralTexture(int width, int height,
-                        celestia::engine::PixelFormat format,
-                        ProceduralTexEval func,
-                        Texture::AddressMode addressMode = Texture::EdgeClamp,
-                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
+    const auto fsize = static_cast<float>(size);
+    for (int i = 0; i < 6; ++i)
+    {
+        Image& face = faces[i];
+        for (int y = 0; y < size; ++y)
+        {
+            float t = (static_cast<float>(y) + 0.5f) / fsize * 2 - 1;
+            std::uint8_t* ptr = face.getPixelRow(y);
+            for (int x = 0; x < size; ++x)
+            {
+                float s = (static_cast<float>(x) + 0.5f) / fsize * 2 - 1;
+                Eigen::Vector3f v = cubeVector(i, s, t);
+                func(v.x(), v.y(), v.z(), ptr);
+                ptr += face.getComponents();
+            }
+        }
+    }
 
-std::unique_ptr<Texture>
-CreateProceduralTexture(int width, int height,
-                        celestia::engine::PixelFormat format,
-                        TexelFunctionObject& func,
-                        Texture::AddressMode addressMode = Texture::EdgeClamp,
-                        Texture::MipMapMode mipMode = Texture::DefaultMipMaps);
-
-std::unique_ptr<Texture>
-CreateProceduralCubeMap(int size, celestia::engine::PixelFormat format,
-                        ProceduralTexEval func);
+    return std::make_unique<CubeMap>(faces);
+}
 
 std::unique_ptr<Texture>
 LoadTextureFromFile(const std::filesystem::path& filename,

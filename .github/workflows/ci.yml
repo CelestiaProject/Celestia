@@ -28,14 +28,14 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true
 
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = 'ee0973d8090e4e3e452244bb50d34c25fe907dc2'
+        $vcpkgCommit = '99a97de2cb371449d4fb9dc970f2ac562d689ec2'
         pushd "$env:VCPKG_INSTALLATION_ROOT"
         git fetch origin $vcpkgCommit
         git reset --hard $vcpkgCommit
@@ -60,8 +60,8 @@ jobs:
       run: |
         $packages = @(
           'boost-container',
+          'boost-container-hash',
           'boost-smart-ptr',
-          'cspice',
           'eigen3',
           'ffmpeg[core,avcodec,avformat,gpl,swscale,x264]',
           'fmt',
@@ -107,7 +107,7 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{matrix.platform}}-windows-release `
             -DCMAKE_GENERATOR_PLATFORM="$GeneratorPlatform" `
             -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install" `
-            -DENABLE_SPICE=ON     `
+            -DENABLE_SPICE=OFF    `
             -DENABLE_TOOLS=ON     `
             -DENABLE_TESTS=ON     `
             -DENABLE_SDL=OFF      `
@@ -188,15 +188,25 @@ jobs:
           minaudio: ON
           wayland: ON
           icu: ON
+          qt5: ON
           qt6: OFF
+        - os: ubuntu-24.04
+          avif: ON
+          gles: ON
+          minaudio: ON
+          wayland: ON
+          icu: ON
+          qt5: OFF
+          qt6: ON
+          analysis_artifacts: 1
         - os: ubuntu-24.04-arm
           avif: ON
           gles: ON
           minaudio: ON
           wayland: ON
           icu: ON
+          qt5: OFF
           qt6: ON
-          analysis_artifacts: 1
 
     runs-on: ${{matrix.config.os}}
     steps:
@@ -222,8 +232,10 @@ jobs:
                                 wayland-protocols \
                                 gettext \
                                 gperf \
-                                ninja-build \
-                                qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+                                ninja-build
+        if [ "${{matrix.config.qt5}}" = "ON" ]; then
+            sudo apt-get install -y qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+        fi
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
             sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-base-private-dev
         fi
@@ -232,7 +244,7 @@ jobs:
         fi
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -241,11 +253,11 @@ jobs:
         cmake -B ${{github.workspace}}/build                 \
               -G Ninja                                       \
               -DENABLE_GLES=${{matrix.config.gles}}          \
-              -DENABLE_SPICE=ON                              \
+              -DENABLE_SPICE=OFF                             \
               -DENABLE_TOOLS=OFF                             \
               -DENABLE_TESTS=ON                              \
               -DENABLE_SDL=ON                                \
-              -DENABLE_QT5=ON                                \
+              -DENABLE_QT5=${{matrix.config.qt5}}            \
               -DENABLE_QT6=${{matrix.config.qt6}}            \
               -DUSE_WAYLAND=${{matrix.config.wayland}}       \
               -DENABLE_FFMPEG=ON                             \
@@ -302,7 +314,7 @@ jobs:
                      eigen \
                      ffmpeg \
                      boost \
-                     cspice \
+                     fast_float \
                      fmt \
                      jpeg-turbo \
                      gettext \
@@ -316,7 +328,7 @@ jobs:
                      sdl2
 
     - name: 'Checkout source code'
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -325,7 +337,7 @@ jobs:
         cmake -B ${{github.workspace}}/build \
               -G Ninja                       \
               -DENABLE_GLES=OFF              \
-              -DENABLE_SPICE=ON              \
+              -DENABLE_SPICE=OFF             \
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=ON              \
               -DENABLE_SDL=ON                \

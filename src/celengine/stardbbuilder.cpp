@@ -63,7 +63,7 @@ struct StarDatabaseBuilder::StcHeader
     explicit StcHeader(std::filesystem::path&&) = delete;
 
     const std::filesystem::path* path;
-    int lineNumber{ 0 };
+    std::uint64_t lineNumber{ 0 };
     DataDisposition disposition{ DataDisposition::Add };
     bool isStar{ true };
     AstroCatalog::IndexNumber catalogNumber{ AstroCatalog::InvalidIndex };
@@ -222,6 +222,8 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
 {
     header.lineNumber = tokenizer.getLineNumber();
 
+    header.catalogNumber = AstroCatalog::InvalidIndex;
+    header.names.clear();
     header.isStar = true;
 
     // Parse the disposition--either Add, Replace, or Modify. The disposition
@@ -267,14 +269,17 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
     }
 
     // Parse the catalog number; it may be omitted if a name is supplied.
-    header.catalogNumber = AstroCatalog::InvalidIndex;
-    if (auto tokenValue = tokenizer.getNumberValue(); tokenValue.has_value())
+    if (auto tokenValue = tokenizer.getNumberValue<AstroCatalog::IndexNumber>(); tokenValue.has_value())
     {
-        header.catalogNumber = static_cast<AstroCatalog::IndexNumber>(*tokenValue);
+        header.catalogNumber = *tokenValue;
+        tokenizer.nextToken();
+    }
+    else if (tokenizer.getTokenType() == util::TokenType::Number)
+    {
+        stcError(header, _("invalid catalog number"));
         tokenizer.nextToken();
     }
 
-    header.names.clear();
     if (auto tokenValue = tokenizer.getStringValue(); tokenValue.has_value())
     {
         for (std::string_view remaining = *tokenValue; !remaining.empty();)
@@ -467,7 +472,8 @@ mergeStarDetails(boost::intrusive_ptr<StarDetails>& existingDetails,
 void
 applyMesh(const StarDatabaseBuilder::StcHeader& header,
           const AssociativeArray* starData,
-          boost::intrusive_ptr<StarDetails>& details)
+          boost::intrusive_ptr<StarDetails>& details,
+          engine::GeometryPaths& geometryPaths)
 {
     const auto* mesh = starData->getString("Mesh");
     if (mesh == nullptr)
@@ -486,10 +492,7 @@ applyMesh(const StarDatabaseBuilder::StcHeader& header,
         return;
     }
 
-    using engine::GeometryInfo;
-    using engine::GetGeometryManager;
-    GeometryInfo geometryInfo(*meshPath, *header.path, Eigen::Vector3f::Zero(), 1.0f, true);
-    ResourceHandle geometryHandle = GetGeometryManager()->getHandle(geometryInfo);
+    engine::GeometryHandle geometryHandle = geometryPaths.getHandle(*meshPath, *header.path);
     StarDetails::setGeometry(details, geometryHandle);
 }
 
@@ -525,8 +528,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                 // Astronomical Society of Canada, Vol 92. p36.
 
                 double logT = std::log10(static_cast<double>(*temperature)) - 4.0;
-                double bc = -8.499 * std::pow(logT, 4) + 13.421 * std::pow(logT, 3)
-                            - 8.131 * logT * logT - 3.901 * logT - 0.438;
+                double bc = -0.438 + logT * (-3.901 + logT * (-8.131 + logT * (13.421 - logT * 8.499)));
 
                 StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
             }
@@ -542,18 +544,29 @@ void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
                    boost::intrusive_ptr<StarDetails>& details,
-                   const std::filesystem::path& resourcePath)
+                   const std::filesystem::path& resourcePath,
+                   engine::GeometryPaths& geometryPaths,
+                   engine::TexturePaths& texturePaths)
 {
-    applyMesh(header, starData, details);
+    applyMesh(header, starData, details, geometryPaths);
 
     if (const auto* texture = starData->getString("Texture"); texture != nullptr)
     {
         if (!header.isStar)
+        {
             stcWarn(header, _("Texture is ignored on Barycenters"));
+        }
         else if (auto texturePath = util::U8FileName(*texture); texturePath.has_value())
-            StarDetails::setTexture(details, MultiResTexture(*texturePath, *header.path));
+        {
+            StarDetails::setTexture(details,
+                                    texturePaths.getHandle(*texturePath,
+                                                           *header.path,
+                                                           engine::TextureFlags::WrapTexture));
+        }
         else
+        {
             stcError(header, _("invalid filename in Texture"));
+        }
     }
 
     if (auto rotationModel = CreateRotationModel(starData, *header.path, 1.0); rotationModel != nullptr)
@@ -596,6 +609,13 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
 }
 
 } // end unnamed namespace
+
+StarDatabaseBuilder::StarDatabaseBuilder(engine::GeometryPaths& _geometryPaths,
+                                         engine::TexturePaths& _texturePaths) :
+    geometryPaths(&_geometryPaths),
+    texturePaths(&_texturePaths)
+{
+}
 
 StarDatabaseBuilder::~StarDatabaseBuilder() = default;
 
@@ -702,9 +722,10 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
  *  Modify <number>   : error
  */
 bool
-StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourcePath)
+StarDatabaseBuilder::load(std::istream& in,
+                          const std::filesystem::path& resourcePath)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
@@ -716,7 +737,7 @@ StarDatabaseBuilder::load(std::istream& in, const std::filesystem::path& resourc
 #endif
 
     StcHeader header(resourcePath);
-    while (tokenizer.nextToken() != util::Tokenizer::TokenEnd)
+    while (tokenizer.nextToken() != util::TokenType::End)
     {
         if (!parseStcHeader(tokenizer, header))
             return false;
@@ -874,7 +895,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     if (orbit != nullptr)
         StarDetails::setOrbit(star->details, orbit);
 
-    applyCustomDetails(header, starData, star->details, resourcePath);
+    applyCustomDetails(header, starData, star->details, resourcePath, *geometryPaths, *texturePaths);
     return true;
 }
 

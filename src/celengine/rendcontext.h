@@ -19,8 +19,7 @@
 #include "glsupport.h"
 #include "shadermanager.h"
 
-
-class Atmosphere;
+struct Atmosphere;
 class Color;
 class LightingState;
 class Renderer;
@@ -32,9 +31,8 @@ class VertexObject;
 
 class RenderContext
 {
- public:
-    RenderContext(const cmod::Material*);
-    RenderContext(Renderer*);
+public:
+    explicit RenderContext(Renderer*);
     virtual ~RenderContext() = default;
 
     virtual void makeCurrent(const cmod::Material&) = 0;
@@ -62,16 +60,18 @@ class RenderContext
     void setCameraOrientation(const Eigen::Quaternionf& q);
     Eigen::Quaternionf getCameraOrientation() const;
 
- protected:
-    Renderer* renderer { nullptr };
+protected:
+    Renderer* renderer;
     bool usePointSize{ false };
     bool useStaticPointSize{ false };
     bool useNormals{ true };
     bool useColors{ false };
     bool useTexCoords{ true };
 
- private:
-    const cmod::Material* material{ nullptr };
+private:
+    static const inline cmod::Material defaultMaterial{ };
+
+    const cmod::Material* material{ &defaultMaterial };
     bool locked{ false };
     RenderPass renderPass{ PrimaryPass };
     float pointScale{ 1.0f };
@@ -81,7 +81,7 @@ class RenderContext
 
 class Shadow_RenderContext : public RenderContext
 {
- public:
+public:
     Shadow_RenderContext(Renderer *r) :
         RenderContext(r)
     {
@@ -94,7 +94,7 @@ class Shadow_RenderContext : public RenderContext
 
 class GLSL_RenderContext : public RenderContext
 {
- public:
+public:
     GLSL_RenderContext(Renderer* r,
                        const LightingState& ls,
                        float _objRadius,
@@ -114,10 +114,8 @@ class GLSL_RenderContext : public RenderContext
     void setAtmosphere(const Atmosphere*);
     void setShadowMap(GLuint, GLuint, const Eigen::Matrix4f*);
 
- private:
+private:
     void initLightingEnvironment();
-    void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
-    void setShadowParameters(CelestiaGLProgram& prog);
 
     const LightingState& lightingState;
     const Atmosphere* atmosphere{ nullptr };
@@ -137,24 +135,20 @@ class GLSL_RenderContext : public RenderContext
     GLuint shadowMapWidth { 0 };
 };
 
-
 class GLSLUnlit_RenderContext : public RenderContext
 {
- public:
+public:
     GLSLUnlit_RenderContext(Renderer* r,
-                            float _objRadius,
                             const Eigen::Matrix4f *_modelViewMatrix,
                             const Eigen::Matrix4f *_projectionMatrix);
     ~GLSLUnlit_RenderContext() override;
 
     void makeCurrent(const cmod::Material&) override;
 
- private:
+private:
     void initLightingEnvironment();
-    void setLightingParameters(CelestiaGLProgram& prog, Color diffuseColor, Color specularColor);
 
     cmod::BlendMode blendMode;
-    float objRadius;
 
     ShaderProperties shaderProps;
 

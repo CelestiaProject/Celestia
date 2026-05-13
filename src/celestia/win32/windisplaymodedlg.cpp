@@ -18,16 +18,14 @@
 #include <optional>
 
 #include <fmt/format.h>
-#ifdef _UNICODE
 #include <fmt/xchar.h>
-#endif
 
 #include <celutil/gettext.h>
 
 #include <commctrl.h>
 
 #include "res/resource.h"
-#include "tstring.h"
+#include "wstringutils.h"
 
 namespace celestia::win32
 {
@@ -43,17 +41,17 @@ DisplayModeDialogInit(HWND hDlg, DisplayModeDialog* displayModeDlg)
     HWND hwnd = GetDlgItem(hDlg, IDC_COMBO_RESOLUTION);
 
     // Add windowed mode as the first item on the menu
-    tstring str = UTF8ToTString(_("Windowed Mode"));
+    std::wstring str = UTF8ToWideString(_("Windowed Mode"));
     SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(str.c_str()));
 
-    fmt::basic_memory_buffer<TCHAR> buf;
+    fmt::basic_memory_buffer<wchar_t> buf;
     for (const DEVMODE& displayMode : displayModeDlg->displayModes)
     {
         buf.clear();
-        fmt::format_to(std::back_inserter(buf), TEXT("{} x {} x {}"),
+        fmt::format_to(std::back_inserter(buf), L"{} x {} x {}",
                        displayMode.dmPelsWidth, displayMode.dmPelsHeight,
                        displayMode.dmBitsPerPel);
-        buf.push_back(TEXT('\0'));
+        buf.push_back(L'\0');
         SendMessage(hwnd, CB_INSERTSTRING, -1, reinterpret_cast<LPARAM>(buf.data()));
     }
 

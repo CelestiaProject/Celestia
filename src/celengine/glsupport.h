@@ -47,6 +47,11 @@ extern CELAPI bool MESA_pack_invert; //NOSONAR
 extern CELAPI bool OES_vertex_array_object; //NOSONAR
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
+extern CELAPI bool OES_depth24; //NOSONAR
+extern CELAPI bool OES_texture_half_float; //NOSONAR
+extern CELAPI bool OES_standard_derivatives; //NOSONAR
+extern CELAPI bool EXT_sRGB; //NOSONAR
+extern CELAPI bool EXT_sRGB_write_control; //NOSONAR
 #else
 extern CELAPI bool ARB_vertex_array_object; //NOSONAR
 #endif
@@ -54,6 +59,7 @@ extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR
 extern CELAPI GLfloat maxLineWidth; //NOSONAR
 extern CELAPI GLint maxTextureAnisotropy; //NOSONAR
+extern CELAPI bool sRGBRendering; //NOSONAR
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;

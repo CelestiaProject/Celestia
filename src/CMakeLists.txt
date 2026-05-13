@@ -1,7 +1,6 @@
 set(CELESTIA_LIBS
   cel3ds
   celastro
-  celcompat
   celengine
   celephem
   celestia

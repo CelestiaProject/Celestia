@@ -47,7 +47,6 @@
 
 #include "res/resource.h"
 #include "odmenu.h"
-#include "tstring.h"
 #include "winbookmarks.h"
 #include "wincontextmenu.h"
 #include "windisplaymodedlg.h"
@@ -66,6 +65,7 @@
 #include "wintime.h"
 #include "wintourguide.h"
 #include "winviewoptsdlg.h"
+#include "wstringutils.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
@@ -97,39 +97,16 @@ setMenuItemCheck(HMENU menuBar, int menuItem, bool checked)
     CheckMenuItem(menuBar, menuItem, checked ? MF_CHECKED : MF_UNCHECKED);
 }
 
-// Version of the function from tstring.h with smaller intermediate buffer
+// Version of the function from wstringutils.h with smaller intermediate buffer
 // suitable for char event processing
 template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
 void
-AppendTCharCodeToUTF8(TCHAR* tch, int nch, T& destination)
+AppendTCharCodeToUTF8(wchar_t* tch, int nch, T& destination)
 {
     if (nch <= 0)
         return;
-    tstring_view source(tch, static_cast<std::size_t>(nch));
-#ifdef _UNICODE
-    AppendTCharToUTF8(source, destination);
-#else
-    fmt::basic_memory_buffer<wchar_t, 4> wbuffer;
-    int wlength = MultiByteToWideChar(CP_ACP, 0, tch, nch, nullptr, 0);
-    if (wlength <= 0)
-        return;
-
-    wbuffer.resize(static_cast<std::size_t>(wlength));
-    wlength = MultiByteToWideChar(CP_ACP, 0, tch, nch, wbuffer.data(), wlength);
-    if (wlength <= 0)
-        return;
-
-    int length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength, nullptr, 0, nullptr, nullptr);
-    if (length <= 0)
-        return;
-
-    const auto existingSize = destination.size();
-    destination.resize(existingSize + static_cast<std::size_t>(length));
-    length = WideCharToMultiByte(CP_UTF8, 0, wbuffer.data(), wlength,
-                                 destination.data() + existingSize, length,
-                                 nullptr, nullptr);
-    destination.resize(length >= 0 ? (existingSize + static_cast<std::size_t>(length)) : existingSize);
-#endif
+    std::wstring_view source(tch, static_cast<std::size_t>(nch));
+    AppendWideToUTF8(source, destination);
 }
 
 unsigned int
@@ -164,91 +141,141 @@ ChooseBestMSAAPixelFormat(HDC hdc, int *formats, unsigned int numFormats,
     return bestFormat;
 }
 
+bool
+SetPreferredPixelFormat(HDC hDC, int aaSamples)
+{
+    PIXELFORMATDESCRIPTOR pfd;
+
+    int ifmtList[] = {
+        WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+        WGL_DOUBLE_BUFFER_ARB,  GL_TRUE,
+        WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
+        WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
+        WGL_DEPTH_BITS_ARB,     24,
+        WGL_COLOR_BITS_ARB,     24,
+        WGL_SAMPLE_BUFFERS_ARB, aaSamples > 1 ? GL_TRUE : GL_FALSE,
+        0 // end
+    };
+
+    int             pixelFormatIndex;
+    int             pixFormats[256];
+    unsigned int    numFormats;
+
+    wglChoosePixelFormatARB(hDC, ifmtList, NULL, 256, pixFormats, &numFormats);
+
+    pixelFormatIndex = ChooseBestMSAAPixelFormat(hDC, pixFormats,
+                                                 numFormats,
+                                                 aaSamples);
+
+    DescribePixelFormat(hDC, pixelFormatIndex,
+                        sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
+    return SetPixelFormat(hDC, pixelFormatIndex, &pfd);
+}
+
 // Select the pixel format for a given device context
 bool
 SetDCPixelFormat(HDC hDC, const CelestiaCore* appCore)
 {
-    bool msaa = false;
-    if (appCore->getConfig()->renderDetails.aaSamples > 1 &&
-        epoxy_has_wgl_extension(hDC, "WGL_ARB_pixel_format") &&
-        epoxy_has_wgl_extension(hDC, "WGL_ARB_multisample"))
+    // We can't check WGL extensions without having an OpenGL context
+    // So create a dummy context
+    bool result = false;
+    WNDCLASS dummyClass;
+    HWND dummyWindow;
+    HDC dummyDC;
+    PIXELFORMATDESCRIPTOR pfd;
+    int dummyPixelFormat;
+    HGLRC dummyContext;
+    int aaSamples;
+
+    dummyClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    dummyClass.lpfnWndProc = &DefWindowProc;
+    dummyClass.cbClsExtra = 0;
+    dummyClass.cbWndExtra = 0;
+    dummyClass.hInstance = GetModuleHandle(nullptr);
+    dummyClass.hIcon = nullptr;
+    dummyClass.hCursor = nullptr;
+    dummyClass.hbrBackground = nullptr;
+    dummyClass.lpszMenuName = nullptr;
+    dummyClass.lpszClassName = L"Celestia-dummy-OpenGL";
+
+    if (RegisterClass(&dummyClass) == 0)
+        return result;
+
+    dummyWindow = CreateWindow(
+        dummyClass.lpszClassName,
+        L"Celestia OpenGL feature detection",
+        0,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        nullptr, nullptr,
+        dummyClass.hInstance,
+        0);
+    if (!dummyWindow)
+        goto unregisterDummyClass;
+
+    dummyDC = GetDC(dummyWindow);
+    if (!dummyDC)
+        goto destroyWindow;
+
+    pfd.nSize = static_cast<WORD>(sizeof(PIXELFORMATDESCRIPTOR));
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = static_cast<BYTE>(GetDeviceCaps(dummyDC, BITSPIXEL));
+    pfd.cRedBits = 0;
+    pfd.cRedShift = 0;
+    pfd.cGreenBits = 0;
+    pfd.cGreenShift = 0;
+    pfd.cBlueBits = 0;
+    pfd.cBlueShift = 0;
+    pfd.cAlphaBits = 8;
+    pfd.cAlphaShift = 0;
+    pfd.cAccumBits = 0;
+    pfd.cAccumRedBits = 0;
+    pfd.cAccumGreenBits = 0;
+    pfd.cAccumBlueBits = 0;
+    pfd.cAccumAlphaBits = 0;
+    pfd.cDepthBits = 24;
+    pfd.cStencilBits = 8;
+    pfd.cAuxBuffers = 0;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+    pfd.bReserved = 0;
+    pfd.dwLayerMask = 0;
+    pfd.dwVisibleMask = 0;
+    pfd.dwDamageMask = 0;
+
+    dummyPixelFormat = ChoosePixelFormat(dummyDC, &pfd);
+    if (!dummyPixelFormat || !SetPixelFormat(dummyDC, dummyPixelFormat, &pfd))
+        goto releaseDC;
+
+    dummyContext = wglCreateContext(dummyDC);
+    if (!dummyContext)
+        goto releaseDC;
+
+    if (!wglMakeCurrent(dummyDC, dummyContext) ||
+        !epoxy_has_wgl_extension(dummyDC, "WGL_ARB_pixel_format"))
     {
-        msaa = true;
+        goto destroyContext;
     }
 
-    if (!msaa)
-    {
-        static PIXELFORMATDESCRIPTOR pfd = {
-            sizeof(PIXELFORMATDESCRIPTOR),    // Size of this structure
-            1,                // Version of this structure
-            PFD_DRAW_TO_WINDOW |    // Draw to Window (not to bitmap)
-            PFD_SUPPORT_OPENGL |    // Support OpenGL calls in window
-            PFD_DOUBLEBUFFER,        // Double buffered mode
-            PFD_TYPE_RGBA,        // RGBA Color mode
-            (BYTE)GetDeviceCaps(hDC, BITSPIXEL),// Want the display bit depth
-            0,0,0,0,0,0,          // Not used to select mode
-            0,0,            // Not used to select mode
-            0,0,0,0,0,            // Not used to select mode
-            24,                // Size of depth buffer
-            0,                // Not used to select mode
-            0,                // Not used to select mode
-            PFD_MAIN_PLANE,             // Draw in main plane
-            0,                          // Not used to select mode
-            0,0,0                       // Not used to select mode
-        };
+    aaSamples = epoxy_has_wgl_extension(dummyDC, "WGL_ARB_multisample")
+        ? static_cast<int>(appCore->getConfig()->renderDetails.aaSamples)
+        : 1;
 
-        // Choose a pixel format that best matches that described in pfd
-        int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
-        if (nPixelFormat == 0)
-        {
-            // Uh oh . . . looks like we can't handle OpenGL on this device.
-            return false;
-        }
-        else
-        {
-            // Set the pixel format for the device context
-            SetPixelFormat(hDC, nPixelFormat, &pfd);
-            return true;
-        }
-    }
-    else
-    {
-        PIXELFORMATDESCRIPTOR pfd;
+    result = SetPreferredPixelFormat(hDC, aaSamples);
 
-        int ifmtList[] = {
-            WGL_DRAW_TO_WINDOW_ARB, TRUE,
-            WGL_SUPPORT_OPENGL_ARB, TRUE,
-            WGL_DOUBLE_BUFFER_ARB,  TRUE,
-            WGL_PIXEL_TYPE_ARB,     WGL_TYPE_RGBA_ARB,
-            WGL_DEPTH_BITS_ARB,     24,
-            WGL_COLOR_BITS_ARB,     24,
-            WGL_RED_BITS_ARB,       8,
-            WGL_GREEN_BITS_ARB,     8,
-            WGL_BLUE_BITS_ARB,      8,
-            WGL_ALPHA_BITS_ARB,     0,
-            WGL_ACCUM_BITS_ARB,     0,
-            WGL_STENCIL_BITS_ARB,   0,
-            WGL_SAMPLE_BUFFERS_ARB, appCore->getConfig()->renderDetails.aaSamples > 1,
-            0
-        };
-
-        int             pixelFormatIndex;
-        int             pixFormats[256];
-        unsigned int    numFormats;
-
-        wglChoosePixelFormatARB(hDC, ifmtList, NULL, 256, pixFormats, &numFormats);
-
-        pixelFormatIndex = ChooseBestMSAAPixelFormat(hDC, pixFormats,
-                                                     numFormats,
-                                                     appCore->getConfig()->renderDetails.aaSamples);
-
-        DescribePixelFormat(hDC, pixelFormatIndex,
-                            sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-        if (!SetPixelFormat(hDC, pixelFormatIndex, &pfd))
-            return false;
-
-        return true;
-    }
+destroyContext:
+    wglMakeCurrent(dummyDC, nullptr);
+    wglDeleteContext(dummyContext);
+releaseDC:
+    ReleaseDC(dummyWindow, dummyDC);
+destroyWindow:
+    DestroyWindow(dummyWindow);
+unregisterDummyClass:
+    UnregisterClass(dummyClass.lpszClassName, dummyClass.hInstance);
+    return result;
 }
 
 bool
@@ -265,7 +292,7 @@ InitJoystick()
         return false;
     }
 
-    GetLogger()->error(_("Using joystick: {}\n"), TCharToUTF8String(caps.szPname));
+    GetLogger()->error(_("Using joystick: {}\n"), WideToUTF8String(caps.szPname));
 
     return true;
 }
@@ -655,7 +682,7 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
         return;
     }
 
-    auto charCode = static_cast<TCHAR>(wParam);
+    auto charCode = static_cast<wchar_t>(wParam);
     int modifiers = 0;
     if (GetKeyState(VK_SHIFT) & 0x8000)
         modifiers |= CelestiaCore::ShiftKey;
@@ -667,7 +694,7 @@ MainWindow::processChar(WPARAM wParam, LPARAM lParam) const
     auto oldColorTable = r->getStarColorTable();
 
     // Catch backtab (Shift+Tab)
-    if (charCode == TEXT('\011') && (modifiers & CelestiaCore::ShiftKey))
+    if (charCode == L'\011' && (modifiers & CelestiaCore::ShiftKey))
     {
         appCore->charEntered(CelestiaCore::Key_BackTab, modifiers);
     }
@@ -693,20 +720,8 @@ void
 MainWindow::imeChar(WPARAM wParam) const
 {
     fmt::basic_memory_buffer<char, 16> buffer;
-#ifdef _UNICODE
-    auto charCode = static_cast<TCHAR>(wParam);
+    auto charCode = static_cast<wchar_t>(wParam);
     AppendTCharCodeToUTF8(&charCode, 1, buffer);
-#else
-    std::array<char, 2> charSeq
-    {
-        static_cast<char>(wParam >> 8),
-        static_cast<char>(wParam & 0x0ff),
-    };
-    if (charSeq[0])
-        AppendTCharCodeToUTF8(charSeq.data(), 2, buffer);
-    else
-        AppendTCharCodeToUTF8(charSeq.data() + 1, 1, buffer);
-#endif
     buffer.push_back('\0');
     appCore->charEntered(buffer.data());
 }
@@ -893,17 +908,17 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_RENDER_TEXTURERES_LOW:
-        appCore->getRenderer()->setResolution(TextureResolution::lores);
+        appCore->getRenderer()->setResolution(engine::TextureResolution::lores);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_MEDIUM:
-        appCore->getRenderer()->setResolution(TextureResolution::medres);
+        appCore->getRenderer()->setResolution(engine::TextureResolution::medres);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
     case ID_RENDER_TEXTURERES_HIGH:
-        appCore->getRenderer()->setResolution(TextureResolution::hires);
+        appCore->getRenderer()->setResolution(engine::TextureResolution::hires);
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
@@ -1014,7 +1029,7 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         break;
 
     case ID_HELP_GUIDE:
-        ShellExecute(hWnd, TEXT("open"), TEXT("help\\CelestiaGuide.html"), NULL, NULL, SW_NORMAL);
+        ShellExecute(hWnd, L"open", L"help\\CelestiaGuide.html", NULL, NULL, SW_NORMAL);
         break;
 
     case ID_HELP_CONTROLS:
@@ -1109,8 +1124,8 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
     deviceContext = GetDC(hWnd);
     if (!SetDCPixelFormat(deviceContext, appCore))
     {
-        tstring message = UTF8ToTString(_("Could not get appropriate pixel format for OpenGL rendering."));
-        tstring caption = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Could not get appropriate pixel format for OpenGL rendering."));
+        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
         return false;
     }
@@ -1127,8 +1142,8 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
     {
         if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
         {
-            tstring message = UTF8ToTString(_("Your system doesn't support OpenGL 2.1!"));
-            tstring error = UTF8ToTString(_("Fatal Error"));
+            std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 2.1!"));
+            std::wstring error = UTF8ToWideString(_("Fatal Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
             return false;
         }
@@ -1144,8 +1159,8 @@ MainWindow::destroyDeviceContext()
     {
         if (!ReleaseDC(hWnd, deviceContext))
         {
-            tstring message = UTF8ToTString(_("Releasing device context failed."));
-            tstring error = UTF8ToTString(_("Error"));
+            std::wstring message = UTF8ToWideString(_("Releasing device context failed."));
+            std::wstring error = UTF8ToWideString(_("Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
         }
         deviceContext = nullptr;
@@ -1401,14 +1416,10 @@ MainWindow::showWWWInfo() const
     if (url.empty())
         return;
 
-#ifdef _UNICODE
     fmt::basic_memory_buffer<wchar_t> wbuffer;
     AppendUTF8ToWide(url, wbuffer);
     wbuffer.push_back(L'\0');
-    ShellExecute(hWnd, TEXT("open"), wbuffer.data(), nullptr, nullptr, 0);
-#else
-    ShellExecute(hWnd, TEXT("open"), url.c_str(), nullptr, nullptr, 0);
-#endif
+    ShellExecute(hWnd, L"open", wbuffer.data(), nullptr, nullptr, 0);
 }
 
 void
@@ -1541,8 +1552,8 @@ RegisterMainWindowClass(HINSTANCE appInstance, HCURSOR hDefaultCursor)
     ATOM result = RegisterClass(&wc);
     if (result == 0)
     {
-        tstring message = UTF8ToTString(_("Failed to register the window class."));
-        tstring fatalError = UTF8ToTString(_("Fatal Error"));
+        std::wstring message = UTF8ToWideString(_("Failed to register the window class."));
+        std::wstring fatalError = UTF8ToWideString(_("Fatal Error"));
         MessageBox(NULL, message.c_str(), fatalError.c_str(), MB_OK | MB_ICONERROR);
     }
 
@@ -1554,7 +1565,7 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
 {
     RenderFlags renderFlags = appCore->getRenderer()->getRenderFlags();
     float ambientLight = appCore->getRenderer()->getAmbientLightLevel();
-    TextureResolution textureRes = appCore->getRenderer()->getResolution();
+    engine::TextureResolution textureRes = appCore->getRenderer()->getResolution();
 
     setMenuItemCheck(menuBar, ID_VIEW_SHOW_FRAMES,
                      appCore->getFramesVisible());
@@ -1586,11 +1597,11 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
     CheckMenuItem(menuBar, ID_STARCOLOR_VEGA,  colorType == ColorTableType::VegaWhite ?     MF_CHECKED : MF_UNCHECKED);
 
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_LOW,
-                  textureRes == TextureResolution::lores ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == engine::TextureResolution::lores ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_MEDIUM,
-                  textureRes == TextureResolution::medres ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == engine::TextureResolution::medres ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_TEXTURERES_HIGH,
-                  textureRes == TextureResolution::hires ? MF_CHECKED : MF_UNCHECKED);
+                  textureRes == engine::TextureResolution::hires ? MF_CHECKED : MF_UNCHECKED);
 
     MENUITEMINFO menuInfo;
     menuInfo.cbSize = sizeof(MENUITEMINFO);

@@ -85,6 +85,25 @@ FStreamAVIFIORead(avifIO* io, std::uint32_t readFlags, std::uint64_t offset, std
     return AVIF_RESULT_OK;
 }
 
+// Detect whether the decoded AVIF image should be treated as linear-light
+// data.  Uses the CICP transfer characteristics stored in the AVIF container.
+bool
+IsLinearAVIF(const avifImage* img)
+{
+    switch (img->transferCharacteristics)
+    {
+    case AVIF_TRANSFER_CHARACTERISTICS_LINEAR:
+        return true;
+    case AVIF_TRANSFER_CHARACTERISTICS_SRGB:
+        return false;
+    case AVIF_TRANSFER_CHARACTERISTICS_UNSPECIFIED:
+    default:
+        // No explicit metadata or an unknown value: assume sRGB
+        // (the overwhelmingly common case for 8-bit content).
+        return false;
+    }
+}
+
 } // end unnamed namespace
 
 Image*
@@ -132,7 +151,8 @@ LoadAVIFImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    auto image = std::make_unique<Image>(PixelFormat::RGBA, rgb.width, rgb.height);
+    bool isLinear = IsLinearAVIF(decoder->image);
+    auto image = std::make_unique<Image>(isLinear ? PixelFormat::RGBA : PixelFormat::sRGBA, rgb.width, rgb.height);
     rgb.pixels = image->getPixels();
     rgb.rowBytes = image->getWidth() * image->getComponents();
 

@@ -11,22 +11,17 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 
 #include <Eigen/Core>
 
 #include <celutil/color.h>
+#include "gl/buffer.h"
+#include "gl/vertexobject.h"
 
 class CelestiaGLProgram;
 class Renderer;
 struct Matrices;
-
-namespace celestia::gl
-{
-class Buffer;
-class VertexObject;
-}
 
 namespace celestia::render
 {
@@ -152,7 +147,7 @@ public:
     void clear();
 
     //! Clear GPU side memory buffers
-    void orphan() const;
+    void orphan();
 
     //! Finish renderring
     void finish();
@@ -225,33 +220,43 @@ public:
     void render(const Matrices &mvp, const Color &color, int count, int offset = 0);
 
 private:
-    //! LineVertex is used to draw lines with triangles with GL_TRIANGLE_STRIP
+    //! LineVertex is used to draw lines with triangles with GL_TRIANGLE_STRIP.
+    //! `side` is the signed normalized perpendicular position used by the AA
+    //! shader (-1 / +1 for the two physical edges of the line). It is tracked
+    //! separately from `scale` because close_strip flips `scale` on the last
+    //! two vertices to compensate for a reversed tangent — but the *physical*
+    //! side of those vertices is unchanged, so `side` must stay put.
     struct LineVertex
     {
         LineVertex(const Vertex &point, float scale) :
             point(point),
-            scale(scale)
+            scale(scale),
+            side(scale * 2.0f)
         {}
         Vertex point;
         float  scale;
+        float  side;
     };
 
-    //! LineSegment is used to draw lines with triangles with GL_TRIANGLES
+    //! LineSegment is used to draw lines with triangles with GL_TRIANGLES.
+    //! See LineVertex for why `side` is tracked separately from `scale`.
     struct LineSegment
     {
-        LineSegment(const Vertex &point1, const Vertex &point2, float scale) :
+        LineSegment(const Vertex &point1, const Vertex &point2, float scale, float side) :
             point1(point1),
             point2(point2),
-            scale(scale)
+            scale(scale),
+            side(side)
         {}
         Vertex point1;
         Vertex point2;
         float  scale;
+        float  side;
     };
 
-    void draw_lines(int count, int offset) const;
-    void draw_triangles(int count, int offset) const;
-    void draw_triangle_strip(int count, int offset) const;
+    void draw_lines(int count, int offset);
+    void draw_triangles(int count, int offset);
+    void draw_triangle_strip(int count, int offset);
     void setup_shader();
     void setup_vbo();
     void create_vbo_lines();
@@ -272,26 +277,26 @@ private:
     float width_multiplyer() const;
     float rasterized_width() const;
 
-    std::vector<LineVertex>             m_verticesTr;
-    std::vector<LineSegment>            m_segments;
-    std::vector<Vertex>                 m_vertices;
-    std::vector<Color>                  m_colors;
-    std::unique_ptr<gl::VertexObject>   m_lnVO;
-    std::unique_ptr<gl::VertexObject>   m_trVO;
-    std::unique_ptr<gl::Buffer>         m_lnBO;
-    std::unique_ptr<gl::Buffer>         m_trBO;
-    const Renderer                     &m_renderer;
-    float                               m_width;
-    PrimType                            m_primType;
-    StorageType                         m_storageType;
-    VertexFormat                        m_format;
-    int                                 m_hints{ 0 };
-    bool                                m_useTriangles{ false };
-    bool                                m_verticesTriangulated{ false };
-    bool                                m_segmented{ false };
-    bool                                m_loopDone{ false };
-    bool                                m_inUse{ false };
-    CelestiaGLProgram                  *m_prog{ nullptr };
+    std::vector<LineVertex>   m_verticesTr;
+    std::vector<LineSegment>  m_segments;
+    std::vector<Vertex>       m_vertices;
+    std::vector<Color>        m_colors;
+    gl::VertexObject          m_lnVO;
+    gl::VertexObject          m_trVO;
+    gl::Buffer                m_lnBO;
+    gl::Buffer                m_trBO;
+    const Renderer           &m_renderer;
+    float                     m_width;
+    PrimType                  m_primType;
+    StorageType               m_storageType;
+    VertexFormat              m_format;
+    int                       m_hints{ 0 };
+    bool                      m_useTriangles{ false };
+    bool                      m_verticesTriangulated{ false };
+    bool                      m_segmented{ false };
+    bool                      m_loopDone{ false };
+    bool                      m_inUse{ false };
+    CelestiaGLProgram        *m_prog{ nullptr };
 };
 
 }

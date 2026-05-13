@@ -84,7 +84,7 @@ void longLatLabel(const std::string& labelText,
         labelPos *= planetZ / z;
 
         renderer.addObjectAnnotation(nullptr, labelText,
-                                     Renderer::PlanetographicGridLabelColor,
+                                     renderer.colors.PlanetographicGridLabel,
                                      labelPos.cast<float>(),
                                      Renderer::LabelHorizontalAlignment::Start,
                                      Renderer::LabelVerticalAlignment::Bottom);
@@ -215,14 +215,14 @@ RenderDetails::renderLatitude(int latitudeStep,
         {
             latitudeRenderer.finish();
             equatorRenderer.render({&projection, &mvcur},
-                                   Renderer::PlanetEquatorColor,
+                                   renderer.colors.PlanetEquator,
                                    circleSubdivisions+1);
             equatorRenderer.finish();
         }
         else
         {
             latitudeRenderer.render({&projection, &mvcur},
-                                    Renderer::PlanetographicGridColor,
+                                    renderer.colors.PlanetographicGrid,
                                     circleSubdivisions+1);
         }
 
@@ -250,7 +250,7 @@ RenderDetails::renderLongitude(int longitudeStep,
                                                                            Eigen::Vector3f::UnitY()));
 
         longitudeRenderer.render({&projection, &mvcur},
-                                 Renderer::PlanetographicGridColor,
+                                 renderer.colors.PlanetographicGrid,
                                  circleSubdivisions + 1);
 
         if (!showCoordinateLabels)

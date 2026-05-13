@@ -22,8 +22,10 @@
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
+#include "meshmanager.h"
 
 namespace astro = celestia::astro;
+namespace engine = celestia::engine;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -91,7 +93,10 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
 }
 
 
-bool DeepSkyObject::load(const util::AssociativeArray* params, const std::filesystem::path& resPath, std::string_view name)
+bool DeepSkyObject::load(const util::AssociativeArray* params,
+                         const std::filesystem::path& resPath,
+                         engine::GeometryPaths&,
+                         std::string_view name)
 {
     // Get position
     if (auto pos = params->getLengthVector<double>("Position", astro::KM_PER_LY<double>); pos.has_value())

@@ -13,11 +13,12 @@
 #include <fstream>
 #include <string_view>
 #include <system_error>
+#include <utility>
 
-#include <fmt/format.h>
-#include <fmt/ostream.h>
 #include <SDL.h>
 
+#include <celestia/celestiacore.h>
+#include "alerter.h"
 #include "appwindow.h"
 #include "gui.h"
 #include "helpers.h"
@@ -63,7 +64,7 @@ Environment::init()
 }
 
 bool
-Environment::setGLAttributes() const
+Environment::setGLAttributes(int aaSamples) const
 {
     if (SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) != 0)
     {
@@ -92,11 +93,20 @@ Environment::setGLAttributes() const
     }
 #endif
 
+    if (aaSamples > 1 &&
+        (SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1) != 0 ||
+         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, aaSamples) != 0))
+    {
+        fmt::print("Could not set multisample anti-aliasing\n");
+    }
+
     return true;
 }
 
 std::unique_ptr<AppWindow>
-Environment::createAppWindow(const Settings& settings)
+Environment::createAppWindow(const Settings& settings,
+                             std::unique_ptr<CelestiaCore>&& celestiaCore,
+                             std::unique_ptr<Alerter>&& alerter)
 {
     Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
     if (settings.isFullscreen)
@@ -134,6 +144,8 @@ Environment::createAppWindow(const Settings& settings)
 
     return std::make_unique<AppWindow>(AppWindow::Private{},
                                        shared_from_this(),
+                                       std::move(celestiaCore),
+                                       std::move(alerter),
                                        std::move(window),
                                        std::move(context),
                                        settings.isFullscreen);

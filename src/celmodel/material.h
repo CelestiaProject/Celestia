@@ -18,8 +18,7 @@
 #include <Eigen/Core>
 
 #include <celutil/color.h>
-#include <celutil/reshandle.h>
-
+#include <celutil/texhandle.h>
 
 namespace cmod
 {
@@ -27,12 +26,7 @@ namespace cmod
 class Color
 {
 public:
-    constexpr Color() :
-        m_red(0.0f),
-        m_green(0.0f),
-        m_blue(0.0f)
-    {
-    }
+    constexpr Color() = default;
 
     constexpr Color(float r, float g, float b) :
         m_red(r),
@@ -48,17 +42,17 @@ public:
     {
     }
 
-    constexpr float red() const
+    constexpr float red() const noexcept
     {
         return m_red;
     }
 
-    constexpr float green() const
+    constexpr float green() const noexcept
     {
         return m_green;
     }
 
-    constexpr float blue() const
+    constexpr float blue() const noexcept
     {
         return m_blue;
     }
@@ -84,11 +78,10 @@ public:
     }
 
 private:
-    float m_red;
-    float m_green;
-    float m_blue;
+    float m_red{ 0.0f };
+    float m_green{ 0.0f };
+    float m_blue{ 0.0f };
 };
-
 
 enum class BlendMode : std::int16_t
 {
@@ -98,7 +91,6 @@ enum class BlendMode : std::int16_t
     BlendMax                = 3,
     InvalidBlend            = -1,
 };
-
 
 enum class TextureSemantic : std::int16_t
 {
@@ -110,45 +102,72 @@ enum class TextureSemantic : std::int16_t
     InvalidTextureSemantic = -1,
 };
 
-
-class Material
+struct Material
 {
-public:
-    Material();
-    ~Material() = default;
-    Material(Material&&) = default;
-    Material& operator=(Material&&) = default;
+    Material() { maps.fill(celestia::util::TextureHandle::Invalid); }
 
-    Material clone() const { return *this; }
-
-    inline ResourceHandle getMap(TextureSemantic semantic) const
+    celestia::util::TextureHandle getMap(TextureSemantic semantic) const
     {
         return maps[static_cast<std::size_t>(semantic)];
     }
 
-    inline void setMap(TextureSemantic semantic, ResourceHandle handle)
+    void setMap(TextureSemantic semantic, celestia::util::TextureHandle handle)
     {
         maps[static_cast<std::size_t>(semantic)] = handle;
     }
 
-    Color diffuse{ 0.0f, 0.0f, 0.0f };
-    Color emissive{ 0.0f, 0.0f, 0.0f };
-    Color specular{ 0.0f, 0.0f, 0.0f };
+    Color diffuse;
+    Color emissive;
+    Color specular;
     float specularPower{ 1.0f };
     float opacity{ 1.0f };
     BlendMode blend{ BlendMode::NormalBlend };
-    std::array<ResourceHandle, static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
-
-    bool operator==(const Material& other) const;
-    bool operator!=(const Material& other) const;
-
-    // Define an ordering for materials; required for elimination of duplicate
-    // materials.
-    bool operator<(const Material& other) const;
-
-private:
-    Material(const Material&) = default;
-    Material& operator=(const Material&) = default;
+    std::array<celestia::util::TextureHandle,
+               static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
 };
+
+inline bool operator==(const Material& lhs, const Material& rhs)
+{
+    return std::tie(lhs.opacity, lhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
+        == std::tie(rhs.opacity, rhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
+}
+
+inline bool operator!=(const Material& lhs, const Material& rhs)
+{
+    return !(lhs == rhs);
+}
+
+// Define an ordering for materials; required for elimination of duplicate
+// materials.
+inline bool operator<(const Material& lhs, const Material& rhs)
+{
+    // Checking opacity first and doing it backwards is deliberate. It means
+    // that after sorting, translucent materials will end up with higher
+    // material indices than opaque ones. Ultimately, after sorting
+    // mesh primitive groups by material, translucent groups will end up
+    // rendered after opaque ones.
+
+    // Reverse sense of comparison for blending--additive blending is 1, normal
+    // blending is 0, and we'd prefer to render additively blended submeshes
+    // last.
+
+    return std::tie(lhs.opacity, rhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
+         < std::tie(rhs.opacity, lhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
+}
+
+inline bool operator>(const Material& lhs, const Material& rhs)
+{
+    return rhs < lhs;
+}
+
+inline bool operator<=(const Material& lhs, const Material& rhs)
+{
+    return !(rhs < lhs);
+}
+
+inline bool operator>=(const Material& lhs, const Material& rhs)
+{
+    return !(lhs < rhs);
+}
 
 } // namespace cmod

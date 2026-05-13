@@ -18,7 +18,6 @@
 #include <celengine/body.h>
 #include <celengine/location.h>
 #include <celengine/planetgrid.h>
-#include <celengine/multitexture.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <celengine/visibleregion.h>
@@ -1305,7 +1304,6 @@ static int object_phases(lua_State* l)
     return 1;
 }
 
-
 /*! object:setringstexture(string: texture_name, string: path)
 *
 * Sets the texture for the object's rings. The texture at path will
@@ -1343,7 +1341,7 @@ static int object_setringstexture(lua_State* l)
     if (path == nullptr)
         path = "";
 
-    rings->texture = MultiResTexture(textureName, path);
+    rings->texture = celx.appCore()->getTexturePaths()->getHandle(textureName, path);
 
     return 0;
 }
@@ -1372,7 +1370,7 @@ static int object_setcloudtexture(lua_State* l)
     if (body == nullptr)
         return 0;
 
-    auto atmosphere = GetBodyFeaturesManager()->getAtmosphere(body);
+    Atmosphere* atmosphere = GetBodyFeaturesManager()->getAtmosphere(body);
     if (atmosphere == nullptr)
         return 0;
 
@@ -1386,11 +1384,10 @@ static int object_setcloudtexture(lua_State* l)
     if (path == nullptr)
         path = "";
 
-    atmosphere->cloudTexture = MultiResTexture(textureName, path);
+    atmosphere->cloudTexture = celx.appCore()->getTexturePaths()->getHandle(textureName, path, celestia::engine::TextureFlags::WrapTexture);
 
     return 0;
 }
-
 
 static int object_getmass(lua_State* l)
 {

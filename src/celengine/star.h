@@ -23,12 +23,12 @@
 
 #include <Eigen/Core>
 
-#include <celengine/astroobj.h>
-#include <celengine/multitexture.h>
-#include <celengine/stellarclass.h>
 #include <celutil/array_view.h>
 #include <celutil/flag.h>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
+#include "astroobj.h"
+#include "meshmanager.h"
+#include "stellarclass.h"
 
 class Selection;
 class Star;
@@ -48,9 +48,11 @@ class StarDetails
 public:
     struct StarTextureSet
     {
-        MultiResTexture defaultTex{ };
-        MultiResTexture neutronStarTex{ };
-        std::array<MultiResTexture, StellarClass::Spectral_Count> starTex{ };
+        StarTextureSet() { starTex.fill(celestia::util::TextureHandle::Invalid); }
+
+        celestia::util::TextureHandle defaultTex{ celestia::util::TextureHandle::Invalid };
+        celestia::util::TextureHandle neutronStarTex{ celestia::util::TextureHandle::Invalid };
+        std::array<celestia::util::TextureHandle, StellarClass::Spectral_Count> starTex;
     };
 
     ~StarDetails() = default;
@@ -64,8 +66,8 @@ public:
 
     float getRadius() const;
     float getTemperature() const;
-    ResourceHandle getGeometry() const;
-    MultiResTexture getTexture() const;
+    celestia::engine::GeometryHandle getGeometry() const;
+    celestia::util::TextureHandle getTexture() const;
     const celestia::ephem::Orbit* getOrbit() const;
     float getOrbitalRadius() const;
     const char* getSpectralType() const;
@@ -80,8 +82,8 @@ public:
     static void setRadius(boost::intrusive_ptr<StarDetails>&, float);
     static void setTemperature(boost::intrusive_ptr<StarDetails>&, float);
     static void setBolometricCorrection(boost::intrusive_ptr<StarDetails>&, float);
-    static void setTexture(boost::intrusive_ptr<StarDetails>&, const MultiResTexture&);
-    static void setGeometry(boost::intrusive_ptr<StarDetails>&, ResourceHandle);
+    static void setTexture(boost::intrusive_ptr<StarDetails>&, celestia::util::TextureHandle);
+    static void setGeometry(boost::intrusive_ptr<StarDetails>&, celestia::engine::GeometryHandle);
     static void setOrbit(boost::intrusive_ptr<StarDetails>&, const std::shared_ptr<const celestia::ephem::Orbit>&);
     static void setOrbitBarycenter(boost::intrusive_ptr<StarDetails>&, Star*);
     static void setVisibility(boost::intrusive_ptr<StarDetails>&, bool);
@@ -136,8 +138,8 @@ private:
     bool visible{ true };
     std::array<char, 8> spectralType{ };
 
-    MultiResTexture texture;
-    ResourceHandle geometry{ InvalidResource };
+    celestia::util::TextureHandle texture{ celestia::util::TextureHandle::Invalid };
+    celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
 
     std::shared_ptr<const celestia::ephem::Orbit> orbit;
     float orbitalRadius{ 0.0f };
@@ -169,13 +171,13 @@ StarDetails::getTemperature() const
     return temperature;
 }
 
-inline ResourceHandle
+inline celestia::engine::GeometryHandle
 StarDetails::getGeometry() const
 {
     return geometry;
 }
 
-inline MultiResTexture
+inline celestia::util::TextureHandle
 StarDetails::getTexture() const
 {
     return texture;
@@ -290,8 +292,8 @@ public:
     float getTemperature() const;
     const char* getSpectralType() const;
     float getBolometricMagnitude() const;
-    MultiResTexture getTexture() const;
-    ResourceHandle getGeometry() const;
+    celestia::util::TextureHandle getTexture() const;
+    celestia::engine::GeometryHandle getGeometry() const;
     const celestia::ephem::Orbit* getOrbit() const;
     float getOrbitalRadius() const;
     Star* getOrbitBarycenter() const;

@@ -245,8 +245,10 @@ CommandSetFrame::CommandSetFrame(ObserverFrame::CoordinateSystem _coordSys,
 
 void CommandSetFrame::processInstantaneous(ExecutionEnvironment& env)
 {
-    Selection ref = env.getSimulation()->findObjectFromPath(refObjectName);
+    Selection ref;
     Selection target;
+    if (coordSys != ObserverFrame::CoordinateSystem::Universal)
+        ref = env.getSimulation()->findObjectFromPath(refObjectName);
     if (coordSys == ObserverFrame::CoordinateSystem::PhaseLock)
         target = env.getSimulation()->findObjectFromPath(targetObjectName);
     env.getSimulation()->setFrame(coordSys, ref, target);
@@ -360,34 +362,36 @@ void CommandChangeDistance::process(ExecutionEnvironment& env, double /*unused*/
 // Orbit command: rotate about the selected object
 
 CommandOrbit::CommandOrbit(double _duration, const Eigen::Vector3f& axis, float rate) :
-    TimedCommand(_duration),
-    spin(axis * rate)
+    TimedCommand(_duration)
 {
+    Eigen::Vector3f spin = axis * rate;
+    spinMag = spin.norm();
+    spinAxis = spinMag != 0.0f ? Eigen::Vector3f(spin / spinMag) : Eigen::Vector3f::Zero();
 }
 
 void CommandOrbit::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
-    float v = spin.norm();
-    if (v != 0.0f)
+    if (spinMag != 0.0f)
     {
-       auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
-       env.getSimulation()->orbit(q);
+        auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
+        env.getSimulation()->orbit(q);
     }
 }
 
 CommandRotate::CommandRotate(double _duration, const Eigen::Vector3f& axis, float rate) :
-    TimedCommand(_duration),
-    spin(axis * rate)
+    TimedCommand(_duration)
 {
+    Eigen::Vector3f spin = axis * rate;
+    spinMag = spin.norm();
+    spinAxis = spinMag != 0.0f ? Eigen::Vector3f(spin / spinMag) : Eigen::Vector3f::Zero();
 }
 
 void CommandRotate::process(ExecutionEnvironment& env, double /*unused*/, double dt)
 {
-    float v = spin.norm();
-    if (v != 0.0f)
+    if (spinMag != 0.0f)
     {
-       auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(v * dt), (spin / v).normalized()));
-       env.getSimulation()->rotate(q);
+        auto q = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(spinMag * dt), spinAxis));
+        env.getSimulation()->rotate(q);
     }
 }
 
@@ -674,7 +678,7 @@ void CommandCapture::processInstantaneous(ExecutionEnvironment& env)
 ////////////////
 // Set texture resolution command
 
-CommandSetTextureResolution::CommandSetTextureResolution(TextureResolution _res) :
+CommandSetTextureResolution::CommandSetTextureResolution(engine::TextureResolution _res) :
     res(_res)
 {
 }
@@ -684,7 +688,6 @@ void CommandSetTextureResolution::processInstantaneous(ExecutionEnvironment& env
     if (env.getRenderer() != nullptr)
     {
         env.getRenderer()->setResolution(res);
-        env.getCelestiaCore()->notifyWatchers(CelestiaCore::RenderFlagsChanged);
     }
 }
 
@@ -1052,7 +1055,6 @@ void CommandSetWindowBordersVisible::processInstantaneous(ExecutionEnvironment& 
     env.getCelestiaCore()->setFramesVisible(visible);
 }
 
-
 ///////////////
 // SetRingsTexture command
 CommandSetRingsTexture::CommandSetRingsTexture(std::string _object,
@@ -1075,7 +1077,7 @@ void CommandSetRingsTexture::processInstantaneous(ExecutionEnvironment& env)
 
     auto rings = GetBodyFeaturesManager()->getRings(body);
     if (rings != nullptr)
-        rings->texture = MultiResTexture(textureName, path);
+        rings->texture = env.getCelestiaCore()->getTexturePaths()->getHandle(textureName, path);
 }
 
 } // end namespace celestia::scripts

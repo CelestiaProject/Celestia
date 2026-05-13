@@ -2,6 +2,7 @@ set(CELENGINE_SOURCES
   asterism.cpp
   asterism.h
   astroobj.h
+  atmosphere.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h
@@ -41,6 +42,7 @@ set(CELENGINE_SOURCES
   galaxy.h
   galaxyform.cpp
   galaxyform.h
+  geometry.cpp
   geometry.h
   glmarker.cpp
   globular.cpp
@@ -60,8 +62,6 @@ set(CELENGINE_SOURCES
   meshmanager.h
   modelgeometry.cpp
   modelgeometry.h
-  multitexture.cpp
-  multitexture.h
   name.cpp
   name.h
   nebula.cpp
@@ -92,6 +92,8 @@ set(CELENGINE_SOURCES
   rendcontext.h
   render.cpp
   render.h
+  rendercolors.cpp
+  rendercolors.h
   renderflags.h
   renderglsl.cpp
   renderglsl.h

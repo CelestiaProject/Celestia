@@ -67,9 +67,9 @@ struct Blob
 
 struct GlobularForm
 {
-    std::vector<Blob> gblobs{ };
-    mutable gl::Buffer bo{ util::NoCreateT{} };
-    mutable gl::VertexObject vo{ util::NoCreateT{} };
+    std::vector<Blob> gblobs;
+    mutable gl::Buffer bo;
+    mutable gl::VertexObject vo;
     mutable bool GLDataInitialized{ false };
 };
 
@@ -101,7 +101,7 @@ relStarDensity(float eta)
 }
 
 void
-centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
+centerCloudTexEval(float u, float v, std::uint8_t *pixel)
 {
     /*! For reasons of speed, calculate central "cloud" texture only for
      *  8 bins of King_1962 concentration, c = CBin, XI(CBin), RRatio(CBin).
@@ -129,7 +129,7 @@ centerCloudTexEval(float u, float v, float /*w*/, std::uint8_t *pixel)
 }
 
 void
-colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
+colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
 {
     auto i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
 
@@ -348,7 +348,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
 }
 
 void
-globularTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
+globularTextureEval(float u, float v, std::uint8_t *pixel)
 {
     // use an exponential luminosity shape for the individual stars
     // giving sort of a halo for the brighter (i.e.bigger) stars.
@@ -416,7 +416,7 @@ public:
 private:
     void initializeForms();
 
-    std::array<GlobularForm, Globular::GlobularBuckets> globularForms{ };
+    std::array<GlobularForm, Globular::GlobularBuckets> globularForms;
     std::array<std::unique_ptr<Texture>, Globular::GlobularBuckets> centerTex;
     std::unique_ptr<Texture> globularTex;
     std::unique_ptr<Texture> colorTex;
@@ -435,9 +435,9 @@ GlobularRenderer::FormManager::getCenterTex(int form)
 {
     if (centerTex[form] == nullptr)
     {
-        centerTex[form] = CreateProceduralTexture(cntrTexWidth, cntrTexHeight,
-                                                  engine::PixelFormat::Luminance,
-                                                  centerCloudTexEval);
+        centerTex[form] = ImageTexture::createProcedural(cntrTexWidth, cntrTexHeight,
+                                                         engine::PixelFormat::Luminance,
+                                                         &centerCloudTexEval);
     }
 
     assert(centerTex[form] != nullptr);
@@ -449,9 +449,9 @@ GlobularRenderer::FormManager::getGlobularTex()
 {
     if (globularTex == nullptr)
     {
-        globularTex = CreateProceduralTexture(starTexWidth, starTexHeight,
-                                              engine::PixelFormat::Luminance,
-                                              globularTextureEval);
+        globularTex = ImageTexture::createProcedural(starTexWidth, starTexHeight,
+                                                     engine::PixelFormat::Luminance,
+                                                     &globularTextureEval);
     }
     assert(globularTex != nullptr);
     return globularTex.get();
@@ -462,10 +462,12 @@ GlobularRenderer::FormManager::getColorTex()
 {
     if (colorTex == nullptr)
     {
-        colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
-                                           colorTextureEval,
-                                           Texture::EdgeClamp,
-                                           Texture::NoMipMaps);
+        // Color values are authored in sRGB; mark the texture accordingly so
+        // GL linearizes them when the shader samples the colour lookup table.
+        colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::sRGBA,
+                                                  &colorTextureEval,
+                                                  Texture::EdgeClamp,
+                                                  Texture::NoMipMaps);
     }
     assert(colorTex != nullptr);
     return colorTex.get();
@@ -530,8 +532,8 @@ GlobularRenderer::render()
     if (m_objects.empty())
         return;
 
-    auto *tidalProg = m_renderer.getShaderManager().getShader("tidal");
-    auto *globProg  = m_renderer.getShaderManager().getShader("globular");
+    auto *tidalProg = m_renderer.getShaderManager().getShader(StaticShader::Tidal);
+    auto *globProg  = m_renderer.getShaderManager().getShader(StaticShader::Globular);
     if (tidalProg == nullptr || globProg == nullptr)
         return;
 

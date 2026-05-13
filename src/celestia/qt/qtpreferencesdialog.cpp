@@ -18,6 +18,7 @@
 #include <Qt>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QSettings>
 #include <QRadioButton>
 #include <QSlider>
 #include <QSpinBox>
@@ -30,6 +31,7 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 
@@ -219,17 +221,28 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     ui.antialiasLinesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowSmoothLines));
 
+    ui.sRGBRenderingCombo->addItem(_("Use config default"));
+    ui.sRGBRenderingCombo->addItem(_("Enabled"));
+    ui.sRGBRenderingCombo->addItem(_("Disabled"));
+    {
+        QSettings settings;
+        if (!settings.contains("sRGBRendering"))
+            ui.sRGBRenderingCombo->setCurrentIndex(0);
+        else
+            ui.sRGBRenderingCombo->setCurrentIndex(settings.value("sRGBRendering").toBool() ? 1 : 2);
+    }
+
     switch (renderer->getResolution())
     {
-        case TextureResolution::lores:
+        case engine::TextureResolution::lores:
             ui.lowResolutionButton->setChecked(true);
             break;
 
-        case TextureResolution::medres:
+        case engine::TextureResolution::medres:
             ui.mediumResolutionButton->setChecked(true);
             break;
 
-        case TextureResolution::hires:
+        case engine::TextureResolution::hires:
             ui.highResolutionButton->setChecked(true);
     }
 
@@ -703,6 +716,16 @@ PreferencesDialog::on_antialiasLinesCheck_stateChanged(int state)
     setRenderFlag(appCore, ::RenderFlags::ShowSmoothLines, state);
 }
 
+void
+PreferencesDialog::on_sRGBRenderingCombo_currentIndexChanged(int index)
+{
+    QSettings settings;
+    if (index == 0)
+        settings.remove("sRGBRendering");
+    else
+        settings.setValue("sRGBRendering", index == 1);
+}
+
 // Texture resolution
 
 void
@@ -711,7 +734,7 @@ PreferencesDialog::on_lowResolutionButton_clicked() const
     if (ui.lowResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(TextureResolution::lores);
+        renderer->setResolution(engine::TextureResolution::lores);
     }
 }
 
@@ -721,7 +744,7 @@ PreferencesDialog::on_mediumResolutionButton_clicked() const
     if (ui.mediumResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(TextureResolution::medres);
+        renderer->setResolution(engine::TextureResolution::medres);
     }
 }
 
@@ -731,7 +754,7 @@ PreferencesDialog::on_highResolutionButton_clicked() const
     if (ui.highResolutionButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setResolution(TextureResolution::hires);
+        renderer->setResolution(engine::TextureResolution::hires);
     }
 }
 

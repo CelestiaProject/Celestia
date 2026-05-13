@@ -239,7 +239,6 @@ static int celestia_show(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setRenderFlags(r->getRenderFlags() | flags);
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -263,7 +262,6 @@ static int celestia_hide(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setRenderFlags(r->getRenderFlags() & ~flags);
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -323,7 +321,6 @@ static int celestia_setrenderflags(lua_State* l)
         lua_pop(l,1);
     }
     appCore->getRenderer()->setRenderFlags(renderFlags);
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -451,7 +448,6 @@ static int celestia_showlabel(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setLabelMode(r->getLabelMode() | flags);
-    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -473,7 +469,6 @@ static int celestia_hidelabel(lua_State* l)
 
     Renderer* r = appCore->getRenderer();
     r->setLabelMode(r->getLabelMode() & ~flags);
-    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -530,7 +525,6 @@ static int celestia_setlabelflags(lua_State* l)
         lua_pop(l,1);
     }
     appCore->getRenderer()->setLabelMode(labelFlags);
-    appCore->notifyWatchers(CelestiaCore::LabelFlagsChanged);
 
     return 0;
 }
@@ -990,24 +984,82 @@ static int celestia_getlinecolor(lua_State* l)
     return 3;
 }
 
-static int celestia_setexposure(lua_State* l)
-{
-    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setexposure()");
 
+static int celestia_setfaintestvisible(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestvisible()");
     CelestiaCore* appCore = this_celestia(l);
-    auto exposure = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setexposure() must be a number"));
-    appCore->getSimulation()->setExposure(exposure);
+    float faintest = (float)Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setfaintestvisible() must be a number");
+    if (util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
+    {
+        faintest = min(12.0f, max(6.0f, faintest));
+        appCore->getRenderer()->setFaintestAM45deg(faintest);
+        appCore->setFaintestAutoMag();
+    }
+    else
+    {
+        faintest = min(15.0f, max(1.0f, faintest));
+        appCore->setFaintest(faintest);
+    }
 
     return 0;
 }
 
-static int celestia_getexposure(lua_State* l)
+static int celestia_getfaintestvisible(lua_State* l)
 {
-    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getexposure()");
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestvisible()");
+    if (const CelestiaCore* appCore = this_celestia(l);
+        util::is_set(appCore->getRenderer()->getRenderFlags(), RenderFlags::ShowAutoMag))
+    {
+        lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
+    }
+    else
+    {
+        lua_pushnumber(l, appCore->getSimulation()->getFaintestVisible());
+    }
+    return 1;
+}
 
+// celestia:setfaintest(mag)
+//
+// Set the simulation's faintest-visible-magnitude (the value used when
+// AutoMag is off), unconditionally and without clamping. Equivalent to
+// the legacy setvisibilitylimit{} command. Note: celestia:setfaintestvisible
+// branches on the current AutoMag state and clamps -- prefer this one
+// when you specifically want the non-AutoMag handle.
+static int celestia_setfaintest(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintest()");
     CelestiaCore* appCore = this_celestia(l);
-    lua_pushnumber(l, appCore->getSimulation()->getExposure());
+    float mag = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors,
+                                                      "Argument to celestia:setfaintest() must be a number"));
+    appCore->setFaintest(mag);
+    return 0;
+}
 
+// celestia:setfaintestam45deg(mag)
+//
+// Set the renderer's faintest-visible magnitude at 45-degree FOV (the
+// value used when AutoMag is on), unconditionally and without clamping.
+// Equivalent to the legacy setfaintestautomag45deg{} command. Unlike
+// celestia:setfaintestvisible, this works even when AutoMag is currently
+// off, so scripts can prime the value before flipping AutoMag on.
+static int celestia_setfaintestam45deg(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:setfaintestam45deg()");
+    CelestiaCore* appCore = this_celestia(l);
+    float mag = static_cast<float>(Celx_SafeGetNumber(l, 2, AllErrors,
+                                                      "Argument to celestia:setfaintestam45deg() must be a number"));
+    appCore->getRenderer()->setFaintestAM45deg(mag);
+    return 0;
+}
+
+// celestia:getfaintestam45deg()
+static int celestia_getfaintestam45deg(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getfaintestam45deg()");
+    const CelestiaCore* appCore = this_celestia(l);
+    lua_pushnumber(l, appCore->getRenderer()->getFaintestAM45deg());
     return 1;
 }
 
@@ -1514,7 +1566,7 @@ static int celestia_dsos(lua_State* l)
 static int celestia_setambient(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setambient");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     double ambientLightLevel = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:setambient must be a number");
@@ -1522,7 +1574,6 @@ static int celestia_setambient(lua_State* l)
 
     if (renderer != nullptr)
         renderer->setAmbientLightLevel(static_cast<float>(ambientLightLevel));
-    appCore->notifyWatchers(CelestiaCore::AmbientLightChanged);
 
     return 0;
 }
@@ -1546,7 +1597,7 @@ static int celestia_getambient(lua_State* l)
 static int celestia_settintsaturation(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settintsaturation");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     Renderer* renderer = appCore->getRenderer();
     double tintSaturation = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settintsaturation must be a number");
@@ -1554,7 +1605,6 @@ static int celestia_settintsaturation(lua_State* l)
 
     if (renderer != nullptr)
         renderer->setTintSaturation(static_cast<float>(tintSaturation));
-    appCore->notifyWatchers(CelestiaCore::TintSaturationChanged);
 
     return 0;
 }
@@ -1642,6 +1692,58 @@ static int celestia_getstardistancelimit(lua_State* l)
     return 1;
 }
 
+static int celestia_getstarstyle(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No argument expected in celestia:getstarstyle");
+    CelestiaCore* appCore = this_celestia(l);
+
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == nullptr)
+    {
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
+    }
+
+    StarStyle starStyle = renderer->getStarStyle();
+    switch (starStyle)
+    {
+    case StarStyle::FuzzyPointStars:
+        lua_pushstring(l, "fuzzy"); break;
+    case StarStyle::PointStars:
+        lua_pushstring(l, "point"); break;
+    case StarStyle::ScaledDiscStars:
+        lua_pushstring(l, "disc"); break;
+    default:
+        lua_pushstring(l, "invalid starstyle");
+    };
+    return 1;
+}
+
+static int celestia_setstarstyle(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarstyle");
+    const CelestiaCore* appCore = this_celestia(l);
+
+    std::string_view starStyle = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarstyle must be a string");
+    Renderer* renderer = appCore->getRenderer();
+    if (renderer == nullptr)
+    {
+        Celx_DoError(l, "Internal Error: renderer is nullptr!");
+        return 0;
+    }
+
+    if (starStyle == "fuzzy"sv)
+        renderer->setStarStyle(StarStyle::FuzzyPointStars);
+    else if (starStyle == "point"sv)
+        renderer->setStarStyle(StarStyle::PointStars);
+    else if (starStyle == "disc"sv)
+        renderer->setStarStyle(StarStyle::ScaledDiscStars);
+    else
+       Celx_DoError(l, "Invalid starstyle");
+
+    return 0;
+}
+
 // -----------------------------------------------------------------------------
 // Star Color
 
@@ -1659,6 +1761,9 @@ static int celestia_getstarcolor(lua_State* l)
 
     switch (renderer->getStarColorTable())
     {
+    case ColorTableType::Enhanced:
+        lua_pushstring(l, "enhanced");
+        break;
     case ColorTableType::Blackbody_D65:
         lua_pushstring(l, "blackbody_d65");
         break;
@@ -1679,7 +1784,7 @@ static int celestia_getstarcolor(lua_State* l)
 static int celestia_setstarcolor(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:setstarcolor");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     std::string_view starColor = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:setstarcolor must be a string");
     Renderer* renderer = appCore->getRenderer();
@@ -1691,13 +1796,14 @@ static int celestia_setstarcolor(lua_State* l)
 
     if (starColor == "blackbody_d65"sv)
         renderer->setStarColorTable(ColorTableType::Blackbody_D65);
+    else if (starColor == "enhanced"sv)
+        renderer->setStarColorTable(ColorTableType::Enhanced);
     else if (starColor == "sunwhite"sv)
         renderer->setStarColorTable(ColorTableType::SunWhite);
     else if (starColor == "vegawhite"sv)
         renderer->setStarColorTable(ColorTableType::VegaWhite);
     else
         Celx_DoError(l, "Invalid starcolor");
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -1724,7 +1830,7 @@ static int celestia_gettextureresolution(lua_State* l)
 static int celestia_settextureresolution(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected in celestia:settextureresolution");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
 
     auto textureResValue = Celx_SafeGetNumber(l, 2, AllErrors, "Argument to celestia:settextureresolution must be a number");
     Renderer* renderer = appCore->getRenderer();
@@ -1743,20 +1849,18 @@ static int celestia_settextureresolution(lua_State* l)
     switch (static_cast<int>(textureResValue))
     {
         case 0:
-            renderer->setResolution(TextureResolution::lores);
+            renderer->setResolution(engine::TextureResolution::lores);
             break;
         case 1:
-            renderer->setResolution(TextureResolution::medres);
+            renderer->setResolution(engine::TextureResolution::medres);
             break;
         case 2:
-            renderer->setResolution(TextureResolution::hires);
+            renderer->setResolution(engine::TextureResolution::hires);
             break;
         default:
             assert(0);
             break;
     }
-
-    appCore->notifyWatchers(CelestiaCore::RenderFlagsChanged);
 
     return 0;
 }
@@ -2284,7 +2388,7 @@ static int celestia_isplayingaudio(lua_State* l)
 static int celestia_playaudio(lua_State* l)
 {
 #ifdef USE_MINIAUDIO
-    Celx_CheckArgs(l, 3, 7, "Function celestia:playaudio requires two to seven arguments");
+    Celx_CheckArgs(l, 3, 8, "Function celestia:playaudio requires two to seven arguments");
     int channel = celestia_getchannel(l, "First argument for celestia:playaudio must be a number");
 
     const char* path = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:playaudio must be a string");
@@ -2298,7 +2402,7 @@ static int celestia_playaudio(lua_State* l)
     float volume = clamp(static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:playaudio must be a number", static_cast<lua_Number>(defaultAudioVolume))), minAudioVolume, maxAudioVolume);
     float pan = clamp(static_cast<float>(Celx_SafeGetNumber(l, 6, WrongType, "Fifth argument to celestia:playaudio must be a number", static_cast<lua_Number>(defaultAudioPan))), minAudioPan, maxAudioPan);
     bool loop = Celx_SafeGetBoolean(l, 7, WrongType, "Sixth argument to celestia:playaudio must be a boolean", false);
-    bool nopause = Celx_SafeGetBoolean(l, 7, WrongType, "Seventh argument to celestia:playaudio must be a number(nopause)", false);
+    bool nopause = Celx_SafeGetBoolean(l, 8, WrongType, "Seventh argument to celestia:playaudio must be a boolean", false);
     CelestiaCore* appCore = this_celestia(l);
     lua_pushboolean(l, appCore->playAudio(channel, path, startTime, volume, pan, loop, nopause));
 #else
@@ -2463,6 +2567,16 @@ static int celestia_version(lua_State* l)
     return 1;
 }
 
+static int celestia_language(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:language");
+
+    const char* orig = N_("LANGUAGE");
+    const char* lang = _(orig);
+    lua_pushstring(l, lang == orig ? "en" : lang);
+    return 1;
+}
+
 void CreateCelestiaMetaTable(lua_State* l)
 {
     Celx_CreateClassMetatable(l, Celx_Celestia);
@@ -2503,8 +2617,11 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "gettextcolor",  celestia_gettextcolor);
     Celx_RegisterMethod(l, "getoverlayelements", celestia_getoverlayelements);
     Celx_RegisterMethod(l, "setoverlayelements", celestia_setoverlayelements);
-    Celx_RegisterMethod(l, "getexposure", celestia_getexposure);
-    Celx_RegisterMethod(l, "setexposure", celestia_setexposure);
+    Celx_RegisterMethod(l, "getfaintestvisible", celestia_getfaintestvisible);
+    Celx_RegisterMethod(l, "setfaintestvisible", celestia_setfaintestvisible);
+    Celx_RegisterMethod(l, "setfaintest", celestia_setfaintest);
+    Celx_RegisterMethod(l, "setfaintestam45deg", celestia_setfaintestam45deg);
+    Celx_RegisterMethod(l, "getfaintestam45deg", celestia_getfaintestam45deg);
     Celx_RegisterMethod(l, "getgalaxylightgain", celestia_getgalaxylightgain);
     Celx_RegisterMethod(l, "setgalaxylightgain", celestia_setgalaxylightgain);
     Celx_RegisterMethod(l, "setminfeaturesize", celestia_setminfeaturesize);
@@ -2533,6 +2650,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setminorbitsize", celestia_setminorbitsize);
     Celx_RegisterMethod(l, "getstardistancelimit", celestia_getstardistancelimit);
     Celx_RegisterMethod(l, "setstardistancelimit", celestia_setstardistancelimit);
+    Celx_RegisterMethod(l, "getstarstyle", celestia_getstarstyle);
+    Celx_RegisterMethod(l, "setstarstyle", celestia_setstarstyle);
 
     // New CELX command for Star Color
     Celx_RegisterMethod(l, "getstarcolor", celestia_getstarcolor);
@@ -2587,6 +2706,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setaudionopause", celestia_setaudionopause);
 
     Celx_RegisterMethod(l, "version", celestia_version);
+    Celx_RegisterMethod(l, "language", celestia_language);
 
     lua_pop(l, 1);
 }
@@ -2605,7 +2725,7 @@ static int celestia_log(lua_State* l)
 static int celestia_getparamstring(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to celestia:getparamstring()");
-    CelestiaCore* appCore = this_celestia(l);
+    const CelestiaCore* appCore = this_celestia(l);
     const char* s = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:getparamstring must be a string");
     const CelestiaConfig* config = appCore->getConfig();
     if (auto params = config->configParams.getHash(); params != nullptr)

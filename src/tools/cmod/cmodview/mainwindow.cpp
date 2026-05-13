@@ -10,6 +10,7 @@
 
 #include "mainwindow.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -39,6 +40,7 @@
 
 #include <cel3ds/3dsmodel.h>
 #include <cel3ds/3dsread.h>
+#include <celestia/qt/qtpathutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>
 #include <celmodel/mesh.h>
@@ -48,12 +50,14 @@
 #include "cmodops.h"
 #include "convert3ds.h"
 #include "convertobj.h"
-#include "pathmanager.h"
+#include "modelio.h"
 
 #include "materialwidget.h"
 #include "modelviewwidget.h"
 
 namespace math = celestia::math;
+
+using celestia::qt::QStringToPath;
 
 namespace cmodview
 {
@@ -335,10 +339,10 @@ MainWindow::openModel(const QString& fileName)
 {
     if (!fileName.isEmpty())
     {
-        std::string fileNameStd = std::string(fileName.toUtf8().data());
+        std::filesystem::path fileNameStd = QStringToPath(fileName);
 
         QFileInfo info(fileName);
-        cmodtools::GetPathManager()->reset();
+        cmodtools::GetModelIO()->reset();
 
         if (info.suffix().toLower() == "3ds")
         {
@@ -349,7 +353,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            auto model = cmodtools::Convert3DSModel(*scene, cmodtools::GetPathManager()->getHandle);
+            auto model = cmodtools::Convert3DSModel(*scene, *cmodtools::GetModelIO());
             if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Internal error converting 3DS file %1").arg(fileName));
@@ -418,7 +422,7 @@ MainWindow::openModel(const QString& fileName)
                 return;
             }
 
-            std::unique_ptr<cmod::Model> model = cmod::LoadModel(in, cmodtools::GetPathManager()->getHandle);
+            std::unique_ptr<cmod::Model> model = cmodtools::GetModelIO()->load(in);
             if (model == nullptr)
             {
                 QMessageBox::warning(this, "Load error", tr("Error reading CMOD file %1").arg(fileName));
@@ -455,12 +459,14 @@ MainWindow::saveModelAs()
 void
 MainWindow::saveModel(const QString& saveFileName)
 {
-    std::string fileNameStd = std::string(saveFileName.toUtf8().data());
+    auto model = m_modelView->model();
+    if (!model)
+        return;
 
-    std::ofstream out(fileNameStd, std::ios::out | std::ios::binary);
+    std::ofstream out(QStringToPath(saveFileName), std::ios::out | std::ios::binary);
     bool ok = false;
     if (out.good())
-        ok = SaveModelBinary(m_modelView->model(), out, cmodtools::GetPathManager()->getSource);
+        ok = cmodtools::GetModelIO()->saveBinary(*model, out);
 
     if (!ok)
     {
@@ -591,7 +597,7 @@ MainWindow::generateTangents()
         // Copy materials
         for (unsigned int i = 0; model->getMaterial(i) != nullptr; i++)
         {
-            newModel->addMaterial(model->getMaterial(i)->clone());
+            newModel->addMaterial(*model->getMaterial(i));
         }
 
         for (unsigned int i = 0; model->getMesh(i) != nullptr; i++)

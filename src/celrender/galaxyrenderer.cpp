@@ -34,14 +34,14 @@ constexpr int kGalaxyTextureSize = 128;
 constexpr float kSpriteScaleFactor = 1.0f / 1.55f;
 
 void
-galaxyTextureEval(float u, float v, float /*w*/, std::uint8_t *pixel)
+galaxyTextureEval(float u, float v, std::uint8_t *pixel)
 {
     float r = std::max(0.0f, 0.9f - std::hypot(u, v));
     *pixel = static_cast<std::uint8_t>(r * 255.99f);
 }
 
 void
-colorTextureEval(float u, float /*v*/, float /*w*/, std::uint8_t *pixel)
+colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
 {
     auto i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
 
@@ -124,7 +124,7 @@ GalaxyRenderer::render()
 }
 
 bool
-GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightness, float &size, float minimumFeatureSize, Eigen::Matrix4f &m, Eigen::Matrix4f &pr, int &nPoints) const
+GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightness, float &size, float &minimumFeatureSize, Eigen::Matrix4f &m, Eigen::Matrix4f &pr, int &nPoints) const
 {
     const auto* galacticForm = GalacticFormManager::get()->getForm(obj.galaxy->getFormId());
     if (galacticForm == nullptr)
@@ -171,10 +171,10 @@ GalaxyRenderer::bindTextures()
 {
     if (m_galaxyTex == nullptr)
     {
-        m_galaxyTex = CreateProceduralTexture(kGalaxyTextureSize,
-                                              kGalaxyTextureSize,
-                                              engine::PixelFormat::Luminance,
-                                              &galaxyTextureEval);
+        m_galaxyTex = ImageTexture::createProcedural(kGalaxyTextureSize,
+                                                     kGalaxyTextureSize,
+                                                     engine::PixelFormat::Luminance,
+                                                     &galaxyTextureEval);
     }
 
     assert(m_galaxyTex != nullptr);
@@ -183,10 +183,12 @@ GalaxyRenderer::bindTextures()
 
     if (m_colorTex == nullptr)
     {
-        m_colorTex = CreateProceduralTexture(256, 1, engine::PixelFormat::RGBA,
-                                             &colorTextureEval,
-                                             Texture::EdgeClamp,
-                                             Texture::NoMipMaps);
+        // Color values are authored in sRGB; mark the texture accordingly so
+        // GL linearizes them when the shader samples the colour lookup table.
+        m_colorTex = ImageTexture::createProcedural(256, 1, engine::PixelFormat::sRGBA,
+                                                    &colorTextureEval,
+                                                    Texture::EdgeClamp,
+                                                    Texture::NoMipMaps);
     }
 
     assert(m_colorTex != nullptr);
@@ -197,7 +199,7 @@ GalaxyRenderer::bindTextures()
 void
 GalaxyRenderer::renderGL2()
 {
-    CelestiaGLProgram *prog =  m_renderer.getShaderManager().getShader("galaxy");
+    CelestiaGLProgram *prog =  m_renderer.getShaderManager().getShader(StaticShader::Galaxy);
     if (prog == nullptr)
         return;
 
@@ -341,7 +343,7 @@ GalaxyRenderer::initializeGL2(const CelestiaGLProgram *prog)
         }
         else
         {
-            m_renderData.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
+            m_renderData.emplace_back(gl::Buffer{}, gl::VertexObject{});
         }
         glVertices.clear();
         indices.clear();
@@ -352,7 +354,7 @@ void
 GalaxyRenderer::renderGL3()
 {
     ShaderManager::GeomShaderParams params = {GL_POINTS, GL_TRIANGLE_STRIP, 4};
-    CelestiaGLProgram *prog = m_renderer.getShaderManager().getShaderGL3("galaxy150", &params);
+    CelestiaGLProgram *prog = m_renderer.getShaderManager().getShaderGL3(StaticShader::Galaxy150, &params);
     if (prog == nullptr)
         return;
 
@@ -466,7 +468,7 @@ GalaxyRenderer::initializeGL3(const CelestiaGLProgram *prog)
         }
         else
         {
-            m_renderData.emplace_back(gl::Buffer(util::NoCreateT{}), gl::VertexObject(util::NoCreateT{}));
+            m_renderData.emplace_back(gl::Buffer{}, gl::VertexObject{});
         }
         glVertices.clear();
     }

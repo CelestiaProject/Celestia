@@ -37,9 +37,10 @@ struct StaticOctreeNode
 {
     using PointType = Eigen::Matrix<PREC, 3, 1>;
 
-    StaticOctreeNode(const PointType&, OctreeDepthType);
+    StaticOctreeNode(const PointType&, PREC, OctreeDepthType);
 
     PointType center;
+    PREC size;
     OctreeDepthType depth;
     OctreeNodeIndex right{ InvalidOctreeNode };
     OctreeObjectIndex first{ 0 };
@@ -49,8 +50,10 @@ struct StaticOctreeNode
 
 template<class PREC>
 StaticOctreeNode<PREC>::StaticOctreeNode(const PointType& _center,
+                                         PREC _size,
                                          OctreeDepthType _depth) :
     center(_center),
+    size(_size),
     depth(_depth)
 {
 }
@@ -112,7 +115,6 @@ private:
 
     std::vector<NodeType> m_nodes;
     std::vector<OBJ> m_objects;
-    std::vector<PREC> m_sizes;
     OctreeDepthType m_minPopulated{ UINT32_MAX };
     OctreeDepthType m_maxDepth{ 0 };
 
@@ -130,7 +132,7 @@ StaticOctree<OBJ, PREC>::processDepthFirst(PROCESSOR& processor) const
     while (nodeIdx < endIdx)
     {
         const NodeType& node = m_nodes[nodeIdx];
-        if (!processor.checkNode(node.center, m_sizes[node.depth], node.brightFactor))
+        if (!processor.checkNode(node.center, node.size, node.brightFactor))
         {
             nodeIdx = node.right;
             continue;
@@ -169,7 +171,7 @@ StaticOctree<OBJ, PREC>::processToDepth(PROCESSOR& processor, OctreeDepthType de
     while (nodeIdx < endIdx)
     {
         const NodeType& node = m_nodes[nodeIdx];
-        if (!processor.checkNode(node.center, m_sizes[node.depth], node.brightFactor))
+        if (!processor.checkNode(node.center, node.size, node.brightFactor))
         {
             nodeIdx = node.right;
         }

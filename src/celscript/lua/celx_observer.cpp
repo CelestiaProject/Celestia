@@ -27,6 +27,9 @@ using celestia::util::GetLogger;
 
 namespace astro = celestia::astro;
 
+// Defined in celx.cpp.
+ObserverFrame::CoordinateSystem parseCoordSys(std::string_view);
+
 // ==================== Observer ====================
 
 int observer_new(lua_State* l, Observer* o)
@@ -410,35 +413,65 @@ static int observer_gotolonglat(lua_State* l)
     return 0;
 }
 
-// deprecated: wrong name, bad interface.
+// observer:gotolocation(position [, duration [, rotation]])
+//
+// Travels to `position` over `duration` seconds (default 5), optionally
+// also rotating to a final `rotation`. Equivalent to the legacy gotoloc{}
+// command, including its xrot/yrot/zrot Euler form (build the rotation
+// script-side as an intrinsic-XYZ chain of celestia:newrotation factories).
+//
+// NOTE: `position` is interpreted in the observer's *current* reference
+// frame, not in universal coordinates -- this matches the legacy gotoloc
+// command, where Observer::gotoLocation assigns the input straight to
+// journey.to without converting from universal. In practice that means
+// scripts must explicitly put the observer in a known frame before
+// calling -- e.g. obs:setframe(celestia:newframe("universal")) -- when
+// the position is meant as an absolute coordinate. (.cel scripts get
+// this for free because the legacy cancel{} command resets the frame to
+// Universal as part of its work; obs:cancelgoto() does NOT, it only
+// stops motion.) The table form obs:goto{to=...} avoids the gotcha by
+// switching to universal internally before running the journey.
 static int observer_gotolocation(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 3,"Expected one or two arguments to observer:gotolocation");
+    celx.checkArgs(2, 4, "Expected one to three arguments to observer:gotolocation");
 
     Observer* o = this_observer(l);
 
-    double travelTime = celx.safeGetNumber(3, WrongType, "Second arg to observer:gotolocation must be a number", 5.0);
+    UniversalCoord* uc = celx.toPosition(2);
+    if (uc == nullptr)
+    {
+        celx.doError("First arg to observer:gotolocation must be a position");
+        return 0;
+    }
+
+    double travelTime = celx.safeGetNumber(3, WrongType,
+                                           "Second argument to observer:gotolocation must be a number",
+                                           5.0);
     if (travelTime < 0)
         travelTime = 0.0;
 
-    UniversalCoord* uc = celx.toPosition(2);
-    if (uc != nullptr)
-    {
-        o->gotoLocation(*uc, o->getOrientation(), travelTime);
-    }
-    else
-    {
-        celx.doError("First arg to observer:gotolocation must be a position");
-    }
+    Quaterniond orientation = o->getOrientation();
+    if (const Quaterniond* rot = celx.toRotation(4); rot != nullptr)
+        orientation = *rot;
+
+    o->gotoLocation(*uc, orientation, travelTime);
 
     return 0;
 }
 
+// observer:gotodistance(target, distance [, time [, up [, upframe]]])
+//
+// `upframe` is an optional coordinate-system name ("universal",
+// "observer", "ecliptic", "equatorial", "bodyfixed", "lock", "chase")
+// describing the frame the `up` vector is expressed in. The default
+// remains "universal" for backward compatibility, but ports of the
+// legacy goto{} command should pass "observer" to match its default
+// (parseGotoCommand sets upFrame = ObserverLocal).
 static int observer_gotodistance(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 5, "One to four arguments expected to observer:gotodistance");
+    celx.checkArgs(2, 6, "One to five arguments expected to observer:gotodistance");
 
     Observer* o = this_observer(l);
     Selection* sel = celx.toObject(2);
@@ -464,7 +497,15 @@ static int observer_gotodistance(lua_State* l)
         up = up_arg->cast<float>();
     }
 
-    o->gotoSelection(*sel, travelTime, distance, up, ObserverFrame::CoordinateSystem::Universal);
+    auto upFrame = ObserverFrame::CoordinateSystem::Universal;
+    if (lua_gettop(l) >= 6)
+    {
+        const char* upFrameName = celx.safeGetString(6, AllErrors,
+                                                     "Fifth arg to observer:gotodistance must be a string");
+        upFrame = parseCoordSys(upFrameName);
+    }
+
+    o->gotoSelection(*sel, travelTime, distance, up, upFrame);
 
     return 0;
 }
@@ -770,17 +811,29 @@ static int observer_getspeed(lua_State* l)
     return 1;
 }
 
+// observer:setfov(fov [, syncZoom])
+//
+// Sets the observer's field of view (radians). When `syncZoom` is true
+// (the default), also runs CelestiaCore::setZoomFromFOV so each view's
+// zoom field is recomputed from its FOV via the projection mode -- this
+// is the long-standing celx behavior. Pass `false` to skip the sync,
+// matching the legacy `set{name "FOV"}` cel command which only writes
+// Observer::fov and leaves Observer::zoom alone.
 static int observer_setfov(lua_State* l)
 {
     CelxLua celx(l);
-    celx.checkArgs(2, 2, "One argument expected to observer:setfov()");
+    celx.checkArgs(2, 3, "One or two arguments expected to observer:setfov(fov [, syncZoom])");
 
     Observer* obs = this_observer(l);
     double fov = celx.safeGetNumber(2, AllErrors, "Argument to observer:setfov() must be a number");
+    bool syncZoom = celx.safeGetBoolean(3, WrongType,
+                                        "Second argument to observer:setfov() must be a boolean",
+                                        true);
     if ((fov >= 0.001_deg) && (fov <= 120.0_deg))
     {
-        obs->setFOV((float) fov);
-        celx.appCore(AllErrors)->setZoomFromFOV();
+        obs->setFOV(static_cast<float>(fov));
+        if (syncZoom)
+            celx.appCore(AllErrors)->setZoomFromFOV();
     }
     return 0;
 }
@@ -943,6 +996,24 @@ static int observer_getlocationflags(lua_State* l)
     return 1;
 }
 
+// observer:changeorbitdistance(d)
+//
+// Exponential dolly toward (d > 0) or away from (d < 0) the current
+// selection.
+static int observer_changeorbitdistance(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(2, 2, "One argument required for observer:changeorbitdistance");
+
+    Observer* o = this_observer(l);
+    double d = celx.safeGetNumber(2, AllErrors,
+                                  "Argument to observer:changeorbitdistance must be a number");
+
+    const CelestiaCore* appCore = celx.appCore(AllErrors);
+    o->changeOrbitDistance(appCore->getSimulation()->getSelection(), static_cast<float>(d));
+    return 0;
+}
+
 void CreateObserverMetaTable(lua_State* l)
 {
     CelxLua celx(l);
@@ -969,6 +1040,7 @@ void CreateObserverMetaTable(lua_State* l)
     celx.registerMethod("setfov", observer_setfov);
     celx.registerMethod("rotate", observer_rotate);
     celx.registerMethod("orbit", observer_orbit);
+    celx.registerMethod("changeorbitdistance", observer_changeorbitdistance);
     celx.registerMethod("center", observer_center);
     celx.registerMethod("centerorbit", observer_centerorbit);
     celx.registerMethod("follow", observer_follow);

@@ -27,6 +27,7 @@
 #include <celestia/celestiacore.h>
 #include <celutil/gettext.h>
 #include <celutil/tzutil.h>
+#include "alerter.h"
 #include "clipboard.h"
 #include "gui.h"
 #include "settings.h"
@@ -135,33 +136,21 @@ mainRunLoopHandler(void* arg)
 
 } // end unnamed namespace
 
-class AppWindow::Alerter : public CelestiaCore::Alerter
-{
-public:
-    explicit Alerter(SDL_Window* win) : window(win) {}
-
-    void fatalError(const std::string& msg) override;
-
-private:
-    SDL_Window* window;
-};
-
-void
-AppWindow::Alerter::fatalError(const std::string& msg)
-{
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", msg.c_str(), window);
-}
-
 AppWindow::AppWindow(Private,
                      const std::shared_ptr<Environment>& environment,
+                     std::unique_ptr<CelestiaCore>&& celestiaCore,
+                     std::unique_ptr<Alerter>&& alerter,
                      UniqueWindow&& window,
                      UniqueGLContext&& context,
                      bool isFullscreen) :
     m_environment(environment),
     m_window(std::move(window)),
     m_context(std::move(context)),
+    m_appCore(std::move(celestiaCore)),
+    m_alerter(std::move(alerter)),
     m_isFullscreen(isFullscreen)
 {
+    m_alerter->setWindow(m_window.get());
 }
 
 AppWindow::~AppWindow() = default;
@@ -190,16 +179,7 @@ AppWindow::dumpGLInfo() const
 bool
 AppWindow::run(const Settings& settings)
 {
-    m_appCore = std::make_unique<CelestiaCore>();
-    m_alerter = std::make_unique<Alerter>(m_window.get());
-    m_appCore->setAlerter(m_alerter.get());
-    if (!m_appCore->initSimulation())
-        return false;
-
-    if (float screenDpi = 96.0f; SDL_GetDisplayDPI(0, &screenDpi, nullptr, nullptr) == 0)
-        m_appCore->setScreenDpi(static_cast<int>(screenDpi));
-
-    m_appCore->initRenderer();
+    m_appCore->initRenderer(settings.textureResolution);
 
     auto renderer = m_appCore->getRenderer();
     const auto* config = m_appCore->getConfig();
@@ -219,6 +199,8 @@ AppWindow::run(const Settings& settings)
     m_gui = Gui::create(m_window.get(), m_context.get(), m_appCore.get(), *m_environment);
     if (m_gui == nullptr)
         return false;
+
+    updateScreenDpi();
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop_arg(&mainRunLoopHandler, this, 0, 1);
@@ -490,6 +472,7 @@ AppWindow::handleWindowEvent(const SDL_WindowEvent& event)
     {
         SDL_GL_GetDrawableSize(m_window.get(), &m_width, &m_height);
         m_appCore->resize(m_width, m_height);
+        updateScreenDpi();
     }
 }
 
@@ -510,8 +493,27 @@ AppWindow::toggleFullscreen()
 
     int width;
     int height;
-    SDL_GetWindowSize(m_window.get(), &width, &height);
+    SDL_GL_GetDrawableSize(m_window.get(), &width, &height);
     m_appCore->resize(width, height);
+    updateScreenDpi();
+}
+
+void
+AppWindow::updateScreenDpi()
+{
+    int windowWidth{ 0 };
+    int windowHeight{ 0 };
+    SDL_GetWindowSize(m_window.get(), &windowWidth, &windowHeight);
+    if (windowHeight == 0)
+        return;
+
+    float scale = static_cast<float>(m_height) / static_cast<float>(windowHeight);
+    if (scale == m_scale)
+        return;
+
+    m_scale = scale;
+    m_appCore->setScreenDpi(static_cast<int>(96.0f * scale));
+    m_gui->updateScreenDpi(scale);
 }
 
 void

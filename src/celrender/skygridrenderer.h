@@ -11,9 +11,8 @@
 
 #pragma once
 
-#include <memory>
-
 #include <Eigen/Core>
+#include "linerenderer.h"
 
 class Color;
 class Renderer;
@@ -29,24 +28,22 @@ struct SkyGrid;
 namespace render
 {
 
-class LineRenderer;
-
 class SkyGridRenderer
 {
 public:
     explicit SkyGridRenderer(Renderer&);
     ~SkyGridRenderer();
 
-    void render(const engine::SkyGrid& grid, float zoom) const;
+    void render(const engine::SkyGrid& grid, float zoom);
 
 private:
     struct RenderInfo;
 
-    int drawParallels(const RenderInfo&, const Eigen::Matrix3f&, const Color&, int) const;
-    int drawMeridians(const RenderInfo&, const Eigen::Matrix3f&, const engine::SkyGrid&, int) const;
+    int drawParallels(const RenderInfo&, const Eigen::Matrix3f&, const Color&, int);
+    int drawMeridians(const RenderInfo&, const Eigen::Matrix3f&, const engine::SkyGrid&, int);
 
-    std::unique_ptr<celestia::render::LineRenderer> m_gridRenderer;
-    std::unique_ptr<celestia::render::LineRenderer> m_crossRenderer;
+    LineRenderer m_gridRenderer;
+    LineRenderer m_crossRenderer;
     Renderer& m_renderer;
 };
 

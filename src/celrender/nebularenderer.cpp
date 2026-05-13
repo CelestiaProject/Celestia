@@ -15,7 +15,6 @@
 #include <celengine/render.h>
 #include <celmath/geomutil.h>
 #include <celmath/vecgl.h>
-#include <celutil/reshandle.h>
 #include "nebularenderer.h"
 
 
@@ -76,9 +75,9 @@ NebulaRenderer::render()
 void
 NebulaRenderer::renderNebula(const Object &obj) const
 {
-    Geometry *g = nullptr;
-    if (auto geometry = obj.nebula->getGeometry(); geometry != InvalidResource)
-        g = engine::GetGeometryManager()->find(geometry);
+    RenderGeometry *g = nullptr;
+    if (auto geometry = obj.nebula->getGeometry(); geometry != engine::GeometryHandle::Invalid)
+        g = m_renderer.getGeometryManager()->find(geometry);
     if (g == nullptr)
         return;
 
@@ -98,7 +97,7 @@ NebulaRenderer::renderNebula(const Object &obj) const
         math::scale(math::translate(m_renderer.getModelViewMatrix(), obj.offset), radius),
         obj.nebula->getOrientation());
 
-    GLSLUnlit_RenderContext rc(&m_renderer, radius, &mv, &pr);
+    GLSLUnlit_RenderContext rc(&m_renderer, &mv, &pr);
     rc.setPointScale(2.0f * radius / m_pixelSize);
     g->render(rc);
 }

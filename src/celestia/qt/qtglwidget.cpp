@@ -37,6 +37,7 @@
 #include <celengine/body.h>
 #include <celengine/render.h>
 #include <celengine/starcolors.h>
+#include <celengine/texmanager.h>
 #include <celestia/configfile.h>
 #include <celutil/gettext.h>
 #include "qtdraghandler.h"
@@ -53,8 +54,9 @@ constexpr auto DEFAULT_LABEL_MODE = static_cast<uint>(RenderLabels::LocationLabe
 constexpr float DEFAULT_AMBIENT_LIGHT_LEVEL = 0.0f; // None
 constexpr float DEFAULT_TINT_SATURATION = 0.5f;
 constexpr int DEFAULT_STARS_COLOR = static_cast<int>(ColorTableType::SunWhite);
-constexpr float DEFAULT_EXPOSURE = 1.0f;
-constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(TextureResolution::medres);
+constexpr float DEFAULT_VISUAL_MAGNITUDE = 8.0f;
+constexpr auto DEFAULT_STAR_STYLE = static_cast<int>(StarStyle::FuzzyPointStars);
+constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(engine::TextureResolution::medres);
 
 std::pair<float, float>
 mousePosition(const QMouseEvent& m, qreal scale)
@@ -125,9 +127,19 @@ CelestiaGlWidget::initializeGL()
     }
 #endif
 
-    appCore->setScreenDpi(logicalDpiY() * devicePixelRatioF());
+    appCore->setScreenDpi(static_cast<int>(logicalDpiY() * devicePixelRatioF()));
 
-    if (!appCore->initRenderer(false))
+    // Read saved settings
+    QSettings settings;
+    auto textureResolution = settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt();
+    if (textureResolution < 0 || textureResolution > static_cast<int>(engine::TextureResolution::hires))
+        textureResolution = DEFAULT_TEXTURE_RESOLUTION;
+
+    std::optional<bool> sRGBOverride;
+    if (settings.contains("sRGBRendering"))
+        sRGBOverride = settings.value("sRGBRendering").toBool();
+
+    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), sRGBOverride, false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);
@@ -135,18 +147,15 @@ CelestiaGlWidget::initializeGL()
 
     appCore->tick();
 
-    // Read saved settings
-    QSettings settings;
     appRenderer->setRenderFlags(static_cast<::RenderFlags>(settings.value("RenderFlags", DEFAULT_RENDER_FLAGS).toULongLong()));
     appRenderer->setOrbitMask(static_cast<BodyClassification>(settings.value("OrbitMask", DEFAULT_ORBIT_MASK).toUInt()));
     appRenderer->setLabelMode(static_cast<RenderLabels>(settings.value("LabelMode", DEFAULT_LABEL_MODE).toUInt()));
     appRenderer->setAmbientLightLevel(static_cast<float>(settings.value("AmbientLightLevel", DEFAULT_AMBIENT_LIGHT_LEVEL).toDouble()));
     appRenderer->setTintSaturation(static_cast<float>(settings.value("TintSaturation", DEFAULT_TINT_SATURATION).toDouble()));
-
-    auto textureResolution = settings.value("TextureResolution", DEFAULT_TEXTURE_RESOLUTION).toInt();
-    if (textureResolution < 0 || textureResolution > static_cast<int>(TextureResolution::hires))
-        textureResolution = DEFAULT_TEXTURE_RESOLUTION;
-    appRenderer->setResolution(static_cast<TextureResolution>(textureResolution));
+    auto starStyle = settings.value("StarStyle", DEFAULT_STAR_STYLE).toInt();
+    if (starStyle < 0 || starStyle >= static_cast<int>(StarStyle::StarStyleCount))
+        starStyle = DEFAULT_STAR_STYLE;
+    appRenderer->setStarStyle(static_cast<StarStyle>(starStyle));
 
     auto colorTableType = settings.value("StarsColor", DEFAULT_STARS_COLOR).toInt();
     if (colorTableType < 0 || colorTableType > static_cast<int>(ColorTableType::VegaWhite))
@@ -155,7 +164,7 @@ CelestiaGlWidget::initializeGL()
 
     appCore->getSimulation()->getActiveObserver()->setLocationFilter(settings.value("LocationFilter", static_cast<quint64>(Observer::DefaultLocationFilter)).toULongLong());
 
-    appCore->getSimulation()->setExposure((float) settings.value("Exposure", DEFAULT_EXPOSURE).toDouble());
+    appCore->getSimulation()->setFaintestVisible((float) settings.value("Preferences/VisualMagnitude", DEFAULT_VISUAL_MAGNITUDE).toDouble());
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
@@ -486,6 +495,23 @@ CelestiaGlWidget::keyReleaseEvent(QKeyEvent* e)
 #endif
     dragHandler->clearButton(modifiers);
     handleSpecialKey(e, false);
+}
+
+bool
+CelestiaGlWidget::event(QEvent* event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    constexpr QEvent::Type dpiChangeEventType = QEvent::DevicePixelRatioChange;
+#else
+    constexpr QEvent::Type dpiChangeEventType = QEvent::ScreenChangeInternal;
+#endif
+    if (event->type() == dpiChangeEventType)
+    {
+        appCore->setScreenDpi(static_cast<int>(logicalDpiY() * devicePixelRatioF()));
+        // resizeGL is not called on screen change, we need to manually call it to update drawable size
+        resizeGL(width(), height());
+    }
+    return QOpenGLWidget::event(event);
 }
 
 void

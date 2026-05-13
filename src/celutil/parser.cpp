@@ -49,7 +49,7 @@ Value::Units readUnits(Tokenizer& tokenizer)
 {
     Value::Units units;
 
-    if (tokenizer.nextToken() != Tokenizer::TokenBeginUnits)
+    if (tokenizer.nextToken() != TokenType::BeginUnits)
     {
         tokenizer.pushBack();
         return units;
@@ -57,7 +57,7 @@ Value::Units readUnits(Tokenizer& tokenizer)
 
     UnitsVisitor visitor(&units);
 
-    while (tokenizer.nextToken() != Tokenizer::TokenEndUnits)
+    while (tokenizer.nextToken() != TokenType::EndUnits)
     {
         auto tokenValue = tokenizer.getNameValue();
         if (!tokenValue.has_value()) { continue; }
@@ -84,8 +84,8 @@ Parser::Parser(Tokenizer* _tokenizer) :
 std::unique_ptr<ValueArray>
 Parser::readArray()
 {
-    Tokenizer::TokenType tok = tokenizer->nextToken();
-    if (tok != Tokenizer::TokenBeginArray)
+    TokenType tok = tokenizer->nextToken();
+    if (tok != TokenType::BeginArray)
     {
         tokenizer->pushBack();
         return nullptr;
@@ -101,7 +101,7 @@ Parser::readArray()
     }
 
     tok = tokenizer->nextToken();
-    if (tok != Tokenizer::TokenEndArray)
+    if (tok != TokenType::EndArray)
     {
         tokenizer->pushBack();
         return nullptr;
@@ -113,8 +113,8 @@ Parser::readArray()
 std::unique_ptr<AssociativeArray>
 Parser::readHash()
 {
-    Tokenizer::TokenType tok = tokenizer->nextToken();
-    if (tok != Tokenizer::TokenBeginGroup)
+    TokenType tok = tokenizer->nextToken();
+    if (tok != TokenType::BeginGroup)
     {
         tokenizer->pushBack();
         return nullptr;
@@ -123,7 +123,7 @@ Parser::readHash()
     auto hash = std::make_unique<AssociativeArray>();
 
     tok = tokenizer->nextToken();
-    while (tok != Tokenizer::TokenEndGroup)
+    while (tok != TokenType::EndGroup)
     {
         std::string name;
         if (auto tokenValue = tokenizer->getNameValue(); tokenValue.has_value())
@@ -156,16 +156,17 @@ Parser::readHash()
 Value
 Parser::readValue()
 {
-    Tokenizer::TokenType tok = tokenizer->nextToken();
-    switch (tok)
+    switch (tokenizer->nextToken())
     {
-    case Tokenizer::TokenNumber:
-        return Value(*tokenizer->getNumberValue());
+    case TokenType::Number:
+        if (auto value = tokenizer->getNumberValue<double>(); value.has_value())
+            return Value(*value);
+        return Value();
 
-    case Tokenizer::TokenString:
+    case TokenType::String:
         return Value(*tokenizer->getStringValue());
 
-    case Tokenizer::TokenName:
+    case TokenType::Name:
         if (auto name = *tokenizer->getNameValue(); name == "false"sv)
             return Value(false);
         else if (name == "true"sv)
@@ -174,13 +175,13 @@ Parser::readValue()
         tokenizer->pushBack();
         return Value();
 
-    case Tokenizer::TokenBeginArray:
+    case TokenType::BeginArray:
         tokenizer->pushBack();
         if (std::unique_ptr<ValueArray> array = readArray(); array != nullptr)
             return Value(std::move(array));
         return Value();
 
-    case Tokenizer::TokenBeginGroup:
+    case TokenType::BeginGroup:
         tokenizer->pushBack();
         if (std::unique_ptr<AssociativeArray> hash = readHash(); hash != nullptr)
             return Value(std::move(hash));

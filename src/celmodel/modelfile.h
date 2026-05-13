@@ -10,22 +10,43 @@
 
 #pragma once
 
-#include <functional>
+#include <filesystem>
 #include <iosfwd>
 #include <memory>
 
-#include <filesystem>
-#include <celutil/reshandle.h>
+#include <celutil/texhandle.h>
 #include "model.h"
 
 namespace cmod
 {
 
-using HandleGetter = std::function<ResourceHandle(const std::filesystem::path&)>;
-using SourceGetter = std::function<std::filesystem::path(ResourceHandle)>;
+class ModelLoader
+{
+public:
+    std::unique_ptr<Model> load(std::istream& in);
 
-std::unique_ptr<Model> LoadModel(std::istream& in, HandleGetter getHandle);
+protected:
+    ~ModelLoader() = default;
+    virtual celestia::util::TextureHandle getHandle(const std::filesystem::path&) = 0;
 
-bool SaveModelAscii(const Model* model, std::ostream& out, SourceGetter getSource);
-bool SaveModelBinary(const Model* model, std::ostream& out, SourceGetter getSource);
-}
+private:
+    class BinaryLoader;
+    class TextLoader;
+};
+
+class ModelWriter
+{
+public:
+    bool saveBinary(const Model& model, std::ostream& out) const;
+    bool saveText(const Model& model, std::ostream& out) const;
+
+protected:
+    ~ModelWriter() = default;
+    virtual const std::filesystem::path* getPath(celestia::util::TextureHandle) const = 0;
+
+private:
+    class BinaryWriter;
+    class TextWriter;
+};
+
+} // end namespace cmod

@@ -15,8 +15,8 @@
 #include <string>
 #include <string_view>
 
-#include <celutil/reshandle.h>
 #include "deepskyobj.h"
+#include "meshmanager.h"
 #include "renderflags.h"
 
 namespace celestia::util
@@ -34,13 +34,16 @@ public:
     std::string getDescription() const override;
 
     // pick: the preconditional sphere-ray intersection test is enough for now
-    bool load(const celestia::util::AssociativeArray*, const std::filesystem::path&, std::string_view) override;
+    bool load(const celestia::util::AssociativeArray*,
+              const std::filesystem::path&,
+              celestia::engine::GeometryPaths&,
+              std::string_view) override;
 
     RenderFlags getRenderMask() const override;
     RenderLabels getLabelMask() const override;
 
-    void setGeometry(ResourceHandle);
-    ResourceHandle getGeometry() const;
+    void setGeometry(celestia::engine::GeometryHandle);
+    celestia::engine::GeometryHandle getGeometry() const;
 
     DeepSkyObjectType getObjType() const override;
 
@@ -55,10 +58,10 @@ public:
         HII_Region         = 6,
         Protoplanetary     = 7
     };
-    
+
     Type getNebulaType() const;
 
 private:
-    ResourceHandle geometry{ InvalidResource };
+    celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
     Type type{ Type::NotDefined };
 };

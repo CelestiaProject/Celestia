@@ -11,11 +11,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 class Color;
 class FramebufferObject;
 class Observer;
 class Overlay;
+class ViewportEffect;
 
 namespace celestia
 {
@@ -49,8 +51,8 @@ public:
     void reset();
     static View* remove(View*);
     void drawBorder(Overlay*, int gWidth, int gHeight, const Color &color, float linewidth = 1.0f) const;
-    void updateFBO(int gWidth, int gHeight);
-    FramebufferObject *getFBO() const;
+    void updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, int gWidth, int gHeight);
+    FramebufferObject *getFBO(int index) const;
 
     Type           type;
 
@@ -64,7 +66,7 @@ public:
     float          height;
 
 private:
-    std::unique_ptr<FramebufferObject> fbo;
+    std::vector<std::unique_ptr<FramebufferObject>> fbos;
 };
 
 }

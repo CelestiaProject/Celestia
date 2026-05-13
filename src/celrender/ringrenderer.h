@@ -12,7 +12,6 @@
 
 #include <array>
 #include <cstdint>
-#include <optional>
 
 #include "gl/buffer.h"
 #include "gl/vertexobject.h"
@@ -32,7 +31,7 @@ public:
     explicit RingRenderer(Renderer&);
     ~RingRenderer() = default;
 
-    void renderRings(RingSystem& rings,
+    void renderRings(const RingSystem& rings,
                      const RenderInfo& ri,
                      const LightingState& ls,
                      float planetRadius,
@@ -49,8 +48,8 @@ private:
     static constexpr unsigned int nLODs = 4;
 
     std::array<float, nLODs - 1> sectionScales;
-    std::array<std::optional<gl::Buffer>, nLODs> buffers;
-    std::array<std::optional<gl::VertexObject>, nLODs> vertexObjects;
+    std::array<gl::Buffer, nLODs> buffers;
+    std::array<gl::VertexObject, nLODs> vertexObjects;
     Renderer& renderer;
 };
 

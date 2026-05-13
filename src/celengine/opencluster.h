@@ -9,13 +9,10 @@
 
 #pragma once
 
-#include <cstdint>
 #include <string>
-#include <string_view>
 
 #include <Eigen/Geometry>
 
-#include <celutil/reshandle.h>
 #include "deepskyobj.h"
 #include "renderflags.h"
 

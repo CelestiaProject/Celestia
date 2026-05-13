@@ -12,6 +12,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iosfwd>
 #include <string>
 #include <string_view>
 
@@ -22,6 +23,8 @@ bool UTF8Decode(std::string_view str, std::int32_t &pos, std::int32_t &ch);
 void UTF8Encode(std::uint32_t ch, std::string &dest);
 int  UTF8StringCompare(std::string_view s0, std::string_view s1);
 bool UTF8StartsWith(std::string_view str, std::string_view prefix, bool ignoreCase = false);
+
+std::istream& SkipUTF8BOM(std::istream&);
 
 class UTF8StringOrderingPredicate
 {
@@ -42,6 +45,8 @@ public:
     std::int32_t check(unsigned char c);
     inline std::int32_t check(char c) { return check(static_cast<unsigned char>(c)); }
     inline bool isInitial() const { return state == State::Initial; }
+
+    static bool validate(std::string_view str);
 
     static constexpr std::int32_t PartialSequence = -1;
     static constexpr std::int32_t InvalidStarter = -2;

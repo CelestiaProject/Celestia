@@ -19,6 +19,10 @@
 #include <celutil/associativearray.h>
 #endif
 
+namespace celestia::engine
+{
+class TexturePaths;
+}
 
 struct CelestiaConfig
 {
@@ -90,6 +94,7 @@ struct CelestiaConfig
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
+        bool sRGBRendering{ false };
     };
 
     CelestiaConfig() = default;
@@ -125,4 +130,6 @@ struct CelestiaConfig
 #endif
 };
 
-bool ReadCelestiaConfig(const std::filesystem::path& filename, CelestiaConfig& config);
+bool ReadCelestiaConfig(const std::filesystem::path& filename,
+                        CelestiaConfig& config,
+                        celestia::engine::TexturePaths& texturePaths);

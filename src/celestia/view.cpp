@@ -14,6 +14,7 @@
 #include <celengine/overlay.h>
 #include <celengine/rectangle.h>
 #include <celengine/shadermanager.h>
+#include <celengine/viewporteffect.h>
 #include <celutil/logger.h>
 
 using celestia::util::GetLogger;
@@ -245,7 +246,7 @@ View::reset()
     parent = nullptr;
     child1 = nullptr;
     child2 = nullptr;
-    fbo = nullptr;
+    fbos.clear();
 }
 
 
@@ -261,28 +262,71 @@ View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, 
 
 
 void
-View::updateFBO(int gWidth, int gHeight)
+View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, int gWidth, int gHeight)
 {
+    int count = static_cast<int>(effects.size());
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
-    if (fbo && fbo.get()->width() == newWidth && fbo.get()->height() == newHeight)
-        return;
 
-    // recreate FBO when FBO not exisits or on size change
-    fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
-                                              FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment);
-    if (!fbo->isValid())
+    // Query the sample count of the currently bound (output) framebuffer so the
+    // first viewport-effect FBO matches it.  glGetIntegerv(GL_SAMPLES) returns 0
+    // on some drivers when multisampling is off, so clamp to at least 1.
+    GLint currentSamples = 0;
+    glGetIntegerv(GL_SAMPLES, &currentSamples);
+    if (currentSamples < 1)
+        currentSamples = 1;
+
+#ifdef GL_ES
+    int samplesToRequest = celestia::gl::checkVersion(celestia::gl::GLES_3_0) ? currentSamples : 1;
+#else
+    int samplesToRequest = currentSamples;
+#endif
+
+    if (static_cast<int>(fbos.size()) != count)
+        fbos.resize(count);
+
+    for (int i = 0; i < count; i++)
     {
-        GetLogger()->error("Error creating view FBO.\n");
-        fbo = nullptr;
+        // Only the first FBO needs MSAA to match the output framebuffer.
+        // Subsequent FBOs receive already-resolved blits so samples=1 suffices.
+        int samples = (i == 0) ? samplesToRequest : 1;
+
+        // Use a float color buffer only when the consuming effect requires it
+        // (e.g. the sRGB tonemap needs linear-light precision).
+        bool useFloat = effects[i]->needsFloatSource();
+#ifdef GL_ES
+        if (useFloat && !celestia::gl::checkVersion(celestia::gl::GLES_3_0) && !celestia::gl::OES_texture_half_float)
+            useFloat = false;
+#endif
+
+        auto& fbo = fbos[i];
+
+        if (fbo
+            && fbo->width()         == newWidth
+            && fbo->height()        == newHeight
+            && fbo->samples()       == samples
+            && fbo->useFloatColor() == useFloat)
+            continue;
+
+        fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
+                                                  FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment,
+                                                  samples,
+                                                  useFloat);
+        if (!fbo->isValid())
+        {
+            GetLogger()->error("Error creating view FBO {}.\n", i);
+            fbo = nullptr;
+        }
     }
 }
 
 
 FramebufferObject*
-View::getFBO() const
+View::getFBO(int index) const
 {
-    return fbo.get();
+    if (index < 0 || index >= static_cast<int>(fbos.size()))
+        return nullptr;
+    return fbos[index].get();
 }
 
 } // end namespace celestia

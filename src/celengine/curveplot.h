@@ -30,6 +30,8 @@
 #pragma once
 
 #include <deque>
+#include <memory>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -38,6 +40,25 @@
 
 class Color;
 class Renderer;
+
+class CurvePlotVertexBuffer
+{
+public:
+    explicit CurvePlotVertexBuffer(const Renderer& _renderer);
+
+    void setup(const Color& _color);
+    void finish();
+    void vertex(const Eigen::Vector4d& v, float opacity = 1.0f);
+    void end();
+    void flush();
+
+private:
+    unsigned int currentStripLength { 0 };
+    std::vector<unsigned int> stripLengths;
+    std::unique_ptr<celestia::render::LineRenderer> lr;
+    const Renderer *renderer { nullptr };
+    Color color;
+};
 
 class CurvePlotSample
 {
@@ -48,11 +69,10 @@ public:
     double boundingRadius { 0.0 };
 };
 
-
 class CurvePlot
 {
- public:
-    explicit CurvePlot(const Renderer &renderer);
+public:
+    explicit CurvePlot(CurvePlotVertexBuffer& vbuf);
 
     double duration() const { return m_duration; }
     void setDuration(double duration);
@@ -103,12 +123,9 @@ class CurvePlot
 
     unsigned int sampleCount() const { return static_cast<unsigned int>(m_samples.size()); }
 
-    static void deinit();
-
- private:
+private:
     std::deque<CurvePlotSample>     m_samples;
-    const Renderer                 &m_renderer;
+    CurvePlotVertexBuffer          &m_vbuf;
     double                          m_duration      { 0.0 };
     unsigned int                    m_lastUsed      { 0   };
 };
-

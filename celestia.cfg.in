@@ -29,17 +29,18 @@ Configuration
 #------------------------------------------------------------------------
   StarDatabase                 "data/stars.dat"
   StarNameDatabase             "data/starnames.dat"
-  StarCatalogs               [ "data/revised.stc"
-                               "data/extrasolar.stc"
-                               "data/nearstars.stc"
-                               "data/visualbins.stc"
-                               "data/spectbins.stc"
-                               "data/charm2.stc"
+  StarCatalogs               [ "data/stars-named.stc"
+                               "data/stars-charm2.stc"
+                               "data/stars-visualbins.stc"
+                               "data/stars-spectbins.stc"
                                "data/whitedwarfs.stc"
-                               "data/pulsars.stc" ]
+                               "data/pulsars.stc"
+                               "data/extrasolar.stc"
+                               "data/stars-revised.stc"
+                               "data/stars-near.stc" ]
 
-  HDCrossIndex                 "data/hdxindex.dat"
-  SAOCrossIndex                "data/saoxindex.dat"
+  HDCrossIndex                 "data/starxindex-hd.dat"
+  SAOCrossIndex                "data/starxindex-sao.dat"
 
   SolarSystemCatalogs        [ "data/solarsys.ssc"
                                "data/dwarfplanets.ssc"
@@ -382,7 +383,7 @@ StarTextures
 # 1. "Asterism": The lines connecting the stars in the constellation.
 # 2. "Boundary": The boundary of the constellation.
 # 3. "Label": The name of the constellation.
-# 
+#
 # "FadeStartDist" ->
 # The maximum distance of the observer to the origin of coordinates
 # before the specified component starts to linearly fade out.
@@ -410,7 +411,7 @@ StarTextures
 # rendering speed.  4 is a sensible setting for recent, higher-end
 # graphics hardware; 2 is probably better mid-range graphics.  The
 # default value is 1, which disables antialiasing.
-# AntialiasingSamples        4
+  AntialiasingSamples        4
 
 
 #------------------------------------------------------------------------
@@ -477,5 +478,16 @@ StarTextures
 # in Celestia. Available options are `ltr` (default) and `rtl`.
 #------------------------------------------------------------------------
 # LayoutDirection "rtl"
+
+#------------------------------------------------------------------------
+# SRGBRendering enables a linear-light rendering pipeline with sRGB
+# output correction.  When enabled, colors and textures are linearized
+# before shading and a final linear-to-sRGB conversion is applied as a
+# post-process.  This produces physically correct blending and lighting.
+# On OpenGL ES, the GL_EXT_sRGB extension is required; if it is not
+# available the setting is ignored.
+# The default value is false.
+#------------------------------------------------------------------------
+# SRGBRendering true
 
 }

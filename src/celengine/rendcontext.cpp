@@ -15,6 +15,7 @@
 #include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
 #include <celutil/flag.h>
+#include <celutil/texhandle.h>
 #include "atmosphere.h"
 #include "body.h"
 #include "lightenv.h"
@@ -24,13 +25,12 @@
 #include "texmanager.h"
 #include "texture.h"
 
+namespace engine = celestia::engine;
 namespace gl = celestia::gl;
 namespace util = celestia::util;
 
 namespace
 {
-
-const cmod::Material defaultMaterial;
 
 constexpr gl::VertexObject::Primitive GLPrimitiveModes[static_cast<std::size_t>(cmod::PrimitiveGroupType::PrimitiveTypeMax)] =
 {
@@ -51,22 +51,10 @@ convert(cmod::PrimitiveGroupType prim)
 
 } // end unnamed namespace
 
-
 RenderContext::RenderContext(Renderer* _renderer) :
-    renderer(_renderer),
-    material(&defaultMaterial)
+    renderer(_renderer)
 {
 }
-
-
-RenderContext::RenderContext(const cmod::Material* _material)
-{
-    if (_material == nullptr)
-        material = &defaultMaterial;
-    else
-        material = _material;
-}
-
 
 const cmod::Material*
 RenderContext::getMaterial() const
@@ -74,35 +62,33 @@ RenderContext::getMaterial() const
     return material;
 }
 
-
 void
 RenderContext::setMaterial(const cmod::Material* newMaterial)
 {
-    if (!locked)
-    {
-        if (newMaterial == nullptr)
-            newMaterial = &defaultMaterial;
+    if (locked)
+        return;
 
-        if (renderPass == PrimaryPass)
+    if (newMaterial == nullptr)
+        newMaterial = &defaultMaterial;
+
+    if (renderPass == PrimaryPass)
+    {
+        if (newMaterial != material)
         {
-            if (newMaterial != material)
-            {
-                material = newMaterial;
-                makeCurrent(*material);
-            }
+            material = newMaterial;
+            makeCurrent(*material);
         }
-        else if (renderPass == EmissivePass)
+    }
+    else if (renderPass == EmissivePass)
+    {
+        if (material->getMap(cmod::TextureSemantic::EmissiveMap) !=
+            newMaterial->getMap(cmod::TextureSemantic::EmissiveMap))
         {
-            if (material->getMap(cmod::TextureSemantic::EmissiveMap) !=
-                newMaterial->getMap(cmod::TextureSemantic::EmissiveMap))
-            {
-                material = newMaterial;
-                makeCurrent(*material);
-            }
+            material = newMaterial;
+            makeCurrent(*material);
         }
     }
 }
-
 
 void
 RenderContext::setPointScale(float _pointScale)
@@ -110,13 +96,11 @@ RenderContext::setPointScale(float _pointScale)
     pointScale = _pointScale;
 }
 
-
 float
 RenderContext::getPointScale() const
 {
     return pointScale;
 }
-
 
 void
 RenderContext::setCameraOrientation(const Eigen::Quaternionf& q)
@@ -124,22 +108,19 @@ RenderContext::setCameraOrientation(const Eigen::Quaternionf& q)
     cameraOrientation = q;
 }
 
-
 Eigen::Quaternionf
 RenderContext::getCameraOrientation() const
 {
     return cameraOrientation;
 }
 
-
 void
 RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& group)
 {
     // Skip rendering if this is the emissive pass but there's no
     // emissive texture.
-    ResourceHandle emissiveMap = material->getMap(cmod::TextureSemantic::EmissiveMap);
-
-    if (renderPass == EmissivePass && emissiveMap == InvalidResource)
+    if (util::TextureHandle emissiveMap = material->getMap(cmod::TextureSemantic::EmissiveMap);
+        renderPass == EmissivePass && emissiveMap == util::TextureHandle::Invalid)
     {
         return;
     }
@@ -169,7 +150,6 @@ RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& grou
     }
 #endif
 }
-
 
 void
 RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType)
@@ -204,7 +184,6 @@ RenderContext::updateShader(const cmod::VertexDescription& desc, cmod::Primitive
     }
 }
 
-
 /***** GLSL render context ******/
 
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
@@ -224,7 +203,6 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
     initLightingEnvironment();
 }
 
-
 GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
                                        const LightingState& ls,
                                        const Eigen::Vector3f& _objScale,
@@ -241,7 +219,6 @@ GLSL_RenderContext::GLSL_RenderContext(Renderer* renderer,
 {
     initLightingEnvironment();
 }
-
 
 GLSL_RenderContext::~GLSL_RenderContext() = default;
 
@@ -262,7 +239,6 @@ GLSL_RenderContext::initLightingEnvironment()
             shaderProps.setEclipseShadowCountForLight(li, nShadows);
         }
     }
-
 }
 
 void
@@ -299,14 +275,10 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
             shaderProps.lightModel = LightingModel::ParticleDiffuseModel;
     }
 
-    ResourceHandle diffuseMap  = m.getMap(cmod::TextureSemantic::DiffuseMap);
-    ResourceHandle normalMap   = m.getMap(cmod::TextureSemantic::NormalMap);
-    ResourceHandle specularMap = m.getMap(cmod::TextureSemantic::SpecularMap);
-    ResourceHandle emissiveMap = m.getMap(cmod::TextureSemantic::EmissiveMap);
-
-    if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
+    if (util::TextureHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
+        diffuseMap != util::TextureHandle::Invalid && (useTexCoords || usePointSize))
     {
-        baseTex = GetTextureManager()->find(diffuseMap);
+        baseTex = renderer->getTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::DiffuseTexture;
@@ -314,9 +286,10 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         }
     }
 
-    if (normalMap != InvalidResource)
+    if (util::TextureHandle normalMap = m.getMap(cmod::TextureSemantic::NormalMap);
+        normalMap != util::TextureHandle::Invalid)
     {
-        bumpTex = GetTextureManager()->find(normalMap);
+        bumpTex = renderer->getTextureManager()->find(normalMap);
         if (bumpTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::NormalTexture;
@@ -331,7 +304,8 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     if (m.specular != cmod::Color(0.0f, 0.0f, 0.0f) && useNormals)
     {
         shaderProps.lightModel = LightingModel::PerPixelSpecularModel;
-        specTex = GetTextureManager()->find(specularMap);
+        util::TextureHandle specularMap = m.getMap(cmod::TextureSemantic::SpecularMap);
+        specTex = renderer->getTextureManager()->find(specularMap);
         if (specTex == nullptr)
         {
             if (baseTex != nullptr)
@@ -344,9 +318,10 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         }
     }
 
-    if (emissiveMap != InvalidResource)
+    if (util::TextureHandle emissiveMap = m.getMap(cmod::TextureSemantic::EmissiveMap);
+        emissiveMap != util::TextureHandle::Invalid)
     {
-        emissiveTex = GetTextureManager()->find(emissiveMap);
+        emissiveTex = renderer->getTextureManager()->find(emissiveMap);
         if (emissiveTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::EmissiveTexture;
@@ -356,7 +331,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     if (lightingState.shadowingRingSystem)
     {
-        Texture* ringsTex = lightingState.shadowingRingSystem->texture.find(TextureResolution::medres);
+        Texture* ringsTex = renderer->getTextureManager()->findShadow(lightingState.shadowingRingSystem->texture);
         if (ringsTex != nullptr)
         {
             glActiveTexture(GL_TEXTURE0 + nTextures);
@@ -544,7 +519,6 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     }
 }
 
-
 void
 GLSL_RenderContext::setAtmosphere(const Atmosphere* _atmosphere)
 {
@@ -569,21 +543,17 @@ GLSL_RenderContext::setShadowMap(GLuint _shadowMap, GLuint _width, const Eigen::
 /***** GLSL-Unlit render context ******/
 
 GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer,
-                                                 float _objRadius,
                                                  const Eigen::Matrix4f* _modelViewMatrix,
                                                  const Eigen::Matrix4f* _projectionMatrix) :
     RenderContext(renderer),
     blendMode(cmod::BlendMode::InvalidBlend),
-    objRadius(_objRadius),
     modelViewMatrix(_modelViewMatrix),
     projectionMatrix(_projectionMatrix)
 {
     initLightingEnvironment();
 }
 
-
 GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext() = default;
-
 
 void
 GLSLUnlit_RenderContext::initLightingEnvironment()
@@ -592,7 +562,6 @@ GLSLUnlit_RenderContext::initLightingEnvironment()
     // The material properties will be set per mesh.
     shaderProps.nLights = 1;
 }
-
 
 void
 GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
@@ -606,10 +575,10 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     shaderProps.lightModel = LightingModel::EmissiveModel;
     shaderProps.texUsage = TexUsage::SharedTextureCoords;
 
-    ResourceHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
-    if (diffuseMap != InvalidResource && (useTexCoords || usePointSize))
+    if (util::TextureHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
+        diffuseMap != util::TextureHandle::Invalid && (useTexCoords || usePointSize))
     {
-        baseTex = GetTextureManager()->find(diffuseMap);
+        baseTex = renderer->getTextureManager()->find(diffuseMap);
         if (baseTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::DiffuseTexture;

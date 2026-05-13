@@ -22,26 +22,29 @@
 
 namespace celestia
 {
+namespace engine
+{
+class GeometryPaths;
+class TexturePaths;
+}
 
 template<class OBJDB> class CatalogLoader
 {
-    OBJDB                     *m_objDB;
-    std::string                m_typeDesc;
-    ContentType                m_contentType;
-    ProgressNotifier          *m_notifier;
-    util::array_view<std::filesystem::path> m_skipPaths;
-
 public:
-    CatalogLoader(OBJDB                     *db,
-                  const std::string         &typeDesc,
-                  const ContentType         &contentType,
-                  ProgressNotifier          *notifier,
-                  util::array_view<std::filesystem::path> skipPaths) :
+    CatalogLoader(OBJDB* db,
+                  const std::string& typeDesc,
+                  const ContentType& contentType,
+                  ProgressNotifier* notifier,
+                  util::array_view<std::filesystem::path> skipPaths,
+                  engine::GeometryPaths& geometryPaths,
+                  engine::TexturePaths& texturePaths) :
         m_objDB(db),
         m_typeDesc(typeDesc),
         m_contentType(contentType),
         m_notifier(notifier),
-        m_skipPaths(skipPaths)
+        m_skipPaths(skipPaths),
+        m_geometryPaths(&geometryPaths),
+        m_texturePaths(&texturePaths)
     {
     }
 
@@ -100,6 +103,15 @@ public:
                 process(fn, fn.parent_path());
         }
     }
+
+private:
+    OBJDB* m_objDB;
+    std::string m_typeDesc;
+    ContentType m_contentType;
+    ProgressNotifier* m_notifier;
+    util::array_view<std::filesystem::path> m_skipPaths;
+    engine::GeometryPaths* m_geometryPaths;
+    engine::TexturePaths* m_texturePaths;
 };
 
 } // namespace celestia

@@ -26,8 +26,8 @@
 
 #include <celengine/marker.h>
 #include <celengine/observer.h>
-#include <celengine/multitexture.h>
 #include <celengine/renderflags.h>
+#include <celengine/texmanager.h>
 #include <celutil/color.h>
 
 enum class BodyClassification : std::uint32_t;
@@ -333,7 +333,8 @@ class CommandOrbit : public TimedCommand
     void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
-    Eigen::Vector3f spin;
+    float spinMag;
+    Eigen::Vector3f spinAxis;
 };
 
 
@@ -345,7 +346,8 @@ class CommandRotate : public TimedCommand
     void process(ExecutionEnvironment&, double t, double dt) override;
 
  private:
-    Eigen::Vector3f spin;
+    float spinMag;
+    Eigen::Vector3f spinAxis;
 };
 
 
@@ -607,13 +609,13 @@ class CommandCapture : public InstantaneousCommand
 class CommandSetTextureResolution : public InstantaneousCommand
 {
  public:
-    explicit CommandSetTextureResolution(TextureResolution);
+    explicit CommandSetTextureResolution(engine::TextureResolution);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
-    TextureResolution res;
+    engine::TextureResolution res;
 };
 
 

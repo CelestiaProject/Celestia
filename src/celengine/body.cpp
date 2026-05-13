@@ -20,6 +20,7 @@
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/mathlib.h>
+#include <celmath/ray.h>
 #include <celutil/gettext.h>
 #include "atmosphere.h"
 #include "frame.h"
@@ -44,7 +45,7 @@ namespace util = celestia::util;
 namespace
 {
 
-const Color defaultCometTailColor(0.5f, 0.5f, 0.75f);
+const Color defaultCometTailColor(0.625f, 0.625f, 0.625f);
 
 constexpr auto CLASSES_VISIBLE_AS_POINT = ~(BodyClassification::Invisible      |
                                             BodyClassification::SurfaceFeature |
@@ -92,7 +93,7 @@ Body::setDefaultProperties()
     emissivity = 1.0f;
     internalHeatFlux = 0.0f;
     geometryOrientation = Eigen::Quaternionf::Identity();
-    geometry = InvalidResource;
+    geometry = engine::GeometryHandle::Invalid;
     surface = Surface(Color::White);
     auto manager = GetBodyFeaturesManager();
     manager->setAtmosphere(this, nullptr);
@@ -291,7 +292,7 @@ Body::getRotationModel(double tdb) const
 float
 Body::getBoundingRadius() const
 {
-    if (geometry == InvalidResource)
+    if (geometry == engine::GeometryHandle::Invalid)
         return radius;
 
     return radius * numbers::sqrt3_v<float>;
@@ -502,7 +503,7 @@ Body::getRadius() const
 bool
 Body::isSphere() const
 {
-    return (geometry == InvalidResource) &&
+    return (geometry == engine::GeometryHandle::Invalid) &&
            (semiAxes.x() == semiAxes.y()) &&
            (semiAxes.x() == semiAxes.z());
 }
@@ -513,7 +514,7 @@ Body::isSphere() const
 bool
 Body::isEllipsoid() const
 {
-    return geometry == InvalidResource;
+    return geometry == engine::GeometryHandle::Invalid;
 }
 
 const
@@ -535,7 +536,7 @@ Body::setSurface(const Surface& surf)
 }
 
 void
-Body::setGeometry(ResourceHandle _geometry)
+Body::setGeometry(engine::GeometryHandle _geometry)
 {
     geometry = _geometry;
 }
@@ -1444,7 +1445,7 @@ BodyFeaturesManager::hasLocations(const Body* body) const
 // defined locations; on-demand (i.e. when the object becomes visible to
 // a user) loading of meshes is preferred.
 void
-BodyFeaturesManager::computeLocations(const Body* body)
+BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager& geometryManager)
 {
     if (!util::is_set(body->features, BodyFeatures::Locations))
         return;
@@ -1460,17 +1461,18 @@ BodyFeaturesManager::computeLocations(const Body* body)
 
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     auto geometry = body->getGeometry();
-    if (geometry == InvalidResource)
+    if (geometry == engine::GeometryHandle::Invalid)
         return;
 
-    const Geometry* g = engine::GetGeometryManager()->find(geometry);
+    const Geometry* g = geometryManager.find(geometry);
     if (g == nullptr)
         return;
 
     // TODO: Implement separate radius and bounding radius so that this hack is
     // not necessary.
-    double boundingRadius = 2.0;
+    constexpr float boundingRadius = 2.0f;
     auto radius = body->getRadius();
+    Eigen::Quaterniond orientation = body->getGeometryOrientation().cast<double>();
     for (const auto& location : bodyLocations.locations)
     {
         Location* loc = location.get();
@@ -1480,13 +1482,13 @@ BodyFeaturesManager::computeLocations(const Body* body)
             continue;
         if (alt != -radius)
             v.normalize();
-        v *= (float) boundingRadius;
+        v *= boundingRadius;
 
         Eigen::ParametrizedLine<double, 3> ray(v.cast<double>(), -v.cast<double>());
         double t = 0.0;
-        if (g->pick(ray, t))
+        if (g->pick(math::transformRay(ray, orientation), t))
         {
-            v *= (float) ((1.0 - t) * radius + alt);
+            v *= static_cast<float>((1.0 - t) * radius + alt);
             loc->setPosition(v);
         }
     }

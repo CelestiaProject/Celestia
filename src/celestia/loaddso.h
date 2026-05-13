@@ -17,8 +17,15 @@ struct CelestiaConfig;
 
 namespace celestia
 {
+namespace engine
+{
+class GeometryPaths;
+class TexturePaths;
+}
 
-std::unique_ptr<DSODatabase> loadDSO(const CelestiaConfig &config,
-                                     ProgressNotifier     *progressNotifier);
+std::unique_ptr<DSODatabase> loadDSO(const CelestiaConfig& config,
+                                     ProgressNotifier* progressNotifier,
+                                     engine::GeometryPaths& geometryPaths,
+                                     engine::TexturePaths& texturePaths);
 
 } // namespace celestia

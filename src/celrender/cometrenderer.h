@@ -14,17 +14,14 @@
 
 #include <Eigen/Core>
 
+#include "gl/buffer.h"
+#include "gl/vertexobject.h"
+
 class Body;
 class Observer;
 class Renderer;
 class CelestiaGLProgram;
 struct Matrices;
-
-namespace celestia::gl
-{
-class Buffer;
-class VertexObject;
-}
 
 namespace celestia::render
 {
@@ -63,9 +60,8 @@ private:
     bool                               m_initialized{ false };
     std::unique_ptr<CometTailVertex[]> m_vertices;
     std::unique_ptr<unsigned short[]>  m_indices;
-    std::unique_ptr<gl::Buffer>        m_bo;
-    std::unique_ptr<gl::Buffer>        m_io;
-    std::unique_ptr<gl::VertexObject>  m_vo;
+    gl::Buffer                         m_bo;
+    gl::VertexObject                   m_vo;
 };
 
 } // namespace celestia::render

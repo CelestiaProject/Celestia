@@ -1,6 +1,6 @@
 // celestiacore.h
 //
-// Copyright (C) 2001-present, the Celestia Development Team
+// Copyright (C) 2001-2009, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -18,9 +18,9 @@
 #include <string_view>
 #include <tuple>
 #include <optional>
+#include <vector>
 #include <celutil/filetype.h>
 #include <celutil/timer.h>
-#include <celutil/watcher.h>
 #include <celengine/solarsys.h>
 #include <celengine/overlay.h>
 #include <celengine/texture.h>
@@ -54,14 +54,18 @@ class ProgressNotifier;
 
 namespace celestia
 {
+namespace engine
+{
+class GeometryManager;
+class TexturePaths;
+}
+
 class TextPrintPosition;
 class ViewManager;
 #ifdef USE_MINIAUDIO
 class AudioSession;
 #endif
 }
-
-typedef Watcher<CelestiaCore> CelestiaWatcher;
 
 class CelestiaCore // : public Watchable<CelestiaCore>
 {
@@ -162,22 +166,6 @@ public:
         KeyCount            = 128,
     };
 
-    enum
-    {
-        LabelFlagsChanged           = 0x0001,
-        RenderFlagsChanged          = 0x0002,
-        VerbosityLevelChanged       = 0x0004,
-        TimeZoneChanged             = 0x0008,
-        AmbientLightChanged         = 0x0010,
-        // removed notification     = 0x0020,
-        HistoryChanged              = 0x0040,
-        TextEnterModeChanged        = 0x0080,
-        GalaxyLightGainChanged      = 0x0100,
-        MeasurementSystemChanged    = 0x0200,
-        TemperatureScaleChanged     = 0x0400,
-        TintSaturationChanged       = 0x0800,
-    };
-
     enum class ScriptSystemAccessPolicy
     {
         Ask         = 0,
@@ -200,7 +188,9 @@ public:
     bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
                         const std::vector<std::filesystem::path>& extrasDirs = {},
                         ProgressNotifier* progressNotifier = nullptr);
-    bool initRenderer(bool useMesaPackInvert = true);
+    bool initRenderer(celestia::engine::TextureResolution,
+                      std::optional<bool> sRGBRendering = std::nullopt,
+                      bool useMesaPackInvert = true);
     void start(double t);
     void start();
     void getLightTravelDelay(double distanceKm, int&, int&, float&);
@@ -285,8 +275,8 @@ public:
     celestia::HudElements getOverlayElements() const;
     void setOverlayElements(celestia::HudElements);
 
-    void addWatcher(CelestiaWatcher*);
-    void removeWatcher(CelestiaWatcher*);
+    void setFaintest(float);
+    void setFaintestAutoMag();
 
     std::vector<Observer*> getObservers() const;
     celestia::View* getViewByObserver(const Observer*) const;
@@ -304,6 +294,8 @@ public:
     void setAltAzimuthMode(bool);
     int getScreenDpi() const;
     void setScreenDpi(int);
+    void setTextScaleFactor(float);
+    float getTextScaleFactor() const;
     void setPickTolerance(float);
     int getDistanceToScreen() const;
     void setDistanceToScreen(int);
@@ -325,8 +317,6 @@ public:
     void flash(const std::string&, double duration = 1.0);
 
     const CelestiaConfig* getConfig() const;
-
-    void notifyWatchers(int);
 
     void setLogFile(const std::filesystem::path&);
 
@@ -416,11 +406,13 @@ public:
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
 
+    celestia::engine::TexturePaths* getTexturePaths() const noexcept { return texturePaths.get(); }
+
 private:
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     void renderOverlay();
-    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view);
+    Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view) const;
     void updateFOV(float fov, const std::optional<Eigen::Vector2f> &focus, const celestia::View *view);
 #ifdef CELX
     bool initLuaHook(ProgressNotifier*);
@@ -500,7 +492,6 @@ private:
 #endif
 
     Alerter* alerter{ nullptr };
-    std::vector<CelestiaWatcher*> watchers;
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
@@ -522,16 +513,22 @@ private:
     std::optional<bool> dragStartFromSurface { std::nullopt };
     std::optional<Eigen::Vector2f> dragStart{ std::nullopt };
 
-    std::unique_ptr<ViewportEffect> viewportEffect { nullptr };
+    std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
     bool isViewportEffectUsed { false };
+    bool needsUpdateFonts{ false };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
 
     std::unique_ptr<Console> console;
     std::ofstream m_logfile;
     teestream m_tee;
+    std::streambuf* m_savedClogBuf{ nullptr };
+    std::streambuf* m_savedCerrBuf{ nullptr };
 
     std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
+
+    std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
+    std::shared_ptr<celestia::engine::TexturePaths> texturePaths;
 
 #ifdef CELX
     friend celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);

@@ -41,6 +41,10 @@ constexpr inline double JupiterMass       = 1.2668653e17 / G; // kg
 
 // https://mips.as.arizona.edu/~cnaw/sun.html for Johnson V filter
 constexpr inline float SOLAR_ABSMAG       = 4.81f;
+// https://arxiv.org/abs/1510.07674
+constexpr inline float SOLAR_TEMPERATURE = 5772.0f;
+// IAU resolution B2 (2015): on recommended zero points for the absolute and apparent bolometric magnitude scales
+constexpr inline float SOLAR_BOLOMETRIC_MAG = 4.74f;
 
 // IAU 2015 Resolution B3
 constexpr inline float SOLAR_IRRADIANCE   = 1361.0f; // W / m^2
@@ -55,6 +59,10 @@ constexpr inline float LN_MAG             = 1.0857362f; // 5/ln(100)
 // Lowest screen brightness of a point to render
 constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
 //                                        = 1.0f / (255.0f * 12.92f); after implementing gamma correction
+
+// Approximately 10 parsecs in light-years
+// used to determine when to switch from AppMag to AbsMag
+constexpr inline double LY_PER_10PARSEC = 32.615637771674336;
 
 namespace detail
 {

@@ -40,16 +40,17 @@ copyVertex(cmod::VWord* newVertexData,
            cmod::Index32 oldIndex,
            array_view<std::uint32_t> fromOffsets)
 {
-    unsigned int stride = oldDesc.strideBytes / sizeof(cmod::VWord);
+    unsigned int stride = oldDesc.strideBytes() / sizeof(cmod::VWord);
     const cmod::VWord* oldVertex = oldVertexData + stride * oldIndex;
 
-    for (std::size_t i = 0; i < newDesc.attributes.size(); i++)
+    auto newAttributes = newDesc.attributes();
+    for (std::size_t i = 0; i < newAttributes.size(); i++)
     {
         if (fromOffsets[i] != ~0u)
         {
-            std::memcpy(newVertexData + newDesc.attributes[i].offsetWords,
+            std::memcpy(newVertexData + newAttributes[i].offsetWords,
                         oldVertex + fromOffsets[i],
-                        cmod::VertexAttribute::getFormatSizeWords(newDesc.attributes[i].format) * sizeof(cmod::VWord));
+                        cmod::VertexAttribute::getFormatSizeWords(newAttributes[i].format) * sizeof(cmod::VWord));
         }
     }
 }
@@ -64,7 +65,6 @@ getVertex(const cmod::VWord* vertexData,
     std::memcpy(fdata.data(), vertexData + strideWords * index + positionOffset, sizeof(float) * 3);
     return Eigen::Vector3f::Map(fdata.data());
 }
-
 
 Eigen::Vector2f
 getTexCoord(const cmod::VWord* vertexData,
@@ -95,43 +95,6 @@ averageFaceVectors(const std::vector<Face>& faces,
     }
 
     return v.squaredNorm() == 0.0f ? Eigen::Vector3f::UnitX() : v.normalized();
-}
-
-void
-augmentVertexDescription(cmod::VertexDescription& desc,
-                         cmod::VertexAttributeSemantic semantic,
-                         cmod::VertexAttributeFormat format)
-{
-    std::uint32_t stride = 0;
-    bool foundMatch = false;
-
-    auto it = desc.attributes.begin();
-    auto end = desc.attributes.end();
-    for (auto &attr : desc.attributes)
-    {
-        if (semantic == attr.semantic && format != attr.format)
-        {
-            // The semantic matches, but the format does not; skip this
-            // item.
-            continue;
-        }
-
-        foundMatch |= (semantic == attr.semantic);
-        attr.offsetWords = stride;
-        stride += cmod::VertexAttribute::getFormatSizeWords(attr.format);
-        *it = std::move(attr);
-        ++it;
-    }
-
-    desc.attributes.erase(it, end);
-
-    if (!foundMatch)
-    {
-        desc.attributes.emplace_back(semantic, format, stride);
-        stride += cmod::VertexAttribute::getFormatSizeWords(format);
-    }
-
-    desc.strideBytes = stride * sizeof(cmod::VWord);
 }
 
 } // namespace
@@ -210,7 +173,7 @@ GenerateTangents(const Mesh& mesh)
         }
     }
 
-    unsigned int stride = desc.strideBytes / sizeof(VWord);
+    unsigned int stride = desc.strideBytes() / sizeof(VWord);
     std::uint32_t posOffset = desc.getAttribute(VertexAttributeSemantic::Position).offsetWords;
     std::uint32_t texCoordOffset = desc.getAttribute(VertexAttributeSemantic::Texture0).offsetWords;
 
@@ -288,8 +251,7 @@ GenerateTangents(const Mesh& mesh)
     }
 
     // Create the new vertex description
-    VertexDescription newDesc = desc.clone();
-    augmentVertexDescription(newDesc, VertexAttributeSemantic::Tangent, VertexAttributeFormat::Float3);
+    VertexDescription newDesc = desc.augment(VertexAttributeSemantic::Tangent, VertexAttributeFormat::Float3);
 
     // We need to convert the copy the old vertex attributes to the new
     // mesh.  In order to do this, we need the old offset of each attribute
@@ -297,21 +259,24 @@ GenerateTangents(const Mesh& mesh)
     // this mapping.
     std::uint32_t tangentOffset = 0;
     std::array<std::uint32_t, 16> fromOffsets;
-    for (std::uint32_t i = 0; i < newDesc.attributes.size(); i++)
+    auto oldAttributes = desc.attributes();
+    auto newAttributes = newDesc.attributes();
+    for (std::uint32_t i = 0; i < newAttributes.size(); i++)
     {
+        const auto& newAttr = newAttributes[i];
         fromOffsets[i] = ~0;
 
-        if (newDesc.attributes[i].semantic == VertexAttributeSemantic::Tangent)
+        if (newAttr.semantic == VertexAttributeSemantic::Tangent)
         {
-            tangentOffset = newDesc.attributes[i].offsetWords;
+            tangentOffset = newAttr.offsetWords;
         }
         else
         {
-            for (const auto& oldAttr : desc.attributes)
+            for (const auto& oldAttr : oldAttributes)
             {
-                if (oldAttr.semantic == newDesc.attributes[i].semantic)
+                if (oldAttr.semantic == newAttr.semantic)
                 {
-                    assert(oldAttr.format == newDesc.attributes[i].format);
+                    assert(oldAttr.format == newAttr.format);
                     fromOffsets[i] = oldAttr.offsetWords;
                     break;
                 }
@@ -321,7 +286,7 @@ GenerateTangents(const Mesh& mesh)
 
     // Copy the old vertex data along with the generated tangents to the
     // new vertex data buffer.
-    unsigned int newStride = newDesc.strideBytes / sizeof(VWord);
+    unsigned int newStride = newDesc.strideBytes() / sizeof(VWord);
     std::vector<VWord> newVertexData(newStride * nFaces * 3);
     for (std::uint32_t f = 0; f < nFaces; f++)
     {

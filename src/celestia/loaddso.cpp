@@ -24,9 +24,12 @@ namespace celestia
 using DeepSkyLoader = CatalogLoader<DSODatabaseBuilder>;
 
 std::unique_ptr<DSODatabase>
-loadDSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
+loadDSO(const CelestiaConfig& config,
+        ProgressNotifier* progressNotifier,
+        engine::GeometryPaths& geometryPaths,
+        engine::TexturePaths& texturePaths)
 {
-    auto dsoDB = std::make_unique<DSODatabaseBuilder>();
+    auto dsoDB = std::make_unique<DSODatabaseBuilder>(geometryPaths);
 
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "deep sky");
@@ -35,7 +38,9 @@ loadDSO(const CelestiaConfig &config, ProgressNotifier *progressNotifier)
                          typeDesc,
                          ContentType::CelestiaDeepSkyCatalog,
                          progressNotifier,
-                         config.paths.skipExtras);
+                         config.paths.skipExtras,
+                         geometryPaths,
+                         texturePaths);
 
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc,
     // globulars.dsc, ...):

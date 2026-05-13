@@ -2,7 +2,7 @@ task:
   name: freebsd amd64
   skip: "changesIncludeOnly('doc/*')"
   freebsd_instance:
-    image_family: freebsd-14-2
+    image_family: freebsd-14-3
 
   install_script: |
     pkg install -y cmake            \
@@ -10,6 +10,7 @@ task:
                    git              \
                    eigen            \
                    libepoxy         \
+                   fast_float       \
                    gettext          \
                    gperf            \
                    jpeg-turbo       \
@@ -30,7 +31,7 @@ task:
           -G Ninja                  \
           -DCMAKE_BUILD_TYPE=Debug  \
           -DENABLE_GLES=ON          \
-          -DENABLE_SPICE=ON         \
+          -DENABLE_SPICE=OFF        \
           -DENABLE_TOOLS=OFF        \
           -DENABLE_TESTS=ON         \
           -DENABLE_SDL=ON           \

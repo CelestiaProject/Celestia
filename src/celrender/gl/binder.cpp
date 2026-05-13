@@ -22,22 +22,24 @@ Binder::get()
 }
 
 Binder&
-Binder::bind(const Buffer &bo)
+Binder::bind(const BufferRef &bo)
 {
     return bindVBO(bo.targetHint(), bo.id());
 }
 
 Binder&
-Binder::unbind(const Buffer &bo)
+Binder::unbind(const BufferRef &bo)
 {
     switch (bo.targetHint())
     {
     case Buffer::TargetHint::Array:
         if (m_boundVbo == bo.id())
             return bindVBO(Buffer::TargetHint::Array, 0u);
+        break;
     case Buffer::TargetHint::ElementArray:
         if (m_boundIbo == bo.id())
             return bindVBO(Buffer::TargetHint::ElementArray, 0u);
+        break;
     default:
         break;
     }

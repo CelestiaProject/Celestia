@@ -102,7 +102,7 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
 std::unique_ptr<VirtualTexture>
 LoadVirtualTexture(std::istream& in, const std::filesystem::path& path)
 {
-    util::Tokenizer tokenizer(&in);
+    util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
 
     tokenizer.nextToken();
@@ -291,11 +291,6 @@ VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v
 
     if (isPow2(img->getWidth()) && isPow2(img->getHeight()))
         tex = std::make_unique<ImageTexture>(*img, EdgeClamp, mipMapMode);
-
-    // TODO: Virtual textures can have tiles in different formats, some
-    // compressed and some not. The compression flag doesn't make much
-    // sense for them.
-    compressed = img->isCompressed();
 
     return tex;
 }
