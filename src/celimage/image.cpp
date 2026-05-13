@@ -60,6 +60,8 @@ formatComponents(PixelFormat fmt)
     case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5:
     case PixelFormat::DXT5_sRGBA:
+    case PixelFormat::BC7:
+    case PixelFormat::BC7_sRGBA:
         return 4;
 
     // Unknown format
@@ -84,6 +86,8 @@ calcMipLevelSize(PixelFormat fmt, std::int32_t w, std::int32_t h, std::int32_t m
     case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5:
     case PixelFormat::DXT5_sRGBA:
+    case PixelFormat::BC7:
+    case PixelFormat::BC7_sRGBA:
         // 4x4 blocks, 16 bytes per block
         return ((w + 3) / 4) * ((h + 3) / 4) * 16;
     default:
@@ -124,6 +128,8 @@ getLinearFormat(PixelFormat format)
         return PixelFormat::DXT3;
     case PixelFormat::DXT5_sRGBA:
         return PixelFormat::DXT5;
+    case PixelFormat::BC7_sRGBA:
+        return PixelFormat::BC7;
     default:
         return format;
     }
@@ -283,6 +289,8 @@ Image::isCompressed() const
     case PixelFormat::DXT1_sRGBA:
     case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5_sRGBA:
+    case PixelFormat::BC7:
+    case PixelFormat::BC7_sRGBA:
         return true;
     default:
         return false;
@@ -298,6 +306,8 @@ Image::hasAlpha() const
     case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5:
     case PixelFormat::DXT5_sRGBA:
+    case PixelFormat::BC7:
+    case PixelFormat::BC7_sRGBA:
     case PixelFormat::RGBA:
     case PixelFormat::BGRA:
     case PixelFormat::LumAlpha:

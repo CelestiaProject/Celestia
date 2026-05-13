@@ -95,6 +95,8 @@ enum class DXGIFormat : std::uint32_t
     BC2_UNORM_SRGB = 75,
     BC3_UNORM      = 77,
     BC3_UNORM_SRGB = 78,
+    BC7_UNORM      = 98,
+    BC7_UNORM_SRGB = 99,
 };
 
 constexpr std::size_t DDS_MAX_BLOCK_SIZE = 16;
@@ -115,7 +117,15 @@ IsCompressedFormat(PixelFormat format)
            format == PixelFormat::DXT5 ||
            format == PixelFormat::DXT1_sRGBA ||
            format == PixelFormat::DXT3_sRGBA ||
-           format == PixelFormat::DXT5_sRGBA;
+           format == PixelFormat::DXT5_sRGBA ||
+           format == PixelFormat::BC7 ||
+           format == PixelFormat::BC7_sRGBA;
+}
+
+constexpr bool
+IsBPTCFormat(PixelFormat format)
+{
+    return format == PixelFormat::BC7 || format == PixelFormat::BC7_sRGBA;
 }
 
 PixelFormat
@@ -180,6 +190,8 @@ GetDXT10Format(const DDSHeaderDXT10& dx10)
     case DXGIFormat::BC2_UNORM_SRGB:      return PixelFormat::DXT3_sRGBA;
     case DXGIFormat::BC3_UNORM:           return PixelFormat::DXT5;
     case DXGIFormat::BC3_UNORM_SRGB:      return PixelFormat::DXT5_sRGBA;
+    case DXGIFormat::BC7_UNORM:           return PixelFormat::BC7;
+    case DXGIFormat::BC7_UNORM_SRGB:      return PixelFormat::BC7_sRGBA;
     default:
         util::GetLogger()->error("Unsupported DXGI format in DDS DX10 header: {}\n", dx10.dxgiFormat);
         return PixelFormat::Invalid;
@@ -388,8 +400,15 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
+    // BC7 must be uploaded as-is to the GPU; there is no software fallback.
+    if (IsBPTCFormat(format) && !gl::ARB_texture_compression_bptc)
+    {
+        util::GetLogger()->error("DDS texture {} is BC7 but BPTC texture compression is not supported (requires GL_ARB_texture_compression_bptc on desktop GL, or ES 3.0 with GL_EXT_texture_compression_bptc on GLES).\n", filename);
+        return nullptr;
+    }
+
     // Check if the platform supports compressed DTXc textures
-    if (IsCompressedFormat(format) && !gl::EXT_texture_compression_s3tc)
+    if (IsCompressedFormat(format) && !IsBPTCFormat(format) && !gl::EXT_texture_compression_s3tc)
         return CreateDecompressedImage(ddsd, format, in, filename).release();
 
     // TODO: Verify that the reported texture size matches the amount of
