@@ -590,7 +590,7 @@ Body::getPosition(double tdb) const
         const ReferenceFrame* frame = phase.orbitFrame().get();
         position += frame->getOrientation(tdb).conjugate() * p;
         Selection center = phase.getFrameTree()->getOwner();
-        const Body* body = center.body();
+        body = center.body();
         if (!body)
             return center.getPosition(tdb).offsetKm(position);
     }
