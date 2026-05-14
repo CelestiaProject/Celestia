@@ -39,20 +39,16 @@ Timeline::findPhase(double t) const
     // nPhases = 1, so we special case that. Otherwise, we do a simple linear search,
     // as the number of phases in a timeline should always be quite small.
     if (phases.size() == 1)
-    {
         return *phases[0];
-    }
-    else
-    {
-        for (const auto& phase : phases)
-        {
-            if (t < phase->endTime())
-                return *phase;
-        }
 
-        // Time is greater than the end time of the final phase. Just return the final phase.
-        return *phases.back();
+    for (const auto& phase : phases)
+    {
+        if (t < phase->endTime())
+            return *phase;
     }
+
+    // Time is greater than the end time of the final phase. Just return the final phase.
+    return *phases.back();
 }
 
 /*! Get the phase at the specified index.

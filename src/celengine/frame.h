@@ -24,7 +24,19 @@
 #include "selection.h"
 #include "shared.h"
 
-class FrameVector;
+class ReferenceFrame;
+
+class FrameVisitor
+{
+public:
+    virtual void visitPosition(const Selection& sel) = 0;
+    virtual void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) = 0;
+    virtual void visitReferenceFrame(const ReferenceFrame*) = 0;
+
+protected:
+    FrameVisitor() = default;
+    ~FrameVisitor() = default;
+};
 
 /*! A ReferenceFrame object has a center and set of orthogonal axes.
  *
@@ -44,10 +56,10 @@ public:
 
     virtual bool isInertial() const = 0;
 
+    virtual void visitChildren(FrameVisitor&) const = 0;
+
 protected:
     explicit ReferenceFrame() = default;
-
-    friend class FrameVector;
 };
 
 /*! Base class for complex frames where there may be some benefit
@@ -90,6 +102,7 @@ public:
     }
 
     bool isInertial() const override { return true; }
+    void visitChildren(FrameVisitor&) const override { /* no-op */ }
 };
 
 //! J2000.0 Earth Mean Equator
@@ -105,6 +118,7 @@ public:
 
     Eigen::Quaterniond getOrientation(double tjd) const override;
     bool isInertial() const override { return true; }
+    void visitChildren(FrameVisitor&) const override { /* no-op*/ }
 };
 
 /*! A BodyFixed frame is a coordinate system with the x-axis pointing
@@ -121,6 +135,7 @@ public:
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override { return false; }
+    void visitChildren(FrameVisitor&) const override;
 
 private:
     Selection m_fixObject;
@@ -134,6 +149,7 @@ public:
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
+    void visitChildren(FrameVisitor&) const override;
 
 private:
     Selection m_equatorObject;
@@ -180,6 +196,7 @@ public:
     explicit FrameVector(ConstVector&&);
 
     Eigen::Vector3d direction(double tjd) const;
+    void visitChildren(FrameVisitor&) const;
 
 private:
     std::variant<RelativePosition, RelativeVelocity, ConstVector> m_data;
@@ -205,6 +222,7 @@ public:
                    int secAxis);
 
     bool isInertial() const override;
+    void visitChildren(FrameVisitor&) const override;
 
 protected:
     Eigen::Quaterniond computeOrientation(double tjd) const override;

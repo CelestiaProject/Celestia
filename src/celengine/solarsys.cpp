@@ -136,13 +136,470 @@ BodyClassification GetClassificationId(std::string_view className)
 //! Maximum depth permitted for nested frames.
 unsigned int MaxFrameDepth = 50;
 
-bool isFrameCircular(const ReferenceFrame& frame)
+class TimelineValidator
 {
-    // TODO
-    return false;
+public:
+    TimelineValidator(const Body* body, const Timeline& timeline) :
+        m_testBody(body), m_testTimeline(timeline)
+    {}
+
+    bool validate();
+
+private:
+    enum class FrameUsage
+    {
+        Position,
+        Body,
+    };
+
+    static constexpr int Invalid = -1;
+    static constexpr int NotStarted = -2;
+
+    struct PhaseStatus
+    {
+        explicit PhaseStatus(const TimelinePhase* p) : phase(p) {}
+
+        const TimelinePhase* phase;
+        int positionDepth{ NotStarted };
+        int bodyDepth{ NotStarted };
+    };
+
+    struct ProcessPhase
+    {
+        const TimelinePhase* phase;
+        FrameUsage usage;
+    };
+
+    struct FinishPhase
+    {
+        const TimelinePhase* phase;
+        FrameUsage usage;
+    };
+
+    struct ProcessFrame
+    {
+        const ReferenceFrame* frame;
+    };
+
+    struct FinishFrame
+    {
+        const ReferenceFrame* frame;
+    };
+
+    using Command = std::variant<ProcessPhase, FinishPhase, ProcessFrame, FinishFrame>;
+
+    class CommandProcessor
+    {
+    public:
+        CommandProcessor(TimelineValidator& validator) : m_validator(validator) {}
+
+        bool operator()(const ProcessPhase&) const;
+        bool operator()(const FinishPhase&) const;
+        bool operator()(const ProcessFrame&) const;
+        bool operator()(const FinishFrame&) const;
+
+    private:
+        TimelineValidator& m_validator;
+    };
+
+    class FrameProcessVisitor final : public FrameVisitor
+    {
+    public:
+        FrameProcessVisitor(TimelineValidator& validator) : m_validator(validator) {}
+
+        void visitPosition(const Selection& sel) override;
+        void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) override;
+        void visitReferenceFrame(const ReferenceFrame*) override;
+
+        bool status() const noexcept { return m_status; }
+    private:
+        TimelineValidator& m_validator;
+        bool m_status{ true };
+    };
+
+    class FrameFinishVisitor final : public FrameVisitor
+    {
+    public:
+        FrameFinishVisitor(TimelineValidator& validator) : m_validator(validator) {}
+
+        void visitPosition(const Selection& sel) override;
+        void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) override;
+        void visitReferenceFrame(const ReferenceFrame*) override;
+
+        int maxDepth() const noexcept { return m_maxDepth; }
+
+    private:
+        TimelineValidator& m_validator;
+        int m_maxDepth{ 0 };
+    };
+
+    static const Body* getBody(const Selection&);
+    const Timeline* getTimeline(const Body*) const;
+    int phaseDepth(const TimelinePhase*) const;
+    int frameDepth(const ReferenceFrame*) const;
+
+    const Body* m_testBody;
+    const Timeline& m_testTimeline;
+    std::vector<PhaseStatus> m_phases;
+    std::vector<std::pair<const ReferenceFrame*, int>> m_frames;
+    std::vector<Command> m_commands;
+};
+
+bool
+TimelineValidator::validate()
+{
+    // Validate that the timeline does not lead to circular references
+    // NOTE: the check for maximum depth can be circumvented by using
+    // Modify directives - to fix this we would need to keep track of
+    // all active reference frames that reference the current body and
+    // track those as well.
+    for (unsigned int i = 0, nPhases = m_testTimeline.phaseCount(); i < nPhases; ++i)
+    {
+        const TimelinePhase* phase = &m_testTimeline.getPhase(i);
+        m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Body });
+        m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Position });
+    }
+
+    CommandProcessor processor(*this);
+    while (!m_commands.empty())
+    {
+        auto command = m_commands.back();
+        m_commands.pop_back();
+        if (!std::visit(processor, command))
+            return false;
+    }
+
+    return true;
 }
 
+const Body*
+TimelineValidator::getBody(const Selection& sel)
+{
+    if (const Body* body = sel.body(); body)
+        return body;
+    if (const Location* location = sel.location(); location)
+        return sel.location()->getParentBody();
+    return nullptr;
+}
 
+const Timeline*
+TimelineValidator::getTimeline(const Body* body) const
+{
+    return body == m_testBody
+        ? &m_testTimeline
+        : body->getTimeline();
+}
+
+int
+TimelineValidator::phaseDepth(const TimelinePhase* phase) const
+{
+    const auto phaseBegin = m_phases.begin();
+    const auto phaseEnd = m_phases.end();
+    int maxTreeDepth = 0;
+    if (const Body* parentBody = phase->getFrameTree()->getOwner().body(); parentBody)
+    {
+        const Timeline* parentTimeline = getTimeline(parentBody);
+        for (unsigned int i = 0, nPhases = parentTimeline->phaseCount(); i < nPhases; ++i)
+        {
+            const TimelinePhase& parentPhase = parentTimeline->getPhase(i);
+            if (parentPhase.startTime() >= phase->endTime() || parentPhase.endTime() <= phase->startTime())
+                continue;
+
+            auto phaseIt = std::find_if(phaseBegin, phaseEnd,
+                                        [&parentPhase](const auto& p) { return p.phase == &parentPhase; });
+            if (phaseIt == phaseEnd || phaseIt->positionDepth < 0)
+                return -1;
+
+            if (phaseIt->positionDepth > maxTreeDepth)
+                maxTreeDepth = phaseIt->positionDepth;
+        }
+    }
+
+    return maxTreeDepth;
+}
+
+int
+TimelineValidator::frameDepth(const ReferenceFrame* frame) const
+{
+    const auto end = m_frames.end();
+    auto it = std::find_if(m_frames.begin(), end,
+                           [frame](const auto& f) { return f.first == frame; });
+    if (it == end)
+        return -1;
+
+    return it->second;
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const ProcessPhase& command) const
+{
+    const TimelinePhase* phase = command.phase;
+    const auto end = m_validator.m_phases.end();
+    auto it = std::find_if(m_validator.m_phases.begin(), end,
+                           [phase](const auto& p) { return p.phase == phase; });
+
+    int PhaseStatus::*depthField;
+    const ReferenceFrame::SharedConstPtr& (TimelinePhase::*getFrame)() const;
+    switch (command.usage)
+    {
+    case FrameUsage::Position:
+        depthField = &PhaseStatus::positionDepth;
+        getFrame = &TimelinePhase::orbitFrame;
+        break;
+
+    case FrameUsage::Body:
+        depthField = &PhaseStatus::bodyDepth;
+        getFrame = &TimelinePhase::bodyFrame;
+        break;
+
+    default:
+        assert(0);
+        return false;
+    }
+
+    if (it == end)
+        m_validator.m_phases.emplace_back(phase).*depthField = TimelineValidator::Invalid;
+    else if (int& depth = (*it).*depthField; depth >= 0)
+        return true;
+    else if (depth == TimelineValidator::Invalid)
+        return false;
+    else
+        depth = TimelineValidator::Invalid;
+
+    m_validator.m_commands.emplace_back(FinishPhase { phase, command.usage });
+    m_validator.m_commands.emplace_back(ProcessFrame { (phase->*getFrame)().get() });
+
+    if (command.usage == FrameUsage::Position)
+    {
+        const Body* parentBody = phase->getFrameTree()->getOwner().body();
+        if (!parentBody)
+            return true;
+
+        const Timeline* parentTimeline = m_validator.getTimeline(parentBody);
+        for (unsigned int i = 0, nPhases = parentTimeline->phaseCount(); i < nPhases; ++i)
+        {
+            const TimelinePhase& parentPhase = parentTimeline->getPhase(i);
+            if (parentPhase.startTime() < phase->endTime() && parentPhase.endTime() > phase->startTime())
+                m_validator.m_commands.emplace_back(ProcessPhase { &parentPhase });
+        }
+    }
+
+    return true;
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const FinishPhase& command) const
+{
+    const TimelinePhase* phase = command.phase;
+    const auto end = m_validator.m_phases.end();
+    auto it = std::find_if(m_validator.m_phases.begin(), end,
+                           [phase](const auto& p) { return p.phase == phase; });
+    if (it == end)
+    {
+        assert(0);
+        return false;
+    }
+
+    int PhaseStatus::*depthField;
+    const ReferenceFrame::SharedConstPtr& (TimelinePhase::*getFrame)() const;
+    switch (command.usage)
+    {
+    case FrameUsage::Position:
+        depthField = &PhaseStatus::positionDepth;
+        getFrame = &TimelinePhase::orbitFrame;
+        break;
+
+    case FrameUsage::Body:
+        depthField = &PhaseStatus::bodyDepth;
+        getFrame = &TimelinePhase::bodyFrame;
+        break;
+
+    default:
+        assert(0);
+        return false;
+    }
+
+    int maxDepth = m_validator.frameDepth((phase->*getFrame)().get());
+    if (maxDepth < 0)
+    {
+        assert(0);
+        return false;
+    }
+
+    if (command.usage == FrameUsage::Position)
+    {
+        if (int orbitDepth = m_validator.phaseDepth(phase); orbitDepth >= 0)
+        {
+            maxDepth += orbitDepth;
+        }
+        else
+        {
+            assert(0);
+            return false;
+        }
+    }
+
+    (*it).*depthField = maxDepth + 1;
+    return maxDepth < MaxFrameDepth;
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const ProcessFrame& command) const
+{
+    const ReferenceFrame* frame = command.frame;
+    if (const auto end = m_validator.m_frames.cend(),
+        it = std::find_if(m_validator.m_frames.cbegin(), end,
+                          [frame](const auto& f) { return f.first == frame; });
+        it != end)
+    {
+        return it->second >= 0;
+    }
+
+    m_validator.m_frames.emplace_back(frame, -1);
+    m_validator.m_commands.emplace_back(FinishFrame { frame });
+    FrameProcessVisitor visitor(m_validator);
+    frame->visitChildren(visitor);
+    return visitor.status();
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const FinishFrame& command) const
+{
+    const ReferenceFrame* frame = command.frame;
+    const auto end = m_validator.m_frames.end();
+    auto it = std::find_if(m_validator.m_frames.begin(), end,
+                           [frame](const auto& f) { return f.first == frame; });
+    if (it == end)
+    {
+        assert(0);
+        return false;
+    }
+
+    FrameFinishVisitor visitor(m_validator);
+    frame->visitChildren(visitor);
+    int depth = visitor.maxDepth();
+    if (depth < 0)
+    {
+        assert(0);
+        return false;
+    }
+
+    it->second = depth + 1;
+    return true;
+}
+
+void
+TimelineValidator::FrameProcessVisitor::visitPosition(const Selection& sel)
+{
+    const Body* body = TimelineValidator::getBody(sel);
+    if (!body)
+        return;
+
+    const Timeline* timeline = m_validator.getTimeline(body);
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+        m_validator.m_commands.emplace_back(ProcessPhase { &timeline->getPhase(i), FrameUsage::Position });
+}
+
+void
+TimelineValidator::FrameProcessVisitor::visitBodyFrame(const Body* body, std::optional<double> t)
+{
+    const Timeline* timeline = m_validator.getTimeline(body);
+    if (t.has_value())
+    {
+        m_validator.m_commands.emplace_back(ProcessFrame { timeline->findPhase(*t).bodyFrame().get() });
+        return;
+    }
+
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+        m_validator.m_commands.emplace_back(ProcessFrame { timeline->getPhase(i).bodyFrame().get() });
+}
+
+void
+TimelineValidator::FrameProcessVisitor::visitReferenceFrame(const ReferenceFrame* frame)
+{
+    m_validator.m_commands.emplace_back(ProcessFrame { frame });
+}
+
+void
+TimelineValidator::FrameFinishVisitor::visitPosition(const Selection& sel)
+{
+    if (m_maxDepth < 0)
+        return;
+
+    const Body* body = TimelineValidator::getBody(sel);
+    if (!body)
+        return;
+
+    const Timeline* timeline = m_validator.getTimeline(body);
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+    {
+        int phaseDepth = m_validator.phaseDepth(&timeline->getPhase(i));
+        if (phaseDepth < 0)
+        {
+            assert(0);
+            m_maxDepth = -1;
+            return;
+        }
+
+        if (phaseDepth > m_maxDepth)
+            m_maxDepth = phaseDepth;
+    }
+}
+
+void
+TimelineValidator::FrameFinishVisitor::visitBodyFrame(const Body* body, std::optional<double> t)
+{
+    if (m_maxDepth < 0)
+        return;
+
+    int frameDepth;
+    const Timeline* timeline = m_validator.getTimeline(body);
+    if (t.has_value())
+    {
+        int frameDepth = m_validator.frameDepth(timeline->findPhase(*t).bodyFrame().get());
+        if (frameDepth < 0)
+        {
+            assert(0);
+            m_maxDepth = -1;
+            return;
+        }
+
+        if (frameDepth > m_maxDepth)
+            m_maxDepth = frameDepth;
+        return;
+    }
+
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+    {
+        int frameDepth = m_validator.frameDepth(timeline->getPhase(i).bodyFrame().get());
+        if (frameDepth < 0)
+        {
+            assert(0);
+            m_maxDepth = -1;
+            return;
+        }
+
+        if (frameDepth > m_maxDepth)
+            m_maxDepth = frameDepth;
+    }
+}
+
+void
+TimelineValidator::FrameFinishVisitor::visitReferenceFrame(const ReferenceFrame* frame)
+{
+    if (m_maxDepth < 0)
+        return;
+
+    int depth = m_validator.frameDepth(frame);
+    if (depth < 0)
+    {
+        assert(0);
+        m_maxDepth = -1;
+    }
+
+    if (depth > m_maxDepth)
+        m_maxDepth = depth;
+}
 
 std::unique_ptr<Location>
 CreateLocation(const AssociativeArray* locationData,
@@ -446,6 +903,12 @@ CreateTimelineFromArray(Body* body,
         timeline->appendPhase(std::move(phase));
     }
 
+    if (!TimelineValidator(body, *timeline).validate())
+    {
+        GetLogger()->error("Frame depth limit exceeded for '{}'.\n", body->getName());
+        return nullptr;
+    }
+
     return timeline;
 }
 
@@ -535,7 +998,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     if (!newOrbit)
         newOrbit = CreateLongLat(*planetData, parentObject.body(), *orbitFrame);
 
-    if (newOrbit == nullptr && orbit == nullptr)
+    if (!newOrbit && !orbit)
     {
         if (body->getTimeline() && disposition == DataDisposition::Modify)
         {
@@ -555,7 +1018,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     }
 
     // If a new orbit was given, override any old orbit
-    if (newOrbit != nullptr)
+    if (newOrbit)
     {
         orbit = newOrbit;
         overrideOldTimeline = true;
@@ -590,56 +1053,44 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     // Something went wrong if the disposition isn't modify and no timeline
     // is to be created.
     assert(disposition == DataDisposition::Modify || overrideOldTimeline);
+    if (!overrideOldTimeline)
+        return true;
 
-    if (overrideOldTimeline)
+    if (beginning >= ending)
     {
-        if (beginning >= ending)
-        {
-            GetLogger()->error("Beginning time must be before Ending time.\n");
-            return false;
-        }
-
-        // We finally have an orbit, rotation model, frames, and time range. Create
-        // the object timeline.
-        auto phase = TimelinePhase::CreateTimelinePhase(universe,
-                                                        body, parentObject,
-                                                        beginning, ending,
-                                                        frameCache->getFrame(*orbitFrame),
-                                                        orbit,
-                                                        frameCache->getFrame(*bodyFrame),
-                                                        rotationModel);
-
-        // We've already checked that beginning < ending; nothing else should go
-        // wrong during the creation of a TimelinePhase.
-        assert(phase != nullptr);
-        if (phase == nullptr)
-        {
-            GetLogger()->error("Internal error creating TimelinePhase.\n");
-            return false;
-        }
-
-        auto timeline = std::make_unique<Timeline>();
-        timeline->appendPhase(std::move(phase));
-
-        body->setTimeline(std::move(timeline));
-
-        // Check for circular references in frames; this can only be done once the timeline
-        // has actually been set.
-        // TIMELINE-TODO: This check is not comprehensive; it won't find recursion in
-        // multiphase timelines.
-        if (newOrbitFrame && isFrameCircular(*body->getOrbitFrame(0.0)))
-        {
-            GetLogger()->error("Orbit frame for '{}' is nested too deep (probably circular)\n", body->getName());
-            return false;
-        }
-
-        if (newBodyFrame && isFrameCircular(*body->getBodyFrame(0.0)))
-        {
-            GetLogger()->error("Body frame for '{}' is nested too deep (probably circular)\n", body->getName());
-            return false;
-        }
+        GetLogger()->error("Beginning time must be before Ending time.\n");
+        return false;
     }
 
+    // We finally have an orbit, rotation model, frames, and time range. Create
+    // the object timeline.
+    auto phase = TimelinePhase::CreateTimelinePhase(universe,
+                                                    body, parentObject,
+                                                    beginning, ending,
+                                                    frameCache->getFrame(*orbitFrame),
+                                                    orbit,
+                                                    frameCache->getFrame(*bodyFrame),
+                                                    rotationModel);
+
+    // We've already checked that beginning < ending; nothing else should go
+    // wrong during the creation of a TimelinePhase.
+    assert(phase != nullptr);
+    if (phase == nullptr)
+    {
+        GetLogger()->error("Internal error creating TimelinePhase.\n");
+        return false;
+    }
+
+    auto timeline = std::make_unique<Timeline>();
+    timeline->appendPhase(std::move(phase));
+
+    if (!TimelineValidator(body, *timeline).validate())
+    {
+        GetLogger()->error("Frame depth limit exceeded for '{}'.\n", body->getName());
+        return false;
+    }
+
+    body->setTimeline(std::move(timeline));
     return true;
 }
 

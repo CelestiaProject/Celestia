@@ -132,12 +132,31 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
     case SelectionType::Star:
         return m_fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
     case SelectionType::Location:
-        if (m_fixObject.location()->getParentBody())
-            return m_fixObject.location()->getParentBody()->getAngularVelocity(tjd);
+        if (const Body* parentBody = m_fixObject.location()->getParentBody(); parentBody)
+            return parentBody->getAngularVelocity(tjd);
         else
             return Eigen::Vector3d::Zero();
     default:
         return Eigen::Vector3d::Zero();
+    }
+}
+
+void
+BodyFixedFrame::visitChildren(FrameVisitor& visitor) const
+{
+    switch (m_fixObject.getType())
+    {
+    case SelectionType::Body:
+        visitor.visitBodyFrame(m_fixObject.body());
+        break;
+
+    case SelectionType::Location:
+        if (const Body* parentBody = m_fixObject.location()->getParentBody(); parentBody)
+            visitor.visitBodyFrame(parentBody);
+        break;
+
+    default:
+        break;
     }
 }
 
@@ -193,6 +212,13 @@ BodyMeanEquatorFrame::isInertial() const
     }
 
     return true;
+}
+
+void
+BodyMeanEquatorFrame::visitChildren(FrameVisitor& visitor) const
+{
+    if (const Body* body = m_equatorObject.body(); body)
+        visitor.visitBodyFrame(body, m_freezeEpoch);
 }
 
 /*** CachingFrame ***/
@@ -359,6 +385,13 @@ TwoVectorFrame::isInertial() const
     return false;
 }
 
+void
+TwoVectorFrame::visitChildren(FrameVisitor& visitor) const
+{
+    m_primaryVector.visitChildren(visitor);
+    m_secondaryVector.visitChildren(visitor);
+}
+
 FrameVector::FrameVector(const RelativePosition& pos) : m_data(pos)
 {
 }
@@ -401,6 +434,38 @@ FrameVector::direction(double tjd) const
     };
 
     return std::visit(DirectionVisitor{ tjd }, m_data);
+}
+
+void
+FrameVector::visitChildren(FrameVisitor& visitor) const
+{
+    class ChildVisitor
+    {
+    public:
+        ChildVisitor(FrameVisitor& v) : m_visitor(v) {}
+
+        void operator()(const RelativePosition& pos) const
+        {
+            m_visitor.visitPosition(pos.observer);
+            m_visitor.visitPosition(pos.target);
+        }
+
+        void operator()(const RelativeVelocity& vel) const
+        {
+            m_visitor.visitPosition(vel.observer);
+            m_visitor.visitPosition(vel.target);
+        }
+
+        void operator()(const ConstVector& vec) const
+        {
+            m_visitor.visitReferenceFrame(vec.frame.get());
+        }
+
+    private:
+        FrameVisitor& m_visitor;
+    };
+
+    std::visit(ChildVisitor(visitor), m_data);
 }
 
 std::size_t
