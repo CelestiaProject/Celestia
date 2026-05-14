@@ -244,16 +244,10 @@ SunDirectionArrow::SunDirectionArrow(const Body& _body) :
 Eigen::Vector3d
 SunDirectionArrow::getDirection(double tdb) const
 {
-    const Body* b = &body;
-    while (b)
-    {
-        Selection center = b->getTimeline()->findPhase(tdb).getFrameTree()->getOwner();
-        if (const Star* sun = center.star(); sun)
-            return sun->getPosition(tdb).offsetFromKm(body.getPosition(tdb));
-        b = center.body();
-    }
-
-    return Eigen::Vector3d::Zero();
+    const Star* sun = body.getTimeline()->findPhase(tdb).getFrameTree()->getRoot(tdb);
+    return sun
+        ? sun->getPosition(tdb).offsetFromKm(body.getPosition(tdb))
+        : Eigen::Vector3d::Zero();
 }
 
 std::string_view
