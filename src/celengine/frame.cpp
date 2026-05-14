@@ -16,6 +16,8 @@
 #include <cassert>
 #include <cmath>
 
+#include <boost/container_hash/hash.hpp>
+
 #include <celastro/date.h>
 #include <celephem/rotation.h>
 #include <celmath/geomutil.h>
@@ -58,7 +60,35 @@ ReferenceFrame::getAngularVelocity(double tjd) const
     return dq.vec().normalized() * (2.0 * std::acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
 }
 
+/*** J2000EclipticFrame ***/
+
+J2000EclipticFrame::SharedConstPtr
+J2000EclipticFrame::getInstance()
+{
+    static std::weak_ptr<const J2000EclipticFrame> instance;
+    auto ptr = instance.lock();
+    if (ptr)
+        return ptr;
+
+    ptr = std::make_shared<J2000EclipticFrame>(CreateToken{});
+    instance = ptr;
+    return ptr;
+}
+
 /*** J2000EquatorFrame ***/
+
+J2000EquatorFrame::SharedConstPtr
+J2000EquatorFrame::getInstance()
+{
+    static std::weak_ptr<const J2000EquatorFrame> instance;
+    auto ptr = instance.lock();
+    if (ptr)
+        return ptr;
+
+    ptr = std::make_shared<J2000EquatorFrame>(CreateToken{});
+    instance = ptr;
+    return ptr;
+}
 
 Eigen::Quaterniond
 J2000EquatorFrame::getOrientation(double /* tjd */) const
@@ -371,4 +401,181 @@ FrameVector::direction(double tjd) const
     };
 
     return std::visit(DirectionVisitor{ tjd }, m_data);
+}
+
+std::size_t
+std::hash<BodyMeanEquatorFrameKey>::operator()(const BodyMeanEquatorFrameKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.target);
+    boost::hash_combine(seed, obj.freezeEpoch);
+    return seed;
+}
+
+std::size_t
+std::hash<TwoVectorFrameKey>::operator()(const TwoVectorFrameKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.frameVectorId1);
+    boost::hash_combine(seed, obj.axis1);
+    boost::hash_combine(seed, obj.frameVectorId2);
+    boost::hash_combine(seed, obj.axis2);
+    return seed;
+}
+
+std::size_t
+std::hash<RelativePositionKey>::operator()(const RelativePositionKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.observer);
+    boost::hash_combine(seed, obj.target);
+    return seed;
+}
+
+std::size_t
+std::hash<RelativeVelocityKey>::operator()(const RelativeVelocityKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.observer);
+    boost::hash_combine(seed, obj.target);
+    return seed;
+}
+
+std::size_t
+std::hash<ConstVectorKey>::operator()(const ConstVectorKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.vec.x());
+    boost::hash_combine(seed, obj.vec.y());
+    boost::hash_combine(seed, obj.vec.z());
+    boost::hash_combine(seed, obj.frameId);
+    return seed;
+}
+
+ReferenceFrame::SharedConstPtr
+FrameCache::getFrame(FrameId frameId) const
+{
+    assert(static_cast<std::size_t>(frameId) < m_frames.size());
+    return m_frames[static_cast<std::size_t>(frameId)];
+}
+
+FrameId
+FrameCache::getFrameId(const FrameKey& key)
+{
+    auto [it, inserted] = m_frameMap.try_emplace(key, static_cast<FrameId>(m_frames.size()));
+    if (inserted)
+        createFrame(key, static_cast<std::size_t>(it->second));
+
+    return it->second;
+}
+
+bool
+FrameCache::getFrameId(FrameId& frameId, const ReferenceFrame* frame) const
+{
+    auto it = m_frameIdMap.find(frame);
+    if (it == m_frameIdMap.end())
+        return false;
+
+    frameId = it->second;
+    return true;
+}
+
+void
+FrameCache::createFrame(const FrameKey& key, std::size_t index)
+{
+    class FrameKeyVisitor
+    {
+    public:
+        FrameKeyVisitor(const FrameCache& cache) : m_cache(cache) {}
+
+        ReferenceFrame::SharedConstPtr operator()(SimpleFrameKey k) const
+        {
+            switch (k)
+            {
+            case SimpleFrameKey::J2000Ecliptic:
+                return J2000EclipticFrame::getInstance();
+
+            case SimpleFrameKey::J2000Equator:
+                return J2000EquatorFrame::getInstance();
+
+            default:
+                assert(0);
+                return nullptr;
+            }
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const BodyFixedFrameKey& k) const
+        {
+            return std::make_shared<BodyFixedFrame>(k.target);
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const BodyMeanEquatorFrameKey& k) const
+        {
+            return std::make_shared<BodyMeanEquatorFrame>(k.target, k.freezeEpoch);
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const TwoVectorFrameKey& k) const
+        {
+            assert(static_cast<std::size_t>(k.frameVectorId1) < m_cache.m_frameVectors.size());
+            assert(static_cast<std::size_t>(k.frameVectorId2) < m_cache.m_frameVectors.size());
+            const FrameVector& vec1 = m_cache.m_frameVectors[static_cast<std::size_t>(k.frameVectorId1)];
+            const FrameVector& vec2 = m_cache.m_frameVectors[static_cast<std::size_t>(k.frameVectorId2)];
+            return std::make_shared<TwoVectorFrame>(vec1, k.axis1, vec2, k.axis2);
+        }
+
+    private:
+        const FrameCache& m_cache;
+    };
+
+    auto ptr = std::visit(FrameKeyVisitor(*this), key);
+    if (index >= m_frames.size())
+        m_frames.emplace_back(ptr);
+    else
+        m_frames[index] = ptr;
+
+    m_frameIdMap.insert_or_assign(ptr.get(), static_cast<FrameId>(index));
+}
+
+FrameVectorId
+FrameCache::getFrameVectorId(const FrameVectorKey& key)
+{
+    auto [it, inserted] = m_frameVectorMap.try_emplace(key, static_cast<FrameVectorId>(m_frameVectorMap.size()));
+    if (!inserted)
+        return it->second;
+
+    class FrameVectorVisitor
+    {
+    public:
+        FrameVectorVisitor(const FrameCache& cache) : m_cache(cache) {}
+
+        FrameVector operator()(const RelativePositionKey& k) const
+        {
+            return FrameVector(FrameVector::RelativePosition(k.observer, k.target));
+        }
+
+        FrameVector operator()(const RelativeVelocityKey& k) const
+        {
+            return FrameVector(FrameVector::RelativeVelocity(k.observer, k.target));
+        }
+
+        FrameVector operator()(const ConstVectorKey& k) const
+        {
+            assert(static_cast<std::size_t>(k.frameId) < m_cache.m_frames.size());
+            const ReferenceFrame::SharedConstPtr& frame = m_cache.m_frames[static_cast<std::size_t>(k.frameId)];
+            return FrameVector(FrameVector::ConstVector(k.vec, frame));
+        }
+
+    private:
+        const FrameCache& m_cache;
+    };
+
+    m_frameVectors.emplace_back(std::visit(FrameVectorVisitor(*this), key));
+    return it->second;
+}
+
+FrameCache*
+GetFrameCache()
+{
+    static FrameCache cache;
+    return &cache;
 }

@@ -38,8 +38,6 @@ public:
      */
     Selection getOwner() const noexcept { return m_owner; }
 
-    const std::shared_ptr<const ReferenceFrame>& getDefaultReferenceFrame() const;
-
     const TimelinePhase* getChild(unsigned int n) const;
     unsigned int childCount() const;
 

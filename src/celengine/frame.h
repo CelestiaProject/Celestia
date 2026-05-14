@@ -10,12 +10,17 @@
 
 #pragma once
 
+#include <cstddef>
+#include <functional>
 #include <optional>
+#include <unordered_map>
 #include <variant>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+#include <celutil/classops.h>
 #include "selection.h"
 #include "shared.h"
 
@@ -73,10 +78,15 @@ private:
 //! J2000.0 Earth ecliptic frame
 class J2000EclipticFrame final : public ReferenceFrame
 {
+private:
+    struct CreateToken { explicit CreateToken() = default; };
+
 public:
     SHARED_TYPES(J2000EclipticFrame)
 
-    J2000EclipticFrame() = default;
+    J2000EclipticFrame(CreateToken) {}
+
+    static SharedConstPtr getInstance();
 
     Eigen::Quaterniond getOrientation(double /* tjd */) const override
     {
@@ -89,10 +99,15 @@ public:
 //! J2000.0 Earth Mean Equator
 class J2000EquatorFrame final : public ReferenceFrame
 {
+private:
+    struct CreateToken { explicit CreateToken() = default; };
+
 public:
     SHARED_TYPES(J2000EquatorFrame)
 
-    J2000EquatorFrame() = default;
+    J2000EquatorFrame(CreateToken) {}
+
+    static SharedConstPtr getInstance();
 
     Eigen::Quaterniond getOrientation(double tjd) const override;
     bool isInertial() const override { return true; }
@@ -212,3 +227,200 @@ private:
     int m_secondaryAxis;
     int m_tertiaryAxis;
 };
+
+enum class FrameId : std::size_t
+{
+};
+
+enum class FrameVectorId : std::size_t
+{
+};
+
+enum class SimpleFrameKey
+{
+    J2000Ecliptic,
+    J2000Equator,
+};
+
+struct BodyFixedFrameKey
+{
+    explicit BodyFixedFrameKey(const Selection& tgt) : target(tgt) {}
+
+    Selection target;
+};
+
+inline bool operator==(const BodyFixedFrameKey& lhs, const BodyFixedFrameKey& rhs)
+{
+    return lhs.target == rhs.target;
+}
+
+inline bool operator!=(const BodyFixedFrameKey& lhs, const BodyFixedFrameKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<BodyFixedFrameKey>
+{
+    std::size_t operator()(const BodyFixedFrameKey& obj) const { return hash<Selection>{}(obj.target); }
+};
+
+struct BodyMeanEquatorFrameKey
+{
+    explicit BodyMeanEquatorFrameKey(Selection tgt, std::optional<double> freeze = std::nullopt) :
+        target(tgt), freezeEpoch(freeze)
+    {}
+
+    Selection target;
+    std::optional<double> freezeEpoch;
+};
+
+inline bool operator==(const BodyMeanEquatorFrameKey& lhs, const BodyMeanEquatorFrameKey& rhs)
+{
+    return lhs.target == rhs.target && lhs.freezeEpoch == rhs.freezeEpoch;
+}
+
+inline bool operator!=(const BodyMeanEquatorFrameKey& lhs, const BodyMeanEquatorFrameKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<BodyMeanEquatorFrameKey>
+{
+    std::size_t operator()(const BodyMeanEquatorFrameKey&) const;
+};
+
+struct TwoVectorFrameKey
+{
+    TwoVectorFrameKey(FrameVectorId f1, int a1, FrameVectorId f2, int a2) :
+        frameVectorId1(f1), axis1(a1), frameVectorId2(f2), axis2(a2)
+    {}
+
+    FrameVectorId frameVectorId1;
+    int axis1;
+    FrameVectorId frameVectorId2;
+    int axis2;
+};
+
+inline bool operator==(const TwoVectorFrameKey& lhs, const TwoVectorFrameKey& rhs)
+{
+    return lhs.frameVectorId1 == rhs.frameVectorId1 &&
+           lhs.axis1 == rhs.axis1 &&
+           lhs.frameVectorId2 == rhs.frameVectorId2 &&
+           lhs.axis2 == rhs.axis2;
+}
+
+inline bool operator!=(const TwoVectorFrameKey& lhs, const TwoVectorFrameKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<TwoVectorFrameKey>
+{
+    std::size_t operator()(const TwoVectorFrameKey&) const;
+};
+
+using FrameKey = std::variant<SimpleFrameKey, BodyFixedFrameKey, BodyMeanEquatorFrameKey, TwoVectorFrameKey>;
+
+struct RelativePositionKey
+{
+    RelativePositionKey(const Selection& obs, const Selection& tgt) :
+        observer(obs), target(tgt)
+    {}
+
+    Selection observer;
+    Selection target;
+};
+
+inline bool operator==(const RelativePositionKey& lhs, const RelativePositionKey& rhs)
+{
+    return lhs.observer == rhs.observer && lhs.target == rhs.target;
+}
+
+inline bool operator!=(const RelativePositionKey& lhs, const RelativePositionKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<RelativePositionKey>
+{
+    std::size_t operator()(const RelativePositionKey&) const;
+};
+
+struct RelativeVelocityKey
+{
+    RelativeVelocityKey(const Selection& obs, const Selection& tgt) :
+        observer(obs), target(tgt)
+    {}
+
+    Selection observer;
+    Selection target;
+};
+
+inline bool operator==(const RelativeVelocityKey& lhs, const RelativeVelocityKey& rhs)
+{
+    return lhs.observer == rhs.observer && lhs.target == rhs.target;
+}
+
+inline bool operator!=(const RelativeVelocityKey& lhs, const RelativeVelocityKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<RelativeVelocityKey>
+{
+    std::size_t operator()(const RelativeVelocityKey&) const;
+};
+
+struct ConstVectorKey
+{
+    ConstVectorKey(const Eigen::Vector3d& v, FrameId fid) :
+        vec(v), frameId(fid)
+    {}
+
+    Eigen::Vector3d vec;
+    FrameId frameId;
+};
+
+inline bool operator==(const ConstVectorKey& lhs, const ConstVectorKey& rhs)
+{
+    return lhs.vec == rhs.vec && lhs.frameId == rhs.frameId;
+}
+
+inline bool operator!=(const ConstVectorKey& lhs, const ConstVectorKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<ConstVectorKey>
+{
+    std::size_t operator()(const ConstVectorKey&) const;
+};
+
+using FrameVectorKey = std::variant<RelativePositionKey, RelativeVelocityKey, ConstVectorKey>;
+
+class FrameCache : private celestia::util::NoCopy
+{
+public:
+    ReferenceFrame::SharedConstPtr getFrame(FrameId) const;
+
+    FrameId getFrameId(const FrameKey&);
+    bool getFrameId(FrameId&, const ReferenceFrame*) const;
+    FrameVectorId getFrameVectorId(const FrameVectorKey&);
+
+private:
+    void createFrame(const FrameKey&, std::size_t);
+
+    std::vector<ReferenceFrame::SharedConstPtr> m_frames;
+    std::vector<FrameVector> m_frameVectors;
+    std::unordered_map<FrameKey, FrameId> m_frameMap;
+    std::unordered_map<FrameVectorKey, FrameVectorId> m_frameVectorMap;
+    std::unordered_map<const ReferenceFrame*, FrameId> m_frameIdMap;
+};
+
+FrameCache* GetFrameCache();

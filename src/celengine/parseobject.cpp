@@ -879,63 +879,75 @@ Selection
 getFrameCenter(const Universe& universe, const AssociativeArray* frameData, const Selection& defaultCenter)
 {
     const std::string* centerName = frameData->getString("Center");
-    if (centerName == nullptr)
-    {
-        if (defaultCenter.empty())
-            GetLogger()->warn("No center specified for reference frame.\n");
+    if (!centerName)
         return defaultCenter;
-    }
 
     Selection centerObject = universe.findPath(*centerName, {});
     if (centerObject.empty())
     {
         GetLogger()->error("Center object '{}' of reference frame not found.\n", *centerName);
-        return Selection();
+        return defaultCenter;
     }
 
     // Should verify that center object is a star or planet, and
     // that it is a member of the same star system as the body in which
     // the frame will be used.
+    switch (centerObject.getType())
+    {
+    case SelectionType::Star:
+    case SelectionType::Body:
+        // Should verify that it is in the same star system
+        return centerObject;
 
-    return centerObject;
+    default:
+        GetLogger()->error("Center object '{}' of reference frame is not a star or planet.\n", *centerName);
+        return defaultCenter;
+    }
 }
 
-BodyFixedFrame::SharedConstPtr
+std::optional<FrameId>
 CreateBodyFixedFrame(const Universe& universe,
                      const AssociativeArray* frameData,
-                     const Selection& defaultCenter)
+                     Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData, defaultCenter);
-    if (center.empty())
-        return nullptr;
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
+    if (defaultCenter.empty())
+    {
+        GetLogger()->error("No center object specified for BodyFixed frame.\n");
+        return std::nullopt;
+    }
 
-    return std::make_shared<BodyFixedFrame>(center, center);
+    return GetFrameCache()->getFrameId(BodyFixedFrameKey(defaultCenter));
 }
 
-BodyMeanEquatorFrame::SharedConstPtr
+std::optional<FrameId>
 CreateMeanEquatorFrame(const Universe& universe,
                        const AssociativeArray* frameData,
-                       const Selection& defaultCenter)
+                       Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData, defaultCenter);
-    if (center.empty())
-        return nullptr;
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
 
-    Selection obj = center;
+    Selection obj = defaultCenter;
     if (const std::string* objName = frameData->getString("Object"); objName != nullptr)
     {
         obj = universe.findPath(*objName, {});
         if (obj.empty())
         {
             GetLogger()->error("Object '{}' for mean equator frame not found.\n", *objName);
-            return nullptr;
+            return std::nullopt;
         }
     }
 
-    if (double freezeEpoch = 0.0; ParseDate(frameData, "Freeze", freezeEpoch))
-        return std::make_shared<BodyMeanEquatorFrame>(center, obj, freezeEpoch);
+    if (obj.empty())
+    {
+        GetLogger()->error("No Object specified for mean equator frame.\n");
+        return std::nullopt;
+    }
 
-    return std::make_shared<BodyMeanEquatorFrame>(center, obj);
+    if (double freezeEpoch = 0.0; ParseDate(frameData, "Freeze", freezeEpoch))
+        return GetFrameCache()->getFrameId(BodyMeanEquatorFrameKey(obj, freezeEpoch));
+
+    return GetFrameCache()->getFrameId(BodyMeanEquatorFrameKey(obj));
 }
 
 /**
@@ -1068,7 +1080,7 @@ getVectorObserver(const Universe& universe, const AssociativeArray* vectorData)
     return obsObject;
 }
 
-std::unique_ptr<FrameVector>
+std::optional<FrameVectorId>
 CreateFrameVector(const Universe& universe,
                   const Selection& center,
                   const AssociativeArray* vectorData)
@@ -1084,13 +1096,15 @@ CreateFrameVector(const Universe& universe,
                 observer = center;
 
             if (observer.empty() || target.empty())
-                return nullptr;
+            {
+                GetLogger()->error("Missing Observer and Target in RelativePosition.\n");
+                return std::nullopt;
+            }
 
-            return std::make_unique<FrameVector>(FrameVector::createRelativePositionVector(observer, target));
+            return GetFrameCache()->getFrameVectorId(RelativePositionKey(observer, target));
         }
     }
-
-    if (const Value* value = vectorData->getValue("RelativeVelocity"); value != nullptr)
+    else if (const Value* value = vectorData->getValue("RelativeVelocity"); value != nullptr)
     {
         if (const AssociativeArray* relVData = value->getHash(); relVData != nullptr)
         {
@@ -1101,13 +1115,14 @@ CreateFrameVector(const Universe& universe,
                 observer = center;
 
             if (observer.empty() || target.empty())
-                return nullptr;
+            {
+                GetLogger()->error("Missing Observer and Target in RelativeVelocity.\n");
+            }
 
-            return std::make_unique<FrameVector>(FrameVector::createRelativeVelocityVector(observer, target));
+            return GetFrameCache()->getFrameVectorId(RelativeVelocityKey(observer, target));
         }
     }
-
-    if (const Value* value = vectorData->getValue("ConstantVector"); value != nullptr)
+    else if (const Value* value = vectorData->getValue("ConstantVector"); value != nullptr)
     {
         if (const AssociativeArray* constVecData = value->getHash(); constVecData != nullptr)
         {
@@ -1115,65 +1130,71 @@ CreateFrameVector(const Universe& universe,
             if (vec.norm() == 0.0)
             {
                 GetLogger()->error("Bad two-vector frame: constant vector has length zero\n");
-                return nullptr;
+                return std::nullopt;
             }
             vec.normalize();
             vec = Eigen::Vector3d(vec.x(), vec.z(), -vec.y());
 
             // The frame for the vector is optional; a nullptr frame indicates
             // J2000 ecliptic.
-            ReferenceFrame::SharedConstPtr f;
-            if (const Value* frameValue = constVecData->getValue("Frame"); frameValue != nullptr)
+            FrameId frameId;
+            if (const Value* frameValue = constVecData->getValue("Frame"); frameValue)
             {
-                f = CreateReferenceFrame(universe, frameValue, center, nullptr);
-                if (f == nullptr)
-                    return nullptr;
+                if (auto f = CreateReferenceFrame(universe, frameValue, nullptr); f.has_value())
+                    frameId = *f;
+                else
+                    return std::nullopt;
+            }
+            else
+            {
+                frameId = GetFrameCache()->getFrameId(SimpleFrameKey::J2000Ecliptic);
             }
 
-            return std::make_unique<FrameVector>(FrameVector::createConstantVector(vec, f));
+            return GetFrameCache()->getFrameVectorId(ConstVectorKey(vec, frameId));
         }
     }
 
     GetLogger()->error("Bad two-vector frame: unknown vector type\n");
-    return nullptr;
+    return std::nullopt;
 }
 
-std::shared_ptr<const TwoVectorFrame>
+std::optional<FrameId>
 CreateTwoVectorFrame(const Universe& universe,
                      const AssociativeArray* frameData,
-                     const Selection& defaultCenter)
+                     Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData, defaultCenter);
-    if (center.empty())
-        return nullptr;
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
 
-    // Primary and secondary vector definitions are required
-    const Value* primaryValue = frameData->getValue("Primary");
-    if (primaryValue == nullptr)
+    const AssociativeArray* primaryData;
+    if (const Value* primaryValue = frameData->getValue("Primary"); primaryValue)
+    {
+        primaryData = primaryValue->getHash();
+        if (!primaryData)
+        {
+            GetLogger()->error("Bad syntax for primary axis of two-vector frame.\n");
+            return std::nullopt;
+        }
+    }
+    else
     {
         GetLogger()->error("Primary axis missing from two-vector frame.\n");
-        return nullptr;
+        return std::nullopt;
     }
 
-    const AssociativeArray* primaryData = primaryValue->getHash();
-    if (primaryData == nullptr)
+    const AssociativeArray* secondaryData;
+    if (const Value* secondaryValue = frameData->getValue("Secondary"); secondaryValue)
     {
-        GetLogger()->error("Bad syntax for primary axis of two-vector frame.\n");
-        return nullptr;
+        secondaryData = secondaryValue->getHash();
+        if (!secondaryData)
+        {
+            GetLogger()->error("Bad syntax for secondary axis of two-vector frame.\n");
+            return std::nullopt;
+        }
     }
-
-    const Value* secondaryValue = frameData->getValue("Secondary");
-    if (secondaryValue == nullptr)
+    else
     {
         GetLogger()->error("Secondary axis missing from two-vector frame.\n");
-        return nullptr;
-    }
-
-    const AssociativeArray* secondaryData = secondaryValue->getHash();
-    if (secondaryData == nullptr)
-    {
-        GetLogger()->error("Bad syntax for secondary axis of two-vector frame.\n");
-        return nullptr;
+        return std::nullopt;
     }
 
     // Get and validate the axes for the direction vectors
@@ -1184,54 +1205,43 @@ CreateTwoVectorFrame(const Universe& universe,
     assert(std::abs(secondaryAxis) <= 3);
     if (primaryAxis == 0 || secondaryAxis == 0)
     {
-        return nullptr;
+        return std::nullopt;
     }
 
     if (std::abs(primaryAxis) == std::abs(secondaryAxis))
     {
         GetLogger()->error("Bad two-vector frame: axes for vectors are collinear.\n");
-        return nullptr;
+        return std::nullopt;
     }
 
-    auto primaryVector = CreateFrameVector(universe, center, primaryData);
-    auto secondaryVector = CreateFrameVector(universe, center, secondaryData);
+    auto primaryVector = CreateFrameVector(universe, defaultCenter, primaryData);
+    auto secondaryVector = CreateFrameVector(universe, defaultCenter, secondaryData);
 
-    if (primaryVector != nullptr && secondaryVector != nullptr)
+    if (primaryVector.has_value() && secondaryVector.has_value())
     {
-        return std::make_shared<TwoVectorFrame>(center,
-                                                *primaryVector,
-                                                primaryAxis,
-                                                *secondaryVector,
-                                                secondaryAxis);
+        return GetFrameCache()->getFrameId(TwoVectorFrameKey(*primaryVector, primaryAxis,
+                                                             *secondaryVector, secondaryAxis));
     }
 
-    return nullptr;
+    return std::nullopt;
 }
 
-std::shared_ptr<const J2000EclipticFrame>
+std::optional<FrameId>
 CreateJ2000EclipticFrame(const Universe& universe,
                          const AssociativeArray* frameData,
-                         const Selection& defaultCenter)
+                         Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData, defaultCenter);
-
-    if (center.empty())
-        return nullptr;
-
-    return std::make_shared<J2000EclipticFrame>(center);
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
+    return GetFrameCache()->getFrameId(SimpleFrameKey::J2000Ecliptic);
 }
 
-std::shared_ptr<const J2000EquatorFrame>
+std::optional<FrameId>
 CreateJ2000EquatorFrame(const Universe& universe,
                         const AssociativeArray* frameData,
-                        const Selection& defaultCenter)
+                        Selection& defaultCenter)
 {
-    Selection center = getFrameCenter(universe, frameData, defaultCenter);
-
-    if (center.empty())
-        return nullptr;
-
-    return std::make_shared<J2000EquatorFrame>(center);
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
+    return GetFrameCache()->getFrameId(SimpleFrameKey::J2000Equator);
 }
 
 /**
@@ -1274,28 +1284,28 @@ CreateJ2000EquatorFrame(const Universe& universe,
  *     ...
  * } </pre>
  */
-std::shared_ptr<const TwoVectorFrame>
+std::optional<FrameId>
 CreateTopocentricFrame(const Universe& universe,
                        const AssociativeArray* frameData,
-                       const Selection& defaultTarget,
+                       Selection& defaultTarget,
                        const Selection& defaultObserver)
 {
     Selection target;
     Selection observer;
-    Selection center;
 
     if (const std::string* centerName = frameData->getString("Center"); centerName != nullptr)
     {
         // If a center is provided, the default observer is the center and
         // the default target is the center's parent. This gives sensible results
         // when a topocentric frame is used as an orbit frame.
-        center = universe.findPath(*centerName, {});
+        Selection center = universe.findPath(*centerName, {});
         if (center.empty())
         {
             GetLogger()->error("Center object '{}' for topocentric frame not found.\n", *centerName);
-            return nullptr;
+            return std::nullopt;
        }
 
+       defaultTarget = center;
        observer = center;
        target = center.parent();
     }
@@ -1306,7 +1316,6 @@ CreateTopocentricFrame(const Universe& universe,
         // is usually the object itself.
         target = defaultTarget;
         observer = defaultObserver;
-        center = defaultObserver;
     }
 
     if (const std::string* targetName = frameData->getString("Target"); targetName == nullptr)
@@ -1314,7 +1323,7 @@ CreateTopocentricFrame(const Universe& universe,
         if (target.empty())
         {
             GetLogger()->error("No target specified for topocentric frame.\n");
-            return nullptr;
+            return std::nullopt;
         }
     }
     else
@@ -1323,7 +1332,7 @@ CreateTopocentricFrame(const Universe& universe,
         if (target.empty())
         {
             GetLogger()->error("Target object '{}' for topocentric frame not found.\n", *targetName);
-            return nullptr;
+            return std::nullopt;
         }
 
         // Should verify that center object is a star or planet, and
@@ -1336,7 +1345,7 @@ CreateTopocentricFrame(const Universe& universe,
         if (observer.empty())
         {
             GetLogger()->error("No observer specified for topocentric frame.\n");
-            return nullptr;
+            return std::nullopt;
         }
     }
     else
@@ -1345,38 +1354,38 @@ CreateTopocentricFrame(const Universe& universe,
         if (observer.empty())
         {
             GetLogger()->error("Observer object '{}' for topocentric frame not found.\n", *observerName);
-            return nullptr;
+            return std::nullopt;
         }
     }
 
-    return CreateTopocentricFrame(center, target, observer);
+    return CreateTopocentricFrame(target, observer);
 }
 
-ReferenceFrame::SharedConstPtr
+std::optional<FrameId>
 CreateComplexFrame(const Universe& universe,
                    const AssociativeArray* frameData,
-                   const Selection& defaultCenter,
+                   Selection& defaultCenter,
                    Body* defaultObserver)
 {
-    if (const Value* value = frameData->getValue("BodyFixed"); value != nullptr)
+    if (const Value* value = frameData->getValue("BodyFixed"); value)
     {
         const AssociativeArray* bodyFixedData = value->getHash();
-        if (bodyFixedData == nullptr)
+        if (!bodyFixedData)
         {
             GetLogger()->error("Object has incorrect body-fixed frame syntax.\n");
-            return nullptr;
+            return std::nullopt;
         }
 
         return CreateBodyFixedFrame(universe, bodyFixedData, defaultCenter);
     }
 
-    if (const Value* value = frameData->getValue("MeanEquator"); value != nullptr)
+    if (const Value* value = frameData->getValue("MeanEquator"); value)
     {
         const AssociativeArray* meanEquatorData = value->getHash();
-        if (meanEquatorData == nullptr)
+        if (!meanEquatorData)
         {
             GetLogger()->error("Object has incorrect mean equator frame syntax.\n");
-            return nullptr;
+            return std::nullopt;
         }
 
         return CreateMeanEquatorFrame(universe, meanEquatorData, defaultCenter);
@@ -1388,7 +1397,7 @@ CreateComplexFrame(const Universe& universe,
         if (twoVectorData == nullptr)
         {
             GetLogger()->error("Object has incorrect two-vector frame syntax.\n");
-            return nullptr;
+            return std::nullopt;
         }
 
        return CreateTwoVectorFrame(universe, twoVectorData, defaultCenter);
@@ -1400,10 +1409,10 @@ CreateComplexFrame(const Universe& universe,
         if (topocentricData == nullptr)
         {
             GetLogger()->error("Object has incorrect topocentric frame syntax.\n");
-            return nullptr;
+            return std::nullopt;
         }
 
-        return CreateTopocentricFrame(universe, topocentricData, defaultCenter, Selection(defaultObserver));
+        return CreateTopocentricFrame(universe, topocentricData, defaultCenter, defaultObserver);
     }
 
     if (const Value* value = frameData->getValue("EclipticJ2000"); value != nullptr)
@@ -1412,7 +1421,7 @@ CreateComplexFrame(const Universe& universe,
         if (eclipticData == nullptr)
         {
             GetLogger()->error("Object has incorrect J2000 ecliptic frame syntax.\n");
-            return nullptr;
+            return std::nullopt;
         }
 
         return CreateJ2000EclipticFrame(universe, eclipticData, defaultCenter);
@@ -1424,7 +1433,7 @@ CreateComplexFrame(const Universe& universe,
         if (equatorData == nullptr)
         {
             GetLogger()->error("Object has incorrect J2000 equator frame syntax.\n");
-            return nullptr;
+            return std::nullopt;
         }
 
         return CreateJ2000EquatorFrame(universe, equatorData, defaultCenter);
@@ -1432,7 +1441,7 @@ CreateComplexFrame(const Universe& universe,
 
     GetLogger()->error("Frame definition does not have a valid frame type.\n");
 
-    return nullptr;
+    return std::nullopt;
 }
 
 } // end unnamed namespace
@@ -1779,31 +1788,55 @@ CreateDefaultRotationModel(double syncRotationPeriod)
  * Helper function for CreateTopocentricFrame().
  * Creates a two-vector frame with the specified center, target, and observer.
  */
-std::shared_ptr<const TwoVectorFrame>
-CreateTopocentricFrame(const Selection& center,
-                       const Selection& target,
+FrameId
+CreateTopocentricFrame(const Selection& target,
                        const Selection& observer)
 {
-    auto eqFrame = std::make_shared<BodyMeanEquatorFrame>(target, target);
-    FrameVector north = FrameVector::createConstantVector(Eigen::Vector3d::UnitY(), eqFrame);
-    FrameVector up = FrameVector::createRelativePositionVector(observer, target);
-
-    return std::make_shared<TwoVectorFrame>(center, up, -2, north, -3);
+    auto frameCache = GetFrameCache();
+    auto eqFrameId = frameCache->getFrameId(BodyMeanEquatorFrameKey(target));
+    auto north = frameCache->getFrameVectorId(ConstVectorKey(Eigen::Vector3d::UnitY(), eqFrameId));
+    auto up = frameCache->getFrameVectorId(RelativePositionKey(observer, target));
+    return frameCache->getFrameId(TwoVectorFrameKey(up, -2, north, -3));
 }
 
-ReferenceFrame::SharedConstPtr CreateReferenceFrame(const Universe& universe,
-                                                    const Value* frameValue,
-                                                    const Selection& defaultCenter,
-                                                    Body* defaultObserver)
+std::optional<FrameId>
+CreateOrbitFrame(FrameId& frame,
+                 const Universe& universe,
+                 const Value* frameValue,
+                 Selection& defaultCenter,
+                 Body* defaultObserver)
 {
-    // TODO: handle named frames
-
     const AssociativeArray* frameData = frameValue->getHash();
     if (frameData == nullptr)
     {
         GetLogger()->error("Invalid syntax for frame definition.\n");
-        return nullptr;
+        return std::nullopt;
     }
 
-    return CreateComplexFrame(universe, frameData, defaultCenter, defaultObserver);
+    // Allow specifying Center directly in the OrbitFrame block
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
+    std::optional<FrameId> result = CreateComplexFrame(universe, frameData, defaultCenter, defaultObserver);
+    if (result.has_value() && defaultCenter.empty())
+    {
+        GetLogger()->error("No center specified for OrbitFrame\n");
+        return std::nullopt;
+    }
+
+    return result;
+}
+
+std::optional<FrameId>
+CreateReferenceFrame(const Universe& universe,
+                     const Value* frameValue,
+                     Body* defaultObserver)
+{
+    const AssociativeArray* frameData = frameValue->getHash();
+    if (frameData == nullptr)
+    {
+        GetLogger()->error("Invalid syntax for frame definition.\n");
+        return std::nullopt;
+    }
+
+    Selection center;
+    return CreateComplexFrame(universe, frameData, center, defaultObserver);
 }

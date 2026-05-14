@@ -45,7 +45,7 @@ FrameTree::FrameTree(Star* star) :
     m_owner(star),
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
-    defaultFrame(std::make_shared<J2000EclipticFrame>())
+    defaultFrame(J2000EclipticFrame::getInstance())
 {
 }
 
@@ -62,15 +62,6 @@ FrameTree::~FrameTree()
 {
     for (const auto& phase : m_children)
         phase->m_owner = nullptr;
-}
-
-/*! Return the default reference frame for the object a frame tree is associated
- *  with.
- */
-const std::shared_ptr<const ReferenceFrame>&
-FrameTree::getDefaultReferenceFrame() const
-{
-    return defaultFrame;
 }
 
 /*! Mark this node of the frame hierarchy as changed. The changed flag

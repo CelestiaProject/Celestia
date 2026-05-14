@@ -357,30 +357,30 @@ createFrame(ObserverFrame::CoordinateSystem _coordSys,
 
     case ObserverFrame::CoordinateSystem::PhaseLock:
         return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
-                                                FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2);
+                                                FrameVector(FrameVector::RelativePosition(_refObject, _targetObject)), 1,
+                                                FrameVector(FrameVector::RelativeVelocity(_refObject, _targetObject)), 2);
 
     case ObserverFrame::CoordinateSystem::Chase:
         return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
-                                                FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2);
+                                                FrameVector(FrameVector::RelativeVelocity(_refObject, _refObject.parent())), 1,
+                                                FrameVector(FrameVector::RelativePosition(_refObject, _refObject.parent())), 2);
 
     case ObserverFrame::CoordinateSystem::PhaseLock_Old:
     {
-        FrameVector rotAxis(FrameVector::createConstantVector(Eigen::Vector3d::UnitY(),
-                                                              std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
+        FrameVector rotAxis(FrameVector::ConstVector(Eigen::Vector3d::UnitY(),
+                                                     std::make_shared<BodyMeanEquatorFrame>(_refObject)));
         return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
+                                                FrameVector(FrameVector::RelativePosition(_refObject, _targetObject)), 3,
                                                 rotAxis, 2);
     }
 
     case ObserverFrame::CoordinateSystem::Chase_Old:
     {
-        FrameVector rotAxis(FrameVector::createConstantVector(Eigen::Vector3d::UnitY(),
-                                                              std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
+        FrameVector rotAxis(FrameVector::ConstVector(Eigen::Vector3d::UnitY(),
+                                                     std::make_shared<BodyMeanEquatorFrame>(_refObject)));
 
         return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
+                                                FrameVector(FrameVector::RelativeVelocity(_refObject.parent(), _refObject)), 3,
                                                 rotAxis, 2);
     }
 

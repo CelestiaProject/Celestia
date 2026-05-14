@@ -138,7 +138,8 @@ unsigned int MaxFrameDepth = 50;
 
 bool isFrameCircular(const ReferenceFrame& frame)
 {
-    return frame.nestingDepth(MaxFrameDepth) > MaxFrameDepth;
+    // TODO
+    return false;
 }
 
 
@@ -268,18 +269,16 @@ Selection GetParentObject(PlanetarySystem* system)
 }
 
 std::shared_ptr<const ephem::Orbit>
-CreateLongLat(const AssociativeArray& planetData, ReferenceFrame::SharedConstPtr& frame)
+CreateLongLat(const AssociativeArray& planetData, Body* centralBody, FrameId& frame)
 {
-    // LongLat will make an object fixed relative to the surface of its center
-    // object. This is done by creating an orbit with a period equal to the
-    // rotation rate of the parent object. A body-fixed reference frame is a
-    // much better way to accomplish this.
-    auto longlat = planetData.getSphericalTuple("LongLat");
-    if (!longlat.has_value())
+    if (!centralBody)
         return nullptr;
 
-    Body* centralBody = frame->getCenter().body();
-    if (!centralBody)
+    // LongLat will make an object fixed relative to the surface of its center
+    // object. This is done by creating an orbit with a period equal to the
+    // rotation rate of the parent object.
+    auto longlat = planetData.getSphericalTuple("LongLat");
+    if (!longlat.has_value())
         return nullptr;
 
 #if 0 // TODO: This should be enabled after #542 is fixed
@@ -288,18 +287,19 @@ CreateLongLat(const AssociativeArray& planetData, ReferenceFrame::SharedConstPtr
     Eigen::Vector3d pos = centralBody->planetocentricToCartesian(180.0 + longlat->x(), longlat->y(), longlat->z());
 #endif
 
-    frame = std::make_shared<BodyFixedFrame>(centralBody, centralBody);
+    frame = GetFrameCache()->getFrameId(BodyFixedFrameKey(centralBody));
     double period = centralBody->getRotationModel(0.0)->getPeriod(); // backwards compatibility use t=0
     return std::make_shared<ephem::FixedOrbit>(pos, period);
 }
 
 std::unique_ptr<TimelinePhase>
 CreateTimelinePhase(Body* body,
+                    Selection parent,
                     Universe& universe,
                     const AssociativeArray* phaseData,
                     const std::filesystem::path& path,
-                    const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
-                    const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
+                    FrameId defaultOrbitFrame,
+                    FrameId defaultBodyFrame,
                     bool isFirstPhase,
                     bool isLastPhase,
                     double previousPhaseEnd)
@@ -326,15 +326,13 @@ CreateTimelinePhase(Body* body,
     }
 
     // Get the orbit reference frame.
-    ReferenceFrame::SharedConstPtr orbitFrame;
-    const Value* frameValue = phaseData->getValue("OrbitFrame");
-    if (frameValue != nullptr)
+    FrameId orbitFrame;
+    if (const Value* frameValue = phaseData->getValue("OrbitFrame"); frameValue)
     {
-        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultOrbitFrame->getCenter(), body);
-        if (orbitFrame == nullptr)
-        {
+        if (auto frame = CreateOrbitFrame(universe, frameValue, parent, body); frame.has_value())
+            orbitFrame = *frame;
+        else
             return nullptr;
-        }
     }
     else
     {
@@ -343,15 +341,13 @@ CreateTimelinePhase(Body* body,
     }
 
     // Get the body reference frame
-    ReferenceFrame::SharedConstPtr bodyFrame;
-    const Value* bodyFrameValue = phaseData->getValue("BodyFrame");
-    if (bodyFrameValue != nullptr)
+    FrameId bodyFrame;
+    if (const Value* bodyFrameValue = phaseData->getValue("BodyFrame"); bodyFrameValue)
     {
-        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
-        if (bodyFrame == nullptr)
-        {
+        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body); frame.has_value())
+            bodyFrame = *frame;
+        else
             return nullptr;
-        }
     }
     else
     {
@@ -361,12 +357,12 @@ CreateTimelinePhase(Body* body,
 
     // Use planet units (AU for semimajor axis) if the center of the orbit
     // reference frame is a star.
-    bool usePlanetUnits = orbitFrame->getCenter().star() != nullptr;
+    bool usePlanetUnits = parent.star() != nullptr;
 
     // Get the orbit
-    auto orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
+    auto orbit = CreateOrbit(parent, phaseData, path, usePlanetUnits);
     if (!orbit)
-        orbit = CreateLongLat(*phaseData, orbitFrame);
+        orbit = CreateLongLat(*phaseData, parent.body(), orbitFrame);
 
     if (!orbit)
     {
@@ -386,12 +382,14 @@ CreateTimelinePhase(Body* body,
         rotationModel = ephem::ConstantOrientation::identity();
     }
 
+    const FrameCache* frameCache = GetFrameCache();
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                     body,
+                                                    parent,
                                                     beginning, ending,
-                                                    orbitFrame,
+                                                    frameCache->getFrame(orbitFrame),
                                                     orbit,
-                                                    bodyFrame,
+                                                    frameCache->getFrame(bodyFrame),
                                                     rotationModel);
 
     // Frame ownership transfered to phase; release local references
@@ -401,11 +399,12 @@ CreateTimelinePhase(Body* body,
 
 std::unique_ptr<Timeline>
 CreateTimelineFromArray(Body* body,
+                        Selection parent,
                         Universe& universe,
                         const ValueArray* timelineArray,
                         const std::filesystem::path& path,
-                        const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
-                        const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
+                        FrameId defaultOrbitFrame,
+                        FrameId defaultBodyFrame)
 {
     auto timeline = std::make_unique<Timeline>();
     double previousEnding = -std::numeric_limits<double>::infinity();
@@ -429,7 +428,7 @@ CreateTimelineFromArray(Body* body,
         bool isFirstPhase = iter == timelineArray->begin();
         bool isLastPhase =  iter == finalIter;
 
-        auto phase = CreateTimelinePhase(body, universe, phaseData,
+        auto phase = CreateTimelinePhase(body, parent, universe, phaseData,
                                          path,
                                          defaultOrbitFrame,
                                          defaultBodyFrame,
@@ -450,72 +449,19 @@ CreateTimelineFromArray(Body* body,
     return timeline;
 }
 
-
-bool CreateTimeline(Body* body,
-                    PlanetarySystem* system,
-                    Universe& universe,
-                    const AssociativeArray* planetData,
-                    const std::filesystem::path& path,
-                    DataDisposition disposition,
-                    BodyType bodyType)
+bool
+CreateLegacyTimeline(Body* body,
+                     Selection parentObject,
+                     Universe& universe,
+                     const AssociativeArray* planetData,
+                     const std::filesystem::path& path,
+                     DataDisposition disposition,
+                     FrameId defaultOrbitFrame,
+                     FrameId defaultBodyFrame)
 {
-    FrameTree* parentFrameTree = nullptr;
-    Selection parentObject = GetParentObject(system);
-    bool orbitsPlanet = false;
-    if (parentObject.body())
-    {
-        parentFrameTree = parentObject.body()->getOrCreateFrameTree();
-        //orbitsPlanet = true;
-    }
-    else if (parentObject.star())
-    {
-        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(parentObject.star());
-        parentFrameTree = solarSystem->getFrameTree();
-    }
-    else
-    {
-        // Bad orbit barycenter specified
-        return false;
-    }
-
-    ReferenceFrame::SharedConstPtr defaultOrbitFrame;
-    ReferenceFrame::SharedConstPtr defaultBodyFrame;
-    if (bodyType == SurfaceObject)
-    {
-        defaultOrbitFrame = std::make_shared<BodyFixedFrame>(parentObject, parentObject);
-        defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
-    }
-    else
-    {
-        defaultOrbitFrame = parentFrameTree->getDefaultReferenceFrame();
-        defaultBodyFrame = parentFrameTree->getDefaultReferenceFrame();
-    }
-
-    // If there's an explicit timeline definition, parse that. Otherwise, we'll do
-    // things the old way.
-    const Value* value = planetData->getValue("Timeline");
-    if (value != nullptr)
-    {
-        const ValueArray* timelineArray = value->getArray();
-        if (timelineArray == nullptr)
-        {
-            GetLogger()->error("Error: Timeline must be an array\n");
-            return false;
-        }
-
-        std::unique_ptr<Timeline> timeline = CreateTimelineFromArray(body, universe, timelineArray, path,
-                                                                     defaultOrbitFrame, defaultBodyFrame);
-
-        if (!timeline)
-            return false;
-
-        body->setTimeline(std::move(timeline));
-        return true;
-    }
-
     // Information required for the object timeline.
-    ReferenceFrame::SharedConstPtr orbitFrame;
-    ReferenceFrame::SharedConstPtr bodyFrame;
+    std::optional<FrameId> orbitFrame;
+    std::optional<FrameId> bodyFrame;
     std::shared_ptr<const ephem::Orbit> orbit = nullptr;
     std::shared_ptr<const ephem::RotationModel> rotationModel = nullptr;
     double beginning  = -std::numeric_limits<double>::infinity();
@@ -524,6 +470,8 @@ bool CreateTimeline(Body* body,
     // If any new timeline values are specified, we need to overrideOldTimeline will
     // be set to true.
     bool overrideOldTimeline = false;
+
+    const FrameCache* frameCache = GetFrameCache();
 
     // The interaction of Modify with timelines is slightly complicated. If the timeline
     // is specified by putting the OrbitFrame, Orbit, BodyFrame, or RotationModel directly
@@ -537,22 +485,23 @@ bool CreateTimeline(Body* body,
         if (timeline->phaseCount() == 1)
         {
             const auto& phase = timeline->getPhase(0);
-            orbitFrame    = phase.orbitFrame();
-            bodyFrame     = phase.bodyFrame();
-            orbit         = phase.orbit();
-            rotationModel = phase.rotationModel();
-            beginning     = phase.startTime();
-            ending        = phase.endTime();
+            if (FrameId frame; frameCache->getFrameId(frame, phase.orbitFrame().get()))
+                orbitFrame = frame;
+            if (FrameId frame; frameCache->getFrameId(frame, phase.bodyFrame().get()))
+                bodyFrame = frame;
+            parentObject      = phase.getFrameTree()->getOwner();
+            orbit             = phase.orbit();
+            rotationModel     = phase.rotationModel();
+            beginning         = phase.startTime();
+            ending            = phase.endTime();
         }
     }
 
     // Get the object's orbit reference frame.
     bool newOrbitFrame = false;
-    const Value* frameValue = planetData->getValue("OrbitFrame");
-    if (frameValue != nullptr)
+    if (const Value* frameValue = planetData->getValue("OrbitFrame"); frameValue)
     {
-        auto frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
-        if (frame != nullptr)
+        if (auto frame = CreateOrbitFrame(universe, frameValue, parentObject, body); frame.has_value())
         {
             orbitFrame = frame;
             newOrbitFrame = true;
@@ -562,11 +511,9 @@ bool CreateTimeline(Body* body,
 
     // Get the object's body frame.
     bool newBodyFrame = false;
-    const Value* bodyFrameValue = planetData->getValue("BodyFrame");
-    if (bodyFrameValue != nullptr)
+    if (const Value* bodyFrameValue = planetData->getValue("BodyFrame"); bodyFrameValue)
     {
-        auto frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
-        if (frame != nullptr)
+        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body); frame.has_value())
         {
             bodyFrame = frame;
             newBodyFrame = true;
@@ -575,18 +522,19 @@ bool CreateTimeline(Body* body,
     }
 
     // If no orbit or body frame was specified, use the default ones
-    if (orbitFrame == nullptr)
+    if (!orbitFrame.has_value())
         orbitFrame = defaultOrbitFrame;
-    if (bodyFrame == nullptr)
+    if (!bodyFrame.has_value())
         bodyFrame = defaultBodyFrame;
 
     // If the center of the is a star, orbital element units are
     // in AU; otherwise, use kilometers.
-    orbitsPlanet = orbitFrame->getCenter().star() == nullptr;
+    bool orbitsPlanet = parentObject.star() == nullptr;
 
-    auto newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
+    auto newOrbit = CreateOrbit(parentObject, planetData, path, !orbitsPlanet);
     if (!newOrbit)
-        newOrbit = CreateLongLat(*planetData, orbitFrame);
+        newOrbit = CreateLongLat(*planetData, parentObject.body(), *orbitFrame);
+
     if (newOrbit == nullptr && orbit == nullptr)
     {
         if (body->getTimeline() && disposition == DataDisposition::Modify)
@@ -654,11 +602,11 @@ bool CreateTimeline(Body* body,
         // We finally have an orbit, rotation model, frames, and time range. Create
         // the object timeline.
         auto phase = TimelinePhase::CreateTimelinePhase(universe,
-                                                        body,
+                                                        body, parentObject,
                                                         beginning, ending,
-                                                        orbitFrame,
+                                                        frameCache->getFrame(*orbitFrame),
                                                         orbit,
-                                                        bodyFrame,
+                                                        frameCache->getFrame(*bodyFrame),
                                                         rotationModel);
 
         // We've already checked that beginning < ending; nothing else should go
@@ -693,6 +641,75 @@ bool CreateTimeline(Body* body,
     }
 
     return true;
+}
+
+
+bool CreateTimeline(Body* body,
+                    PlanetarySystem* system,
+                    Universe& universe,
+                    const AssociativeArray* planetData,
+                    const std::filesystem::path& path,
+                    DataDisposition disposition,
+                    BodyType bodyType)
+{
+    FrameTree* parentFrameTree = nullptr;
+    Selection parentObject = GetParentObject(system);
+    bool orbitsPlanet = false;
+    if (parentObject.body())
+    {
+        parentFrameTree = parentObject.body()->getOrCreateFrameTree();
+        //orbitsPlanet = true;
+    }
+    else if (parentObject.star())
+    {
+        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(parentObject.star());
+        parentFrameTree = solarSystem->getFrameTree();
+    }
+    else
+    {
+        // Bad orbit barycenter specified
+        return false;
+    }
+
+    FrameId defaultOrbitFrame;
+    FrameId defaultBodyFrame;
+    if (bodyType == SurfaceObject)
+    {
+        defaultOrbitFrame = GetFrameCache()->getFrameId(BodyFixedFrameKey(parentObject));
+        defaultBodyFrame = CreateTopocentricFrame(parentObject, body);
+    }
+    else
+    {
+        defaultOrbitFrame = parentObject.getType() == SelectionType::Body
+            ? GetFrameCache()->getFrameId(BodyMeanEquatorFrameKey(parentObject))
+            : GetFrameCache()->getFrameId(SimpleFrameKey::J2000Ecliptic);
+        defaultBodyFrame = defaultOrbitFrame;
+    }
+
+    if (const Value* value = planetData->getValue("Timeline"); value)
+    {
+        // If there's an explicit timeline definition, parse that.
+        const ValueArray* timelineArray = value->getArray();
+        if (timelineArray == nullptr)
+        {
+            GetLogger()->error("Error: Timeline must be an array\n");
+            return false;
+        }
+
+        std::unique_ptr<Timeline> timeline = CreateTimelineFromArray(body, parentObject, universe,
+                                                                     timelineArray, path,
+                                                                     defaultOrbitFrame, defaultBodyFrame);
+
+        if (!timeline)
+            return false;
+
+        body->setTimeline(std::move(timeline));
+        return true;
+    }
+
+    return CreateLegacyTimeline(body, parentObject, universe,
+                                planetData, path, disposition,
+                                defaultOrbitFrame, defaultBodyFrame);
 }
 
 void
