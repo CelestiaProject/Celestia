@@ -486,7 +486,7 @@ FrameCache::createFrame(const FrameKey& key, std::size_t index)
     class FrameKeyVisitor
     {
     public:
-        FrameKeyVisitor(const FrameCache& cache) : m_cache(cache) {}
+        explicit FrameKeyVisitor(const FrameCache& cache) : m_cache(cache) {}
 
         ReferenceFrame::SharedConstPtr operator()(SimpleFrameKey k) const
         {
@@ -546,7 +546,7 @@ FrameCache::getFrameVectorId(const FrameVectorKey& key)
     class FrameVectorVisitor
     {
     public:
-        FrameVectorVisitor(const FrameCache& cache) : m_cache(cache) {}
+        explicit FrameVectorVisitor(const FrameCache& cache) : m_cache(cache) {}
 
         FrameVector operator()(const RelativePositionKey& k) const
         {

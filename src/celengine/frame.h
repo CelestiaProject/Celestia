@@ -80,7 +80,7 @@ private:
     struct CreateToken { explicit CreateToken() = default; };
 
 public:
-    J2000EclipticFrame(CreateToken) {}
+    explicit J2000EclipticFrame(CreateToken) {}
 
     static SharedConstPtr getInstance();
 
@@ -99,7 +99,7 @@ private:
     struct CreateToken { explicit CreateToken() = default; };
 
 public:
-    J2000EquatorFrame(CreateToken) {}
+    explicit J2000EquatorFrame(CreateToken) {}
 
     static SharedConstPtr getInstance();
 
@@ -117,7 +117,7 @@ class BodyFixedFrame final : public ReferenceFrame
 {
 public:
     explicit BodyFixedFrame(Selection obj);
-    ~BodyFixedFrame() override = default;
+
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override { return false; }
@@ -129,8 +129,8 @@ private:
 class BodyMeanEquatorFrame final : public ReferenceFrame
 {
 public:
-    BodyMeanEquatorFrame(Selection obj, std::optional<double> freeze = std::nullopt);
-    ~BodyMeanEquatorFrame() override = default;
+    explicit BodyMeanEquatorFrame(Selection obj, std::optional<double> freeze = std::nullopt);
+
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
     bool isInertial() const override;
@@ -203,7 +203,6 @@ public:
                    int primAxis,
                    const FrameVector& sec,
                    int secAxis);
-    ~TwoVectorFrame() override = default;
 
     bool isInertial() const override;
 

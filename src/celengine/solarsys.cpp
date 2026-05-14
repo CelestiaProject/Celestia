@@ -450,7 +450,7 @@ CreateTimelineFromArray(Body* body,
 }
 
 bool
-CreateLegacyTimeline(Body* body,
+CreateLegacyTimeline(Body* body, //NOSONAR
                      Selection parentObject,
                      Universe& universe,
                      const AssociativeArray* planetData,
@@ -652,20 +652,9 @@ bool CreateTimeline(Body* body,
                     DataDisposition disposition,
                     BodyType bodyType)
 {
-    FrameTree* parentFrameTree = nullptr;
     Selection parentObject = GetParentObject(system);
-    bool orbitsPlanet = false;
-    if (parentObject.body())
-    {
-        parentFrameTree = parentObject.body()->getOrCreateFrameTree();
-        //orbitsPlanet = true;
-    }
-    else if (parentObject.star())
-    {
-        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(parentObject.star());
-        parentFrameTree = solarSystem->getFrameTree();
-    }
-    else
+    if (SelectionType selType = parentObject.getType();
+        selType != SelectionType::Body && selType != SelectionType::Star)
     {
         // Bad orbit barycenter specified
         return false;

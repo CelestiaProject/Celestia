@@ -40,7 +40,7 @@ UniversalCoord locationPosition(const Location* location, double t)
 }
 
 Selection
-getNonBodyParent(SelectionType type, const void* obj)
+getNonBodyParent(SelectionType type, const void* obj) //NOSONAR
 {
     // For now only bodies have timelines and the potential for time-dependent
     // frame parents. Everything else has the same logic for name and frame trees

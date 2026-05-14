@@ -1215,15 +1215,15 @@ CreateTwoVectorFrame(const Universe& universe,
     }
 
     auto primaryVector = CreateFrameVector(universe, defaultCenter, primaryData);
+    if (!primaryVector.has_value())
+        return std::nullopt;
+
     auto secondaryVector = CreateFrameVector(universe, defaultCenter, secondaryData);
+    if (!secondaryVector.has_value())
+        return std::nullopt;
 
-    if (primaryVector.has_value() && secondaryVector.has_value())
-    {
-        return GetFrameCache()->getFrameId(TwoVectorFrameKey(*primaryVector, primaryAxis,
-                                                             *secondaryVector, secondaryAxis));
-    }
-
-    return std::nullopt;
+    return GetFrameCache()->getFrameId(TwoVectorFrameKey(*primaryVector, primaryAxis,
+                                                         *secondaryVector, secondaryAxis));
 }
 
 std::optional<FrameId>
