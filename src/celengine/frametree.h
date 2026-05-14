@@ -37,6 +37,7 @@ public:
     /*! Return the object that this tree is associated with.
      */
     Selection getOwner() const noexcept { return m_owner; }
+    Star* getRoot(double tjd) const;
 
     const TimelinePhase* getChild(unsigned int n) const;
     unsigned int childCount() const;

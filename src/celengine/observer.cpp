@@ -27,6 +27,7 @@
 #include "frametree.h"
 #include "location.h"
 #include "star.h"
+#include "timeline.h"
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
@@ -223,16 +224,8 @@ interpolatePositionGreatCircle(const Observer::JourneyParams& journey,
                                double x)
 {
     Selection centerObj = frame->getRefObject();
-    if (const Body* body = centerObj.body(); body != nullptr)
-    {
-        if (const PlanetarySystem* system = body->getSystem(); system != nullptr)
-        {
-            if (Body* primaryBody = system->getPrimaryBody(); primaryBody != nullptr)
-                centerObj = primaryBody;
-            else
-                centerObj = system->getStar();
-        }
-    }
+    if (const Body* body = centerObj.body(); body)
+        centerObj = body->getTimeline()->findPhase(simTime).getFrameTree()->getOwner();
 
     UniversalCoord ufrom  = frame->convertToUniversal(journey.from, simTime);
     UniversalCoord uto    = frame->convertToUniversal(journey.to, simTime);
@@ -1580,13 +1573,14 @@ Observer::phaseLock(const Selection& selection)
         if (refObject.body() != nullptr || refObject.star() != nullptr)
             setFrame(ObserverFrame::CoordinateSystem::PhaseLock, refObject, selection);
     }
-    else if (selection.body() != nullptr)
+    else if (const Body* body = selection.body(); body)
     {
         // Selection and reference object are identical, so the frame is undefined.
         // We'll instead use the object's star as the target object.
+        double t = getTime();
         setFrame(ObserverFrame::CoordinateSystem::PhaseLock,
                  selection,
-                 selection.body()->getSystem()->getStar());
+                 body->getTimeline()->findPhase(t).getFrameTree()->getRoot(t));
     }
 }
 

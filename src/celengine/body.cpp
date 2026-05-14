@@ -384,12 +384,8 @@ Body::getTemperature(double time) const
     if (temperature > 0)
         return temperature;
 
-    const PlanetarySystem* system = getSystem();
-    if (system == nullptr)
-        return 0;
-
-    const Star* sun = system->getStar();
-    if (sun == nullptr)
+    const Star* sun = timeline->findPhase(time).getFrameTree()->getRoot(time);
+    if (!sun)
         return 0;
 
     float temp = 0.0f;

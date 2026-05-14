@@ -38,13 +38,6 @@ Simulation::~Simulation()
 }
 
 
-static const Star* getSun(const Body* body)
-{
-    const PlanetarySystem* system = body->getSystem();
-    return system ? system->getStar() : nullptr;
-}
-
-
 void Simulation::render(Renderer& renderer)
 {
     renderer.render(*activeObserver,
@@ -381,8 +374,7 @@ void Simulation::chase()
     activeObserver->chase(selection);
 }
 
-
-// Choose a planet around a star given it's index in the planetary system.
+// Choose a planet around a star given its index in the planetary system.
 // The planetary system is either the system of the selected object, or the
 // nearest planetary system if no object is selected.  If index is less than
 // zero, pick the star.  This function should probably be in celestiacore.cpp.
@@ -390,33 +382,29 @@ void Simulation::selectPlanet(int index)
 {
     if (index < 0)
     {
-        if (selection.getType() == SelectionType::Body)
+        if (const Body* body = selection.body(); body)
         {
-            PlanetarySystem* system = selection.body()->getSystem();
-            if (system != nullptr)
+            if (const PlanetarySystem* system = body->getSystem(); system)
                 setSelection(system->getStar());
         }
+        return;
     }
-    else
+
+    const Star* star = selection.star();
+    if (const Body* body = selection.body(); body)
     {
-        const Star* star = nullptr;
-        if (selection.getType() == SelectionType::Star)
-            star = selection.star();
-        else if (selection.getType() == SelectionType::Body)
-            star = getSun(selection.body());
-
-        SolarSystem* solarSystem = nullptr;
-        if (star != nullptr)
-            solarSystem = universe->getSolarSystem(star);
-        else
-            solarSystem = getNearestSolarSystem();
-
-        if (solarSystem != nullptr &&
-            index < solarSystem->getPlanets()->getSystemSize())
-        {
-            setSelection(Selection(solarSystem->getPlanets()->getBody(index)));
-        }
+        if (const PlanetarySystem* system = body->getSystem(); system)
+            star = system->getStar();
     }
+
+    SolarSystem* solarSystem = nullptr;
+    if (star)
+        solarSystem = universe->getSolarSystem(star);
+    else
+        solarSystem = getNearestSolarSystem();
+
+    if (solarSystem && index < solarSystem->getPlanets()->getSystemSize())
+        setSelection(Selection(solarSystem->getPlanets()->getBody(index)));
 }
 
 // Find an object from a path, for example Sol/Earth/Moon or Upsilon And/b

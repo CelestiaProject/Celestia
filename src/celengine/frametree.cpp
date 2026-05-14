@@ -17,6 +17,7 @@
 
 #include <celephem/orbit.h>
 #include "frame.h"
+#include "timeline.h"
 #include "timelinephase.h"
 
 /* A FrameTree is hierarchy of solar system bodies organized according to
@@ -57,6 +58,19 @@ FrameTree::~FrameTree()
 {
     for (const auto& phase : m_children)
         phase->m_owner = nullptr;
+}
+
+Star*
+FrameTree::getRoot(double tjd) const
+{
+    Selection current = m_owner;
+    for (;;)
+    {
+        if (const Body* body = current.body())
+            current = body->getTimeline()->findPhase(tjd).getFrameTree()->getOwner();
+        else
+            return current.star();
+    }
 }
 
 /*! Mark this node of the frame hierarchy as changed. The changed flag
