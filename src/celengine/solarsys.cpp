@@ -143,7 +143,7 @@ public:
         m_testBody(body), m_testTimeline(timeline)
     {}
 
-    bool validate();
+    bool validate(bool validateOrbit = true, bool validateBody = true);
 
 private:
     enum class FrameUsage
@@ -247,8 +247,11 @@ private:
 };
 
 bool
-TimelineValidator::validate()
+TimelineValidator::validate(bool validateOrbit, bool validateBody)
 {
+    if (!validateOrbit && !validateBody)
+        return true;
+
     // Validate that the timeline does not lead to circular references
     // NOTE: the check for maximum depth can be circumvented by using
     // Modify directives - to fix this we would need to keep track of
@@ -257,8 +260,10 @@ TimelineValidator::validate()
     for (unsigned int i = 0, nPhases = m_testTimeline.phaseCount(); i < nPhases; ++i)
     {
         const TimelinePhase* phase = &m_testTimeline.getPhase(i);
-        m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Body });
-        m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Position });
+        if (validateBody)
+            m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Body });
+        if (validateOrbit)
+            m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Position });
     }
 
     CommandProcessor processor(*this);
@@ -553,7 +558,6 @@ TimelineValidator::FrameFinishVisitor::visitBodyFrame(const Body* body, std::opt
     if (m_maxDepth < 0)
         return;
 
-    int frameDepth;
     const Timeline* timeline = m_validator.getTimeline(body);
     if (t.has_value())
     {
@@ -1085,7 +1089,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     auto timeline = std::make_unique<Timeline>();
     timeline->appendPhase(std::move(phase));
 
-    if (!TimelineValidator(body, *timeline).validate())
+    if (!TimelineValidator(body, *timeline).validate(newOrbitFrame, newBodyFrame))
     {
         GetLogger()->error("Frame depth limit exceeded for '{}'.\n", body->getName());
         return false;
