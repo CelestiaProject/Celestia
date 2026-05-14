@@ -2708,9 +2708,8 @@ void Renderer::renderPlanet(Body& body,
         }
 
         // Calculate eclipse circumstances
-        if (util::is_set(renderFlags, RenderFlags::ShowEclipseShadows) && body.getSystem() != nullptr)
+        if (util::is_set(renderFlags, RenderFlags::ShowEclipseShadows))
         {
-            const Body* parent = body.getTimeline()->findPhase(now).getFrameTree()->getOwner().body();
             const Body* testBody = &body;
             for (;;)
             {

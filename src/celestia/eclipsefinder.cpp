@@ -20,6 +20,7 @@
 #include <celengine/body.h>
 #include <celengine/frametree.h>
 #include <celengine/star.h>
+#include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <celmath/distance.h>
 
@@ -46,57 +47,56 @@ testEclipse(const Body& receiver, const Body& caster, double now)
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
-    if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        caster.isEllipsoid())
+    if (caster.getRadius() < receiver.getRadius() * MinRelativeOccluderRadius ||
+        !caster.isEllipsoid())
     {
-        // All of the eclipse related code assumes that both the caster
-        // and receiver are spherical.  Irregular receivers will work more
-        // or less correctly, but casters that are sufficiently non-spherical
-        // will produce obviously incorrect shadows.  Another assumption we
-        // make is that the distance between the caster and receiver is much
-        // less than the distance between the sun and the receiver.  This
-        // approximation works everywhere in the solar system, and likely
-        // works for any orbitally stable pair of objects orbiting a star.
-        Eigen::Vector3d posReceiver = receiver.getAstrocentricPosition(now);
-        Eigen::Vector3d posCaster = caster.getAstrocentricPosition(now);
-
-        const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != nullptr);
-        double distToSun = posReceiver.norm();
-        float appSunRadius = (float) (sun->getRadius() / distToSun);
-
-        Eigen::Vector3d dir = posCaster - posReceiver;
-        double distToCaster = dir.norm() - receiver.getRadius();
-        float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
-
-        // The shadow radius is the radius of the occluder plus some additional
-        // amount that depends upon the apparent radius of the sun.  For
-        // a sun that's distant/small and effectively a point, the shadow
-        // radius will be the same as the radius of the occluder.
-        float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
-            caster.getRadius();
-
-        // Test whether a shadow is cast on the receiver.  We want to know
-        // if the receiver lies within the shadow volume of the caster.  Since
-        // we're assuming that everything is a sphere and the sun is far
-        // away relative to the caster, the shadow volume is a
-        // cylinder capped at one end.  Testing for the intersection of a
-        // singly capped cylinder is as simple as checking the distance
-        // from the center of the receiver to the axis of the shadow cylinder.
-        // If the distance is less than the sum of the caster's and receiver's
-        // radii, then we have an eclipse.
-        float R = receiver.getRadius() + shadowRadius;
-        double dist = math::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
-        if (dist < R)
-        {
-            // Ignore "eclipses" where the caster and receiver have
-            // intersecting bounding spheres.
-            if (distToCaster > caster.getRadius())
-                return true;
-        }
+        return false;
     }
 
-    return false;
+    // All of the eclipse related code assumes that both the caster
+    // and receiver are spherical.  Irregular receivers will work more
+    // or less correctly, but casters that are sufficiently non-spherical
+    // will produce obviously incorrect shadows.  Another assumption we
+    // make is that the distance between the caster and receiver is much
+    // less than the distance between the sun and the receiver.  This
+    // approximation works everywhere in the solar system, and likely
+    // works for any orbitally stable pair of objects orbiting a star.
+    Eigen::Vector3d posReceiver = receiver.getAstrocentricPosition(now);
+    Eigen::Vector3d posCaster = caster.getAstrocentricPosition(now);
+
+    const Star* sun = receiver.getTimeline()->findPhase(now).getFrameTree()->getRoot(now);
+    if (!sun)
+        return false;
+
+    double distToSun = posReceiver.norm();
+    float appSunRadius = (float) (sun->getRadius() / distToSun);
+
+    Eigen::Vector3d dir = posCaster - posReceiver;
+    double distToCaster = dir.norm() - receiver.getRadius();
+    float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
+
+    // The shadow radius is the radius of the occluder plus some additional
+    // amount that depends upon the apparent radius of the sun.  For
+    // a sun that's distant/small and effectively a point, the shadow
+    // radius will be the same as the radius of the occluder.
+    float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
+                         caster.getRadius();
+
+    // Test whether a shadow is cast on the receiver.  We want to know
+    // if the receiver lies within the shadow volume of the caster.  Since
+    // we're assuming that everything is a sphere and the sun is far
+    // away relative to the caster, the shadow volume is a
+    // cylinder capped at one end.  Testing for the intersection of a
+    // singly capped cylinder is as simple as checking the distance
+    // from the center of the receiver to the axis of the shadow cylinder.
+    // If the distance is less than the sum of the caster's and receiver's
+    // radii, then we have an eclipse.
+    float R = receiver.getRadius() + shadowRadius;
+    double dist = math::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
+
+    // Ignore "eclipses" where the caster and receiver have
+    // intersecting bounding spheres.
+    return dist < R && distToCaster > caster.getRadius();
 }
 
 double
