@@ -160,8 +160,9 @@ private:
         explicit PhaseStatus(const TimelinePhase* p) : phase(p) {}
 
         const TimelinePhase* phase;
+
         int positionDepth{ NotStarted };
-        int bodyDepth{ NotStarted };
+        int bodyDepth{ NotStarted }; // cppcheck-suppress unusedStructMember
     };
 
     struct ProcessPhase
@@ -191,7 +192,7 @@ private:
     class CommandProcessor
     {
     public:
-        CommandProcessor(TimelineValidator& validator) : m_validator(validator) {}
+        explicit CommandProcessor(TimelineValidator& validator) : m_validator(validator) {}
 
         bool operator()(const ProcessPhase&) const;
         bool operator()(const FinishPhase&) const;
@@ -205,7 +206,7 @@ private:
     class FrameProcessVisitor final : public FrameVisitor
     {
     public:
-        FrameProcessVisitor(TimelineValidator& validator) : m_validator(validator) {}
+        explicit FrameProcessVisitor(TimelineValidator& validator) : m_validator(validator) {}
 
         void visitPosition(const Selection& sel) override;
         void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) override;
@@ -220,7 +221,7 @@ private:
     class FrameFinishVisitor final : public FrameVisitor
     {
     public:
-        FrameFinishVisitor(TimelineValidator& validator) : m_validator(validator) {}
+        explicit FrameFinishVisitor(TimelineValidator& validator) : m_validator(validator) {}
 
         void visitPosition(const Selection& sel) override;
         void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) override;

@@ -439,10 +439,10 @@ FrameVector::direction(double tjd) const
 void
 FrameVector::visitChildren(FrameVisitor& visitor) const
 {
-    class ChildVisitor
+    class ReferenceVisitor
     {
     public:
-        ChildVisitor(FrameVisitor& v) : m_visitor(v) {}
+        explicit ReferenceVisitor(FrameVisitor& v) : m_visitor(v) {}
 
         void operator()(const RelativePosition& pos) const
         {
@@ -465,7 +465,7 @@ FrameVector::visitChildren(FrameVisitor& visitor) const
         FrameVisitor& m_visitor;
     };
 
-    std::visit(ChildVisitor(visitor), m_data);
+    std::visit(ReferenceVisitor(visitor), m_data);
 }
 
 std::size_t
