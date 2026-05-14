@@ -1085,9 +1085,9 @@ CreateFrameVector(const Universe& universe,
                   const Selection& center,
                   const AssociativeArray* vectorData)
 {
-    if (const Value* value = vectorData->getValue("RelativePosition"); value != nullptr)
+    if (const Value* value = vectorData->getValue("RelativePosition"); value)
     {
-        if (const AssociativeArray* relPosData = value->getHash(); relPosData != nullptr)
+        if (const AssociativeArray* relPosData = value->getHash(); relPosData)
         {
             Selection observer = getVectorObserver(universe, relPosData);
             Selection target = getVectorTarget(universe, relPosData);
@@ -1104,9 +1104,10 @@ CreateFrameVector(const Universe& universe,
             return GetFrameCache()->getFrameVectorId(RelativePositionKey(observer, target));
         }
     }
-    else if (const Value* value = vectorData->getValue("RelativeVelocity"); value != nullptr)
+
+    if (const Value* value = vectorData->getValue("RelativeVelocity"); value)
     {
-        if (const AssociativeArray* relVData = value->getHash(); relVData != nullptr)
+        if (const AssociativeArray* relVData = value->getHash(); relVData)
         {
             Selection observer = getVectorObserver(universe, relVData);
             Selection target = getVectorTarget(universe, relVData);
@@ -1122,9 +1123,10 @@ CreateFrameVector(const Universe& universe,
             return GetFrameCache()->getFrameVectorId(RelativeVelocityKey(observer, target));
         }
     }
-    else if (const Value* value = vectorData->getValue("ConstantVector"); value != nullptr)
+
+    if (const Value* value = vectorData->getValue("ConstantVector"); value)
     {
-        if (const AssociativeArray* constVecData = value->getHash(); constVecData != nullptr)
+        if (const AssociativeArray* constVecData = value->getHash(); constVecData)
         {
             auto vec = constVecData->getVector3<double>("Vector").value_or(Eigen::Vector3d::UnitZ());
             if (vec.norm() == 0.0)

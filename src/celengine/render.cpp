@@ -2722,10 +2722,10 @@ void Renderer::renderPlanet(Body& body,
                     for (unsigned int i = 0, nPhases = frameTree->childCount(); i < nPhases; ++i)
                     {
                         const auto& phase = frameTree->getChild(i);
-                        if (phase->startTime() > now || phase->endTime() <= now)
+                        if (phase->startTime() > now || phase->endTime() <= now) //NOSONAR
                             continue;
 
-                        for (unsigned int li = 0; li < lights.nLights; ++li)
+                        for (unsigned int li = 0; li < lights.nLights; ++li) //NOSONAR
                             testEclipse(body, *phase->body(), lights, li, now);
                     }
                 }
