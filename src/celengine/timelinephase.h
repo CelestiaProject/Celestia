@@ -103,7 +103,7 @@ public:
     static std::unique_ptr<TimelinePhase>
     CreateTimelinePhase(Universe& universe,
                         Body* body,
-                        Selection parent,
+                        const Selection& parent,
                         double startTime,
                         double endTime,
                         const ReferenceFrame::SharedConstPtr& orbitFrame,

@@ -54,7 +54,7 @@ TimelinePhase::~TimelinePhase()
 std::unique_ptr<TimelinePhase>
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
-                                   Selection parent,
+                                   const Selection& parent,
                                    double startTime,
                                    double endTime,
                                    const ReferenceFrame::SharedConstPtr& orbitFrame,

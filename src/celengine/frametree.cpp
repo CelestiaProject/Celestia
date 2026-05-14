@@ -45,7 +45,7 @@ FrameTree::FrameTree(Star* star) :
     m_owner(star),
     // Default frame for a star is J2000 ecliptical, centered
     // on the star.
-    defaultFrame(std::make_shared<J2000EclipticFrame>(star))
+    defaultFrame(std::make_shared<J2000EclipticFrame>())
 {
 }
 
@@ -54,7 +54,7 @@ FrameTree::FrameTree(Star* star) :
 FrameTree::FrameTree(Body* body) :
     m_owner(body),
     // Default frame for a solar system body is the mean equatorial frame of the body.
-    defaultFrame(std::make_shared<BodyMeanEquatorFrame>(body, body))
+    defaultFrame(std::make_shared<BodyMeanEquatorFrame>(body))
 {
 }
 

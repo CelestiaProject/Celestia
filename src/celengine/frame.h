@@ -142,18 +142,30 @@ class FrameVector
 public:
     struct RelativePosition
     {
+        RelativePosition(const Selection& obs, const Selection& tgt) :
+            observer(obs), target(tgt)
+        {}
+
         Selection observer;
         Selection target;
     };
 
     struct RelativeVelocity
     {
+        RelativeVelocity(const Selection& obs, const Selection& tgt) :
+            observer(obs), target(tgt)
+        {}
+
         Selection observer;
         Selection target;
     };
 
     struct ConstVector
     {
+        ConstVector(const Eigen::Vector3d& v, ReferenceFrame::SharedConstPtr f) :
+            vec(v), frame(f)
+        {}
+
         Eigen::Vector3d vec;
         ReferenceFrame::SharedConstPtr frame;
     };

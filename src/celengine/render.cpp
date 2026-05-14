@@ -3449,11 +3449,9 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
              (orbitVis == Body::UseClassVisibility && util::is_set(body->getOrbitClassification(), orbitMask))))
         {
             Vector3d orbitOrigin = Vector3d::Zero();
-            Selection centerObject = phase->orbitFrame()->getCenter();
-            if (centerObject.body() != nullptr)
-            {
-                orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
-            }
+            Selection centerObject = phase->getFrameTree()->getOwner();
+            if (const Body* centerBody = centerObject.body(); centerBody)
+                orbitOrigin = centerBody->getAstrocentricPosition(now);
 
             // Calculate the origin of the orbit relative to the observer
             Vector3d relOrigin = orbitOrigin - astrocentricObserverPos;
@@ -3567,13 +3565,7 @@ void Renderer::buildLabelLists(const math::InfiniteFrustum& viewFrustum,
             continue;
 
         const TimelinePhase& phase = body->getTimeline()->findPhase(now);
-        const Body* primary = phase.orbitFrame()->getCenter().body();
-        if (primary != nullptr && util::is_set(primary->getClassification(), BodyClassification::Invisible))
-        {
-            const Body* parent = phase.orbitFrame()->getCenter().body();
-            if (parent != nullptr)
-                primary = parent;
-        }
+        const Body* primary = phase.getFrameTree()->getOwner().body();
 
         // Position the label slightly in front of the object along a line from
         // object center to viewer.
