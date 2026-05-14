@@ -1307,7 +1307,7 @@ CreateTopocentricFrame(const Universe& universe,
 
        defaultTarget = center;
        observer = center;
-       target = center.parent();
+       target = center.nameParent();
     }
     else
     {

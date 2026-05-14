@@ -961,7 +961,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\b':
-        sim->setSelection(sim->getSelection().parent());
+        sim->setSelection(sim->getSelection().nameParent());
         break;
 
     case '\014': // Ctrl+L

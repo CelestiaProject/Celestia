@@ -50,7 +50,8 @@ public:
     double radius() const;
     UniversalCoord getPosition(double t) const;
     Eigen::Vector3d getVelocity(double t) const;
-    Selection parent() const;
+    Selection nameParent() const;
+    Selection frameParent(double t) const;
 
     bool isVisible() const;
 
