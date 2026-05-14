@@ -1800,8 +1800,7 @@ CreateTopocentricFrame(const Selection& target,
 }
 
 std::optional<FrameId>
-CreateOrbitFrame(FrameId& frame,
-                 const Universe& universe,
+CreateOrbitFrame(const Universe& universe,
                  const Value* frameValue,
                  Selection& defaultCenter,
                  Body* defaultObserver)

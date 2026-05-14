@@ -28,11 +28,14 @@
 #include <QString>
 
 #include <celengine/body.h>
+#include <celengine/frametree.h>
 #include <celengine/marker.h>
 #include <celengine/render.h>
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
 #include <celengine/solarsys.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
 #include <celestia/celestiacore.h>
 #include <celestia/helper.h>
 #include <celutil/gettext.h>
@@ -320,7 +323,7 @@ SelectionPopup::createReferenceVectorMenu()
     connect(spinVectorAction, SIGNAL(triggered()), this, SLOT(slotToggleSpinVector()));
     refVecMenu->addAction(spinVectorAction);
 
-    Selection center = body->getOrbitFrame(appCore->getSimulation()->getTime())->getCenter();
+    Selection center = body->getTimeline()->findPhase(appCore->getSimulation()->getTime()).getFrameTree()->getOwner();
     if (center.body() != nullptr)
     {
         // Only show the frame center menu item if the selection orbits another

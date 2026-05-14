@@ -1044,6 +1044,14 @@ Observer::setFrame(const ObserverFrame::SharedConstPtr& f)
     frame = f;
 }
 
+/*! Get the current reference frame for the observer.
+ */
+const ObserverFrame::SharedConstPtr&
+Observer::getFrame() const
+{
+    return frame;
+}
+
 /*! Rotate the observer about its center.
  */
 void

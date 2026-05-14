@@ -13,6 +13,7 @@
 #include "celx.h"
 #include "celx_internal.h"
 #include "celx_phase.h"
+#include <celengine/frametree.h>
 #include <celengine/timelinephase.h>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
@@ -95,8 +96,7 @@ static int phase_orbitframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for to phase:orbitframe");
 
     auto phase = this_phase(l);
-    auto f = phase->orbitFrame();
-    celx.newFrame(ObserverFrame(f));
+    celx.newFrame(ObserverFrame(phase->getFrameTree()->getOwner(), phase->orbitFrame()));
 
     return 1;
 }
@@ -113,8 +113,7 @@ static int phase_bodyframe(lua_State* l)
     celx.checkArgs(1, 1, "No arguments allowed for to phase:bodyframe");
 
     auto phase = this_phase(l);
-    const auto& f = phase->bodyFrame();
-    celx.newFrame(ObserverFrame(f));
+    celx.newFrame(ObserverFrame(phase->body(), phase->bodyFrame()));
 
     return 1;
 }
