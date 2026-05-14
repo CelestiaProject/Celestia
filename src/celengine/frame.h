@@ -56,8 +56,6 @@ protected:
 class CachingFrame : public ReferenceFrame
 {
 public:
-    SHARED_TYPES(CachingFrame)
-
     Eigen::Quaterniond getOrientation(double tjd) const final;
     Eigen::Vector3d getAngularVelocity(double tjd) const final;
 
@@ -82,8 +80,6 @@ private:
     struct CreateToken { explicit CreateToken() = default; };
 
 public:
-    SHARED_TYPES(J2000EclipticFrame)
-
     J2000EclipticFrame(CreateToken) {}
 
     static SharedConstPtr getInstance();
@@ -103,8 +99,6 @@ private:
     struct CreateToken { explicit CreateToken() = default; };
 
 public:
-    SHARED_TYPES(J2000EquatorFrame)
-
     J2000EquatorFrame(CreateToken) {}
 
     static SharedConstPtr getInstance();
@@ -122,8 +116,6 @@ public:
 class BodyFixedFrame final : public ReferenceFrame
 {
 public:
-    SHARED_TYPES(BodyFixedFrame)
-
     explicit BodyFixedFrame(Selection obj);
     ~BodyFixedFrame() override = default;
     Eigen::Quaterniond getOrientation(double tjd) const override;
@@ -137,8 +129,6 @@ private:
 class BodyMeanEquatorFrame final : public ReferenceFrame
 {
 public:
-    SHARED_TYPES(BodyMeanEquatorFrame)
-
     BodyMeanEquatorFrame(Selection obj, std::optional<double> freeze = std::nullopt);
     ~BodyMeanEquatorFrame() override = default;
     Eigen::Quaterniond getOrientation(double tjd) const override;

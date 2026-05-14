@@ -79,7 +79,5 @@ private:
     bool m_changed{ true };
     BodyClassification m_childClassMask{ BodyClassification::EmptyMask };
 
-    std::shared_ptr<const ReferenceFrame> defaultFrame;
-
     friend class TimelinePhase;
 };
