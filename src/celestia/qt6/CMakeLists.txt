@@ -16,7 +16,7 @@ if (Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
 endif()
 qt6_add_resources(RC_SRC "../qt/icons.qrc")
 
-if(USE_WAYLAND)
+if(USE_WAYLAND_DRAG)
   GetQtSources(ON)
 else()
   GetQtSources(OFF)
@@ -26,8 +26,8 @@ add_executable(celestia-qt6 WIN32 ${QT_SOURCES} ${RES} ${RC_SRC})
 add_dependencies(celestia-qt6 celestia)
 target_link_libraries(celestia-qt6 PUBLIC Qt6::Widgets Qt6::OpenGLWidgets celestia)
 
-if(USE_WAYLAND)
-  target_compile_definitions(celestia-qt6 PRIVATE USE_WAYLAND)
+if(USE_WAYLAND_DRAG)
+  target_compile_definitions(celestia-qt6 PRIVATE USE_WAYLAND_DRAG)
   target_link_libraries(celestia-qt6
       PUBLIC
           Wayland::Client

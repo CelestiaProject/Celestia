@@ -71,7 +71,7 @@ option(ENABLE_FAST_MATH   "Build with unsafe fast-math compiller option (Default
 option(ENABLE_TESTS       "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES        "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
 option(ENABLE_LTO         "Enable link time optimizations (Default: off)" OFF)
-option(USE_WAYLAND        "Use Wayland in Qt frontend (Default: off)" OFF)
+option(USE_WAYLAND_DRAG   "Use custom Wayland drag implementation in Qt frontend (Default: off)" OFF)
 option(USE_ICU            "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 option(USE_WIN_ICU        "Use Windows SDK's ICU implementation (Default: off)" OFF)
 option(USE_MESHOPTIMIZER  "Use meshoptimizer (Default: off)" OFF)
@@ -308,7 +308,7 @@ if(USE_MESHOPTIMIZER)
   set(HAVE_MESHOPTIMIZER 1)
 endif()
 
-if(USE_WAYLAND)
+if(USE_WAYLAND_DRAG)
   message(STATUS "Creating Wayland protocol helpers")
 
   find_package(Wayland COMPONENTS protocols scanner REQUIRED)

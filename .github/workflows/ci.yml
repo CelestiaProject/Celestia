@@ -259,7 +259,7 @@ jobs:
               -DENABLE_SDL=ON                                \
               -DENABLE_QT5=${{matrix.config.qt5}}            \
               -DENABLE_QT6=${{matrix.config.qt6}}            \
-              -DUSE_WAYLAND=${{matrix.config.wayland}}       \
+              -DUSE_WAYLAND_DRAG=${{matrix.config.wayland}}  \
               -DENABLE_FFMPEG=ON                             \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}       \
               -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
@@ -343,7 +343,7 @@ jobs:
               -DENABLE_SDL=ON                \
               -DENABLE_QT5=OFF               \
               -DENABLE_QT6=ON                \
-              -DUSE_WAYLAND=OFF              \
+              -DUSE_WAYLAND_DRAG=OFF         \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_LIBAVIF=ON            \
               -DENABLE_MINIAUDIO=ON          \

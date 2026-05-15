@@ -7,7 +7,7 @@
 
 #include <celestia/celestiacore.h>
 
-#ifdef USE_WAYLAND
+#ifdef USE_WAYLAND_DRAG
 #include "qtwaylanddraghandler.h"
 #endif
 
@@ -113,10 +113,14 @@ createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)
     if (platformName == "cocoa" || platformName == "windows" || platformName == "xcb")
         return std::make_unique<WarpingDragHandler>(appCore);
 
-#ifdef USE_WAYLAND
     if (platformName == "wayland")
+    {
+#ifdef USE_WAYLAND_DRAG
         return std::make_unique<WaylandDragHandler>(widget, appCore);
+#elif QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+        return std::make_unique<WarpingDragHandler>(appCore);
 #endif
+    }
 
     return std::make_unique<DragHandler>(appCore);
 }
