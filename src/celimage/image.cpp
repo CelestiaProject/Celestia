@@ -310,6 +310,8 @@ Image::hasAlpha() const
     case PixelFormat::BC7_sRGBA:
     case PixelFormat::RGBA:
     case PixelFormat::BGRA:
+    case PixelFormat::sRGBA:
+    case PixelFormat::sRGBA8:
     case PixelFormat::LumAlpha:
     case PixelFormat::sLumAlpha:
     case PixelFormat::Alpha:
