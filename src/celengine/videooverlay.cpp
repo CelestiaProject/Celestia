@@ -1,6 +1,6 @@
 // videooverlay.cpp
 //
-// Copyright (C) 2026, the Celestia Development Team
+// Copyright (C) 2026-present, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -481,7 +481,7 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
     r.colors.fill(Color::White);
     r.hasColors = true;
     m_renderer->drawRectangle(r, FisheyeOverrideMode::Disabled,
-                               m_renderer->getOrthoProjectionMatrix());
+                              m_renderer->getOrthoProjectionMatrix());
 }
 
 #endif // USE_FFMPEG

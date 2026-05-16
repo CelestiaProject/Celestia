@@ -1,6 +1,6 @@
 // videooverlay.h
 //
-// Copyright (C) 2026, the Celestia Development Team
+// Copyright (C) 2026-present, the Celestia Development Team
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
