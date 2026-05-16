@@ -1432,6 +1432,21 @@ Hud::removeVideoOverlay(VideoOverlay::Id id)
     return m_videoOverlays.size() != before;
 }
 
+bool
+Hud::seekVideoOverlay(VideoOverlay::Id id, double seconds)
+{
+    if (id == 0) return false;
+    for (auto& v : m_videoOverlays)
+    {
+        if (v->id() == id)
+        {
+            v->seek(seconds);
+            return true;
+        }
+    }
+    return false;
+}
+
 void
 Hud::clearVideoOverlays()
 {

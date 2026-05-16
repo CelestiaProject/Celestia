@@ -2504,6 +2504,22 @@ static int celestia_clearvideooverlays(lua_State* l)
     this_celestia(l)->clearVideoOverlays();
     return 0;
 }
+
+// celestia:seekvideooverlay(id, seconds) -- seek a video overlay to the
+// given time. Negative values clamp to 0; values past the video's duration
+// wrap to the beginning. Returns true if a video with that id was found.
+static int celestia_seekvideooverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 3, 3, "Two arguments expected for celestia:seekvideooverlay");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:seekvideooverlay must be a number (video id)"));
+    double seconds = Celx_SafeGetNumber(
+        l, 3, AllErrors,
+        "Second argument to celestia:seekvideooverlay must be a number (seconds)");
+    lua_pushboolean(l, this_celestia(l)->seekVideoOverlay(id, seconds) ? 1 : 0);
+    return 1;
+}
 #endif // USE_VIDEO_OVERLAY
 
 static int celestia_verbosity(lua_State* l)
@@ -2893,6 +2909,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "addvideooverlay", celestia_addvideooverlay);
     Celx_RegisterMethod(l, "removevideooverlay", celestia_removevideooverlay);
     Celx_RegisterMethod(l, "clearvideooverlays", celestia_clearvideooverlays);
+    Celx_RegisterMethod(l, "seekvideooverlay", celestia_seekvideooverlay);
 #endif
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 

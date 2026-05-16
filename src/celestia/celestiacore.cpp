@@ -2270,6 +2270,11 @@ bool CelestiaCore::removeVideoOverlay(VideoOverlay::Id id)
     return hud->removeVideoOverlay(id);
 }
 
+bool CelestiaCore::seekVideoOverlay(VideoOverlay::Id id, double seconds)
+{
+    return hud->seekVideoOverlay(id, seconds);
+}
+
 void CelestiaCore::clearVideoOverlays()
 {
     hud->clearVideoOverlays();

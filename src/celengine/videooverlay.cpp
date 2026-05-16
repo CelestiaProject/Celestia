@@ -107,6 +107,10 @@ struct VideoOverlay::Impl
     // Decoder thread.
     std::thread       decoderThread;
     std::atomic<bool> stop { false };
+    // Pending seek target in seconds; -1 means "no seek requested". The
+    // render thread writes, the decoder thread reads-and-clears with
+    // exchange(). Wake the decoder via slotFree after a write.
+    std::atomic<double> seekRequest { -1.0 };
 
     ~Impl();
 
@@ -281,13 +285,36 @@ void VideoOverlay::Impl::decoderLoop()
 
     while (!stop.load(std::memory_order_relaxed))
     {
-        // Wait until a free slot is available in the ring buffer.
+        // Handle a pending user-initiated seek before touching the ring.
+        // EOF wraparound is handled below at the decode site.
+        double pending = seekRequest.exchange(-1.0, std::memory_order_acq_rel);
+        if (pending >= 0.0)
+        {
+            int64_t ts = av_q2d(timeBase) > 0.0
+                ? static_cast<int64_t>(pending / av_q2d(timeBase))
+                : 0;
+            av_seek_frame(fmtCtx, videoStream, ts, AVSEEK_FLAG_BACKWARD);
+            avcodec_flush_buffers(codecCtx);
+            // Invalidate any frames already in the ring — they belong to the
+            // old timeline.  Holding the lock here lets the render thread see
+            // a consistent post-seek state on its next pass.
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                for (auto& f : ring) f.ready = false;
+            }
+            lastPts   = pending;
+            afterSeek = true;
+        }
+
+        // Wait until a free slot is available in the ring buffer, or a seek
+        // is requested, or we're being torn down.
         DecodedFrame* slot = nullptr;
         {
             std::unique_lock<std::mutex> lock(mutex);
             slotFree.wait(lock, [&]
             {
                 if (stop.load()) return true;
+                if (seekRequest.load(std::memory_order_acquire) >= 0.0) return true;
                 for (auto& f : ring)
                     if (!f.ready) { slot = &f; return true; }
                 return false;
@@ -295,6 +322,7 @@ void VideoOverlay::Impl::decoderLoop()
         }
 
         if (stop.load()) break;
+        if (slot == nullptr) continue;  // woken by a seek — go process it
 
         // Decode one frame outside the lock — all FFmpeg resources are
         // exclusively owned by this thread.
@@ -311,6 +339,11 @@ void VideoOverlay::Impl::decoderLoop()
         lastPts = pts;
 
         // Copy the decoded RGBA data into the ring slot and mark it ready.
+        // If a seek arrived while we were decoding, drop the just-decoded
+        // frame instead of publishing it — the next loop iteration will
+        // service the seek.
+        if (seekRequest.load(std::memory_order_acquire) >= 0.0)
+            continue;
         {
             std::lock_guard<std::mutex> lock(mutex);
             std::memcpy(slot->pixels.data(), rgbaFrame->data[0], slot->pixels.size());
@@ -368,6 +401,17 @@ VideoOverlay::VideoOverlay(const std::filesystem::path& path, Renderer* renderer
 }
 
 VideoOverlay::~VideoOverlay() = default;
+
+void VideoOverlay::seek(double seconds)
+{
+    if (!m_valid) return;
+    if (seconds < 0.0) seconds = 0.0;
+    m_impl->seekRequest.store(seconds, std::memory_order_release);
+    m_impl->slotFree.notify_all();
+    // Force the render thread to realign its playback clock on the next
+    // frame even if decode finishes before that frame arrives.
+    m_startTime = -1.0;
+}
 
 void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
 {

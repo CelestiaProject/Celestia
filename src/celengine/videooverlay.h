@@ -45,6 +45,12 @@ public:
     // native dimension for that axis.
     void setSize(float w, float h) { m_displayWidth = w; m_displayHeight = h; }
 
+    // Seek to `seconds` from the start of the video. Asynchronously signals
+    // the decoder thread; the next frame to be displayed will be at or just
+    // before the requested time, and the playback clock is then realigned so
+    // playback continues from that point. Negative values clamp to 0.
+    void seek(double seconds);
+
     void setId(Id id) { m_id = id; }
     Id   id()    const { return m_id; }
     bool isValid() const { return m_valid; }

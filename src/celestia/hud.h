@@ -175,6 +175,7 @@ public:
 #ifdef USE_VIDEO_OVERLAY
     VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
     bool removeVideoOverlay(VideoOverlay::Id);
+    bool seekVideoOverlay(VideoOverlay::Id, double seconds);
     void clearVideoOverlays();
 #endif
 
