@@ -190,6 +190,9 @@ private:
     void renderSelectionInfo(const WindowMetrics&, const Simulation*, Selection, const Eigen::Vector3d&);
     void renderTextMessages(const WindowMetrics&, double);
     void renderMovieCapture(const WindowMetrics&, const MovieCapture&);
+#ifdef USE_FFMPEG
+    void renderVideoOverlays(const WindowMetrics&, double currentTime, bool isScriptRunning);
+#endif
 
     HudSettings m_hudSettings;
     HudFonts m_hudFonts;

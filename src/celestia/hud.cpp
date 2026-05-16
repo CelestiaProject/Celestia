@@ -962,21 +962,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
     }
 
 #ifdef USE_FFMPEG
-    if (!m_videoOverlays.empty())
-    {
-        if (!m_hudSettings.showOverlayImage || !isScriptRunning)
-            m_videoOverlays.clear();
-        else
-        {
-            for (const auto& v : m_videoOverlays)
-                v->render(timeInfo.currentTime, metrics.width, metrics.height);
-            // Drop overlays whose non-looping playback has finished.
-            m_videoOverlays.erase(
-                std::remove_if(m_videoOverlays.begin(), m_videoOverlays.end(),
-                               [](const auto& v) { return v->isFinished(); }),
-                m_videoOverlays.end());
-        }
-    }
+    renderVideoOverlays(metrics, timeInfo.currentTime, isScriptRunning);
 #endif
 
     views.renderBorders(m_overlay.get(), metrics, timeInfo.currentTime);
@@ -1488,6 +1474,24 @@ void
 Hud::clearVideoOverlays()
 {
     m_videoOverlays.clear();
+}
+
+void
+Hud::renderVideoOverlays(const WindowMetrics& metrics, double currentTime, bool isScriptRunning)
+{
+    if (m_videoOverlays.empty()) return;
+    if (!m_hudSettings.showOverlayImage || !isScriptRunning)
+    {
+        m_videoOverlays.clear();
+        return;
+    }
+    for (const auto& v : m_videoOverlays)
+        v->render(currentTime, metrics.width, metrics.height);
+    // Drop overlays whose non-looping playback has finished.
+    m_videoOverlays.erase(
+        std::remove_if(m_videoOverlays.begin(), m_videoOverlays.end(),
+                       [](const auto& v) { return v->isFinished(); }),
+        m_videoOverlays.end());
 }
 #endif
 

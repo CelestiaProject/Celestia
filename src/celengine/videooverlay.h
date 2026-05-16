@@ -77,6 +77,11 @@ private:
     struct Impl;
     std::unique_ptr<Impl> m_impl;
 
+    // render() helpers, split out to keep render() readable.
+    void advanceClock(double currentTime);
+    bool pickFrame(double currentTime, double elapsed, bool& ringEmpty);
+    void drawRect(int vpWidth, int vpHeight) const;
+
     float  m_offsetX       { 0.0f };
     float  m_offsetY       { 0.0f };
     float  m_displayWidth  { 0.0f };

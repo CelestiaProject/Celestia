@@ -129,6 +129,13 @@ struct VideoOverlay::Impl
     // Called from the decoder thread only.
     bool decodeOneFrame(double& outPts);
 
+    // decoderLoop() helpers, called only by the decoder thread.
+    bool processPendingSeek(bool& afterSeek, double& lastPts);
+    void parkAtEof();
+    DecodedFrame* acquireFreeSlot();
+    void handleDecodeFailure(bool& afterSeek, double& lastPts);
+    void publishFrame(DecodedFrame* slot, double pts, bool afterSeek);
+
     // Render thread helpers.
     void ensureTexture();
     void uploadToGL();   // uploads uploadBuffer into the GL texture
@@ -284,6 +291,86 @@ bool VideoOverlay::Impl::decodeOneFrame(double& outPts)
     }
 }
 
+bool VideoOverlay::Impl::processPendingSeek(bool& afterSeek, double& lastPts)
+{
+    double pending = seekRequest.exchange(-1.0, std::memory_order_acq_rel);
+    if (pending < 0.0) return false;
+
+    int64_t ts = av_q2d(timeBase) > 0.0
+        ? static_cast<int64_t>(pending / av_q2d(timeBase))
+        : 0;
+    av_seek_frame(fmtCtx, videoStream, ts, AVSEEK_FLAG_BACKWARD);
+    avcodec_flush_buffers(codecCtx);
+    // Invalidate any frames already in the ring — they belong to the
+    // old timeline.  Holding the lock here lets the render thread see
+    // a consistent post-seek state on its next pass.
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        for (auto& f : ring) f.ready = false;
+    }
+    lastPts   = pending;
+    afterSeek = true;
+    atEof.store(false, std::memory_order_release);
+    return true;
+}
+
+void VideoOverlay::Impl::parkAtEof()
+{
+    // Non-looping video that's hit EOF: park here until a seek arrives or
+    // the overlay is being torn down.  No CPU spin, no extra slots consumed.
+    std::unique_lock<std::mutex> lock(mutex);
+    slotFree.wait(lock, [this]
+    {
+        return stop.load() ||
+               seekRequest.load(std::memory_order_acquire) >= 0.0;
+    });
+}
+
+DecodedFrame* VideoOverlay::Impl::acquireFreeSlot()
+{
+    // Wait until a free slot is available in the ring buffer, or a seek
+    // is requested, or we're being torn down.
+    DecodedFrame* slot = nullptr;
+    std::unique_lock<std::mutex> lock(mutex);
+    slotFree.wait(lock, [this, &slot]
+    {
+        if (stop.load()) return true;
+        if (seekRequest.load(std::memory_order_acquire) >= 0.0) return true;
+        for (auto& f : ring)
+            if (!f.ready) { slot = &f; return true; }
+        return false;
+    });
+    return slot;
+}
+
+void VideoOverlay::Impl::handleDecodeFailure(bool& afterSeek, double& lastPts)
+{
+    if (loop.load(std::memory_order_acquire))
+    {
+        // EOF — seek back to the beginning and flag the next frame.
+        av_seek_frame(fmtCtx, videoStream, 0, AVSEEK_FLAG_BACKWARD);
+        avcodec_flush_buffers(codecCtx);
+        lastPts   = 0.0;
+        afterSeek = true;
+    }
+    else
+    {
+        // Non-looping: stop producing frames.  The render thread keeps
+        // drawing the last uploaded frame until it observes this flag and
+        // marks the overlay finished for auto-remove.
+        atEof.store(true, std::memory_order_release);
+    }
+}
+
+void VideoOverlay::Impl::publishFrame(DecodedFrame* slot, double pts, bool afterSeek)
+{
+    std::lock_guard<std::mutex> lock(mutex);
+    std::memcpy(slot->pixels.data(), rgbaFrame->data[0], slot->pixels.size());
+    slot->pts    = pts;
+    slot->looped = afterSeek;
+    slot->ready  = true;
+}
+
 void VideoOverlay::Impl::decoderLoop()
 {
     // The very first frame is not considered a "loop" — the render thread
@@ -293,57 +380,15 @@ void VideoOverlay::Impl::decoderLoop()
 
     while (!stop.load(std::memory_order_relaxed))
     {
-        // Handle a pending user-initiated seek before touching the ring.
-        // EOF wraparound is handled below at the decode site.
-        double pending = seekRequest.exchange(-1.0, std::memory_order_acq_rel);
-        if (pending >= 0.0)
-        {
-            int64_t ts = av_q2d(timeBase) > 0.0
-                ? static_cast<int64_t>(pending / av_q2d(timeBase))
-                : 0;
-            av_seek_frame(fmtCtx, videoStream, ts, AVSEEK_FLAG_BACKWARD);
-            avcodec_flush_buffers(codecCtx);
-            // Invalidate any frames already in the ring — they belong to the
-            // old timeline.  Holding the lock here lets the render thread see
-            // a consistent post-seek state on its next pass.
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                for (auto& f : ring) f.ready = false;
-            }
-            lastPts   = pending;
-            afterSeek = true;
-            atEof.store(false, std::memory_order_release);
-        }
+        processPendingSeek(afterSeek, lastPts);
 
-        // Non-looping video that's hit EOF: park here until a seek arrives
-        // or the overlay is being torn down.  No CPU spin, no extra slots
-        // consumed.
         if (atEof.load(std::memory_order_acquire))
         {
-            std::unique_lock<std::mutex> lock(mutex);
-            slotFree.wait(lock, [&]
-            {
-                return stop.load() ||
-                       seekRequest.load(std::memory_order_acquire) >= 0.0;
-            });
+            parkAtEof();
             continue;
         }
 
-        // Wait until a free slot is available in the ring buffer, or a seek
-        // is requested, or we're being torn down.
-        DecodedFrame* slot = nullptr;
-        {
-            std::unique_lock<std::mutex> lock(mutex);
-            slotFree.wait(lock, [&]
-            {
-                if (stop.load()) return true;
-                if (seekRequest.load(std::memory_order_acquire) >= 0.0) return true;
-                for (auto& f : ring)
-                    if (!f.ready) { slot = &f; return true; }
-                return false;
-            });
-        }
-
+        DecodedFrame* slot = acquireFreeSlot();
         if (stop.load()) break;
         if (slot == nullptr) continue;  // woken by a seek — go process it
 
@@ -352,39 +397,18 @@ void VideoOverlay::Impl::decoderLoop()
         double pts = lastPts;
         if (!decodeOneFrame(pts))
         {
-            if (loop.load(std::memory_order_acquire))
-            {
-                // EOF — seek back to the beginning and flag the next frame.
-                av_seek_frame(fmtCtx, videoStream, 0, AVSEEK_FLAG_BACKWARD);
-                avcodec_flush_buffers(codecCtx);
-                lastPts   = 0.0;
-                afterSeek = true;
-            }
-            else
-            {
-                // Non-looping: stop producing frames.  The render thread
-                // keeps drawing the last uploaded frame until it observes
-                // this flag and marks the overlay finished for auto-remove.
-                atEof.store(true, std::memory_order_release);
-            }
+            handleDecodeFailure(afterSeek, lastPts);
             continue;
         }
         lastPts = pts;
 
-        // Copy the decoded RGBA data into the ring slot and mark it ready.
-        // If a seek arrived while we were decoding, drop the just-decoded
-        // frame instead of publishing it — the next loop iteration will
-        // service the seek.
-        if (seekRequest.load(std::memory_order_acquire) >= 0.0)
-            continue;
+        // Drop the just-decoded frame if a seek arrived during decode —
+        // the next loop iteration will service the seek.
+        if (seekRequest.load(std::memory_order_acquire) < 0.0)
         {
-            std::lock_guard<std::mutex> lock(mutex);
-            std::memcpy(slot->pixels.data(), rgbaFrame->data[0], slot->pixels.size());
-            slot->pts    = pts;
-            slot->looped = afterSeek;
-            slot->ready  = true;
+            publishFrame(slot, pts, afterSeek);
+            afterSeek = false;
         }
-        afterSeek = false;
     }
 }
 
@@ -471,17 +495,15 @@ void VideoOverlay::resume()
     m_pauseElapsed = -1.0;
 }
 
-void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
+void VideoOverlay::advanceClock(double currentTime)
 {
-    if (!m_valid || m_renderer == nullptr) return;
-
     if (m_startTime < 0.0)
         m_startTime = currentTime;
 
     // While paused, hold the playback clock at the elapsed value it had
-    // when pause() was first observed.  Frame selection below still runs
-    // so that seek-while-paused can land on the new frame, but with
-    // elapsed frozen no untouched-by-seek future frames will match.
+    // when pause() was first observed.  Frame selection still runs so
+    // that seek-while-paused can land on the new frame, but with elapsed
+    // frozen no untouched-by-seek future frames will match.
     if (m_paused)
     {
         if (m_pauseElapsed < 0.0) m_pauseElapsed = currentTime - m_startTime;
@@ -491,73 +513,52 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
     {
         m_pauseElapsed = -1.0;
     }
+}
 
-    double elapsed = currentTime - m_startTime;
+bool VideoOverlay::pickFrame(double currentTime, double elapsed, bool& ringEmpty)
+{
+    // Find the ready frame with the highest PTS that does not exceed
+    // elapsed.  Copy its pixels into the upload buffer so the decoder
+    // thread can reuse the slot immediately without contending with the
+    // GL upload.
+    std::lock_guard<std::mutex> lock(m_impl->mutex);
 
-    // Find the ready frame with the highest PTS that does not exceed elapsed.
-    // Copy its pixels out of the ring buffer so the decoder thread can reuse
-    // the slot immediately without contending with the GL upload.
-    bool haveFrame = false;
-    bool ringEmpty = true;
+    DecodedFrame* best = nullptr;
+    for (auto& f : m_impl->ring)
     {
-        std::lock_guard<std::mutex> lock(m_impl->mutex);
-
-        DecodedFrame* best = nullptr;
-        for (auto& f : m_impl->ring)
-        {
-            if (!f.ready) continue;
-            ringEmpty = false;
-            if (f.pts > elapsed && !f.looped) continue;
-            if (best == nullptr || f.pts > best->pts)
-                best = &f;
-        }
-
-        if (best != nullptr)
-        {
-            if (best->looped)
-            {
-                // Align the playback clock so that PTS=0 maps to now.
-                m_startTime = currentTime - best->pts;
-                // If a seek landed while we're paused, refresh the freeze
-                // point so resume() continues from the seeked-to position
-                // rather than the old pre-seek one.
-                if (m_paused) m_pauseElapsed = best->pts;
-            }
-
-            std::memcpy(m_impl->uploadBuffer.data(),
-                        best->pixels.data(),
-                        best->pixels.size());
-
-            // Free this slot and every older one so the decoder can proceed.
-            double uploadedPts = best->pts;
-            for (auto& f : m_impl->ring)
-                if (f.ready && f.pts <= uploadedPts)
-                    f.ready = false;
-
-            haveFrame = true;
-        }
+        if (!f.ready) continue;
+        ringEmpty = false;
+        if (f.pts > elapsed && !f.looped) continue;
+        if (best == nullptr || f.pts > best->pts)
+            best = &f;
     }
 
-    if (haveFrame)
+    if (best == nullptr) return false;
+
+    if (best->looped)
     {
-        m_impl->slotFree.notify_all();
-        m_impl->ensureTexture();
-        m_impl->uploadToGL();
+        // Align the playback clock so that PTS=0 maps to now.  If a seek
+        // landed while we're paused, refresh the freeze point so resume()
+        // continues from the seeked-to position.
+        m_startTime = currentTime - best->pts;
+        if (m_paused) m_pauseElapsed = best->pts;
     }
 
-    // A non-looping video is "finished" once the decoder has parked at EOF,
-    // the ring is empty, and we've at least uploaded one frame.  Hud uses
-    // this to schedule auto-removal of the overlay after EOF.
-    if (!m_paused &&
-        m_impl->atEof.load(std::memory_order_acquire) &&
-        ringEmpty &&
-        m_impl->glName != 0)
-    {
-        m_finished = true;
-    }
+    std::memcpy(m_impl->uploadBuffer.data(),
+                best->pixels.data(),
+                best->pixels.size());
 
-    if (m_impl->glName == 0) return;
+    // Free this slot and every older one so the decoder can proceed.
+    double uploadedPts = best->pts;
+    for (auto& f : m_impl->ring)
+        if (f.ready && f.pts <= uploadedPts)
+            f.ready = false;
 
+    return true;
+}
+
+void VideoOverlay::drawRect(int vpWidth, int vpHeight) const
+{
     float xSize = (m_displayWidth  > 0.0f) ? m_displayWidth  : static_cast<float>(m_impl->videoWidth);
     float ySize = (m_displayHeight > 0.0f) ? m_displayHeight : static_cast<float>(m_impl->videoHeight);
 
@@ -570,6 +571,38 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
     r.hasColors = true;
     m_renderer->drawRectangle(r, FisheyeOverrideMode::Disabled,
                               m_renderer->getOrthoProjectionMatrix());
+}
+
+void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
+{
+    if (!m_valid || m_renderer == nullptr) return;
+
+    advanceClock(currentTime);
+    double elapsed = currentTime - m_startTime;
+
+    bool ringEmpty = true;
+    bool haveFrame = pickFrame(currentTime, elapsed, ringEmpty);
+
+    if (haveFrame)
+    {
+        m_impl->slotFree.notify_all();
+        m_impl->ensureTexture();
+        m_impl->uploadToGL();
+    }
+
+    // A non-looping video is "finished" once the decoder has parked at EOF,
+    // the ring is empty, and we've at least uploaded one frame.  Hud uses
+    // this to schedule auto-removal of the overlay after EOF.
+    if (!m_paused
+        && m_impl->atEof.load(std::memory_order_acquire)
+        && ringEmpty
+        && m_impl->glName != 0)
+    {
+        m_finished = true;
+    }
+
+    if (m_impl->glName == 0) return;
+    drawRect(vpWidth, vpHeight);
 }
 
 #endif // USE_FFMPEG
