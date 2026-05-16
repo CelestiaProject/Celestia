@@ -28,7 +28,7 @@
 #include <celengine/render.h>
 #include <celengine/simulation.h>
 #include <celengine/overlayimage.h>
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 #include <celengine/videooverlay.h>
 #endif
 #include <celengine/viewporteffect.h>
@@ -373,7 +373,7 @@ public:
     // Remove every currently-displayed overlay image.
     void clearScriptImages();
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
     VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
     bool removeVideoOverlay(VideoOverlay::Id);
     bool seekVideoOverlay(VideoOverlay::Id, double seconds);

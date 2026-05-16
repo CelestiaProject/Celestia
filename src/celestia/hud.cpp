@@ -31,7 +31,7 @@
 #include <celengine/observer.h>
 #include <celengine/overlay.h>
 #include <celengine/overlayimage.h>
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 #include <celengine/videooverlay.h>
 #endif
 #include <celengine/rectangle.h>
@@ -961,7 +961,7 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         }
     }
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
     if (!m_videoOverlays.empty())
     {
         if (!m_hudSettings.showOverlayImage || !isScriptRunning)
@@ -1409,7 +1409,7 @@ Hud::clearImages()
     m_images.clear();
 }
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 VideoOverlay::Id
 Hud::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
 {

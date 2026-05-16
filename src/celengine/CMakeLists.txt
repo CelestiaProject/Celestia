@@ -159,7 +159,7 @@ set(CELENGINE_SOURCES
   warpmesh.h
 )
 
-if(ENABLE_VIDEO_OVERLAY)
+if(ENABLE_FFMPEG)
   list(APPEND CELENGINE_SOURCES
     videooverlay.cpp
     videooverlay.h

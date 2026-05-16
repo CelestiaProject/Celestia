@@ -19,7 +19,7 @@
 
 #include <celengine/category.h>
 #include <celengine/texture.h>
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 #include <celengine/videooverlay.h>
 #endif
 #include <celestia/audiosession.h>
@@ -2449,7 +2449,7 @@ static int celestia_clearimageoverlays(lua_State* l)
     return 0;
 }
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 // celestia:addvideooverlay(xoffset, yoffset, width, height, filename) -- start
 // playing a video file as a screen overlay. xoffset/yoffset follow the same
 // convention as addoverlay (0 = centred, ±1 = edge). width/height are in
@@ -2520,7 +2520,7 @@ static int celestia_seekvideooverlay(lua_State* l)
     lua_pushboolean(l, this_celestia(l)->seekVideoOverlay(id, seconds) ? 1 : 0);
     return 1;
 }
-#endif // USE_VIDEO_OVERLAY
+#endif // USE_FFMPEG
 
 static int celestia_verbosity(lua_State* l)
 {
@@ -2905,7 +2905,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "addimageoverlay", celestia_addimageoverlay);
     Celx_RegisterMethod(l, "removeimageoverlay", celestia_removeimageoverlay);
     Celx_RegisterMethod(l, "clearimageoverlays", celestia_clearimageoverlays);
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
     Celx_RegisterMethod(l, "addvideooverlay", celestia_addvideooverlay);
     Celx_RegisterMethod(l, "removevideooverlay", celestia_removevideooverlay);
     Celx_RegisterMethod(l, "clearvideooverlays", celestia_clearvideooverlays);

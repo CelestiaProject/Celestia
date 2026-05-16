@@ -9,7 +9,7 @@
 
 #pragma once
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 
 #include <cstdint>
 #include <filesystem>
@@ -69,4 +69,4 @@ private:
     Renderer* m_renderer   { nullptr };
 };
 
-#endif // USE_VIDEO_OVERLAY
+#endif // USE_FFMPEG

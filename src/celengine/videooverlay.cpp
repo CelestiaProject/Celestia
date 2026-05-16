@@ -9,7 +9,7 @@
 
 #include "videooverlay.h"
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 
 #include <array>
 #include <atomic>
@@ -484,4 +484,4 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
                                m_renderer->getOrthoProjectionMatrix());
 }
 
-#endif // USE_VIDEO_OVERLAY
+#endif // USE_FFMPEG

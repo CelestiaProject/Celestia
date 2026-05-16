@@ -2259,7 +2259,7 @@ void CelestiaCore::clearScriptImages()
     hud->clearImages();
 }
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 VideoOverlay::Id CelestiaCore::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
 {
     return hud->addVideoOverlay(std::move(overlay));

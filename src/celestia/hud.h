@@ -25,7 +25,7 @@
 
 #include <celastro/date.h>
 #include <celengine/overlayimage.h>
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
 #include <celengine/videooverlay.h>
 #endif
 #include <celengine/selection.h>
@@ -172,7 +172,7 @@ public:
     // Drop every currently-displayed overlay image immediately.
     void clearImages();
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
     VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
     bool removeVideoOverlay(VideoOverlay::Id);
     bool seekVideoOverlay(VideoOverlay::Id, double seconds);
@@ -201,7 +201,7 @@ private:
     // and the sentinel 0 is reserved for "no id."
     OverlayImage::Id m_nextImageId { 0 };
 
-#ifdef USE_VIDEO_OVERLAY
+#ifdef USE_FFMPEG
     std::vector<std::unique_ptr<VideoOverlay>> m_videoOverlays;
     VideoOverlay::Id m_nextVideoId { 0 };
 #endif
