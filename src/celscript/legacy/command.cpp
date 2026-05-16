@@ -941,7 +941,13 @@ void CommandScriptImage::processInstantaneous(ExecutionEnvironment& env)
     image->setOffset(xoffset, yoffset);
     image->setColor(colors);
     image->fitScreen(fitscreen);
-    env.getCelestiaCore()->setScriptImage(std::move(image));
+    // Legacy `overlay {}` historically allowed only one image on screen.
+    // Preserve that contract by clearing existing images before adding
+    // the new one; scripts that want multiple should use the celx
+    // celestia:addimageoverlay method instead.
+    auto* core = env.getCelestiaCore();
+    core->clearScriptImages();
+    core->addScriptImage(std::move(image));
 }
 
 // Verbosity command

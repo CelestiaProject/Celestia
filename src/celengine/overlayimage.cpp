@@ -4,13 +4,12 @@
 #include "rectangle.h"
 #include "render.h"
 
-OverlayImage::OverlayImage(std::filesystem::path f, Renderer *r) :
-    filename(std::move(f)),
+OverlayImage::OverlayImage(const std::filesystem::path& f, Renderer *r) :
+    texture(LoadTextureFromFile(f.is_relative() ? "images" / f : f,
+                                Texture::EdgeClamp,
+                                Texture::NoMipMaps)),
     renderer(r)
 {
-    texture = LoadTextureFromFile(std::filesystem::path("images") / filename,
-                                  Texture::EdgeClamp,
-                                  Texture::NoMipMaps);
 }
 
 void OverlayImage::setColor(const Color& c)
@@ -28,8 +27,10 @@ void OverlayImage::render(float curr_time, int width, int height)
     if (renderer == nullptr || texture == nullptr || (curr_time >= start + duration))
         return;
 
-    float xSize = texture->getWidth();
-    float ySize = texture->getHeight();
+    // Honor explicit width/height set via setSize(); fall back to the
+    // texture's intrinsic dimensions when either is non-positive.
+    float xSize = overrideWidth  > 0.0f ? overrideWidth  : static_cast<float>(texture->getWidth());
+    float ySize = overrideHeight > 0.0f ? overrideHeight : static_cast<float>(texture->getHeight());
 
     // center overlay image horizontally if offsetX = 0
     float left = (width * (1 + offsetX) - xSize)/2;

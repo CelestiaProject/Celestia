@@ -19,10 +19,12 @@
 #include <string_view>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 #include <Eigen/Core>
 
 #include <celastro/date.h>
+#include <celengine/overlayimage.h>
 #include <celengine/selection.h>
 #include <celestia/textinput.h>
 #include <celestia/textprintposition.h>
@@ -35,7 +37,6 @@
 
 class MovieCapture;
 class Overlay;
-class OverlayImage;
 class Simulation;
 
 namespace celestia
@@ -156,7 +157,17 @@ public:
                        bool editMode);
 
     void showText(const TextPrintPosition&, std::string_view, double duration, double currentTime);
-    void setImage(std::unique_ptr<OverlayImage>&&, double);
+    // Push an overlay image onto the stack of currently-displayed images.
+    // Each image is rendered until its own duration elapses, then dropped
+    // from the stack; calling this never replaces existing images. Returns
+    // the freshly-assigned image id so callers can pass it to removeImage
+    // later. 0 is reserved as "no id" and is never returned on success.
+    OverlayImage::Id addImage(std::unique_ptr<OverlayImage>&&, double);
+    // Remove the overlay image with the given id, if any. No-op when the id
+    // is 0 or not currently active.
+    bool removeImage(OverlayImage::Id);
+    // Drop every currently-displayed overlay image immediately.
+    void clearImages();
 
     HudSettings& hudSettings() noexcept { return m_hudSettings; }
     const HudSettings& hudSettings() const noexcept { return m_hudSettings; }
@@ -173,7 +184,12 @@ private:
 
     std::unique_ptr<Overlay> m_overlay;
 
-    std::unique_ptr<OverlayImage> m_image;
+    // Active script overlays. New images are appended in `addImage`;
+    // expired ones are pruned during renderOverlay.
+    std::vector<std::unique_ptr<OverlayImage>> m_images;
+    // Counter for assigning image ids; pre-incremented so the first id is 1
+    // and the sentinel 0 is reserved for "no id."
+    OverlayImage::Id m_nextImageId { 0 };
 
     std::locale loc;
 
