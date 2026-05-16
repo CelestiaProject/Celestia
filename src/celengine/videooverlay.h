@@ -51,6 +51,24 @@ public:
     // playback continues from that point. Negative values clamp to 0.
     void seek(double seconds);
 
+    // When true (the default) the video loops back to the beginning on EOF.
+    // When false, decoding stops at EOF and the last decoded frame remains
+    // on screen until the overlay is removed or seek() is called.
+    void setLoop(bool b);
+
+    // Pause/resume playback. While paused the currently-displayed frame stays
+    // on screen; the decoder thread continues to fill the ring buffer until
+    // it is full and then blocks naturally.  seek() still works while paused
+    // and lands on the seeked-to frame without resuming playback.
+    void pause();
+    void resume();
+    bool isPaused() const { return m_paused; }
+
+    // True once a non-looping video has played all the way through and the
+    // last frame has been displayed.  Hud uses this to auto-remove the
+    // overlay after EOF.  Always false while looping is enabled.
+    bool isFinished() const { return m_finished; }
+
     void setId(Id id) { m_id = id; }
     Id   id()    const { return m_id; }
     bool isValid() const { return m_valid; }
@@ -64,6 +82,13 @@ private:
     float  m_displayWidth  { 0.0f };
     float  m_displayHeight { 0.0f };
     double m_startTime     { -1.0 };  // currentTime of first render() call
+    // Frozen elapsed value while paused.  -1 means "not currently paused or
+    // pause hasn't been observed by render() yet."
+    double m_pauseElapsed  { -1.0 };
+    bool   m_paused        { false };
+    // Set once by render() when a non-looping video has shown its last
+    // frame.  Hud polls this to schedule auto-removal.
+    bool   m_finished      { false };
     Id     m_id            { 0 };
     bool   m_valid         { false };
     Renderer* m_renderer   { nullptr };

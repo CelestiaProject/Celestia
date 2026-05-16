@@ -967,8 +967,15 @@ Hud::renderOverlay(const WindowMetrics& metrics,
         if (!m_hudSettings.showOverlayImage || !isScriptRunning)
             m_videoOverlays.clear();
         else
+        {
             for (const auto& v : m_videoOverlays)
                 v->render(timeInfo.currentTime, metrics.width, metrics.height);
+            // Drop overlays whose non-looping playback has finished.
+            m_videoOverlays.erase(
+                std::remove_if(m_videoOverlays.begin(), m_videoOverlays.end(),
+                               [](const auto& v) { return v->isFinished(); }),
+                m_videoOverlays.end());
+        }
     }
 #endif
 
@@ -1441,6 +1448,36 @@ Hud::seekVideoOverlay(VideoOverlay::Id id, double seconds)
         if (v->id() == id)
         {
             v->seek(seconds);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool
+Hud::pauseVideoOverlay(VideoOverlay::Id id)
+{
+    if (id == 0) return false;
+    for (auto& v : m_videoOverlays)
+    {
+        if (v->id() == id)
+        {
+            v->pause();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool
+Hud::resumeVideoOverlay(VideoOverlay::Id id)
+{
+    if (id == 0) return false;
+    for (auto& v : m_videoOverlays)
+    {
+        if (v->id() == id)
+        {
+            v->resume();
             return true;
         }
     }

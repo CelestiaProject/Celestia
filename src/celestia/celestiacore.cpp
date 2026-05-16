@@ -2275,6 +2275,16 @@ bool CelestiaCore::seekVideoOverlay(VideoOverlay::Id id, double seconds)
     return hud->seekVideoOverlay(id, seconds);
 }
 
+bool CelestiaCore::pauseVideoOverlay(VideoOverlay::Id id)
+{
+    return hud->pauseVideoOverlay(id);
+}
+
+bool CelestiaCore::resumeVideoOverlay(VideoOverlay::Id id)
+{
+    return hud->resumeVideoOverlay(id);
+}
+
 void CelestiaCore::clearVideoOverlays()
 {
     hud->clearVideoOverlays();
