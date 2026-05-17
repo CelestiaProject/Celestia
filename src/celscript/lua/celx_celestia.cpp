@@ -2450,30 +2450,31 @@ static int celestia_clearimageoverlays(lua_State* l)
 }
 
 #ifdef USE_FFMPEG
-// celestia:addvideooverlay(xoffset, yoffset, width, height, filename [, loop]) --
-// start playing a video file as a screen overlay. xoffset/yoffset follow the
-// same convention as addimageoverlay (0 = centred, ±1 = edge). width/height
-// are in pixels; 0 means use the video's native dimension. `loop` defaults
-// to false: the video plays once and the overlay is then auto-removed.
-// Pass true to play the video on an infinite loop. Returns a numeric id
-// that can be passed to removevideooverlay()/pausevideooverlay()/etc., or
-// nil on failure.
+// celestia:addvideooverlay(filename [, xoffset, yoffset, width, height, loop]) --
+// start playing a video file as a screen overlay. Only `filename` is required;
+// all other arguments default to 0 (loop defaults to false). xoffset/yoffset
+// follow the same convention as addimageoverlay (0 = centred, ±1 = edge).
+// width/height are in pixels; 0 means use the video's native dimension.
+// `loop` defaults to false: the video plays once and the overlay is then
+// auto-removed. Pass true to play on an infinite loop. Returns a numeric
+// id that can be passed to removevideooverlay()/pausevideooverlay()/etc.,
+// or nil on failure.
 static int celestia_addvideooverlay(lua_State* l)
 {
-    Celx_CheckArgs(l, 6, 7, "Five or six arguments expected for celestia:addvideooverlay");
+    Celx_CheckArgs(l, 2, 7, "One to six arguments expected for celestia:addvideooverlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 2, WrongType, "First argument to celestia:addvideooverlay must be a number (xoffset)", 0.0));
-    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:addvideooverlay must be a number (yoffset)", 0.0));
-    float width   = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:addvideooverlay must be a number (width)", 0.0));
-    float height  = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:addvideooverlay must be a number (height)", 0.0));
-    const char* filename = Celx_SafeGetString(l, 6, AllErrors, "Fifth argument to celestia:addvideooverlay must be a string (filename)");
+    const char* filename = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:addvideooverlay must be a string (filename)");
     if (filename == nullptr)
     {
         lua_pushnil(l);
         return 1;
     }
 
+    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:addvideooverlay must be a number (xoffset)", 0.0));
+    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:addvideooverlay must be a number (yoffset)", 0.0));
+    float width   = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:addvideooverlay must be a number (width)", 0.0));
+    float height  = static_cast<float>(Celx_SafeGetNumber(l, 6, WrongType, "Fifth argument to celestia:addvideooverlay must be a number (height)", 0.0));
     bool loop = Celx_SafeGetBoolean(l, 7, WrongType,
         "Sixth argument to celestia:addvideooverlay must be a boolean (loop)", false);
 
