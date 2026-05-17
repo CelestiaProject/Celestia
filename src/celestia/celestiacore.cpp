@@ -2270,17 +2270,17 @@ bool CelestiaCore::removeVideoOverlay(VideoOverlay::Id id)
     return hud->removeVideoOverlay(id);
 }
 
-bool CelestiaCore::seekVideoOverlay(VideoOverlay::Id id, double seconds)
+bool CelestiaCore::seekVideoOverlay(VideoOverlay::Id id, double seconds) const
 {
     return hud->seekVideoOverlay(id, seconds);
 }
 
-bool CelestiaCore::pauseVideoOverlay(VideoOverlay::Id id)
+bool CelestiaCore::pauseVideoOverlay(VideoOverlay::Id id) const
 {
     return hud->pauseVideoOverlay(id);
 }
 
-bool CelestiaCore::resumeVideoOverlay(VideoOverlay::Id id)
+bool CelestiaCore::resumeVideoOverlay(VideoOverlay::Id id) const
 {
     return hud->resumeVideoOverlay(id);
 }

@@ -376,9 +376,9 @@ public:
 #ifdef USE_FFMPEG
     VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
     bool removeVideoOverlay(VideoOverlay::Id);
-    bool seekVideoOverlay(VideoOverlay::Id, double seconds);
-    bool pauseVideoOverlay(VideoOverlay::Id);
-    bool resumeVideoOverlay(VideoOverlay::Id);
+    bool seekVideoOverlay(VideoOverlay::Id, double seconds) const;
+    bool pauseVideoOverlay(VideoOverlay::Id) const;
+    bool resumeVideoOverlay(VideoOverlay::Id) const;
     void clearVideoOverlays();
 #endif
 

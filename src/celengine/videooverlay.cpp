@@ -192,7 +192,7 @@ bool VideoOverlay::Impl::open(const std::filesystem::path& path)
         return false;
     }
 
-    AVStream* stream = fmtCtx->streams[videoStream];
+    const AVStream* stream = fmtCtx->streams[videoStream];
     timeBase = stream->time_base;
 
     const AVCodec* codec = avcodec_find_decoder(stream->codecpar->codec_id);
@@ -223,7 +223,7 @@ bool VideoOverlay::Impl::open(const std::filesystem::path& path)
     if (!frame || !rgbaFrame || !packet) return false;
 
     int bufSize = av_image_get_buffer_size(AV_PIX_FMT_RGBA, videoWidth, videoHeight, 1);
-    auto* buf = static_cast<uint8_t*>(av_malloc(static_cast<size_t>(bufSize)));
+    auto* buf = static_cast<uint8_t*>(av_malloc(static_cast<size_t>(bufSize))); // NOSONAR S5350: av_image_fill_arrays takes uint8_t* (non-const)
     if (!buf) return false;
 
     av_image_fill_arrays(rgbaFrame->data, rgbaFrame->linesize,
@@ -284,7 +284,7 @@ bool VideoOverlay::Impl::decodeOneFrame(double& outPts)
                   rgbaFrame->data, rgbaFrame->linesize);
 
         outPts = (frame->pts != AV_NOPTS_VALUE)
-            ? frame->pts * av_q2d(timeBase)
+            ? static_cast<double>(frame->pts) * av_q2d(timeBase)
             : outPts + av_q2d(timeBase);  // fallback: advance by one time-base unit
 
         return true;
@@ -293,7 +293,7 @@ bool VideoOverlay::Impl::decodeOneFrame(double& outPts)
 
 bool VideoOverlay::Impl::processPendingSeek(bool& afterSeek, double& lastPts)
 {
-    double pending = seekRequest.exchange(-1.0, std::memory_order_acq_rel);
+    double pending = seekRequest.exchange(-1.0, std::memory_order_acq_rel); // NOSONAR S6004: used after the if
     if (pending < 0.0) return false;
 
     int64_t ts = av_q2d(timeBase) > 0.0
@@ -305,7 +305,7 @@ bool VideoOverlay::Impl::processPendingSeek(bool& afterSeek, double& lastPts)
     // old timeline.  Holding the lock here lets the render thread see
     // a consistent post-seek state on its next pass.
     {
-        std::lock_guard<std::mutex> lock(mutex);
+        std::scoped_lock lock(mutex);
         for (auto& f : ring) f.ready = false;
     }
     lastPts   = pending;
@@ -318,7 +318,7 @@ void VideoOverlay::Impl::parkAtEof()
 {
     // Non-looping video that's hit EOF: park here until a seek arrives or
     // the overlay is being torn down.  No CPU spin, no extra slots consumed.
-    std::unique_lock<std::mutex> lock(mutex);
+    std::unique_lock lock(mutex);
     slotFree.wait(lock, [this]
     {
         return stop.load() ||
@@ -331,7 +331,7 @@ DecodedFrame* VideoOverlay::Impl::acquireFreeSlot()
     // Wait until a free slot is available in the ring buffer, or a seek
     // is requested, or we're being torn down.
     DecodedFrame* slot = nullptr;
-    std::unique_lock<std::mutex> lock(mutex);
+    std::unique_lock lock(mutex);
     slotFree.wait(lock, [this, &slot]
     {
         if (stop.load()) return true;
@@ -364,7 +364,7 @@ void VideoOverlay::Impl::handleDecodeFailure(bool& afterSeek, double& lastPts)
 
 void VideoOverlay::Impl::publishFrame(DecodedFrame* slot, double pts, bool afterSeek)
 {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::scoped_lock lock(mutex);
     std::memcpy(slot->pixels.data(), rgbaFrame->data[0], slot->pixels.size());
     slot->pts    = pts;
     slot->looped = afterSeek;
@@ -521,7 +521,7 @@ bool VideoOverlay::pickFrame(double currentTime, double elapsed, bool& ringEmpty
     // elapsed.  Copy its pixels into the upload buffer so the decoder
     // thread can reuse the slot immediately without contending with the
     // GL upload.
-    std::lock_guard<std::mutex> lock(m_impl->mutex);
+    std::scoped_lock lock(m_impl->mutex);
 
     DecodedFrame* best = nullptr;
     for (auto& f : m_impl->ring)
@@ -581,9 +581,7 @@ void VideoOverlay::render(double currentTime, int vpWidth, int vpHeight)
     double elapsed = currentTime - m_startTime;
 
     bool ringEmpty = true;
-    bool haveFrame = pickFrame(currentTime, elapsed, ringEmpty);
-
-    if (haveFrame)
+    if (pickFrame(currentTime, elapsed, ringEmpty))
     {
         m_impl->slotFree.notify_all();
         m_impl->ensureTexture();

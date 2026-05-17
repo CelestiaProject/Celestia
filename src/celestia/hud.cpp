@@ -1426,10 +1426,10 @@ Hud::removeVideoOverlay(VideoOverlay::Id id)
 }
 
 bool
-Hud::seekVideoOverlay(VideoOverlay::Id id, double seconds)
+Hud::seekVideoOverlay(VideoOverlay::Id id, double seconds) const
 {
     if (id == 0) return false;
-    for (auto& v : m_videoOverlays)
+    for (const auto& v : m_videoOverlays)
     {
         if (v->id() == id)
         {
@@ -1441,10 +1441,10 @@ Hud::seekVideoOverlay(VideoOverlay::Id id, double seconds)
 }
 
 bool
-Hud::pauseVideoOverlay(VideoOverlay::Id id)
+Hud::pauseVideoOverlay(VideoOverlay::Id id) const
 {
     if (id == 0) return false;
-    for (auto& v : m_videoOverlays)
+    for (const auto& v : m_videoOverlays)
     {
         if (v->id() == id)
         {
@@ -1456,10 +1456,10 @@ Hud::pauseVideoOverlay(VideoOverlay::Id id)
 }
 
 bool
-Hud::resumeVideoOverlay(VideoOverlay::Id id)
+Hud::resumeVideoOverlay(VideoOverlay::Id id) const
 {
     if (id == 0) return false;
-    for (auto& v : m_videoOverlays)
+    for (const auto& v : m_videoOverlays)
     {
         if (v->id() == id)
         {
