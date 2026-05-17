@@ -46,7 +46,7 @@ public:
     // wrapping, and an initial RGBA upload from `initialPixels` (may be the
     // pre-allocated upload buffer; its contents will be replaced on the next
     // glTexSubImage2D call).  The GL handle is released by the destructor.
-    VideoFrameTexture(int w, int h, const void* initialPixels)
+    VideoFrameTexture(int w, int h, const std::uint8_t* initialPixels)
         : Texture(w, h, /*alpha=*/true)
     {
         glGenTextures(1, &m_glName);
