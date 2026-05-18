@@ -2474,7 +2474,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths, *texturePaths);
+    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths);
     if (dsoCatalog == nullptr)
     {
         fatalError(_("Cannot read DSO database."), false);

@@ -31,13 +31,9 @@ class StarLoader final : public CatalogLoader
 public:
     StarLoader(StarDatabaseBuilder& db,
                ProgressNotifier* notifier,
-               util::array_view<std::filesystem::path> skipPaths,
-               engine::GeometryPaths& geometryPaths,
-               engine::TexturePaths& texturePaths) :
+               util::array_view<std::filesystem::path> skipPaths) :
         CatalogLoader(notifier, skipPaths),
-        m_db(&db),
-        m_geometryPaths(&geometryPaths),
-        m_texturePaths(&texturePaths)
+        m_db(&db)
     {
     }
 
@@ -58,8 +54,6 @@ protected:
 
 private:
     StarDatabaseBuilder* m_db;
-    engine::GeometryPaths* m_geometryPaths;
-    engine::TexturePaths* m_texturePaths;
 };
 
 void
@@ -132,9 +126,7 @@ loadStars(const CelestiaConfig &config,
 
     StarLoader loader(starDBBuilder,
                       progressNotifier,
-                      config.paths.skipExtras,
-                      geometryPaths,
-                      texturePaths);
+                      config.paths.skipExtras);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs list.
     std::filesystem::path empty;

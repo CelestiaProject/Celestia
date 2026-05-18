@@ -868,7 +868,7 @@ CreateTimelinePhase(Body* body,
 
 
 std::unique_ptr<Timeline>
-CreateTimelineFromArray(Body* body,
+CreateTimelineFromArray(Body* body, //NOSONAR
                         Selection parent,
                         Universe& universe,
                         const ValueArray* timelineArray,
@@ -1109,7 +1109,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
 }
 
 
-bool CreateTimeline(Body* body,
+bool CreateTimeline(Body* body, //NOSONAR
                     PlanetarySystem* system,
                     Universe& universe,
                     const AssociativeArray* planetData,
@@ -1570,7 +1570,7 @@ Body* CreateBody(const std::string& name,
 
 
 // Create a barycenter object using the values from a hash
-Body* CreateReferencePoint(const std::string& name,
+Body* CreateReferencePoint(const std::string& name, //NOSONAR
                            PlanetarySystem* system,
                            Universe& universe,
                            Body* existingBody,

@@ -29,13 +29,9 @@ class DeepSkyLoader final : public CatalogLoader
 public:
     DeepSkyLoader(DSODatabaseBuilder& db,
                   ProgressNotifier* notifier,
-                  util::array_view<std::filesystem::path> skipPaths,
-                  engine::GeometryPaths& geometryPaths,
-                  engine::TexturePaths& texturePaths) :
+                  util::array_view<std::filesystem::path> skipPaths) :
         CatalogLoader(notifier, skipPaths),
-        m_db(&db),
-        m_geometryPaths(&geometryPaths),
-        m_texturePaths(&texturePaths)
+        m_db(&db)
     {
     }
 
@@ -56,8 +52,6 @@ protected:
 
 private:
     DSODatabaseBuilder* m_db;
-    engine::GeometryPaths* m_geometryPaths;
-    engine::TexturePaths* m_texturePaths;
 };
 
 }
@@ -65,16 +59,13 @@ private:
 std::unique_ptr<DSODatabase>
 loadDSO(const CelestiaConfig& config,
         ProgressNotifier* progressNotifier,
-        engine::GeometryPaths& geometryPaths,
-        engine::TexturePaths& texturePaths)
+        engine::GeometryPaths& geometryPaths)
 {
     auto dsoDB = std::make_unique<DSODatabaseBuilder>(geometryPaths);
 
     DeepSkyLoader loader(*dsoDB,
                          progressNotifier,
-                         config.paths.skipExtras,
-                         geometryPaths,
-                         texturePaths);
+                         config.paths.skipExtras);
 
     // Load first the vector of dsoCatalogFiles in the data directory (deepsky.dsc,
     // globulars.dsc, ...):
