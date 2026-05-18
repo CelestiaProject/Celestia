@@ -429,5 +429,3 @@ private:
     std::unordered_map<FrameVectorKey, FrameVectorId> m_frameVectorMap;
     std::unordered_map<const ReferenceFrame*, FrameId> m_frameIdMap;
 };
-
-FrameCache* GetFrameCache();

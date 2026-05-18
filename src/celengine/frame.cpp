@@ -637,10 +637,3 @@ FrameCache::getFrameVectorId(const FrameVectorKey& key)
     m_frameVectors.emplace_back(std::visit(FrameVectorVisitor(*this), key));
     return it->second;
 }
-
-FrameCache*
-GetFrameCache()
-{
-    static FrameCache cache;
-    return &cache;
-}

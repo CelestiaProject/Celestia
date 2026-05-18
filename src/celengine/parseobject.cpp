@@ -908,7 +908,8 @@ getFrameCenter(const Universe& universe, const AssociativeArray* frameData, cons
 std::optional<FrameId>
 CreateBodyFixedFrame(const Universe& universe,
                      const AssociativeArray* frameData,
-                     Selection& defaultCenter)
+                     Selection& defaultCenter,
+                     FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
     if (defaultCenter.empty())
@@ -917,13 +918,14 @@ CreateBodyFixedFrame(const Universe& universe,
         return std::nullopt;
     }
 
-    return GetFrameCache()->getFrameId(BodyFixedFrameKey(defaultCenter));
+    return frameCache.getFrameId(BodyFixedFrameKey(defaultCenter));
 }
 
 std::optional<FrameId>
 CreateMeanEquatorFrame(const Universe& universe,
                        const AssociativeArray* frameData,
-                       Selection& defaultCenter)
+                       Selection& defaultCenter,
+                       FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
 
@@ -945,9 +947,9 @@ CreateMeanEquatorFrame(const Universe& universe,
     }
 
     if (double freezeEpoch = 0.0; ParseDate(frameData, "Freeze", freezeEpoch))
-        return GetFrameCache()->getFrameId(BodyMeanEquatorFrameKey(obj, freezeEpoch));
+        return frameCache.getFrameId(BodyMeanEquatorFrameKey(obj, freezeEpoch));
 
-    return GetFrameCache()->getFrameId(BodyMeanEquatorFrameKey(obj));
+    return frameCache.getFrameId(BodyMeanEquatorFrameKey(obj));
 }
 
 /**
@@ -1083,7 +1085,8 @@ getVectorObserver(const Universe& universe, const AssociativeArray* vectorData)
 std::optional<FrameVectorId>
 CreateFrameVector(const Universe& universe,
                   const Selection& center,
-                  const AssociativeArray* vectorData)
+                  const AssociativeArray* vectorData,
+                  FrameCache& frameCache)
 {
     if (const Value* value = vectorData->getValue("RelativePosition"); value)
     {
@@ -1101,7 +1104,7 @@ CreateFrameVector(const Universe& universe,
                 return std::nullopt;
             }
 
-            return GetFrameCache()->getFrameVectorId(RelativePositionKey(observer, target));
+            return frameCache.getFrameVectorId(RelativePositionKey(observer, target));
         }
     }
 
@@ -1120,7 +1123,7 @@ CreateFrameVector(const Universe& universe,
                 GetLogger()->error("Missing Observer and Target in RelativeVelocity.\n");
             }
 
-            return GetFrameCache()->getFrameVectorId(RelativeVelocityKey(observer, target));
+            return frameCache.getFrameVectorId(RelativeVelocityKey(observer, target));
         }
     }
 
@@ -1142,17 +1145,17 @@ CreateFrameVector(const Universe& universe,
             FrameId frameId;
             if (const Value* frameValue = constVecData->getValue("Frame"); frameValue)
             {
-                if (auto f = CreateReferenceFrame(universe, frameValue, nullptr); f.has_value())
+                if (auto f = CreateReferenceFrame(universe, frameValue, nullptr, frameCache); f.has_value())
                     frameId = *f;
                 else
                     return std::nullopt;
             }
             else
             {
-                frameId = GetFrameCache()->getFrameId(SimpleFrameKey::J2000Ecliptic);
+                frameId = frameCache.getFrameId(SimpleFrameKey::J2000Ecliptic);
             }
 
-            return GetFrameCache()->getFrameVectorId(ConstVectorKey(vec, frameId));
+            return frameCache.getFrameVectorId(ConstVectorKey(vec, frameId));
         }
     }
 
@@ -1163,7 +1166,8 @@ CreateFrameVector(const Universe& universe,
 std::optional<FrameId>
 CreateTwoVectorFrame(const Universe& universe,
                      const AssociativeArray* frameData,
-                     Selection& defaultCenter)
+                     Selection& defaultCenter,
+                     FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
 
@@ -1216,34 +1220,36 @@ CreateTwoVectorFrame(const Universe& universe,
         return std::nullopt;
     }
 
-    auto primaryVector = CreateFrameVector(universe, defaultCenter, primaryData);
+    auto primaryVector = CreateFrameVector(universe, defaultCenter, primaryData, frameCache);
     if (!primaryVector.has_value())
         return std::nullopt;
 
-    auto secondaryVector = CreateFrameVector(universe, defaultCenter, secondaryData);
+    auto secondaryVector = CreateFrameVector(universe, defaultCenter, secondaryData, frameCache);
     if (!secondaryVector.has_value())
         return std::nullopt;
 
-    return GetFrameCache()->getFrameId(TwoVectorFrameKey(*primaryVector, primaryAxis,
-                                                         *secondaryVector, secondaryAxis));
+    return frameCache.getFrameId(TwoVectorFrameKey(*primaryVector, primaryAxis,
+                                                   *secondaryVector, secondaryAxis));
 }
 
 std::optional<FrameId>
 CreateJ2000EclipticFrame(const Universe& universe,
                          const AssociativeArray* frameData,
-                         Selection& defaultCenter)
+                         Selection& defaultCenter,
+                         FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
-    return GetFrameCache()->getFrameId(SimpleFrameKey::J2000Ecliptic);
+    return frameCache.getFrameId(SimpleFrameKey::J2000Ecliptic);
 }
 
 std::optional<FrameId>
 CreateJ2000EquatorFrame(const Universe& universe,
                         const AssociativeArray* frameData,
-                        Selection& defaultCenter)
+                        Selection& defaultCenter,
+                        FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
-    return GetFrameCache()->getFrameId(SimpleFrameKey::J2000Equator);
+    return frameCache.getFrameId(SimpleFrameKey::J2000Equator);
 }
 
 /**
@@ -1290,7 +1296,8 @@ std::optional<FrameId>
 CreateTopocentricFrame(const Universe& universe,
                        const AssociativeArray* frameData,
                        Selection& defaultTarget,
-                       const Selection& defaultObserver)
+                       const Selection& defaultObserver,
+                       FrameCache& frameCache)
 {
     Selection target;
     Selection observer;
@@ -1360,14 +1367,15 @@ CreateTopocentricFrame(const Universe& universe,
         }
     }
 
-    return CreateTopocentricFrame(target, observer);
+    return CreateTopocentricFrame(target, observer, frameCache);
 }
 
 std::optional<FrameId>
 CreateComplexFrame(const Universe& universe,
                    const AssociativeArray* frameData,
                    Selection& defaultCenter,
-                   Body* defaultObserver)
+                   Body* defaultObserver,
+                   FrameCache& frameCache)
 {
     if (const Value* value = frameData->getValue("BodyFixed"); value)
     {
@@ -1378,7 +1386,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateBodyFixedFrame(universe, bodyFixedData, defaultCenter);
+        return CreateBodyFixedFrame(universe, bodyFixedData, defaultCenter, frameCache);
     }
 
     if (const Value* value = frameData->getValue("MeanEquator"); value)
@@ -1390,7 +1398,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateMeanEquatorFrame(universe, meanEquatorData, defaultCenter);
+        return CreateMeanEquatorFrame(universe, meanEquatorData, defaultCenter, frameCache);
     }
 
     if (const Value* value = frameData->getValue("TwoVector"); value != nullptr)
@@ -1402,7 +1410,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-       return CreateTwoVectorFrame(universe, twoVectorData, defaultCenter);
+       return CreateTwoVectorFrame(universe, twoVectorData, defaultCenter, frameCache);
     }
 
     if (const Value* value = frameData->getValue("Topocentric"); value != nullptr)
@@ -1414,7 +1422,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateTopocentricFrame(universe, topocentricData, defaultCenter, defaultObserver);
+        return CreateTopocentricFrame(universe, topocentricData, defaultCenter, defaultObserver, frameCache);
     }
 
     if (const Value* value = frameData->getValue("EclipticJ2000"); value != nullptr)
@@ -1426,7 +1434,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateJ2000EclipticFrame(universe, eclipticData, defaultCenter);
+        return CreateJ2000EclipticFrame(universe, eclipticData, defaultCenter, frameCache);
     }
 
     if (const Value* value = frameData->getValue("EquatorJ2000"); value != nullptr)
@@ -1438,7 +1446,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateJ2000EquatorFrame(universe, equatorData, defaultCenter);
+        return CreateJ2000EquatorFrame(universe, equatorData, defaultCenter, frameCache);
     }
 
     GetLogger()->error("Frame definition does not have a valid frame type.\n");
@@ -1792,20 +1800,21 @@ CreateDefaultRotationModel(double syncRotationPeriod)
  */
 FrameId
 CreateTopocentricFrame(const Selection& target,
-                       const Selection& observer)
+                       const Selection& observer,
+                       FrameCache& frameCache)
 {
-    auto frameCache = GetFrameCache();
-    auto eqFrameId = frameCache->getFrameId(BodyMeanEquatorFrameKey(target));
-    auto north = frameCache->getFrameVectorId(ConstVectorKey(Eigen::Vector3d::UnitY(), eqFrameId));
-    auto up = frameCache->getFrameVectorId(RelativePositionKey(observer, target));
-    return frameCache->getFrameId(TwoVectorFrameKey(up, -2, north, -3));
+    auto eqFrameId = frameCache.getFrameId(BodyMeanEquatorFrameKey(target));
+    auto north = frameCache.getFrameVectorId(ConstVectorKey(Eigen::Vector3d::UnitY(), eqFrameId));
+    auto up = frameCache.getFrameVectorId(RelativePositionKey(observer, target));
+    return frameCache.getFrameId(TwoVectorFrameKey(up, -2, north, -3));
 }
 
 std::optional<FrameId>
 CreateOrbitFrame(const Universe& universe,
                  const Value* frameValue,
                  Selection& defaultCenter,
-                 Body* defaultObserver)
+                 Body* defaultObserver,
+                 FrameCache& frameCache)
 {
     const AssociativeArray* frameData = frameValue->getHash();
     if (frameData == nullptr)
@@ -1816,7 +1825,7 @@ CreateOrbitFrame(const Universe& universe,
 
     // Allow specifying Center directly in the OrbitFrame block
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
-    std::optional<FrameId> result = CreateComplexFrame(universe, frameData, defaultCenter, defaultObserver);
+    std::optional<FrameId> result = CreateComplexFrame(universe, frameData, defaultCenter, defaultObserver, frameCache);
     if (result.has_value() && defaultCenter.empty())
     {
         GetLogger()->error("No center specified for OrbitFrame\n");
@@ -1829,7 +1838,8 @@ CreateOrbitFrame(const Universe& universe,
 std::optional<FrameId>
 CreateReferenceFrame(const Universe& universe,
                      const Value* frameValue,
-                     Body* defaultObserver)
+                     Body* defaultObserver,
+                     FrameCache& frameCache)
 {
     const AssociativeArray* frameData = frameValue->getHash();
     if (frameData == nullptr)
@@ -1839,5 +1849,5 @@ CreateReferenceFrame(const Universe& universe,
     }
 
     Selection center;
-    return CreateComplexFrame(universe, frameData, center, defaultObserver);
+    return CreateComplexFrame(universe, frameData, center, defaultObserver, frameCache);
 }

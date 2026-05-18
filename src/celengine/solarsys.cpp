@@ -739,7 +739,7 @@ Selection GetParentObject(PlanetarySystem* system)
 }
 
 std::shared_ptr<const ephem::Orbit>
-CreateLongLat(const AssociativeArray& planetData, Body* centralBody, FrameId& frame)
+CreateLongLat(const AssociativeArray& planetData, Body* centralBody, FrameId& frame, FrameCache& frameCache)
 {
     if (!centralBody)
         return nullptr;
@@ -757,7 +757,7 @@ CreateLongLat(const AssociativeArray& planetData, Body* centralBody, FrameId& fr
     Eigen::Vector3d pos = centralBody->planetocentricToCartesian(180.0 + longlat->x(), longlat->y(), longlat->z());
 #endif
 
-    frame = GetFrameCache()->getFrameId(BodyFixedFrameKey(centralBody));
+    frame = frameCache.getFrameId(BodyFixedFrameKey(centralBody));
     double period = centralBody->getRotationModel(0.0)->getPeriod(); // backwards compatibility use t=0
     return std::make_shared<ephem::FixedOrbit>(pos, period);
 }
@@ -770,6 +770,7 @@ CreateTimelinePhase(Body* body,
                     const std::filesystem::path& path,
                     FrameId defaultOrbitFrame,
                     FrameId defaultBodyFrame,
+                    FrameCache& frameCache,
                     bool isFirstPhase,
                     bool isLastPhase,
                     double previousPhaseEnd)
@@ -799,7 +800,7 @@ CreateTimelinePhase(Body* body,
     FrameId orbitFrame;
     if (const Value* frameValue = phaseData->getValue("OrbitFrame"); frameValue)
     {
-        if (auto frame = CreateOrbitFrame(universe, frameValue, parent, body); frame.has_value())
+        if (auto frame = CreateOrbitFrame(universe, frameValue, parent, body, frameCache); frame.has_value())
             orbitFrame = *frame;
         else
             return nullptr;
@@ -814,7 +815,7 @@ CreateTimelinePhase(Body* body,
     FrameId bodyFrame;
     if (const Value* bodyFrameValue = phaseData->getValue("BodyFrame"); bodyFrameValue)
     {
-        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body); frame.has_value())
+        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body, frameCache); frame.has_value())
             bodyFrame = *frame;
         else
             return nullptr;
@@ -832,7 +833,7 @@ CreateTimelinePhase(Body* body,
     // Get the orbit
     auto orbit = CreateOrbit(parent, phaseData, path, usePlanetUnits);
     if (!orbit)
-        orbit = CreateLongLat(*phaseData, parent.body(), orbitFrame);
+        orbit = CreateLongLat(*phaseData, parent.body(), orbitFrame, frameCache);
 
     if (!orbit)
     {
@@ -852,14 +853,13 @@ CreateTimelinePhase(Body* body,
         rotationModel = ephem::ConstantOrientation::identity();
     }
 
-    const FrameCache* frameCache = GetFrameCache();
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                     body,
                                                     parent,
                                                     beginning, ending,
-                                                    frameCache->getFrame(orbitFrame),
+                                                    frameCache.getFrame(orbitFrame),
                                                     orbit,
-                                                    frameCache->getFrame(bodyFrame),
+                                                    frameCache.getFrame(bodyFrame),
                                                     rotationModel);
 
     // Frame ownership transfered to phase; release local references
@@ -874,7 +874,8 @@ CreateTimelineFromArray(Body* body,
                         const ValueArray* timelineArray,
                         const std::filesystem::path& path,
                         FrameId defaultOrbitFrame,
-                        FrameId defaultBodyFrame)
+                        FrameId defaultBodyFrame,
+                        FrameCache& frameCache)
 {
     auto timeline = std::make_unique<Timeline>();
     double previousEnding = -std::numeric_limits<double>::infinity();
@@ -902,6 +903,7 @@ CreateTimelineFromArray(Body* body,
                                          path,
                                          defaultOrbitFrame,
                                          defaultBodyFrame,
+                                         frameCache,
                                          isFirstPhase, isLastPhase, previousEnding);
         if (phase == nullptr)
         {
@@ -933,7 +935,8 @@ CreateLegacyTimeline(Body* body, //NOSONAR
                      const std::filesystem::path& path,
                      DataDisposition disposition,
                      FrameId defaultOrbitFrame,
-                     FrameId defaultBodyFrame)
+                     FrameId defaultBodyFrame,
+                     FrameCache& frameCache)
 {
     // Information required for the object timeline.
     std::optional<FrameId> orbitFrame;
@@ -947,8 +950,6 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     // be set to true.
     bool overrideOldTimeline = false;
 
-    const FrameCache* frameCache = GetFrameCache();
-
     // The interaction of Modify with timelines is slightly complicated. If the timeline
     // is specified by putting the OrbitFrame, Orbit, BodyFrame, or RotationModel directly
     // in the object definition (i.e. not inside a Timeline structure), it will completely
@@ -961,9 +962,9 @@ CreateLegacyTimeline(Body* body, //NOSONAR
         if (timeline->phaseCount() == 1)
         {
             const auto& phase = timeline->getPhase(0);
-            if (FrameId frame; frameCache->getFrameId(frame, phase.orbitFrame().get()))
+            if (FrameId frame; frameCache.getFrameId(frame, phase.orbitFrame().get()))
                 orbitFrame = frame;
-            if (FrameId frame; frameCache->getFrameId(frame, phase.bodyFrame().get()))
+            if (FrameId frame; frameCache.getFrameId(frame, phase.bodyFrame().get()))
                 bodyFrame = frame;
             parentObject      = phase.getFrameTree()->getOwner();
             orbit             = phase.orbit();
@@ -977,7 +978,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     bool newOrbitFrame = false;
     if (const Value* frameValue = planetData->getValue("OrbitFrame"); frameValue)
     {
-        if (auto frame = CreateOrbitFrame(universe, frameValue, parentObject, body); frame.has_value())
+        if (auto frame = CreateOrbitFrame(universe, frameValue, parentObject, body, frameCache); frame.has_value())
         {
             orbitFrame = frame;
             newOrbitFrame = true;
@@ -989,7 +990,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     bool newBodyFrame = false;
     if (const Value* bodyFrameValue = planetData->getValue("BodyFrame"); bodyFrameValue)
     {
-        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body); frame.has_value())
+        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body, frameCache); frame.has_value())
         {
             bodyFrame = frame;
             newBodyFrame = true;
@@ -1009,7 +1010,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
 
     auto newOrbit = CreateOrbit(parentObject, planetData, path, !orbitsPlanet);
     if (!newOrbit)
-        newOrbit = CreateLongLat(*planetData, parentObject.body(), *orbitFrame);
+        newOrbit = CreateLongLat(*planetData, parentObject.body(), *orbitFrame, frameCache);
 
     if (!newOrbit && !orbit)
     {
@@ -1080,9 +1081,9 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                     body, parentObject,
                                                     beginning, ending,
-                                                    frameCache->getFrame(*orbitFrame),
+                                                    frameCache.getFrame(*orbitFrame),
                                                     orbit,
-                                                    frameCache->getFrame(*bodyFrame),
+                                                    frameCache.getFrame(*bodyFrame),
                                                     rotationModel);
 
     // We've already checked that beginning < ending; nothing else should go
@@ -1114,7 +1115,8 @@ bool CreateTimeline(Body* body,
                     const AssociativeArray* planetData,
                     const std::filesystem::path& path,
                     DataDisposition disposition,
-                    BodyType bodyType)
+                    BodyType bodyType,
+                    FrameCache& frameCache)
 {
     Selection parentObject = GetParentObject(system);
     if (SelectionType selType = parentObject.getType();
@@ -1128,14 +1130,14 @@ bool CreateTimeline(Body* body,
     FrameId defaultBodyFrame;
     if (bodyType == SurfaceObject)
     {
-        defaultOrbitFrame = GetFrameCache()->getFrameId(BodyFixedFrameKey(parentObject));
-        defaultBodyFrame = CreateTopocentricFrame(parentObject, body);
+        defaultOrbitFrame = frameCache.getFrameId(BodyFixedFrameKey(parentObject));
+        defaultBodyFrame = CreateTopocentricFrame(parentObject, body, frameCache);
     }
     else
     {
         defaultOrbitFrame = parentObject.getType() == SelectionType::Body
-            ? GetFrameCache()->getFrameId(BodyMeanEquatorFrameKey(parentObject))
-            : GetFrameCache()->getFrameId(SimpleFrameKey::J2000Ecliptic);
+            ? frameCache.getFrameId(BodyMeanEquatorFrameKey(parentObject))
+            : frameCache.getFrameId(SimpleFrameKey::J2000Ecliptic);
         defaultBodyFrame = defaultOrbitFrame;
     }
 
@@ -1151,7 +1153,8 @@ bool CreateTimeline(Body* body,
 
         std::unique_ptr<Timeline> timeline = CreateTimelineFromArray(body, parentObject, universe,
                                                                      timelineArray, path,
-                                                                     defaultOrbitFrame, defaultBodyFrame);
+                                                                     defaultOrbitFrame, defaultBodyFrame,
+                                                                     frameCache);
 
         if (!timeline)
             return false;
@@ -1162,7 +1165,8 @@ bool CreateTimeline(Body* body,
 
     return CreateLegacyTimeline(body, parentObject, universe,
                                 planetData, path, disposition,
-                                defaultOrbitFrame, defaultBodyFrame);
+                                defaultOrbitFrame, defaultBodyFrame,
+                                frameCache);
 }
 
 void
@@ -1333,7 +1337,8 @@ Body* CreateBody(const std::string& name,
                  DataDisposition disposition,
                  BodyType bodyType,
                  engine::GeometryPaths& geometryPaths,
-                 engine::TexturePaths& texturePaths)
+                 engine::TexturePaths& texturePaths,
+                 FrameCache& frameCache)
 {
     Body* body = nullptr;
 
@@ -1354,7 +1359,7 @@ Body* CreateBody(const std::string& name,
         }
     }
 
-    if (!CreateTimeline(body, system, universe, planetData, path, disposition, bodyType))
+    if (!CreateTimeline(body, system, universe, planetData, path, disposition, bodyType, frameCache))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1571,7 +1576,8 @@ Body* CreateReferencePoint(const std::string& name,
                            Body* existingBody,
                            const AssociativeArray* refPointData,
                            const std::filesystem::path& path,
-                           DataDisposition disposition)
+                           DataDisposition disposition,
+                           FrameCache& frameCache)
 {
     Body* body = nullptr;
     if (disposition == DataDisposition::Modify || disposition == DataDisposition::Replace)
@@ -1591,7 +1597,7 @@ Body* CreateReferencePoint(const std::string& name,
     body->setVisible(false);
     body->setClickable(false);
 
-    if (!CreateTimeline(body, system, universe, refPointData, path, disposition, ReferencePoint))
+    if (!CreateTimeline(body, system, universe, refPointData, path, disposition, ReferencePoint, frameCache))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1625,7 +1631,8 @@ bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const std::filesystem::path& directory,
                             engine::GeometryPaths& geometryPaths,
-                            engine::TexturePaths& texturePaths)
+                            engine::TexturePaths& texturePaths,
+                            FrameCache& frameCache)
 {
     Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
@@ -1767,9 +1774,16 @@ bool LoadSolarSystemObjects(std::istream& in,
 
                 Body* body;
                 if (bodyType == ReferencePoint)
-                    body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
+                {
+                    body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody,
+                                                objectData, directory, disposition, frameCache);
+                }
                 else
-                    body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType, geometryPaths, texturePaths);
+                {
+                    body = CreateBody(primaryName, parentSystem, universe, existingBody,
+                                      objectData, directory, disposition, bodyType,
+                                      geometryPaths, texturePaths, frameCache);
+                }
 
                 if (body != nullptr)
                 {

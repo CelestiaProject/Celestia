@@ -67,13 +67,16 @@ std::optional<FrameId>
 CreateOrbitFrame(const Universe& universe,
                  const celestia::util::Value* frameValue,
                  Selection& defaultCenter,
-                 Body* defaultObserver);
+                 Body* defaultObserver,
+                 FrameCache& frameCache);
 
 std::optional<FrameId>
 CreateReferenceFrame(const Universe& universe,
                      const celestia::util::Value* frameValue,
-                     Body* defaultObserver);
+                     Body* defaultObserver,
+                     FrameCache& frameCache);
 
 FrameId
 CreateTopocentricFrame(const Selection& target,
-                       const Selection& observer);
+                       const Selection& observer,
+                       FrameCache& frameCache);

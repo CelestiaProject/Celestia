@@ -23,10 +23,36 @@
 namespace celestia
 {
 
-using StarLoader = CatalogLoader<StarDatabaseBuilder>;
-
 namespace
 {
+
+class StarLoader : public CatalogLoader
+{
+public:
+    StarLoader(StarDatabaseBuilder& db,
+               const std::string& typeDesc,
+               const ContentType& contentType,
+               ProgressNotifier* notifier,
+               util::array_view<std::filesystem::path> skipPaths,
+               engine::GeometryPaths& geometryPaths,
+               engine::TexturePaths& texturePaths) :
+        CatalogLoader(typeDesc, contentType, notifier, skipPaths),
+        m_db(&db),
+        m_geometryPaths(&geometryPaths),
+        m_texturePaths(&texturePaths)
+    {
+    }
+
+    bool load(std::istream &in, const std::filesystem::path &dir) override
+    {
+        return m_db->load(in, dir);
+    }
+
+private:
+    StarDatabaseBuilder* m_db;
+    engine::GeometryPaths* m_geometryPaths;
+    engine::TexturePaths* m_texturePaths;
+};
 
 void
 loadCrossIndex(StarNameDatabase& starNamesDB, StarCatalog catalog, const std::filesystem::path &filename)
@@ -99,7 +125,7 @@ loadStars(const CelestiaConfig &config,
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "star");
 
-    StarLoader loader(&starDBBuilder,
+    StarLoader loader(starDBBuilder,
                       typeDesc,
                       ContentType::CelestiaStarCatalog,
                       progressNotifier,

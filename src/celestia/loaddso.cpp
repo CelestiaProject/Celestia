@@ -21,7 +21,38 @@
 
 namespace celestia
 {
-using DeepSkyLoader = CatalogLoader<DSODatabaseBuilder>;
+namespace
+{
+
+class DeepSkyLoader : public CatalogLoader
+{
+public:
+    DeepSkyLoader(DSODatabaseBuilder& db,
+                  const std::string& typeDesc,
+                  const ContentType& contentType,
+                  ProgressNotifier* notifier,
+                  util::array_view<std::filesystem::path> skipPaths,
+                  engine::GeometryPaths& geometryPaths,
+                  engine::TexturePaths& texturePaths) :
+        CatalogLoader(typeDesc, contentType, notifier, skipPaths),
+        m_db(&db),
+        m_geometryPaths(&geometryPaths),
+        m_texturePaths(&texturePaths)
+    {
+    }
+
+    bool load(std::istream &in, const std::filesystem::path &dir) override
+    {
+        return m_db->load(in, dir);
+    }
+
+private:
+    DSODatabaseBuilder* m_db;
+    engine::GeometryPaths* m_geometryPaths;
+    engine::TexturePaths* m_texturePaths;
+};
+
+}
 
 std::unique_ptr<DSODatabase>
 loadDSO(const CelestiaConfig& config,
@@ -34,7 +65,7 @@ loadDSO(const CelestiaConfig& config,
     // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
     const char *typeDesc = C_("catalog", "deep sky");
 
-    DeepSkyLoader loader(dsoDB.get(),
+    DeepSkyLoader loader(*dsoDB,
                          typeDesc,
                          ContentType::CelestiaDeepSkyCatalog,
                          progressNotifier,
