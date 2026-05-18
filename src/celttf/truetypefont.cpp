@@ -293,7 +293,7 @@ TextureFontPrivate::loadFont(const std::filesystem::path &filename, int index, i
     int   screenDpi = m_renderer->getScreenDpi();
     auto  face      = LoadFontFace(ftlib, filename,
                                    index,
-                                   scale * static_cast<float>(size),
+                                   static_cast<int>(scale * static_cast<float>(size)),
                                    screenDpi);
     if (face == nullptr)
         return false;
