@@ -2669,13 +2669,20 @@ LoadFontHelper(const Renderer* renderer,
                const char* defaultKey,
                const std::filesystem::path& defaultPath)
 {
-    std::filesystem::path fontPath = configPath;
-    if (fontPath.empty())
+    if (!configPath.empty())
     {
-        const char* translated = _(defaultKey);
-        fontPath = translated == defaultKey ? defaultPath : translated;
+        if (auto font = LoadTextureFont(
+                renderer,
+                configPath.is_absolute() ? configPath : std::filesystem::path("fonts") / configPath);
+            font != nullptr)
+        {
+            return font;
+        }
     }
 
+    // Reading default font as fallback
+    const char* translated = _(defaultKey);
+    std::filesystem::path fontPath = translated == defaultKey ? defaultPath : translated;
     return LoadTextureFont(renderer, fontPath.is_absolute() ? fontPath : std::filesystem::path("fonts") / fontPath);
 }
 
