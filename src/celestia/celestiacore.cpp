@@ -2259,6 +2259,38 @@ void CelestiaCore::clearScriptImages()
     hud->clearImages();
 }
 
+#ifdef USE_FFMPEG
+VideoOverlay::Id CelestiaCore::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
+{
+    return hud->addVideoOverlay(std::move(overlay));
+}
+
+bool CelestiaCore::removeVideoOverlay(VideoOverlay::Id id)
+{
+    return hud->removeVideoOverlay(id);
+}
+
+bool CelestiaCore::seekVideoOverlay(VideoOverlay::Id id, double seconds) const
+{
+    return hud->seekVideoOverlay(id, seconds);
+}
+
+bool CelestiaCore::pauseVideoOverlay(VideoOverlay::Id id) const
+{
+    return hud->pauseVideoOverlay(id);
+}
+
+bool CelestiaCore::resumeVideoOverlay(VideoOverlay::Id id) const
+{
+    return hud->resumeVideoOverlay(id);
+}
+
+void CelestiaCore::clearVideoOverlays()
+{
+    hud->clearVideoOverlays();
+}
+#endif
+
 
 void CelestiaCore::renderOverlay()
 {

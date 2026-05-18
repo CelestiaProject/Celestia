@@ -159,6 +159,13 @@ set(CELENGINE_SOURCES
   warpmesh.h
 )
 
+if(ENABLE_FFMPEG)
+  list(APPEND CELENGINE_SOURCES
+    videooverlay.cpp
+    videooverlay.h
+  )
+endif()
+
 add_library(celengine OBJECT ${CELENGINE_SOURCES})
 
 gperf_add_table(celengine location.gperf location.cpp 4)

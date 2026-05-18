@@ -19,6 +19,9 @@
 
 #include <celengine/category.h>
 #include <celengine/texture.h>
+#ifdef USE_FFMPEG
+#include <celengine/videooverlay.h>
+#endif
 #include <celestia/audiosession.h>
 #include <celestia/configfile.h>
 #include <celestia/hud.h>
@@ -2446,6 +2449,112 @@ static int celestia_clearimageoverlays(lua_State* l)
     return 0;
 }
 
+#ifdef USE_FFMPEG
+// celestia:addvideooverlay(filename [, xoffset, yoffset, width, height, loop]) --
+// start playing a video file as a screen overlay. Only `filename` is required;
+// all other arguments default to 0 (loop defaults to false). xoffset/yoffset
+// follow the same convention as addimageoverlay (0 = centred, ±1 = edge).
+// width/height are in pixels; 0 means use the video's native dimension.
+// `loop` defaults to false: the video plays once and the overlay is then
+// auto-removed. Pass true to play on an infinite loop. Returns a numeric
+// id that can be passed to removevideooverlay()/pausevideooverlay()/etc.,
+// or nil on failure.
+static int celestia_addvideooverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 7, "One to six arguments expected for celestia:addvideooverlay");
+
+    CelestiaCore* appCore = this_celestia(l);
+    const char* filename = Celx_SafeGetString(l, 2, AllErrors, "First argument to celestia:addvideooverlay must be a string (filename)");
+    if (filename == nullptr)
+    {
+        lua_pushnil(l);
+        return 1;
+    }
+
+    float xoffset = static_cast<float>(Celx_SafeGetNumber(l, 3, WrongType, "Second argument to celestia:addvideooverlay must be a number (xoffset)", 0.0));
+    float yoffset = static_cast<float>(Celx_SafeGetNumber(l, 4, WrongType, "Third argument to celestia:addvideooverlay must be a number (yoffset)", 0.0));
+    float width   = static_cast<float>(Celx_SafeGetNumber(l, 5, WrongType, "Fourth argument to celestia:addvideooverlay must be a number (width)", 0.0));
+    float height  = static_cast<float>(Celx_SafeGetNumber(l, 6, WrongType, "Fifth argument to celestia:addvideooverlay must be a number (height)", 0.0));
+    bool loop = Celx_SafeGetBoolean(l, 7, WrongType,
+        "Sixth argument to celestia:addvideooverlay must be a boolean (loop)", false);
+
+    auto video = std::make_unique<VideoOverlay>(std::filesystem::path(filename), appCore->getRenderer());
+    if (!video->isValid())
+    {
+        lua_pushnil(l);
+        return 1;
+    }
+    video->setOffset(xoffset, yoffset);
+    video->setSize(width, height);
+    video->setLoop(loop);
+
+    auto id = appCore->addVideoOverlay(std::move(video));
+    lua_pushnumber(l, static_cast<lua_Number>(id));
+    return 1;
+}
+
+// celestia:removevideooverlay(id) -- stop and remove a video overlay previously
+// started with addvideooverlay(). Returns true if a video was removed.
+static int celestia_removevideooverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:removevideooverlay");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:removevideooverlay must be a number (video id)"));
+    lua_pushboolean(l, this_celestia(l)->removeVideoOverlay(id) ? 1 : 0);
+    return 1;
+}
+
+// celestia:clearvideooverlays() -- remove all active video overlays.
+static int celestia_clearvideooverlays(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearvideooverlays");
+    this_celestia(l)->clearVideoOverlays();
+    return 0;
+}
+
+// celestia:seekvideooverlay(id, seconds) -- seek a video overlay to the
+// given time. Negative values clamp to 0; values past the video's duration
+// wrap to the beginning. Returns true if a video with that id was found.
+static int celestia_seekvideooverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 3, 3, "Two arguments expected for celestia:seekvideooverlay");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:seekvideooverlay must be a number (video id)"));
+    double seconds = Celx_SafeGetNumber(
+        l, 3, AllErrors,
+        "Second argument to celestia:seekvideooverlay must be a number (seconds)");
+    lua_pushboolean(l, this_celestia(l)->seekVideoOverlay(id, seconds) ? 1 : 0);
+    return 1;
+}
+
+// celestia:pausevideooverlay(id) -- freeze playback at the current frame.
+// Returns true if a video with that id was found.
+static int celestia_pausevideooverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:pausevideooverlay");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:pausevideooverlay must be a number (video id)"));
+    lua_pushboolean(l, this_celestia(l)->pauseVideoOverlay(id) ? 1 : 0);
+    return 1;
+}
+
+// celestia:resumevideooverlay(id) -- resume playback from where pause() left
+// off, or from the seek target if seek was called while paused. Returns
+// true if a video with that id was found.
+static int celestia_resumevideooverlay(lua_State* l)
+{
+    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:resumevideooverlay");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:resumevideooverlay must be a number (video id)"));
+    lua_pushboolean(l, this_celestia(l)->resumeVideoOverlay(id) ? 1 : 0);
+    return 1;
+}
+#endif // USE_FFMPEG
+
 static int celestia_verbosity(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:verbosity");
@@ -2829,6 +2938,14 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "addimageoverlay", celestia_addimageoverlay);
     Celx_RegisterMethod(l, "removeimageoverlay", celestia_removeimageoverlay);
     Celx_RegisterMethod(l, "clearimageoverlays", celestia_clearimageoverlays);
+#ifdef USE_FFMPEG
+    Celx_RegisterMethod(l, "addvideooverlay", celestia_addvideooverlay);
+    Celx_RegisterMethod(l, "removevideooverlay", celestia_removevideooverlay);
+    Celx_RegisterMethod(l, "clearvideooverlays", celestia_clearvideooverlays);
+    Celx_RegisterMethod(l, "seekvideooverlay", celestia_seekvideooverlay);
+    Celx_RegisterMethod(l, "pausevideooverlay", celestia_pausevideooverlay);
+    Celx_RegisterMethod(l, "resumevideooverlay", celestia_resumevideooverlay);
+#endif
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 
     // Compatibility audio playback
