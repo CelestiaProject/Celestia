@@ -1783,6 +1783,7 @@ Renderer::locationsToAnnotations(const Body& body,
     math::Ellipsoidd bodyEllipsoid(semiAxes.cast<double>());
 
     Matrix3d bodyMatrix = bodyOrientation.conjugate().toRotationMatrix();
+    float minFeaturePixelSize = minFeatureSize * static_cast<float>(getScreenDpi()) / 96.0f;
 
     for (const auto location : *locations)
     {
@@ -1807,8 +1808,8 @@ Renderer::locationsToAnnotations(const Body& body,
         if (effSize < 0.0f)
             effSize = location->getSize();
 
-        if (float pixSize = effSize / (float) (labelPos.norm() * pixelSize);
-            pixSize <= minFeatureSize || labelPos.dot(viewNormal) <= 0.0)
+        if (float pixSize = effSize / static_cast<float>(labelPos.norm() * pixelSize);
+            pixSize <= minFeaturePixelSize || labelPos.dot(viewNormal) <= 0.0)
         {
             continue;
         }
