@@ -10,6 +10,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <filesystem>
 #include <string_view>
 
@@ -20,10 +21,7 @@ class Renderer;
 class TextureFont;
 
 std::shared_ptr<TextureFont>
-LoadTextureFont(const Renderer *, const std::filesystem::path &, int index = 0, int size = 0);
-
-std::filesystem::path
-ParseFontName(const std::filesystem::path &, int &, int &);
+LoadTextureFont(const Renderer*, const std::filesystem::path&, std::optional<int> index = std::nullopt, std::optional<int> size = std::nullopt);
 
 struct TextureFontPrivate;
 class TextureFont
@@ -61,5 +59,5 @@ private:
     std::unique_ptr<TextureFontPrivate> impl;
 
     friend std::shared_ptr<TextureFont>
-    LoadTextureFont(const Renderer*, const std::filesystem::path&, int, int);
+    LoadTextureFont(const Renderer*, const std::filesystem::path&, std::optional<int>, std::optional<int>);
 };

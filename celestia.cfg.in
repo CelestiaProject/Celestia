@@ -238,9 +238,9 @@ StarTextures
 # TitleFont: Used to display object names, messages, and script text.
 #            Default "DejaVuSans-Bold.ttf,15"
 #------------------------------------------------------------------------
-  Font       "DejaVuSans.ttf,9"
-  LabelFont  "DejaVuSans.ttf,9"
-  TitleFont  "DejaVuSans-Bold.ttf,15"
+#  Font       "DejaVuSans.ttf,9"
+#  LabelFont  "DejaVuSans.ttf,9"
+#  TitleFont  "DejaVuSans-Bold.ttf,15"
 
 
 #------------------------------------------------------------------------
