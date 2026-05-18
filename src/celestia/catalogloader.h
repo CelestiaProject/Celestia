@@ -11,7 +11,7 @@
 
 #include <iosfwd>
 #include <filesystem>
-#include <string>
+#include <string_view>
 
 #include <celutil/array_view.h>
 #include <celutil/filetype.h>
@@ -37,18 +37,15 @@ public:
     void loadExtras(util::array_view<std::filesystem::path> dirs);
 
 protected:
-    CatalogLoader(const std::string& typeDesc,
-                  const ContentType& contentType,
-                  ProgressNotifier* notifier,
+    CatalogLoader(ProgressNotifier* notifier,
                   util::array_view<std::filesystem::path> skipPaths);
 
+    virtual ContentType contentType() const = 0;
+    virtual std::string_view typeDesc() const = 0;
+
 private:
-    std::string m_typeDesc;
-    ContentType m_contentType;
     ProgressNotifier* m_notifier;
     util::array_view<std::filesystem::path> m_skipPaths;
-    engine::GeometryPaths* m_geometryPaths;
-    engine::TexturePaths* m_texturePaths;
 };
 
 } // namespace celestia

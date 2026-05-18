@@ -25,18 +25,16 @@ namespace celestia
 namespace
 {
 
-class SolarSystemLoader : public CatalogLoader
+class SolarSystemLoader final : public CatalogLoader
 {
 public:
     SolarSystemLoader(Universe* universe,
-                      const std::string& typeDesc,
-                      const ContentType& contentType,
                       ProgressNotifier* notifier,
                       util::array_view<std::filesystem::path> skipPaths,
                       engine::GeometryPaths& geometryPaths,
                       engine::TexturePaths& texturePaths,
                       FrameCache& frameCache) :
-        CatalogLoader(typeDesc, contentType, notifier, skipPaths),
+        CatalogLoader(notifier, skipPaths),
         m_universe(universe),
         m_geometryPaths(&geometryPaths),
         m_texturePaths(&texturePaths),
@@ -47,6 +45,16 @@ public:
     bool load(std::istream &in, const std::filesystem::path &dir) override
     {
         return LoadSolarSystemObjects(in, *m_universe, dir, *m_geometryPaths, *m_texturePaths, *m_frameCache);
+    }
+
+protected:
+    ContentType contentType() const override { return ContentType::CelestiaCatalog; }
+
+    std::string_view typeDesc() const override
+    {
+        // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+        const char *typeDesc = C_("catalog", "solar system");
+        return typeDesc;
     }
 
 private:
@@ -68,14 +76,9 @@ loadSSO(const CelestiaConfig &config,
     auto solarSystem = std::make_unique<SolarSystemCatalog>();
     universe->setSolarSystemCatalog(std::move(solarSystem));
 
-    // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
-    const char *typeDesc = C_("catalog", "solar system");
-
     FrameCache frameCache;
 
     SolarSystemLoader loader(universe,
-                             typeDesc,
-                             ContentType::CelestiaCatalog,
                              progressNotifier,
                              config.paths.skipExtras,
                              geometryPaths,

@@ -26,17 +26,15 @@ namespace celestia
 namespace
 {
 
-class StarLoader : public CatalogLoader
+class StarLoader final : public CatalogLoader
 {
 public:
     StarLoader(StarDatabaseBuilder& db,
-               const std::string& typeDesc,
-               const ContentType& contentType,
                ProgressNotifier* notifier,
                util::array_view<std::filesystem::path> skipPaths,
                engine::GeometryPaths& geometryPaths,
                engine::TexturePaths& texturePaths) :
-        CatalogLoader(typeDesc, contentType, notifier, skipPaths),
+        CatalogLoader(notifier, skipPaths),
         m_db(&db),
         m_geometryPaths(&geometryPaths),
         m_texturePaths(&texturePaths)
@@ -46,6 +44,16 @@ public:
     bool load(std::istream &in, const std::filesystem::path &dir) override
     {
         return m_db->load(in, dir);
+    }
+
+protected:
+    ContentType contentType() const override { return ContentType::CelestiaStarCatalog; }
+
+    std::string_view typeDesc() const override
+    {
+        // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+        const char *typeDesc = C_("catalog", "star");
+        return typeDesc;
     }
 
 private:
@@ -122,12 +130,7 @@ loadStars(const CelestiaConfig &config,
 
     starDBBuilder.setNameDatabase(std::move(starNameDB));
 
-    // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
-    const char *typeDesc = C_("catalog", "star");
-
     StarLoader loader(starDBBuilder,
-                      typeDesc,
-                      ContentType::CelestiaStarCatalog,
                       progressNotifier,
                       config.paths.skipExtras,
                       geometryPaths,

@@ -21,12 +21,8 @@
 namespace celestia
 {
 
-CatalogLoader::CatalogLoader(const std::string& typeDesc,
-                             const ContentType& contentType,
-                             ProgressNotifier* notifier,
+CatalogLoader::CatalogLoader(ProgressNotifier* notifier,
                              util::array_view<std::filesystem::path> skipPaths) :
-    m_typeDesc(typeDesc),
-    m_contentType(contentType),
     m_notifier(notifier),
     m_skipPaths(skipPaths)
 {
@@ -35,16 +31,16 @@ CatalogLoader::CatalogLoader(const std::string& typeDesc,
 void
 CatalogLoader::process(const std::filesystem::path &filePath, const std::filesystem::path &parentPath)
 {
-    if (DetermineFileType(filePath) != m_contentType)
+    if (DetermineFileType(filePath) != contentType())
         return;
 
     if (std::find(m_skipPaths.begin(), m_skipPaths.end(), filePath) != m_skipPaths.end())
     {
-        util::GetLogger()->info(_("Skipping {} catalog: {}\n"), m_typeDesc, filePath);
+        util::GetLogger()->info(_("Skipping {} catalog: {}\n"), typeDesc(), filePath);
         return;
     }
 
-    util::GetLogger()->info(_("Loading {} catalog: {}\n"), m_typeDesc, filePath);
+    util::GetLogger()->info(_("Loading {} catalog: {}\n"), typeDesc(), filePath);
     if (m_notifier)
         m_notifier->update(filePath.filename().string());
 
@@ -52,7 +48,7 @@ CatalogLoader::process(const std::filesystem::path &filePath, const std::filesys
         !catalogFile.good() || !load(catalogFile, parentPath))
     {
         util::GetLogger()->error(_("Error reading {} catalog file: {}\n"),
-                                    m_typeDesc,
+                                    typeDesc(),
                                     filePath);
     }
 }
