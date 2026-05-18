@@ -136,6 +136,14 @@ BodyClassification GetClassificationId(std::string_view className)
 //! Maximum depth permitted for nested frames.
 unsigned int MaxFrameDepth = 50;
 
+// Check frames for circular references. For position frames, check both the
+// frametree hierarchy and the reference frame. For body frames, only the
+// reference frame is checked. For now, we consider any phase of the frame
+// center that is reachable from the current phase as a parent, and for
+// frames we consider all possible body phases. This may lead to some false
+// positive circular reference detections with certain tricky frame
+// configurations, but handling that would require tracking time windows
+// across the entire frame graph and the associated complexity of doing that.
 class TimelineValidator
 {
 public:
