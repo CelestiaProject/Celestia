@@ -1079,7 +1079,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     class FrameDetailsVisitor
     {
     public:
-        FrameDetailsVisitor(const FrameCache& fc) : m_frameCache(fc) {}
+        explicit FrameDetailsVisitor(const FrameCache& fc) : m_frameCache(fc) {}
 
         ReferenceFrame::SharedConstPtr operator()(FrameId id) const { return m_frameCache.getFrame(id); }
         ReferenceFrame::SharedConstPtr operator()(const ReferenceFrame::SharedConstPtr& ptr) const { return ptr; }
