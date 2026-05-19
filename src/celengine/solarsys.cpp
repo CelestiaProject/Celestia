@@ -1356,7 +1356,7 @@ Body* CreateBody(const std::string& name,
     if (disposition == DataDisposition::Modify || disposition == DataDisposition::Replace)
         body = existingBody;
 
-    if (body == nullptr)
+    if (!body)
     {
         body = system->addBody(name);
         // If the body doesn't exist, always treat the disposition as 'Add'
@@ -1796,12 +1796,19 @@ bool LoadSolarSystemObjects(std::istream& in,
                                       geometryPaths, texturePaths, frameCache);
                 }
 
-                if (body != nullptr)
+                if (body)
                 {
                     UserCategory::loadCategories(body, *objectData, disposition, directory.string());
                     if (disposition == DataDisposition::Add)
                         for (const auto& name : names)
                             body->addAlias(name);
+
+                    frameCache.commit();
+                }
+                else
+                {
+                    // Remove any frames with dangling pointers
+                    frameCache.rollback();
                 }
             }
         }

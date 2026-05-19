@@ -419,11 +419,19 @@ public:
     FrameId getFrameId(const FrameKey&);
     FrameVectorId getFrameVectorId(const FrameVectorKey&);
 
+    void commit();
+    void rollback();
+
 private:
-    void createFrame(const FrameKey&, std::size_t);
+    void createFrame(const FrameKey&);
 
     std::vector<ReferenceFrame::SharedConstPtr> m_frames;
     std::vector<FrameVector> m_frameVectors;
     std::unordered_map<FrameKey, FrameId> m_frameMap;
     std::unordered_map<FrameVectorKey, FrameVectorId> m_frameVectorMap;
+
+    std::size_t m_uncommittedFrameIndex{ 0 };
+    std::size_t m_uncommittedVectorIndex{ 0 };
+    std::vector<FrameKey> m_uncommittedFrames;
+    std::vector<FrameVectorKey> m_uncommittedVectors;
 };

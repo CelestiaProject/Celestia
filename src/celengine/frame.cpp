@@ -529,13 +529,13 @@ FrameCache::getFrameId(const FrameKey& key)
 {
     auto [it, inserted] = m_frameMap.try_emplace(key, static_cast<FrameId>(m_frames.size()));
     if (inserted)
-        createFrame(key, static_cast<std::size_t>(it->second));
+        createFrame(key);
 
     return it->second;
 }
 
 void
-FrameCache::createFrame(const FrameKey& key, std::size_t index)
+FrameCache::createFrame(const FrameKey& key)
 {
     class FrameKeyVisitor
     {
@@ -581,11 +581,8 @@ FrameCache::createFrame(const FrameKey& key, std::size_t index)
         const FrameCache& m_cache;
     };
 
-    auto ptr = std::visit(FrameKeyVisitor(*this), key);
-    if (index >= m_frames.size())
-        m_frames.emplace_back(ptr);
-    else
-        m_frames[index] = ptr;
+    m_frames.emplace_back(std::visit(FrameKeyVisitor(*this), key));
+    m_uncommittedFrames.emplace_back(key);
 }
 
 FrameVectorId
@@ -622,5 +619,35 @@ FrameCache::getFrameVectorId(const FrameVectorKey& key)
     };
 
     m_frameVectors.emplace_back(std::visit(FrameVectorVisitor(*this), key));
+    m_uncommittedVectors.emplace_back(key);
     return it->second;
+}
+
+// Marks all generated frames and frame vectors up to this point as committed.
+void
+FrameCache::commit()
+{
+    m_uncommittedFrameIndex = m_frames.size();
+    m_uncommittedVectorIndex = m_frameVectors.size();
+    m_uncommittedFrames.clear();
+    m_uncommittedVectors.clear();
+}
+
+// Removes all generated frames and frame vectors created since the last commit
+// This allows us to remove any dangling pointers if the validation fails and
+// the Body object is deleted.
+void
+FrameCache::rollback()
+{
+    m_frames.erase(m_frames.begin() + m_uncommittedFrameIndex, m_frames.end());
+    m_frameVectors.erase(m_frameVectors.begin() + m_uncommittedVectorIndex, m_frameVectors.end());
+
+    for (const FrameKey& key : m_uncommittedFrames)
+        m_frameMap.erase(key);
+
+    for (const FrameVectorKey& key : m_uncommittedVectors)
+        m_frameVectorMap.erase(key);
+
+    m_uncommittedFrames.clear();
+    m_uncommittedVectors.clear();
 }
