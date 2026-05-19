@@ -534,17 +534,6 @@ FrameCache::getFrameId(const FrameKey& key)
     return it->second;
 }
 
-bool
-FrameCache::getFrameId(FrameId& frameId, const ReferenceFrame* frame) const
-{
-    auto it = m_frameIdMap.find(frame);
-    if (it == m_frameIdMap.end())
-        return false;
-
-    frameId = it->second;
-    return true;
-}
-
 void
 FrameCache::createFrame(const FrameKey& key, std::size_t index)
 {
@@ -597,8 +586,6 @@ FrameCache::createFrame(const FrameKey& key, std::size_t index)
         m_frames.emplace_back(ptr);
     else
         m_frames[index] = ptr;
-
-    m_frameIdMap.insert_or_assign(ptr.get(), static_cast<FrameId>(index));
 }
 
 FrameVectorId

@@ -417,7 +417,6 @@ public:
     ReferenceFrame::SharedConstPtr getFrame(FrameId) const;
 
     FrameId getFrameId(const FrameKey&);
-    bool getFrameId(FrameId&, const ReferenceFrame*) const;
     FrameVectorId getFrameVectorId(const FrameVectorKey&);
 
 private:
@@ -427,5 +426,4 @@ private:
     std::vector<FrameVector> m_frameVectors;
     std::unordered_map<FrameKey, FrameId> m_frameMap;
     std::unordered_map<FrameVectorKey, FrameVectorId> m_frameVectorMap;
-    std::unordered_map<const ReferenceFrame*, FrameId> m_frameIdMap;
 };

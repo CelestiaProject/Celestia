@@ -939,8 +939,9 @@ CreateLegacyTimeline(Body* body, //NOSONAR
                      FrameCache& frameCache)
 {
     // Information required for the object timeline.
-    std::optional<FrameId> orbitFrame;
-    std::optional<FrameId> bodyFrame;
+    using FrameDetails = std::variant<FrameId, ReferenceFrame::SharedConstPtr>;
+    FrameDetails orbitFrame = defaultOrbitFrame;
+    FrameDetails bodyFrame = defaultBodyFrame;
     std::shared_ptr<const ephem::Orbit> orbit = nullptr;
     std::shared_ptr<const ephem::RotationModel> rotationModel = nullptr;
     double beginning  = -std::numeric_limits<double>::infinity();
@@ -962,10 +963,8 @@ CreateLegacyTimeline(Body* body, //NOSONAR
         if (timeline->phaseCount() == 1)
         {
             const auto& phase = timeline->getPhase(0);
-            if (FrameId frame; frameCache.getFrameId(frame, phase.orbitFrame().get()))
-                orbitFrame = frame;
-            if (FrameId frame; frameCache.getFrameId(frame, phase.bodyFrame().get()))
-                bodyFrame = frame;
+            orbitFrame = phase.orbitFrame();
+            bodyFrame = phase.bodyFrame();
             parentObject      = phase.getFrameTree()->getOwner();
             orbit             = phase.orbit();
             rotationModel     = phase.rotationModel();
@@ -980,7 +979,7 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     {
         if (auto frame = CreateOrbitFrame(universe, frameValue, parentObject, body, frameCache); frame.has_value())
         {
-            orbitFrame = frame;
+            orbitFrame = *frame;
             newOrbitFrame = true;
             overrideOldTimeline = true;
         }
@@ -992,17 +991,11 @@ CreateLegacyTimeline(Body* body, //NOSONAR
     {
         if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body, frameCache); frame.has_value())
         {
-            bodyFrame = frame;
+            bodyFrame = *frame;
             newBodyFrame = true;
             overrideOldTimeline = true;
         }
     }
-
-    // If no orbit or body frame was specified, use the default ones
-    if (!orbitFrame.has_value())
-        orbitFrame = defaultOrbitFrame;
-    if (!bodyFrame.has_value())
-        bodyFrame = defaultBodyFrame;
 
     // If the center of the is a star, orbital element units are
     // in AU; otherwise, use kilometers.
@@ -1010,7 +1003,12 @@ CreateLegacyTimeline(Body* body, //NOSONAR
 
     auto newOrbit = CreateOrbit(parentObject, planetData, path, !orbitsPlanet);
     if (!newOrbit)
-        newOrbit = CreateLongLat(*planetData, parentObject.body(), *orbitFrame, frameCache);
+    {
+        FrameId longLatFrame;
+        newOrbit = CreateLongLat(*planetData, parentObject.body(), longLatFrame, frameCache);
+        if (newOrbit)
+            orbitFrame = longLatFrame;
+    }
 
     if (!newOrbit && !orbit)
     {
@@ -1018,10 +1016,10 @@ CreateLegacyTimeline(Body* body, //NOSONAR
         {
             // The object definition is modifying an existing object with a multiple phase
             // timeline, but no orbit definition was given. This can happen for completely
-            // sensible reasons, such a Modify definition that just changes visual properties.
-            // Or, the definition may try to change other timeline phase properties such as
-            // the orbit frame, but without providing an orbit. In both cases, we'll just
-            // leave the original timeline alone.
+            // sensible reasons, such as a Modify definition that just changes visual
+            // properties. Or, the definition may try to change other timeline phase
+            // properties such as the orbit frame, but without providing an orbit. In both
+            // cases, we'll just leave the original timeline alone.
             return true;
         }
         else
@@ -1078,12 +1076,25 @@ CreateLegacyTimeline(Body* body, //NOSONAR
 
     // We finally have an orbit, rotation model, frames, and time range. Create
     // the object timeline.
+    class FrameDetailsVisitor
+    {
+    public:
+        FrameDetailsVisitor(const FrameCache& fc) : m_frameCache(fc) {}
+
+        ReferenceFrame::SharedConstPtr operator()(FrameId id) const { return m_frameCache.getFrame(id); }
+        ReferenceFrame::SharedConstPtr operator()(const ReferenceFrame::SharedConstPtr& ptr) const { return ptr; }
+
+    private:
+        const FrameCache& m_frameCache;
+    };
+
+    FrameDetailsVisitor visitor(frameCache);
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                     body, parentObject,
                                                     beginning, ending,
-                                                    frameCache.getFrame(*orbitFrame),
+                                                    std::visit(visitor, orbitFrame),
                                                     orbit,
-                                                    frameCache.getFrame(*bodyFrame),
+                                                    std::visit(visitor, bodyFrame),
                                                     rotationModel);
 
     // We've already checked that beginning < ending; nothing else should go
