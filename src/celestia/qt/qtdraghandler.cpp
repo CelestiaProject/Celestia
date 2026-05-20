@@ -7,7 +7,7 @@
 
 #include <celestia/celestiacore.h>
 
-#ifdef USE_WAYLAND
+#ifdef HAS_WAYLAND_DRAG
 #include "qtwaylanddraghandler.h"
 #endif
 
@@ -17,7 +17,7 @@ namespace celestia::qt
 namespace
 {
 inline auto
-mouseEventPos(const QMouseEvent &m)
+mouseEventPos(const QMouseEvent& m)
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     return m.globalPos();
@@ -28,36 +28,35 @@ mouseEventPos(const QMouseEvent &m)
 }
 
 void
-DragHandler::begin(const QMouseEvent &m, qreal s, int b)
+DragHandler::begin(const QMouseEvent& m, qreal s, int b)
 {
-    saveCursorPos = mouseEventPos(m);
-    scale         = s;
-    buttons       = b;
+    m_saveCursorPos = mouseEventPos(m);
+    m_scale         = s;
+    m_buttons       = b;
 }
 
 void
 DragHandler::move(const QMouseEvent &m, qreal s)
 {
-    if (scale != s)
-        begin(m, s, buttons);
-    auto relativeMovement = mouseEventPos(m) - saveCursorPos;
-    appCore->mouseMove(
-        static_cast<float>(relativeMovement.x() * scale),
-        static_cast<float>(relativeMovement.y() * scale),
-        effectiveButtons());
-    saveCursorPos = mouseEventPos(m);
+    if (m_scale != s)
+        begin(m, s, m_buttons);
+    auto relativeMovement = mouseEventPos(m) - m_saveCursorPos;
+    m_appCore->mouseMove(static_cast<float>(relativeMovement.x() * m_scale),
+                         static_cast<float>(relativeMovement.y() * m_scale),
+                         effectiveButtons());
+    m_saveCursorPos = mouseEventPos(m);
 }
 
 void
 DragHandler::setButton(int button)
 {
-    buttons |= button;
+    m_buttons |= button;
 }
 
 void
 DragHandler::clearButton(int button)
 {
-    buttons &= ~button;
+    m_buttons &= ~button;
 }
 
 int
@@ -67,10 +66,10 @@ DragHandler::effectiveButtons() const
     // On the Mac, right dragging is be simulated with Option+left drag.
     // We may want to enable this on other platforms, though it's mostly only helpful
     // for users with single button mice.
-    if (buttons & CelestiaCore::AltKey)
-        return (buttons | CelestiaCore::RightButton) & (~CelestiaCore::LeftButton);
+    if (m_buttons & CelestiaCore::AltKey)
+        return (m_buttons | CelestiaCore::RightButton) & (~CelestiaCore::LeftButton);
 #endif
-    return buttons;
+    return m_buttons;
 }
 
 // Warping drag handler
@@ -79,23 +78,16 @@ void
 WarpingDragHandler::restoreCursorPosition() const
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCursor::setPos(saveCursorPos);
+    QCursor::setPos(saveCursorPos());
 #else
-    QCursor::setPos(saveCursorPos.toPoint());
+    QCursor::setPos(saveCursorPos().toPoint());
 #endif
 }
 
 void
 WarpingDragHandler::move(const QMouseEvent &m, qreal s)
 {
-    if (scale != s)
-        begin(m, s, buttons);
-    auto relativeMovement = mouseEventPos(m) - saveCursorPos;
-    appCore->mouseMove(
-        static_cast<float>(relativeMovement.x() * scale),
-        static_cast<float>(relativeMovement.y() * scale),
-        effectiveButtons());
-
+    DragHandler::move(m, s);
     restoreCursorPosition();
 }
 
@@ -113,9 +105,14 @@ createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)
     if (platformName == "cocoa" || platformName == "windows" || platformName == "xcb")
         return std::make_unique<WarpingDragHandler>(appCore);
 
-#ifdef USE_WAYLAND
+#ifdef HAS_WAYLAND_DRAG
     if (platformName == "wayland")
-        return std::make_unique<WaylandDragHandler>(widget, appCore);
+        return wayland::createWaylandDragHandler(widget, appCore);
+#elif QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    // Qt 6.10+ has built-in support for the Wayland pointer warp protocol
+    // so try to use that
+    if (platformName == "wayland")
+        return std::make_unique<WarpingDragHandler>(appCore);
 #endif
 
     return std::make_unique<DragHandler>(appCore);

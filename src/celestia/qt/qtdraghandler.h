@@ -20,6 +20,8 @@
 #include <QPointF>
 #endif
 
+#include <celutil/classops.h>
+
 class QMouseEvent;
 class QWidget;
 
@@ -30,21 +32,14 @@ namespace celestia::qt
 
 // The base version of DragHandler is the fallback implementation for
 // platforms which do not support pointer warping
-class DragHandler
+class DragHandler : private util::NoCopy
 {
 public:
-    explicit DragHandler(CelestiaCore *core) : appCore(core)
-    {
-    }
+    explicit DragHandler(CelestiaCore* appCore) : m_appCore(appCore) {}
     virtual ~DragHandler() = default;
 
-    DragHandler(const DragHandler &)            = delete;
-    DragHandler &operator=(const DragHandler &) = delete;
-    DragHandler(DragHandler &&)                 = delete;
-    DragHandler &operator=(DragHandler &&)      = delete;
-
-    virtual void begin(const QMouseEvent &, qreal, int);
-    virtual void move(const QMouseEvent &, qreal);
+    virtual void begin(const QMouseEvent&, qreal, int);
+    virtual void move(const QMouseEvent&, qreal);
     virtual void finish(){ /* nothing to do */ };
 
     void setButton(int);
@@ -57,28 +52,33 @@ protected:
     using PointType = QPointF;
 #endif
 
-    CelestiaCore *appCore;
-    PointType     saveCursorPos{};
-    qreal         scale{};
-    int           buttons{ 0 };
-
     int effectiveButtons() const;
+
+    CelestiaCore* appCore() const noexcept { return m_appCore; }
+    const PointType& saveCursorPos() const noexcept { return m_saveCursorPos; }
+    qreal scale() const noexcept { return m_scale; }
+
+private:
+    CelestiaCore* m_appCore;
+    PointType m_saveCursorPos;
+    qreal m_scale{ 1 };
+    int m_buttons{ 0 };
 };
 
 // Implementation of DragHandler which uses pointer warping to enable infinite
 // movement
-class WarpingDragHandler : public DragHandler
+class WarpingDragHandler final : public DragHandler
 {
 public:
     using DragHandler::DragHandler;
 
-    void move(const QMouseEvent &, qreal) override;
+    void move(const QMouseEvent&, qreal) override;
     void finish() override;
 
 private:
     void restoreCursorPosition() const;
 };
 
-std::unique_ptr<DragHandler> createDragHandler(QWidget *, CelestiaCore *);
+std::unique_ptr<DragHandler> createDragHandler(QWidget*, CelestiaCore*);
 
 } // end namespace celestia::qt

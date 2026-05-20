@@ -4,27 +4,33 @@
 
 #include <QGuiApplication>
 #include <QWidget>
+#include <QWindow>
 #include <qpa/qplatformnativeinterface.h>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0) && defined(HAS_WAYLAND_POINTER_WARP)
+#include <pointer-warp-v1-client-protocol.h>
+#endif
 
 #include <celestia/celestiacore.h>
 
-namespace celestia::qt
+namespace celestia::qt::wayland
 {
 
 namespace
 {
 
-QPlatformNativeInterface *
-getPlatformNativeInterface()
+struct Interfaces
 {
-    static QPlatformNativeInterface *pni = nullptr;
-    if (!pni)
-    {
-        pni = QGuiApplication::platformNativeInterface();
-    }
-
-    return pni;
-}
+    wl_pointer* pointer{ nullptr };
+#ifdef HAS_WAYLAND_POINTER_CONSTRAINTS
+    zwp_pointer_constraints_v1* pointerConstraints{ nullptr };
+    zwp_relative_pointer_manager_v1* relativePointerManager{ nullptr };
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0) && defined(HAS_WAYLAND_POINTER_WARP)
+    bool hasPointerWarp{ false };
+#endif
+    bool initialized{ false };
+};
 
 void
 addRegistryItem(
@@ -34,20 +40,36 @@ addRegistryItem(
     const char   *interface,
     std::uint32_t version)
 {
-    auto pointerInterfaces = static_cast<WaylandDragHandler::PointerInterfaces *>(data);
-    if (std::strcmp(interface, zwp_pointer_constraints_v1_interface.name) == 0
-        && version == static_cast<std::uint32_t>(zwp_pointer_constraints_v1_interface.version))
+    [[maybe_unused]] auto interfaces = static_cast<Interfaces*>(data);
+#ifdef HAS_WAYLAND_POINTER_CONSTRAINTS
+    if (std::strcmp(interface, zwp_pointer_constraints_v1_interface.name) == 0)
     {
-        pointerInterfaces->pointerConstraints = static_cast<zwp_pointer_constraints_v1 *>(
-            wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, version));
+        if (version == static_cast<std::uint32_t>(zwp_pointer_constraints_v1_interface.version))
+        {
+            interfaces->pointerConstraints = static_cast<zwp_pointer_constraints_v1*>(
+                wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, version));
+        }
+        return;
     }
-    else if (
-        std::strcmp(interface, zwp_relative_pointer_manager_v1_interface.name) == 0
-        && version == static_cast<std::uint32_t>(zwp_relative_pointer_manager_v1_interface.version))
+
+    if (std::strcmp(interface, zwp_relative_pointer_manager_v1_interface.name) == 0)
     {
-        pointerInterfaces->relativePointerManager = static_cast<zwp_relative_pointer_manager_v1 *>(
-            wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, version));
+        if (version == static_cast<std::uint32_t>(zwp_relative_pointer_manager_v1_interface.version))
+        {
+            interfaces->relativePointerManager = static_cast<zwp_relative_pointer_manager_v1*>(
+                wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, version));
+        }
+        return;
     }
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0) && defined(HAS_WAYLAND_POINTER_WARP)
+    if (std::strcmp(interface, wp_pointer_warp_v1_interface.name) == 0)
+    {
+        if (version == static_cast<std::uint32_t>(wp_pointer_warp_v1_interface.version))
+            interfaces->hasPointerWarp = true;
+        return;
+    }
+#endif
 }
 
 void
@@ -56,131 +78,134 @@ removeRegistryItem(void *data, wl_registry *registry, std::uint32_t name)
     // not handled
 }
 
-std::shared_ptr<WaylandDragHandler::PointerInterfaces>
-getPointerInterfaces()
+wl_registry_listener
+createListener()
 {
-    static std::weak_ptr<WaylandDragHandler::PointerInterfaces> cachedPointerInterfaces{};
-    auto pointerInterfaces = cachedPointerInterfaces.lock();
-    if (pointerInterfaces)
-        return pointerInterfaces;
+    wl_registry_listener listener;
+    listener.global = &addRegistryItem;
+    listener.global_remove = &removeRegistryItem;
+    return listener;
+}
 
-    QPlatformNativeInterface *pni = getPlatformNativeInterface();
+const Interfaces*
+getInterfaces()
+{
+    static Interfaces interfaces;
+    if (interfaces.initialized)
+        return &interfaces;
+
+    interfaces.initialized = true;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    auto instance = static_cast<const QGuiApplication*>(QGuiApplication::instance());
+    if (!instance)
+        return &interfaces;
+
+    const auto* waylandApp = instance->nativeInterface<QNativeInterface::QWaylandApplication>();
+    if (!waylandApp)
+        return &interfaces;
+
+    auto display = waylandApp->display();
+    interfaces.pointer = waylandApp->pointer();
+#else
+    QPlatformNativeInterface* pni = QGuiApplication::platformNativeInterface();
     if (!pni)
-        return nullptr;
+        return &interfaces;
 
-    auto display = static_cast<wl_display *>(pni->nativeResourceForIntegration("wl_display"));
+    auto display = static_cast<wl_display*>(pni->nativeResourceForIntegration("wl_display"));
+    interfaces.pointer = static_cast<wl_pointer*>(pni->nativeResourceForIntegration("wl_pointer"));
+#endif
+
     if (!display)
-        return nullptr;
+        return &interfaces;
 
-    wl_registry *registry = wl_display_get_registry(display);
+    wl_registry* registry = wl_display_get_registry(display);
     if (!registry)
-        return nullptr;
+        return &interfaces;
 
-    pointerInterfaces = std::make_shared<WaylandDragHandler::PointerInterfaces>(registry);
-    static const wl_registry_listener registryListener{ &addRegistryItem, &removeRegistryItem };
-
-    wl_registry_add_listener(registry, &registryListener, pointerInterfaces.get());
+    static const wl_registry_listener listener = createListener();
+    wl_registry_add_listener(registry, &listener, &interfaces);
     wl_display_roundtrip(display);
 
-    cachedPointerInterfaces = pointerInterfaces;
-    return pointerInterfaces;
+    return &interfaces;
 }
 
 } // end unnamed namespace
 
-const zwp_relative_pointer_v1_listener WaylandDragHandler::listener{ processRelativePointer };
+#ifdef HAS_WAYLAND_POINTER_CONSTRAINTS
+const zwp_relative_pointer_v1_listener PointerConstraintsDragHandler::s_listener{ &processRelativePointer };
 
-WaylandDragHandler::WaylandDragHandler(QWidget *_widget, CelestiaCore *_appCore) :
-    DragHandler(_appCore), widget(_widget)
+PointerConstraintsDragHandler::PointerConstraintsDragHandler(CelestiaCore* appCore,
+                                                             QWidget* widget,
+                                                             wl_pointer* pointer) :
+    DragHandler(appCore), m_widget(widget), m_pointer(pointer)
 {
-}
-
-WaylandDragHandler::~WaylandDragHandler()
-{
-    if (lockedPointer)
-        zwp_locked_pointer_v1_destroy(lockedPointer);
-    if (relativePointer)
-        zwp_relative_pointer_v1_destroy(relativePointer);
 }
 
 void
-WaylandDragHandler::begin(const QMouseEvent &m, qreal s, int b)
+PointerConstraintsDragHandler::begin(const QMouseEvent &m, qreal s, int b)
 {
-    buttons  = b;
-    scale    = s;
-    auto pni = getPlatformNativeInterface();
+    DragHandler::begin(m, s, b);
+
+    auto pni = QGuiApplication::platformNativeInterface();
     if (!pni)
     {
-        fallback = true;
-        DragHandler::begin(m, s, b);
+        m_fallback = true;
         return;
     }
 
-    surface = static_cast<wl_surface *>(
-        pni->nativeResourceForWindow("surface", widget->window()->windowHandle()));
-    pointer = static_cast<wl_pointer *>(pni->nativeResourceForIntegration("wl_pointer"));
-    if (!surface || !pointer)
+    auto surface = static_cast<wl_surface*>(pni->nativeResourceForWindow("surface", m_widget->window()->windowHandle()));
+    if (!surface)
     {
-        fallback = true;
-        DragHandler::begin(m, s, b);
+        m_fallback = true;
         return;
     }
 
-    pointerInterfaces = getPointerInterfaces();
+    auto interfaces = getInterfaces();
+    m_relativePointer = UniqueRelativePointer(zwp_relative_pointer_manager_v1_get_relative_pointer(interfaces->relativePointerManager,
+                                                                                                   m_pointer));
 
-    relativePointer = zwp_relative_pointer_manager_v1_get_relative_pointer(
-        pointerInterfaces->relativePointerManager,
-        pointer);
-    if (!relativePointer)
+    if (!m_relativePointer)
     {
-        fallback = true;
-        DragHandler::begin(m, s, b);
+        m_fallback = true;
         return;
     }
 
-    zwp_relative_pointer_v1_add_listener(relativePointer, &listener, this);
+    zwp_relative_pointer_v1_add_listener(m_relativePointer.get(), &s_listener, this);
 
-    lockedPointer = zwp_pointer_constraints_v1_lock_pointer(
-        pointerInterfaces->pointerConstraints,
-        surface,
-        pointer,
-        nullptr,
-        ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT);
-    if (!lockedPointer)
+    m_lockedPointer = UniqueLockedPointer(zwp_pointer_constraints_v1_lock_pointer(interfaces->pointerConstraints,
+                                                                                  surface,
+                                                                                  m_pointer,
+                                                                                  nullptr,
+                                                                                  ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_ONESHOT));
+    if (!m_lockedPointer)
     {
-        zwp_relative_pointer_v1_destroy(relativePointer);
-        fallback = true;
-        DragHandler::begin(m, s, b);
-        return;
+        m_relativePointer.reset();
+        m_fallback = true;
     }
 }
 
 void
-WaylandDragHandler::move(const QMouseEvent &m, qreal s)
+PointerConstraintsDragHandler::move(const QMouseEvent &m, qreal s)
 {
-    if (fallback)
-    {
+    if (m_fallback)
         DragHandler::move(m, s);
-    }
 }
 
 void
-WaylandDragHandler::finish()
+PointerConstraintsDragHandler::finish()
 {
-    if (fallback)
+    if (m_fallback)
     {
         DragHandler::finish();
         return;
     }
-    zwp_locked_pointer_v1_destroy(lockedPointer);
-    lockedPointer = nullptr;
 
-    zwp_relative_pointer_v1_destroy(relativePointer);
-    relativePointer = nullptr;
+    m_lockedPointer.reset();
+    m_relativePointer.reset();
 }
 
 void
-WaylandDragHandler::processRelativePointer(
+PointerConstraintsDragHandler::processRelativePointer(
     void *data,
     zwp_relative_pointer_v1 * /* pointer */,
     std::uint32_t /* utime_hi */,
@@ -190,26 +215,27 @@ WaylandDragHandler::processRelativePointer(
     wl_fixed_t /* dx_unaccel */,
     wl_fixed_t /* dy_unaccel */)
 {
-    auto dragHandler = static_cast<WaylandDragHandler *>(data);
-    dragHandler->appCore->mouseMove(
-        static_cast<float>(wl_fixed_to_double(dx) * dragHandler->scale),
-        static_cast<float>(wl_fixed_to_double(dy) * dragHandler->scale),
-        dragHandler->effectiveButtons());
+    auto dragHandler = static_cast<PointerConstraintsDragHandler*>(data);
+    dragHandler->appCore()->mouseMove(static_cast<float>(wl_fixed_to_double(dx) * dragHandler->scale()),
+                                      static_cast<float>(wl_fixed_to_double(dy) * dragHandler->scale()),
+                                      dragHandler->effectiveButtons());
 }
+#endif
 
-WaylandDragHandler::PointerInterfaces::PointerInterfaces(wl_registry *_registry) :
-    registry{ _registry }
+std::unique_ptr<DragHandler> createWaylandDragHandler([[maybe_unused]] QWidget* widget, CelestiaCore* appCore)
 {
+    [[maybe_unused]] auto interfaces = getInterfaces();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0) && defined(HAS_WAYLAND_POINTER_WARP)
+    // use built-in Qt pointer warp functionality
+    if (interfaces->hasPointerWarp)
+        return std::make_unique<WarpingDragHandler>(appCore);
+#endif
+#ifdef HAS_WAYLAND_POINTER_CONSTRAINTS
+    if (interfaces->pointer && interfaces->pointerConstraints && interfaces->relativePointerManager)
+        return std::make_unique<PointerConstraintsDragHandler>(appCore, widget, interfaces->pointer);
+#endif
+
+    return std::make_unique<DragHandler>(appCore);
 }
 
-WaylandDragHandler::PointerInterfaces::~PointerInterfaces()
-{
-    if (pointerConstraints)
-        zwp_pointer_constraints_v1_destroy(pointerConstraints);
-    if (relativePointerManager)
-        zwp_relative_pointer_manager_v1_destroy(relativePointerManager);
-    if (registry)
-        wl_registry_destroy(registry);
-}
-
-} // end namespace celestia::qt
+} // end namespace celestia::qt::wayland

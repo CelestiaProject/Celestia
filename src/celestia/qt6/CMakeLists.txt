@@ -11,23 +11,19 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets CONFIG REQUIRED)
-if (Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
-    find_package(Qt6GuiPrivate REQUIRED NO_MODULE)
-endif()
-qt6_add_resources(RC_SRC "../qt/icons.qrc")
+qt6_add_resources(CEL_QT6_RC_SRC "../qt/icons.qrc")
 
-if(USE_WAYLAND)
-  GetQtSources(ON)
-else()
-  GetQtSources(OFF)
-endif()
+GetQtSources(CEL_QT6_SOURCES)
 
-add_executable(celestia-qt6 WIN32 ${QT_SOURCES} ${RES} ${RC_SRC})
+add_executable(celestia-qt6 WIN32 ${CEL_QT6_SOURCES} ${CEL_QT6_RC_SRC})
 add_dependencies(celestia-qt6 celestia)
 target_link_libraries(celestia-qt6 PUBLIC Qt6::Widgets Qt6::OpenGLWidgets celestia)
 
-if(USE_WAYLAND)
-  target_compile_definitions(celestia-qt6 PRIVATE USE_WAYLAND)
+if(HAS_WAYLAND_DRAG)
+  if (Qt6Core_VERSION VERSION_GREATER_EQUAL "6.10.0")
+    find_package(Qt6 COMPONENTS GuiPrivate REQUIRED NO_MODULE)
+  endif()
+  target_compile_definitions(celestia-qt6 PRIVATE HAS_WAYLAND_DRAG ${CEL_WAYLAND_DEFINES})
   target_link_libraries(celestia-qt6
       PUBLIC
           Wayland::Client
