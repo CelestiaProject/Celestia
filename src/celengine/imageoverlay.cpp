@@ -48,7 +48,7 @@ void ImageOverlay::render(float curr_time, int width, int height)
         ySize /= coeffy;                // new overlay picture height to fit viewport
 
         left = (fwidth - xSize) / 2.0f; // to be sure overlay pict is centered in viewport
-        bottom = 0;                     // overlay pict locked at bottom of screen
+        bottom = 0.0f;                  // overlay pict locked at bottom of screen
     }
 
     float alpha = 1.0f;
