@@ -4483,7 +4483,7 @@ static void draw_rectangle_border(const Renderer &renderer,
                                   const Eigen::Matrix4f& p,
                                   const Eigen::Matrix4f& m)
 {
-    LineRenderer lr(renderer, rect.lw, LineRenderer::PrimType::LineStrip);
+    LineRenderer lr(renderer, rect.lw, LineRenderer::PrimType::LineLoop);
     if (fishEyeOverrideMode == FisheyeOverrideMode::Disabled)
         lr.setHints(LineRenderer::DISABLE_FISHEYE_TRANFORMATION);
     lr.startUpdate();
@@ -4491,7 +4491,6 @@ static void draw_rectangle_border(const Renderer &renderer,
     lr.addVertex(rect.x + rect.w, rect.y);
     lr.addVertex(rect.x + rect.w, rect.y + rect.h);
     lr.addVertex(rect.x,          rect.y + rect.h);
-    lr.addVertex(rect.x,          rect.y);
     lr.render({&p, &m}, rect.colors[0], 4);
     lr.finish();
 }
