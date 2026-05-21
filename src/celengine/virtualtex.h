@@ -23,7 +23,8 @@ public:
                    unsigned int _baseSplit,
                    unsigned int _tileSize,
                    const std::string& _tilePrefix,
-                   const std::string& _tileType);
+                   const std::string& _tileType,
+                   Colorspace _colorspace);
     ~VirtualTexture() = default;
 
     TextureTile getTile(int lod, int u, int v) override;
@@ -64,6 +65,7 @@ private:
     unsigned int ticks{ 0 };
     unsigned int tilesRequested{ 0 };
     unsigned int nResolutionLevels{ 0 };
+    Colorspace colorspace;
 
     enum
     {
@@ -75,4 +77,4 @@ private:
 };
 
 std::unique_ptr<VirtualTexture>
-LoadVirtualTexture(const std::filesystem::path& filename);
+LoadVirtualTexture(const std::filesystem::path& filename, Texture::Colorspace colorspace);
