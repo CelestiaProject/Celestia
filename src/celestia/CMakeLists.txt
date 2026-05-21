@@ -23,6 +23,8 @@ set(CELESTIA_SOURCES
   loadstars.cpp
   loadstars.h
   moviecapture.h
+  overlaymanager.cpp
+  overlaymanager.h
   scriptmenu.cpp
   scriptmenu.h
   textinput.cpp

@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include "overlayimage.h"
+#include "imageoverlay.h"
 #include "rectangle.h"
 #include "render.h"
 
-OverlayImage::OverlayImage(const std::filesystem::path& f, Renderer *r) :
+ImageOverlay::ImageOverlay(const std::filesystem::path& f, Renderer *r) :
     texture(LoadTextureFromFile(f.is_relative() ? "images" / f : f,
                                 Texture::EdgeClamp,
                                 Texture::NoMipMaps)),
@@ -12,17 +12,17 @@ OverlayImage::OverlayImage(const std::filesystem::path& f, Renderer *r) :
 {
 }
 
-void OverlayImage::setColor(const Color& c)
+void ImageOverlay::setColor(const Color& c)
 {
     colors.fill(c);
 }
 
-void OverlayImage::setColor(std::array<Color, 4>& c)
+void ImageOverlay::setColor(std::array<Color, 4>& c)
 {
     std::copy(c.begin(), c.end(), colors.begin());
 }
 
-void OverlayImage::render(float curr_time, int width, int height)
+void ImageOverlay::render(float curr_time, int width, int height)
 {
     if (renderer == nullptr || texture == nullptr || (curr_time >= start + duration))
         return;

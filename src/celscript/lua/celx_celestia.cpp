@@ -2324,12 +2324,12 @@ parseOverlayColors(lua_State* l, int slot, std::string_view methodName)
     return colors;
 }
 
-// Build an OverlayImage from celestia:overlay / celestia:addimageoverlay args.
+// Build an ImageOverlay from celestia:overlay / celestia:addimageoverlay args.
 // Returns nullptr if the filename argument was missing or invalid.
 // `methodName` is used for argc/error messages so each method reports its
 // own name.
-static std::unique_ptr<OverlayImage>
-buildOverlayImage(lua_State* l, const CelestiaCore* appCore, std::string_view methodName)
+static std::unique_ptr<ImageOverlay>
+buildImageOverlay(lua_State* l, const CelestiaCore* appCore, std::string_view methodName)
 {
     const char* filename = Celx_SafeGetString(l, 6, AllErrors, fmt::format("Fifth argument to celestia:{} must be a string (filename)", methodName).c_str());
     if (filename == nullptr)
@@ -2383,7 +2383,7 @@ buildOverlayImage(lua_State* l, const CelestiaCore* appCore, std::string_view me
             color.alpha(alpha);
     }
 
-    auto image = std::make_unique<OverlayImage>(filename, appCore->getRenderer());
+    auto image = std::make_unique<ImageOverlay>(filename, appCore->getRenderer());
     image->setDuration(duration);
     image->setFadeAfter(fadeafter);
     image->setOffset(xoffset, yoffset);
@@ -2402,7 +2402,7 @@ static int celestia_overlay(lua_State* l)
     Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:overlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    if (auto image = buildOverlayImage(l, appCore, "overlay"); image != nullptr)
+    if (auto image = buildImageOverlay(l, appCore, "overlay"); image != nullptr)
     {
         appCore->clearScriptImages();
         appCore->addScriptImage(std::move(image));
@@ -2418,7 +2418,7 @@ static int celestia_addimageoverlay(lua_State* l)
     Celx_CheckArgs(l, 2, 11, "One to ten arguments expected to function celestia:addimageoverlay");
 
     CelestiaCore* appCore = this_celestia(l);
-    auto image = buildOverlayImage(l, appCore, "addimageoverlay");
+    auto image = buildImageOverlay(l, appCore, "addimageoverlay");
     if (image == nullptr)
     {
         lua_pushnil(l);
@@ -2434,7 +2434,7 @@ static int celestia_addimageoverlay(lua_State* l)
 static int celestia_removeimageoverlay(lua_State* l)
 {
     Celx_CheckArgs(l, 2, 2, "One argument expected to function celestia:removeimageoverlay");
-    auto id = static_cast<OverlayImage::Id>(Celx_SafeGetNumber(
+    auto id = static_cast<ImageOverlay::Id>(Celx_SafeGetNumber(
         l, 2, AllErrors,
         "First argument to celestia:removeimageoverlay must be a number (overlay id)"));
     lua_pushboolean(l, this_celestia(l)->removeScriptImage(id) ? 1 : 0);
@@ -2447,6 +2447,46 @@ static int celestia_clearimageoverlays(lua_State* l)
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:clearimageoverlays");
     this_celestia(l)->clearScriptImages();
     return 0;
+}
+
+// celestia:setimageoverlaysize(id, width, height) -- override the rendered
+// size in pixels of an existing image overlay. A non-positive value on
+// either axis falls back to the texture's intrinsic dimension. Returns
+// true if an image with that id was found.
+static int celestia_setimageoverlaysize(lua_State* l)
+{
+    Celx_CheckArgs(l, 4, 4, "Three arguments expected for celestia:setimageoverlaysize");
+    auto id = static_cast<ImageOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:setimageoverlaysize must be a number (overlay id)"));
+    float width  = static_cast<float>(Celx_SafeGetNumber(
+        l, 3, AllErrors,
+        "Second argument to celestia:setimageoverlaysize must be a number (width)"));
+    float height = static_cast<float>(Celx_SafeGetNumber(
+        l, 4, AllErrors,
+        "Third argument to celestia:setimageoverlaysize must be a number (height)"));
+    lua_pushboolean(l, this_celestia(l)->setImageOverlaySize(id, width, height) ? 1 : 0);
+    return 1;
+}
+
+// celestia:setimageoverlayoffset(id, xoffset, yoffset) -- reposition an
+// existing image overlay. 0 = centred on that axis, ±1 = edge of viewport;
+// matches the xoffset/yoffset convention used by addimageoverlay. Returns
+// true if an image with that id was found.
+static int celestia_setimageoverlayoffset(lua_State* l)
+{
+    Celx_CheckArgs(l, 4, 4, "Three arguments expected for celestia:setimageoverlayoffset");
+    auto id = static_cast<ImageOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:setimageoverlayoffset must be a number (overlay id)"));
+    float x = static_cast<float>(Celx_SafeGetNumber(
+        l, 3, AllErrors,
+        "Second argument to celestia:setimageoverlayoffset must be a number (xoffset)"));
+    float y = static_cast<float>(Celx_SafeGetNumber(
+        l, 4, AllErrors,
+        "Third argument to celestia:setimageoverlayoffset must be a number (yoffset)"));
+    lua_pushboolean(l, this_celestia(l)->setImageOverlayOffset(id, x, y) ? 1 : 0);
+    return 1;
 }
 
 #ifdef USE_FFMPEG
@@ -2551,6 +2591,46 @@ static int celestia_resumevideooverlay(lua_State* l)
         l, 2, AllErrors,
         "First argument to celestia:resumevideooverlay must be a number (video id)"));
     lua_pushboolean(l, this_celestia(l)->resumeVideoOverlay(id) ? 1 : 0);
+    return 1;
+}
+
+// celestia:setvideooverlaysize(id, width, height) -- override the rendered
+// size in pixels of an existing video overlay. 0 on either axis falls back
+// to the video's native dimension for that axis. Returns true if a video
+// with that id was found.
+static int celestia_setvideooverlaysize(lua_State* l)
+{
+    Celx_CheckArgs(l, 4, 4, "Three arguments expected for celestia:setvideooverlaysize");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:setvideooverlaysize must be a number (video id)"));
+    float width  = static_cast<float>(Celx_SafeGetNumber(
+        l, 3, AllErrors,
+        "Second argument to celestia:setvideooverlaysize must be a number (width)"));
+    float height = static_cast<float>(Celx_SafeGetNumber(
+        l, 4, AllErrors,
+        "Third argument to celestia:setvideooverlaysize must be a number (height)"));
+    lua_pushboolean(l, this_celestia(l)->setVideoOverlaySize(id, width, height) ? 1 : 0);
+    return 1;
+}
+
+// celestia:setvideooverlayoffset(id, xoffset, yoffset) -- reposition an
+// existing video overlay. 0 = centred on that axis, ±1 = edge of viewport;
+// matches the xoffset/yoffset convention used by addvideooverlay. Returns
+// true if a video with that id was found.
+static int celestia_setvideooverlayoffset(lua_State* l)
+{
+    Celx_CheckArgs(l, 4, 4, "Three arguments expected for celestia:setvideooverlayoffset");
+    auto id = static_cast<VideoOverlay::Id>(Celx_SafeGetNumber(
+        l, 2, AllErrors,
+        "First argument to celestia:setvideooverlayoffset must be a number (video id)"));
+    float x = static_cast<float>(Celx_SafeGetNumber(
+        l, 3, AllErrors,
+        "Second argument to celestia:setvideooverlayoffset must be a number (xoffset)"));
+    float y = static_cast<float>(Celx_SafeGetNumber(
+        l, 4, AllErrors,
+        "Third argument to celestia:setvideooverlayoffset must be a number (yoffset)"));
+    lua_pushboolean(l, this_celestia(l)->setVideoOverlayOffset(id, x, y) ? 1 : 0);
     return 1;
 }
 #endif // USE_FFMPEG
@@ -2938,6 +3018,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "addimageoverlay", celestia_addimageoverlay);
     Celx_RegisterMethod(l, "removeimageoverlay", celestia_removeimageoverlay);
     Celx_RegisterMethod(l, "clearimageoverlays", celestia_clearimageoverlays);
+    Celx_RegisterMethod(l, "setimageoverlaysize", celestia_setimageoverlaysize);
+    Celx_RegisterMethod(l, "setimageoverlayoffset", celestia_setimageoverlayoffset);
 #ifdef USE_FFMPEG
     Celx_RegisterMethod(l, "addvideooverlay", celestia_addvideooverlay);
     Celx_RegisterMethod(l, "removevideooverlay", celestia_removevideooverlay);
@@ -2945,6 +3027,8 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "seekvideooverlay", celestia_seekvideooverlay);
     Celx_RegisterMethod(l, "pausevideooverlay", celestia_pausevideooverlay);
     Celx_RegisterMethod(l, "resumevideooverlay", celestia_resumevideooverlay);
+    Celx_RegisterMethod(l, "setvideooverlaysize", celestia_setvideooverlaysize);
+    Celx_RegisterMethod(l, "setvideooverlayoffset", celestia_setvideooverlayoffset);
 #endif
     Celx_RegisterMethod(l, "verbosity", celestia_verbosity);
 

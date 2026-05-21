@@ -2244,50 +2244,70 @@ int CelestiaCore::getTextWidth(std::string_view s) const
 }
 
 
-OverlayImage::Id CelestiaCore::addScriptImage(std::unique_ptr<OverlayImage>&& _image)
+ImageOverlay::Id CelestiaCore::addScriptImage(std::unique_ptr<ImageOverlay>&& _image)
 {
-    return hud->addImage(std::move(_image), timeInfo.currentTime);
+    return hud->overlayManager().addImage(std::move(_image), timeInfo.currentTime);
 }
 
-bool CelestiaCore::removeScriptImage(OverlayImage::Id id)
+bool CelestiaCore::removeScriptImage(ImageOverlay::Id id)
 {
-    return hud->removeImage(id);
+    return hud->overlayManager().removeImage(id);
+}
+
+bool CelestiaCore::setImageOverlaySize(ImageOverlay::Id id, float width, float height) const
+{
+    return hud->overlayManager().setImageSize(id, width, height);
+}
+
+bool CelestiaCore::setImageOverlayOffset(ImageOverlay::Id id, float x, float y) const
+{
+    return hud->overlayManager().setImageOffset(id, x, y);
 }
 
 void CelestiaCore::clearScriptImages()
 {
-    hud->clearImages();
+    hud->overlayManager().clearImages();
 }
 
 #ifdef USE_FFMPEG
 VideoOverlay::Id CelestiaCore::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
 {
-    return hud->addVideoOverlay(std::move(overlay));
+    return hud->overlayManager().addVideo(std::move(overlay));
 }
 
 bool CelestiaCore::removeVideoOverlay(VideoOverlay::Id id)
 {
-    return hud->removeVideoOverlay(id);
+    return hud->overlayManager().removeVideo(id);
 }
 
 bool CelestiaCore::seekVideoOverlay(VideoOverlay::Id id, double seconds) const
 {
-    return hud->seekVideoOverlay(id, seconds);
+    return hud->overlayManager().seekVideo(id, seconds);
 }
 
 bool CelestiaCore::pauseVideoOverlay(VideoOverlay::Id id) const
 {
-    return hud->pauseVideoOverlay(id);
+    return hud->overlayManager().pauseVideo(id);
 }
 
 bool CelestiaCore::resumeVideoOverlay(VideoOverlay::Id id) const
 {
-    return hud->resumeVideoOverlay(id);
+    return hud->overlayManager().resumeVideo(id);
+}
+
+bool CelestiaCore::setVideoOverlaySize(VideoOverlay::Id id, float width, float height) const
+{
+    return hud->overlayManager().setVideoSize(id, width, height);
+}
+
+bool CelestiaCore::setVideoOverlayOffset(VideoOverlay::Id id, float x, float y) const
+{
+    return hud->overlayManager().setVideoOffset(id, x, y);
 }
 
 void CelestiaCore::clearVideoOverlays()
 {
-    hud->clearVideoOverlays();
+    hud->overlayManager().clearVideos();
 }
 #endif
 
