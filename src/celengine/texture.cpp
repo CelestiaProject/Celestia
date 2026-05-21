@@ -1012,7 +1012,7 @@ LoadTextureFromFile(const std::filesystem::path& filename,
     ContentType contentType = DetermineFileType(filename);
 
     if (contentType == ContentType::CelestiaTexture)
-        return LoadVirtualTexture(filename);
+        return LoadVirtualTexture(filename, colorspace);
 
     // All other texture types are handled by first loading an image, then
     // creating a texture from that image.

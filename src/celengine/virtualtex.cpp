@@ -42,7 +42,8 @@ isPow2(int x)
 
 std::unique_ptr<VirtualTexture>
 CreateVirtualTexture(const util::AssociativeArray* texParams,
-                     const std::filesystem::path& path)
+                     const std::filesystem::path& path,
+                     Texture::Colorspace colorspace)
 {
     const std::string* imageDirectory = texParams->getString("ImageDirectory");
     if (imageDirectory == nullptr)
@@ -95,12 +96,13 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
                                             (unsigned int) *baseSplit,
                                             (unsigned int) *tileSize,
                                             tilePrefix,
-                                            tileType);
+                                            tileType,
+                                            colorspace);
 }
 
 
 std::unique_ptr<VirtualTexture>
-LoadVirtualTexture(std::istream& in, const std::filesystem::path& path)
+LoadVirtualTexture(std::istream& in, const std::filesystem::path& path, Texture::Colorspace colorspace)
 {
     util::Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
@@ -119,7 +121,7 @@ LoadVirtualTexture(std::istream& in, const std::filesystem::path& path)
         return nullptr;
     }
 
-    return CreateVirtualTexture(texParams, path);
+    return CreateVirtualTexture(texParams, path, colorspace);
 }
 
 } // end unnamed namespace
@@ -140,13 +142,13 @@ VirtualTexture::VirtualTexture(const std::filesystem::path& _tilePath,
                                unsigned int _baseSplit,
                                unsigned int _tileSize,
                                const std::string& _tilePrefix,
-                               const std::string& _tileType) :
+                               const std::string& _tileType,
+                               Colorspace _colorspace) :
     Texture(_tileSize << (_baseSplit + 1), _tileSize << _baseSplit),
     tilePath(_tilePath),
     tilePrefix(_tilePrefix),
     baseSplit(_baseSplit),
-    ticks(0),
-    nResolutionLevels(0)
+    colorspace(_colorspace)
 {
     assert(_tileSize != 0 && isPow2(_tileSize));
     tileExt = fmt::format(".{:s}", _tileType);
@@ -280,8 +282,11 @@ VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v
                 filename;
 
     auto img = Image::load(path);
-    if (img == nullptr)
+    if (!img)
         return nullptr;
+
+    if (colorspace == Texture::Colorspace::LinearColorspace)
+        img->forceLinear();
 
     std::unique_ptr<ImageTexture> tex = nullptr;
 
@@ -371,7 +376,7 @@ VirtualTexture::addTileToTree(std::unique_ptr<Tile> tile, unsigned int lod, unsi
 
 
 std::unique_ptr<VirtualTexture>
-LoadVirtualTexture(const std::filesystem::path& filename)
+LoadVirtualTexture(const std::filesystem::path& filename, Texture::Colorspace colorspace)
 {
     std::ifstream in(filename, std::ios::in);
 
@@ -381,5 +386,5 @@ LoadVirtualTexture(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    return LoadVirtualTexture(in, filename.parent_path());
+    return LoadVirtualTexture(in, filename.parent_path(), colorspace);
 }
