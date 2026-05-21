@@ -9,19 +9,19 @@
 
 class Renderer;
 
-class OverlayImage
+class ImageOverlay
 {
  public:
-    // Opaque handle assigned by Hud::addImage at insertion time. Returned to
+    // Opaque handle assigned by OverlayManager at insertion time. Returned to
     // celx callers so they can remove a specific image later. 0 is reserved
     // as "no id."
     using Id = std::uint64_t;
 
-    OverlayImage(const std::filesystem::path&, Renderer*);
-    OverlayImage()               = delete;
-    ~OverlayImage()              = default;
-    OverlayImage(OverlayImage&)  = delete;
-    OverlayImage(OverlayImage&&) = delete;
+    ImageOverlay(const std::filesystem::path&, Renderer*);
+    ImageOverlay()               = delete;
+    ~ImageOverlay()              = default;
+    ImageOverlay(ImageOverlay&)  = delete;
+    ImageOverlay(ImageOverlay&&) = delete;
 
     void render(float, int, int);
     // True once the image has fully faded out and no longer renders;

@@ -24,11 +24,8 @@
 #include <Eigen/Core>
 
 #include <celastro/date.h>
-#include <celengine/overlayimage.h>
-#ifdef USE_FFMPEG
-#include <celengine/videooverlay.h>
-#endif
 #include <celengine/selection.h>
+#include <celestia/overlaymanager.h>
 #include <celestia/textinput.h>
 #include <celestia/textprintposition.h>
 #include <celestia/windowmetrics.h>
@@ -160,26 +157,9 @@ public:
                        bool editMode);
 
     void showText(const TextPrintPosition&, std::string_view, double duration, double currentTime);
-    // Push an overlay image onto the stack of currently-displayed images.
-    // Each image is rendered until its own duration elapses, then dropped
-    // from the stack; calling this never replaces existing images. Returns
-    // the freshly-assigned image id so callers can pass it to removeImage
-    // later. 0 is reserved as "no id" and is never returned on success.
-    OverlayImage::Id addImage(std::unique_ptr<OverlayImage>&&, double);
-    // Remove the overlay image with the given id, if any. No-op when the id
-    // is 0 or not currently active.
-    bool removeImage(OverlayImage::Id);
-    // Drop every currently-displayed overlay image immediately.
-    void clearImages();
 
-#ifdef USE_FFMPEG
-    VideoOverlay::Id addVideoOverlay(std::unique_ptr<VideoOverlay>&&);
-    bool removeVideoOverlay(VideoOverlay::Id);
-    bool seekVideoOverlay(VideoOverlay::Id, double seconds) const;
-    bool pauseVideoOverlay(VideoOverlay::Id) const;
-    bool resumeVideoOverlay(VideoOverlay::Id) const;
-    void clearVideoOverlays();
-#endif
+    OverlayManager& overlayManager() noexcept { return m_overlayManager; }
+    const OverlayManager& overlayManager() const noexcept { return m_overlayManager; }
 
     HudSettings& hudSettings() noexcept { return m_hudSettings; }
     const HudSettings& hudSettings() const noexcept { return m_hudSettings; }
@@ -190,26 +170,13 @@ private:
     void renderSelectionInfo(const WindowMetrics&, const Simulation*, Selection, const Eigen::Vector3d&);
     void renderTextMessages(const WindowMetrics&, double);
     void renderMovieCapture(const WindowMetrics&, const MovieCapture&);
-#ifdef USE_FFMPEG
-    void renderVideoOverlays(const WindowMetrics&, double currentTime, bool isScriptRunning);
-#endif
 
     HudSettings m_hudSettings;
     HudFonts m_hudFonts;
 
     std::unique_ptr<Overlay> m_overlay;
 
-    // Active script overlays. New images are appended in `addImage`;
-    // expired ones are pruned during renderOverlay.
-    std::vector<std::unique_ptr<OverlayImage>> m_images;
-    // Counter for assigning image ids; pre-incremented so the first id is 1
-    // and the sentinel 0 is reserved for "no id."
-    OverlayImage::Id m_nextImageId { 0 };
-
-#ifdef USE_FFMPEG
-    std::vector<std::unique_ptr<VideoOverlay>> m_videoOverlays;
-    VideoOverlay::Id m_nextVideoId { 0 };
-#endif
+    OverlayManager m_overlayManager;
 
     std::locale loc;
 

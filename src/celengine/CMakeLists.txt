@@ -76,8 +76,8 @@ set(CELENGINE_SOURCES
   orbitsampler.h
   overlay.cpp
   overlay.h
-  overlayimage.cpp
-  overlayimage.h
+  imageoverlay.cpp
+  imageoverlay.h
   parseobject.cpp
   parseobject.h
   perspectiveprojectionmode.cpp

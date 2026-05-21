@@ -30,10 +30,6 @@
 #include <celengine/location.h>
 #include <celengine/observer.h>
 #include <celengine/overlay.h>
-#include <celengine/overlayimage.h>
-#ifdef USE_FFMPEG
-#include <celengine/videooverlay.h>
-#endif
 #include <celengine/rectangle.h>
 #include <celengine/simulation.h>
 #include <celengine/star.h>
@@ -938,32 +934,10 @@ Hud::renderOverlay(const WindowMetrics& metrics,
 
     m_overlay->begin();
 
-    if (!m_images.empty())
-    {
-        if (!m_hudSettings.showOverlayImage || !isScriptRunning)
-        {
-            // Overlays are gated off (preference toggled or script ended).
-            // Drop the queue rather than letting it accumulate silently.
-            m_images.clear();
-        }
-        else
-        {
-            auto now = static_cast<float>(timeInfo.currentTime);
-            // Drop fully-faded images first so the loop doesn't pile up
-            // state across many short-lived overlays; render the survivors
-            // in insertion order (newest on top).
-            m_images.erase(
-                std::remove_if(m_images.begin(), m_images.end(),
-                               [now](const auto& img) { return img->isExpired(now); }),
-                m_images.end());
-            for (const auto& img : m_images)
-                img->render(now, metrics.width, metrics.height);
-        }
-    }
-
-#ifdef USE_FFMPEG
-    renderVideoOverlays(metrics, timeInfo.currentTime, isScriptRunning);
-#endif
+    m_overlayManager.render(metrics.width,
+                            metrics.height,
+                            timeInfo.currentTime,
+                            m_hudSettings.showOverlayImage && isScriptRunning);
 
     views.renderBorders(m_overlay.get(), metrics, timeInfo.currentTime);
 
@@ -1372,127 +1346,5 @@ Hud::showText(const TextPrintPosition& position,
     m_messageStart = currentTime;
     m_messageDuration = duration;
 }
-
-OverlayImage::Id
-Hud::addImage(std::unique_ptr<OverlayImage>&& _image, double currentTime)
-{
-    if (_image == nullptr) return 0;
-    _image->setStartTime(static_cast<float>(currentTime));
-    ++m_nextImageId;
-    _image->setId(m_nextImageId);
-    m_images.push_back(std::move(_image));
-    return m_nextImageId;
-}
-
-bool
-Hud::removeImage(OverlayImage::Id id)
-{
-    if (id == 0) return false;
-    auto before = m_images.size();
-    m_images.erase(
-        std::remove_if(m_images.begin(), m_images.end(),
-                       [id](const auto& img) { return img->id() == id; }),
-        m_images.end());
-    return m_images.size() != before;
-}
-
-void
-Hud::clearImages()
-{
-    m_images.clear();
-}
-
-#ifdef USE_FFMPEG
-VideoOverlay::Id
-Hud::addVideoOverlay(std::unique_ptr<VideoOverlay>&& overlay)
-{
-    if (!overlay) return 0;
-    ++m_nextVideoId;
-    overlay->setId(m_nextVideoId);
-    m_videoOverlays.push_back(std::move(overlay));
-    return m_nextVideoId;
-}
-
-bool
-Hud::removeVideoOverlay(VideoOverlay::Id id)
-{
-    if (id == 0) return false;
-    auto before = m_videoOverlays.size();
-    m_videoOverlays.erase(
-        std::remove_if(m_videoOverlays.begin(), m_videoOverlays.end(),
-                       [id](const auto& v) { return v->id() == id; }),
-        m_videoOverlays.end());
-    return m_videoOverlays.size() != before;
-}
-
-bool
-Hud::seekVideoOverlay(VideoOverlay::Id id, double seconds) const
-{
-    if (id == 0) return false;
-    for (const auto& v : m_videoOverlays)
-    {
-        if (v->id() == id)
-        {
-            v->seek(seconds);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool
-Hud::pauseVideoOverlay(VideoOverlay::Id id) const
-{
-    if (id == 0) return false;
-    for (const auto& v : m_videoOverlays)
-    {
-        if (v->id() == id)
-        {
-            v->pause();
-            return true;
-        }
-    }
-    return false;
-}
-
-bool
-Hud::resumeVideoOverlay(VideoOverlay::Id id) const
-{
-    if (id == 0) return false;
-    for (const auto& v : m_videoOverlays)
-    {
-        if (v->id() == id)
-        {
-            v->resume();
-            return true;
-        }
-    }
-    return false;
-}
-
-void
-Hud::clearVideoOverlays()
-{
-    m_videoOverlays.clear();
-}
-
-void
-Hud::renderVideoOverlays(const WindowMetrics& metrics, double currentTime, bool isScriptRunning)
-{
-    if (m_videoOverlays.empty()) return;
-    if (!m_hudSettings.showOverlayImage || !isScriptRunning)
-    {
-        m_videoOverlays.clear();
-        return;
-    }
-    for (const auto& v : m_videoOverlays)
-        v->render(currentTime, metrics.width, metrics.height);
-    // Drop overlays whose non-looping playback has finished.
-    m_videoOverlays.erase(
-        std::remove_if(m_videoOverlays.begin(), m_videoOverlays.end(),
-                       [](const auto& v) { return v->isFinished(); }),
-        m_videoOverlays.end());
-}
-#endif
 
 } // end namespace celestia

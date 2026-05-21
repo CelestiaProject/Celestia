@@ -18,7 +18,7 @@
 #include <celengine/body.h>
 #include <celengine/dsodb.h>
 #include <celengine/galaxy.h>
-#include <celengine/overlayimage.h>
+#include <celengine/imageoverlay.h>
 #include <celengine/render.h>
 #include <celengine/selection.h>
 #include <celengine/simulation.h>
@@ -935,7 +935,7 @@ CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
 
 void CommandScriptImage::processInstantaneous(ExecutionEnvironment& env)
 {
-    auto image = std::make_unique<OverlayImage>(filename, env.getRenderer());
+    auto image = std::make_unique<ImageOverlay>(filename, env.getRenderer());
     image->setDuration(duration);
     image->setFadeAfter(fadeafter);
     image->setOffset(xoffset, yoffset);

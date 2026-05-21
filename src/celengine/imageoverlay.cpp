@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <celmath/mathlib.h>
-#include "overlayimage.h"
+#include "imageoverlay.h"
 #include "rectangle.h"
 #include "render.h"
 
-OverlayImage::OverlayImage(const std::filesystem::path& f, Renderer *r) :
+ImageOverlay::ImageOverlay(const std::filesystem::path& f, Renderer *r) :
     texture(LoadTextureFromFile(f.is_relative() ? "images" / f : f,
                                 Texture::EdgeClamp,
                                 Texture::NoMipMaps)),
@@ -12,17 +12,17 @@ OverlayImage::OverlayImage(const std::filesystem::path& f, Renderer *r) :
 {
 }
 
-void OverlayImage::setColor(const Color& c)
+void ImageOverlay::setColor(const Color& c)
 {
     colors.fill(c);
 }
 
-void OverlayImage::setColor(std::array<Color, 4>& c)
+void ImageOverlay::setColor(std::array<Color, 4>& c)
 {
     std::copy(c.begin(), c.end(), colors.begin());
 }
 
-void OverlayImage::render(float curr_time, int width, int height)
+void ImageOverlay::render(float curr_time, int width, int height)
 {
     if (renderer == nullptr || texture == nullptr || (curr_time >= start + duration))
         return;
@@ -32,20 +32,23 @@ void OverlayImage::render(float curr_time, int width, int height)
     float xSize = overrideWidth  > 0.0f ? overrideWidth  : static_cast<float>(texture->getWidth());
     float ySize = overrideHeight > 0.0f ? overrideHeight : static_cast<float>(texture->getHeight());
 
+    float fwidth  = static_cast<float>(width);
+    float fheight = static_cast<float>(height);
+
     // center overlay image horizontally if offsetX = 0
-    float left = (width * (1 + offsetX) - xSize)/2;
+    float left = (fwidth * (1.0f + offsetX) - xSize) / 2.0f;
     // center overlay image vertically if offsetY = 0
-    float bottom = (height * (1 + offsetY) - ySize)/2;
+    float bottom = (fheight * (1.0f + offsetY) - ySize) / 2.0f;
 
     if (fitscreen)
     {
-        float coeffx = xSize / width;  // overlay pict width/view window width ratio
-        float coeffy = ySize / height; // overlay pict height/view window height ratio
-        xSize /= coeffx;               // new overlay picture width size to fit viewport
-        ySize /= coeffy;               // new overlay picture height to fit viewport
+        float coeffx = xSize / fwidth;  // overlay pict width/view window width ratio
+        float coeffy = ySize / fheight; // overlay pict height/view window height ratio
+        xSize /= coeffx;                // new overlay picture width size to fit viewport
+        ySize /= coeffy;                // new overlay picture height to fit viewport
 
-        left = (width - xSize) / 2;    // to be sure overlay pict is centered in viewport
-        bottom = 0;                    // overlay pict locked at bottom of screen
+        left = (fwidth - xSize) / 2.0f; // to be sure overlay pict is centered in viewport
+        bottom = 0.0f;                  // overlay pict locked at bottom of screen
     }
 
     float alpha = 1.0f;

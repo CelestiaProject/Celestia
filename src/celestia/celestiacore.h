@@ -27,7 +27,7 @@
 #include <celengine/universe.h>
 #include <celengine/render.h>
 #include <celengine/simulation.h>
-#include <celengine/overlayimage.h>
+#include <celengine/imageoverlay.h>
 #ifdef USE_FFMPEG
 #include <celengine/videooverlay.h>
 #endif
@@ -366,10 +366,12 @@ public:
     // Append an overlay image. Each call adds another image without
     // displacing existing ones; expired images are pruned automatically.
     // Returns the freshly-assigned image id (0 means the image was null).
-    OverlayImage::Id addScriptImage(std::unique_ptr<OverlayImage>&&);
+    ImageOverlay::Id addScriptImage(std::unique_ptr<ImageOverlay>&&);
     // Remove a specific overlay image by id. Returns true when an image
     // was actually removed.
-    bool removeScriptImage(OverlayImage::Id);
+    bool removeScriptImage(ImageOverlay::Id);
+    bool setImageOverlaySize(ImageOverlay::Id, float width, float height) const;
+    bool setImageOverlayOffset(ImageOverlay::Id, float x, float y) const;
     // Remove every currently-displayed overlay image.
     void clearScriptImages();
 
@@ -379,6 +381,8 @@ public:
     bool seekVideoOverlay(VideoOverlay::Id, double seconds) const;
     bool pauseVideoOverlay(VideoOverlay::Id) const;
     bool resumeVideoOverlay(VideoOverlay::Id) const;
+    bool setVideoOverlaySize(VideoOverlay::Id, float width, float height) const;
+    bool setVideoOverlayOffset(VideoOverlay::Id, float x, float y) const;
     void clearVideoOverlays();
 #endif
 

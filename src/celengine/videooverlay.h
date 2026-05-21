@@ -36,7 +36,7 @@ public:
     VideoOverlay(VideoOverlay&&) = delete;
 
     // Advance playback to currentTime and draw the current frame. currentTime
-    // is Celestia's real-time clock (seconds), matching what OverlayImage
+    // is Celestia's real-time clock (seconds), matching what ImageOverlay
     // receives.
     void render(double currentTime, int vpWidth, int vpHeight);
 
