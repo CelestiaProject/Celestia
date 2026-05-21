@@ -18,23 +18,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 COMPONENTS Widgets CONFIG REQUIRED)
-qt5_add_resources(RC_SRC "../qt/icons.qrc")
+qt5_add_resources(CELQT5_RC_SRC "../qt/icons.qrc")
 
-if(USE_WAYLAND)
-  GetQtSources(ON)
-else()
-  GetQtSources(OFF)
-endif()
+GetQtSources(CELQT5_SOURCES)
 
-add_executable(celestia-qt5 WIN32 ${QT_SOURCES} ${RES} ${RC_SRC})
+add_executable(celestia-qt5 WIN32 ${CELQT5_SOURCES} ${CELQT5_RC_SRC})
 add_dependencies(celestia-qt5 celestia)
 target_link_libraries(celestia-qt5 Qt5::Widgets celestia)
-
-if(USE_WAYLAND)
-  target_link_libraries(celestia-qt5 Wayland::Client wayland-protocols-helper)
-  target_compile_definitions(celestia-qt5 PRIVATE USE_WAYLAND)
-  target_include_directories(celestia-qt5 PRIVATE ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-endif()
 
 set_target_properties(celestia-qt5 PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
