@@ -1121,6 +1121,7 @@ CreateFrameVector(const Universe& universe,
             if (observer.empty() || target.empty())
             {
                 GetLogger()->error("Missing Observer and Target in RelativeVelocity.\n");
+                return std::nullopt;
             }
 
             return frameCache.getFrameVectorId(RelativeVelocityKey(observer, target));
