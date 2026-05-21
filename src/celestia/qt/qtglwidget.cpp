@@ -83,7 +83,7 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
     currentCursor = CelestiaCore::CrossCursor;
     setMouseTracking(true);
 
-    dragHandler = createDragHandler(this, appCore);
+    dragHandler = createDragHandler(appCore);
     cursorVisible = true;
 
     // We use glClear directly, so we don't need it called by Qt.

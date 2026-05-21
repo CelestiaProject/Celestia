@@ -71,7 +71,6 @@ option(ENABLE_FAST_MATH   "Build with unsafe fast-math compiller option (Default
 option(ENABLE_TESTS       "Enable unit tests? (Default: off)" OFF)
 option(ENABLE_GLES        "Build for OpenGL ES 2.0 instead of OpenGL 2.1 (Default: off)" OFF)
 option(ENABLE_LTO         "Enable link time optimizations (Default: off)" OFF)
-option(USE_WAYLAND        "Use Wayland in Qt frontend (Default: off)" OFF)
 option(USE_ICU            "Use ICU for UTF8 decoding for text rendering (Default: off)" OFF)
 option(USE_WIN_ICU        "Use Windows SDK's ICU implementation (Default: off)" OFF)
 option(USE_MESHOPTIMIZER  "Use meshoptimizer (Default: off)" OFF)
@@ -306,22 +305,6 @@ link_libraries(Freetype::Freetype)
 if(USE_MESHOPTIMIZER)
   find_package(meshoptimizer CONFIG REQUIRED)
   set(HAVE_MESHOPTIMIZER 1)
-endif()
-
-if(USE_WAYLAND)
-  message(STATUS "Creating Wayland protocol helpers")
-
-  find_package(Wayland COMPONENTS protocols scanner REQUIRED)
-
-  include(WaylandAddProtocolClient)
-  wayland_add_protocol_client(PROTOCOL_SOURCES
-    "unstable/pointer-constraints/pointer-constraints-unstable-v1.xml")
-  wayland_add_protocol_client(PROTOCOL_SOURCES
-    "unstable/relative-pointer/relative-pointer-unstable-v1.xml")
-
-  set_source_files_properties(${PROTOCOL_SOURCES} PROPERTIES GENERATED ON)
-  add_library(wayland-protocols-helper STATIC ${PROTOCOL_SOURCES})
-  target_include_directories(wayland-protocols-helper PUBLIC ${Wayland_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 find_package(gperf REQUIRED)

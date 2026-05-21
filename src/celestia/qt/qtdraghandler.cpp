@@ -7,16 +7,12 @@
 
 #include <celestia/celestiacore.h>
 
-#ifdef USE_WAYLAND
-#include "qtwaylanddraghandler.h"
-#endif
-
 namespace celestia::qt
 {
 
 namespace
 {
-inline auto
+auto
 mouseEventPos(const QMouseEvent &m)
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -25,7 +21,7 @@ mouseEventPos(const QMouseEvent &m)
     return m.globalPosition();
 #endif
 }
-}
+} // end unnamed namespace
 
 void
 DragHandler::begin(const QMouseEvent &m, qreal s, int b)
@@ -106,17 +102,18 @@ WarpingDragHandler::finish()
 }
 
 std::unique_ptr<DragHandler>
-createDragHandler([[maybe_unused]] QWidget *widget, CelestiaCore *appCore)
+createDragHandler(CelestiaCore *appCore)
 {
-    QString platformName = QGuiApplication::platformName();
-
-    if (platformName == "cocoa" || platformName == "windows" || platformName == "xcb")
-        return std::make_unique<WarpingDragHandler>(appCore);
-
-#ifdef USE_WAYLAND
-    if (platformName == "wayland")
-        return std::make_unique<WaylandDragHandler>(widget, appCore);
+    if (QString platformName = QGuiApplication::platformName();
+        platformName == "cocoa" ||
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+        platformName == "wayland" ||
 #endif
+        platformName == "windows" ||
+        platformName == "xcb")
+    {
+        return std::make_unique<WarpingDragHandler>(appCore);
+    }
 
     return std::make_unique<DragHandler>(appCore);
 }

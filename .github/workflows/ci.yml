@@ -186,7 +186,6 @@ jobs:
           avif: ON
           gles: ON
           minaudio: ON
-          wayland: ON
           icu: ON
           qt5: ON
           qt6: OFF
@@ -194,7 +193,6 @@ jobs:
           avif: ON
           gles: ON
           minaudio: ON
-          wayland: ON
           icu: ON
           qt5: OFF
           qt6: ON
@@ -203,7 +201,6 @@ jobs:
           avif: ON
           gles: ON
           minaudio: ON
-          wayland: ON
           icu: ON
           qt5: OFF
           qt6: ON
@@ -228,16 +225,14 @@ jobs:
                                 libluajit-5.1-dev \
                                 libfmt-dev \
                                 libicu-dev \
-                                libwayland-dev \
-                                wayland-protocols \
                                 gettext \
                                 gperf \
                                 ninja-build
         if [ "${{matrix.config.qt5}}" = "ON" ]; then
-            sudo apt-get install -y qtbase5-dev qtbase5-dev-tools qtbase5-private-dev
+            sudo apt-get install -y qtbase5-dev qtbase5-dev-tools
         fi
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
-            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-base-private-dev
+            sudo apt-get install -y qt6-base-dev qt6-base-dev-tools
         fi
         if [ "${{matrix.config.avif}}" = "ON" ]; then
             sudo apt-get install -y libavif-dev
@@ -259,7 +254,6 @@ jobs:
               -DENABLE_SDL=ON                                \
               -DENABLE_QT5=${{matrix.config.qt5}}            \
               -DENABLE_QT6=${{matrix.config.qt6}}            \
-              -DUSE_WAYLAND=${{matrix.config.wayland}}       \
               -DENABLE_FFMPEG=ON                             \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}       \
               -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
@@ -343,7 +337,6 @@ jobs:
               -DENABLE_SDL=ON                \
               -DENABLE_QT5=OFF               \
               -DENABLE_QT6=ON                \
-              -DUSE_WAYLAND=OFF              \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_LIBAVIF=ON            \
               -DENABLE_MINIAUDIO=ON          \

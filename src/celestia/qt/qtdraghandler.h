@@ -79,6 +79,6 @@ private:
     void restoreCursorPosition() const;
 };
 
-std::unique_ptr<DragHandler> createDragHandler(QWidget *, CelestiaCore *);
+std::unique_ptr<DragHandler> createDragHandler(CelestiaCore *);
 
 } // end namespace celestia::qt
