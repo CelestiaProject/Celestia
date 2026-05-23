@@ -44,6 +44,7 @@ namespace gl = celestia::gl;
 
 namespace
 {
+constexpr int kDefaultSize = 12;
 
 struct Glyph
 {
@@ -787,7 +788,7 @@ LoadTextureFont(const Renderer *r, const std::filesystem::path &filename, std::o
         fontCache = new FontCache;
 
     int  parsedIndex = 0;
-    int  parsedSize  = TextureFont::kDefaultSize;
+    int  parsedSize  = kDefaultSize;
     auto path        = ParseFontName(filename, parsedIndex, parsedSize);
 
     parsedIndex = index.value_or(parsedIndex);

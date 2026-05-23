@@ -27,8 +27,6 @@ struct TextureFontPrivate;
 class TextureFont
 {
 public:
-    constexpr static int kDefaultSize = 12;
-
     TextureFont(const Renderer *);
     TextureFont() = delete;
     ~TextureFont();
