@@ -349,3 +349,70 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest
+
+  build-freebsd:
+    name: "freebsd"
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout source code'
+      uses: actions/checkout@v6
+      with:
+        submodules: true
+
+    - name: 'Start VM'
+      id: vm
+      uses: vmactions/freebsd-vm@v1
+      with:
+        arch: x86_64
+        sync: rsync
+        copyback: false
+
+    - name: 'Install dependencies'
+      shell: freebsd {0}
+      run: |
+            pkg install -y cmake            \
+                           ninja            \
+                           git              \
+                           eigen            \
+                           libepoxy         \
+                           fast_float       \
+                           gettext          \
+                           gperf            \
+                           jpeg-turbo       \
+                           png              \
+                           mesa-libs        \
+                           meshoptimizer    \
+                           freetype2        \
+                           luajit           \
+                           libfmt           \
+                           icu              \
+                           pkgconf          \
+                           boost-libs       \
+                           sdl2
+
+    - name: 'Configure CMake'
+      shell: freebsd {0}
+      run: |
+        cmake -B build                  \
+              -G Ninja                  \
+              -DCMAKE_BUILD_TYPE=Debug  \
+              -DENABLE_GLES=ON          \
+              -DENABLE_SPICE=OFF        \
+              -DENABLE_TOOLS=OFF        \
+              -DENABLE_TESTS=ON         \
+              -DENABLE_SDL=ON           \
+              -DENABLE_QT5=OFF          \
+              -DENABLE_FFMPEG=OFF       \
+              -DENABLE_LIBAVIF=OFF      \
+              -DENABLE_MINIAUDIO=ON     \
+              -DUSE_ICU=OFF # tests fail on freebsd
+
+    - name: Build
+      shell: freebsd {0}
+      run: |
+        cmake --build build --parallel
+
+    - name: Run tests
+      shell: freebsd {0}
+      run: |
+        ctest --progress --extra-verbose --output-on-failure --test-dir build
