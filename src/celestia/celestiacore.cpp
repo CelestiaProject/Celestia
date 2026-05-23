@@ -2664,16 +2664,26 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 }
 
 static std::shared_ptr<TextureFont>
-LoadFontHelper(const Renderer *renderer, const std::filesystem::path &p)
+LoadFontHelper(const Renderer* renderer,
+               const std::filesystem::path& configPath,
+               const char* defaultKey,
+               const std::filesystem::path& defaultPath)
 {
-    if (p.is_absolute())
-        return LoadTextureFont(renderer, p);
+    if (!configPath.empty())
+    {
+        if (auto font = LoadTextureFont(
+                renderer,
+                configPath.is_absolute() ? configPath : std::filesystem::path("fonts") / configPath);
+            font != nullptr)
+        {
+            return font;
+        }
+    }
 
-    int index = 0;
-    int size = TextureFont::kDefaultSize;
-    std::filesystem::path path = LocaleFilename(ParseFontName(std::filesystem::path("fonts") / p, index, size));
-
-    return LoadTextureFont(renderer, path, index, size);
+    // Reading default font as fallback
+    const char* translated = _(defaultKey);
+    std::filesystem::path fontPath = translated == defaultKey ? defaultPath : translated;
+    return LoadTextureFont(renderer, fontPath.is_absolute() ? fontPath : std::filesystem::path("fonts") / fontPath);
 }
 
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
@@ -2741,15 +2751,13 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
         setFaintestAutoMag();
     }
 
-    auto mainFont = config->fonts.mainFont.empty()
-                ? LoadFontHelper(renderer, "DejaVuSans.ttf,12")
-                : LoadFontHelper(renderer, config->fonts.mainFont);
+    auto mainFont = LoadFontHelper(renderer, config->fonts.mainFont, N_("DEFAULT_MAIN_FONT"), "DejaVuSans.ttf,9");
     if (mainFont != nullptr)
         hud->font(mainFont);
     else
         std::cout << _("Error loading font; text will not be visible.\n");
 
-    if (auto titleFont = config->fonts.titleFont.empty() ? nullptr : LoadFontHelper(renderer, config->fonts.titleFont);
+    if (auto titleFont = LoadFontHelper(renderer, config->fonts.titleFont, N_("DEFAULT_TITLE_FONT"), "DejaVuSans-Bold.ttf,15");
         titleFont != nullptr)
     {
         hud->titleFont(titleFont);
@@ -2775,7 +2783,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
     }
     else
     {
-        auto labelFont = LoadFontHelper(renderer, config->fonts.labelFont);
+        auto labelFont = LoadFontHelper(renderer, config->fonts.labelFont, N_("DEFAULT_LABEL_FONT"), "DejaVuSans.ttf,9");
         renderer->setFont(Renderer::FontStyle::Normal, labelFont == nullptr ? hud->font() : labelFont);
     }
 

@@ -291,12 +291,9 @@ TextureFontPrivate::loadFont(const std::filesystem::path &filename, int index, i
 
     float scale     = m_renderer->getTextScaleFactor();
     int   screenDpi = m_renderer->getScreenDpi();
-    int   psize     = TextureFont::kDefaultSize;
-    int   pindex    = 0;
-    auto  nameonly  = ParseFontName(filename, pindex, psize);
-    auto  face      = LoadFontFace(ftlib, nameonly,
-                                   index > 0 ? index : 0,
-                                   static_cast<int>(scale * static_cast<float>(size > 0 ? size : psize)),
+    auto  face      = LoadFontFace(ftlib, filename,
+                                   index,
+                                   static_cast<int>(scale * static_cast<float>(size)),
                                    screenDpi);
     if (face == nullptr)
         return false;
@@ -782,22 +779,29 @@ template<> struct std::hash<FontCacheKey>
 using FontCache = std::unordered_map<FontCacheKey, std::weak_ptr<TextureFont>>;
 
 std::shared_ptr<TextureFont>
-LoadTextureFont(const Renderer *r, const std::filesystem::path &filename, int index, int size)
+LoadTextureFont(const Renderer *r, const std::filesystem::path &filename, std::optional<int> index, std::optional<int> size)
 {
     // Init FontCache
     static FontCache *fontCache = nullptr;
     if (fontCache == nullptr)
         fontCache = new FontCache;
 
+    int  parsedIndex = 0;
+    int  parsedSize  = TextureFont::kDefaultSize;
+    auto path        = ParseFontName(filename, parsedIndex, parsedSize);
+
+    parsedIndex = index.value_or(parsedIndex);
+    parsedSize  = size.value_or(parsedSize);
+
     // Lookup for an existing cached font
-    std::weak_ptr<TextureFont> &font = (*fontCache)[{ filename, index, size }];
+    std::weak_ptr<TextureFont> &font = (*fontCache)[{ path, parsedIndex, parsedSize }];
     std::shared_ptr<TextureFont> ret = font.lock();
     if (ret == nullptr)
     {
         ret = std::make_shared<TextureFont>(r);
-        if (!ret->impl->loadFont(filename, index, size))
+        if (!ret->impl->loadFont(path, parsedIndex, parsedSize))
         {
-            GetLogger()->error("Could not load font at path: {} index: {} size: {}\n", filename, index, size);
+            GetLogger()->error("Could not load font at path: {} index: {} size: {}\n", path, parsedIndex, parsedSize);
             return nullptr;
         }
 
