@@ -423,6 +423,15 @@ FramebufferObject::resolve() const
     if (m_msaaFboId == 0)
         return true;
 
+    // glBlitFramebuffer is affected by the scissor test, but the caller's scissor
+    // is in window coordinates while the blit destination is FBO-local. For views
+    // that don't start at (0,0) the scissor box wouldn't overlap the destination
+    // and the resolve would silently produce nothing. Disable scissor around the
+    // blit and restore the GL state afterwards.
+    GLboolean scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
+    if (scissorEnabled)
+        glDisable(GL_SCISSOR_TEST);
+
     // Desktop GL / GLES3: blit the MSAA color renderbuffer into the resolve texture FBO.
     // GL_READ_FRAMEBUFFER / GL_DRAW_FRAMEBUFFER and glBlitFramebuffer are available on
     // desktop GL (via ARB_framebuffer_object, which is required) and GLES 3.0+.
@@ -431,5 +440,8 @@ FramebufferObject::resolve() const
     glBlitFramebuffer(0, 0, static_cast<GLint>(m_width), static_cast<GLint>(m_height),
                       0, 0, static_cast<GLint>(m_width), static_cast<GLint>(m_height),
                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    if (scissorEnabled)
+        glEnable(GL_SCISSOR_TEST);
     return true;
 }
