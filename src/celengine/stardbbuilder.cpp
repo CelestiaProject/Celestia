@@ -569,12 +569,11 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
         }
     }
 
-    if (auto rotationModel = CreateRotationModel(starData, *header.path, 1.0); rotationModel != nullptr)
+    if (auto rotationModel = CreateRotationModel(starData, *header.path, 1.0); rotationModel)
     {
-        if (!header.isStar)
-            stcWarn(header, _("Rotation is ignored on Barycenters"));
-        else
-            StarDetails::setRotationModel(details, rotationModel);
+        // While a rotation model does not make much sense for a barycenter,
+        // there are some add-ons that use this in reference frame definitions.
+        StarDetails::setRotationModel(details, rotationModel);
     }
 
     if (auto semiAxes = starData->getLengthVector<float>("SemiAxes"); semiAxes.has_value())
