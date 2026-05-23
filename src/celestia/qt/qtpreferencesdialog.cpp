@@ -222,10 +222,11 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     ui.antialiasLinesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowSmoothLines));
 
-    ui.sRGBRenderingCombo->addItem(_("Use config default"));
-    ui.sRGBRenderingCombo->addItem(_("Enabled"));
-    ui.sRGBRenderingCombo->addItem(_("Disabled"));
     {
+        QSignalBlocker blocker(ui.sRGBRenderingCombo);
+        ui.sRGBRenderingCombo->addItem(_("Use config default"));
+        ui.sRGBRenderingCombo->addItem(_("Enabled"));
+        ui.sRGBRenderingCombo->addItem(_("Disabled"));
         QSettings settings;
         if (!settings.contains("sRGBRendering"))
             ui.sRGBRenderingCombo->setCurrentIndex(0);
@@ -275,22 +276,28 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             break;
     }
 
-    ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
-    ui.starColorBox->addItem(_("Blackbody (Solar Whitepoint)"), static_cast<int>(ColorTableType::SunWhite));
-    ui.starColorBox->addItem(_("Blackbody (Vega Whitepoint)"), static_cast<int>(ColorTableType::VegaWhite));
-    ui.starColorBox->addItem(_("Classic colors"), static_cast<int>(ColorTableType::Enhanced));
-    SetComboBoxValue(ui.starColorBox, static_cast<int>(colors));
+    {
+        QSignalBlocker blocker(ui.starColorBox);
+        ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
+        ui.starColorBox->addItem(_("Blackbody (Solar Whitepoint)"), static_cast<int>(ColorTableType::SunWhite));
+        ui.starColorBox->addItem(_("Blackbody (Vega Whitepoint)"), static_cast<int>(ColorTableType::VegaWhite));
+        ui.starColorBox->addItem(_("Classic colors"), static_cast<int>(ColorTableType::Enhanced));
+        SetComboBoxValue(ui.starColorBox, static_cast<int>(colors));
+    }
 
     ui.autoMagnitudeCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowAutoMag));
 
+    {
+        QSignalBlocker blocker(ui.dateFormatBox);
 #ifndef _WIN32
-    ui.dateFormatBox->addItem(_("Local format"), astro::Date::Locale);
+        ui.dateFormatBox->addItem(_("Local format"), astro::Date::Locale);
 #endif
-    ui.dateFormatBox->addItem(_("Time zone name"), astro::Date::TZName);
-    ui.dateFormatBox->addItem(_("UTC offset"), astro::Date::UTCOffset);
+        ui.dateFormatBox->addItem(_("Time zone name"), astro::Date::TZName);
+        ui.dateFormatBox->addItem(_("UTC offset"), astro::Date::UTCOffset);
 
-    astro::Date::Format dateFormat = appCore->getDateFormat();
-    SetComboBoxValue(ui.dateFormatBox, dateFormat);
+        astro::Date::Format dateFormat = appCore->getDateFormat();
+        SetComboBoxValue(ui.dateFormatBox, dateFormat);
+    }
 }
 
 // Objects
