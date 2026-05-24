@@ -1463,6 +1463,13 @@ void Renderer::render(const Observer& observer,
 
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel).linearize(gl::sRGBRendering);
 
+    // glClear(GL_DEPTH_BUFFER_BIT) is masked by glDepthMask. A previous pass
+    // (e.g. a post-process quad from a prior view) may have left depthMask=false,
+    // which would silently skip clearing the depth buffer for this view.
+    PipelineState clearPs;
+    clearPs.depthMask = true;
+    setPipelineState(clearPs);
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
