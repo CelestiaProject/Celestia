@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "body.h"
+#include "selection.h"
 
 class ReferenceFrame;
 class Star;
@@ -33,15 +34,10 @@ public:
     FrameTree(FrameTree&&) = delete;
     FrameTree& operator=(FrameTree&&) = delete;
 
-    /*! Return the star that this tree is associated with; it will be
-     *  nullptr for frame trees associated with solar system bodies.
+    /*! Return the object that this tree is associated with.
      */
-    Star* getStar() const
-    {
-        return starParent;
-    }
-
-    const std::shared_ptr<const ReferenceFrame>& getDefaultReferenceFrame() const;
+    Selection getOwner() const noexcept { return m_owner; }
+    Star* getRoot(double tjd) const;
 
     const TimelinePhase* getChild(unsigned int n) const;
     unsigned int childCount() const;
@@ -50,62 +46,39 @@ public:
     void markUpdated();
     void recomputeBoundingSphere();
 
-    bool isRoot() const
-    {
-        return bodyParent == nullptr;
-    }
-
-    bool updateRequired() const
-    {
-        return m_changed;
-    }
+    bool updateRequired() const noexcept { return m_changed; }
 
     /*! Get the radius of a sphere large enough to contain all
      *  objects in the tree.
      */
-    double boundingSphereRadius() const
-    {
-        return m_boundingSphereRadius;
-    }
+    double boundingSphereRadius() const noexcept { return m_boundingSphereRadius; }
 
     /*! Get the radius of the largest body in the tree.
      */
-    double maxChildRadius() const
-    {
-        return m_maxChildRadius;
-    }
+    double maxChildRadius() const noexcept { return m_maxChildRadius; }
 
     /*! Return whether any of the children of this frame
      *  are secondary illuminators.
      */
-    bool containsSecondaryIlluminators() const
-    {
-        return m_containsSecondaryIlluminators;
-    }
+    bool containsSecondaryIlluminators() const noexcept { return m_containsSecondaryIlluminators; }
 
     /*! Return a bitmask with the classifications of all children
      *  in this tree.
      */
-    BodyClassification childClassMask() const
-    {
-        return m_childClassMask;
-    }
+    BodyClassification childClassMask() const noexcept { return m_childClassMask; }
 
 private:
     void addChild(TimelinePhase* phase);
     void removeChild(TimelinePhase* phase);
 
-    Star* starParent{ nullptr };
-    Body* bodyParent{ nullptr };
-    std::vector<TimelinePhase*> children;
+    Selection m_owner;
+    std::vector<TimelinePhase*> m_children;
 
     double m_boundingSphereRadius{ 0.0 };
     double m_maxChildRadius{ 0.0 };
     bool m_containsSecondaryIlluminators{ false };
     bool m_changed{ true };
     BodyClassification m_childClassMask{ BodyClassification::EmptyMask };
-
-    std::shared_ptr<const ReferenceFrame> defaultFrame;
 
     friend class TimelinePhase;
 };

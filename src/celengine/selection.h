@@ -12,8 +12,10 @@
 #include <cstddef>
 #include <functional>
 #include <string>
-#include <celengine/univcoord.h>
+
 #include <Eigen/Core>
+
+#include <celengine/univcoord.h>
 
 class Star;
 class Body;
@@ -48,7 +50,8 @@ public:
     double radius() const;
     UniversalCoord getPosition(double t) const;
     Eigen::Vector3d getVelocity(double t) const;
-    Selection parent() const;
+    Selection nameParent() const;
+    Selection frameParent(double t) const;
 
     bool isVisible() const;
 
@@ -95,14 +98,18 @@ inline bool operator!=(const Selection& s0, const Selection& s1)
     return s0.type != s1.type || s0.obj != s1.obj;
 }
 
-namespace std
-{
 template<>
-struct hash<Selection>
+struct std::hash<Selection>
 {
     std::size_t operator()(const Selection& sel) const noexcept
     {
-        return hash<const void*>()(sel.obj);
+        return std::hash<const void*>{}(sel.obj);
     }
 };
+
+// For boost::hash_combine
+inline std::size_t
+hash_value(const Selection& sel)
+{
+    return std::hash<Selection>{}(sel);
 }

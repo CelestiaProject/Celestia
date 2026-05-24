@@ -17,6 +17,7 @@
 
 #include <celephem/orbit.h>
 #include "frame.h"
+#include "timeline.h"
 #include "timelinephase.h"
 
 /* A FrameTree is hierarchy of solar system bodies organized according to
@@ -42,35 +43,34 @@
 /*! Create a frame tree associated with a star.
  */
 FrameTree::FrameTree(Star* star) :
-    starParent(star),
-    // Default frame for a star is J2000 ecliptical, centered
-    // on the star.
-    defaultFrame(std::make_shared<J2000EclipticFrame>(star))
+    m_owner(star)
 {
 }
 
 /*! Create a frame tree associated with a planet or other solar system body.
  */
 FrameTree::FrameTree(Body* body) :
-    bodyParent(body),
-    // Default frame for a solar system body is the mean equatorial frame of the body.
-    defaultFrame(std::make_shared<BodyMeanEquatorFrame>(body, body))
+    m_owner(body)
 {
 }
 
 FrameTree::~FrameTree()
 {
-    for (const auto& phase : children)
+    for (const auto& phase : m_children)
         phase->m_owner = nullptr;
 }
 
-/*! Return the default reference frame for the object a frame tree is associated
- *  with.
- */
-const std::shared_ptr<const ReferenceFrame>&
-FrameTree::getDefaultReferenceFrame() const
+Star*
+FrameTree::getRoot(double tjd) const
 {
-    return defaultFrame;
+    Selection current = m_owner;
+    for (;;)
+    {
+        if (const Body* body = current.body())
+            current = body->getTimeline()->findPhase(tjd).getFrameTree()->getOwner();
+        else
+            return current.star();
+    }
 }
 
 /*! Mark this node of the frame hierarchy as changed. The changed flag
@@ -82,8 +82,8 @@ FrameTree::markChanged()
     if (!m_changed)
     {
         m_changed = true;
-        if (bodyParent != nullptr)
-            bodyParent->markChanged();
+        if (Body* body = m_owner.body(); body)
+            body->markChanged();
     }
 }
 
@@ -97,7 +97,7 @@ FrameTree::markUpdated()
     if (m_changed)
     {
         m_changed = false;
-        for (const auto &child : children)
+        for (const auto &child : m_children)
             child->body()->markUpdated();
     }
 }
@@ -119,7 +119,7 @@ FrameTree::recomputeBoundingSphere()
     m_containsSecondaryIlluminators = false;
     m_childClassMask = BodyClassification::EmptyMask;
 
-    for (const auto &phase : children)
+    for (const auto &phase : m_children)
     {
         double bodyRadius = phase->body()->getRadius();
         double r = phase->body()->getCullingRadius() + phase->orbit()->getBoundingRadius();
@@ -147,7 +147,7 @@ FrameTree::addChild(TimelinePhase* phase)
 {
     assert(phase->m_owner == nullptr);
     phase->m_owner = this;
-    children.push_back(phase);
+    m_children.push_back(phase);
     markChanged();
 }
 
@@ -157,27 +157,27 @@ FrameTree::addChild(TimelinePhase* phase)
 void
 FrameTree::removeChild(TimelinePhase* phase)
 {
-    auto iter = std::find(children.begin(), children.end(), phase);
-    if (iter != children.end())
-    {
-        children.erase(iter);
-        assert(phase->m_owner == this);
-        phase->m_owner = nullptr;
-        markChanged();
-    }
+    auto iter = std::find(m_children.begin(), m_children.end(), phase);
+    if (iter == m_children.end())
+        return;
+
+    m_children.erase(iter);
+    assert(phase->m_owner == this);
+    phase->m_owner = nullptr;
+    markChanged();
 }
 
 /*! Return the child at the specified index. */
 const TimelinePhase*
 FrameTree::getChild(unsigned int n) const
 {
-    assert(n < children.size());
-    return children[n];
+    assert(n < m_children.size());
+    return m_children[n];
 }
 
 /*! Get the number of immediate children of this tree. */
 unsigned int
 FrameTree::childCount() const
 {
-    return static_cast<unsigned int>(children.size());
+    return static_cast<unsigned int>(m_children.size());
 }

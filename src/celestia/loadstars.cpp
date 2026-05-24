@@ -23,10 +23,38 @@
 namespace celestia
 {
 
-using StarLoader = CatalogLoader<StarDatabaseBuilder>;
-
 namespace
 {
+
+class StarLoader final : public CatalogLoader
+{
+public:
+    StarLoader(StarDatabaseBuilder& db,
+               ProgressNotifier* notifier,
+               util::array_view<std::filesystem::path> skipPaths) :
+        CatalogLoader(notifier, skipPaths),
+        m_db(&db)
+    {
+    }
+
+    bool load(std::istream &in, const std::filesystem::path &dir) override
+    {
+        return m_db->load(in, dir);
+    }
+
+protected:
+    ContentType contentType() const override { return ContentType::CelestiaStarCatalog; }
+
+    std::string_view typeDesc() const override
+    {
+        // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+        const char *typeDesc = C_("catalog", "star");
+        return typeDesc;
+    }
+
+private:
+    StarDatabaseBuilder* m_db;
+};
 
 void
 loadCrossIndex(StarNameDatabase& starNamesDB, StarCatalog catalog, const std::filesystem::path &filename)
@@ -96,16 +124,9 @@ loadStars(const CelestiaConfig &config,
 
     starDBBuilder.setNameDatabase(std::move(starNameDB));
 
-    // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
-    const char *typeDesc = C_("catalog", "star");
-
-    StarLoader loader(&starDBBuilder,
-                      typeDesc,
-                      ContentType::CelestiaStarCatalog,
+    StarLoader loader(starDBBuilder,
                       progressNotifier,
-                      config.paths.skipExtras,
-                      geometryPaths,
-                      texturePaths);
+                      config.paths.skipExtras);
 
     // Next, read any ASCII star catalog files specified in the StarCatalogs list.
     std::filesystem::path empty;

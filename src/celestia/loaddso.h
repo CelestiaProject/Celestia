@@ -25,7 +25,6 @@ class TexturePaths;
 
 std::unique_ptr<DSODatabase> loadDSO(const CelestiaConfig& config,
                                      ProgressNotifier* progressNotifier,
-                                     engine::GeometryPaths& geometryPaths,
-                                     engine::TexturePaths& texturePaths);
+                                     engine::GeometryPaths& geometryPaths);
 
 } // namespace celestia

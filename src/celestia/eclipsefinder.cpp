@@ -18,7 +18,10 @@
 #include <Eigen/Geometry>
 
 #include <celengine/body.h>
+#include <celengine/frametree.h>
 #include <celengine/star.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
 #include <celmath/distance.h>
 
 namespace math = celestia::math;
@@ -44,57 +47,56 @@ testEclipse(const Body& receiver, const Body& caster, double now)
     // the receiver, as these shadows aren't likely to be relevant.  Also,
     // ignore eclipses where the caster is not an ellipsoid, since we can't
     // generate correct shadows in this case.
-    if (caster.getRadius() >= receiver.getRadius() * MinRelativeOccluderRadius &&
-        caster.isEllipsoid())
+    if (caster.getRadius() < receiver.getRadius() * MinRelativeOccluderRadius ||
+        !caster.isEllipsoid())
     {
-        // All of the eclipse related code assumes that both the caster
-        // and receiver are spherical.  Irregular receivers will work more
-        // or less correctly, but casters that are sufficiently non-spherical
-        // will produce obviously incorrect shadows.  Another assumption we
-        // make is that the distance between the caster and receiver is much
-        // less than the distance between the sun and the receiver.  This
-        // approximation works everywhere in the solar system, and likely
-        // works for any orbitally stable pair of objects orbiting a star.
-        Eigen::Vector3d posReceiver = receiver.getAstrocentricPosition(now);
-        Eigen::Vector3d posCaster = caster.getAstrocentricPosition(now);
-
-        const Star* sun = receiver.getSystem()->getStar();
-        assert(sun != nullptr);
-        double distToSun = posReceiver.norm();
-        float appSunRadius = (float) (sun->getRadius() / distToSun);
-
-        Eigen::Vector3d dir = posCaster - posReceiver;
-        double distToCaster = dir.norm() - receiver.getRadius();
-        float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
-
-        // The shadow radius is the radius of the occluder plus some additional
-        // amount that depends upon the apparent radius of the sun.  For
-        // a sun that's distant/small and effectively a point, the shadow
-        // radius will be the same as the radius of the occluder.
-        float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
-            caster.getRadius();
-
-        // Test whether a shadow is cast on the receiver.  We want to know
-        // if the receiver lies within the shadow volume of the caster.  Since
-        // we're assuming that everything is a sphere and the sun is far
-        // away relative to the caster, the shadow volume is a
-        // cylinder capped at one end.  Testing for the intersection of a
-        // singly capped cylinder is as simple as checking the distance
-        // from the center of the receiver to the axis of the shadow cylinder.
-        // If the distance is less than the sum of the caster's and receiver's
-        // radii, then we have an eclipse.
-        float R = receiver.getRadius() + shadowRadius;
-        double dist = math::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
-        if (dist < R)
-        {
-            // Ignore "eclipses" where the caster and receiver have
-            // intersecting bounding spheres.
-            if (distToCaster > caster.getRadius())
-                return true;
-        }
+        return false;
     }
 
-    return false;
+    // All of the eclipse related code assumes that both the caster
+    // and receiver are spherical.  Irregular receivers will work more
+    // or less correctly, but casters that are sufficiently non-spherical
+    // will produce obviously incorrect shadows.  Another assumption we
+    // make is that the distance between the caster and receiver is much
+    // less than the distance between the sun and the receiver.  This
+    // approximation works everywhere in the solar system, and likely
+    // works for any orbitally stable pair of objects orbiting a star.
+    Eigen::Vector3d posReceiver = receiver.getAstrocentricPosition(now);
+    Eigen::Vector3d posCaster = caster.getAstrocentricPosition(now);
+
+    const Star* sun = receiver.getTimeline()->findPhase(now).getFrameTree()->getRoot(now);
+    if (!sun)
+        return false;
+
+    double distToSun = posReceiver.norm();
+    float appSunRadius = (float) (sun->getRadius() / distToSun);
+
+    Eigen::Vector3d dir = posCaster - posReceiver;
+    double distToCaster = dir.norm() - receiver.getRadius();
+    float appOccluderRadius = (float) (caster.getRadius() / distToCaster);
+
+    // The shadow radius is the radius of the occluder plus some additional
+    // amount that depends upon the apparent radius of the sun.  For
+    // a sun that's distant/small and effectively a point, the shadow
+    // radius will be the same as the radius of the occluder.
+    float shadowRadius = (1 + appSunRadius / appOccluderRadius) *
+                         caster.getRadius();
+
+    // Test whether a shadow is cast on the receiver.  We want to know
+    // if the receiver lies within the shadow volume of the caster.  Since
+    // we're assuming that everything is a sphere and the sun is far
+    // away relative to the caster, the shadow volume is a
+    // cylinder capped at one end.  Testing for the intersection of a
+    // singly capped cylinder is as simple as checking the distance
+    // from the center of the receiver to the axis of the shadow cylinder.
+    // If the distance is less than the sum of the caster's and receiver's
+    // radii, then we have an eclipse.
+    float R = receiver.getRadius() + shadowRadius;
+    double dist = math::distance(posReceiver, Eigen::ParametrizedLine<double, 3>(posCaster, posCaster));
+
+    // Ignore "eclipses" where the caster and receiver have
+    // intersecting bounding spheres.
+    return dist < R && distToCaster > caster.getRadius();
 }
 
 double
@@ -133,6 +135,17 @@ addEclipse(const Body& receiver, const Body& occulter,
     }
 }
 
+struct BodyInfo
+{
+    BodyInfo(const Body* _body, double _startTime, double _endTime) :
+        body(_body), startTime(_startTime), endTime(_endTime)
+    {}
+
+    const Body* body;
+    double startTime;
+    double endTime;
+};
+
 } // end unnamed namespace
 
 EclipseFinder::EclipseFinder(const Body* _body,
@@ -142,43 +155,59 @@ EclipseFinder::EclipseFinder(const Body* _body,
 {
 }
 
-void EclipseFinder::findEclipses(double startDate,
+void EclipseFinder::findEclipses(double startDate, //NOSONAR
                                  double endDate,
                                  int eclipseTypeMask,
                                  std::vector<Eclipse>& eclipses)
 {
-    PlanetarySystem* satellites = body->getSatellites();
-
-    // See if there's anything that could test
-    if (satellites == nullptr)
-        return;
-
-    // For each body, we'll need to store the time when the last eclipse ended
-    std::vector<double> previousEclipseEndTimes;
-
-    // Make a list of satellites that we'll actually test for eclipses; ignore
-    // spacecraft and very small objects.
-    std::vector<Body*> testBodies;
-    for (int i = 0; i < satellites->getSystemSize(); i++)
+    const FrameTree* frameTree = body->getFrameTree();
+    if (!frameTree)
     {
-        Body* obj = satellites->getBody(i);
-        if (util::is_set(obj->getClassification(), EclipseObjectMask) &&
-            obj->getRadius() >= body->getRadius() * MinRelativeOccluderRadius)
+        // no satellites, bail out
+        return;
+    }
+
+    // For each body, store the start and end time of the unprocessed window
+    std::vector<BodyInfo> testBodies;
+    for (unsigned int i = 0, nPhases = frameTree->childCount(); i < nPhases; ++i)
+    {
+        const auto* phase = frameTree->getChild(i);
+        if (phase->startTime() > endDate || phase->endTime() <= startDate)
+            continue;
+
+        double phaseStart = std::max(startDate, phase->startTime());
+        double phaseEnd = std::min(endDate, phase->endTime());
+
+        if (phaseEnd <= phaseStart)
+            continue;
+
+        const Body* testBody = phase->body();
+        auto it = std::find_if(testBodies.begin(), testBodies.end(),
+                               [testBody](const BodyInfo& info) { return info.body == testBody; });
+        if (it == testBodies.end())
         {
-            testBodies.push_back(obj);
-            previousEclipseEndTimes.push_back(startDate - 1.0);
+            testBodies.emplace_back(testBody, phaseStart, phaseEnd);
+        }
+        else
+        {
+            it->startTime = std::min(it->startTime, phaseStart);
+            it->endTime = std::max(it->endTime, phaseEnd);
         }
     }
 
     if (testBodies.empty())
         return;
 
+    std::vector<double> previousEclipseEndTimes(testBodies.size());
+    std::transform(testBodies.cbegin(), testBodies.cend(), previousEclipseEndTimes.begin(),
+                   [](const BodyInfo& info) { return info.startTime - 1.0; });
+
     // TODO: Use a fixed step of one hour for now; we should use a binary
     // search instead.
-    double searchStep = 1.0 / 24.0; // one hour
+    constexpr double searchStep = 1.0 / 24.0; // one hour
 
     // Precision of eclipse duration calculation
-    double durationPrecision = 1.0 / (24.0 * 360.0); // ten seconds
+    constexpr double durationPrecision = 1.0 / (24.0 * 360.0); // ten seconds
 
     for (double t = startDate; t <= endDate; t += searchStep)
     {
@@ -188,18 +217,20 @@ void EclipseFinder::findEclipses(double startDate,
                 return;
         }
 
-        for (unsigned int i = 0; i < testBodies.size(); i++)
+        for (unsigned int i = 0; i < testBodies.size(); ++i)
         {
+            const BodyInfo& info = testBodies[i];
+
             // Only test for an eclipse if we're not in the middle of
             // of previous one.
-            if (t <= previousEclipseEndTimes[i])
+            if (t < info.startTime || t >= info.endTime || t <= previousEclipseEndTimes[i])
                 continue;
 
             if (eclipseTypeMask & Eclipse::Solar)
-                addEclipse(*body, *testBodies[i], t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
+                addEclipse(*body, *info.body, t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
 
             if (eclipseTypeMask & Eclipse::Lunar)
-                addEclipse(*testBodies[i], *body, t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
+                addEclipse(*info.body, *body, t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
         }
     }
 }

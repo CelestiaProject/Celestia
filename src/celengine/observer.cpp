@@ -27,6 +27,7 @@
 #include "frametree.h"
 #include "location.h"
 #include "star.h"
+#include "timeline.h"
 
 namespace astro = celestia::astro;
 namespace math = celestia::math;
@@ -223,16 +224,8 @@ interpolatePositionGreatCircle(const Observer::JourneyParams& journey,
                                double x)
 {
     Selection centerObj = frame->getRefObject();
-    if (const Body* body = centerObj.body(); body != nullptr)
-    {
-        if (const PlanetarySystem* system = body->getSystem(); system != nullptr)
-        {
-            if (Body* primaryBody = system->getPrimaryBody(); primaryBody != nullptr)
-                centerObj = primaryBody;
-            else
-                centerObj = system->getStar();
-        }
-    }
+    if (const Body* body = centerObj.body(); body)
+        centerObj = body->getTimeline()->findPhase(simTime).getFrameTree()->getOwner();
 
     UniversalCoord ufrom  = frame->convertToUniversal(journey.from, simTime);
     UniversalCoord uto    = frame->convertToUniversal(journey.to, simTime);
@@ -335,65 +328,6 @@ interpolateOrientation(const Observer::JourneyParams& journey, double t)
     return journey.initialOrientation.slerp(v, journey.finalOrientation);
 }
 
-// Create the ReferenceFrame for the specified observer frame parameters.
-ReferenceFrame::SharedConstPtr
-createFrame(ObserverFrame::CoordinateSystem _coordSys,
-            const Selection& _refObject,
-            const Selection& _targetObject)
-{
-    switch (_coordSys)
-    {
-    case ObserverFrame::CoordinateSystem::Universal:
-        return std::make_shared<J2000EclipticFrame>(Selection());
-
-    case ObserverFrame::CoordinateSystem::Ecliptical:
-        return std::make_shared<J2000EclipticFrame>(_refObject);
-
-    case ObserverFrame::CoordinateSystem::Equatorial:
-        return std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject);
-
-    case ObserverFrame::CoordinateSystem::BodyFixed:
-        return std::make_shared<BodyFixedFrame>(_refObject, _refObject);
-
-    case ObserverFrame::CoordinateSystem::PhaseLock:
-        return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativePositionVector(_refObject, _targetObject), 1,
-                                                FrameVector::createRelativeVelocityVector(_refObject, _targetObject), 2);
-
-    case ObserverFrame::CoordinateSystem::Chase:
-        return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativeVelocityVector(_refObject, _refObject.parent()), 1,
-                                                FrameVector::createRelativePositionVector(_refObject, _refObject.parent()), 2);
-
-    case ObserverFrame::CoordinateSystem::PhaseLock_Old:
-    {
-        FrameVector rotAxis(FrameVector::createConstantVector(Eigen::Vector3d::UnitY(),
-                                                              std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
-        return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativePositionVector(_refObject, _targetObject), 3,
-                                                rotAxis, 2);
-    }
-
-    case ObserverFrame::CoordinateSystem::Chase_Old:
-    {
-        FrameVector rotAxis(FrameVector::createConstantVector(Eigen::Vector3d::UnitY(),
-                                                              std::make_shared<BodyMeanEquatorFrame>(_refObject, _refObject)));
-
-        return std::make_shared<TwoVectorFrame>(_refObject,
-                                                FrameVector::createRelativeVelocityVector(_refObject.parent(), _refObject), 3,
-                                                rotAxis, 2);
-    }
-
-    case ObserverFrame::CoordinateSystem::ObserverLocal:
-        // TODO: This is only used for computing up vectors for orientation; it does
-        // define a proper frame for the observer position orientation.
-        return std::make_shared<J2000EclipticFrame>(Selection());
-
-    default:
-        return std::make_shared<J2000EclipticFrame>(_refObject);
-    }
-}
-
 // High-precision rotation using 64.64 fixed point path. Rotate uc by
 // the rotation specified by unit quaternion q.
 UniversalCoord
@@ -407,6 +341,30 @@ rotate(const UniversalCoord& uc, const Eigen::Quaterniond& q)
     uc1.z = uc.x * R128(r(0, 2)) + uc.y * R128(r(1, 2)) + uc.z * R128(r(2, 2));
 
     return uc1;
+}
+
+/*! Convert a position from one frame to another.
+ */
+UniversalCoord
+convert(const ObserverFrame::SharedConstPtr& fromFrame,
+        const ObserverFrame::SharedConstPtr& toFrame,
+        const UniversalCoord& uc,
+        double t)
+{
+    // Perform the conversion fromFrame -> universal -> toFrame
+    return toFrame->convertFromUniversal(fromFrame->convertToUniversal(uc, t), t);
+}
+
+/*! Convert an orientation from one frame to another.
+*/
+Eigen::Quaterniond
+convert(const ObserverFrame::SharedConstPtr& fromFrame,
+        const ObserverFrame::SharedConstPtr& toFrame,
+        const Eigen::Quaterniond& q,
+        double t)
+{
+    // Perform the conversion fromFrame -> universal -> toFrame
+    return toFrame->convertFromUniversal(fromFrame->convertToUniversal(q, t), t);
 }
 
 } // end unnamed namespace
@@ -860,7 +818,7 @@ Observer::computeGotoParameters(const Selection& destination,
     else
     {
         ObserverFrame offsetFrame(offsetCoordSys, destination);
-        jparams.to = targetPosition.offsetKm(offsetFrame.getFrame()->getOrientation(getTime()).conjugate() * offset);
+        jparams.to = targetPosition.offsetKm(offsetFrame.getOrientation(getTime()).conjugate() * offset);
     }
 
     Eigen::Vector3d upd = up.cast<double>();
@@ -871,7 +829,7 @@ Observer::computeGotoParameters(const Selection& destination,
     else
     {
         ObserverFrame upFrame(upCoordSys, destination);
-        upd = upFrame.getFrame()->getOrientation(getTime()).conjugate() * upd;
+        upd = upFrame.getOrientation(getTime()).conjugate() * upd;
     }
 
     jparams.initialOrientation = getOrientation();
@@ -909,7 +867,7 @@ Observer::computeGotoParametersGC(const Selection& destination,
     jparams.from = getPosition();
 
     ObserverFrame offsetFrame(offsetCoordSys, destination);
-    Eigen::Vector3d offsetTransformed = offsetFrame.getFrame()->getOrientation(getTime()).conjugate() * offset;
+    Eigen::Vector3d offsetTransformed = offsetFrame.getOrientation(getTime()).conjugate() * offset;
 
     jparams.to = targetPosition.offsetKm(offsetTransformed);
 
@@ -921,7 +879,7 @@ Observer::computeGotoParametersGC(const Selection& destination,
     else
     {
         ObserverFrame upFrame(upCoordSys, destination);
-        upd = upFrame.getFrame()->getOrientation(getTime()).conjugate() * upd;
+        upd = upFrame.getOrientation(getTime()).conjugate() * upd;
     }
 
     jparams.initialOrientation = getOrientation();
@@ -1039,10 +997,10 @@ Observer::convertFrameCoordinates(const ObserverFrame::SharedConstPtr &newFrame)
     transformedOrientation = newFrame->convertFromUniversal(transformedOrientationUniv, now);
 
     // Convert goto parameters to the new frame
-    journey.from               = ObserverFrame::convert(frame, newFrame, journey.from, now);
-    journey.initialOrientation = ObserverFrame::convert(frame, newFrame, journey.initialOrientation, now);
-    journey.to                 = ObserverFrame::convert(frame, newFrame, journey.to, now);
-    journey.finalOrientation   = ObserverFrame::convert(frame, newFrame, journey.finalOrientation, now);
+    journey.from               = convert(frame, newFrame, journey.from, now);
+    journey.initialOrientation = convert(frame, newFrame, journey.initialOrientation, now);
+    journey.to                 = convert(frame, newFrame, journey.to, now);
+    journey.finalOrientation   = convert(frame, newFrame, journey.finalOrientation, now);
 }
 
 /*! Set the observer's reference frame. The position of the observer in
@@ -1357,7 +1315,7 @@ Observer::gotoSelectionGC(const Selection& selection,
     if (selection.empty())
         return;
 
-    Selection centerObj = selection.parent();
+    Selection centerObj = selection.frameParent(getTime());
 
     UniversalCoord pos = selection.getPosition(getTime());
     Eigen::Vector3d v = pos.offsetFromKm(centerObj.getPosition(getTime()));
@@ -1367,10 +1325,9 @@ Observer::gotoSelectionGC(const Selection& selection,
 
     if (selection.location() != nullptr)
     {
-        Selection parent = selection.parent();
-        double maintainDist = getPreferredDistance(parent);
-        Eigen::Vector3d parentPos = parent.getPosition(getTime()).offsetFromKm(getPosition());
-        double parentDist = parentPos.norm() - parent.radius();
+        double maintainDist = getPreferredDistance(centerObj);
+        Eigen::Vector3d parentPos = centerObj.getPosition(getTime()).offsetFromKm(getPosition());
+        double parentDist = parentPos.norm() - centerObj.radius();
 
         if (parentDist <= maintainDist && parentDist > orbitDistance)
             orbitDistance = parentDist;
@@ -1419,7 +1376,7 @@ Observer::gotoSelectionGC(const Selection& selection,
     if (selection.empty())
         return;
 
-    Selection centerObj = selection.parent();
+    Selection centerObj = selection.frameParent(getTime());
 
     UniversalCoord pos = selection.getPosition(getTime());
     Eigen::Vector3d v = pos.offsetFromKm(centerObj.getPosition(getTime()));
@@ -1616,13 +1573,14 @@ Observer::phaseLock(const Selection& selection)
         if (refObject.body() != nullptr || refObject.star() != nullptr)
             setFrame(ObserverFrame::CoordinateSystem::PhaseLock, refObject, selection);
     }
-    else if (selection.body() != nullptr)
+    else if (const Body* body = selection.body(); body)
     {
         // Selection and reference object are identical, so the frame is undefined.
         // We'll instead use the object's star as the target object.
+        double t = getTime();
         setFrame(ObserverFrame::CoordinateSystem::PhaseLock,
                  selection,
-                 selection.body()->getSystem()->getStar());
+                 body->getTimeline()->findPhase(t).getFrameTree()->getRoot(t));
     }
 }
 
@@ -1696,66 +1654,31 @@ Observer::updateUniversal()
     updateOrientation();
 }
 
-/*! Create the default 'universal' observer frame, with a center at the
- *  Solar System barycenter and coordinate axes of the J200Ecliptic
- *  reference frame.
- */
-ObserverFrame::ObserverFrame() :
-    coordSys(CoordinateSystem::Universal),
-    frame(createFrame(CoordinateSystem::Universal, Selection(), Selection()))
-{
-}
-
-
 /*! Create a new frame with the specified coordinate system and
  *  reference object. The targetObject is only needed for phase
  *  lock frames; the argument is ignored for other frames.
  */
-ObserverFrame::ObserverFrame(CoordinateSystem _coordSys,
-                             const Selection& _refObject,
-                             const Selection& _targetObject) :
-    coordSys(_coordSys),
-    frame(nullptr),
-    targetObject(_targetObject)
+ObserverFrame::ObserverFrame(CoordinateSystem coordSys,
+                             const Selection& refObject,
+                             const Selection& targetObject) :
+    m_coordSys(coordSys),
+    m_refObject(refObject),
+    m_targetObject(targetObject)
 {
-    frame = createFrame(_coordSys, _refObject, _targetObject);
 }
-
 
 /*! Create a new ObserverFrame with the specified reference frame.
  *  The coordinate system of this frame will be marked as unknown.
  */
-ObserverFrame::ObserverFrame(const ReferenceFrame::SharedConstPtr &f) :
-    coordSys(CoordinateSystem::Unknown),
-    frame(f)
+ObserverFrame::ObserverFrame(const Selection& refObject,
+                             const ReferenceFrame::SharedConstPtr &frame) :
+    m_coordSys(CoordinateSystem::Unknown),
+    m_frame(frame),
+    m_refObject(refObject)
 {
 }
 
 ObserverFrame::~ObserverFrame() = default;
-
-ObserverFrame::CoordinateSystem
-ObserverFrame::getCoordinateSystem() const
-{
-    return coordSys;
-}
-
-Selection
-ObserverFrame::getRefObject() const
-{
-    return frame->getCenter();
-}
-
-Selection
-ObserverFrame::getTargetObject() const
-{
-    return targetObject;
-}
-
-const ReferenceFrame::SharedConstPtr&
-ObserverFrame::getFrame() const
-{
-    return frame;
-}
 
 /*! Convert from universal coordinates to frame coordinates. This method
  *  uses 64.64 fixed point arithmetic in conversion, and is thus /much/ slower
@@ -1766,8 +1689,8 @@ ObserverFrame::getFrame() const
 UniversalCoord
 ObserverFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 {
-    UniversalCoord uc1 = uc - frame->getCenter().getPosition(tjd);
-    return rotate(uc1, frame->getOrientation(tjd).conjugate());
+    UniversalCoord uc1 = uc - m_refObject.getPosition(tjd);
+    return rotate(uc1, getOrientation(tjd).conjugate());
 }
 
 /*! Convert from local coordinates to universal coordinates. This method
@@ -1784,41 +1707,49 @@ ObserverFrame::convertFromUniversal(const UniversalCoord& uc, double tjd) const
 UniversalCoord
 ObserverFrame::convertToUniversal(const UniversalCoord& uc, double tjd) const
 {
-    return frame->getCenter().getPosition(tjd) + rotate(uc, frame->getOrientation(tjd));
+    return m_refObject.getPosition(tjd) + rotate(uc, getOrientation(tjd));
 }
 
 Eigen::Quaterniond
 ObserverFrame::convertFromUniversal(const Eigen::Quaterniond& q, double tjd) const
 {
-    return q * frame->getOrientation(tjd).conjugate();
+    return q * getOrientation(tjd).conjugate();
 }
 
 Eigen::Quaterniond
 ObserverFrame::convertToUniversal(const Eigen::Quaterniond& q, double tjd) const
 {
-    return q * frame->getOrientation(tjd);
+    return q * getOrientation(tjd);
 }
 
-/*! Convert a position from one frame to another.
- */
-UniversalCoord
-ObserverFrame::convert(const ObserverFrame::SharedConstPtr& fromFrame,
-                       const ObserverFrame::SharedConstPtr& toFrame,
-                       const UniversalCoord& uc,
-                       double t)
-{
-    // Perform the conversion fromFrame -> universal -> toFrame
-    return toFrame->convertFromUniversal(fromFrame->convertToUniversal(uc, t), t);
-}
-
-/*! Convert an orientation from one frame to another.
-*/
 Eigen::Quaterniond
-ObserverFrame::convert(const ObserverFrame::SharedConstPtr& fromFrame,
-                       const ObserverFrame::SharedConstPtr& toFrame,
-                       const Eigen::Quaterniond& q,
-                       double t)
+ObserverFrame::getOrientation(double tjd) const
 {
-    // Perform the conversion fromFrame -> universal -> toFrame
-    return toFrame->convertFromUniversal(fromFrame->convertToUniversal(q, t), t);
+    switch (m_coordSys)
+    {
+    case ObserverFrame::CoordinateSystem::Equatorial:
+        return BodyMeanEquatorFrame(m_refObject).getOrientation(tjd);
+
+    case ObserverFrame::CoordinateSystem::BodyFixed:
+        return BodyFixedFrame(m_refObject).getOrientation(tjd);
+
+    case ObserverFrame::CoordinateSystem::PhaseLock:
+        return TwoVectorFrame(FrameVector(FrameVector::RelativePosition(m_refObject, m_targetObject)), 1,
+                              FrameVector(FrameVector::RelativeVelocity(m_refObject, m_targetObject)), 2).getOrientation(tjd);
+
+
+    case ObserverFrame::CoordinateSystem::Chase:
+        {
+            auto parent = m_refObject.frameParent(tjd);
+            return TwoVectorFrame(FrameVector(FrameVector::RelativeVelocity(m_refObject, parent)), 1,
+                                  FrameVector(FrameVector::RelativePosition(m_refObject, parent)), 2).getOrientation(tjd);
+        }
+
+    case ObserverFrame::CoordinateSystem::Unknown:
+        return m_frame->getOrientation(tjd);
+
+    default:
+        // J2000 ecliptic
+        return Eigen::Quaterniond::Identity();
+    }
 }

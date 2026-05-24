@@ -78,12 +78,6 @@ public:
         PhaseLock       = 5,
         Chase           = 6,
 
-        // Previous versions of PhaseLock and Chase used the
-        // spin axis of the reference object as a secondary
-        // vector for the coordinate system.
-        PhaseLock_Old   = 100,
-        Chase_Old       = 101,
-
         // ObserverLocal is not a real frame; it's an optional
         // way to specify view vectors. Eventually, there will
         // be some other way to accomplish this and ObserverLocal
@@ -93,11 +87,15 @@ public:
         Unknown         = 1000,
     };
 
-    ObserverFrame();
+    /*! Create the default 'universal' observer frame, with a center at the
+     *  Solar System barycenter and coordinate axes of the J200Ecliptic
+     *  reference frame.
+     */
+    ObserverFrame() = default;
     ObserverFrame(CoordinateSystem cs,
-                  const Selection& _refObject,
-                  const Selection& _targetObj = Selection());
-    explicit ObserverFrame(const std::shared_ptr<const ReferenceFrame>& f);
+                  const Selection& refObject,
+                  const Selection& targetObj = Selection());
+    ObserverFrame(const Selection& refObject, const std::shared_ptr<const ReferenceFrame>& f);
 
     ~ObserverFrame();
 
@@ -106,30 +104,22 @@ public:
     ObserverFrame(ObserverFrame&&) noexcept = default;
     ObserverFrame& operator=(ObserverFrame&&) noexcept = default;
 
-    CoordinateSystem getCoordinateSystem() const;
-    Selection getRefObject() const;
-    Selection getTargetObject() const;
+    CoordinateSystem getCoordinateSystem() const noexcept { return m_coordSys; }
+    Selection getRefObject() const noexcept { return m_refObject; }
+    Selection getTargetObject() const noexcept { return m_targetObject; }
 
-    const std::shared_ptr<const ReferenceFrame>& getFrame() const;
+    Eigen::Quaterniond getOrientation(double tjd) const;
 
     UniversalCoord convertFromUniversal(const UniversalCoord &uc, double tjd) const;
     UniversalCoord convertToUniversal(const UniversalCoord &uc, double tjd) const;
     Eigen::Quaterniond convertFromUniversal(const Eigen::Quaterniond &q, double tjd) const;
     Eigen::Quaterniond convertToUniversal(const Eigen::Quaterniond &q, double tjd) const;
 
-    static UniversalCoord convert(const ObserverFrame::SharedConstPtr &fromFrame,
-                                  const ObserverFrame::SharedConstPtr &toFrame,
-                                  const UniversalCoord &uc,
-                                  double t);
-    static Eigen::Quaterniond convert(const ObserverFrame::SharedConstPtr &fromFrame,
-                                      const ObserverFrame::SharedConstPtr &toFrame,
-                                      const Eigen::Quaterniond &q,
-                                      double t);
-
 private:
-    CoordinateSystem coordSys;
-    std::shared_ptr<const ReferenceFrame> frame;
-    Selection targetObject;
+    CoordinateSystem m_coordSys{ CoordinateSystem::Universal };
+    std::shared_ptr<const ReferenceFrame> m_frame;
+    Selection m_refObject;
+    Selection m_targetObject;
 };
 
 class Observer

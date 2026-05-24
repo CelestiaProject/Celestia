@@ -136,12 +136,483 @@ BodyClassification GetClassificationId(std::string_view className)
 //! Maximum depth permitted for nested frames.
 unsigned int MaxFrameDepth = 50;
 
-bool isFrameCircular(const ReferenceFrame& frame)
+// Check frames for circular references. For position frames, check both the
+// frametree hierarchy and the reference frame. For body frames, only the
+// reference frame is checked. For now, we consider any phase of the frame
+// center that is reachable from the current phase as a parent, and for
+// frames we consider all possible body phases. This may lead to some false
+// positive circular reference detections with certain tricky frame
+// configurations, but handling that would require tracking time windows
+// across the entire frame graph and the associated complexity of doing that.
+class TimelineValidator
 {
-    return frame.nestingDepth(MaxFrameDepth) > MaxFrameDepth;
+public:
+    TimelineValidator(const Body* body, const Timeline& timeline) :
+        m_testBody(body), m_testTimeline(timeline)
+    {}
+
+    bool validate(bool validateOrbit = true, bool validateBody = true);
+
+private:
+    enum class FrameUsage
+    {
+        Position,
+        Body,
+    };
+
+    static constexpr int Invalid = -1;
+    static constexpr int NotStarted = -2;
+
+    struct PhaseStatus
+    {
+        explicit PhaseStatus(const TimelinePhase* p) : phase(p) {}
+
+        const TimelinePhase* phase;
+
+        int positionDepth{ NotStarted };
+        int bodyDepth{ NotStarted }; // cppcheck-suppress unusedStructMember
+    };
+
+    struct ProcessPhase
+    {
+        const TimelinePhase* phase;
+        FrameUsage usage;
+    };
+
+    struct FinishPhase
+    {
+        const TimelinePhase* phase;
+        FrameUsage usage;
+    };
+
+    struct ProcessFrame
+    {
+        const ReferenceFrame* frame;
+    };
+
+    struct FinishFrame
+    {
+        const ReferenceFrame* frame;
+    };
+
+    using Command = std::variant<ProcessPhase, FinishPhase, ProcessFrame, FinishFrame>;
+
+    class CommandProcessor
+    {
+    public:
+        explicit CommandProcessor(TimelineValidator& validator) : m_validator(validator) {}
+
+        bool operator()(const ProcessPhase&) const;
+        bool operator()(const FinishPhase&) const;
+        bool operator()(const ProcessFrame&) const;
+        bool operator()(const FinishFrame&) const;
+
+    private:
+        TimelineValidator& m_validator;
+    };
+
+    class FrameProcessVisitor final : public FrameVisitor
+    {
+    public:
+        explicit FrameProcessVisitor(TimelineValidator& validator) : m_validator(validator) {}
+
+        void visitPosition(const Selection& sel) override;
+        void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) override;
+        void visitReferenceFrame(const ReferenceFrame*) override;
+
+        bool status() const noexcept { return m_status; }
+    private:
+        TimelineValidator& m_validator;
+        bool m_status{ true };
+    };
+
+    class FrameFinishVisitor final : public FrameVisitor
+    {
+    public:
+        explicit FrameFinishVisitor(TimelineValidator& validator) : m_validator(validator) {}
+
+        void visitPosition(const Selection& sel) override;
+        void visitBodyFrame(const Body* body, std::optional<double> epoch = std::nullopt) override;
+        void visitReferenceFrame(const ReferenceFrame*) override;
+
+        int maxDepth() const noexcept { return m_maxDepth; }
+
+    private:
+        TimelineValidator& m_validator;
+        int m_maxDepth{ 0 };
+    };
+
+    static const Body* getBody(const Selection&);
+    const Timeline* getTimeline(const Body*) const;
+    int phaseDepth(const TimelinePhase*) const;
+    int frameDepth(const ReferenceFrame*) const;
+
+    const Body* m_testBody;
+    const Timeline& m_testTimeline;
+    std::vector<PhaseStatus> m_phases;
+    std::vector<std::pair<const ReferenceFrame*, int>> m_frames;
+    std::vector<Command> m_commands;
+};
+
+bool
+TimelineValidator::validate(bool validateOrbit, bool validateBody)
+{
+    if (!validateOrbit && !validateBody)
+        return true;
+
+    // Validate that the timeline does not lead to circular references
+    // NOTE: the check for maximum depth can be circumvented by using
+    // Modify directives - to fix this we would need to keep track of
+    // all active reference frames that reference the current body and
+    // track those as well.
+    for (unsigned int i = 0, nPhases = m_testTimeline.phaseCount(); i < nPhases; ++i)
+    {
+        const TimelinePhase* phase = &m_testTimeline.getPhase(i);
+        if (validateBody)
+            m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Body });
+        if (validateOrbit)
+            m_commands.emplace_back(ProcessPhase{ phase, FrameUsage::Position });
+    }
+
+    CommandProcessor processor(*this);
+    while (!m_commands.empty())
+    {
+        auto command = m_commands.back();
+        m_commands.pop_back();
+        if (!std::visit(processor, command))
+            return false;
+    }
+
+    return true;
 }
 
+const Body*
+TimelineValidator::getBody(const Selection& sel)
+{
+    if (const Body* body = sel.body(); body)
+        return body;
+    if (const Location* location = sel.location(); location)
+        return sel.location()->getParentBody();
+    return nullptr;
+}
 
+const Timeline*
+TimelineValidator::getTimeline(const Body* body) const
+{
+    return body == m_testBody
+        ? &m_testTimeline
+        : body->getTimeline();
+}
+
+int
+TimelineValidator::phaseDepth(const TimelinePhase* phase) const
+{
+    const auto phaseBegin = m_phases.begin();
+    const auto phaseEnd = m_phases.end();
+    int maxTreeDepth = 0;
+    if (const Body* parentBody = phase->getFrameTree()->getOwner().body(); parentBody)
+    {
+        const Timeline* parentTimeline = getTimeline(parentBody);
+        for (unsigned int i = 0, nPhases = parentTimeline->phaseCount(); i < nPhases; ++i)
+        {
+            const TimelinePhase& parentPhase = parentTimeline->getPhase(i);
+            if (parentPhase.startTime() >= phase->endTime() || parentPhase.endTime() <= phase->startTime())
+                continue;
+
+            auto phaseIt = std::find_if(phaseBegin, phaseEnd,
+                                        [&parentPhase](const auto& p) { return p.phase == &parentPhase; });
+            if (phaseIt == phaseEnd || phaseIt->positionDepth < 0)
+                return -1;
+
+            if (phaseIt->positionDepth > maxTreeDepth)
+                maxTreeDepth = phaseIt->positionDepth;
+        }
+    }
+
+    return maxTreeDepth;
+}
+
+int
+TimelineValidator::frameDepth(const ReferenceFrame* frame) const
+{
+    const auto end = m_frames.end();
+    auto it = std::find_if(m_frames.begin(), end,
+                           [frame](const auto& f) { return f.first == frame; });
+    if (it == end)
+        return -1;
+
+    return it->second;
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const ProcessPhase& command) const
+{
+    const TimelinePhase* phase = command.phase;
+    const auto end = m_validator.m_phases.end();
+    auto it = std::find_if(m_validator.m_phases.begin(), end,
+                           [phase](const auto& p) { return p.phase == phase; });
+
+    int PhaseStatus::*depthField;
+    const ReferenceFrame::SharedConstPtr& (TimelinePhase::*getFrame)() const;
+    switch (command.usage)
+    {
+    case FrameUsage::Position:
+        depthField = &PhaseStatus::positionDepth;
+        getFrame = &TimelinePhase::orbitFrame;
+        break;
+
+    case FrameUsage::Body:
+        depthField = &PhaseStatus::bodyDepth;
+        getFrame = &TimelinePhase::bodyFrame;
+        break;
+
+    default:
+        assert(0);
+        return false;
+    }
+
+    if (it == end)
+        m_validator.m_phases.emplace_back(phase).*depthField = TimelineValidator::Invalid;
+    else if (int& depth = (*it).*depthField; depth >= 0)
+        return true;
+    else if (depth == TimelineValidator::Invalid)
+        return false;
+    else
+        depth = TimelineValidator::Invalid;
+
+    m_validator.m_commands.emplace_back(FinishPhase { phase, command.usage });
+    m_validator.m_commands.emplace_back(ProcessFrame { (phase->*getFrame)().get() });
+
+    if (command.usage == FrameUsage::Position)
+    {
+        const Body* parentBody = phase->getFrameTree()->getOwner().body();
+        if (!parentBody)
+            return true;
+
+        const Timeline* parentTimeline = m_validator.getTimeline(parentBody);
+        for (unsigned int i = 0, nPhases = parentTimeline->phaseCount(); i < nPhases; ++i)
+        {
+            const TimelinePhase& parentPhase = parentTimeline->getPhase(i);
+            if (parentPhase.startTime() < phase->endTime() && parentPhase.endTime() > phase->startTime())
+                m_validator.m_commands.emplace_back(ProcessPhase { &parentPhase });
+        }
+    }
+
+    return true;
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const FinishPhase& command) const
+{
+    const TimelinePhase* phase = command.phase;
+    const auto end = m_validator.m_phases.end();
+    auto it = std::find_if(m_validator.m_phases.begin(), end,
+                           [phase](const auto& p) { return p.phase == phase; });
+    if (it == end)
+    {
+        assert(0);
+        return false;
+    }
+
+    int PhaseStatus::*depthField;
+    const ReferenceFrame::SharedConstPtr& (TimelinePhase::*getFrame)() const;
+    switch (command.usage)
+    {
+    case FrameUsage::Position:
+        depthField = &PhaseStatus::positionDepth;
+        getFrame = &TimelinePhase::orbitFrame;
+        break;
+
+    case FrameUsage::Body:
+        depthField = &PhaseStatus::bodyDepth;
+        getFrame = &TimelinePhase::bodyFrame;
+        break;
+
+    default:
+        assert(0);
+        return false;
+    }
+
+    int maxDepth = m_validator.frameDepth((phase->*getFrame)().get());
+    if (maxDepth < 0)
+    {
+        assert(0);
+        return false;
+    }
+
+    if (command.usage == FrameUsage::Position)
+    {
+        if (int orbitDepth = m_validator.phaseDepth(phase); orbitDepth >= 0)
+        {
+            maxDepth += orbitDepth;
+        }
+        else
+        {
+            assert(0);
+            return false;
+        }
+    }
+
+    (*it).*depthField = maxDepth + 1;
+    return maxDepth < MaxFrameDepth;
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const ProcessFrame& command) const
+{
+    const ReferenceFrame* frame = command.frame;
+    if (const auto end = m_validator.m_frames.cend(),
+        it = std::find_if(m_validator.m_frames.cbegin(), end,
+                          [frame](const auto& f) { return f.first == frame; });
+        it != end)
+    {
+        return it->second >= 0;
+    }
+
+    m_validator.m_frames.emplace_back(frame, -1);
+    m_validator.m_commands.emplace_back(FinishFrame { frame });
+    FrameProcessVisitor visitor(m_validator);
+    frame->visitChildren(visitor);
+    return visitor.status();
+}
+
+bool
+TimelineValidator::CommandProcessor::operator()(const FinishFrame& command) const
+{
+    const ReferenceFrame* frame = command.frame;
+    const auto end = m_validator.m_frames.end();
+    auto it = std::find_if(m_validator.m_frames.begin(), end,
+                           [frame](const auto& f) { return f.first == frame; });
+    if (it == end)
+    {
+        assert(0);
+        return false;
+    }
+
+    FrameFinishVisitor visitor(m_validator);
+    frame->visitChildren(visitor);
+    int depth = visitor.maxDepth();
+    if (depth < 0)
+    {
+        assert(0);
+        return false;
+    }
+
+    it->second = depth + 1;
+    return true;
+}
+
+void
+TimelineValidator::FrameProcessVisitor::visitPosition(const Selection& sel)
+{
+    const Body* body = TimelineValidator::getBody(sel);
+    if (!body)
+        return;
+
+    const Timeline* timeline = m_validator.getTimeline(body);
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+        m_validator.m_commands.emplace_back(ProcessPhase { &timeline->getPhase(i), FrameUsage::Position });
+}
+
+void
+TimelineValidator::FrameProcessVisitor::visitBodyFrame(const Body* body, std::optional<double> t)
+{
+    const Timeline* timeline = m_validator.getTimeline(body);
+    if (t.has_value())
+    {
+        m_validator.m_commands.emplace_back(ProcessFrame { timeline->findPhase(*t).bodyFrame().get() });
+        return;
+    }
+
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+        m_validator.m_commands.emplace_back(ProcessFrame { timeline->getPhase(i).bodyFrame().get() });
+}
+
+void
+TimelineValidator::FrameProcessVisitor::visitReferenceFrame(const ReferenceFrame* frame)
+{
+    m_validator.m_commands.emplace_back(ProcessFrame { frame });
+}
+
+void
+TimelineValidator::FrameFinishVisitor::visitPosition(const Selection& sel)
+{
+    if (m_maxDepth < 0)
+        return;
+
+    const Body* body = TimelineValidator::getBody(sel);
+    if (!body)
+        return;
+
+    const Timeline* timeline = m_validator.getTimeline(body);
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+    {
+        int phaseDepth = m_validator.phaseDepth(&timeline->getPhase(i));
+        if (phaseDepth < 0)
+        {
+            assert(0);
+            m_maxDepth = -1;
+            return;
+        }
+
+        if (phaseDepth > m_maxDepth)
+            m_maxDepth = phaseDepth;
+    }
+}
+
+void
+TimelineValidator::FrameFinishVisitor::visitBodyFrame(const Body* body, std::optional<double> t)
+{
+    if (m_maxDepth < 0)
+        return;
+
+    const Timeline* timeline = m_validator.getTimeline(body);
+    if (t.has_value())
+    {
+        int frameDepth = m_validator.frameDepth(timeline->findPhase(*t).bodyFrame().get());
+        if (frameDepth < 0)
+        {
+            assert(0);
+            m_maxDepth = -1;
+            return;
+        }
+
+        if (frameDepth > m_maxDepth)
+            m_maxDepth = frameDepth;
+        return;
+    }
+
+    for (unsigned int i = 0, nPhases = timeline->phaseCount(); i < nPhases; ++i)
+    {
+        int frameDepth = m_validator.frameDepth(timeline->getPhase(i).bodyFrame().get());
+        if (frameDepth < 0)
+        {
+            assert(0);
+            m_maxDepth = -1;
+            return;
+        }
+
+        if (frameDepth > m_maxDepth)
+            m_maxDepth = frameDepth;
+    }
+}
+
+void
+TimelineValidator::FrameFinishVisitor::visitReferenceFrame(const ReferenceFrame* frame)
+{
+    if (m_maxDepth < 0)
+        return;
+
+    int depth = m_validator.frameDepth(frame);
+    if (depth < 0)
+    {
+        assert(0);
+        m_maxDepth = -1;
+    }
+
+    if (depth > m_maxDepth)
+        m_maxDepth = depth;
+}
 
 std::unique_ptr<Location>
 CreateLocation(const AssociativeArray* locationData,
@@ -268,18 +739,16 @@ Selection GetParentObject(PlanetarySystem* system)
 }
 
 std::shared_ptr<const ephem::Orbit>
-CreateLongLat(const AssociativeArray& planetData, ReferenceFrame::SharedConstPtr& frame)
+CreateLongLat(const AssociativeArray& planetData, Body* centralBody, FrameId& frame, FrameCache& frameCache)
 {
-    // LongLat will make an object fixed relative to the surface of its center
-    // object. This is done by creating an orbit with a period equal to the
-    // rotation rate of the parent object. A body-fixed reference frame is a
-    // much better way to accomplish this.
-    auto longlat = planetData.getSphericalTuple("LongLat");
-    if (!longlat.has_value())
+    if (!centralBody)
         return nullptr;
 
-    Body* centralBody = frame->getCenter().body();
-    if (!centralBody)
+    // LongLat will make an object fixed relative to the surface of its center
+    // object. This is done by creating an orbit with a period equal to the
+    // rotation rate of the parent object.
+    auto longlat = planetData.getSphericalTuple("LongLat");
+    if (!longlat.has_value())
         return nullptr;
 
 #if 0 // TODO: This should be enabled after #542 is fixed
@@ -288,18 +757,20 @@ CreateLongLat(const AssociativeArray& planetData, ReferenceFrame::SharedConstPtr
     Eigen::Vector3d pos = centralBody->planetocentricToCartesian(180.0 + longlat->x(), longlat->y(), longlat->z());
 #endif
 
-    frame = std::make_shared<BodyFixedFrame>(centralBody, centralBody);
+    frame = frameCache.getFrameId(BodyFixedFrameKey(centralBody));
     double period = centralBody->getRotationModel(0.0)->getPeriod(); // backwards compatibility use t=0
     return std::make_shared<ephem::FixedOrbit>(pos, period);
 }
 
 std::unique_ptr<TimelinePhase>
 CreateTimelinePhase(Body* body,
+                    Selection parent,
                     Universe& universe,
                     const AssociativeArray* phaseData,
                     const std::filesystem::path& path,
-                    const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
-                    const ReferenceFrame::SharedConstPtr& defaultBodyFrame,
+                    FrameId defaultOrbitFrame,
+                    FrameId defaultBodyFrame,
+                    FrameCache& frameCache,
                     bool isFirstPhase,
                     bool isLastPhase,
                     double previousPhaseEnd)
@@ -326,15 +797,13 @@ CreateTimelinePhase(Body* body,
     }
 
     // Get the orbit reference frame.
-    ReferenceFrame::SharedConstPtr orbitFrame;
-    const Value* frameValue = phaseData->getValue("OrbitFrame");
-    if (frameValue != nullptr)
+    FrameId orbitFrame;
+    if (const Value* frameValue = phaseData->getValue("OrbitFrame"); frameValue)
     {
-        orbitFrame = CreateReferenceFrame(universe, frameValue, defaultOrbitFrame->getCenter(), body);
-        if (orbitFrame == nullptr)
-        {
+        if (auto frame = CreateOrbitFrame(universe, frameValue, parent, body, frameCache); frame.has_value())
+            orbitFrame = *frame;
+        else
             return nullptr;
-        }
     }
     else
     {
@@ -343,15 +812,13 @@ CreateTimelinePhase(Body* body,
     }
 
     // Get the body reference frame
-    ReferenceFrame::SharedConstPtr bodyFrame;
-    const Value* bodyFrameValue = phaseData->getValue("BodyFrame");
-    if (bodyFrameValue != nullptr)
+    FrameId bodyFrame;
+    if (const Value* bodyFrameValue = phaseData->getValue("BodyFrame"); bodyFrameValue)
     {
-        bodyFrame = CreateReferenceFrame(universe, bodyFrameValue, defaultBodyFrame->getCenter(), body);
-        if (bodyFrame == nullptr)
-        {
+        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body, frameCache); frame.has_value())
+            bodyFrame = *frame;
+        else
             return nullptr;
-        }
     }
     else
     {
@@ -361,12 +828,12 @@ CreateTimelinePhase(Body* body,
 
     // Use planet units (AU for semimajor axis) if the center of the orbit
     // reference frame is a star.
-    bool usePlanetUnits = orbitFrame->getCenter().star() != nullptr;
+    bool usePlanetUnits = parent.star() != nullptr;
 
     // Get the orbit
-    auto orbit = CreateOrbit(orbitFrame->getCenter(), phaseData, path, usePlanetUnits);
+    auto orbit = CreateOrbit(parent, phaseData, path, usePlanetUnits);
     if (!orbit)
-        orbit = CreateLongLat(*phaseData, orbitFrame);
+        orbit = CreateLongLat(*phaseData, parent.body(), orbitFrame, frameCache);
 
     if (!orbit)
     {
@@ -388,10 +855,11 @@ CreateTimelinePhase(Body* body,
 
     auto phase = TimelinePhase::CreateTimelinePhase(universe,
                                                     body,
+                                                    parent,
                                                     beginning, ending,
-                                                    orbitFrame,
+                                                    frameCache.getFrame(orbitFrame),
                                                     orbit,
-                                                    bodyFrame,
+                                                    frameCache.getFrame(bodyFrame),
                                                     rotationModel);
 
     // Frame ownership transfered to phase; release local references
@@ -400,12 +868,14 @@ CreateTimelinePhase(Body* body,
 
 
 std::unique_ptr<Timeline>
-CreateTimelineFromArray(Body* body,
+CreateTimelineFromArray(Body* body, //NOSONAR
+                        Selection parent,
                         Universe& universe,
                         const ValueArray* timelineArray,
                         const std::filesystem::path& path,
-                        const ReferenceFrame::SharedConstPtr& defaultOrbitFrame,
-                        const ReferenceFrame::SharedConstPtr& defaultBodyFrame)
+                        FrameId defaultOrbitFrame,
+                        FrameId defaultBodyFrame,
+                        FrameCache& frameCache)
 {
     auto timeline = std::make_unique<Timeline>();
     double previousEnding = -std::numeric_limits<double>::infinity();
@@ -429,10 +899,11 @@ CreateTimelineFromArray(Body* body,
         bool isFirstPhase = iter == timelineArray->begin();
         bool isLastPhase =  iter == finalIter;
 
-        auto phase = CreateTimelinePhase(body, universe, phaseData,
+        auto phase = CreateTimelinePhase(body, parent, universe, phaseData,
                                          path,
                                          defaultOrbitFrame,
                                          defaultBodyFrame,
+                                         frameCache,
                                          isFirstPhase, isLastPhase, previousEnding);
         if (phase == nullptr)
         {
@@ -447,75 +918,30 @@ CreateTimelineFromArray(Body* body,
         timeline->appendPhase(std::move(phase));
     }
 
+    if (!TimelineValidator(body, *timeline).validate())
+    {
+        GetLogger()->error("Frame depth limit exceeded for '{}'.\n", body->getName());
+        return nullptr;
+    }
+
     return timeline;
 }
 
-
-bool CreateTimeline(Body* body,
-                    PlanetarySystem* system,
-                    Universe& universe,
-                    const AssociativeArray* planetData,
-                    const std::filesystem::path& path,
-                    DataDisposition disposition,
-                    BodyType bodyType)
+bool
+CreateLegacyTimeline(Body* body, //NOSONAR
+                     Selection parentObject,
+                     Universe& universe,
+                     const AssociativeArray* planetData,
+                     const std::filesystem::path& path,
+                     DataDisposition disposition,
+                     FrameId defaultOrbitFrame,
+                     FrameId defaultBodyFrame,
+                     FrameCache& frameCache)
 {
-    FrameTree* parentFrameTree = nullptr;
-    Selection parentObject = GetParentObject(system);
-    bool orbitsPlanet = false;
-    if (parentObject.body())
-    {
-        parentFrameTree = parentObject.body()->getOrCreateFrameTree();
-        //orbitsPlanet = true;
-    }
-    else if (parentObject.star())
-    {
-        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(parentObject.star());
-        parentFrameTree = solarSystem->getFrameTree();
-    }
-    else
-    {
-        // Bad orbit barycenter specified
-        return false;
-    }
-
-    ReferenceFrame::SharedConstPtr defaultOrbitFrame;
-    ReferenceFrame::SharedConstPtr defaultBodyFrame;
-    if (bodyType == SurfaceObject)
-    {
-        defaultOrbitFrame = std::make_shared<BodyFixedFrame>(parentObject, parentObject);
-        defaultBodyFrame = CreateTopocentricFrame(parentObject, parentObject, Selection(body));
-    }
-    else
-    {
-        defaultOrbitFrame = parentFrameTree->getDefaultReferenceFrame();
-        defaultBodyFrame = parentFrameTree->getDefaultReferenceFrame();
-    }
-
-    // If there's an explicit timeline definition, parse that. Otherwise, we'll do
-    // things the old way.
-    const Value* value = planetData->getValue("Timeline");
-    if (value != nullptr)
-    {
-        const ValueArray* timelineArray = value->getArray();
-        if (timelineArray == nullptr)
-        {
-            GetLogger()->error("Error: Timeline must be an array\n");
-            return false;
-        }
-
-        std::unique_ptr<Timeline> timeline = CreateTimelineFromArray(body, universe, timelineArray, path,
-                                                                     defaultOrbitFrame, defaultBodyFrame);
-
-        if (!timeline)
-            return false;
-
-        body->setTimeline(std::move(timeline));
-        return true;
-    }
-
     // Information required for the object timeline.
-    ReferenceFrame::SharedConstPtr orbitFrame;
-    ReferenceFrame::SharedConstPtr bodyFrame;
+    using FrameDetails = std::variant<FrameId, ReferenceFrame::SharedConstPtr>;
+    FrameDetails orbitFrame = defaultOrbitFrame;
+    FrameDetails bodyFrame = defaultBodyFrame;
     std::shared_ptr<const ephem::Orbit> orbit = nullptr;
     std::shared_ptr<const ephem::RotationModel> rotationModel = nullptr;
     double beginning  = -std::numeric_limits<double>::infinity();
@@ -537,24 +963,23 @@ bool CreateTimeline(Body* body,
         if (timeline->phaseCount() == 1)
         {
             const auto& phase = timeline->getPhase(0);
-            orbitFrame    = phase.orbitFrame();
-            bodyFrame     = phase.bodyFrame();
-            orbit         = phase.orbit();
-            rotationModel = phase.rotationModel();
-            beginning     = phase.startTime();
-            ending        = phase.endTime();
+            orbitFrame = phase.orbitFrame();
+            bodyFrame = phase.bodyFrame();
+            parentObject      = phase.getFrameTree()->getOwner();
+            orbit             = phase.orbit();
+            rotationModel     = phase.rotationModel();
+            beginning         = phase.startTime();
+            ending            = phase.endTime();
         }
     }
 
     // Get the object's orbit reference frame.
     bool newOrbitFrame = false;
-    const Value* frameValue = planetData->getValue("OrbitFrame");
-    if (frameValue != nullptr)
+    if (const Value* frameValue = planetData->getValue("OrbitFrame"); frameValue)
     {
-        auto frame = CreateReferenceFrame(universe, frameValue, parentObject, body);
-        if (frame != nullptr)
+        if (auto frame = CreateOrbitFrame(universe, frameValue, parentObject, body, frameCache); frame.has_value())
         {
-            orbitFrame = frame;
+            orbitFrame = *frame;
             newOrbitFrame = true;
             overrideOldTimeline = true;
         }
@@ -562,41 +987,39 @@ bool CreateTimeline(Body* body,
 
     // Get the object's body frame.
     bool newBodyFrame = false;
-    const Value* bodyFrameValue = planetData->getValue("BodyFrame");
-    if (bodyFrameValue != nullptr)
+    if (const Value* bodyFrameValue = planetData->getValue("BodyFrame"); bodyFrameValue)
     {
-        auto frame = CreateReferenceFrame(universe, bodyFrameValue, parentObject, body);
-        if (frame != nullptr)
+        if (auto frame = CreateReferenceFrame(universe, bodyFrameValue, body, frameCache); frame.has_value())
         {
-            bodyFrame = frame;
+            bodyFrame = *frame;
             newBodyFrame = true;
             overrideOldTimeline = true;
         }
     }
 
-    // If no orbit or body frame was specified, use the default ones
-    if (orbitFrame == nullptr)
-        orbitFrame = defaultOrbitFrame;
-    if (bodyFrame == nullptr)
-        bodyFrame = defaultBodyFrame;
-
     // If the center of the is a star, orbital element units are
     // in AU; otherwise, use kilometers.
-    orbitsPlanet = orbitFrame->getCenter().star() == nullptr;
+    bool orbitsPlanet = parentObject.star() == nullptr;
 
-    auto newOrbit = CreateOrbit(orbitFrame->getCenter(), planetData, path, !orbitsPlanet);
+    auto newOrbit = CreateOrbit(parentObject, planetData, path, !orbitsPlanet);
     if (!newOrbit)
-        newOrbit = CreateLongLat(*planetData, orbitFrame);
-    if (newOrbit == nullptr && orbit == nullptr)
+    {
+        FrameId longLatFrame;
+        newOrbit = CreateLongLat(*planetData, parentObject.body(), longLatFrame, frameCache);
+        if (newOrbit)
+            orbitFrame = longLatFrame;
+    }
+
+    if (!newOrbit && !orbit)
     {
         if (body->getTimeline() && disposition == DataDisposition::Modify)
         {
             // The object definition is modifying an existing object with a multiple phase
             // timeline, but no orbit definition was given. This can happen for completely
-            // sensible reasons, such a Modify definition that just changes visual properties.
-            // Or, the definition may try to change other timeline phase properties such as
-            // the orbit frame, but without providing an orbit. In both cases, we'll just
-            // leave the original timeline alone.
+            // sensible reasons, such as a Modify definition that just changes visual
+            // properties. Or, the definition may try to change other timeline phase
+            // properties such as the orbit frame, but without providing an orbit. In both
+            // cases, we'll just leave the original timeline alone.
             return true;
         }
         else
@@ -607,7 +1030,7 @@ bool CreateTimeline(Body* body,
     }
 
     // If a new orbit was given, override any old orbit
-    if (newOrbit != nullptr)
+    if (newOrbit)
     {
         orbit = newOrbit;
         overrideOldTimeline = true;
@@ -642,57 +1065,119 @@ bool CreateTimeline(Body* body,
     // Something went wrong if the disposition isn't modify and no timeline
     // is to be created.
     assert(disposition == DataDisposition::Modify || overrideOldTimeline);
+    if (!overrideOldTimeline)
+        return true;
 
-    if (overrideOldTimeline)
+    if (beginning >= ending)
     {
-        if (beginning >= ending)
-        {
-            GetLogger()->error("Beginning time must be before Ending time.\n");
-            return false;
-        }
-
-        // We finally have an orbit, rotation model, frames, and time range. Create
-        // the object timeline.
-        auto phase = TimelinePhase::CreateTimelinePhase(universe,
-                                                        body,
-                                                        beginning, ending,
-                                                        orbitFrame,
-                                                        orbit,
-                                                        bodyFrame,
-                                                        rotationModel);
-
-        // We've already checked that beginning < ending; nothing else should go
-        // wrong during the creation of a TimelinePhase.
-        assert(phase != nullptr);
-        if (phase == nullptr)
-        {
-            GetLogger()->error("Internal error creating TimelinePhase.\n");
-            return false;
-        }
-
-        auto timeline = std::make_unique<Timeline>();
-        timeline->appendPhase(std::move(phase));
-
-        body->setTimeline(std::move(timeline));
-
-        // Check for circular references in frames; this can only be done once the timeline
-        // has actually been set.
-        // TIMELINE-TODO: This check is not comprehensive; it won't find recursion in
-        // multiphase timelines.
-        if (newOrbitFrame && isFrameCircular(*body->getOrbitFrame(0.0)))
-        {
-            GetLogger()->error("Orbit frame for '{}' is nested too deep (probably circular)\n", body->getName());
-            return false;
-        }
-
-        if (newBodyFrame && isFrameCircular(*body->getBodyFrame(0.0)))
-        {
-            GetLogger()->error("Body frame for '{}' is nested too deep (probably circular)\n", body->getName());
-            return false;
-        }
+        GetLogger()->error("Beginning time must be before Ending time.\n");
+        return false;
     }
 
+    // We finally have an orbit, rotation model, frames, and time range. Create
+    // the object timeline.
+    class FrameDetailsVisitor
+    {
+    public:
+        explicit FrameDetailsVisitor(const FrameCache& fc) : m_frameCache(fc) {}
+
+        ReferenceFrame::SharedConstPtr operator()(FrameId id) const { return m_frameCache.getFrame(id); }
+        ReferenceFrame::SharedConstPtr operator()(const ReferenceFrame::SharedConstPtr& ptr) const { return ptr; }
+
+    private:
+        const FrameCache& m_frameCache;
+    };
+
+    FrameDetailsVisitor visitor(frameCache);
+    auto phase = TimelinePhase::CreateTimelinePhase(universe,
+                                                    body, parentObject,
+                                                    beginning, ending,
+                                                    std::visit(visitor, orbitFrame),
+                                                    orbit,
+                                                    std::visit(visitor, bodyFrame),
+                                                    rotationModel);
+
+    // We've already checked that beginning < ending; nothing else should go
+    // wrong during the creation of a TimelinePhase.
+    assert(phase != nullptr);
+    if (phase == nullptr)
+    {
+        GetLogger()->error("Internal error creating TimelinePhase.\n");
+        return false;
+    }
+
+    auto timeline = std::make_unique<Timeline>();
+    timeline->appendPhase(std::move(phase));
+
+    if (!TimelineValidator(body, *timeline).validate(newOrbitFrame, newBodyFrame))
+    {
+        GetLogger()->error("Frame depth limit exceeded for '{}'.\n", body->getName());
+        return false;
+    }
+
+    body->setTimeline(std::move(timeline));
     return true;
+}
+
+
+bool CreateTimeline(Body* body, //NOSONAR
+                    PlanetarySystem* system,
+                    Universe& universe,
+                    const AssociativeArray* planetData,
+                    const std::filesystem::path& path,
+                    DataDisposition disposition,
+                    BodyType bodyType,
+                    FrameCache& frameCache)
+{
+    Selection parentObject = GetParentObject(system);
+    if (SelectionType selType = parentObject.getType();
+        selType != SelectionType::Body && selType != SelectionType::Star)
+    {
+        // Bad orbit barycenter specified
+        return false;
+    }
+
+    FrameId defaultOrbitFrame;
+    FrameId defaultBodyFrame;
+    if (bodyType == SurfaceObject)
+    {
+        defaultOrbitFrame = frameCache.getFrameId(BodyFixedFrameKey(parentObject));
+        defaultBodyFrame = CreateTopocentricFrame(parentObject, body, frameCache);
+    }
+    else
+    {
+        defaultOrbitFrame = parentObject.getType() == SelectionType::Body
+            ? frameCache.getFrameId(BodyMeanEquatorFrameKey(parentObject))
+            : frameCache.getFrameId(SimpleFrameKey::J2000Ecliptic);
+        defaultBodyFrame = defaultOrbitFrame;
+    }
+
+    if (const Value* value = planetData->getValue("Timeline"); value)
+    {
+        // If there's an explicit timeline definition, parse that.
+        const ValueArray* timelineArray = value->getArray();
+        if (timelineArray == nullptr)
+        {
+            GetLogger()->error("Error: Timeline must be an array\n");
+            return false;
+        }
+
+        std::unique_ptr<Timeline> timeline = CreateTimelineFromArray(body, parentObject, universe,
+                                                                     timelineArray, path,
+                                                                     defaultOrbitFrame, defaultBodyFrame,
+                                                                     frameCache);
+
+        if (!timeline)
+            return false;
+
+        body->setTimeline(std::move(timeline));
+        return true;
+    }
+
+    return CreateLegacyTimeline(body, parentObject, universe,
+                                planetData, path, disposition,
+                                defaultOrbitFrame, defaultBodyFrame,
+                                frameCache);
 }
 
 void
@@ -863,14 +1348,15 @@ Body* CreateBody(const std::string& name,
                  DataDisposition disposition,
                  BodyType bodyType,
                  engine::GeometryPaths& geometryPaths,
-                 engine::TexturePaths& texturePaths)
+                 engine::TexturePaths& texturePaths,
+                 FrameCache& frameCache)
 {
     Body* body = nullptr;
 
     if (disposition == DataDisposition::Modify || disposition == DataDisposition::Replace)
         body = existingBody;
 
-    if (body == nullptr)
+    if (!body)
     {
         body = system->addBody(name);
         // If the body doesn't exist, always treat the disposition as 'Add'
@@ -884,7 +1370,7 @@ Body* CreateBody(const std::string& name,
         }
     }
 
-    if (!CreateTimeline(body, system, universe, planetData, path, disposition, bodyType))
+    if (!CreateTimeline(body, system, universe, planetData, path, disposition, bodyType, frameCache))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1095,13 +1581,14 @@ Body* CreateBody(const std::string& name,
 
 
 // Create a barycenter object using the values from a hash
-Body* CreateReferencePoint(const std::string& name,
+Body* CreateReferencePoint(const std::string& name, //NOSONAR
                            PlanetarySystem* system,
                            Universe& universe,
                            Body* existingBody,
                            const AssociativeArray* refPointData,
                            const std::filesystem::path& path,
-                           DataDisposition disposition)
+                           DataDisposition disposition,
+                           FrameCache& frameCache)
 {
     Body* body = nullptr;
     if (disposition == DataDisposition::Modify || disposition == DataDisposition::Replace)
@@ -1121,7 +1608,7 @@ Body* CreateReferencePoint(const std::string& name,
     body->setVisible(false);
     body->setClickable(false);
 
-    if (!CreateTimeline(body, system, universe, refPointData, path, disposition, ReferencePoint))
+    if (!CreateTimeline(body, system, universe, refPointData, path, disposition, ReferencePoint, frameCache))
     {
         // No valid timeline given; give up.
         if (body != existingBody)
@@ -1155,7 +1642,8 @@ bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const std::filesystem::path& directory,
                             engine::GeometryPaths& geometryPaths,
-                            engine::TexturePaths& texturePaths)
+                            engine::TexturePaths& texturePaths,
+                            FrameCache& frameCache)
 {
     Tokenizer tokenizer(in);
     util::Parser parser(&tokenizer);
@@ -1297,16 +1785,30 @@ bool LoadSolarSystemObjects(std::istream& in,
 
                 Body* body;
                 if (bodyType == ReferencePoint)
-                    body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition);
+                {
+                    body = CreateReferencePoint(primaryName, parentSystem, universe, existingBody,
+                                                objectData, directory, disposition, frameCache);
+                }
                 else
-                    body = CreateBody(primaryName, parentSystem, universe, existingBody, objectData, directory, disposition, bodyType, geometryPaths, texturePaths);
+                {
+                    body = CreateBody(primaryName, parentSystem, universe, existingBody,
+                                      objectData, directory, disposition, bodyType,
+                                      geometryPaths, texturePaths, frameCache);
+                }
 
-                if (body != nullptr)
+                if (body)
                 {
                     UserCategory::loadCategories(body, *objectData, disposition, directory.string());
                     if (disposition == DataDisposition::Add)
                         for (const auto& name : names)
                             body->addAlias(name);
+
+                    frameCache.commit();
+                }
+                else
+                {
+                    // Remove any frames with dangling pointers
+                    frameCache.rollback();
                 }
             }
         }

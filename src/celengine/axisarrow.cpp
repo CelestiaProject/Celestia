@@ -24,6 +24,7 @@
 #include "axisarrow.h"
 #include "body.h"
 #include "frame.h"
+#include "frametree.h"
 #include "render.h"
 #include "selection.h"
 #include "shadermanager.h"
@@ -243,20 +244,10 @@ SunDirectionArrow::SunDirectionArrow(const Body& _body) :
 Eigen::Vector3d
 SunDirectionArrow::getDirection(double tdb) const
 {
-    const Body* b = &body;
-    const Star* sun = nullptr;
-    while (b != nullptr)
-    {
-        Selection center = b->getOrbitFrame(tdb)->getCenter();
-        if (center.star() != nullptr)
-            sun = center.star();
-        b = center.body();
-    }
-
-    if (sun != nullptr)
-        return sun->getPosition(tdb).offsetFromKm(body.getPosition(tdb));
-
-    return Eigen::Vector3d::Zero();
+    const Star* sun = body.getTimeline()->findPhase(tdb).getFrameTree()->getRoot(tdb);
+    return sun
+        ? sun->getPosition(tdb).offsetFromKm(body.getPosition(tdb))
+        : Eigen::Vector3d::Zero();
 }
 
 std::string_view

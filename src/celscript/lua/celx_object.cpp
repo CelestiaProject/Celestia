@@ -16,6 +16,7 @@
 #include <celengine/atmosphere.h>
 #include <celengine/axisarrow.h>
 #include <celengine/body.h>
+#include <celengine/frametree.h>
 #include <celengine/location.h>
 #include <celengine/planetgrid.h>
 #include <celengine/timeline.h>
@@ -1138,8 +1139,8 @@ static int object_orbitframe(lua_State* l)
     }
     else
     {
-        const auto& f = sel->body()->getOrbitFrame(t);
-        celx.newFrame(ObserverFrame(f));
+        const auto& phase = sel->body()->getTimeline()->findPhase(t);
+        celx.newFrame(ObserverFrame(phase.getFrameTree()->getOwner(), phase.orbitFrame()));
     }
 
     return 1;
@@ -1180,7 +1181,7 @@ static int object_bodyframe(lua_State* l)
     else
     {
         const auto& f = sel->body()->getBodyFrame(t);
-        celx.newFrame(ObserverFrame(f));
+        celx.newFrame(ObserverFrame(sel->body(), f));
     }
 
     return 1;

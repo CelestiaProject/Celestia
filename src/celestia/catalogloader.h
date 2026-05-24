@@ -1,4 +1,4 @@
-// catalogloader.h
+// catalogloader.cpp
 //
 // Copyright (C) 2001-2023, the Celestia Development Team
 //
@@ -9,16 +9,14 @@
 
 #pragma once
 
-#include <algorithm>
-#include <fstream>
-#include <string>
+#include <iosfwd>
+#include <filesystem>
+#include <string_view>
 
-#include <celestia/progressnotifier.h>
 #include <celutil/array_view.h>
 #include <celutil/filetype.h>
-#include <celutil/fsutils.h>
-#include <celutil/gettext.h>
-#include <celutil/logger.h>
+
+class ProgressNotifier;
 
 namespace celestia
 {
@@ -28,90 +26,26 @@ class GeometryPaths;
 class TexturePaths;
 }
 
-template<class OBJDB> class CatalogLoader
+class CatalogLoader
 {
 public:
-    CatalogLoader(OBJDB* db,
-                  const std::string& typeDesc,
-                  const ContentType& contentType,
-                  ProgressNotifier* notifier,
-                  util::array_view<std::filesystem::path> skipPaths,
-                  engine::GeometryPaths& geometryPaths,
-                  engine::TexturePaths& texturePaths) :
-        m_objDB(db),
-        m_typeDesc(typeDesc),
-        m_contentType(contentType),
-        m_notifier(notifier),
-        m_skipPaths(skipPaths),
-        m_geometryPaths(&geometryPaths),
-        m_texturePaths(&texturePaths)
-    {
-    }
+    virtual ~CatalogLoader() = default;
 
-    bool load(std::istream &in, const std::filesystem::path &dir)
-    {
-        return m_objDB->load(in, dir);
-    }
+    virtual bool load(std::istream &in, const std::filesystem::path &dir) = 0;
 
-    void process(const std::filesystem::path &filePath, const std::filesystem::path &parentPath)
-    {
-        if (DetermineFileType(filePath) != m_contentType)
-            return;
+    void process(const std::filesystem::path &filePath, const std::filesystem::path &parentPath);
+    void loadExtras(util::array_view<std::filesystem::path> dirs);
 
-        if (std::find(std::begin(m_skipPaths), std::end(m_skipPaths), filePath)
-            != std::end(m_skipPaths))
-        {
-            util::GetLogger()->info(_("Skipping {} catalog: {}\n"), m_typeDesc, filePath);
-            return;
-        }
-        util::GetLogger()->info(_("Loading {} catalog: {}\n"), m_typeDesc, filePath);
-        if (m_notifier != nullptr)
-            m_notifier->update(filePath.filename().string());
+protected:
+    CatalogLoader(ProgressNotifier* notifier,
+                  util::array_view<std::filesystem::path> skipPaths);
 
-        if (std::ifstream catalogFile(filePath);
-            !catalogFile.good() || !load(catalogFile, parentPath))
-        {
-            util::GetLogger()->error(_("Error reading {} catalog file: {}\n"),
-                                     m_typeDesc,
-                                     filePath);
-        }
-    }
-
-    void loadExtras(util::array_view<std::filesystem::path> dirs)
-    {
-        std::vector<std::filesystem::path> entries;
-        std::error_code       ec;
-        for (const auto &dir : dirs)
-        {
-            if (!util::IsValidDirectory(dir))
-                continue;
-
-            entries.clear();
-
-            for (auto iter = std::filesystem::recursive_directory_iterator(dir, ec); iter != end(iter);
-                 iter.increment(ec))
-            {
-                if (ec)
-                    continue;
-                if (!std::filesystem::is_directory(iter->path(), ec))
-                    entries.push_back(iter->path());
-            }
-
-            std::sort(std::begin(entries), std::end(entries));
-
-            for (const auto &fn : entries)
-                process(fn, fn.parent_path());
-        }
-    }
+    virtual ContentType contentType() const = 0;
+    virtual std::string_view typeDesc() const = 0;
 
 private:
-    OBJDB* m_objDB;
-    std::string m_typeDesc;
-    ContentType m_contentType;
     ProgressNotifier* m_notifier;
     util::array_view<std::filesystem::path> m_skipPaths;
-    engine::GeometryPaths* m_geometryPaths;
-    engine::TexturePaths* m_texturePaths;
 };
 
 } // namespace celestia

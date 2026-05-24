@@ -13,7 +13,9 @@
 #pragma once
 
 #include <memory>
+
 #include "frame.h"
+#include "selection.h"
 
 class FrameTree;
 class Universe;
@@ -101,6 +103,7 @@ public:
     static std::unique_ptr<TimelinePhase>
     CreateTimelinePhase(Universe& universe,
                         Body* body,
+                        const Selection& parent,
                         double startTime,
                         double endTime,
                         const ReferenceFrame::SharedConstPtr& orbitFrame,

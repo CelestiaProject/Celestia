@@ -14,10 +14,12 @@
 
 #include <fmt/format.h>
 
-#include <celengine/star.h>
-#include <celengine/body.h>
-#include <celengine/location.h>
-#include <celengine/deepskyobj.h>
+#include "body.h"
+#include "deepskyobj.h"
+#include "frametree.h"
+#include "location.h"
+#include "star.h"
+#include "timeline.h"
 
 namespace astro = celestia::astro;
 
@@ -35,6 +37,28 @@ UniversalCoord locationPosition(const Location* location, double t)
     // Bad location; all locations should have a parent.
     assert(0);
     return UniversalCoord::Zero();
+}
+
+Selection
+getNonBodyParent(SelectionType type, const void* obj) //NOSONAR
+{
+    // For now only bodies have timelines and the potential for time-dependent
+    // frame parents. Everything else has the same logic for name and frame trees
+    switch(type)
+    {
+    case SelectionType::Star:
+        return static_cast<const Star*>(obj)->getOrbitBarycenter();
+
+    case SelectionType::DeepSky:
+        // Currently no hierarchy for stars and deep sky objects.
+        return Selection();
+
+    case SelectionType::Location:
+        return Selection(static_cast<const Location*>(obj)->getParentBody());
+
+    default:
+        return Selection();
+    }
 }
 
 } // end unnamed namespace
@@ -113,34 +137,32 @@ Selection::getVelocity(double t) const
 }
 
 Selection
-Selection::parent() const
+Selection::nameParent() const
 {
-    switch (type)
+    if (type == SelectionType::Body)
     {
-    case SelectionType::Star:
-        return Selection(static_cast<const Star*>(obj)->getOrbitBarycenter());
-
-    case SelectionType::Body:
-        if (auto system = static_cast<const Body*>(obj)->getSystem(); system != nullptr)
+        if (auto system = static_cast<const Body*>(obj)->getSystem(); system)
         {
-            if (auto primaryBody = system->getPrimaryBody(); primaryBody != nullptr)
+            if (auto primaryBody = system->getPrimaryBody(); primaryBody)
                 return Selection(primaryBody);
 
             return Selection(system->getStar());
         }
-
-        return Selection();
-
-    case SelectionType::DeepSky:
-        // Currently no hierarchy for stars and deep sky objects.
-        return Selection();
-
-    case SelectionType::Location:
-        return Selection(static_cast<const Location*>(obj)->getParentBody());
-
-    default:
-        return Selection();
     }
+
+    return getNonBodyParent(type, obj);
+}
+
+Selection
+Selection::frameParent(double t) const
+{
+    if (type == SelectionType::Body)
+    {
+        const auto& phase = static_cast<const Body*>(obj)->getTimeline()->findPhase(t);
+        return phase.getFrameTree()->getOwner();
+    }
+
+    return getNonBodyParent(type, obj);
 }
 
 /*! Return true if the selection's visibility flag is set. */

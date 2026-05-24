@@ -1,4 +1,5 @@
 set(CELESTIA_SOURCES
+  catalogloader.cpp
   catalogloader.h
   celestiacore.cpp
   celestiacore.h

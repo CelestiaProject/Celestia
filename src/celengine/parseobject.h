@@ -63,13 +63,20 @@ CreateRotationModel(const celestia::util::AssociativeArray* rotationData,
 std::shared_ptr<const celestia::ephem::RotationModel>
 CreateDefaultRotationModel(double syncRotationPeriod);
 
-ReferenceFrame::SharedConstPtr
+std::optional<FrameId>
+CreateOrbitFrame(const Universe& universe,
+                 const celestia::util::Value* frameValue,
+                 Selection& defaultCenter,
+                 Body* defaultObserver,
+                 FrameCache& frameCache);
+
+std::optional<FrameId>
 CreateReferenceFrame(const Universe& universe,
                      const celestia::util::Value* frameValue,
-                     const Selection& defaultCenter,
-                     Body* defaultObserver);
+                     Body* defaultObserver,
+                     FrameCache& frameCache);
 
-std::shared_ptr<const TwoVectorFrame>
-CreateTopocentricFrame(const Selection& center,
-                       const Selection& target,
-                       const Selection& observer);
+FrameId
+CreateTopocentricFrame(const Selection& target,
+                       const Selection& observer,
+                       FrameCache& frameCache);

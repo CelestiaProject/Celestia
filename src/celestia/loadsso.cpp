@@ -12,6 +12,7 @@
 #include <fstream>
 #include <memory>
 
+#include <celengine/frame.h>
 #include <celengine/universe.h>
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
@@ -21,13 +22,49 @@
 namespace celestia
 {
 
-using SolarSystemLoader = CatalogLoader<Universe>;
-
-template<> bool
-CatalogLoader<Universe>::load(std::istream &in, const std::filesystem::path &dir)
+namespace
 {
-    return LoadSolarSystemObjects(in, *m_objDB, dir, *m_geometryPaths, *m_texturePaths);
-}
+
+class SolarSystemLoader final : public CatalogLoader
+{
+public:
+    SolarSystemLoader(Universe* universe,
+                      ProgressNotifier* notifier,
+                      util::array_view<std::filesystem::path> skipPaths,
+                      engine::GeometryPaths& geometryPaths,
+                      engine::TexturePaths& texturePaths,
+                      FrameCache& frameCache) :
+        CatalogLoader(notifier, skipPaths),
+        m_universe(universe),
+        m_geometryPaths(&geometryPaths),
+        m_texturePaths(&texturePaths),
+        m_frameCache(&frameCache)
+    {
+    }
+
+    bool load(std::istream &in, const std::filesystem::path &dir) override
+    {
+        return LoadSolarSystemObjects(in, *m_universe, dir, *m_geometryPaths, *m_texturePaths, *m_frameCache);
+    }
+
+protected:
+    ContentType contentType() const override { return ContentType::CelestiaCatalog; }
+
+    std::string_view typeDesc() const override
+    {
+        // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+        const char *typeDesc = C_("catalog", "solar system");
+        return typeDesc;
+    }
+
+private:
+    Universe* m_universe;
+    engine::GeometryPaths* m_geometryPaths;
+    engine::TexturePaths* m_texturePaths;
+    FrameCache* m_frameCache;
+};
+
+} // end unnamed namespace
 
 void
 loadSSO(const CelestiaConfig &config,
@@ -39,16 +76,14 @@ loadSSO(const CelestiaConfig &config,
     auto solarSystem = std::make_unique<SolarSystemCatalog>();
     universe->setSolarSystemCatalog(std::move(solarSystem));
 
-    // TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
-    const char *typeDesc = C_("catalog", "solar system");
+    FrameCache frameCache;
 
     SolarSystemLoader loader(universe,
-                             typeDesc,
-                             ContentType::CelestiaCatalog,
                              progressNotifier,
                              config.paths.skipExtras,
                              geometryPaths,
-                             texturePaths);
+                             texturePaths,
+                             frameCache);
 
     // First read the solar system files listed individually in the config file.
     std::filesystem::path empty;

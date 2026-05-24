@@ -54,6 +54,7 @@ TimelinePhase::~TimelinePhase()
 std::unique_ptr<TimelinePhase>
 TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    Body* body,
+                                   const Selection& parent,
                                    double startTime,
                                    double endTime,
                                    const ReferenceFrame::SharedConstPtr& orbitFrame,
@@ -68,14 +69,13 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
     // Get the frame tree to add the new phase to. Verify that the reference frame
     // center is either a star or solar system body.
     FrameTree* frameTree = nullptr;
-    Selection center = orbitFrame->getCenter();
-    if (center.body() != nullptr)
+    if (Body* parentBody = parent.body(); parentBody)
     {
-        frameTree = center.body()->getOrCreateFrameTree();
+        frameTree = parentBody->getOrCreateFrameTree();
     }
-    else if (center.star() != nullptr)
+    else if (Star* star = parent.star(); star)
     {
-        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(center.star());
+        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(star);
         frameTree = solarSystem->getFrameTree();
     }
     else

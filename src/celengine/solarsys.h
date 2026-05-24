@@ -17,6 +17,7 @@
 
 #include <Eigen/Core>
 
+class FrameCache;
 class FrameTree;
 class PlanetarySystem;
 class Star;
@@ -51,4 +52,5 @@ bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
                             const std::filesystem::path& dir,
                             celestia::engine::GeometryPaths& geometryPaths,
-                            celestia::engine::TexturePaths& texturePaths);
+                            celestia::engine::TexturePaths& texturePaths,
+                            FrameCache& frameCache);

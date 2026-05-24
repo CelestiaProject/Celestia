@@ -16,6 +16,8 @@
 #include <cassert>
 #include <cmath>
 
+#include <boost/container_hash/hash.hpp>
+
 #include <celastro/date.h>
 #include <celephem/rotation.h>
 #include <celmath/geomutil.h>
@@ -23,6 +25,7 @@
 #include "location.h"
 #include "selection.h"
 #include "star.h"
+#include "timeline.h"
 #include "univcoord.h"
 
 namespace astro = celestia::astro;
@@ -45,19 +48,6 @@ const Eigen::Quaterniond J2000Orientation{ Eigen::AngleAxis<double>(astro::J2000
 
 /*** ReferenceFrame ***/
 
-ReferenceFrame::ReferenceFrame(Selection center) :
-    centerObject(center)
-{
-}
-
-/*! Return the object that is the defined origin of the reference frame.
- */
-Selection
-ReferenceFrame::getCenter() const
-{
-    return centerObject;
-}
-
 Eigen::Vector3d
 ReferenceFrame::getAngularVelocity(double tjd) const
 {
@@ -70,83 +60,34 @@ ReferenceFrame::getAngularVelocity(double tjd) const
     return dq.vec().normalized() * (2.0 * std::acos(dq.w()) / ANGULAR_VELOCITY_DIFF_DELTA);
 }
 
-unsigned int
-ReferenceFrame::nestingDepth(unsigned int maxDepth) const
-{
-    return nestingDepth(0, maxDepth);
-}
-
-unsigned int
-ReferenceFrame::getFrameDepth(const Selection& sel,
-                              unsigned int depth,
-                              unsigned int maxDepth,
-                              FrameType frameType)
-{
-    if (depth > maxDepth)
-        return depth;
-
-    const Body* body = sel.body();
-    if (sel.location() != nullptr)
-        body = sel.location()->getParentBody();
-
-    if (body == nullptr)
-        return depth;
-
-    unsigned int frameDepth;
-    // TODO: need to check /all/ orbit frames of body
-    switch (frameType)
-    {
-    case FrameType::PositionFrame:
-        if (const ReferenceFrame* orbitFrame = body->getOrbitFrame(0.0).get();
-            orbitFrame != nullptr)
-        {
-            frameDepth = orbitFrame->nestingDepth(depth + 1, maxDepth);
-            if (frameDepth > maxDepth)
-                return frameDepth;
-        }
-        break;
-
-    case FrameType::OrientationFrame:
-        if (const ReferenceFrame* bodyFrame = body->getBodyFrame(0.0).get();
-            bodyFrame != nullptr)
-        {
-            frameDepth = bodyFrame->nestingDepth(depth + 1, maxDepth);
-        }
-        break;
-
-    default:
-        assert(0);
-        return depth;
-    }
-
-    return std::max(frameDepth, depth);
-}
-
 /*** J2000EclipticFrame ***/
 
-J2000EclipticFrame::J2000EclipticFrame(Selection center) :
-    ReferenceFrame(center)
+J2000EclipticFrame::SharedConstPtr
+J2000EclipticFrame::getInstance()
 {
-}
+    static std::weak_ptr<const J2000EclipticFrame> instance;
+    auto ptr = instance.lock();
+    if (ptr)
+        return ptr;
 
-bool
-J2000EclipticFrame::isInertial() const
-{
-    return true;
-}
-
-unsigned int
-J2000EclipticFrame::nestingDepth(unsigned int depth,
-                                 unsigned int maxDepth) const
-{
-    return getFrameDepth(getCenter(), depth, maxDepth, FrameType::PositionFrame);
+    ptr = std::make_shared<J2000EclipticFrame>(CreateToken{});
+    instance = ptr;
+    return ptr;
 }
 
 /*** J2000EquatorFrame ***/
 
-J2000EquatorFrame::J2000EquatorFrame(Selection center) :
-    ReferenceFrame(center)
+J2000EquatorFrame::SharedConstPtr
+J2000EquatorFrame::getInstance()
 {
+    static std::weak_ptr<const J2000EquatorFrame> instance;
+    auto ptr = instance.lock();
+    if (ptr)
+        return ptr;
+
+    ptr = std::make_shared<J2000EquatorFrame>(CreateToken{});
+    instance = ptr;
+    return ptr;
 }
 
 Eigen::Quaterniond
@@ -155,39 +96,25 @@ J2000EquatorFrame::getOrientation(double /* tjd */) const
     return J2000Orientation;
 }
 
-bool
-J2000EquatorFrame::isInertial() const
-{
-    return true;
-}
-
-unsigned int
-J2000EquatorFrame::nestingDepth(unsigned int depth,
-                                unsigned int maxDepth) const
-{
-    return getFrameDepth(getCenter(), depth, maxDepth, FrameType::PositionFrame);
-}
-
 /*** BodyFixedFrame ***/
 
-BodyFixedFrame::BodyFixedFrame(Selection center, Selection obj) :
-    ReferenceFrame(center),
-    fixObject(obj)
+BodyFixedFrame::BodyFixedFrame(Selection obj) :
+    m_fixObject(obj)
 {
 }
 
 Eigen::Quaterniond
 BodyFixedFrame::getOrientation(double tjd) const
 {
-    switch (fixObject.getType())
+    switch (m_fixObject.getType())
     {
     case SelectionType::Body:
-        return math::YRot180<double> * fixObject.body()->getEclipticToBodyFixed(tjd);
+        return math::YRot180<double> * m_fixObject.body()->getEclipticToBodyFixed(tjd);
     case SelectionType::Star:
-        return math::YRot180<double> * fixObject.star()->getRotationModel()->orientationAtTime(tjd);
+        return math::YRot180<double> * m_fixObject.star()->getRotationModel()->orientationAtTime(tjd);
     case SelectionType::Location:
-        if (fixObject.location()->getParentBody())
-            return math::YRot180<double> * fixObject.location()->getParentBody()->getEclipticToBodyFixed(tjd);
+        if (m_fixObject.location()->getParentBody())
+            return math::YRot180<double> * m_fixObject.location()->getParentBody()->getEclipticToBodyFixed(tjd);
         else
             return math::YRot180<double>;
     default:
@@ -198,15 +125,15 @@ BodyFixedFrame::getOrientation(double tjd) const
 Eigen::Vector3d
 BodyFixedFrame::getAngularVelocity(double tjd) const
 {
-    switch (fixObject.getType())
+    switch (m_fixObject.getType())
     {
     case SelectionType::Body:
-        return fixObject.body()->getAngularVelocity(tjd);
+        return m_fixObject.body()->getAngularVelocity(tjd);
     case SelectionType::Star:
-        return fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
+        return m_fixObject.star()->getRotationModel()->angularVelocityAtTime(tjd);
     case SelectionType::Location:
-        if (fixObject.location()->getParentBody())
-            return fixObject.location()->getParentBody()->getAngularVelocity(tjd);
+        if (const Body* parentBody = m_fixObject.location()->getParentBody(); parentBody)
+            return parentBody->getAngularVelocity(tjd);
         else
             return Eigen::Vector3d::Zero();
     default:
@@ -214,56 +141,44 @@ BodyFixedFrame::getAngularVelocity(double tjd) const
     }
 }
 
-bool
-BodyFixedFrame::isInertial() const
+void
+BodyFixedFrame::visitChildren(FrameVisitor& visitor) const
 {
-    return false;
-}
+    switch (m_fixObject.getType())
+    {
+    case SelectionType::Body:
+        visitor.visitBodyFrame(m_fixObject.body());
+        break;
 
-unsigned int
-BodyFixedFrame::nestingDepth(unsigned int depth,
-                             unsigned int maxDepth) const
-{
-    unsigned int n = getFrameDepth(getCenter(), depth, maxDepth, FrameType::PositionFrame);
-    if (n > maxDepth)
-        return n;
+    case SelectionType::Location:
+        if (const Body* parentBody = m_fixObject.location()->getParentBody(); parentBody)
+            visitor.visitBodyFrame(parentBody);
+        break;
 
-    unsigned int m = getFrameDepth(fixObject, depth, maxDepth, FrameType::OrientationFrame);
-    return std::max(m, n);
+    default:
+        break;
+    }
 }
 
 /*** BodyMeanEquatorFrame ***/
 
-BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
-                                           Selection obj) :
-    ReferenceFrame(center),
-    equatorObject(obj),
-    freezeEpoch(astro::J2000),
-    isFrozen(false)
-{
-}
-
-BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection center,
-                                           Selection obj,
-                                           double freeze) :
-    ReferenceFrame(center),
-    equatorObject(obj),
-    freezeEpoch(freeze),
-    isFrozen(true)
+BodyMeanEquatorFrame::BodyMeanEquatorFrame(Selection obj,
+                                           std::optional<double> freeze) :
+    m_equatorObject(obj),
+    m_freezeEpoch(freeze)
 {
 }
 
 Eigen::Quaterniond
 BodyMeanEquatorFrame::getOrientation(double tjd) const
 {
-    double t = isFrozen ? freezeEpoch : tjd;
-
-    switch (equatorObject.getType())
+    double t = m_freezeEpoch.value_or(tjd);
+    switch (m_equatorObject.getType())
     {
     case SelectionType::Body:
-        return equatorObject.body()->getEclipticToEquatorial(t);
+        return m_equatorObject.body()->getEclipticToEquatorial(t);
     case SelectionType::Star:
-        return equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
+        return m_equatorObject.star()->getRotationModel()->equatorOrientationAtTime(t);
     default:
         return Eigen::Quaterniond::Identity();
     }
@@ -272,11 +187,11 @@ BodyMeanEquatorFrame::getOrientation(double tjd) const
 Eigen::Vector3d
 BodyMeanEquatorFrame::getAngularVelocity(double tjd) const
 {
-    if (isFrozen)
+    if (m_freezeEpoch.has_value())
         return Eigen::Vector3d::Zero();
 
-    if (equatorObject.body() != nullptr)
-        return equatorObject.body()->getBodyFrame(tjd)->getAngularVelocity(tjd);
+    if (const Body* body = m_equatorObject.body(); body)
+        return body->getBodyFrame(tjd)->getAngularVelocity(tjd);
 
     return Eigen::Vector3d::Zero();
 }
@@ -287,29 +202,26 @@ BodyMeanEquatorFrame::isInertial() const
     // Although the mean equator of an object may vary slightly due to precession,
     // treat it as an inertial frame as long as the body frame of the object is
     // also inertial.
-    return isFrozen ||
-           equatorObject.body() == nullptr ||
-           equatorObject.body()->getBodyFrame(0.0)->isInertial();
+    if (m_freezeEpoch.has_value())
+        return true;
+
+    if (const Body* body = m_equatorObject.body(); body)
+    {
+        return body->getTimeline()->phaseCount() == 1
+            && body->getTimeline()->findPhase(0).bodyFrame()->isInertial();
+    }
+
+    return true;
 }
 
-unsigned int
-BodyMeanEquatorFrame::nestingDepth(unsigned int depth,
-                                   unsigned int maxDepth) const
+void
+BodyMeanEquatorFrame::visitChildren(FrameVisitor& visitor) const
 {
-    // Test origin and equator object (typically the same) frames
-    unsigned int n =  getFrameDepth(getCenter(), depth, maxDepth, FrameType::PositionFrame);
-    if (n > maxDepth)
-        return n;
-
-    unsigned int m = getFrameDepth(equatorObject, depth, maxDepth, FrameType::OrientationFrame);
-    return std::max(m, n);
+    if (const Body* body = m_equatorObject.body(); body)
+        visitor.visitBodyFrame(body, m_freezeEpoch);
 }
 
 /*** CachingFrame ***/
-
-CachingFrame::CachingFrame(Selection _center) : ReferenceFrame(_center)
-{
-}
 
 Eigen::Quaterniond
 CachingFrame::getOrientation(double tjd) const
@@ -374,44 +286,42 @@ CachingFrame::computeAngularVelocity(double tjd) const
 
 /*** TwoVectorFrame ***/
 
-TwoVectorFrame::TwoVectorFrame(Selection center,
-                               const FrameVector& prim,
+TwoVectorFrame::TwoVectorFrame(const FrameVector& prim,
                                int primAxis,
                                const FrameVector& sec,
                                int secAxis) :
-    CachingFrame(center),
-    primaryVector(prim),
-    primaryAxis(primAxis),
-    secondaryVector(sec),
-    secondaryAxis(secAxis)
+    m_primaryVector(prim),
+    m_primaryAxis(primAxis),
+    m_secondaryVector(sec),
+    m_secondaryAxis(secAxis)
 {
     // Verify that primary and secondary axes are valid
-    assert(primaryAxis != 0 && secondaryAxis != 0);
-    assert(std::abs(primaryAxis) <= 3 && std::abs(secondaryAxis) <= 3);
+    assert(m_primaryAxis != 0 && m_secondaryAxis != 0);
+    assert(std::abs(m_primaryAxis) <= 3 && std::abs(m_secondaryAxis) <= 3);
     // Verify that the primary and secondary axes aren't collinear
-    assert(std::abs(primaryAxis) != std::abs(secondaryAxis));
+    assert(std::abs(m_primaryAxis) != std::abs(m_secondaryAxis));
 
-    if (std::abs(primaryAxis) != 1 && std::abs(secondaryAxis) != 1)
-        tertiaryAxis = 1;
-    else if (std::abs(primaryAxis) != 2 && std::abs(secondaryAxis) != 2)
-        tertiaryAxis = 2;
+    if (std::abs(m_primaryAxis) != 1 && std::abs(m_secondaryAxis) != 1)
+        m_tertiaryAxis = 1;
+    else if (std::abs(m_primaryAxis) != 2 && std::abs(m_secondaryAxis) != 2)
+        m_tertiaryAxis = 2;
     else
-        tertiaryAxis = 3;
+        m_tertiaryAxis = 3;
 }
 
 Eigen::Quaterniond
 TwoVectorFrame::computeOrientation(double tjd) const
 {
-    Eigen::Vector3d v0 = primaryVector.direction(tjd);
-    Eigen::Vector3d v1 = secondaryVector.direction(tjd);
+    Eigen::Vector3d v0 = m_primaryVector.direction(tjd);
+    Eigen::Vector3d v1 = m_secondaryVector.direction(tjd);
 
     // TODO: verify that v0 and v1 aren't zero length
     v0.normalize();
     v1.normalize();
 
-    if (primaryAxis < 0)
+    if (m_primaryAxis < 0)
         v0 = -v0;
-    if (secondaryAxis < 0)
+    if (m_secondaryAxis < 0)
         v1 = -v1;
 
     Eigen::Vector3d v2 = v0.cross(v1);
@@ -430,26 +340,26 @@ TwoVectorFrame::computeOrientation(double tjd) const
 
     // Determine whether the primary and secondary axes are in
     // right hand order.
-    int rhAxis = std::abs(primaryAxis) + 1;
+    int rhAxis = std::abs(m_primaryAxis) + 1;
     if (rhAxis > 3)
         rhAxis = 1;
-    bool rhOrder = rhAxis == std::abs(secondaryAxis);
+    bool rhOrder = rhAxis == std::abs(m_secondaryAxis);
 
     // Set the rotation matrix axes
     Eigen::Matrix3d m;
-    m.row(std::abs(primaryAxis) - 1) = v0;
+    m.row(std::abs(m_primaryAxis) - 1) = v0;
 
     // Reverse the cross products if the axes are not in right
     // hand order.
     if (rhOrder)
     {
-        m.row(std::abs(secondaryAxis) - 1) = v2.cross(v0);
-        m.row(std::abs(tertiaryAxis) - 1)  = v2;
+        m.row(std::abs(m_secondaryAxis) - 1) = v2.cross(v0);
+        m.row(std::abs(m_tertiaryAxis) - 1)  = v2;
     }
     else
     {
-        m.row(std::abs(secondaryAxis) - 1) = v0.cross(-v2);
-        m.row(std::abs(tertiaryAxis) - 1)  = -v2;
+        m.row(std::abs(m_secondaryAxis) - 1) = v0.cross(-v2);
+        m.row(std::abs(m_tertiaryAxis) - 1)  = -v2;
     }
 
     // The axes are the rows of a rotation matrix. The getOrientation
@@ -472,26 +382,14 @@ TwoVectorFrame::isInertial() const
     // Although it's possible to specify an inertial two-vector frame, we won't
     // bother trying to distinguish these cases: all two-vector frames will be
     // treated as non-inertial.
-    return true;
+    return false;
 }
 
-unsigned int
-TwoVectorFrame::nestingDepth(unsigned int depth,
-                             unsigned int maxDepth) const
+void
+TwoVectorFrame::visitChildren(FrameVisitor& visitor) const
 {
-    // Check nesting of the origin object as well as frames references by
-    // the primary and secondary axes.
-    unsigned int n = getFrameDepth(getCenter(), depth, maxDepth, FrameType::PositionFrame);
-    if (n > maxDepth)
-        return n;
-
-    unsigned int m = primaryVector.nestingDepth(depth, maxDepth);
-    n = std::max(m, n);
-    if (n > maxDepth)
-        return n;
-
-    m = secondaryVector.nestingDepth(depth, maxDepth);
-    return std::max(m, n);
+    m_primaryVector.visitChildren(visitor);
+    m_secondaryVector.visitChildren(visitor);
 }
 
 FrameVector::FrameVector(const RelativePosition& pos) : m_data(pos)
@@ -504,27 +402,6 @@ FrameVector::FrameVector(const RelativeVelocity& vel) : m_data(vel)
 
 FrameVector::FrameVector(ConstVector&& vec) : m_data(std::move(vec))
 {
-}
-
-FrameVector
-FrameVector::createRelativePositionVector(const Selection& _observer,
-                                          const Selection& _target)
-{
-    return FrameVector(RelativePosition { _observer, _target });
-}
-
-FrameVector
-FrameVector::createRelativeVelocityVector(const Selection& _observer,
-                                          const Selection& _target)
-{
-    return FrameVector(RelativeVelocity { _observer, _target });
-}
-
-FrameVector
-FrameVector::createConstantVector(const Eigen::Vector3d& _vec,
-                                  const ReferenceFrame::SharedConstPtr& _frame)
-{
-    return FrameVector(ConstVector { _vec, _frame });
 }
 
 Eigen::Vector3d
@@ -559,55 +436,218 @@ FrameVector::direction(double tjd) const
     return std::visit(DirectionVisitor{ tjd }, m_data);
 }
 
-unsigned int
-FrameVector::nestingDepth(unsigned int depth,
-                          unsigned int maxDepth) const
+void
+FrameVector::visitChildren(FrameVisitor& visitor) const
 {
-    class NestingVisitor
+    class ReferenceVisitor
     {
     public:
-        NestingVisitor(unsigned int d, unsigned int md)
-            : _depth(d), _maxDepth(md)
+        explicit ReferenceVisitor(FrameVisitor& v) : m_visitor(v) {}
+
+        void operator()(const RelativePosition& pos) const
         {
+            m_visitor.visitPosition(pos.observer);
+            m_visitor.visitPosition(pos.target);
         }
 
-        unsigned int operator()(const RelativePosition& pos) const
+        void operator()(const RelativeVelocity& vel) const
         {
-            return relativeDepth(pos.observer, pos.target);
+            m_visitor.visitPosition(vel.observer);
+            m_visitor.visitPosition(vel.target);
         }
 
-        unsigned int operator()(const RelativeVelocity& vel) const
+        void operator()(const ConstVector& vec) const
         {
-            return relativeDepth(vel.observer, vel.target);
-        }
-
-        unsigned int operator()(const ConstVector& vec) const
-        {
-            return _depth > _maxDepth
-                ? _depth
-                : vec.frame->nestingDepth(_depth + 1, _maxDepth);
+            m_visitor.visitReferenceFrame(vec.frame.get());
         }
 
     private:
-        unsigned int relativeDepth(const Selection& _observer, const Selection& _target) const
-        {
-            unsigned int n = ReferenceFrame::getFrameDepth(_observer,
-                                                           _depth,
-                                                           _maxDepth,
-                                                           ReferenceFrame::FrameType::PositionFrame);
-            if (n > _maxDepth)
-                return n;
-
-            unsigned int m = ReferenceFrame::getFrameDepth(_target,
-                                                           _depth,
-                                                           _maxDepth,
-                                                           ReferenceFrame::FrameType::PositionFrame);
-            return std::max(m, n);
-        }
-
-        unsigned int _depth;
-        unsigned int _maxDepth;
+        FrameVisitor& m_visitor;
     };
 
-    return std::visit(NestingVisitor{ depth, maxDepth }, m_data);
+    std::visit(ReferenceVisitor(visitor), m_data);
+}
+
+std::size_t
+std::hash<BodyMeanEquatorFrameKey>::operator()(const BodyMeanEquatorFrameKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.target);
+    boost::hash_combine(seed, obj.freezeEpoch);
+    return seed;
+}
+
+std::size_t
+std::hash<TwoVectorFrameKey>::operator()(const TwoVectorFrameKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.frameVectorId1);
+    boost::hash_combine(seed, obj.axis1);
+    boost::hash_combine(seed, obj.frameVectorId2);
+    boost::hash_combine(seed, obj.axis2);
+    return seed;
+}
+
+std::size_t
+std::hash<RelativePositionKey>::operator()(const RelativePositionKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.observer);
+    boost::hash_combine(seed, obj.target);
+    return seed;
+}
+
+std::size_t
+std::hash<RelativeVelocityKey>::operator()(const RelativeVelocityKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.observer);
+    boost::hash_combine(seed, obj.target);
+    return seed;
+}
+
+std::size_t
+std::hash<ConstVectorKey>::operator()(const ConstVectorKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.vec.x());
+    boost::hash_combine(seed, obj.vec.y());
+    boost::hash_combine(seed, obj.vec.z());
+    boost::hash_combine(seed, obj.frameId);
+    return seed;
+}
+
+ReferenceFrame::SharedConstPtr
+FrameCache::getFrame(FrameId frameId) const
+{
+    assert(static_cast<std::size_t>(frameId) < m_frames.size());
+    return m_frames[static_cast<std::size_t>(frameId)];
+}
+
+FrameId
+FrameCache::getFrameId(const FrameKey& key)
+{
+    auto [it, inserted] = m_frameMap.try_emplace(key, static_cast<FrameId>(m_frames.size()));
+    if (inserted)
+        createFrame(key);
+
+    return it->second;
+}
+
+void
+FrameCache::createFrame(const FrameKey& key)
+{
+    class FrameKeyVisitor
+    {
+    public:
+        explicit FrameKeyVisitor(const FrameCache& cache) : m_cache(cache) {}
+
+        ReferenceFrame::SharedConstPtr operator()(SimpleFrameKey k) const
+        {
+            switch (k)
+            {
+            case SimpleFrameKey::J2000Ecliptic:
+                return J2000EclipticFrame::getInstance();
+
+            case SimpleFrameKey::J2000Equator:
+                return J2000EquatorFrame::getInstance();
+
+            default:
+                assert(0);
+                return nullptr;
+            }
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const BodyFixedFrameKey& k) const
+        {
+            return std::make_shared<BodyFixedFrame>(k.target);
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const BodyMeanEquatorFrameKey& k) const
+        {
+            return std::make_shared<BodyMeanEquatorFrame>(k.target, k.freezeEpoch);
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const TwoVectorFrameKey& k) const
+        {
+            assert(static_cast<std::size_t>(k.frameVectorId1) < m_cache.m_frameVectors.size());
+            assert(static_cast<std::size_t>(k.frameVectorId2) < m_cache.m_frameVectors.size());
+            const FrameVector& vec1 = m_cache.m_frameVectors[static_cast<std::size_t>(k.frameVectorId1)];
+            const FrameVector& vec2 = m_cache.m_frameVectors[static_cast<std::size_t>(k.frameVectorId2)];
+            return std::make_shared<TwoVectorFrame>(vec1, k.axis1, vec2, k.axis2);
+        }
+
+    private:
+        const FrameCache& m_cache;
+    };
+
+    m_frames.emplace_back(std::visit(FrameKeyVisitor(*this), key));
+    m_uncommittedFrames.emplace_back(key);
+}
+
+FrameVectorId
+FrameCache::getFrameVectorId(const FrameVectorKey& key)
+{
+    auto [it, inserted] = m_frameVectorMap.try_emplace(key, static_cast<FrameVectorId>(m_frameVectorMap.size()));
+    if (!inserted)
+        return it->second;
+
+    class FrameVectorVisitor
+    {
+    public:
+        explicit FrameVectorVisitor(const FrameCache& cache) : m_cache(cache) {}
+
+        FrameVector operator()(const RelativePositionKey& k) const
+        {
+            return FrameVector(FrameVector::RelativePosition(k.observer, k.target));
+        }
+
+        FrameVector operator()(const RelativeVelocityKey& k) const
+        {
+            return FrameVector(FrameVector::RelativeVelocity(k.observer, k.target));
+        }
+
+        FrameVector operator()(const ConstVectorKey& k) const
+        {
+            assert(static_cast<std::size_t>(k.frameId) < m_cache.m_frames.size());
+            const ReferenceFrame::SharedConstPtr& frame = m_cache.m_frames[static_cast<std::size_t>(k.frameId)];
+            return FrameVector(FrameVector::ConstVector(k.vec, frame));
+        }
+
+    private:
+        const FrameCache& m_cache;
+    };
+
+    m_frameVectors.emplace_back(std::visit(FrameVectorVisitor(*this), key));
+    m_uncommittedVectors.emplace_back(key);
+    return it->second;
+}
+
+// Marks all generated frames and frame vectors up to this point as committed.
+void
+FrameCache::commit()
+{
+    m_uncommittedFrameIndex = m_frames.size();
+    m_uncommittedVectorIndex = m_frameVectors.size();
+    m_uncommittedFrames.clear();
+    m_uncommittedVectors.clear();
+}
+
+// Removes all generated frames and frame vectors created since the last commit
+// This allows us to remove any dangling pointers if the validation fails and
+// the Body object is deleted.
+void
+FrameCache::rollback()
+{
+    m_frames.erase(m_frames.begin() + m_uncommittedFrameIndex, m_frames.end());
+    m_frameVectors.erase(m_frameVectors.begin() + m_uncommittedVectorIndex, m_frameVectors.end());
+
+    for (const FrameKey& key : m_uncommittedFrames)
+        m_frameMap.erase(key);
+
+    for (const FrameVectorKey& key : m_uncommittedVectors)
+        m_frameVectorMap.erase(key);
+
+    m_uncommittedFrames.clear();
+    m_uncommittedVectors.clear();
 }

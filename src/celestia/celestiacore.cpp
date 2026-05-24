@@ -48,12 +48,15 @@
 #include <celengine/console.h>
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
+#include <celengine/frametree.h>
 #include <celengine/location.h>
 #include <celengine/overlay.h>
 #include <celengine/perspectiveprojectionmode.h>
 #include <celengine/planetgrid.h>
 #include <celengine/starname.h>
 #include <celengine/textlayout.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
 #include <celengine/rectangle.h>
 #include <celengine/visibleregion.h>
 #include <celengine/warpmesh.h>
@@ -961,7 +964,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\b':
-        sim->setSelection(sim->getSelection().parent());
+        sim->setSelection(sim->getSelection().nameParent());
         break;
 
     case '\014': // Ctrl+L
@@ -2491,7 +2494,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths, *texturePaths);
+    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths);
     if (dsoCatalog == nullptr)
     {
         fatalError(_("Cannot read DSO database."), false);
@@ -3192,7 +3195,7 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
     else if (refMark == "frame center direction")
     {
         double now = getSimulation()->getTime();
-        auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, body->getOrbitFrame(now)->getCenter());
+        auto arrow = std::make_unique<BodyToBodyDirectionArrow>(*body, body->getTimeline()->findPhase(now).getFrameTree()->getOwner());
         arrow->setTag(refMark);
         bodyFeaturesManager->addReferenceMark(body, std::move(arrow));
     }
@@ -3207,7 +3210,7 @@ void CelestiaCore::toggleReferenceMark(const string& refMark, Selection sel)
         Body* b = body;
         while (b != nullptr)
         {
-            Selection center = b->getOrbitFrame(now)->getCenter();
+            Selection center = b->getTimeline()->findPhase(now).getFrameTree()->getOwner();
             if (center.star() != nullptr)
                 sun = center.star();
             b = center.body();

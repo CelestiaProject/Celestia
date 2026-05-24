@@ -2473,6 +2473,9 @@ bool Renderer::testEclipse(const Body& receiver,
                            unsigned int lightIndex,
                            double now)
 {
+    if (!lightingState.lights[lightIndex].castsShadows)
+        return false;
+
     bool isReceiverShadowed = false;
 
     // Ignore situations where the shadow casting body is much smaller than
@@ -2712,58 +2715,35 @@ void Renderer::renderPlanet(Body& body,
         }
 
         // Calculate eclipse circumstances
-        if (util::is_set(renderFlags, RenderFlags::ShowEclipseShadows) && body.getSystem() != nullptr)
+        if (util::is_set(renderFlags, RenderFlags::ShowEclipseShadows))
         {
-            if (const auto *system = body.getSystem(); system->getPrimaryBody() == nullptr)
+            const Body* testBody = &body;
+            for (;;)
             {
-                // The body is a planet.  Check for eclipse shadows
-                // from all of its satellites.
-                if (const auto *satellites = body.getSatellites(); satellites != nullptr)
+                // Check for eclipse shadows from the satellites of the current object
+                // Note this only test direct satellites, binary satellites won't work here.
+                // Hopefully the exoplanet astronomers don't find any binary exomoons in the
+                // near future...
+                if (const FrameTree* frameTree = testBody->getFrameTree(); frameTree)
                 {
-                    int nSatellites = satellites->getSystemSize();
-                    for (unsigned int li = 0; li < lights.nLights; li++)
+                    for (unsigned int i = 0, nPhases = frameTree->childCount(); i < nPhases; ++i)
                     {
-                        if (lights.lights[li].castsShadows)
-                        {
-                            for (int i = 0; i < nSatellites; i++)
-                            {
-                                testEclipse(body, *satellites->getBody(i), lights, li, now);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (unsigned int li = 0; li < lights.nLights; li++)
-                {
-                    if (lights.lights[li].castsShadows)
-                    {
-                        // The body is a moon.  Check for eclipse shadows from
-                        // the parent planet and all satellites in the system.
-                        // Traverse up the hierarchy so that any parent objects
-                        // of the parent are also considered (TODO: their child
-                        // objects will not be checked for shadows.)
-                        const Body* planet = system->getPrimaryBody();
-                        while (planet != nullptr)
-                        {
-                            testEclipse(body, *planet, lights, li, now);
-                            if (planet->getSystem() != nullptr)
-                                planet = planet->getSystem()->getPrimaryBody();
-                            else
-                                planet = nullptr;
-                        }
+                        const auto& phase = frameTree->getChild(i);
+                        if (phase->startTime() > now || phase->endTime() <= now) //NOSONAR
+                            continue;
 
-                        int nSatellites = system->getSystemSize();
-                        for (int i = 0; i < nSatellites; i++)
-                        {
-                            if (system->getBody(i) != &body)
-                            {
-                                testEclipse(body, *system->getBody(i), lights, li, now);
-                            }
-                        }
+                        for (unsigned int li = 0; li < lights.nLights; ++li) //NOSONAR
+                            testEclipse(body, *phase->body(), lights, li, now);
                     }
                 }
+
+                testBody = testBody->getTimeline()->findPhase(now).getFrameTree()->getOwner().body();
+                if (!testBody)
+                    break;
+
+                // Check for eclipses from the parent object
+                for (unsigned int li = 0; li < lights.nLights; ++li)
+                    testEclipse(body, *testBody, lights, li, now);
             }
         }
 
@@ -2772,80 +2752,75 @@ void Renderer::renderPlanet(Body& body,
         for (unsigned int li = 0; li < lights.nLights; li++)
         {
             RingSystem* rings = lights.ringShadows[li].ringSystem;
-            if (rings != nullptr)
+            if (!rings)
+                continue;
+
+            // Use the first set of ring shadows found (shadowing the brightest light
+            // source.)
+            if (lights.shadowingRingSystem == nullptr)
             {
-                // Use the first set of ring shadows found (shadowing the brightest light
-                // source.)
-                if (lights.shadowingRingSystem == nullptr)
-                {
-                    lights.shadowingRingSystem = rings;
-                    lights.ringPlaneNormal = (rp.orientation * lights.ringShadows[li].casterOrientation.conjugate()) * Vector3f::UnitY();
-                    lights.ringCenter = rp.orientation * lights.ringShadows[li].origin;
-                }
-
-                // Light sources have a finite size, which causes some blurring of the texture. Simulate
-                // this effect by using a lower LOD (i.e. a smaller mipmap level, indicated somewhat
-                // confusingly by a _higher_ LOD value.
-                float ringWidth = rings->outerRadius - rings->innerRadius;
-                float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
-                float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
-                const Texture* ringsTex = m_textureManager->find(rings->texture);
-                if (ringsTex != nullptr)
-                {
-                    // Calculate the approximate distance from the shadowed object to the rings
-                    Hyperplane<float, 3> ringPlane(lights.ringPlaneNormal, lights.ringCenter);
-                    float cosLightAngle = lights.lights[li].direction_obj.dot(ringPlane.normal());
-                    float approxRingDistance = rings->innerRadius;
-                    if (abs(cosLightAngle) < 0.99999f)
-                    {
-                        approxRingDistance = abs(ringPlane.offset() / cosLightAngle);
-                    }
-                    if (lights.ringCenter.norm() < rings->innerRadius)
-                    {
-                        approxRingDistance = max(approxRingDistance, rings->innerRadius - lights.ringCenter.norm());
-                    }
-
-                    // Calculate the LOD based on the size of the smallest
-                    // ring feature relative to the apparent size of the light source.
-                    float ringTextureWidth = ringsTex->getWidth();
-                    float ringFeatureSize = (projectedRingSize / ringTextureWidth) / approxRingDistance;
-                    float relativeFeatureSize = lights.lights[li].apparentSize / ringFeatureSize;
-                    //float areaLightLod = log(max(relativeFeatureSize, 1.0f)) / log(2.0f);
-                    float areaLightLod = log2(max(relativeFeatureSize, 1.0f));
-
-                    // Compute the LOD that would be automatically used by the GPU.
-                    float texelToPixelRatio = ringTextureWidth / projectedRingSizeInPixels;
-                    float gpuLod = log2(texelToPixelRatio);
-
-                    //float lod = max(areaLightLod, log(texelToPixelRatio) / log(2.0f));
-                    float lod = max(areaLightLod, gpuLod);
-
-                    // maxLOD is the index of the smallest mipmap (or close to it for non-power-of-two
-                    // textures.) We can't make the lod larger than this.
-                    float maxLod = log2((float) ringsTex->getWidth());
-                    if (maxLod > 1.0f)
-                    {
-                        // Avoid using the 1x1 mipmap, as it appears to cause 'bleeding' when
-                        // the light source is very close to the ring plane. This is probably
-                        // a numerical precision issue from calculating the intersection of
-                        // between a ray and plane that are nearly parallel.
-                        maxLod -= 1.0f;
-                    }
-                    lod = min(lod, maxLod);
-
-                    // Not all hardware/drivers support GLSL's textureXDLOD instruction, which lets
-                    // us explicitly set the LOD. But, they do all have an optional lodBias parameter
-                    // for the textureXD instruction. The bias is just the difference between the
-                    // area light LOD and the approximate GPU calculated LOD.
-                    if (!gl::ARB_shader_texture_lod)
-                        lod = max(0.0f, lod - gpuLod);
-                    lights.ringShadows[li].texLod = lod;
-                }
-                else
-                {
-                    lights.ringShadows[li].texLod = 0.0f;
-                }
+                lights.shadowingRingSystem = rings;
+                lights.ringPlaneNormal = (rp.orientation * lights.ringShadows[li].casterOrientation.conjugate()) * Vector3f::UnitY();
+                lights.ringCenter = rp.orientation * lights.ringShadows[li].origin;
             }
+
+            // Light sources have a finite size, which causes some blurring of the texture. Simulate
+            // this effect by using a lower LOD (i.e. a smaller mipmap level, indicated somewhat
+            // confusingly by a _higher_ LOD value.
+            float ringWidth = rings->outerRadius - rings->innerRadius;
+            float projectedRingSize = std::abs(lights.lights[li].direction_obj.dot(lights.ringPlaneNormal)) * ringWidth;
+            float projectedRingSizeInPixels = projectedRingSize / (max(nearPlaneDistance, altitude) * pixelSize);
+            const Texture* ringsTex = m_textureManager->find(rings->texture);
+            if (!ringsTex)
+            {
+                lights.ringShadows[li].texLod = 0.0f;
+                continue;
+            }
+
+            // Calculate the approximate distance from the shadowed object to the rings
+            Hyperplane<float, 3> ringPlane(lights.ringPlaneNormal, lights.ringCenter);
+            float cosLightAngle = lights.lights[li].direction_obj.dot(ringPlane.normal());
+            float approxRingDistance = rings->innerRadius;
+            if (abs(cosLightAngle) < 0.99999f)
+                approxRingDistance = abs(ringPlane.offset() / cosLightAngle);
+            if (lights.ringCenter.norm() < rings->innerRadius)
+                approxRingDistance = max(approxRingDistance, rings->innerRadius - lights.ringCenter.norm());
+
+            // Calculate the LOD based on the size of the smallest
+            // ring feature relative to the apparent size of the light source.
+            float ringTextureWidth = ringsTex->getWidth();
+            float ringFeatureSize = (projectedRingSize / ringTextureWidth) / approxRingDistance;
+            float relativeFeatureSize = lights.lights[li].apparentSize / ringFeatureSize;
+            //float areaLightLod = log(max(relativeFeatureSize, 1.0f)) / log(2.0f);
+            float areaLightLod = log2(max(relativeFeatureSize, 1.0f));
+
+            // Compute the LOD that would be automatically used by the GPU.
+            float texelToPixelRatio = ringTextureWidth / projectedRingSizeInPixels;
+            float gpuLod = log2(texelToPixelRatio);
+
+            //float lod = max(areaLightLod, log(texelToPixelRatio) / log(2.0f));
+            float lod = max(areaLightLod, gpuLod);
+
+            // maxLOD is the index of the smallest mipmap (or close to it for non-power-of-two
+            // textures.) We can't make the lod larger than this.
+            float maxLod = log2((float) ringsTex->getWidth());
+            if (maxLod > 1.0f)
+            {
+                // Avoid using the 1x1 mipmap, as it appears to cause 'bleeding' when
+                // the light source is very close to the ring plane. This is probably
+                // a numerical precision issue from calculating the intersection of
+                // between a ray and plane that are nearly parallel.
+                maxLod -= 1.0f;
+            }
+            lod = min(lod, maxLod);
+
+            // Not all hardware/drivers support GLSL's textureXDLOD instruction, which lets
+            // us explicitly set the LOD. But, they do all have an optional lodBias parameter
+            // for the textureXD instruction. The bias is just the difference between the
+            // area light LOD and the approximate GPU calculated LOD.
+            if (!gl::ARB_shader_texture_lod)
+                lod = max(0.0f, lod - gpuLod);
+            lights.ringShadows[li].texLod = lod;
         }
 
         renderObject(pos, distance, observer,
@@ -3456,11 +3431,9 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
              (orbitVis == Body::UseClassVisibility && util::is_set(body->getOrbitClassification(), orbitMask))))
         {
             Vector3d orbitOrigin = Vector3d::Zero();
-            Selection centerObject = phase->orbitFrame()->getCenter();
-            if (centerObject.body() != nullptr)
-            {
-                orbitOrigin = centerObject.body()->getAstrocentricPosition(now);
-            }
+            Selection centerObject = phase->getFrameTree()->getOwner();
+            if (const Body* centerBody = centerObject.body(); centerBody)
+                orbitOrigin = centerBody->getAstrocentricPosition(now);
 
             // Calculate the origin of the orbit relative to the observer
             Vector3d relOrigin = orbitOrigin - astrocentricObserverPos;
@@ -3574,13 +3547,7 @@ void Renderer::buildLabelLists(const math::InfiniteFrustum& viewFrustum,
             continue;
 
         const TimelinePhase& phase = body->getTimeline()->findPhase(now);
-        const Body* primary = phase.orbitFrame()->getCenter().body();
-        if (primary != nullptr && util::is_set(primary->getClassification(), BodyClassification::Invisible))
-        {
-            const Body* parent = phase.orbitFrame()->getCenter().body();
-            if (parent != nullptr)
-                primary = parent;
-        }
+        const Body* primary = phase.getFrameTree()->getOwner().body();
 
         // Position the label slightly in front of the object along a line from
         // object center to viewer.
