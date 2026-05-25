@@ -477,6 +477,27 @@ AssignDiffuse(unsigned int lightIndex, const ShaderProperties& props)
 }
 
 
+std::string
+LunarLambert()
+{
+    std::string source;
+
+    source += "phaseAngle = degrees(acos(clamp(cosPhaseAngle, -1.0, 1.0)));\n";
+
+    // Limb-darkening parameter L(alpha) for the Moon from McEwen (1996),
+    // Lunar and Planetary Science, volume 27, page 841.
+    source += "lunarLimbDarkening = 1.0 + phaseAngle * (-0.019 + phaseAngle * (0.242e-3 - phaseAngle * 1.46e-6));\n";
+
+    // While L(alpha) is intended to be used on its own to weigh the Lambert and
+    // Lommel-Seeliger functions which compose the lunar-Lambert model, here it
+    // is multiplied by the LunarLambert parameter as a rough way to generalize
+    // it to other bodies.
+    source += "lunarWeight = lunarLambert * max(lunarLimbDarkening, 0.0);\n";
+
+    return source;
+}
+
+
 // Values used in generated shaders:
 //    N - surface normal
 //    V - view vector: the normalized direction from vertex to eye
@@ -511,9 +532,15 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
     else if (props.hasSpecular())
     {
         if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
-            source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
+        {
+            source += "cosPhaseAngle = dot(eyeDir, " + LightProperty(i, "direction") + ");\n";
+            source += LunarLambert();
+            source += AssignDiffuse(i, props) + " mix(NL, 2.0 * NL / (max(NV, 0.001) + NL), lunarWeight);\n";
+        }
         else
+        {
             source += SeparateDiffuse(i) + " = NL;\n";
+        }
     }
 #if 0
     else if (props.lightModel == LightingModel::OrenNayarModel)
@@ -543,7 +570,9 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
 #endif
     else if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
-        source += AssignDiffuse(i, props) + " mix(NL, NL / (max(NV, 0.001) + NL), lunarLambert);\n";
+        source += "cosPhaseAngle = dot(eyeDir, " + LightProperty(i, "direction") + ");\n";
+        source += LunarLambert();
+        source += AssignDiffuse(i, props) + " mix(NL, 2.0 * NL / (max(NV, 0.001) + NL), lunarWeight);\n";
     }
     else if (props.usesShadows())
     {
@@ -1611,6 +1640,13 @@ buildFragmentShader(const ShaderProperties& props)
     if (props.lightModel != LightingModel::UnlitModel)
     {
         source += DeclareLocal("NL", Shader_Float);
+        if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
+        {
+            source += DeclareLocal("cosPhaseAngle", Shader_Float);
+            source += DeclareLocal("phaseAngle", Shader_Float);
+            source += DeclareLocal("lunarLimbDarkening", Shader_Float);
+            source += DeclareLocal("lunarWeight", Shader_Float);
+        }
         for (unsigned int i = 0; i < props.nLights; i++)
             source += AddDirectionalLightContrib(i, props);
     }
@@ -1676,7 +1712,9 @@ buildFragmentShader(const ShaderProperties& props)
             if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
             {
                 source += "NL = max(0.0, NL);\n";
-                source += "l = mix(NL, (NL / (max(NV, 0.001) + NL)), lunarLambert) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
+                source += "cosPhaseAngle = dot(eyeDir_tan, " + LightDir_tan(i) + ");\n";
+                source += LunarLambert();
+                source += "l = mix(NL, 2.0 * NL / (max(NV, 0.001) + NL), lunarWeight) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
             }
             else
             {
@@ -3063,16 +3101,6 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         Eigen::Vector3f lightColor = light.color.toVector3() * light.irradiance;
         lights[i].color = light.color.toVector3();
         lights[i].direction = light.direction_obj;
-
-        // Include a phase-based normalization factor to prevent planets from appearing
-        // too dim when rendered with non-Lambertian photometric functions.
-        float cosPhaseAngle = light.direction_obj.dot(ls.eyeDir_obj);
-        if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
-        {
-            float photometricNormFactor = std::max(1.0f, 1.0f + cosPhaseAngle * 0.5f);
-            lightColor *= photometricNormFactor;
-        }
-
         lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
         lights[i].brightness = lightColor.maxCoeff();
         lights[i].specular = lightColor.cwiseProduct(specularColor);
