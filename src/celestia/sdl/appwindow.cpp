@@ -186,6 +186,8 @@ AppWindow::run(const Settings& settings)
 
     renderer->setShadowMapSize(config->renderDetails.ShadowMapSize);
     renderer->setSolarSystemMaxDistance(config->renderDetails.SolarSystemMaxDistance);
+    renderer->setStarPointRadius(config->renderDetails.starPointRadius);
+    renderer->setStarOptimization(config->renderDetails.starOptimization);
 
     settings.apply(m_appCore.get());
 

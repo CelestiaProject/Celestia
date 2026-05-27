@@ -43,6 +43,7 @@
 #include "planetgrid.h"
 #include "pointstarvertexbuffer.h"
 #include "pointstarrenderer.h"
+#include "psfstarvertexbuffer.h"
 #include "orbitsampler.h"
 #include "rendcontext.h"
 #include "textlayout.h"
@@ -165,6 +166,8 @@ Renderer::Renderer() :
 #endif
     pointStarVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
     glareVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
+    psfPointBuffer(std::make_unique<PsfStarVertexBuffer>(*this, 2048)),
+    psfGlowBuffer(std::make_unique<PsfStarVertexBuffer>(*this, 2048)),
     curvePlotVertexBuffer(std::make_unique<CurvePlotVertexBuffer>(*this)),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
@@ -3698,6 +3701,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer.get();
     starRenderer.glareVertexBuffer = glareVertexBuffer.get();
+    starRenderer.psfPointBuffer    = psfPointBuffer.get();
+    starRenderer.psfGlowBuffer     = psfGlowBuffer.get();
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3705,12 +3710,52 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
+    starRenderer.starStyle         = starStyle;
+    starRenderer.pointRadius       = starPointRadius;
+    starRenderer.optimization      = starOptimization;
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
     starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
 
     starRenderer.colorTemp = &starColors;
+
+    if (starStyle == StarStyle::PointSourceFunction)
+    {
+        const float scale = static_cast<float>(screenDpi) / 96.0f;
+        psfPointBuffer->setPointScale(scale);
+        psfPointBuffer->setPointRadius(starPointRadius);
+        psfPointBuffer->setOptimization(starOptimization);
+        psfGlowBuffer->setPointScale(scale);
+        psfGlowBuffer->setPointRadius(starPointRadius);
+        psfGlowBuffer->setOptimization(starOptimization);
+
+        PsfStarVertexBuffer::enable();
+        psfPointBuffer->start(PsfStarVertexBuffer::Mode::Point);
+        psfGlowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
+
+        Renderer::PipelineState ps;
+        ps.blending  = true;
+        ps.blendFunc = {GL_ONE, GL_ONE};
+        setPipelineState(ps);
+
+        starDB.findVisibleStars(starRenderer,
+                                obsPos.cast<float>(),
+                                getCameraOrientationf(),
+                                math::degToRad(fov),
+                                getAspectRatio(),
+                                faintestMagNight);
+
+        psfPointBuffer->finish();
+        psfGlowBuffer->finish();
+        PsfStarVertexBuffer::disable();
+
+#ifndef GL_ES
+        if (toggleAA)
+            enableMSAA();
+#endif
+        return;
+    }
 
     m_gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(m_gaussianDiscTex.get());
@@ -4204,6 +4249,32 @@ void Renderer::setStarStyle(StarStyle style)
 StarStyle Renderer::getStarStyle() const
 {
     return starStyle;
+}
+
+
+void Renderer::setStarPointRadius(float r)
+{
+    starPointRadius = std::clamp(r, 1.0f, 10.0f);
+    markSettingsChanged();
+}
+
+
+float Renderer::getStarPointRadius() const
+{
+    return starPointRadius;
+}
+
+
+void Renderer::setStarOptimization(float opt)
+{
+    starOptimization = std::clamp(opt, 0.0f, 10.0f);
+    markSettingsChanged();
+}
+
+
+float Renderer::getStarOptimization() const
+{
+    return starOptimization;
 }
 
 

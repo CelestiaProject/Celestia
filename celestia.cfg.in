@@ -259,6 +259,20 @@ StarTextures
 
 
 #------------------------------------------------------------------------
+# StarPointRadius (Point Source Function star style only) defines the
+# pixel radius of the unit-irradiance point-mode cone for each star.
+# Valid range: 1.0 to 10.0. The default value is 2.0.
+#
+# StarOptimization (Point Source Function star style only) controls the
+# extent of the Spencer 1995 eye-PSF glow added around bright stars.
+# Lower values produce a wider glow at higher GPU cost; 1.0 produces no
+# glow beyond the point radius. Valid range: 0.1 to 1.0. Default: 0.1.
+#------------------------------------------------------------------------
+  StarPointRadius  2.0
+  StarOptimization 0.1
+
+
+#------------------------------------------------------------------------
 # RotateAcceleration defines the speed at which an object will be
 # rotated in Celestia, when using a keypress, such as the left and right
 # arrow keys. A higher value will rotate the object quicker, while a

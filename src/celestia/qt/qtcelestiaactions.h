@@ -98,6 +98,7 @@ public:
     QAction* pointStarAction{ nullptr };
     QAction* fuzzyPointStarAction{ nullptr };
     QAction* scaledDiscStarAction{ nullptr };
+    QAction* psfStarAction{ nullptr };
 
     QAction* autoMagAction{ nullptr };
     QAction* increaseLimitingMagAction{ nullptr };

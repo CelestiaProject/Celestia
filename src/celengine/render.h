@@ -43,6 +43,7 @@ class ReferenceMark;
 class CurvePlot;
 class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
+class PsfStarVertexBuffer;
 class Observer;
 struct Surface;
 class Texture;
@@ -277,6 +278,12 @@ class Renderer
 
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
+
+    // Point Source Function star renderer settings (StarStyle::PointSourceFunction).
+    void  setStarPointRadius(float r);
+    float getStarPointRadius() const;
+    void  setStarOptimization(float opt);
+    float getStarOptimization() const;
     void setResolution(celestia::engine::TextureResolution resolution);
     celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
@@ -631,6 +638,8 @@ class Renderer
     float saturationMagNight{ 1.0f };
     float saturationMag{ 1.0f };
     StarStyle starStyle{ StarStyle::FuzzyPointStars };
+    float starPointRadius{ 2.0f };
+    float starOptimization{ 0.1f };
 
     Color ambientColor;
     std::string displayedSurface;
@@ -639,6 +648,8 @@ class Renderer
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
     std::unique_ptr<PointStarVertexBuffer> pointStarVertexBuffer;
     std::unique_ptr<PointStarVertexBuffer> glareVertexBuffer;
+    std::unique_ptr<PsfStarVertexBuffer>   psfPointBuffer;
+    std::unique_ptr<PsfStarVertexBuffer>   psfGlowBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;

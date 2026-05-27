@@ -15,10 +15,12 @@
 #include <Eigen/Core>
 
 #include "objectrenderer.h"
+#include "renderflags.h"
 #include "renderlistentry.h"
 
 class ColorTemperatureTable;
 class PointStarVertexBuffer;
+class PsfStarVertexBuffer;
 class Star;
 class StarDatabase;
 
@@ -41,8 +43,14 @@ public:
     std::vector<RenderListEntry>* renderList    { nullptr };
     PointStarVertexBuffer* starVertexBuffer     { nullptr };
     PointStarVertexBuffer* glareVertexBuffer    { nullptr };
+    PsfStarVertexBuffer*   psfPointBuffer       { nullptr };
+    PsfStarVertexBuffer*   psfGlowBuffer        { nullptr };
     const StarDatabase* starDB                  { nullptr };
     const ColorTemperatureTable* colorTemp      { nullptr };
     float SolarSystemMaxDistance                { 1.0f };
     float cosFOV                                { 1.0f };
+
+    StarStyle starStyle                         { StarStyle::FuzzyPointStars };
+    float pointRadius                           { 2.0f };   // px
+    float optimization                          { 0.1f };
 };

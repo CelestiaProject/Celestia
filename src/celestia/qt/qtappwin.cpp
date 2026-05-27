@@ -599,6 +599,8 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());
     settings.setValue("StarStyle", static_cast<int>(renderer->getStarStyle()));
+    settings.setValue("StarPointRadius", renderer->getStarPointRadius());
+    settings.setValue("StarOptimization", renderer->getStarOptimization());
     settings.setValue("TextureResolution", static_cast<unsigned int>(renderer->getResolution()));
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 

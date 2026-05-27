@@ -168,6 +168,12 @@ CelestiaGlWidget::initializeGL()
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
+    appRenderer->setStarPointRadius(
+        (float) settings.value("StarPointRadius",
+                               appCore->getConfig()->renderDetails.starPointRadius).toDouble());
+    appRenderer->setStarOptimization(
+        (float) settings.value("StarOptimization",
+                               appCore->getConfig()->renderDetails.starOptimization).toDouble());
 }
 
 void

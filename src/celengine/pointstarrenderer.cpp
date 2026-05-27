@@ -10,11 +10,17 @@
 
 #include "pointstarrenderer.h"
 
+#include <algorithm>
+#include <cmath>
+
+#include <celastro/astro.h>
+#include <celengine/glsupport.h>
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
 #include "observer.h"
 #include "pointstarvertexbuffer.h"
+#include "psfstarvertexbuffer.h"
 #include "render.h"
 
 using namespace std;
@@ -98,19 +104,60 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > SolarSystemMaxDistance)
         {
-            float pointSize, alpha, glareSize, glareAlpha;
-            float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
-            renderer->calculatePointSize(appMag,
-                                         size,
-                                         pointSize,
-                                         alpha,
-                                         glareSize,
-                                         glareAlpha);
+            if (starStyle == StarStyle::PointSourceFunction)
+            {
+                // Linear-radiance PSF renderer.
+                // peak_radiance = exposure * 3 * irradiance / (pi * r^2)
+                // (Vega-normalised; SI conversion is a constant the framebuffer absorbs.)
+                constexpr float kPi = 3.14159265358979323846f;
+                // Minimum representable peak radiance after framebuffer encoding.
+                constexpr float kMinPeakSRGB   = 1.0f / (255.0f * 12.92f);
+                constexpr float kMinPeakLinear = 1.0f / 255.0f;
 
-            if (glareSize != 0.0f)
-                glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
-            if (pointSize != 0.0f)
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
+                // Exposure: choose so that a star at the user's faintest-visible
+                // magnitude produces a cone whose centre pixel reads about one
+                // perceptual step (~1/255 sRGB).  Without the 1/255 baseline that
+                // faintestMagToExposure bakes in, this matches the perceptual
+                // coverage of the fuzzy-point renderer at the same magnitude limit.
+                float exposure = std::pow(10.0f, 0.4f * faintestMag);
+
+                float irradiance = astro::magToIrradiance(appMag);
+                // Use the LOGICAL point radius here.  pointRadius is a visual
+                // size (in points), and gl_PointSize in the shader is scaled by
+                // pointScale to produce the physical-pixel footprint.  Keeping
+                // peakRadiance DPI-invariant means per-pixel-area brightness is
+                // invariant across DPIs (visually correct) and lets the glow
+                // mode's gl_PointSize = 2*r*pointScale scale linearly with DPI.
+                float r          = std::max(pointRadius, 1.0e-3f);
+                float peakRad    = exposure * 3.0f * irradiance / (kPi * r * r);
+
+                float minPeak = celestia::gl::sRGBRendering ? kMinPeakSRGB : kMinPeakLinear;
+
+                // Point (cone) contribution
+                Color linearStarColor = starColor.linearize(celestia::gl::sRGBRendering);
+                if (peakRad > minPeak && psfPointBuffer != nullptr)
+                    psfPointBuffer->addStar(relPos, linearStarColor, peakRad);
+
+                // Glow (eye-PSF) contribution, additive on top of the point cone
+                if (peakRad > 1.0f && psfGlowBuffer != nullptr && optimization > 0.0f)
+                    psfGlowBuffer->addStar(relPos, linearStarColor, peakRad);
+            }
+            else
+            {
+                float pointSize, alpha, glareSize, glareAlpha;
+                float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
+                renderer->calculatePointSize(appMag,
+                                             size,
+                                             pointSize,
+                                             alpha,
+                                             glareSize,
+                                             glareAlpha);
+
+                if (glareSize != 0.0f)
+                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
+                if (pointSize != 0.0f)
+                    starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
+            }
 
             // Place labels for stars brighter than the specified label threshold brightness
             if (util::is_set(labelMode, RenderLabels::StarLabels) && appMag < labelThresholdMag)

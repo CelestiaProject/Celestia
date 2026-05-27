@@ -202,6 +202,10 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.ShadowMapSize, hash, "ShadowMapSize"sv);
     applyStringArray(renderDetails.ignoreGLExtensions, hash, "IgnoreGLExtensions"sv);
     applyBoolean(renderDetails.sRGBRendering, hash, "SRGBRendering"sv);
+    applyNumber(renderDetails.starPointRadius, hash, "StarPointRadius"sv);
+    renderDetails.starPointRadius = std::clamp(renderDetails.starPointRadius, 1.0f, 10.0f);
+    applyNumber(renderDetails.starOptimization, hash, "StarOptimization"sv);
+    renderDetails.starOptimization = std::clamp(renderDetails.starOptimization, 0.1f, 1.0f);
 }
 
 void

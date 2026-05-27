@@ -272,10 +272,17 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             ui.scaledDiscsButton->setChecked(true);
             break;
 
+        case StarStyle::PointSourceFunction:
+            ui.psfStarsButton->setChecked(true);
+            break;
+
         default:
             assert(0);
             break;
     }
+
+    ui.psfRadiusSpinBox->setValue(renderer->getStarPointRadius());
+    ui.psfOptimizationSpinBox->setValue(renderer->getStarOptimization());
 
     {
         QSignalBlocker blocker(ui.starColorBox);
@@ -864,6 +871,28 @@ PreferencesDialog::on_fuzzyPointStarsButton_clicked() const
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::FuzzyPointStars);
     }
+}
+
+void
+PreferencesDialog::on_psfStarsButton_clicked() const
+{
+    if (ui.psfStarsButton->isChecked())
+    {
+        Renderer* renderer = appCore->getRenderer();
+        renderer->setStarStyle(StarStyle::PointSourceFunction);
+    }
+}
+
+void
+PreferencesDialog::on_psfRadiusSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarPointRadius(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfOptimizationSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarOptimization(static_cast<float>(value));
 }
 
 void
