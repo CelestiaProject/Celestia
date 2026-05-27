@@ -63,6 +63,7 @@
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
 #include <celrender/largestarrenderer.h>
+#include <celrender/psfglowlargerenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/galaxyrenderer.h>
 #include <celrender/globularrenderer.h>
@@ -175,6 +176,7 @@ Renderer::Renderer() :
     m_galaxyRenderer(std::make_unique<GalaxyRenderer>(*this)),
     m_globularRenderer(std::make_unique<GlobularRenderer>(*this)),
     m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
+    m_psfGlowLargeRenderer(std::make_unique<PsfGlowLargeRenderer>(*this)),
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
     m_openClusterRenderer(std::make_unique<OpenClusterRenderer>(*this)),
@@ -3713,6 +3715,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starStyle         = starStyle;
     starRenderer.pointRadius       = starPointRadius;
     starRenderer.optimization      = starOptimization;
+    starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
+    starRenderer.maxPointSize      = celestia::gl::maxPointSize;
+    starRenderer.largeGlowStars.clear();
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -3749,6 +3754,27 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         psfPointBuffer->finish();
         psfGlowBuffer->finish();
         PsfStarVertexBuffer::disable();
+
+        // Drain large-glow fallback stars (those whose computed gl_PointSize
+        // exceeds gl::maxPointSize).  Drawn as per-star clip-space billboards
+        // using the same Spencer PSF math.
+        if (!starRenderer.largeGlowStars.empty())
+        {
+            Eigen::Matrix4f proj = getCurrentProjectionMatrix();
+            Eigen::Matrix4f mv   = getCurrentModelViewMatrix();
+            Matrices mvp{ &proj, &mv };
+            for (const auto &s : starRenderer.largeGlowStars)
+            {
+                m_psfGlowLargeRenderer->render(s.position,
+                                               s.color,
+                                               s.peakRadiance,
+                                               starPointRadius,
+                                               starOptimization,
+                                               starRenderer.pointScale,
+                                               s.sizePhys,
+                                               mvp);
+            }
+        }
 
 #ifndef GL_ES
         if (toggleAA)

@@ -63,6 +63,7 @@ constexpr std::array StaticShaderBaseNames
     "largestar"sv,
     "passthrough"sv,
     "psfstarglow"sv,
+    "psfstarglowlarge"sv,
     "psfstarpoint"sv,
     "srgb"sv,
     "selpointer"sv,

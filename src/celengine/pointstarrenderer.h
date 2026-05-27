@@ -14,6 +14,8 @@
 
 #include <Eigen/Core>
 
+#include <celutil/color.h>
+
 #include "objectrenderer.h"
 #include "renderflags.h"
 #include "renderlistentry.h"
@@ -53,4 +55,18 @@ public:
     StarStyle starStyle                         { StarStyle::FuzzyPointStars };
     float pointRadius                           { 2.0f };   // px
     float optimization                          { 0.1f };
+    float pointScale                            { 1.0f };
+    float maxPointSize                          { 64.0f };
+
+    // Deferred large-glow stars (gl_PointSize would exceed driver cap).
+    // Drawn after the point-sprite glow batch finishes so we don't disturb
+    // the active PsfStarVertexBuffer program binding.
+    struct LargeGlow
+    {
+        Eigen::Vector3f position;
+        Color           color;
+        float           peakRadiance;
+        float           sizePhys;
+    };
+    std::vector<LargeGlow> largeGlowStars;
 };

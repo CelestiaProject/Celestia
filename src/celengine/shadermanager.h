@@ -38,6 +38,7 @@ enum class StaticShader
     LargeStar,
     Passthrough,
     PsfStarGlow,
+    PsfStarGlowLarge,
     PsfStarPoint,
     sRGB,
     SelPointer,
