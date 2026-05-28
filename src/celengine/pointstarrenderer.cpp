@@ -38,6 +38,46 @@ static Vector3d astrocentricPosition(const UniversalCoord& pos,
     return pos.offsetFromKm(star.getPosition(t));
 }
 
+// Normalises a linear-RGB star colour following CSR.py's
+// `green_normalization()` (V-band reference + saturation limit).  The
+// returned colour has max channel = 1 (and so fits in a UByte attribute);
+// `greenScale` receives the `1 / green` factor that the caller bakes
+// into the per-star peak radiance so the shader's `color * peak`
+// product reproduces `(color_arr / green) * peak`.
+static Color greenNormalization(const Color& c, float saturationLimit, float& greenScale)
+{
+    float r = c.red();
+    float g = c.green();
+    float b = c.blue();
+
+    float mx = std::max({ r, g, b });
+    if (mx <= 0.0f)
+    {
+        greenScale = 1.0f;
+        return c;
+    }
+
+    r /= mx;
+    g /= mx;
+    b /= mx;
+
+    float mn = std::min({ r, g, b });
+    float delta = saturationLimit - mn;
+    if (delta > 0.0f)
+    {
+        // Desaturate toward white so no channel falls below the limit.
+        float dr = 1.0f - r;
+        float dg = 1.0f - g;
+        float db = 1.0f - b;
+        r = std::min(1.0f, r + delta * dr * dr);
+        g = std::min(1.0f, g + delta * dg * dg);
+        b = std::min(1.0f, b + delta * db * db);
+    }
+
+    greenScale = (g > 0.0f) ? (1.0f / g) : 1.0f;
+    return Color(r, g, b);
+}
+
 PointStarRenderer::PointStarRenderer() :
     ObjectRenderer(StarDistanceLimit)
 {
@@ -133,23 +173,31 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 
                 float minPeak = celestia::gl::sRGBRendering ? kMinPeakSRGB : kMinPeakLinear;
 
-                // Point (cone) contribution
+                // Green-normalised, saturation-limited colour (CSR.py
+                // `green_normalization`, color_saturation_limit = 0.1).
+                // The `1/green` factor is folded into peakRadiance so the
+                // shader's `color * peak` matches `(color_arr/green) * peak`.
                 Color linearStarColor = starColor.linearize(celestia::gl::sRGBRendering);
-                if (peakRad > minPeak && psfPointBuffer != nullptr)
-                    psfPointBuffer->addStar(relPos, linearStarColor, peakRad);
+                float greenScale = 1.0f;
+                linearStarColor = greenNormalization(linearStarColor, 0.1f, greenScale);
+                float peakRadCol = peakRad * greenScale;
+
+                // Point (cone) contribution
+                if (peakRadCol > minPeak && psfPointBuffer != nullptr)
+                    psfPointBuffer->addStar(relPos, linearStarColor, peakRadCol);
 
                 // Glow (eye-PSF) contribution, additive on top of the point cone
-                if (peakRad > 1.0f && psfGlowBuffer != nullptr && optimization > 0.0f)
+                if (peakRadCol > 1.0f && psfGlowBuffer != nullptr && optimization > 0.0f)
                 {
                     // Soft-clip peakRadiance to bound the Spencer kernel radius.
                     // Matches CSR.py brightness_rescaler() applied before the
                     // eye-PSF computation; without it, very bright stars or
                     // high faintest-magnitude settings produce a runaway bloom
                     // that washes out the whole screen.
-                    float glowPeak = peakRad;
+                    float glowPeak = peakRadCol;
                     if (maxIrradiance > 0.0f)
                     {
-                        glowPeak = (1.0f - 1.0f / (peakRad / maxIrradiance + 1.0f))
+                        glowPeak = (1.0f - 1.0f / (peakRadCol / maxIrradiance + 1.0f))
                                    * maxIrradiance;
                     }
 
