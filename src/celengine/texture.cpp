@@ -86,11 +86,11 @@ GetTextureCaps()
     return texCaps;
 }
 
-#ifdef GL_ES
 bool
-needsRGBAExpansion(PixelFormat format, bool needsMipmap)
+needsRGBAExpansion(PixelFormat format, [[maybe_unused]] bool needsMipmap)
 {
     format = effectiveFormat(format);
+#ifdef GL_ES
     // GLES 3.0 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap
     // generation; expand to 4-component when mipmaps are needed.
     // sLuminance/sLumAlpha are not natively supported and always need
@@ -101,6 +101,10 @@ needsRGBAExpansion(PixelFormat format, bool needsMipmap)
         || format == PixelFormat::sRGB8
         || format == PixelFormat::sLuminance
         || format == PixelFormat::sLumAlpha;
+#else
+    // Desktop: only sLumAlpha needs expansion; see expansion site below.
+    return format == PixelFormat::sLumAlpha;
+#endif
 }
 
 std::unique_ptr<std::uint8_t[]>
@@ -122,7 +126,6 @@ expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
     }
     return dst;
 }
-#endif
 
 GLenum
 getInternalFormat(PixelFormat format, bool needsMipmap)
@@ -172,33 +175,22 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT5_sRGBA:
     case PixelFormat::BC7_sRGBA:
         return static_cast<GLenum>(format);
-    // GL_LUMINANCE/GL_ALPHA/GL_LUMINANCE_ALPHA were removed in GL 3.2 Core
-    // Profile. Map them to the equivalent sized R8/RG8 internal formats; a
-    // swizzle (see ApplyLegacyFormatSwizzle) restores the historical shader
-    // visibility (.r-broadcast for Luminance, alpha-from-red for Alpha, etc).
+    // GL_LUMINANCE/ALPHA/LUMINANCE_ALPHA were removed in 3.2 Core; map to
+    // R8/RG8 + ApplyLegacyFormatSwizzle to keep legacy shader visibility.
     case PixelFormat::Luminance:
     case PixelFormat::Alpha:
         return GL_R8;
     case PixelFormat::LumAlpha:
         return GL_RG8;
-    // No single/two-channel sRGB internal format exists in Core 3.2. Prefer
-    // the GL_SR8 / GL_SRG8 internal formats from EXT_texture_sRGB_R8 and
-    // EXT_texture_sRGB_RG8 when the driver exposes them (saves 4x / 2x VRAM
-    // on these single/two-channel sRGB textures); otherwise fall back to
-    // GL_SRGB8_ALPHA8 so the sample-time sRGB->linear decode the callers
-    // (e.g. BuildGaussianDiscTexture) rely on is preserved. The external
-    // format remains GL_RED/GL_RG; with the RGBA8 fallback the unused
-    // channels are filled by the driver and then masked out by the swizzle.
-    // Without sRGB-decoding storage, values would be sampled as linear and
-    // re-encoded by the sRGB framebuffer, pushing the gaussian falloff into
-    // a bright plateau and exposing 8-bit banding (very visible on close-up
-    // stars).
+    // No core single/two-channel sRGB format. Use GL_SR8 when available
+    // (saves 4x VRAM); otherwise fall back to GL_SRGB8_ALPHA8 + swizzle.
     case PixelFormat::sLuminance:
         return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(PixelFormat::sR8)
                                        : GL_SRGB8_ALPHA8;
+    // sLumAlpha is CPU-expanded to (L,L,L,A); see needsRGBAExpansion.
+    // GL_SRG8 has no fast path here (would sRGB-decode alpha).
     case PixelFormat::sLumAlpha:
-        return gl::EXT_texture_sRGB_RG8 ? static_cast<GLenum>(PixelFormat::sRG8)
-                                        : GL_SRGB8_ALPHA8;
+        return GL_SRGB8_ALPHA8;
     default:
         return GL_NONE;
     }
@@ -242,8 +234,10 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::Alpha:
         return GL_RED;
     case PixelFormat::LumAlpha:
-    case PixelFormat::sLumAlpha:
         return GL_RG;
+    // sLumAlpha is pre-expanded to (L,L,L,A); upload as RGBA.
+    case PixelFormat::sLumAlpha:
+        return GL_RGBA;
     case PixelFormat::sRGB:
     case PixelFormat::sRGB8:
         return static_cast<GLenum>(PixelFormat::RGB);
@@ -344,9 +338,8 @@ SetBorderColor(Color borderColor, GLenum target)
 }
 
 #ifndef GL_ES
-// GL 3.2 Core removed GL_LUMINANCE/GL_ALPHA/GL_LUMINANCE_ALPHA. We upload these
-// as GL_R8/GL_RG8 and use texture swizzle to keep the historical channel
-// visibility intact for shaders that sample these textures.
+// Restore legacy GL_LUMINANCE/ALPHA/LUMINANCE_ALPHA shader visibility via
+// texture swizzle, since those formats are gone in 3.2 Core.
 void
 ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
 {
@@ -362,9 +355,9 @@ ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
         swizzle[0] = GL_ZERO; swizzle[1] = GL_ZERO; swizzle[2] = GL_ZERO; swizzle[3] = GL_RED;
         break;
     case PixelFormat::LumAlpha:
-    case PixelFormat::sLumAlpha:
         swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_GREEN;
         break;
+    // sLumAlpha is pre-expanded into the right slots; no swizzle needed.
     default:
         return;
     }
@@ -398,21 +391,16 @@ LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
                                    img.getMipLevelSize(mip),
                                    img.getMipLevel(mip));
         }
+        else if (needsRGBAExpansion(img.getFormat(), needsMipmap))
+        {
+            auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
+            glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
+        }
         else
         {
-#ifdef GL_ES
-            if (needsRGBAExpansion(img.getFormat(), needsMipmap))
-            {
-                auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
-                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
-                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
-            }
-            else
-#endif
-            {
-                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
-                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(mip));
-            }
+            glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(mip));
         }
     }
 }
@@ -436,21 +424,16 @@ LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
                                img.getMipLevelSize(0),
                                img.getMipLevel(0));
     }
+    else if (needsRGBAExpansion(img.getFormat(), needsMipmap))
+    {
+        auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
+        glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                     getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
+    }
     else
     {
-#ifdef GL_ES
-        if (needsRGBAExpansion(img.getFormat(), needsMipmap))
-        {
-            auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
-            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
-                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
-        }
-        else
-#endif
-        {
-            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
-                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(0));
-        }
+        glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                     getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(0));
     }
 }
 

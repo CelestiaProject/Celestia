@@ -2693,12 +2693,6 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
-    // Resolve the effective sRGB rendering flag. sRGB texture formats are
-    // core in GLES 3.0+ and desktop GL 3.0+. We never enable
-    // GL_FRAMEBUFFER_SRGB (which is core on desktop but only available
-    // through EXT_sRGB_write_control on ES); instead, the SRGBViewportEffect
-    // shader below performs the linear->sRGB encoding in software, keeping
-    // the pipeline identical on every GL variant.
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.sRGBRendering);
 
     if (gl::sRGBRendering)

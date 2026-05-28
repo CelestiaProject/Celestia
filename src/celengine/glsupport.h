@@ -40,7 +40,6 @@ extern CELAPI bool ARB_texture_compression_bptc; //NOSONAR
 extern CELAPI bool EXT_texture_compression_s3tc; //NOSONAR
 extern CELAPI bool EXT_texture_filter_anisotropic; //NOSONAR
 extern CELAPI bool EXT_texture_sRGB_R8; //NOSONAR
-extern CELAPI bool EXT_texture_sRGB_RG8; //NOSONAR
 extern CELAPI bool MESA_pack_invert; //NOSONAR
 #ifdef GL_ES
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
