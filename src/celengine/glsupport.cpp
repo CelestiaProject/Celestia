@@ -10,11 +10,12 @@ namespace celestia::gl
 #ifdef GL_ES
 CELAPI bool OES_texture_border_clamp             = false; //NOSONAR
 CELAPI bool OES_geometry_shader                  = false; //NOSONAR
-CELAPI bool EXT_texture_filter_anisotropic       = false; //NOSONAR
 #endif
 CELAPI bool ARB_texture_compression_bptc   = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc   = false; //NOSONAR
 CELAPI bool EXT_texture_filter_anisotropic = false; //NOSONAR
+CELAPI bool EXT_texture_sRGB_R8            = false; //NOSONAR
+CELAPI bool EXT_texture_sRGB_RG8           = false; //NOSONAR
 CELAPI bool MESA_pack_invert               = false; //NOSONAR
 CELAPI GLint maxPointSize                  = 0; //NOSONAR
 CELAPI GLint maxTextureSize                = 0; //NOSONAR
@@ -88,6 +89,8 @@ bool init(util::array_view<std::string> ignore) noexcept
 #endif
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
     EXT_texture_filter_anisotropic = check_extension(ignore, "GL_EXT_texture_filter_anisotropic") || check_extension(ignore, "GL_ARB_texture_filter_anisotropic");
+    EXT_texture_sRGB_R8            = check_extension(ignore, "GL_EXT_texture_sRGB_R8");
+    EXT_texture_sRGB_RG8           = check_extension(ignore, "GL_EXT_texture_sRGB_RG8");
     MESA_pack_invert               = check_extension(ignore, "GL_MESA_pack_invert");
 
     GLint pointSizeRange[2];

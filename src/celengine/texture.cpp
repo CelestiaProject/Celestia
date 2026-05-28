@@ -181,17 +181,24 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
         return GL_R8;
     case PixelFormat::LumAlpha:
         return GL_RG8;
-    // No single/two-channel sRGB internal format exists in Core 3.2. Use
+    // No single/two-channel sRGB internal format exists in Core 3.2. Prefer
+    // the GL_SR8 / GL_SRG8 internal formats from EXT_texture_sRGB_R8 and
+    // EXT_texture_sRGB_RG8 when the driver exposes them (saves 4x / 2x VRAM
+    // on these single/two-channel sRGB textures); otherwise fall back to
     // GL_SRGB8_ALPHA8 so the sample-time sRGB->linear decode the callers
     // (e.g. BuildGaussianDiscTexture) rely on is preserved. The external
-    // format remains GL_RED/GL_RG; unused channels are filled by the driver
-    // and then masked out by the swizzle. Without this, values are sampled
-    // as linear and then re-encoded by the sRGB framebuffer, pushing the
-    // gaussian falloff into a bright plateau and exposing 8-bit banding
-    // (very visible on close-up stars).
+    // format remains GL_RED/GL_RG; with the RGBA8 fallback the unused
+    // channels are filled by the driver and then masked out by the swizzle.
+    // Without sRGB-decoding storage, values would be sampled as linear and
+    // re-encoded by the sRGB framebuffer, pushing the gaussian falloff into
+    // a bright plateau and exposing 8-bit banding (very visible on close-up
+    // stars).
     case PixelFormat::sLuminance:
+        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(PixelFormat::sR8)
+                                       : GL_SRGB8_ALPHA8;
     case PixelFormat::sLumAlpha:
-        return GL_SRGB8_ALPHA8;
+        return gl::EXT_texture_sRGB_RG8 ? static_cast<GLenum>(PixelFormat::sRG8)
+                                        : GL_SRGB8_ALPHA8;
     default:
         return GL_NONE;
     }
