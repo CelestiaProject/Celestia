@@ -22,7 +22,7 @@ class Buffer;
 class VertexObject;
 }
 
-// Vertex buffer used by StarStyle::PointSourceFunction.
+// Vertex buffer used by StarStyle::PointSpreadFunction.
 // Vertices carry per-star peak radiance (HDR float) and a linear, green-
 // normalised colour.  The shader is the same in both modes; a uniform
 // selects "point" (fixed pixel disc) or "glow" (PSF approximation).

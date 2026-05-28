@@ -108,6 +108,6 @@ enum class StarStyle : int
     FuzzyPointStars      = 0,
     PointStars           = 1,
     ScaledDiscStars      = 2,
-    PointSourceFunction  = 3,
+    PointSpreadFunction  = 3,
     StarStyleCount,
 };

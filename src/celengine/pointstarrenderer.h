@@ -55,6 +55,7 @@ public:
     StarStyle starStyle                         { StarStyle::FuzzyPointStars };
     float pointRadius                           { 2.0f };   // px
     float optimization                          { 0.1f };
+    float maxIrradiance                         { 0.0f };   // 0 = disabled
     float pointScale                            { 1.0f };
     float maxPointSize                          { 64.0f };
 

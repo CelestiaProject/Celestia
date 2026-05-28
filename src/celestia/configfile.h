@@ -96,6 +96,7 @@ struct CelestiaConfig
         bool sRGBRendering{ false };
         float starPointRadius{ 2.0f };
         float starOptimization{ 0.1f };
+        float starMaxIrradiance{ 100.0f };
     };
 
     CelestiaConfig() = default;

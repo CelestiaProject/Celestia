@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// Point Source Function (PSF) star renderer - glow (eye-PSF) pass.
+// Point Spread Function (PSF) star renderer - glow (eye-PSF) pass.
 // Approximation of Greg Spencer et al. (1995) photopic PSF.
 // Outputs linear radiance; assumes additive blending and an sRGB framebuffer.
 

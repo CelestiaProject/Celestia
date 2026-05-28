@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// Point Source Function (PSF) star renderer - point (cone) pass.
+// Point Spread Function (PSF) star renderer - point (cone) pass.
 
 attribute vec4 in_Position;
 attribute vec4 in_Color;        // green-normalised, linear-space, 8-bit per channel

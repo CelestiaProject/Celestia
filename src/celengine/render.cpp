@@ -3715,6 +3715,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.starStyle         = starStyle;
     starRenderer.pointRadius       = starPointRadius;
     starRenderer.optimization      = starOptimization;
+    starRenderer.maxIrradiance     = starMaxIrradiance;
     starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
     starRenderer.maxPointSize      = celestia::gl::maxPointSize;
     starRenderer.largeGlowStars.clear();
@@ -3725,7 +3726,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     starRenderer.colorTemp = &starColors;
 
-    if (starStyle == StarStyle::PointSourceFunction)
+    if (starStyle == StarStyle::PointSpreadFunction)
     {
         const float scale = static_cast<float>(screenDpi) / 96.0f;
         psfPointBuffer->setPointScale(scale);
@@ -4301,6 +4302,22 @@ void Renderer::setStarOptimization(float opt)
 float Renderer::getStarOptimization() const
 {
     return starOptimization;
+}
+
+
+void Renderer::setStarMaxIrradiance(float v)
+{
+    if (v <= 0.0f)
+        starMaxIrradiance = 0.0f;
+    else
+        starMaxIrradiance = std::clamp(v, 1.0f, 1.0e6f);
+    markSettingsChanged();
+}
+
+
+float Renderer::getStarMaxIrradiance() const
+{
+    return starMaxIrradiance;
 }
 
 

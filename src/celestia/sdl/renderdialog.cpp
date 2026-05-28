@@ -74,7 +74,7 @@ starStylePanel(Renderer* renderer)
     ImGui::RadioButton("Points##starStylePoints", &starStyleNew, static_cast<int>(StarStyle::PointStars));
     ImGui::RadioButton("Fuzzy points", &starStyleNew, static_cast<int>(StarStyle::FuzzyPointStars));
     ImGui::RadioButton("Scaled discs", &starStyleNew, static_cast<int>(StarStyle::ScaledDiscStars));
-    ImGui::RadioButton("Point source function", &starStyleNew, static_cast<int>(StarStyle::PointSourceFunction));
+    ImGui::RadioButton("Point spread function", &starStyleNew, static_cast<int>(StarStyle::PointSpreadFunction));
     ImGui::Separator();
     enumCheckbox("Auto-magnitude", rfNew, RenderFlags::ShowAutoMag);
 

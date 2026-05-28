@@ -174,6 +174,9 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setStarOptimization(
         (float) settings.value("StarOptimization",
                                appCore->getConfig()->renderDetails.starOptimization).toDouble());
+    appRenderer->setStarMaxIrradiance(
+        (float) settings.value("StarMaxIrradiance",
+                               appCore->getConfig()->renderDetails.starMaxIrradiance).toDouble());
 }
 
 void

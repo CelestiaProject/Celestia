@@ -188,6 +188,7 @@ AppWindow::run(const Settings& settings)
     renderer->setSolarSystemMaxDistance(config->renderDetails.SolarSystemMaxDistance);
     renderer->setStarPointRadius(config->renderDetails.starPointRadius);
     renderer->setStarOptimization(config->renderDetails.starOptimization);
+    renderer->setStarMaxIrradiance(config->renderDetails.starMaxIrradiance);
 
     settings.apply(m_appCore.get());
 

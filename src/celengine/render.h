@@ -279,11 +279,13 @@ class Renderer
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
 
-    // Point Source Function star renderer settings (StarStyle::PointSourceFunction).
+    // Point Spread Function star renderer settings (StarStyle::PointSpreadFunction).
     void  setStarPointRadius(float r);
     float getStarPointRadius() const;
     void  setStarOptimization(float opt);
     float getStarOptimization() const;
+    void  setStarMaxIrradiance(float v);
+    float getStarMaxIrradiance() const;
     void setResolution(celestia::engine::TextureResolution resolution);
     celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
@@ -640,6 +642,7 @@ class Renderer
     StarStyle starStyle{ StarStyle::FuzzyPointStars };
     float starPointRadius{ 2.0f };
     float starOptimization{ 0.1f };
+    float starMaxIrradiance{ 100.0f };
 
     Color ambientColor;
     std::string displayedSurface;

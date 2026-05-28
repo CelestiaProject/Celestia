@@ -272,7 +272,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             ui.scaledDiscsButton->setChecked(true);
             break;
 
-        case StarStyle::PointSourceFunction:
+        case StarStyle::PointSpreadFunction:
             ui.psfStarsButton->setChecked(true);
             break;
 
@@ -283,6 +283,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     ui.psfRadiusSpinBox->setValue(renderer->getStarPointRadius());
     ui.psfOptimizationSpinBox->setValue(renderer->getStarOptimization());
+    ui.psfMaxIrradianceSpinBox->setValue(renderer->getStarMaxIrradiance());
 
     {
         QSignalBlocker blocker(ui.starColorBox);
@@ -879,7 +880,7 @@ PreferencesDialog::on_psfStarsButton_clicked() const
     if (ui.psfStarsButton->isChecked())
     {
         Renderer* renderer = appCore->getRenderer();
-        renderer->setStarStyle(StarStyle::PointSourceFunction);
+        renderer->setStarStyle(StarStyle::PointSpreadFunction);
     }
 }
 
@@ -893,6 +894,12 @@ void
 PreferencesDialog::on_psfOptimizationSpinBox_valueChanged(double value) const
 {
     appCore->getRenderer()->setStarOptimization(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfMaxIrradianceSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarMaxIrradiance(static_cast<float>(value));
 }
 
 void

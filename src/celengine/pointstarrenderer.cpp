@@ -104,7 +104,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > SolarSystemMaxDistance)
         {
-            if (starStyle == StarStyle::PointSourceFunction)
+            if (starStyle == StarStyle::PointSpreadFunction)
             {
                 // Linear-radiance PSF renderer.
                 // peak_radiance = exposure * 3 * irradiance / (pi * r^2)
@@ -141,20 +141,32 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // Glow (eye-PSF) contribution, additive on top of the point cone
                 if (peakRad > 1.0f && psfGlowBuffer != nullptr && optimization > 0.0f)
                 {
-                    // r_glow_logical = peakRad^0.4 / psfA, psfA = optimization/pointRadius
+                    // Soft-clip peakRadiance to bound the Spencer kernel radius.
+                    // Matches CSR.py brightness_rescaler() applied before the
+                    // eye-PSF computation; without it, very bright stars or
+                    // high faintest-magnitude settings produce a runaway bloom
+                    // that washes out the whole screen.
+                    float glowPeak = peakRad;
+                    if (maxIrradiance > 0.0f)
+                    {
+                        glowPeak = (1.0f - 1.0f / (peakRad / maxIrradiance + 1.0f))
+                                   * maxIrradiance;
+                    }
+
+                    // r_glow_logical = glowPeak^0.4 / psfA, psfA = optimization/pointRadius
                     float a        = optimization / r;
-                    float rGlowLog = std::pow(peakRad, 0.4f) / std::max(a, 1.0e-6f);
+                    float rGlowLog = std::pow(glowPeak, 0.4f) / std::max(a, 1.0e-6f);
                     float sizePhys = 2.0f * rGlowLog * pointScale;
                     if (sizePhys > maxPointSize)
                     {
                         largeGlowStars.push_back({relPos,
                                                   linearStarColor,
-                                                  peakRad,
+                                                  glowPeak,
                                                   sizePhys});
                     }
                     else
                     {
-                        psfGlowBuffer->addStar(relPos, linearStarColor, peakRad);
+                        psfGlowBuffer->addStar(relPos, linearStarColor, glowPeak);
                     }
                 }
             }

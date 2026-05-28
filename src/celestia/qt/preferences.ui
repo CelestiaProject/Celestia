@@ -1082,7 +1082,7 @@
             <item>
              <widget class="QRadioButton" name="psfStarsButton">
               <property name="text">
-               <string>Point source function</string>
+               <string>Point spread function</string>
               </property>
              </widget>
             </item>
@@ -1147,7 +1147,41 @@
              </layout>
             </item>
             <item>
-             <spacer name="verticalSpacer_15">
+            <layout class="QHBoxLayout" name="horizontalLayout_psfMaxIrr">
+             <item>
+              <widget class="QLabel" name="psfMaxIrradianceLabel">
+               <property name="text">
+                <string>Max irradiance (log):</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="psfMaxIrradianceSpinBox">
+               <property name="toolTip">
+                <string>Soft-clip on per-star peak radiance. 0 = disabled.
+Stepped in factors of 10. Valid range: 1.0 to 1.0e6.</string>
+               </property>
+               <property name="decimals">
+                <number>2</number>
+               </property>
+               <property name="minimum">
+                <double>0.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1000000.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>100.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+            </item>
+            <item>
+            <spacer name="verticalSpacer_15">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>

@@ -9,7 +9,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// Point Source Function (PSF) star renderer - glow (eye-PSF) pass.
+// Point Spread Function (PSF) star renderer - glow (eye-PSF) pass.
 
 attribute vec4 in_Position;
 attribute vec4 in_Color;
