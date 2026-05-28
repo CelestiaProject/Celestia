@@ -102,6 +102,7 @@ public:
     bool vertexBuffersInitialized{ false };
     GLuint currentVB{ 0 };
     std::array<GLuint, NUM_SPHERE_VERTEX_BUFFERS> vertexBuffers{};
+    GLuint vao{ 0 };
 
     // Index buffer cache (key = nSlices)
     std::unordered_map<int, CachedIndexBuffer> indexBufferCache{};

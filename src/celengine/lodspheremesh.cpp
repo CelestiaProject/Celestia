@@ -42,6 +42,16 @@ constexpr int maxVertices   = (maxPhiSteps + 1) * (maxThetaSteps + 1);
 constexpr int nIndices      = maxPhiSteps * 2 * (maxThetaSteps + 2) - 2;
 static_assert(nIndices < std::numeric_limits<unsigned short>::max());
 
+bool
+isVAOSupported()
+{
+#ifdef GL_ES
+    return celestia::gl::OES_vertex_array_object;
+#else
+    return celestia::gl::ARB_vertex_array_object;
+#endif
+}
+
 // largest vertex:
 //     position   - 3 floats, (re-used for normals)
 //     tangent    - 3 floats,
@@ -291,6 +301,8 @@ createVertices(std::vector<float>& vertices,
 LODSphereMesh::~LODSphereMesh()
 {
     glDeleteBuffers(vertexBuffers.size(), vertexBuffers.data());
+    if (vao != 0)
+        glDeleteVertexArrays(1, &vao);
 }
 
 
@@ -419,7 +431,13 @@ void LODSphereMesh::render(unsigned int attributes,
                          GL_STREAM_DRAW);
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        if (isVAOSupported())
+            glGenVertexArrays(1, &vao);
     }
+
+    if (vao != 0)
+        glBindVertexArray(vao);
 
     currentVB = 0;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[currentVB]);
