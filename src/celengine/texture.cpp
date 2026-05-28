@@ -365,14 +365,6 @@ ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
 }
 #endif
 
-bool
-canGenerateMipmaps([[maybe_unused]] PixelFormat format)
-{
-    // sRGB mipmap generation is supported on GLES 3.0+ and desktop GL 3.0+,
-    // which are now the floor; mipmaps are always generatable here.
-    return true;
-}
-
 // Load a prebuilt set of mipmaps; assumes that the image contains
 // a complete set of mipmap levels.
 void
@@ -579,11 +571,7 @@ ComputeTileMipMaps(const Image& img, Image& tile,
         }
     }
 
-    bool genMipmaps = mipmap && canGenerateMipmaps(img.getFormat());
-
-    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
-    if (mipmap && !genMipmaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    bool genMipmaps = mipmap;
 
     LoadMiplessTexture(tile, GL_TEXTURE_2D, genMipmaps);
     if (genMipmaps)
@@ -693,14 +681,7 @@ ImageTexture::ImageTexture(const Image& img,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
     }
 
-    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(img.getFormat());
-
-    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
-    if (mipmap && !precomputedMipMaps && !genMipmaps)
-    {
-        mipmap = false;
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    }
+    bool genMipmaps = mipmap && !precomputedMipMaps;
 
     if (mipmap)
     {
@@ -918,14 +899,7 @@ CubeMap::CubeMap(celestia::util::array_view<Image> faces) :
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(faces[0].getFormat());
-
-    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
-    if (mipmap && !precomputedMipMaps && !genMipmaps)
-    {
-        mipmap = false;
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    }
+    bool genMipmaps = mipmap && !precomputedMipMaps;
 
     for (int i = 0; i < 6; ++i)
     {

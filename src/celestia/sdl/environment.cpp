@@ -98,9 +98,6 @@ Environment::setGLAttributes(int aaSamples) const
         return false;
     }
 
-    // macOS exposes 3.3 Core on every Mac shipped since 2013, and 3.3 is the
-    // lowest common version that the GLSL '#version 330' shaders (with
-    // explicit attribute locations) need.
     if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3) != 0
         || SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3) != 0)
     {

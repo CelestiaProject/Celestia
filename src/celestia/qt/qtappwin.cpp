@@ -336,10 +336,6 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     glformat.setVersion(3, 0);
 #else
     glformat.setRenderableType(QSurfaceFormat::RenderableType::OpenGL);
-    // Request a Core Profile context. macOS exposes 3.3 Core on every Mac
-    // shipped since 2013, and 3.3 is the lowest common version that the
-    // GLSL '#version 330' shaders (with explicit attribute locations)
-    // need.
     glformat.setVersion(3, 3);
     glformat.setProfile(QSurfaceFormat::CoreProfile);
 #endif

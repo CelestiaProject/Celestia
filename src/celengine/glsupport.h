@@ -43,7 +43,6 @@ extern CELAPI bool MESA_pack_invert; //NOSONAR
 #ifdef GL_ES
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
-extern CELAPI bool EXT_sRGB_write_control; //NOSONAR
 #endif
 extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR
