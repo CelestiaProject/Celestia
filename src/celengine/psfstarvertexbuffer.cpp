@@ -13,6 +13,7 @@
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include <celcompat/numbers.h>
 #include <celutil/color.h>
 
 #include "glsupport.h"
@@ -21,11 +22,6 @@
 
 namespace gl  = celestia::gl;
 namespace util = celestia::util;
-
-namespace
-{
-constexpr float kPi = 3.14159265358979323846f;
-}
 
 PsfStarVertexBuffer* PsfStarVertexBuffer::current = nullptr;
 
@@ -81,7 +77,7 @@ PsfStarVertexBuffer::makeCurrent()
     if (m_mode == Mode::Glow)
     {
         float a = (m_pointRadius > 0.0f) ? (m_optimization / m_pointRadius) : 0.0f;
-        float denom = (kPi / std::max(m_pointRadius, 1e-6f)) - a;
+        float denom = (celestia::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
         float b = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
         m_prog->floatParam("psfA") = a;
         m_prog->floatParam("psfB") = b;

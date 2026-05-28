@@ -275,10 +275,18 @@ StarTextures
 # stars (or high FaintestMagnitude values) produce a runaway bloom that
 # washes out the screen.  Valid range: 1.0 to 1.0e6 (log scale in GUI).
 # Default: 100.0.  Set to 0 to disable the clamp entirely.
+#
+# StarExposure (Point Spread Function star style only) is a per-star
+# brightness multiplier applied to the irradiance prior to peak
+# computation:  peak = StarExposure * 3 * irradiance / (pi * r^2)
+# Larger values brighten every star uniformly (and extend the visible
+# magnitude limit via the minPeak cutoff).  Valid range: 1e-3 to 1e6.
+# Default: 1.0.
 #------------------------------------------------------------------------
   StarPointRadius   2.0
   StarOptimization  0.1
   StarMaxIrradiance 100.0
+  StarExposure      100.0
 
 
 #------------------------------------------------------------------------

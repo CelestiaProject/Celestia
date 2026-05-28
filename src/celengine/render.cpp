@@ -3716,6 +3716,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.pointRadius       = starPointRadius;
     starRenderer.optimization      = starOptimization;
     starRenderer.maxIrradiance     = starMaxIrradiance;
+    starRenderer.exposure          = starExposure;
     starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
     starRenderer.maxPointSize      = celestia::gl::maxPointSize;
     starRenderer.largeGlowStars.clear();
@@ -3745,12 +3746,26 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         ps.blendFunc = {GL_ONE, GL_ONE};
         setPipelineState(ps);
 
+        // Extend the iteration cutoff to the PSF's natural fade-in
+        // threshold so stars actually grow through minPeak instead of
+        // popping in at whatever peakRad they happen to have just past
+        // Celestia's perceptual faintestMag cutoff.
+        //   peakRad = exposure * 3 * irradiance / (pi * r^2),  irradiance = 10^(-0.4*m)
+        //   peakRad = minPeak  =>  m = (1/0.4) * log10(exposure * 3 / (pi * r^2 * minPeak))
+        float minPeak = celestia::gl::sRGBRendering
+                            ? astro::LOWEST_IRRADIATION_SRGB
+                            : astro::LOWEST_IRRADIATION;
+        float rLog = std::max(starPointRadius, 1.0e-3f);
+        float psfFaintMag = std::log10(starExposure * 3.0f
+                                       / (celestia::numbers::pi_v<float> * rLog * rLog * minPeak)) / 0.4f;
+        float psfIterMag  = std::max(faintestMagNight, psfFaintMag);
+
         starDB.findVisibleStars(starRenderer,
                                 obsPos.cast<float>(),
                                 getCameraOrientationf(),
                                 math::degToRad(fov),
                                 getAspectRatio(),
-                                faintestMagNight);
+                                psfIterMag);
 
         psfPointBuffer->finish();
         psfGlowBuffer->finish();
@@ -4318,6 +4333,19 @@ void Renderer::setStarMaxIrradiance(float v)
 float Renderer::getStarMaxIrradiance() const
 {
     return starMaxIrradiance;
+}
+
+
+void Renderer::setStarExposure(float e)
+{
+    starExposure = std::clamp(e, 1.0e-3f, 1.0e6f);
+    markSettingsChanged();
+}
+
+
+float Renderer::getStarExposure() const
+{
+    return starExposure;
 }
 
 

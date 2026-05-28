@@ -17,15 +17,11 @@
 #include <celengine/shadermanager.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include <celcompat/numbers.h>
 #include <celutil/color.h>
 
 namespace celestia::render
 {
-
-namespace
-{
-constexpr float kPi = 3.14159265358979323846f;
-}
 
 PsfGlowLargeRenderer::PsfGlowLargeRenderer(Renderer &renderer) :
     m_renderer(renderer)
@@ -65,7 +61,7 @@ PsfGlowLargeRenderer::render(
     prog->floatParam("peakRadiance") = peakRadiance;
 
     float a = (pointRadius > 0.0f) ? (optimization / pointRadius) : 0.0f;
-    float denom = (kPi / std::max(pointRadius, 1e-6f)) - a;
+    float denom = (celestia::numbers::pi_v<float> / std::max(pointRadius, 1e-6f)) - a;
     float b = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
     prog->floatParam("psfA")         = a;
     prog->floatParam("psfB")         = b;

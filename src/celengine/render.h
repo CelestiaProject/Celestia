@@ -286,6 +286,8 @@ class Renderer
     float getStarOptimization() const;
     void  setStarMaxIrradiance(float v);
     float getStarMaxIrradiance() const;
+    void  setStarExposure(float e);
+    float getStarExposure() const;
     void setResolution(celestia::engine::TextureResolution resolution);
     celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
@@ -643,6 +645,7 @@ class Renderer
     float starPointRadius{ 2.0f };
     float starOptimization{ 0.1f };
     float starMaxIrradiance{ 100.0f };
+    float starExposure{ 100.0f };
 
     Color ambientColor;
     std::string displayedSurface;

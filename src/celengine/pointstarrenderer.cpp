@@ -14,6 +14,7 @@
 #include <cmath>
 
 #include <celastro/astro.h>
+#include <celcompat/numbers.h>
 #include <celengine/glsupport.h>
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
@@ -22,6 +23,8 @@
 #include "pointstarvertexbuffer.h"
 #include "psfstarvertexbuffer.h"
 #include "render.h"
+
+#include <fmt/printf.h>
 
 using namespace std;
 using namespace Eigen;
@@ -149,17 +152,11 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // Linear-radiance PSF renderer.
                 // peak_radiance = exposure * 3 * irradiance / (pi * r^2)
                 // (Vega-normalised; SI conversion is a constant the framebuffer absorbs.)
-                constexpr float kPi = 3.14159265358979323846f;
-                // Minimum representable peak radiance after framebuffer encoding.
-                constexpr float kMinPeakSRGB   = 1.0f / (255.0f * 12.92f);
-                constexpr float kMinPeakLinear = 1.0f / 255.0f;
 
-                // Exposure: choose so that a star at the user's faintest-visible
-                // magnitude produces a cone whose centre pixel reads about one
-                // perceptual step (~1/255 sRGB).  Without the 1/255 baseline that
-                // faintestMagToExposure bakes in, this matches the perceptual
-                // coverage of the fuzzy-point renderer at the same magnitude limit.
-                float exposure = std::pow(10.0f, 0.4f * faintestMag);
+                // Exposure: per-CSR.py, a user-controlled brightness multiplier
+                // (independent of the magnitude limit).  Default 1.0 yields
+                // visibility down to ~mag 7 with r=2 on an sRGB framebuffer.
+                float exposureFactor = std::max(exposure, 1.0e-6f);
 
                 float irradiance = astro::magToIrradiance(appMag);
                 // Use the LOGICAL point radius here.  pointRadius is a visual
@@ -169,9 +166,12 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // invariant across DPIs (visually correct) and lets the glow
                 // mode's gl_PointSize = 2*r*pointScale scale linearly with DPI.
                 float r          = std::max(pointRadius, 1.0e-3f);
-                float peakRad    = exposure * 3.0f * irradiance / (kPi * r * r);
+                float peakRad    = exposureFactor * 3.0f * irradiance
+                                   / (celestia::numbers::pi_v<float> * r * r);
 
-                float minPeak = celestia::gl::sRGBRendering ? kMinPeakSRGB : kMinPeakLinear;
+                float minPeak = celestia::gl::sRGBRendering
+                                    ? astro::LOWEST_IRRADIATION_SRGB
+                                    : astro::LOWEST_IRRADIATION;
 
                 // Green-normalised, saturation-limited colour (CSR.py
                 // `green_normalization`, color_saturation_limit = 0.1).

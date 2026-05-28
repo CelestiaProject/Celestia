@@ -1180,6 +1180,39 @@ Stepped in factors of 10. Valid range: 1.0 to 1.0e6.</string>
              </item>
             </layout>
             </item>
+             <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_psfExposure">
+             <item>
+              <widget class="QLabel" name="psfExposureLabel">
+               <property name="text">
+                <string>Exposure:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="psfExposureSpinBox">
+               <property name="toolTip">
+                <string>Per-star brightness multiplier. Valid range: 0.001 to 1.0e6.</string>
+               </property>
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="minimum">
+                <double>0.001000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>1000000.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>100.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+            </item>
             <item>
             <spacer name="verticalSpacer_15">
               <property name="orientation">

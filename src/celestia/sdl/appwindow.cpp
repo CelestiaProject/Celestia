@@ -189,6 +189,7 @@ AppWindow::run(const Settings& settings)
     renderer->setStarPointRadius(config->renderDetails.starPointRadius);
     renderer->setStarOptimization(config->renderDetails.starOptimization);
     renderer->setStarMaxIrradiance(config->renderDetails.starMaxIrradiance);
+    renderer->setStarExposure(config->renderDetails.starExposure);
 
     settings.apply(m_appCore.get());
 

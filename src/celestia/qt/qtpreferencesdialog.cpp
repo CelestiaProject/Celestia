@@ -284,6 +284,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.psfRadiusSpinBox->setValue(renderer->getStarPointRadius());
     ui.psfOptimizationSpinBox->setValue(renderer->getStarOptimization());
     ui.psfMaxIrradianceSpinBox->setValue(renderer->getStarMaxIrradiance());
+    ui.psfExposureSpinBox->setValue(renderer->getStarExposure());
 
     {
         QSignalBlocker blocker(ui.starColorBox);
@@ -900,6 +901,12 @@ void
 PreferencesDialog::on_psfMaxIrradianceSpinBox_valueChanged(double value) const
 {
     appCore->getRenderer()->setStarMaxIrradiance(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfExposureSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarExposure(static_cast<float>(value));
 }
 
 void

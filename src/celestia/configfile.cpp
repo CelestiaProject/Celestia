@@ -211,6 +211,8 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
         renderDetails.starMaxIrradiance = 0.0f;
     else if (renderDetails.starMaxIrradiance > 0.0f)
         renderDetails.starMaxIrradiance = std::clamp(renderDetails.starMaxIrradiance, 1.0f, 1.0e6f);
+    applyNumber(renderDetails.starExposure, hash, "StarExposure"sv);
+    renderDetails.starExposure = std::clamp(renderDetails.starExposure, 1.0e-3f, 1.0e6f);
 }
 
 void
