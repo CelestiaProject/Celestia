@@ -45,6 +45,7 @@
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include "qtcolorswatchwidget.h"
+#include "qtmarkerutil.h"
 #include "qtinfopanel.h"
 
 namespace celestia::qt
@@ -808,17 +809,7 @@ SolarSystemBrowser::SolarSystemBrowser(CelestiaCore* _appCore, QWidget* parent, 
 
     markerSymbolBox = new QComboBox();
     markerSymbolBox->setEditable(false);
-    markerSymbolBox->addItem(_("None"));
-    markerSymbolBox->addItem(_("Diamond"), (int) MarkerRepresentation::Diamond);
-    markerSymbolBox->addItem(_("Triangle"), (int) MarkerRepresentation::Triangle);
-    markerSymbolBox->addItem(_("Square"), (int) MarkerRepresentation::Square);
-    markerSymbolBox->addItem(_("Plus"), (int) MarkerRepresentation::Plus);
-    markerSymbolBox->addItem(_("X"), (int) MarkerRepresentation::X);
-    markerSymbolBox->addItem(_("Circle"), (int) MarkerRepresentation::Circle);
-    markerSymbolBox->addItem(_("Left Arrow"), (int) MarkerRepresentation::LeftArrow);
-    markerSymbolBox->addItem(_("Right Arrow"), (int) MarkerRepresentation::RightArrow);
-    markerSymbolBox->addItem(_("Up Arrow"), (int) MarkerRepresentation::UpArrow);
-    markerSymbolBox->addItem(_("Down Arrow"), (int) MarkerRepresentation::DownArrow);
+    populateMarkerSymbolComboBox(markerSymbolBox);
     markerSymbolBox->setCurrentIndex(1);
     markerSymbolBox->setToolTip(_("Select marker symbol"));
     markGroupLayout->addWidget(markerSymbolBox, 1, 0);

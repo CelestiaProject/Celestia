@@ -31,6 +31,8 @@ function(GetQtSources _var_name)
     qtinfopanel.cpp
     qtinfopanel.h
     qtmain.cpp
+    qtmarkerutil.cpp
+    qtmarkerutil.h
     qtpathutil.h
     qtpreferencesdialog.cpp
     qtpreferencesdialog.h
