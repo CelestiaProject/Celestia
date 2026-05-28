@@ -197,8 +197,8 @@ FramebufferObject::generateDepthTexture()
         type = celestia::gl::OES_depth24 ? GL_UNSIGNED_INT :  GL_UNSIGNED_SHORT;
     }
 #else
-    GLint internalFormat = GL_DEPTH_COMPONENT;
-    GLenum type = GL_UNSIGNED_BYTE;
+    GLint internalFormat = GL_DEPTH_COMPONENT24;
+    GLenum type = GL_UNSIGNED_INT;
 #endif
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, GL_DEPTH_COMPONENT, type, nullptr);
 
