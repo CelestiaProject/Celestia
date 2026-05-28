@@ -1151,7 +1151,7 @@
              <item>
               <widget class="QLabel" name="psfMaxIrradianceLabel">
                <property name="text">
-                <string>Max irradiance (log):</string>
+                <string>Max irradiance:</string>
                </property>
               </widget>
              </item>
@@ -1159,7 +1159,7 @@
               <widget class="QDoubleSpinBox" name="psfMaxIrradianceSpinBox">
                <property name="toolTip">
                 <string>Soft-clip on per-star peak radiance. 0 = disabled.
-Stepped in factors of 10. Valid range: 1.0 to 1.0e6.</string>
+Valid range: 1.0 to 1.0e6.</string>
                </property>
                <property name="decimals">
                 <number>2</number>
