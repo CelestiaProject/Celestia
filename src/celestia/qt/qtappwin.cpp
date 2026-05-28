@@ -333,8 +333,14 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     QSurfaceFormat glformat = QSurfaceFormat::defaultFormat();
 #ifdef GL_ES
     glformat.setRenderableType(QSurfaceFormat::RenderableType::OpenGLES);
+    glformat.setVersion(3, 0);
 #else
     glformat.setRenderableType(QSurfaceFormat::RenderableType::OpenGL);
+    // Request a Core Profile context. macOS only exposes desktop GL >= 3.2
+    // via Core Profile, and 3.2 is the lowest common denominator that the
+    // GLSL '#version 150' shaders need.
+    glformat.setVersion(3, 2);
+    glformat.setProfile(QSurfaceFormat::CoreProfile);
 #endif
     glformat.setAlphaBufferSize(0);
     if (m_appCore->getConfig()->renderDetails.aaSamples > 1)

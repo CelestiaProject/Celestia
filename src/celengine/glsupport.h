@@ -25,36 +25,25 @@ namespace celestia::gl
 {
 enum Version
 {
-    GL_2_1   = 21,
     GL_3     = 30,
     GL_3_0   = 30,
     GL_3_1   = 31,
     GL_3_2   = 32,
     GL_3_3   = 33,
-    GLES_2   = 20,
-    GLES_2_0 = 20,
     GLES_3   = 30,
     GLES_3_0 = 30,
     GLES_3_1 = 31,
     GLES_3_2 = 32,
 };
 
-extern CELAPI bool ARB_shader_texture_lod; //NOSONAR
 extern CELAPI bool ARB_texture_compression_bptc; //NOSONAR
 extern CELAPI bool EXT_texture_compression_s3tc; //NOSONAR
 extern CELAPI bool EXT_texture_filter_anisotropic; //NOSONAR
 extern CELAPI bool MESA_pack_invert; //NOSONAR
 #ifdef GL_ES
-extern CELAPI bool OES_vertex_array_object; //NOSONAR
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
 extern CELAPI bool OES_geometry_shader; //NOSONAR
-extern CELAPI bool OES_depth24; //NOSONAR
-extern CELAPI bool OES_texture_half_float; //NOSONAR
-extern CELAPI bool OES_standard_derivatives; //NOSONAR
-extern CELAPI bool EXT_sRGB; //NOSONAR
 extern CELAPI bool EXT_sRGB_write_control; //NOSONAR
-#else
-extern CELAPI bool ARB_vertex_array_object; //NOSONAR
 #endif
 extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR

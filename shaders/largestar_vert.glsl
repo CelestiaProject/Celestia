@@ -1,11 +1,11 @@
-attribute vec2 in_Position;
-attribute vec2 in_TexCoord0;
+in vec2 in_Position;
+in vec2 in_TexCoord0;
 
 uniform float pointWidth;
 uniform float pointHeight;
 uniform vec3 center;
 
-varying vec2 texCoord;
+out vec2 texCoord;
 
 void main(void)
 {

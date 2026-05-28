@@ -1,9 +1,9 @@
-attribute vec2 in_Position;
-attribute vec2 in_TexCoord0;
-attribute float in_Intensity;
+in vec2 in_Position;
+in vec2 in_TexCoord0;
+in float in_Intensity;
 
-varying vec2 texCoord;
-varying float intensity;
+out vec2 texCoord;
+out float intensity;
 
 uniform float screenRatio;
 

@@ -1,7 +1,7 @@
-attribute vec2 in_Position;
-attribute vec2 in_TexCoord0;
+in vec2 in_Position;
+in vec2 in_TexCoord0;
 
-varying vec2 texCoord;
+out vec2 texCoord;
 
 void main(void)
 {

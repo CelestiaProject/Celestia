@@ -113,16 +113,16 @@ CelestiaGlWidget::initializeGL()
     using namespace celestia;
 #ifdef GL_ES
     if (!gl::init(appCore->getConfig()->renderDetails.ignoreGLExtensions) ||
-        !gl::checkVersion(gl::GLES_2))
+        !gl::checkVersion(gl::GLES_3_0))
     {
-        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGLES 2.0."));
+        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL ES 3.0."));
         std::exit(1);
     }
 #else
     if (!gl::init(appCore->getConfig()->renderDetails.ignoreGLExtensions) ||
-        !gl::checkVersion(gl::GL_2_1))
+        !gl::checkVersion(gl::GL_3_1))
     {
-        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL 2.1."));
+        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL 3.1."));
         std::exit(1);
     }
 #endif

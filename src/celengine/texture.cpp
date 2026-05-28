@@ -91,28 +91,16 @@ bool
 needsRGBAExpansion(PixelFormat format, bool needsMipmap)
 {
     format = effectiveFormat(format);
-    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-    {
-        // GLES3 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap generation. If we
-        // don't need mipmap, we can use the format as is. sLuminance/sLumAlpha are not natively
-        // supported and always needs expansion.
-        if (!needsMipmap)
-            return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
-        return format == PixelFormat::sRGB
-            || format == PixelFormat::sRGB8
-            || format == PixelFormat::sLuminance
-            || format == PixelFormat::sLumAlpha;
-    }
-    else if (celestia::gl::EXT_sRGB)
-    {
-        // GLES2 with sRGB. All sRGB formats should have mipmap disabled.
+    // GLES 3.0 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap
+    // generation; expand to 4-component when mipmaps are needed.
+    // sLuminance/sLumAlpha are not natively supported and always need
+    // expansion.
+    if (!needsMipmap)
         return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
-    }
-    else
-    {
-        // sRGB not supported at all, no need for expansion.
-        return false;
-    }
+    return format == PixelFormat::sRGB
+        || format == PixelFormat::sRGB8
+        || format == PixelFormat::sLuminance
+        || format == PixelFormat::sLumAlpha;
 }
 
 std::unique_ptr<std::uint8_t[]>
@@ -157,22 +145,12 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
         return static_cast<GLenum>(format);
     case PixelFormat::sRGB:
         if (!needsRGBAExpansion(format, needsMipmap))
-        {
-            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-                return static_cast<GLenum>(PixelFormat::sRGB8);
-            if (celestia::gl::EXT_sRGB)
-                return GL_SRGB_EXT;
-            return static_cast<GLenum>(PixelFormat::RGB);
-        }
+            return static_cast<GLenum>(PixelFormat::sRGB8);
         [[fallthrough]];
     case PixelFormat::sRGBA:
     case PixelFormat::sLuminance:
     case PixelFormat::sLumAlpha:
-        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-            return static_cast<GLenum>(PixelFormat::sRGBA8);
-        if (celestia::gl::EXT_sRGB)
-            return GL_SRGB_ALPHA_EXT;
-        return static_cast<GLenum>(PixelFormat::RGBA);
+        return static_cast<GLenum>(PixelFormat::sRGBA8);
     default:
         return GL_NONE;
     }
@@ -215,22 +193,12 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::sRGB:
     case PixelFormat::sRGB8:
         if (!needsRGBAExpansion(format, needsMipmap))
-        {
-            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-                return static_cast<GLenum>(PixelFormat::RGB);
-            if (celestia::gl::EXT_sRGB)
-                return GL_SRGB_EXT;
             return static_cast<GLenum>(PixelFormat::RGB);
-        }
         [[fallthrough]];
     case PixelFormat::sRGBA:
     case PixelFormat::sRGBA8:
     case PixelFormat::sLuminance:
     case PixelFormat::sLumAlpha:
-        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-            return static_cast<GLenum>(PixelFormat::RGBA);
-        if (celestia::gl::EXT_sRGB)
-            return GL_SRGB_ALPHA_EXT;
         return static_cast<GLenum>(PixelFormat::RGBA);
     default:
         return getInternalFormat(format, needsMipmap);
@@ -356,26 +324,8 @@ SetBorderColor(Color borderColor, GLenum target)
 bool
 canGenerateMipmaps([[maybe_unused]] PixelFormat format)
 {
-    format = effectiveFormat(format);
-#ifdef GL_ES
-    // All sRGB formats can generate mipmap (after expansion if necessary) on GLES3
-    // No sRGB format can generate mipmap on GLES2
-    if (!celestia::gl::checkVersion(celestia::gl::GLES_3_0) && celestia::gl::EXT_sRGB)
-    {
-        switch (format)
-        {
-        case PixelFormat::sRGB:
-        case PixelFormat::sRGB8:
-        case PixelFormat::sRGBA:
-        case PixelFormat::sRGBA8:
-        case PixelFormat::sLuminance:
-        case PixelFormat::sLumAlpha:
-            return false;
-        default:
-            break;
-        }
-    }
-#endif
+    // sRGB mipmap generation is supported on GLES 3.0+ and desktop GL 3.0+,
+    // which are now the floor; mipmaps are always generatable here.
     return true;
 }
 

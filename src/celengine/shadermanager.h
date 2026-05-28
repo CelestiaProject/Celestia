@@ -354,14 +354,12 @@ public:
     ~ShaderManager() = default;
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
-    CelestiaGLProgram* getShader(StaticShader);
-    CelestiaGLProgram* getShaderGL3(StaticShader, const GeomShaderParams* = nullptr);
+    CelestiaGLProgram* getShader(StaticShader, const GeomShaderParams* = nullptr);
 
     void setFisheyeEnabled(bool enabled);
 
 private:
-    std::shared_ptr<CelestiaGLProgram> loadShader(StaticShader);
-    std::shared_ptr<CelestiaGLProgram> loadShaderGL3(StaticShader, const GeomShaderParams*);
+    std::shared_ptr<CelestiaGLProgram> loadShader(StaticShader, const GeomShaderParams*);
     std::shared_ptr<CelestiaGLProgram> getErrorProgram();
 
     std::unordered_map<ShaderProperties, std::shared_ptr<CelestiaGLProgram>> m_dynamicShaders;

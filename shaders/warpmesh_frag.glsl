@@ -1,9 +1,9 @@
-varying vec2 texCoord;
-varying float intensity;
+in vec2 texCoord;
+in float intensity;
 
 uniform sampler2D tex;
 
 void main(void)
 {
-    gl_FragColor = vec4(texture2D(tex, texCoord).rgb * intensity, 1.0);
+    fragColor = vec4(texture(tex, texCoord).rgb * intensity, 1.0);
 }

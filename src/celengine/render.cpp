@@ -2814,12 +2814,9 @@ void Renderer::renderPlanet(Body& body,
             }
             lod = min(lod, maxLod);
 
-            // Not all hardware/drivers support GLSL's textureXDLOD instruction, which lets
-            // us explicitly set the LOD. But, they do all have an optional lodBias parameter
-            // for the textureXD instruction. The bias is just the difference between the
-            // area light LOD and the approximate GPU calculated LOD.
-            if (!gl::ARB_shader_texture_lod)
-                lod = max(0.0f, lod - gpuLod);
+            // textureLod() is core in GLSL 1.30+ / GLSL ES 3.00, which is now
+            // the floor; the explicit LOD is always honored, so no bias-fallback
+            // adjustment is needed here.
             lights.ringShadows[li].texLod = lod;
         }
 

@@ -238,13 +238,11 @@ private:
     void clear();
     //! Destroy underlying OpenGL resources
     void destroy() noexcept;
-    //! Enable attribute attays and bind index and vertex buffers
+    //! Enable attribute arrays and bind index and vertex buffers
     void enableAttribArrays() const;
-    //! Disable attribute attays and unbind index and vertex buffers
-    void disableAttribArrays() const;
-    //! Bind the current VertexObject if supported or call enableAttribArrays()
+    //! Bind the current VertexObject
     void bind();
-    //! Unbind the current VertexObject if supported or call disableAttribArrays()
+    //! Unbind the current VertexObject
     void unbind() const noexcept;
 
     struct BufferDesc;

@@ -1,4 +1,4 @@
-attribute vec4 in_Position;
+in vec4 in_Position;
 
 void main(void)
 {

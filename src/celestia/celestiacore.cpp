@@ -2693,17 +2693,10 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
-    // Resolve the effective sRGB rendering flag.
-    // On GLES 2.0, sRGB requires the EXT_sRGB extension.
-    // GLES 3.0+ has native sRGB support.
+    // Resolve the effective sRGB rendering flag. sRGB textures and the
+    // EXT_sRGB_write_control framebuffer extension are core in GLES 3.0+ and
+    // desktop GL 3.0+, so we no longer have a capability gate to test here.
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.sRGBRendering);
-#ifdef GL_ES
-    if (gl::sRGBRendering && !gl::checkVersion(gl::GLES_3_0) && !gl::EXT_sRGB)
-    {
-        GetLogger()->warn("sRGB rendering requested but GL_EXT_sRGB is not available; disabling.\n");
-        gl::sRGBRendering = false;
-    }
-#endif
 
     if (gl::sRGBRendering)
     {
