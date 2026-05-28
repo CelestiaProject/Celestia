@@ -5273,12 +5273,9 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
     }
     if (ps.smoothLines != m_pipelineState.smoothLines)
     {
-#ifndef GL_ES
-        if (ps.smoothLines && util::is_set(renderFlags, RenderFlags::ShowSmoothLines))
-            glEnable(GL_LINE_SMOOTH);
-        else
-            glDisable(GL_LINE_SMOOTH);
-#endif
+        // GL_LINE_SMOOTH was removed in GL 3.2 Core Profile and is unsupported
+        // on GLES. Shader-based line AA in LineRenderer handles antialiasing
+        // for thick lines; we just track the flag for downstream code.
         m_pipelineState.smoothLines = ps.smoothLines;
     }
 }

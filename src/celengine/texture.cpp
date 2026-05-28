@@ -161,15 +161,10 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::BGRA:
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::LumAlpha:
-    case PixelFormat::Alpha:
-    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
     case PixelFormat::BC7:
-    case PixelFormat::sLumAlpha:
-    case PixelFormat::sLuminance:
     case PixelFormat::sRGB:
     case PixelFormat::sRGBA:
     case PixelFormat::DXT1_sRGBA:
@@ -177,6 +172,26 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT5_sRGBA:
     case PixelFormat::BC7_sRGBA:
         return static_cast<GLenum>(format);
+    // GL_LUMINANCE/GL_ALPHA/GL_LUMINANCE_ALPHA were removed in GL 3.2 Core
+    // Profile. Map them to the equivalent sized R8/RG8 internal formats; a
+    // swizzle (see ApplyLegacyFormatSwizzle) restores the historical shader
+    // visibility (.r-broadcast for Luminance, alpha-from-red for Alpha, etc).
+    case PixelFormat::Luminance:
+    case PixelFormat::Alpha:
+        return GL_R8;
+    case PixelFormat::LumAlpha:
+        return GL_RG8;
+    // No single/two-channel sRGB internal format exists in Core 3.2. Use
+    // GL_SRGB8_ALPHA8 so the sample-time sRGB->linear decode the callers
+    // (e.g. BuildGaussianDiscTexture) rely on is preserved. The external
+    // format remains GL_RED/GL_RG; unused channels are filled by the driver
+    // and then masked out by the swizzle. Without this, values are sampled
+    // as linear and then re-encoded by the sRGB framebuffer, pushing the
+    // gaussian falloff into a bright plateau and exposing 8-bit banding
+    // (very visible on close-up stars).
+    case PixelFormat::sLuminance:
+    case PixelFormat::sLumAlpha:
+        return GL_SRGB8_ALPHA8;
     default:
         return GL_NONE;
     }
@@ -210,18 +225,18 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::BGRA:
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::LumAlpha:
-    case PixelFormat::Alpha:
-    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
     case PixelFormat::BC7:
         return static_cast<GLenum>(format);
-    case PixelFormat::sLumAlpha:
-        return static_cast<GLenum>(PixelFormat::LumAlpha);
+    case PixelFormat::Luminance:
     case PixelFormat::sLuminance:
-        return static_cast<GLenum>(PixelFormat::Luminance);
+    case PixelFormat::Alpha:
+        return GL_RED;
+    case PixelFormat::LumAlpha:
+    case PixelFormat::sLumAlpha:
+        return GL_RG;
     case PixelFormat::sRGB:
     case PixelFormat::sRGB8:
         return static_cast<GLenum>(PixelFormat::RGB);
@@ -321,6 +336,35 @@ SetBorderColor(Color borderColor, GLenum target)
 #endif
 }
 
+#ifndef GL_ES
+// GL 3.2 Core removed GL_LUMINANCE/GL_ALPHA/GL_LUMINANCE_ALPHA. We upload these
+// as GL_R8/GL_RG8 and use texture swizzle to keep the historical channel
+// visibility intact for shaders that sample these textures.
+void
+ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
+{
+    format = effectiveFormat(format);
+    GLint swizzle[4];
+    switch (format)
+    {
+    case PixelFormat::Luminance:
+    case PixelFormat::sLuminance:
+        swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_ONE;
+        break;
+    case PixelFormat::Alpha:
+        swizzle[0] = GL_ZERO; swizzle[1] = GL_ZERO; swizzle[2] = GL_ZERO; swizzle[3] = GL_RED;
+        break;
+    case PixelFormat::LumAlpha:
+    case PixelFormat::sLumAlpha:
+        swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_GREEN;
+        break;
+    default:
+        return;
+    }
+    glTexParameteriv(target, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
+}
+#endif
+
 bool
 canGenerateMipmaps([[maybe_unused]] PixelFormat format)
 {
@@ -337,6 +381,7 @@ LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
     int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
 #ifndef GL_ES
     glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount()-1);
+    ApplyLegacyFormatSwizzle(img.getFormat(), target);
 #endif
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
@@ -378,6 +423,9 @@ void
 LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
 {
     int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
+#ifndef GL_ES
+    ApplyLegacyFormatSwizzle(img.getFormat(), target);
+#endif
 
     if (img.isCompressed())
     {
