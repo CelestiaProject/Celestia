@@ -1,5 +1,5 @@
-in vec2 in_Position;
-in vec2 in_TexCoord0;
+layout(location = 0) in vec2 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
 
 uniform float pointWidth;
 uniform float pointHeight;

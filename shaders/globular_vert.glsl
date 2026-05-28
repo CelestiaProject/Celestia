@@ -1,5 +1,5 @@
-in vec3 in_Position;
-in vec3 in_TexCoord0; // reuse it for starSize, relStarDensity and colorIndex
+layout(location = 0) in vec3 in_Position;
+layout(location = 2) in vec3 in_TexCoord0; // reuse it for starSize, relStarDensity and colorIndex
 
 uniform sampler2D colorTex;
 uniform mat3 m;

@@ -1,4 +1,4 @@
-in vec4 in_Position;
+layout(location = 0) in vec4 in_Position;
 in float in_Size;
 in float in_ColorIndex;
 in float in_Brightness;

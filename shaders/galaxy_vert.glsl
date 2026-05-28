@@ -1,5 +1,5 @@
-in vec4 in_Position;
-in vec2 in_TexCoord0;
+layout(location = 0) in vec4 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
 in float in_Size;
 in float in_ColorIndex;
 in float in_Brightness;

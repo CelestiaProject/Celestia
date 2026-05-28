@@ -1,5 +1,5 @@
-in vec3 in_Position;
-in vec3 in_TexCoord0; // reuse [3] as colorIndex
+layout(location = 0) in vec3 in_Position;
+layout(location = 2) in vec3 in_TexCoord0; // reuse [3] as colorIndex
 
 uniform sampler2D colorTex;
 uniform mat3 viewMat;

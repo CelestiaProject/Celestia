@@ -91,11 +91,10 @@ Gui::create(SDL_Window* window, SDL_GLContext context, CelestiaCore* appCore, co
         return nullptr;
     }
 
-    #if defined(__APPLE__) && !defined(GL_ES)
-    // Celestia uses legacy profile, on macOS we cannot use core profile shaders with a legacy profile context
-    const char *glslVersion = "#version 120";
+    #ifdef GL_ES
+    const char *glslVersion = "#version 300 es";
     #else
-    const char *glslVersion = nullptr;
+    const char *glslVersion = "#version 330";
     #endif
     if (!ImGui_ImplOpenGL3_Init(glslVersion))
     {

@@ -1,5 +1,5 @@
-in vec4 in_Position;
-in vec3 in_Normal;
+layout(location = 0) in vec4 in_Position;
+layout(location = 1) in vec3 in_Normal;
 in float in_Brightness;
 
 uniform vec3 color;

@@ -1,6 +1,6 @@
-in vec2 in_Position;
-in vec2 in_TexCoord0;
-in float in_Intensity;
+layout(location = 0) in vec2 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
+layout(location = 9) in float in_Intensity;
 
 out vec2 texCoord;
 out float intensity;

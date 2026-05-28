@@ -96,7 +96,7 @@ enum ShaderInOut
 };
 
 constexpr std::string_view errorVertexShaderSource = R"glsl(
-in vec4 in_Position;
+layout(location = 0) in vec4 in_Position;
 void main(void)
 {
     gl_Position = MVPMatrix * in_Position;
@@ -116,8 +116,8 @@ constexpr std::string_view VersionHeader = "#version 300 es\n"sv;
 constexpr std::string_view VersionHeaderGeom = "#version 320 es\n"sv;
 constexpr std::string_view CommonHeader = "precision highp float;\n"sv;
 #else
-constexpr std::string_view VersionHeader = "#version 150\n"sv;
-constexpr std::string_view VersionHeaderGeom = "#version 150\n"sv;
+constexpr std::string_view VersionHeader = "#version 330\n"sv;
+constexpr std::string_view VersionHeaderGeom = "#version 330\n"sv;
 constexpr std::string_view CommonHeader = "\n"sv;
 #endif
 constexpr std::string_view VertexHeader = R"glsl(
@@ -193,13 +193,13 @@ out vec4 fragColor;
 )glsl"sv;
 
 constexpr std::string_view CommonAttribs = R"glsl(
-in vec4 in_Position;
-in vec3 in_Normal;
-in vec4 in_TexCoord0;
-in vec4 in_TexCoord1;
-in vec4 in_TexCoord2;
-in vec4 in_TexCoord3;
-in vec4 in_Color;
+layout(location = 0) in vec4 in_Position;
+layout(location = 1) in vec3 in_Normal;
+layout(location = 2) in vec4 in_TexCoord0;
+layout(location = 3) in vec4 in_TexCoord1;
+layout(location = 4) in vec4 in_TexCoord2;
+layout(location = 5) in vec4 in_TexCoord3;
+layout(location = 8) in vec4 in_Color;
 )glsl"sv;
 
 constexpr std::string_view TextureTransformUniforms = R"glsl(
@@ -297,9 +297,9 @@ DeclareOutput(std::string_view name, ShaderVariableType type)
 }
 
 std::string
-DeclareAttribute(std::string_view name, ShaderVariableType type)
+DeclareAttribute(std::string_view name, ShaderVariableType type, int location)
 {
-    return fmt::format("in {} {};\n", ShaderTypeString(type), name);
+    return fmt::format("layout(location = {}) in {} {};\n", location, ShaderTypeString(type), name);
 }
 
 std::string
@@ -956,7 +956,7 @@ PointSizeDeclaration()
     std::string source;
     source += DeclareOutput("pointFade", Shader_Float);
     source += DeclareUniform("pointScale", Shader_Float);
-    source += DeclareAttribute("in_PointSize", Shader_Float);
+    source += DeclareAttribute("in_PointSize", Shader_Float, CelestiaGLProgram::PointSizeAttributeIndex);
     return source;
 }
 
@@ -984,9 +984,9 @@ std::string
 LineDeclaration()
 {
     std::string source;
-    source += DeclareAttribute("in_PositionNext", Shader_Vector4);
-    source += DeclareAttribute("in_ScaleFactor", Shader_Float);
-    source += DeclareAttribute("in_LineSide", Shader_Float);
+    source += DeclareAttribute("in_PositionNext", Shader_Vector4, CelestiaGLProgram::NextVCoordAttributeIndex);
+    source += DeclareAttribute("in_ScaleFactor", Shader_Float, CelestiaGLProgram::ScaleFactorAttributeIndex);
+    source += DeclareAttribute("in_LineSide", Shader_Float, CelestiaGLProgram::LineSideAttributeIndex);
     source += DeclareUniform("lineWidthX", Shader_Float);
     source += DeclareUniform("lineWidthY", Shader_Float);
     source += DeclareOutput("lineU", Shader_Float);
@@ -1043,24 +1043,6 @@ float calculateShadow()
 )glsl"sv;
 #endif
     return source;
-}
-
-void
-BindAttribLocations(const GLProgramBuilder& prog)
-{
-    prog.bindAttribute(CelestiaGLProgram::VertexCoordAttributeIndex,   "in_Position");
-    prog.bindAttribute(CelestiaGLProgram::NormalAttributeIndex,        "in_Normal");
-    prog.bindAttribute(CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
-    prog.bindAttribute(CelestiaGLProgram::TextureCoord1AttributeIndex, "in_TexCoord1");
-    prog.bindAttribute(CelestiaGLProgram::TextureCoord2AttributeIndex, "in_TexCoord2");
-    prog.bindAttribute(CelestiaGLProgram::TextureCoord3AttributeIndex, "in_TexCoord3");
-    prog.bindAttribute(CelestiaGLProgram::ColorAttributeIndex,         "in_Color");
-    prog.bindAttribute(CelestiaGLProgram::IntensityAttributeIndex,     "in_Intensity");
-    prog.bindAttribute(CelestiaGLProgram::NextVCoordAttributeIndex,    "in_PositionNext");
-    prog.bindAttribute(CelestiaGLProgram::ScaleFactorAttributeIndex,   "in_ScaleFactor");
-    prog.bindAttribute(CelestiaGLProgram::LineSideAttributeIndex,      "in_LineSide");
-    prog.bindAttribute(CelestiaGLProgram::TangentAttributeIndex,       "in_Tangent");
-    prog.bindAttribute(CelestiaGLProgram::PointSizeAttributeIndex,     "in_PointSize");
 }
 
 std::string
@@ -1128,7 +1110,6 @@ CreateErrorProgram(bool fisheyeEnabled, GLShaderStatus& status)
         return GLProgram{};
     }
 
-    BindAttribLocations(builder);
 
     GLProgram program = builder.link(status);
     if (status != GLShaderStatus::OK)
@@ -1226,7 +1207,7 @@ R"glsl(
 
     if (props.usesTangentSpaceLighting())
     {
-        source += DeclareAttribute("in_Tangent", Shader_Vector3);
+        source += DeclareAttribute("in_Tangent", Shader_Vector3, CelestiaGLProgram::TangentAttributeIndex);
         source += DeclareOutput("tangent", Shader_Vector3);
     }
 
@@ -2344,7 +2325,6 @@ buildProgram(const ShaderProperties& props, bool fisheyeEnabled)
         {
             builder.attach(std::move(vs));
             builder.attach(std::move(fs));
-            BindAttribLocations(builder);
             program = builder.link(status);
         }
     }
@@ -2380,7 +2360,6 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled)
         {
             builder.attach(std::move(_vs));
             builder.attach(std::move(_fs));
-            BindAttribLocations(builder);
             program = builder.link(status);
         }
     }
@@ -2433,7 +2412,6 @@ buildProgramGeom(std::string_view vs,
             builder.attach(std::move(_vs));
             builder.attach(std::move(_gs));
             builder.attach(std::move(_fs));
-            BindAttribLocations(builder);
             program = builder.link(status);
         }
     }

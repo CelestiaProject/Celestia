@@ -81,7 +81,7 @@ private:
 #ifdef GL_ES
 constexpr char glsl_version[] = "300 es";
 #else
-constexpr char glsl_version[] = "150";
+constexpr char glsl_version[] = "330";
 #endif
 
 constexpr char kVertexShader[] = R"glsl(
@@ -93,10 +93,10 @@ constexpr char kVertexShader[] = R"glsl(
 precision highp float;
 #endif
 
-in vec2 in_Position;
-in vec2 in_TexCoord0;
+layout(location = 0) in vec2 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
 #if SHADER_COLOR
-in vec4 in_Color;
+layout(location = 8) in vec4 in_Color;
 out vec4 v_color;
 #endif
 #if SHADER_TEXCOORD
@@ -184,9 +184,6 @@ GLProgram BuildProgram(const std::string &vertex, const std::string &fragment)
 
     builder.attach(std::move(vs));
     builder.attach(std::move(fs));
-    builder.bindAttribute(CelestiaGLProgram::VertexCoordAttributeIndex, "in_Position");
-    builder.bindAttribute(CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
-    builder.bindAttribute(CelestiaGLProgram::ColorAttributeIndex, "in_Color");
 
     if (auto program = builder.link(status); status == GLShaderStatus::OK)
         return program;

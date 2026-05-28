@@ -120,9 +120,9 @@ CelestiaGlWidget::initializeGL()
     }
 #else
     if (!gl::init(appCore->getConfig()->renderDetails.ignoreGLExtensions) ||
-        !gl::checkVersion(gl::GL_3_1))
+        !gl::checkVersion(gl::GL_3_3))
     {
-        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL 3.1."));
+        QMessageBox::critical(nullptr, "Celestia", _("Celestia was unable to initialize OpenGL 3.3."));
         std::exit(1);
     }
 #endif

@@ -1,6 +1,6 @@
-in vec2 in_Position;
-in vec2 in_TexCoord0;
-in vec4 in_Color;
+layout(location = 0) in vec2 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
+layout(location = 8) in vec4 in_Color;
 
 out vec2 texCoord;
 out vec4 color;
