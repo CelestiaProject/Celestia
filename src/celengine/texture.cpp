@@ -93,13 +93,16 @@ needsRGBAExpansion(PixelFormat format, [[maybe_unused]] bool needsMipmap)
 #ifdef GL_ES
     // GLES 3.0 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap
     // generation; expand to 4-component when mipmaps are needed.
-    // sLuminance/sLumAlpha are not natively supported and always need
-    // expansion.
+    // sLuminance has no core single-channel sRGB format; use the GL_SR8 fast
+    // path + swizzle when EXT_texture_sRGB_R8 is available, otherwise expand.
+    // sLumAlpha always needs expansion (no per-channel sRGB-decode format).
+    bool sLuminanceNeedsExpansion = !gl::EXT_texture_sRGB_R8;
     if (!needsMipmap)
-        return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
+        return (format == PixelFormat::sLuminance && sLuminanceNeedsExpansion)
+            || format == PixelFormat::sLumAlpha;
     return format == PixelFormat::sRGB
         || format == PixelFormat::sRGB8
-        || format == PixelFormat::sLuminance
+        || (format == PixelFormat::sLuminance && sLuminanceNeedsExpansion)
         || format == PixelFormat::sLumAlpha;
 #else
     // Desktop: only sLumAlpha needs expansion; see expansion site below.
@@ -151,9 +154,13 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
             return static_cast<GLenum>(PixelFormat::sRGB8);
         [[fallthrough]];
     case PixelFormat::sRGBA:
-    case PixelFormat::sLuminance:
     case PixelFormat::sLumAlpha:
         return static_cast<GLenum>(PixelFormat::sRGBA8);
+    // sLuminance fast path: GL_SR8 + swizzle when EXT_texture_sRGB_R8 is
+    // present, otherwise CPU-expand to sRGBA8 (handled by needsRGBAExpansion).
+    case PixelFormat::sLuminance:
+        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(PixelFormat::sR8)
+                                       : static_cast<GLenum>(PixelFormat::sRGBA8);
     default:
         return GL_NONE;
     }
@@ -211,9 +218,13 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
         [[fallthrough]];
     case PixelFormat::sRGBA:
     case PixelFormat::sRGBA8:
-    case PixelFormat::sLuminance:
     case PixelFormat::sLumAlpha:
         return static_cast<GLenum>(PixelFormat::RGBA);
+    // sLuminance with GL_SR8 fast path uploads as GL_RED; without the
+    // extension it's CPU-expanded and uploaded as RGBA.
+    case PixelFormat::sLuminance:
+        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(GL_RED)
+                                       : static_cast<GLenum>(PixelFormat::RGBA);
     default:
         return getInternalFormat(format, needsMipmap);
     }
@@ -337,9 +348,9 @@ SetBorderColor(Color borderColor, GLenum target)
 #endif
 }
 
-#ifndef GL_ES
 // Restore legacy GL_LUMINANCE/ALPHA/LUMINANCE_ALPHA shader visibility via
-// texture swizzle, since those formats are gone in 3.2 Core.
+// texture swizzle, since those formats are gone in 3.2 Core. On GLES this is
+// also used for the GL_SR8 sLuminance fast path (single-channel sRGB).
 void
 ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
 {
@@ -347,8 +358,8 @@ ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
     GLint swizzle[4];
     switch (format)
     {
+#ifndef GL_ES
     case PixelFormat::Luminance:
-    case PixelFormat::sLuminance:
         swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_ONE;
         break;
     case PixelFormat::Alpha:
@@ -357,13 +368,28 @@ ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
     case PixelFormat::LumAlpha:
         swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_GREEN;
         break;
+#endif
+    case PixelFormat::sLuminance:
+#ifdef GL_ES
+        if (!gl::EXT_texture_sRGB_R8)
+            return;
+#endif
+        swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_ONE;
+        break;
     // sLumAlpha is pre-expanded into the right slots; no swizzle needed.
     default:
         return;
     }
+#ifndef GL_ES
     glTexParameteriv(target, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
-}
+#else
+    // GLES 3.0 lacks the vector form; set each channel individually.
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_R, swizzle[0]);
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_G, swizzle[1]);
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_B, swizzle[2]);
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_A, swizzle[3]);
 #endif
+}
 
 // Load a prebuilt set of mipmaps; assumes that the image contains
 // a complete set of mipmap levels.
@@ -373,8 +399,8 @@ LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
     int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
 #ifndef GL_ES
     glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount()-1);
-    ApplyLegacyFormatSwizzle(img.getFormat(), target);
 #endif
+    ApplyLegacyFormatSwizzle(img.getFormat(), target);
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
     {
@@ -410,9 +436,7 @@ void
 LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
 {
     int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
-#ifndef GL_ES
     ApplyLegacyFormatSwizzle(img.getFormat(), target);
-#endif
 
     if (img.isCompressed())
     {
