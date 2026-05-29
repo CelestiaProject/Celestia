@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
@@ -355,33 +356,37 @@ void
 ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
 {
     format = effectiveFormat(format);
-    GLint swizzle[4];
-    switch (format)
-    {
+    std::array<GLint, 4> swizzle{};
 #ifndef GL_ES
-    case PixelFormat::Luminance:
-        swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_ONE;
-        break;
-    case PixelFormat::Alpha:
-        swizzle[0] = GL_ZERO; swizzle[1] = GL_ZERO; swizzle[2] = GL_ZERO; swizzle[3] = GL_RED;
-        break;
-    case PixelFormat::LumAlpha:
-        swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_GREEN;
-        break;
+    if (format == PixelFormat::Luminance)
+    {
+        swizzle = { GL_RED, GL_RED, GL_RED, GL_ONE };
+    }
+    else if (format == PixelFormat::Alpha)
+    {
+        swizzle = { GL_ZERO, GL_ZERO, GL_ZERO, GL_RED };
+    }
+    else if (format == PixelFormat::LumAlpha)
+    {
+        swizzle = { GL_RED, GL_RED, GL_RED, GL_GREEN };
+    }
+    else
 #endif
-    case PixelFormat::sLuminance:
+    if (format == PixelFormat::sLuminance)
+    {
 #ifdef GL_ES
         if (!gl::EXT_texture_sRGB_R8)
             return;
 #endif
-        swizzle[0] = GL_RED; swizzle[1] = GL_RED; swizzle[2] = GL_RED; swizzle[3] = GL_ONE;
-        break;
-    // sLumAlpha is pre-expanded into the right slots; no swizzle needed.
-    default:
+        swizzle = { GL_RED, GL_RED, GL_RED, GL_ONE };
+    }
+    else
+    {
+        // sLumAlpha is pre-expanded into the right slots; no swizzle needed.
         return;
     }
 #ifndef GL_ES
-    glTexParameteriv(target, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
+    glTexParameteriv(target, GL_TEXTURE_SWIZZLE_RGBA, swizzle.data());
 #else
     // GLES 3.0 lacks the vector form; set each channel individually.
     glTexParameteri(target, GL_TEXTURE_SWIZZLE_R, swizzle[0]);

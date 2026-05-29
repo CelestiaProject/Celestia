@@ -1,5 +1,6 @@
 #include "glsupport.h"
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <fmt/format.h>
 #include <celutil/gettext.h>
@@ -91,16 +92,16 @@ bool init(util::array_view<std::string> ignore) noexcept
     EXT_texture_sRGB_R8            = check_extension(ignore, "GL_EXT_texture_sRGB_R8");
     MESA_pack_invert               = check_extension(ignore, "GL_MESA_pack_invert");
 
-    GLint pointSizeRange[2] = { 0, 0 };
-    GLfloat lineWidthRange[2] = { 0.0f, 0.0f };
+    std::array<GLint, 2> pointSizeRange = { 0, 0 };
+    std::array<GLfloat, 2> lineWidthRange = { 0.0f, 0.0f };
 #ifdef GL_ES
-    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange.data());
 #else
     // GL 3.2 Core removed GL_SMOOTH_*_RANGE; GL_POINT_SIZE_RANGE / GL_LINE_WIDTH_RANGE
     // are the surviving (and only) range queries.
-    glGetIntegerv(GL_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange.data());
 #endif
     maxPointSize = pointSizeRange[1];
     maxLineWidth = lineWidthRange[1];

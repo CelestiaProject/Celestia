@@ -4650,14 +4650,14 @@ bool Renderer::getInfo(map<string, string>& info) const
 
     // GL 3.2 Core removed antialiased point/line queries; GL_POINT_SIZE_RANGE /
     // GL_LINE_WIDTH_RANGE are core. GLES 3.0 only exposes the ALIASED variants.
-    GLint pointSizeRange[2] = { 0, 0 };
-    GLfloat lineWidthRange[2] = { 0.0f, 0.0f };
+    std::array<GLint, 2> pointSizeRange = { 0, 0 };
+    std::array<GLfloat, 2> lineWidthRange = { 0.0f, 0.0f };
 #ifdef GL_ES
-    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange.data());
 #else
-    glGetIntegerv(GL_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange.data());
 #endif
     info["PointSizeMin"] = to_string(pointSizeRange[0]);
     info["PointSizeMax"] = to_string(pointSizeRange[1]);
