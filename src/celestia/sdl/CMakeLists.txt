@@ -29,8 +29,8 @@ set(IMGUI_SOURCES
 
 add_library(imgui STATIC ${IMGUI_SOURCES})
 if(ENABLE_GLES)
-  target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_ES2)
-  target_link_libraries(imgui PRIVATE OpenGLES::OpenGLESv2)
+  target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_ES3)
+  target_link_libraries(imgui PRIVATE OpenGLES::OpenGLESv3)
 else()
   target_link_libraries(imgui PRIVATE OpenGL::GL)
 endif()

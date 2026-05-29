@@ -246,7 +246,7 @@ endif()
 
 if(ENABLE_SDL OR ENABLE_WIN OR ENABLE_TOOLS)
   if(ENABLE_GLES)
-    find_package(OpenGLES COMPONENTS V2 REQUIRED)
+    find_package(OpenGLES COMPONENTS V3 REQUIRED)
   else()
     find_package(OpenGL REQUIRED)
   endif()

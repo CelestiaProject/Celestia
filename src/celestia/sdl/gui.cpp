@@ -91,12 +91,7 @@ Gui::create(SDL_Window* window, SDL_GLContext context, CelestiaCore* appCore, co
         return nullptr;
     }
 
-    #ifdef GL_ES
-    const char *glslVersion = "#version 300 es";
-    #else
-    const char *glslVersion = "#version 330";
-    #endif
-    if (!ImGui_ImplOpenGL3_Init(glslVersion))
+    if (!ImGui_ImplOpenGL3_Init())
     {
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext(ctx);
