@@ -20,7 +20,7 @@ public:
     const std::filesystem::path* path(celestia::util::TextureHandle handle) const { return getPath(handle); }
 
 protected:
-    celestia::util::TextureHandle getHandle(const std::filesystem::path&) override;
+    celestia::util::TextureHandle getHandle(const std::filesystem::path&, bool = false) override;
     const std::filesystem::path* getPath(celestia::util::TextureHandle) const override;
 
 private:

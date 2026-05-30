@@ -6,7 +6,7 @@ namespace cmodtools
 {
 
 celestia::util::TextureHandle
-ModelIO::getHandle(const std::filesystem::path& path)
+ModelIO::getHandle(const std::filesystem::path& path, bool /* linear */)
 {
     auto [it, inserted] = m_handles.try_emplace(path, static_cast<celestia::util::TextureHandle>(m_handles.size()));
     if (inserted)

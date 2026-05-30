@@ -23,11 +23,11 @@ namespace cmod
 class ModelLoader
 {
 public:
+    virtual ~ModelLoader() = default;
     std::unique_ptr<Model> load(std::istream& in);
 
 protected:
-    ~ModelLoader() = default;
-    virtual celestia::util::TextureHandle getHandle(const std::filesystem::path&) = 0;
+    virtual celestia::util::TextureHandle getHandle(const std::filesystem::path&, bool linear = false) = 0;
 
 private:
     class BinaryLoader;

@@ -21,7 +21,7 @@ class ModelIO : public cmod::ModelLoader,
                 public cmod::ModelWriter
 {
 protected:
-    celestia::util::TextureHandle getHandle(const std::filesystem::path&) override;
+    celestia::util::TextureHandle getHandle(const std::filesystem::path&, bool) override;
     const std::filesystem::path* getPath(celestia::util::TextureHandle) const override;
 
 private:
@@ -29,7 +29,7 @@ private:
 };
 
 celestia::util::TextureHandle
-ModelIO::getHandle(const std::filesystem::path& path)
+ModelIO::getHandle(const std::filesystem::path& path, bool /* linear */)
 {
     auto it = std::find(paths.cbegin(), paths.cend(), path);
     if (it == paths.cend())
