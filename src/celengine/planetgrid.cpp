@@ -126,6 +126,7 @@ longitudeLabel(std::string& buf,
 
     case PlanetographicGrid::LongitudeConvention::Westward:
         fmt::format_to(it, "{}W", longitude > 0 ? 360 - longitude : std::abs(longitude));
+        break;
 
     default:
         assert(0);
