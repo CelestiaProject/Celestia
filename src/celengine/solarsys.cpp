@@ -134,7 +134,7 @@ BodyClassification GetClassificationId(std::string_view className)
 
 
 //! Maximum depth permitted for nested frames.
-unsigned int MaxFrameDepth = 50;
+constexpr int MaxFrameDepth = 50;
 
 // Check frames for circular references. For position frames, check both the
 // frametree hierarchy and the reference frame. For body frames, only the

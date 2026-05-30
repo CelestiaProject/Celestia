@@ -343,32 +343,31 @@ EventFinder::EventFinder(CelestiaCore* _appCore,
 EclipseFinderWatcher::Status
 EventFinder::eclipseFinderProgressUpdate(double t)
 {
-    if (progress != nullptr)
-    {
-        // Avoid processing events at every update, otherwise finding eclipse
-        // can take a very long time.
-        //if (t - lastProgressUpdate > searchSpan * 0.01)
-        if (searchTimer.elapsed() >= 100)
-        {
-            searchTimer.start();
-            progress->setValue((int) t);
-            QApplication::processEvents();
-            lastProgressUpdate = t;
-        }
+    if (!progress)
+        return Status::ContinueOperation;
 
-        return progress->wasCanceled() ? AbortOperation : ContinueOperation;
+    // Avoid processing events at every update, otherwise finding eclipse
+    // can take a very long time.
+    //if (t - lastProgressUpdate > searchSpan * 0.01)
+    if (searchTimer.elapsed() >= 100)
+    {
+        searchTimer.start();
+        progress->setValue((int) t);
+        QApplication::processEvents();
+        lastProgressUpdate = t;
     }
-    return EclipseFinderWatcher::ContinueOperation;
+
+    return progress->wasCanceled() ? Status::AbortOperation : Status::ContinueOperation;
 }
 
 void
 EventFinder::slotFindEclipses()
 {
-    int eclipseTypeMask = Eclipse::Solar;
+    Eclipse::Type eclipseTypeMask = Eclipse::Type::Solar;
     if (lunarOnlyButton->isChecked())
-        eclipseTypeMask = Eclipse::Lunar;
+        eclipseTypeMask = Eclipse::Type::Lunar;
     else if (allEclipsesButton->isChecked())
-        eclipseTypeMask = Eclipse::Solar | Eclipse::Lunar;
+        eclipseTypeMask = Eclipse::Type::Solar | Eclipse::Type::Lunar;
 
     std::string bodyName = fmt::format("Sol/{}", planets[planetSelect->currentIndex()]);
     Selection obj = appCore->getSimulation()->findObjectFromPath(bodyName);

@@ -14,13 +14,15 @@
 
 #include <vector>
 
+#include <celutil/flag.h>
+
 class Body;
 
 
 struct Eclipse
 {
     // values must be 2^n
-    enum Type {
+    enum class Type {
         Solar = 0x01,
         Lunar = 0x02
     };
@@ -32,11 +34,12 @@ struct Eclipse
     double endTime{ 0.0 };
 };
 
+ENUM_CLASS_BITWISE_OPS(Eclipse::Type)
 
 class EclipseFinderWatcher
 {
- public:
-    enum Status
+public:
+    enum class Status
     {
         ContinueOperation = 0,
         AbortOperation = 1,
@@ -49,14 +52,14 @@ class EclipseFinderWatcher
 
 class EclipseFinder
 {
- public:
-    EclipseFinder(const Body*, EclipseFinderWatcher* = nullptr);
+public:
+    explicit EclipseFinder(const Body*, EclipseFinderWatcher* = nullptr);
 
     void findEclipses(double startDate,
                       double endDate,
-                      int eclipseTypeMask,
+                      Eclipse::Type eclipseTypeMask,
                       std::vector<Eclipse>& eclipses);
- private:
+private:
     const Body* body;
     EclipseFinderWatcher* watcher;
 };

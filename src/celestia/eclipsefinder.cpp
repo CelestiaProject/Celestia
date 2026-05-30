@@ -146,29 +146,16 @@ struct BodyInfo
     double endTime;
 };
 
-} // end unnamed namespace
-
-EclipseFinder::EclipseFinder(const Body* _body,
-                             EclipseFinderWatcher* _watcher) :
-    body(_body),
-    watcher(_watcher)
+std::vector<BodyInfo>
+getTestBodies(const Body* body, double startDate, double endDate)
 {
-}
-
-void EclipseFinder::findEclipses(double startDate, //NOSONAR
-                                 double endDate,
-                                 int eclipseTypeMask,
-                                 std::vector<Eclipse>& eclipses)
-{
+    std::vector<BodyInfo> testBodies;
     const FrameTree* frameTree = body->getFrameTree();
     if (!frameTree)
-    {
-        // no satellites, bail out
-        return;
-    }
+        return testBodies;
 
+    const float minRadius = body->getRadius() * MinRelativeOccluderRadius;
     // For each body, store the start and end time of the unprocessed window
-    std::vector<BodyInfo> testBodies;
     for (unsigned int i = 0, nPhases = frameTree->childCount(); i < nPhases; ++i)
     {
         const auto* phase = frameTree->getChild(i);
@@ -182,6 +169,12 @@ void EclipseFinder::findEclipses(double startDate, //NOSONAR
             continue;
 
         const Body* testBody = phase->body();
+        if (!util::is_set(testBody->getClassification(), EclipseObjectMask) ||
+            testBody->getRadius() < minRadius)
+        {
+            continue;
+        }
+
         auto it = std::find_if(testBodies.begin(), testBodies.end(),
                                [testBody](const BodyInfo& info) { return info.body == testBody; });
         if (it == testBodies.end())
@@ -195,6 +188,24 @@ void EclipseFinder::findEclipses(double startDate, //NOSONAR
         }
     }
 
+    return testBodies;
+}
+
+} // end unnamed namespace
+
+EclipseFinder::EclipseFinder(const Body* _body,
+                             EclipseFinderWatcher* _watcher) :
+    body(_body),
+    watcher(_watcher)
+{
+}
+
+void EclipseFinder::findEclipses(double startDate,
+                                 double endDate,
+                                 Eclipse::Type eclipseTypeMask,
+                                 std::vector<Eclipse>& eclipses)
+{
+    std::vector<BodyInfo> testBodies = getTestBodies(body, startDate, endDate);
     if (testBodies.empty())
         return;
 
@@ -211,11 +222,8 @@ void EclipseFinder::findEclipses(double startDate, //NOSONAR
 
     for (double t = startDate; t <= endDate; t += searchStep)
     {
-        if (watcher != nullptr)
-        {
-            if (watcher->eclipseFinderProgressUpdate(t) == EclipseFinderWatcher::AbortOperation)
-                return;
-        }
+        if (watcher && watcher->eclipseFinderProgressUpdate(t) == EclipseFinderWatcher::Status::AbortOperation)
+            return;
 
         for (unsigned int i = 0; i < testBodies.size(); ++i)
         {
@@ -226,10 +234,10 @@ void EclipseFinder::findEclipses(double startDate, //NOSONAR
             if (t < info.startTime || t >= info.endTime || t <= previousEclipseEndTimes[i])
                 continue;
 
-            if (eclipseTypeMask & Eclipse::Solar)
+            if (util::is_set(eclipseTypeMask, Eclipse::Type::Solar))
                 addEclipse(*body, *info.body, t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
 
-            if (eclipseTypeMask & Eclipse::Lunar)
+            if (util::is_set(eclipseTypeMask, Eclipse::Type::Lunar))
                 addEclipse(*info.body, *body, t, searchStep, durationPrecision, eclipses, previousEclipseEndTimes, i);
         }
     }

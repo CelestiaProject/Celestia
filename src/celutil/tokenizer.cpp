@@ -97,8 +97,6 @@ private:
     void processExponentSign(int);
     void processExponent(int);
 
-    bool isInvalidEndState() const noexcept;
-
     BufferedFile* m_file;
     std::size_t m_expPos{ 0 };
     State m_state{ State::Start };
@@ -380,16 +378,6 @@ NumberStateMachine::processExponent(int next)
         m_file->advance(false);
     else
         m_state = State::End;
-}
-
-bool
-NumberStateMachine::isInvalidEndState() const noexcept
-{
-    return m_state == State::Start ||
-           m_state == State::IntegerSign ||
-           (m_state == State::FractionalPoint && !m_hasDigits) ||
-           m_state == State::ExponentSymbol ||
-           m_state == State::ExponentSign;
 }
 
 class StringStateMachine

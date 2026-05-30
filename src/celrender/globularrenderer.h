@@ -37,7 +37,7 @@ public:
     void render();
 
 private:
-    struct FormManager;
+    class FormManager;
     struct Object;
 
     void renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *globProg, const Object &obj) const;
