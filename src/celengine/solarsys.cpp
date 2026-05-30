@@ -692,7 +692,7 @@ FillinSurface(const AssociativeArray* surfaceData,
     constexpr auto baseFlags = engine::TextureFlags::WrapTexture;
     constexpr auto bumpFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
     constexpr auto nightFlags = engine::TextureFlags::WrapTexture;
-    constexpr auto specularFlags = engine::TextureFlags::WrapTexture;
+    constexpr auto specularFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
 
     auto bumpHeight = surfaceData->getNumber<float>("BumpHeight").value_or(2.5f);
 

@@ -383,7 +383,7 @@ public:
     ModelLoader(TexturePaths&, const std::filesystem::path&);
 
 protected:
-    celestia::util::TextureHandle getHandle(const std::filesystem::path& filename) override;
+    celestia::util::TextureHandle getHandle(const std::filesystem::path& filename, bool linear = false) override;
 
 private:
     TexturePaths& m_paths;
@@ -396,9 +396,12 @@ ModelLoader::ModelLoader(TexturePaths& paths, const std::filesystem::path& direc
 }
 
 celestia::util::TextureHandle
-ModelLoader::getHandle(const std::filesystem::path& filename)
+ModelLoader::getHandle(const std::filesystem::path& filename, bool linear)
 {
-    return m_paths.getHandle(filename, m_directory, TextureFlags::WrapTexture);
+    TextureFlags flags = TextureFlags::WrapTexture;
+    if (linear)
+        flags |= TextureFlags::LinearColorspace;
+    return m_paths.getHandle(filename, m_directory, flags);
 }
 
 std::unique_ptr<cmod::Model>

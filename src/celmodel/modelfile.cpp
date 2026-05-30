@@ -337,6 +337,12 @@ hasTangents(const Mesh &mesh)
     return desc.getAttribute(VertexAttributeSemantic::Tangent).format == VertexAttributeFormat::Float3;
 }
 
+bool
+isLinear(TextureSemantic semantic)
+{
+    return semantic == TextureSemantic::NormalMap || semantic == TextureSemantic::SpecularMap;
+}
+
 } // end unnamed namespace
 
 /***** ASCII loader *****/
@@ -486,7 +492,7 @@ ModelLoader::TextLoader::loadMaterial(Material& material) //NOSONAR
 
             if (auto texFile = util::U8FileName(*tokenValue); texFile.has_value())
             {
-                material.setMap(texType, loader.getHandle(*texFile));
+                material.setMap(texType, loader.getHandle(*texFile, isLinear(texType)));
             }
             else
             {
@@ -1547,7 +1553,7 @@ ModelLoader::BinaryLoader::loadMaterial(Material& material) //NOSONAR
                 }
 
                 if (auto texfilePath = util::U8FileName(texfile); texfilePath.has_value())
-                    material.maps[texType] = loader.getHandle(*texfilePath);
+                    material.maps[texType] = loader.getHandle(*texfilePath, isLinear(static_cast<cmod::TextureSemantic>(texType)));
                 else
                     reportError("Invalid texture filename in material definition");
             }
