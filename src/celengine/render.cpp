@@ -302,7 +302,7 @@ static std::unique_ptr<Texture>
 BuildGaussianDiscTexture(unsigned int log2size)
 {
     unsigned int size = 1U << log2size;
-    Image img(PixelFormat::sLuminance, size, size, log2size + 1);
+    Image img(PixelFormat::Luminance, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; ++mipLevel)
     {
@@ -322,7 +322,7 @@ static std::unique_ptr<Texture>
 BuildGaussianGlareTexture(unsigned int log2size)
 {
     unsigned int size = 1U << log2size;
-    Image img(PixelFormat::sLuminance, size, size, log2size + 1);
+    Image img(PixelFormat::Luminance, size, size, log2size + 1);
 
     for (unsigned int mipLevel = 0; mipLevel <= log2size; mipLevel++)
     {
