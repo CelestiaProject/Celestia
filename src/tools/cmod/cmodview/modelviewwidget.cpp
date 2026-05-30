@@ -55,7 +55,6 @@ constexpr int ShadowBufferSize = 1024;
 constexpr int ShadowSampleKernelWidth = 2;
 
 constexpr GLuint TangentAttributeIndex = 6;
-constexpr GLuint PointSizeAttributeIndex = 7;
 
 // Calculate the matrix used to render the model from the
 // perspective of the light.

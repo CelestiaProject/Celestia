@@ -79,7 +79,7 @@ struct FontDescriptor
 
 struct FontMetrics
 {
-    int maxAscent;;
+    int maxAscent;
     int maxDescent;
 };
 

@@ -305,7 +305,7 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         SendDlgItemMessage(hDlg, IDC_ECLIPSES_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
         CheckRadioButton(hDlg, IDC_SOLARECLIPSE, IDC_LUNARECLIPSE, IDC_SOLARECLIPSE);
-        efd->type = Eclipse::Solar;
+        efd->type = Eclipse::Type::Solar;
 
         constexpr std::size_t numItems = 6;
         std::array<std::wstring, numItems> items
@@ -415,10 +415,10 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             }
             break;
         case IDC_SOLARECLIPSE:
-                eclipseFinderDlg->type = Eclipse::Solar;
+                eclipseFinderDlg->type = Eclipse::Type::Solar;
             break;
         case IDC_LUNARECLIPSE:
-                eclipseFinderDlg->type = Eclipse::Lunar;
+                eclipseFinderDlg->type = Eclipse::Type::Lunar;
             break;
         case IDC_ECLIPSETARGET:
             if(HIWORD(wParam) == CBN_SELCHANGE)
@@ -450,7 +450,7 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         {
                             eclipseFinderDlg->TimetoSet_ =
                                 (eclipse->startTime + eclipse->endTime) / 2.0f;
-                            eclipseFinderDlg->BodytoSet_ = eclipseFinderDlg->type == Eclipse::Solar
+                            eclipseFinderDlg->BodytoSet_ = eclipseFinderDlg->type == Eclipse::Type::Solar
                                                          ? eclipse->receiver
                                                          : eclipse->occulter;
                         }

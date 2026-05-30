@@ -50,7 +50,7 @@ TextInput::getCompletion() const
 std::optional<Selection>
 TextInput::getSelectedCompletion()
 {
-    if (m_completionIdx >= 0 && m_completionIdx < m_completion.size())
+    if (m_completionIdx >= 0 && m_completionIdx < static_cast<int>(m_completion.size()))
         return m_completion[m_completionIdx].getSelection();
     return std::nullopt;
 }
@@ -122,9 +122,9 @@ TextInput::doBackspace(const Simulation* sim, bool withLocations)
 void
 TextInput::doTab()
 {
-    if (m_completionIdx + 1 < (int) m_completion.size())
+    if (m_completionIdx + 1 < static_cast<int>(m_completion.size()))
         m_completionIdx++;
-    else if ((int) m_completion.size() > 0 && m_completionIdx + 1 == (int) m_completion.size())
+    else if (!m_completion.empty() && m_completionIdx + 1 == static_cast<int>(m_completion.size()))
         m_completionIdx = 0;
 
     if (m_completionIdx >= 0)
