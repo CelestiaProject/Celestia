@@ -399,6 +399,7 @@ AddBookmarkDialog::command(WPARAM wParam, LPARAM lParam) const
                            &AddBookmarkFolderProc,
                            reinterpret_cast<LPARAM>(&addBookmarkFolderDlg));
         }
+        return FALSE;
 
     default:
         return FALSE;

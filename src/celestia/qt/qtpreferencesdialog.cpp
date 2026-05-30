@@ -270,6 +270,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
         case StarStyle::ScaledDiscStars:
             ui.scaledDiscsButton->setChecked(true);
+            break;
 
         default:
             assert(0);

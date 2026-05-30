@@ -619,7 +619,7 @@ bool processPercentageChunk(std::istream& in, M3DChunkType chunkType, std::int32
 
     case M3DChunkType::FloatPercentage:
         GetLogger()->debug("Processing FloatPercentage chunk\n");
-        readFloatPercentage(in, contentSize, percentage);
+        return readFloatPercentage(in, contentSize, percentage);
 
     default:
         GetLogger()->warn("Unknown percentage {}\n", chunkType);
