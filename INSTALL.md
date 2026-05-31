@@ -200,7 +200,7 @@ Optional packages:
 * icu
 * libavif
 * meshoptimizer
-* qtbase
+* qtbase\[windeployqt\]
 
 In Visual Studio Code, create the workspace settings file at
 .vscode\settings.json and add the following sections:
