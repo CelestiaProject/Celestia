@@ -15,9 +15,9 @@
 uniform float pointRadius;
 uniform float pointScale;
 
-varying vec3  v_color;
-varying float v_peakRadiance;
-varying float v_pointSize;
+in vec3  v_color;
+in float v_peakRadiance;
+in float v_pointSize;
 
 void main(void)
 {
@@ -31,5 +31,5 @@ void main(void)
     float height  = min(v_peakRadiance, 1.0);
     vec3  radiance = v_color * (falloff * height);
 
-    gl_FragColor = vec4(radiance, 1.0);
+    fragColor = vec4(radiance, 1.0);
 }

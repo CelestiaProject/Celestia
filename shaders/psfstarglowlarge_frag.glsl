@@ -18,7 +18,7 @@ uniform float peakRadiance;
 uniform float psfA;
 uniform float psfB;
 
-varying vec2 v_uv;
+in vec2 v_uv;
 
 void main(void)
 {
@@ -39,5 +39,5 @@ void main(void)
     float val = pow(base * psfB, 2.5);
     val = clamp(val, 0.0, peakRadiance);
 
-    gl_FragColor = vec4(color * val, 1.0);
+    fragColor = vec4(color * val, 1.0);
 }

@@ -11,19 +11,19 @@
 
 // Point Spread Function (PSF) star renderer - glow (eye-PSF) pass.
 
-attribute vec4 in_Position;
-attribute vec4 in_Color;
-attribute float in_Intensity;
+layout(location = 0) in vec4 in_Position;
+layout(location = 8) in vec4 in_Color;
+layout(location = 9) in float in_Intensity;
 
 uniform float pointRadius;
 uniform float psfA;        // = optimization / pointRadius
 uniform float psfB;        // = 1 / (pi/pointRadius - a)
 uniform float pointScale;  // DPI scale
 
-varying vec3  v_color;
-varying float v_peakRadiance;
-varying float v_psfRadius;  // PSF cutoff radius in px (>0)
-varying float v_pointSize;
+out vec3  v_color;
+out float v_peakRadiance;
+out float v_psfRadius;  // PSF cutoff radius in px (>0)
+out float v_pointSize;
 
 void main(void)
 {

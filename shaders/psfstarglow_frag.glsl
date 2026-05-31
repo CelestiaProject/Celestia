@@ -18,10 +18,10 @@ uniform float psfA;
 uniform float psfB;
 uniform float pointScale;
 
-varying vec3  v_color;
-varying float v_peakRadiance;
-varying float v_psfRadius;
-varying float v_pointSize;
+in vec3  v_color;
+in float v_peakRadiance;
+in float v_psfRadius;
+in float v_pointSize;
 
 void main(void)
 {
@@ -40,5 +40,5 @@ void main(void)
     float val = pow(base * psfB, 2.5);
     val = clamp(val, 0.0, v_peakRadiance);
 
-    gl_FragColor = vec4(v_color * val, 1.0);
+    fragColor = vec4(v_color * val, 1.0);
 }

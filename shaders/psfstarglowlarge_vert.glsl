@@ -12,14 +12,14 @@
 // Billboard fallback for PSF glow stars whose gl_PointSize would exceed
 // the driver's GL_ALIASED_POINT_SIZE_RANGE upper bound.
 
-attribute vec2 in_Position;   // quad corner offset in [-0.5, 0.5]
-attribute vec2 in_TexCoord0;  // quad UV in [0, 1]
+layout(location = 0) in vec2 in_Position;   // quad corner offset in [-0.5, 0.5]
+layout(location = 2) in vec2 in_TexCoord0;  // quad UV in [0, 1]
 
 uniform vec3  center;         // star world position
 uniform float pointWidth;     // 2 * sizePhys / windowWidth   (clip-space full extent)
 uniform float pointHeight;    // 2 * sizePhys / windowHeight  (clip-space full extent)
 
-varying vec2 v_uv;
+out vec2 v_uv;
 
 void main(void)
 {
