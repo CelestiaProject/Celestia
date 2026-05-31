@@ -3727,19 +3727,29 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     starRenderer.colorTemp = &starColors;
 
+    // Even in PSF mode the legacy point-sprite buffers are still used by
+    // renderObjectAsPoint for close stars (Sol, etc.) flushed inside
+    // renderSolarSystemObjects.  Configure their texture and point
+    // scale here so they're in a valid state before that path runs.
+    float scale = static_cast<float>(screenDpi) / 96.0f;
+    m_gaussianDiscTex->bind();
+    starRenderer.starVertexBuffer->setTexture(m_gaussianDiscTex.get());
+    starRenderer.starVertexBuffer->setPointScale(scale);
+    starRenderer.glareVertexBuffer->setTexture(m_gaussianGlareTex.get());
+    starRenderer.glareVertexBuffer->setPointScale(scale);
+
     if (starStyle == StarStyle::PointSpreadFunction)
     {
-        const float scale = static_cast<float>(screenDpi) / 96.0f;
-        psfPointBuffer->setPointScale(scale);
-        psfPointBuffer->setPointRadius(starPointRadius);
-        psfPointBuffer->setOptimization(starOptimization);
-        psfGlowBuffer->setPointScale(scale);
-        psfGlowBuffer->setPointRadius(starPointRadius);
-        psfGlowBuffer->setOptimization(starOptimization);
+        starRenderer.psfPointBuffer->setPointScale(scale);
+        starRenderer.psfPointBuffer->setPointRadius(starPointRadius);
+        starRenderer.psfPointBuffer->setOptimization(starOptimization);
+        starRenderer.psfGlowBuffer->setPointScale(scale);
+        starRenderer.psfGlowBuffer->setPointRadius(starPointRadius);
+        starRenderer.psfGlowBuffer->setOptimization(starOptimization);
 
         PsfStarVertexBuffer::enable();
-        psfPointBuffer->start(PsfStarVertexBuffer::Mode::Point);
-        psfGlowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
+        starRenderer.psfPointBuffer->start(PsfStarVertexBuffer::Mode::Point);
+        starRenderer.psfGlowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
 
         Renderer::PipelineState ps;
         ps.blending  = true;
@@ -3767,8 +3777,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                 getAspectRatio(),
                                 psfIterMag);
 
-        psfPointBuffer->finish();
-        psfGlowBuffer->finish();
+        starRenderer.psfPointBuffer->finish();
+        starRenderer.psfGlowBuffer->finish();
         PsfStarVertexBuffer::disable();
 
         // Drain large-glow fallback stars (those whose computed gl_PointSize
@@ -3798,12 +3808,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 #endif
         return;
     }
-
-    m_gaussianDiscTex->bind();
-    starRenderer.starVertexBuffer->setTexture(m_gaussianDiscTex.get());
-    starRenderer.starVertexBuffer->setPointScale(screenDpi / 96.0f);
-    starRenderer.glareVertexBuffer->setTexture(m_gaussianGlareTex.get());
-    starRenderer.glareVertexBuffer->setPointScale(screenDpi / 96.0f);
 
     PointStarVertexBuffer::enable();
     starRenderer.glareVertexBuffer->startSprites();
