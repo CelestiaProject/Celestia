@@ -35,7 +35,7 @@ jobs:
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = '99a97de2cb371449d4fb9dc970f2ac562d689ec2'
+        $vcpkgCommit = 'f9ffbaa46ad8e284b2b74919f7e0ba259564d424'
         pushd "$env:VCPKG_INSTALLATION_ROOT"
         git fetch origin $vcpkgCommit
         git reset --hard $vcpkgCommit
@@ -72,7 +72,7 @@ jobs:
           'libjpeg-turbo',
           'libpng',
           'luajit',
-          'qtbase[core,opengl,widgets,freetype,harfbuzz,jpeg,png]'
+          'qtbase[core,opengl,widgets,freetype,harfbuzz,jpeg,png,windeployqt]'
         )
 
         # We treat x86 builds as native, other builds keep host as x64-windows.
