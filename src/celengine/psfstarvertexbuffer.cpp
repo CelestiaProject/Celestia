@@ -29,7 +29,7 @@ PsfStarVertexBuffer::PsfStarVertexBuffer(const Renderer &renderer,
                                          capacity_t capacity) :
     m_renderer(renderer),
     m_capacity(capacity),
-    m_vertices(std::make_unique<StarVertex[]>(capacity))
+    m_vertices(capacity)
 {
 }
 
@@ -51,7 +51,7 @@ PsfStarVertexBuffer::render()
     makeCurrent();
 
     m_bo->invalidateData().setData(
-        util::array_view(m_vertices.get(), m_nStars),
+        util::array_view(m_vertices.data(), m_nStars),
         gl::Buffer::BufferUsage::StreamDraw);
 
     m_vo->draw(m_nStars);
@@ -160,7 +160,7 @@ PsfStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
     {
         m_vertices[m_nStars].position = pos;
         m_vertices[m_nStars].peakRadiance = peakRadiance;
-        color.get(m_vertices[m_nStars].color);
+        color.get(m_vertices[m_nStars].color.data());
         m_nStars++;
     }
 

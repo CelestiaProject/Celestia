@@ -170,16 +170,16 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
     appRenderer->setStarPointRadius(
         (float) settings.value("StarPointRadius",
-                               appCore->getConfig()->renderDetails.starPointRadius).toDouble());
+                               appCore->getConfig()->renderDetails.stars.pointRadius).toDouble());
     appRenderer->setStarOptimization(
         (float) settings.value("StarOptimization",
-                               appCore->getConfig()->renderDetails.starOptimization).toDouble());
+                               appCore->getConfig()->renderDetails.stars.optimization).toDouble());
     appRenderer->setStarMaxIrradiance(
         (float) settings.value("StarMaxIrradiance",
-                               appCore->getConfig()->renderDetails.starMaxIrradiance).toDouble());
+                               appCore->getConfig()->renderDetails.stars.maxIrradiance).toDouble());
     appRenderer->setStarExposure(
         (float) settings.value("StarExposure",
-                               appCore->getConfig()->renderDetails.starExposure).toDouble());
+                               appCore->getConfig()->renderDetails.stars.exposure).toDouble());
 }
 
 void

@@ -94,10 +94,14 @@ struct CelestiaConfig
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
         bool sRGBRendering{ false };
-        float starPointRadius{ 2.0f };
-        float starOptimization{ 0.1f };
-        float starMaxIrradiance{ 100.0f };
-        float starExposure{ 100.0f };
+        struct StarRendering
+        {
+            float pointRadius{ 2.0f };
+            float optimization{ 0.1f };
+            float maxIrradiance{ 100.0f };
+            float exposure{ 100.0f };
+        };
+        StarRendering stars{ };
     };
 
     CelestiaConfig() = default;

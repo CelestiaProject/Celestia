@@ -9,7 +9,10 @@
 
 #pragma once
 
+#include <array>
 #include <memory>
+#include <vector>
+
 #include <Eigen/Core>
 
 class Color;
@@ -61,15 +64,15 @@ public:
 private:
     struct StarVertex
     {
-        Eigen::Vector3f position;
-        float           peakRadiance;
-        unsigned char   color[4];
+        Eigen::Vector3f            position;
+        float                      peakRadiance;
+        std::array<unsigned char, 4> color;
     };
 
     const Renderer                 &m_renderer;
     capacity_t                      m_capacity;
     capacity_t                      m_nStars                { 0 };
-    std::unique_ptr<StarVertex[]>   m_vertices;
+    std::vector<StarVertex>         m_vertices;
     Mode                            m_mode                  { Mode::Point };
     float                           m_pointRadius           { 2.0f };
     float                           m_optimization          { 0.1f };

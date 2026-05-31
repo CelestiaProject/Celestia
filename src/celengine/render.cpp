@@ -3718,7 +3718,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.maxIrradiance     = starMaxIrradiance;
     starRenderer.exposure          = starExposure;
     starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
-    starRenderer.maxPointSize      = celestia::gl::maxPointSize;
+    starRenderer.maxPointSize      = static_cast<float>(celestia::gl::maxPointSize);
     starRenderer.largeGlowStars.clear();
 
     // = 1.0 at startup

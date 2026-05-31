@@ -65,8 +65,7 @@ static Color greenNormalization(const Color& c, float saturationLimit, float& gr
     b /= mx;
 
     float mn = std::min({ r, g, b });
-    float delta = saturationLimit - mn;
-    if (delta > 0.0f)
+    if (float delta = saturationLimit - mn; delta > 0.0f)
     {
         // Desaturate toward white so no channel falls below the limit.
         float dr = 1.0f - r;
@@ -201,7 +200,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                    * maxIrradiance;
                     }
 
-                    // r_glow_logical = glowPeak^0.4 / psfA, psfA = optimization/pointRadius
                     float a        = optimization / r;
                     float rGlowLog = std::pow(glowPeak, 0.4f) / std::max(a, 1.0e-6f);
                     float sizePhys = 2.0f * rGlowLog * pointScale;

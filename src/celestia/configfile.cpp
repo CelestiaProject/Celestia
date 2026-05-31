@@ -202,17 +202,17 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.ShadowMapSize, hash, "ShadowMapSize"sv);
     applyStringArray(renderDetails.ignoreGLExtensions, hash, "IgnoreGLExtensions"sv);
     applyBoolean(renderDetails.sRGBRendering, hash, "SRGBRendering"sv);
-    applyNumber(renderDetails.starPointRadius, hash, "StarPointRadius"sv);
-    renderDetails.starPointRadius = std::clamp(renderDetails.starPointRadius, 1.0f, 10.0f);
-    applyNumber(renderDetails.starOptimization, hash, "StarOptimization"sv);
-    renderDetails.starOptimization = std::clamp(renderDetails.starOptimization, 0.1f, 1.0f);
-    applyNumber(renderDetails.starMaxIrradiance, hash, "StarMaxIrradiance"sv);
-    if (renderDetails.starMaxIrradiance < 0.0f)
-        renderDetails.starMaxIrradiance = 0.0f;
-    else if (renderDetails.starMaxIrradiance > 0.0f)
-        renderDetails.starMaxIrradiance = std::clamp(renderDetails.starMaxIrradiance, 1.0f, 1.0e6f);
-    applyNumber(renderDetails.starExposure, hash, "StarExposure"sv);
-    renderDetails.starExposure = std::clamp(renderDetails.starExposure, 1.0e-3f, 1.0e6f);
+    applyNumber(renderDetails.stars.pointRadius, hash, "StarPointRadius"sv);
+    renderDetails.stars.pointRadius = std::clamp(renderDetails.stars.pointRadius, 1.0f, 10.0f);
+    applyNumber(renderDetails.stars.optimization, hash, "StarOptimization"sv);
+    renderDetails.stars.optimization = std::clamp(renderDetails.stars.optimization, 0.1f, 1.0f);
+    applyNumber(renderDetails.stars.maxIrradiance, hash, "StarMaxIrradiance"sv);
+    if (renderDetails.stars.maxIrradiance < 0.0f)
+        renderDetails.stars.maxIrradiance = 0.0f;
+    else if (renderDetails.stars.maxIrradiance > 0.0f)
+        renderDetails.stars.maxIrradiance = std::clamp(renderDetails.stars.maxIrradiance, 1.0f, 1.0e6f);
+    applyNumber(renderDetails.stars.exposure, hash, "StarExposure"sv);
+    renderDetails.stars.exposure = std::clamp(renderDetails.stars.exposure, 1.0e-3f, 1.0e6f);
 }
 
 void
