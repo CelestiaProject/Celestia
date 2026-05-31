@@ -137,18 +137,8 @@ FramebufferObject::generateColorTexture()
     // Set the texture dimensions
 #ifdef GL_ES
     GLenum format = GL_RGBA;
-    GLint internalFormat;
-    GLenum type;
-    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-    {
-        internalFormat = m_useFloatColor ? GL_RGBA16F : GL_RGBA8;
-        type = m_useFloatColor ? GL_HALF_FLOAT : GL_UNSIGNED_BYTE;
-    }
-    else
-    {
-        internalFormat = GL_RGBA;
-        type = m_useFloatColor ? GL_HALF_FLOAT_OES : GL_UNSIGNED_BYTE;
-    }
+    GLint internalFormat = m_useFloatColor ? GL_RGBA16F : GL_RGBA8;
+    GLenum type = m_useFloatColor ? GL_HALF_FLOAT : GL_UNSIGNED_BYTE;
 #else
     GLint internalFormat = m_useFloatColor ? GL_RGBA16F : GL_RGB8;
     GLenum format = m_useFloatColor ? GL_RGBA : GL_RGB;
@@ -183,23 +173,8 @@ FramebufferObject::generateDepthTexture()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // Set the texture dimensions
-#ifdef GL_ES
-    GLint internalFormat;
-    GLenum type;
-    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-    {
-        internalFormat = GL_DEPTH_COMPONENT24;
-        type = GL_UNSIGNED_INT;
-    }
-    else
-    {
-        internalFormat = GL_DEPTH_COMPONENT;
-        type = celestia::gl::OES_depth24 ? GL_UNSIGNED_INT :  GL_UNSIGNED_SHORT;
-    }
-#else
     GLint internalFormat = GL_DEPTH_COMPONENT24;
     GLenum type = GL_UNSIGNED_INT;
-#endif
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, GL_DEPTH_COMPONENT, type, nullptr);
 
     // Unbind the texture

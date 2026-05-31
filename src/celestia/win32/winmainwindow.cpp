@@ -1167,9 +1167,9 @@ MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
 
     if (firstContext)
     {
-        if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_2_1))
+        if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_3_3))
         {
-            std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 2.1!"));
+            std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 3.3!"));
             std::wstring error = UTF8ToWideString(_("Fatal Error"));
             MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
             return false;

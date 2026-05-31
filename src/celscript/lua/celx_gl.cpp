@@ -18,14 +18,6 @@
 
 // ==================== OpenGL ====================
 
-// If defined then our GLES compatibily layer is used
-// If not defined then GL1 functions are used
-#define USE_GLES_COMPAT_LAYER
-
-#ifndef USE_GLES_COMPAT_LAYER
-#include <celengine/shadermanager.h>
-#endif
-
 static int glu_LookAt(lua_State* l)
 {
     CelxLua celx(l);
@@ -126,9 +118,6 @@ static int gl_Color(lua_State* l)
     float b = (float)celx.safeGetNumber(3, WrongType, "argument 3 to gl.Color must be a number", 0.0);
     float a = (float)celx.safeGetNumber(4, WrongType, "argument 4 to gl.Color must be a number", 0.0);
     glColor4f(r,g,b,a);
-#ifndef USE_GLES_COMPAT_LAYER
-    glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
-#endif
     return 0;
 }
 
@@ -138,6 +127,15 @@ static int gl_LineWidth(lua_State* l)
     celx.checkArgs(1, 1, "One argument expected for gl.LineWidth()");
     float n = (float)celx.safeGetNumber(1, WrongType, "argument 1 to gl.LineWidth must be a number", 1.0);
     glLineWidth(n);
+    return 0;
+}
+
+static int gl_PointSize(lua_State* l)
+{
+    CelxLua celx(l);
+    celx.checkArgs(1, 1, "One argument expected for gl.PointSize()");
+    float n = (float)celx.safeGetNumber(1, WrongType, "argument 1 to gl.PointSize must be a number", 1.0);
+    glPointSize(n);
     return 0;
 }
 
@@ -157,7 +155,7 @@ static int gl_BlendFunc(lua_State* l)
     celx.checkArgs(2, 2, "Two arguments expected for gl.BlendFunc()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.BlendFunc must be a number", 0.0);
     int j = (int)celx.safeGetNumber(2, WrongType, "argument 2 to gl.BlendFunc must be a number", 0.0);
-    glBlendFuncSeparate(i,j,GL_ZERO,GL_ONE);
+    glBlendFunc(static_cast<GLenum>(i), static_cast<GLenum>(j));
     return 0;
 }
 
@@ -166,9 +164,6 @@ static int gl_Begin(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "One argument expected for gl.Begin()");
     int i = (int)celx.safeGetNumber(1, WrongType, "argument 1 to gl.Begin must be a number", 0.0);
-#ifndef USE_GLES_COMPAT_LAYER
-    glUseProgram(0);
-#endif
     glBegin(i);
     return 0;
 }
@@ -241,6 +236,7 @@ void LoadLuaGraphicsLibrary(lua_State* l)
     celx.registerMethod("Ortho", gl_Ortho);
     celx.registerMethod("Color", gl_Color);
     celx.registerMethod("LineWidth", gl_LineWidth);
+    celx.registerMethod("PointSize", gl_PointSize);
     celx.registerMethod("TexCoord", gl_TexCoord);
     celx.registerMethod("TexParameter", gl_TexParameter);
     celx.registerMethod("Vertex", gl_Vertex);
@@ -260,7 +256,6 @@ void LoadLuaGraphicsLibrary(lua_State* l)
     celx.registerValue("POINTS", GL_POINTS);
     celx.registerValue("LINES", GL_LINES);
     celx.registerValue("LINE_LOOP", GL_LINE_LOOP);
-    celx.registerValue("LINE_SMOOTH", GL_LINE_SMOOTH);
     celx.registerValue("POLYGON", GL_POLYGON);
     celx.registerValue("PROJECTION", GL_PROJECTION);
     celx.registerValue("MODELVIEW", GL_MODELVIEW);

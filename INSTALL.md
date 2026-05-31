@@ -381,7 +381,7 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_LIBAVIF       | bool | OFF       | Support AVIF texture using libavif
 | ENABLE_MINIAUDIO     | bool | OFF       | Support audio playback using miniaudio
 | ENABLE_TOOLS         | bool | OFF       | Build tools for Celestia data files
-| ENABLE_GLES          | bool | OFF       | Use OpenGL ES 2.0 in rendering code
+| ENABLE_GLES          | bool | OFF       | Use OpenGL ES 3.0 in rendering code
 | USE_QT6              | bool | OFF       | Use Qt6 in Qt frontend
 | USE_ICU              | bool | OFF       | Use ICU for UTF8 decoding for text rendering
 | USE_MESHOPTIMIZER    | bool | OFF       | Use meshoptimizer when loading models

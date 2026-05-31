@@ -1,12 +1,12 @@
-attribute vec4 in_Position;
-attribute vec3 in_Normal;
-attribute float in_Brightness;
+layout(location = 0) in vec4 in_Position;
+layout(location = 1) in vec3 in_Normal;
+in float in_Brightness;
 
 uniform vec3 color;
 uniform vec3 viewDir;
 uniform float fadeFactor;
 
-varying float shade;
+out float shade;
 
 void main(void)
 {

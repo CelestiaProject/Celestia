@@ -1,9 +1,9 @@
-varying vec2 texCoord;
-varying vec4 color;
+in vec2 texCoord;
+in vec4 color;
 
 uniform sampler2D atlasTex;
 
 void main(void)
 {
-    gl_FragColor = vec4(color.rgb, texture2D(atlasTex, texCoord).r * color.a);
+    fragColor = vec4(color.rgb, texture(atlasTex, texCoord).r * color.a);
 }

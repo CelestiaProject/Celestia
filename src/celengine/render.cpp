@@ -2814,12 +2814,9 @@ void Renderer::renderPlanet(Body& body,
             }
             lod = min(lod, maxLod);
 
-            // Not all hardware/drivers support GLSL's textureXDLOD instruction, which lets
-            // us explicitly set the LOD. But, they do all have an optional lodBias parameter
-            // for the textureXD instruction. The bias is just the difference between the
-            // area light LOD and the approximate GPU calculated LOD.
-            if (!gl::ARB_shader_texture_lod)
-                lod = max(0.0f, lod - gpuLod);
+            // textureLod() is core in GLSL 1.30+ / GLSL ES 3.00, which is now
+            // the floor; the explicit LOD is always honored, so no bias-fallback
+            // adjustment is needed here.
             lights.ringShadows[li].texLod = lod;
         }
 
@@ -4609,11 +4606,32 @@ bool Renderer::getInfo(map<string, string>& info) const
     GLint blueBits = 0;
     GLint alphaBits = 0;
     GLint depthBits = 0;
+#ifdef GL_ES
+    // GLES 3.0 still supports GL_*_BITS queries.
     glGetIntegerv(GL_RED_BITS, &redBits);
     glGetIntegerv(GL_GREEN_BITS, &greenBits);
     glGetIntegerv(GL_BLUE_BITS, &blueBits);
     glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
     glGetIntegerv(GL_DEPTH_BITS, &depthBits);
+#else
+    // GL 3.2 Core removed GL_*_BITS; query the bound draw framebuffer's
+    // attachments. The attachment names differ for the default FB vs a user
+    // FBO (Qt's QOpenGLWidget renders into its own FBO).
+    GLint drawFbo = 0;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFbo);
+    const GLenum colorAttach = (drawFbo == 0) ? GL_BACK_LEFT : GL_COLOR_ATTACHMENT0;
+    const GLenum depthAttach = (drawFbo == 0) ? GL_DEPTH     : GL_DEPTH_ATTACHMENT;
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, colorAttach,
+                                          GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, &redBits);
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, colorAttach,
+                                          GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE, &greenBits);
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, colorAttach,
+                                          GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE, &blueBits);
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, colorAttach,
+                                          GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE, &alphaBits);
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, depthAttach,
+                                          GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depthBits);
+#endif
 
     if (alphaBits == 0)
         info["ColorComponent"] = fmt::format("RGB{}{}{}", redBits, greenBits, blueBits);
@@ -4630,14 +4648,16 @@ bool Renderer::getInfo(map<string, string>& info) const
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
     info["MaxTextureUnits"] = to_string(maxTextureUnits);
 
-    GLint pointSizeRange[2];
-    GLfloat lineWidthRange[2];
+    // GL 3.2 Core removed antialiased point/line queries; GL_POINT_SIZE_RANGE /
+    // GL_LINE_WIDTH_RANGE are core. GLES 3.0 only exposes the ALIASED variants.
+    std::array<GLint, 2> pointSizeRange = { 0, 0 };
+    std::array<GLfloat, 2> lineWidthRange = { 0.0f, 0.0f };
 #ifdef GL_ES
-    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange.data());
 #else
-    glGetIntegerv(GL_SMOOTH_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange.data());
 #endif
     info["PointSizeMin"] = to_string(pointSizeRange[0]);
     info["PointSizeMax"] = to_string(pointSizeRange[1]);
@@ -4645,12 +4665,11 @@ bool Renderer::getInfo(map<string, string>& info) const
     info["LineWidthMax"] = to_string(lineWidthRange[1]);
 
 #ifndef GL_ES
-    GLfloat pointSizeGran = 0;
-    glGetFloatv(GL_SMOOTH_POINT_SIZE_GRANULARITY, &pointSizeGran);
-    info["PointSizeGran"] = fmt::format("{:.2f}", pointSizeGran);
-
+    // GL_MAX_VARYING_FLOATS / GL_MAX_VARYING_COMPONENTS are unreliable on
+    // some Core drivers (Apple's GL 4.1 Metal returns 0); use the per-stage
+    // vertex output limit which is the canonical 3.2+ Core query.
     GLint maxVaryings = 0;
-    glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryings);
+    glGetIntegerv(GL_MAX_VERTEX_OUTPUT_COMPONENTS, &maxVaryings);
     info["MaxVaryingFloats"] = to_string(maxVaryings);
 #endif
 
@@ -4667,9 +4686,23 @@ bool Renderer::getInfo(map<string, string>& info) const
     info["MaxCubeMapSize"] = to_string(maxCubeMapSize);
 #endif
 
-    s = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-    if (s != nullptr)
-        info["Extensions"] = s;
+    // GL 3.2 Core / GLES 3.0: glGetString(GL_EXTENSIONS) is removed; iterate
+    // GL_NUM_EXTENSIONS + glGetStringi.
+    GLint numExtensions = 0;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+    std::string extensions;
+    extensions.reserve(static_cast<std::size_t>(numExtensions) * 32);
+    for (GLint i = 0; i < numExtensions; ++i)
+    {
+        const char* ext = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, static_cast<GLuint>(i)));
+        if (ext == nullptr)
+            continue;
+        if (!extensions.empty())
+            extensions.push_back(' ');
+        extensions.append(ext);
+    }
+    if (!extensions.empty())
+        info["Extensions"] = std::move(extensions);
 
     return true;
 }
@@ -5276,12 +5309,9 @@ Renderer::setPipelineState(const Renderer::PipelineState &ps) noexcept
     }
     if (ps.smoothLines != m_pipelineState.smoothLines)
     {
-#ifndef GL_ES
-        if (ps.smoothLines && util::is_set(renderFlags, RenderFlags::ShowSmoothLines))
-            glEnable(GL_LINE_SMOOTH);
-        else
-            glDisable(GL_LINE_SMOOTH);
-#endif
+        // GL_LINE_SMOOTH was removed in GL 3.2 Core Profile and is unsupported
+        // on GLES. Shader-based line AA in LineRenderer handles antialiasing
+        // for thick lines; we just track the flag for downstream code.
         m_pipelineState.smoothLines = ps.smoothLines;
     }
 }

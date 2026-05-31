@@ -99,36 +99,19 @@ LineRenderer::setup_shader()
 
     if (m_useTriangles)
     {
-        // The fragment-shader analytical AA needs fwidth(), which is core on
-        // desktop GL but optional on GLES2. If the extension isn't there,
-        // skip the inflation and emit the visible width — the FS in that
-        // build won't reference lineEdge either, so we fall back to the
-        // pre-AA behavior cleanly.
-#ifdef GL_ES
-        const bool aaSupported = celestia::gl::OES_standard_derivatives;
-#else
-        const bool aaSupported = true;
-#endif
-        if (aaSupported)
-        {
-            // Inflate the rendered quad by 1 device pixel on each side so the
-            // analytical AA in the fragment shader has room to fade to zero
-            // before hitting the geometry boundary. lineEdge tells the FS where
-            // the visible edge sits inside the inflated quad (in lineU space,
-            // which spans [-1, +1] across the inflated width).
-            float visiblePx    = rasterized_width();
-            float inflateRatio = (visiblePx + 2.0f) / visiblePx;
-            float w = m_width * width_multiplyer() * inflateRatio;
-            m_prog->lineWidthX = w * m_renderer.getPointWidth();
-            m_prog->lineWidthY = w * m_renderer.getPointHeight();
-            m_prog->lineEdge   = 1.0f / inflateRatio;
-        }
-        else
-        {
-            float w =  m_width * width_multiplyer();
-            m_prog->lineWidthX = w * m_renderer.getPointWidth();
-            m_prog->lineWidthY = w * m_renderer.getPointHeight();
-        }
+        // Inflate the rendered quad by 1 device pixel on each side so the
+        // analytical AA in the fragment shader has room to fade to zero
+        // before hitting the geometry boundary. lineEdge tells the FS where
+        // the visible edge sits inside the inflated quad (in lineU space,
+        // which spans [-1, +1] across the inflated width). fwidth() is core
+        // on both desktop GL (1.10+) and GLSL ES 3.00, so no capability
+        // gate is needed.
+        float visiblePx    = rasterized_width();
+        float inflateRatio = (visiblePx + 2.0f) / visiblePx;
+        float w = m_width * width_multiplyer() * inflateRatio;
+        m_prog->lineWidthX = w * m_renderer.getPointWidth();
+        m_prog->lineWidthY = w * m_renderer.getPointHeight();
+        m_prog->lineEdge   = 1.0f / inflateRatio;
     }
     else
     {

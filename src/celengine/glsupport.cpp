@@ -1,5 +1,6 @@
 #include "glsupport.h"
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <fmt/format.h>
 #include <celutil/gettext.h>
@@ -8,22 +9,13 @@ namespace celestia::gl
 {
 
 #ifdef GL_ES
-CELAPI bool OES_vertex_array_object              = false; //NOSONAR
 CELAPI bool OES_texture_border_clamp             = false; //NOSONAR
 CELAPI bool OES_geometry_shader                  = false; //NOSONAR
-CELAPI bool OES_depth24                          = false; //NOSONAR
-CELAPI bool OES_texture_half_float               = false; //NOSONAR
-CELAPI bool OES_standard_derivatives             = false; //NOSONAR
-CELAPI bool EXT_sRGB                             = false; //NOSONAR
-CELAPI bool EXT_sRGB_write_control               = false; //NOSONAR
-#else
-CELAPI bool ARB_vertex_array_object        = false; //NOSONAR
-CELAPI bool ARB_framebuffer_object         = false; //NOSONAR
 #endif
-CELAPI bool ARB_shader_texture_lod         = false; //NOSONAR
 CELAPI bool ARB_texture_compression_bptc   = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc   = false; //NOSONAR
 CELAPI bool EXT_texture_filter_anisotropic = false; //NOSONAR
+CELAPI bool EXT_texture_sRGB_R8            = false; //NOSONAR
 CELAPI bool MESA_pack_invert               = false; //NOSONAR
 CELAPI GLint maxPointSize                  = 0; //NOSONAR
 CELAPI GLint maxTextureSize                = 0; //NOSONAR
@@ -85,45 +77,31 @@ void enable_workarounds()
 bool init(util::array_view<std::string> ignore) noexcept
 {
 #ifdef GL_ES
-    OES_vertex_array_object            = check_extension(ignore, "GL_OES_vertex_array_object");
     OES_texture_border_clamp           = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
     OES_geometry_shader                = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
-    OES_depth24                        = check_extension(ignore, "GL_OES_depth24");
-    OES_texture_half_float             = check_extension(ignore, "GL_OES_texture_half_float");
-    // Derivative functions are core in GLSL ES 3.0, so any GLES 3.0+ context
-    // has them regardless of whether the legacy extension is advertised.
-    OES_standard_derivatives           = check_extension(ignore, "GL_OES_standard_derivatives")
-                                         || checkVersion(celestia::gl::GLES_3_0);
-    EXT_sRGB                           = check_extension(ignore, "GL_EXT_sRGB");
-    EXT_sRGB_write_control             = check_extension(ignore, "GL_EXT_sRGB_write_control");
-    // BPTC on GLES is exposed via GL_EXT_texture_compression_bptc and requires
-    // ES 3.0+. The compressed format tokens (0x8E8C / 0x8E8D) are identical to
-    // the desktop GL_ARB_texture_compression_bptc extension, so the same
-    // ARB_texture_compression_bptc flag can drive both upload paths.
-    ARB_texture_compression_bptc   = checkVersion(celestia::gl::GLES_3_0)
-                                     && check_extension(ignore, "GL_EXT_texture_compression_bptc");
+    // BPTC on GLES is exposed via GL_EXT_texture_compression_bptc; the
+    // compressed-format tokens (0x8E8C / 0x8E8D) are identical to the desktop
+    // GL_ARB_texture_compression_bptc extension, so the same flag drives both
+    // upload paths.
+    ARB_texture_compression_bptc   = check_extension(ignore, "GL_EXT_texture_compression_bptc");
 #else
-    ARB_vertex_array_object        = check_extension(ignore, "GL_ARB_vertex_array_object");
-    if (!has_extension("GL_ARB_framebuffer_object"))
-    {
-        fmt::print("{}", _("Mandatory extension GL_ARB_framebuffer_object is missing!\n"));
-        return false;
-    }
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
 #endif
-    ARB_shader_texture_lod         = check_extension(ignore, "GL_ARB_shader_texture_lod");
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
     EXT_texture_filter_anisotropic = check_extension(ignore, "GL_EXT_texture_filter_anisotropic") || check_extension(ignore, "GL_ARB_texture_filter_anisotropic");
+    EXT_texture_sRGB_R8            = check_extension(ignore, "GL_EXT_texture_sRGB_R8");
     MESA_pack_invert               = check_extension(ignore, "GL_MESA_pack_invert");
 
-    GLint pointSizeRange[2];
-    GLfloat lineWidthRange[2];
+    std::array<GLint, 2> pointSizeRange = { 0, 0 };
+    std::array<GLfloat, 2> lineWidthRange = { 0.0f, 0.0f };
 #ifdef GL_ES
-    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
+    glGetIntegerv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange.data());
 #else
-    glGetIntegerv(GL_SMOOTH_POINT_SIZE_RANGE, pointSizeRange);
-    glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, lineWidthRange);
+    // GL 3.2 Core removed GL_SMOOTH_*_RANGE; GL_POINT_SIZE_RANGE / GL_LINE_WIDTH_RANGE
+    // are the surviving (and only) range queries.
+    glGetIntegerv(GL_POINT_SIZE_RANGE, pointSizeRange.data());
+    glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange.data());
 #endif
     maxPointSize = pointSizeRange[1];
     maxLineWidth = lineWidthRange[1];

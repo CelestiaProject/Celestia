@@ -333,8 +333,11 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     QSurfaceFormat glformat = QSurfaceFormat::defaultFormat();
 #ifdef GL_ES
     glformat.setRenderableType(QSurfaceFormat::RenderableType::OpenGLES);
+    glformat.setVersion(3, 0);
 #else
     glformat.setRenderableType(QSurfaceFormat::RenderableType::OpenGL);
+    glformat.setVersion(3, 3);
+    glformat.setProfile(QSurfaceFormat::CoreProfile);
 #endif
     glformat.setAlphaBufferSize(0);
     if (m_appCore->getConfig()->renderDetails.aaSamples > 1)

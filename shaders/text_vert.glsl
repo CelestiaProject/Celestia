@@ -1,9 +1,9 @@
-attribute vec2 in_Position;
-attribute vec2 in_TexCoord0;
-attribute vec4 in_Color;
+layout(location = 0) in vec2 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
+layout(location = 8) in vec4 in_Color;
 
-varying vec2 texCoord;
-varying vec4 color;
+out vec2 texCoord;
+out vec4 color;
 
 void main(void)
 {

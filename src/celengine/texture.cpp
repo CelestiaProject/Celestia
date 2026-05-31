@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
@@ -86,33 +87,28 @@ GetTextureCaps()
     return texCaps;
 }
 
-#ifdef GL_ES
 bool
-needsRGBAExpansion(PixelFormat format, bool needsMipmap)
+needsRGBAExpansion(PixelFormat format, [[maybe_unused]] bool needsMipmap)
 {
     format = effectiveFormat(format);
-    if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-    {
-        // GLES3 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap generation. If we
-        // don't need mipmap, we can use the format as is. sLuminance/sLumAlpha are not natively
-        // supported and always needs expansion.
-        if (!needsMipmap)
-            return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
-        return format == PixelFormat::sRGB
-            || format == PixelFormat::sRGB8
-            || format == PixelFormat::sLuminance
+#ifdef GL_ES
+    // GLES 3.0 sRGB 3-component textures (sRGB/sRGB8) don't support mipmap
+    // generation; expand to 4-component when mipmaps are needed.
+    // sLuminance has no core single-channel sRGB format; use the GL_SR8 fast
+    // path + swizzle when EXT_texture_sRGB_R8 is available, otherwise expand.
+    // sLumAlpha always needs expansion (no per-channel sRGB-decode format).
+    bool sLuminanceNeedsExpansion = !gl::EXT_texture_sRGB_R8;
+    if (!needsMipmap)
+        return (format == PixelFormat::sLuminance && sLuminanceNeedsExpansion)
             || format == PixelFormat::sLumAlpha;
-    }
-    else if (celestia::gl::EXT_sRGB)
-    {
-        // GLES2 with sRGB. All sRGB formats should have mipmap disabled.
-        return format == PixelFormat::sLuminance || format == PixelFormat::sLumAlpha;
-    }
-    else
-    {
-        // sRGB not supported at all, no need for expansion.
-        return false;
-    }
+    return format == PixelFormat::sRGB
+        || format == PixelFormat::sRGB8
+        || (format == PixelFormat::sLuminance && sLuminanceNeedsExpansion)
+        || format == PixelFormat::sLumAlpha;
+#else
+    // Desktop: only sLumAlpha needs expansion; see expansion site below.
+    return format == PixelFormat::sLumAlpha;
+#endif
 }
 
 std::unique_ptr<std::uint8_t[]>
@@ -134,7 +130,6 @@ expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
     }
     return dst;
 }
-#endif
 
 GLenum
 getInternalFormat(PixelFormat format, bool needsMipmap)
@@ -157,22 +152,16 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
         return static_cast<GLenum>(format);
     case PixelFormat::sRGB:
         if (!needsRGBAExpansion(format, needsMipmap))
-        {
-            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-                return static_cast<GLenum>(PixelFormat::sRGB8);
-            if (celestia::gl::EXT_sRGB)
-                return GL_SRGB_EXT;
-            return static_cast<GLenum>(PixelFormat::RGB);
-        }
+            return static_cast<GLenum>(PixelFormat::sRGB8);
         [[fallthrough]];
     case PixelFormat::sRGBA:
-    case PixelFormat::sLuminance:
     case PixelFormat::sLumAlpha:
-        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-            return static_cast<GLenum>(PixelFormat::sRGBA8);
-        if (celestia::gl::EXT_sRGB)
-            return GL_SRGB_ALPHA_EXT;
-        return static_cast<GLenum>(PixelFormat::RGBA);
+        return static_cast<GLenum>(PixelFormat::sRGBA8);
+    // sLuminance fast path: GL_SR8 + swizzle when EXT_texture_sRGB_R8 is
+    // present, otherwise CPU-expand to sRGBA8 (handled by needsRGBAExpansion).
+    case PixelFormat::sLuminance:
+        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(PixelFormat::sR8)
+                                       : static_cast<GLenum>(PixelFormat::sRGBA8);
     default:
         return GL_NONE;
     }
@@ -183,15 +172,10 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::BGRA:
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::LumAlpha:
-    case PixelFormat::Alpha:
-    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
     case PixelFormat::BC7:
-    case PixelFormat::sLumAlpha:
-    case PixelFormat::sLuminance:
     case PixelFormat::sRGB:
     case PixelFormat::sRGBA:
     case PixelFormat::DXT1_sRGBA:
@@ -199,6 +183,22 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT5_sRGBA:
     case PixelFormat::BC7_sRGBA:
         return static_cast<GLenum>(format);
+    // GL_LUMINANCE/ALPHA/LUMINANCE_ALPHA were removed in 3.2 Core; map to
+    // R8/RG8 + ApplyLegacyFormatSwizzle to keep legacy shader visibility.
+    case PixelFormat::Luminance:
+    case PixelFormat::Alpha:
+        return GL_R8;
+    case PixelFormat::LumAlpha:
+        return GL_RG8;
+    // No core single/two-channel sRGB format. Use GL_SR8 when available
+    // (saves 4x VRAM); otherwise fall back to GL_SRGB8_ALPHA8 + swizzle.
+    case PixelFormat::sLuminance:
+        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(PixelFormat::sR8)
+                                       : GL_SRGB8_ALPHA8;
+    // sLumAlpha is CPU-expanded to (L,L,L,A); see needsRGBAExpansion.
+    // GL_SRG8 has no fast path here (would sRGB-decode alpha).
+    case PixelFormat::sLumAlpha:
+        return GL_SRGB8_ALPHA8;
     default:
         return GL_NONE;
     }
@@ -215,23 +215,17 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::sRGB:
     case PixelFormat::sRGB8:
         if (!needsRGBAExpansion(format, needsMipmap))
-        {
-            if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-                return static_cast<GLenum>(PixelFormat::RGB);
-            if (celestia::gl::EXT_sRGB)
-                return GL_SRGB_EXT;
             return static_cast<GLenum>(PixelFormat::RGB);
-        }
         [[fallthrough]];
     case PixelFormat::sRGBA:
     case PixelFormat::sRGBA8:
-    case PixelFormat::sLuminance:
     case PixelFormat::sLumAlpha:
-        if (celestia::gl::checkVersion(celestia::gl::GLES_3_0))
-            return static_cast<GLenum>(PixelFormat::RGBA);
-        if (celestia::gl::EXT_sRGB)
-            return GL_SRGB_ALPHA_EXT;
         return static_cast<GLenum>(PixelFormat::RGBA);
+    // sLuminance with GL_SR8 fast path uploads as GL_RED; without the
+    // extension it's CPU-expanded and uploaded as RGBA.
+    case PixelFormat::sLuminance:
+        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(GL_RED)
+                                       : static_cast<GLenum>(PixelFormat::RGBA);
     default:
         return getInternalFormat(format, needsMipmap);
     }
@@ -242,18 +236,20 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::BGRA:
     case PixelFormat::RGB:
     case PixelFormat::BGR:
-    case PixelFormat::LumAlpha:
-    case PixelFormat::Alpha:
-    case PixelFormat::Luminance:
     case PixelFormat::DXT1:
     case PixelFormat::DXT3:
     case PixelFormat::DXT5:
     case PixelFormat::BC7:
         return static_cast<GLenum>(format);
-    case PixelFormat::sLumAlpha:
-        return static_cast<GLenum>(PixelFormat::LumAlpha);
+    case PixelFormat::Luminance:
     case PixelFormat::sLuminance:
-        return static_cast<GLenum>(PixelFormat::Luminance);
+    case PixelFormat::Alpha:
+        return GL_RED;
+    case PixelFormat::LumAlpha:
+        return GL_RG;
+    // sLumAlpha is pre-expanded to (L,L,L,A); upload as RGBA.
+    case PixelFormat::sLumAlpha:
+        return GL_RGBA;
     case PixelFormat::sRGB:
     case PixelFormat::sRGB8:
         return static_cast<GLenum>(PixelFormat::RGB);
@@ -353,30 +349,51 @@ SetBorderColor(Color borderColor, GLenum target)
 #endif
 }
 
-bool
-canGenerateMipmaps([[maybe_unused]] PixelFormat format)
+// Restore legacy GL_LUMINANCE/ALPHA/LUMINANCE_ALPHA shader visibility via
+// texture swizzle, since those formats are gone in 3.2 Core. On GLES this is
+// also used for the GL_SR8 sLuminance fast path (single-channel sRGB).
+void
+ApplyLegacyFormatSwizzle(PixelFormat format, GLenum target)
 {
     format = effectiveFormat(format);
-#ifdef GL_ES
-    // All sRGB formats can generate mipmap (after expansion if necessary) on GLES3
-    // No sRGB format can generate mipmap on GLES2
-    if (!celestia::gl::checkVersion(celestia::gl::GLES_3_0) && celestia::gl::EXT_sRGB)
+    std::array<GLint, 4> swizzle{};
+#ifndef GL_ES
+    if (format == PixelFormat::Luminance)
     {
-        switch (format)
-        {
-        case PixelFormat::sRGB:
-        case PixelFormat::sRGB8:
-        case PixelFormat::sRGBA:
-        case PixelFormat::sRGBA8:
-        case PixelFormat::sLuminance:
-        case PixelFormat::sLumAlpha:
-            return false;
-        default:
-            break;
-        }
+        swizzle = { GL_RED, GL_RED, GL_RED, GL_ONE };
     }
+    else if (format == PixelFormat::Alpha)
+    {
+        swizzle = { GL_ZERO, GL_ZERO, GL_ZERO, GL_RED };
+    }
+    else if (format == PixelFormat::LumAlpha)
+    {
+        swizzle = { GL_RED, GL_RED, GL_RED, GL_GREEN };
+    }
+    else
 #endif
-    return true;
+    if (format == PixelFormat::sLuminance)
+    {
+#ifdef GL_ES
+        if (!gl::EXT_texture_sRGB_R8)
+            return;
+#endif
+        swizzle = { GL_RED, GL_RED, GL_RED, GL_ONE };
+    }
+    else
+    {
+        // sLumAlpha is pre-expanded into the right slots; no swizzle needed.
+        return;
+    }
+#ifndef GL_ES
+    glTexParameteriv(target, GL_TEXTURE_SWIZZLE_RGBA, swizzle.data());
+#else
+    // GLES 3.0 lacks the vector form; set each channel individually.
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_R, swizzle[0]);
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_G, swizzle[1]);
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_B, swizzle[2]);
+    glTexParameteri(target, GL_TEXTURE_SWIZZLE_A, swizzle[3]);
+#endif
 }
 
 // Load a prebuilt set of mipmaps; assumes that the image contains
@@ -388,6 +405,7 @@ LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
 #ifndef GL_ES
     glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, img.getMipLevelCount()-1);
 #endif
+    ApplyLegacyFormatSwizzle(img.getFormat(), target);
 
     for (int mip = 0; mip < img.getMipLevelCount(); mip++)
     {
@@ -404,21 +422,16 @@ LoadMipmapSet(const Image& img, GLenum target, bool needsMipmap)
                                    img.getMipLevelSize(mip),
                                    img.getMipLevel(mip));
         }
+        else if (needsRGBAExpansion(img.getFormat(), needsMipmap))
+        {
+            auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
+            glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
+        }
         else
         {
-#ifdef GL_ES
-            if (needsRGBAExpansion(img.getFormat(), needsMipmap))
-            {
-                auto expanded = expandToRGBA(img.getMipLevel(mip), mipWidth, mipHeight, img.getFormat());
-                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
-                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
-            }
-            else
-#endif
-            {
-                glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
-                             getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(mip));
-            }
+            glTexImage2D(target, mip, internalFormat, mipWidth, mipHeight, 0,
+                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(mip));
         }
     }
 }
@@ -428,6 +441,7 @@ void
 LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
 {
     int internalFormat = getInternalFormat(img.getFormat(), needsMipmap);
+    ApplyLegacyFormatSwizzle(img.getFormat(), target);
 
     if (img.isCompressed())
     {
@@ -439,21 +453,16 @@ LoadMiplessTexture(const Image& img, GLenum target, bool needsMipmap)
                                img.getMipLevelSize(0),
                                img.getMipLevel(0));
     }
+    else if (needsRGBAExpansion(img.getFormat(), needsMipmap))
+    {
+        auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
+        glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                     getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
+    }
     else
     {
-#ifdef GL_ES
-        if (needsRGBAExpansion(img.getFormat(), needsMipmap))
-        {
-            auto expanded = expandToRGBA(img.getMipLevel(0), img.getWidth(), img.getHeight(), img.getFormat());
-            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
-                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, expanded.get());
-        }
-        else
-#endif
-        {
-            glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
-                         getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(0));
-        }
+        glTexImage2D(target, 0, internalFormat, img.getWidth(), img.getHeight(), 0,
+                     getExternalFormat(img.getFormat(), needsMipmap), GL_UNSIGNED_BYTE, img.getMipLevel(0));
     }
 }
 
@@ -581,11 +590,7 @@ ComputeTileMipMaps(const Image& img, Image& tile,
         }
     }
 
-    bool genMipmaps = mipmap && canGenerateMipmaps(img.getFormat());
-
-    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
-    if (mipmap && !genMipmaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    bool genMipmaps = mipmap;
 
     LoadMiplessTexture(tile, GL_TEXTURE_2D, genMipmaps);
     if (genMipmaps)
@@ -695,14 +700,7 @@ ImageTexture::ImageTexture(const Image& img,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GetTextureCaps().preferredAnisotropy);
     }
 
-    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(img.getFormat());
-
-    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
-    if (mipmap && !precomputedMipMaps && !genMipmaps)
-    {
-        mipmap = false;
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    }
+    bool genMipmaps = mipmap && !precomputedMipMaps;
 
     if (mipmap)
     {
@@ -920,14 +918,7 @@ CubeMap::CubeMap(celestia::util::array_view<Image> faces) :
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                     mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    bool genMipmaps = mipmap && !precomputedMipMaps && canGenerateMipmaps(faces[0].getFormat());
-
-    // If we wanted mipmaps but can't generate them, fall back to linear filtering.
-    if (mipmap && !precomputedMipMaps && !genMipmaps)
-    {
-        mipmap = false;
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    }
+    bool genMipmaps = mipmap && !precomputedMipMaps;
 
     for (int i = 0; i < 6; ++i)
     {

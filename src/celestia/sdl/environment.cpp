@@ -85,8 +85,21 @@ Environment::setGLAttributes(int aaSamples) const
         return false;
     }
 
-    if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2) != 0
+    if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3) != 0
         || SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0) != 0)
+    {
+        fatalError("Failed to set context version: {}", SDL_GetError());
+        return false;
+    }
+#else
+    if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE) != 0)
+    {
+        fatalError("Failed to set OpenGL context: {}", SDL_GetError());
+        return false;
+    }
+
+    if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3) != 0
+        || SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3) != 0)
     {
         fatalError("Failed to set context version: {}", SDL_GetError());
         return false;
@@ -134,10 +147,16 @@ Environment::createAppWindow(const Settings& settings,
         SDL_GL_SetSwapInterval(1);
 
     gl::init();
-#ifndef GL_ES
-    if (!gl::checkVersion(gl::GL_2_1))
+#ifdef GL_ES
+    if (!gl::checkVersion(gl::GLES_3_0))
     {
-        fatalError("Celestia requires OpenGL 2.1");
+        fatalError("Celestia requires OpenGL ES 3.0");
+        return nullptr;
+    }
+#else
+    if (!gl::checkVersion(gl::GL_3_3))
+    {
+        fatalError("Celestia requires OpenGL 3.3");
         return nullptr;
     }
 #endif

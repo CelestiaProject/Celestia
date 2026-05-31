@@ -30,9 +30,6 @@
 #ifndef GL_LIGHTING
 #define GL_LIGHTING 0x0B50
 #endif
-#ifndef GL_LINE_SMOOTH
-#define GL_LINE_SMOOTH 0x0B20
-#endif
 #ifndef GL_TEXTURE_2D
 #define GL_TEXTURE_2D 0x0DE1
 #endif
@@ -139,6 +136,16 @@
 #endif
 #define gluLookAt(ix,iy,iz,cx,cy,cz,ux,uy,uz) fpcLookAt(ix,iy,iz,cx,cy,cz,ux,uy,uz)
 
+#ifdef glPointSize
+#undef glPointSize  // NOSONAR(cpp:S959) pop GL header macro so we can redirect to fpcPointSize
+#endif
+#define glPointSize(s) fpcPointSize(s)
+
+#ifdef glBlendFunc
+#undef glBlendFunc  // NOSONAR(cpp:S959) pop GL header macro so we can redirect to fpcBlendFunc
+#endif
+#define glBlendFunc(s,d) fpcBlendFunc(s,d)
+
 void fpcMatrixMode(int _g_matrixMode) noexcept;
 void fpcPushMatrix() noexcept;
 void fpcPopMatrix() noexcept;
@@ -157,3 +164,5 @@ void fpcColor4f(float r, float g, float b, float a) noexcept;
 void fpcVertex2f(float x, float y) noexcept;
 void fpcTexCoord2f(float x, float y) noexcept;
 void fpcLookAt(float ix, float iy, float iz, float cx, float cy, float cz, float ux, float uy, float uz) noexcept;
+void fpcPointSize(float size) noexcept;
+void fpcBlendFunc(GLenum src, GLenum dst) noexcept;

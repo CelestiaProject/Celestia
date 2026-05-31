@@ -1,4 +1,4 @@
-attribute vec4 in_Position;
+layout(location = 0) in vec4 in_Position;
 
 uniform float radius;
 uniform float width;

@@ -550,8 +550,7 @@ GlobularRenderer::render()
     m_renderer.setPipelineState(ps);
 
 #ifndef GL_ES
-    glEnable(GL_POINT_SPRITE);
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 
     for (const auto &obj : m_objects)
@@ -559,8 +558,7 @@ GlobularRenderer::render()
 
     m_objects.clear();
 #ifndef GL_ES
-    glDisable(GL_POINT_SPRITE);
-    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glDisable(GL_PROGRAM_POINT_SIZE);
 #endif
     glActiveTexture(GL_TEXTURE0);
 }

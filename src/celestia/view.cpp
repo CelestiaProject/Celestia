@@ -276,11 +276,7 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
     if (currentSamples < 1)
         currentSamples = 1;
 
-#ifdef GL_ES
-    int samplesToRequest = celestia::gl::checkVersion(celestia::gl::GLES_3_0) ? currentSamples : 1;
-#else
     int samplesToRequest = currentSamples;
-#endif
 
     if (static_cast<int>(fbos.size()) != count)
         fbos.resize(count);
@@ -292,12 +288,9 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
         int samples = (i == 0) ? samplesToRequest : 1;
 
         // Use a float color buffer only when the consuming effect requires it
-        // (e.g. the sRGB tonemap needs linear-light precision).
+        // (e.g. the sRGB tonemap needs linear-light precision). Half-float
+        // texture formats are core in GLES 3.0+ and desktop GL 3.0+.
         bool useFloat = effects[i]->needsFloatSource();
-#ifdef GL_ES
-        if (useFloat && !celestia::gl::checkVersion(celestia::gl::GLES_3_0) && !celestia::gl::OES_texture_half_float)
-            useFloat = false;
-#endif
 
         auto& fbo = fbos[i];
 

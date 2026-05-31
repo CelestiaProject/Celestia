@@ -15,21 +15,6 @@
 
 #define PTR(p) (reinterpret_cast<void*>(p))
 
-namespace
-{
-
-[[ nodiscard ]] inline bool
-isVAOSupported()
-{
-#ifdef GL_ES
-    return celestia::gl::OES_vertex_array_object;
-#else
-    return celestia::gl::ARB_vertex_array_object;
-#endif
-}
-
-} // anonymous namespace
-
 namespace celestia::gl
 {
 
@@ -66,8 +51,7 @@ VertexObject::VertexObject() = default;
 VertexObject::VertexObject(VertexObject::Primitive primitive) :
     m_primitive(primitive)
 {
-    if (isVAOSupported())
-        glGenVertexArrays(1, &m_id);
+    glGenVertexArrays(1, &m_id);
 }
 
 VertexObject::VertexObject(VertexObject &&other) noexcept :
@@ -122,7 +106,7 @@ void
 VertexObject::destroy() noexcept
 {
     unbind();
-    if (m_id != 0 && isVAOSupported())
+    if (m_id != 0)
         glDeleteVertexArrays(1, &m_id);
     m_id = 0;
 }
@@ -225,45 +209,22 @@ VertexObject::enableAttribArrays() const
 }
 
 void
-VertexObject::disableAttribArrays() const
-{
-    auto &binder = Binder::get();
-
-    for (const auto &p : m_bufferDesc)
-        glDisableVertexAttribArray(p.location);
-
-    binder.unbind(Buffer::TargetHint::Array);
-
-    if (isIndexed())
-        binder.unbind(Buffer::TargetHint::ElementArray);
-}
-
-void
 VertexObject::bind()
 {
-    if (isVAOSupported())
-        Binder::get().bind(*this);
-    else
-        enableAttribArrays();
+    Binder::get().bind(*this);
 
     if (!m_initialized)
     {
         m_initialized = true;
-        if (isVAOSupported())
-        {
-            enableAttribArrays();
-            m_bufferDesc.clear();
-        }
+        enableAttribArrays();
+        m_bufferDesc.clear();
     }
 }
 
 void
 VertexObject::unbind() const noexcept
 {
-    if (isVAOSupported())
-        Binder::get().unbind(*this);
-    else
-        disableAttribArrays();
+    Binder::get().unbind(*this);
 }
 
 } // namespace celestia::gl

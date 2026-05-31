@@ -11,6 +11,7 @@
 
 #include <array>
 #include <cassert>
+#include <cstddef>                      // offsetof
 #include <cstring>                      // memcpy
 #include <memory>
 #include <Eigen/Core>
@@ -19,6 +20,7 @@
 #include <celengine/shadermanager.h>    // CelestiaGLProgram::*Index
 #include <celmath/vecgl.h>              // math::translate
 #include "glcompat.h"
+
 
 namespace math = celestia::math;
 
@@ -49,6 +51,14 @@ std::array<Eigen::Matrix4f, PROJECTION_STACK_DEPTH> g_projectionStack =
 int g_modelViewPosition = 0;
 int g_projectionPosition = 0;
 int g_matrixMode = GL_MODELVIEW;
+float g_pointSize = 1.0f; // NOSONAR(cpp:S5421) immediate-mode state shadow
+
+// Lua-emulator blend state. Tracked in shadows so the engine's actual GL
+// blend state (and Renderer::m_pipelineState cache) is never modified outside
+// of Draw(), where we save/restore around the draw call.
+bool   g_blendEnabled = false;                       // NOSONAR(cpp:S5421)
+GLenum g_blendSrc     = GL_SRC_ALPHA;                // NOSONAR(cpp:S5421)
+GLenum g_blendDst     = GL_ONE_MINUS_SRC_ALPHA;      // NOSONAR(cpp:S5421)
 
 class GLSLProgram
 {
@@ -56,6 +66,7 @@ public:
     explicit GLSLProgram(GLProgram&& prog) : m_prog(std::move(prog))
     {
         m_MVPMatrix = Mat4ShaderParameter(m_prog.getID(), "MVPMatrix");
+        m_PointSize = FloatShaderParameter(m_prog.getID(), "PointSize");
         IntegerShaderParameter(m_prog.getID(), "u_tex") = 0;
     }
     ~GLSLProgram() = default;
@@ -72,20 +83,24 @@ public:
     {
         m_MVPMatrix = m;
     }
+    void setPointSize(float s)
+    {
+        m_PointSize = s;
+    }
 
 private:
     GLProgram m_prog;
     Mat4ShaderParameter m_MVPMatrix;
+    FloatShaderParameter m_PointSize;
 };
 
 #ifdef GL_ES
-constexpr char glsl_version[] = "100";
+constexpr char glsl_version[] = "300 es";
 #else
-constexpr char glsl_version[] = "120";
+constexpr char glsl_version[] = "330";
 #endif
 
-constexpr char kVertexShader[] = R"glsl(
-#version {}
+constexpr char kVertexShader[] = R"glsl(#version {}
 #define SHADER_COLOR {}
 #define SHADER_TEXCOORD {}
 
@@ -93,19 +108,20 @@ constexpr char kVertexShader[] = R"glsl(
 precision highp float;
 #endif
 
-attribute vec2 in_Position;
-attribute vec2 in_TexCoord0;
+layout(location = 0) in vec2 in_Position;
+layout(location = 2) in vec2 in_TexCoord0;
 #if SHADER_COLOR
-attribute vec4 in_Color;
-varying vec4 v_color;
+layout(location = 8) in vec4 in_Color;
+out vec4 v_color;
 #endif
 #if SHADER_TEXCOORD
-varying vec2 v_texCoord;
+out vec2 v_texCoord;
 #endif
 
 //uniform mat4 ModelViewMatrix;
 //uniform mat4 ProjectionMatrix;
 uniform mat4 MVPMatrix;
+uniform float PointSize;
 
 invariant gl_Position;
 
@@ -118,11 +134,11 @@ void main(void)
     v_texCoord = in_TexCoord0;
 #endif
     gl_Position = MVPMatrix * vec4(in_Position, 0.0, 1.0);
+    gl_PointSize = PointSize;
 }}
 )glsl";
 
-constexpr char kFragmentShader[] = R"glsl(
-#version {}
+constexpr char kFragmentShader[] = R"glsl(#version {}
 #define SHADER_COLOR {}
 #define SHADER_TEXCOORD {}
 
@@ -131,20 +147,22 @@ precision highp float;
 #endif
 
 #if SHADER_COLOR
-varying vec4 v_color;
+in vec4 v_color;
 #endif
 #if SHADER_TEXCOORD
-varying vec2 v_texCoord;
+in vec2 v_texCoord;
 uniform sampler2D u_tex;
 #endif
+
+out vec4 fragColor;
 
 void main(void)
 {{
 #if SHADER_TEXCOORD
-    gl_FragColor = texture2D(u_tex, v_texCoord);
+    fragColor = texture(u_tex, v_texCoord);
 #endif
 #if SHADER_COLOR
-    gl_FragColor = v_color;
+    fragColor = v_color;
 #endif
 }}
 )glsl";
@@ -156,10 +174,15 @@ enum ShaderAttributes
     SHADER_COUNT    = 2
 };
 
-GLenum gPrimitive = GL_NONE;
-GLsizei gVertexCounter = 0;
-GLsizei gTexCoordCounter = 0;
-GLsizei gColorCounter = 0;
+// GL_POINTS == 0 == GL_NONE, so we can't use GL_NONE as the "no primitive
+// active" sentinel — that would silently swallow every POINTS draw. Use an
+// out-of-range value instead.
+constexpr GLenum kNoPrimitive = ~GLenum(0);
+
+GLenum gPrimitive = kNoPrimitive;       // NOSONAR(cpp:S5421) immediate-mode state shadow
+GLsizei gVertexCounter = 0;             // NOSONAR(cpp:S5421)
+GLsizei gTexCoordCounter = 0;           // NOSONAR(cpp:S5421)
+GLsizei gColorCounter = 0;              // NOSONAR(cpp:S5421)
 
 struct Vertex
 {
@@ -182,9 +205,6 @@ GLProgram BuildProgram(const std::string &vertex, const std::string &fragment)
 
     builder.attach(std::move(vs));
     builder.attach(std::move(fs));
-    builder.bindAttribute(CelestiaGLProgram::VertexCoordAttributeIndex, "in_Position");
-    builder.bindAttribute(CelestiaGLProgram::TextureCoord0AttributeIndex, "in_TexCoord0");
-    builder.bindAttribute(CelestiaGLProgram::ColorAttributeIndex, "in_Color");
 
     if (auto program = builder.link(status); status == GLShaderStatus::OK)
         return program;
@@ -195,8 +215,7 @@ GLProgram BuildProgram(const std::string &vertex, const std::string &fragment)
 GLSLProgram* FindGLProgram(ShaderAttributes attr)
 {
     static std::array<GLSLProgram*, SHADER_COUNT> programs;
-    auto *prog = programs[attr];
-    if (prog == nullptr)
+    if (programs[attr] == nullptr)
     {
         int color = attr == SHADER_COLOR ? 1 : 0;
         int texture = attr == SHADER_TEXCOORD ? 1 : 0;
@@ -206,23 +225,60 @@ GLSLProgram* FindGLProgram(ShaderAttributes attr)
         if (glprog.isValid())
             programs[attr] = std::make_unique<GLSLProgram>(std::move(glprog)).release();
     }
-    return prog;
+    return programs[attr];
 }
 
 
+GLuint gVao = 0;        // NOSONAR(cpp:S5421) lazily-created GL object handle
+GLuint gVbo = 0;        // NOSONAR(cpp:S5421)
+
+void EnsureBuffers()
+{
+    if (gVao == 0)
+    {
+        glGenVertexArrays(1, &gVao);
+        glGenBuffers(1, &gVbo);
+        glBindVertexArray(gVao);
+        glBindBuffer(GL_ARRAY_BUFFER, gVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), nullptr, GL_DYNAMIC_DRAW);
+    }
+}
+
 void Draw()
 {
-    if (gPrimitive == GL_NONE || gVertexCounter == 0)
+    if (gPrimitive == kNoPrimitive || gVertexCounter == 0)
         return; // Do nothing
 
     bool hasTexCoords       = gTexCoordCounter == gVertexCounter;
     bool hasColors          = gColorCounter == gVertexCounter;
     ShaderAttributes type   = hasTexCoords ? SHADER_TEXCOORD : SHADER_COLOR;
 
+    // Core profile needs a VAO + a real VBO; client-side arrays are gone.
+    GLint prevVao = 0;
+    GLint prevVbo = 0;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &prevVao);
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &prevVbo);
+
+    // Save the engine's generic color attribute — celx_gl.cpp::gl_Color
+    // calls glVertexAttrib4f on location 8 directly, so without this the
+    // engine's HUD (which reads the generic value when its color array is
+    // disabled) inherits whatever the last Lua gl.Color set.
+    std::array<GLfloat, 4> prevGenericColor{};
+    glGetVertexAttribfv(CelestiaGLProgram::ColorAttributeIndex,
+                        GL_CURRENT_VERTEX_ATTRIB, prevGenericColor.data());
+    GLint prevProgram = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prevProgram);
+
+    EnsureBuffers();
+    glBindVertexArray(gVao);
+    glBindBuffer(GL_ARRAY_BUFFER, gVbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertex) * gVertexCounter, vertices.data());
+
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(
         CelestiaGLProgram::VertexCoordAttributeIndex,
-        2, GL_FLOAT, false, sizeof(Vertex), &vertices[0].x
+        2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+        reinterpret_cast<const void*>(offsetof(Vertex, x))
     );
 
     if (hasTexCoords)
@@ -230,8 +286,13 @@ void Draw()
         glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
         glVertexAttribPointer(
             CelestiaGLProgram::TextureCoord0AttributeIndex,
-            2, GL_FLOAT, false, sizeof(Vertex), &vertices[0].u
+            2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+            reinterpret_cast<const void*>(offsetof(Vertex, u))
         );
+    }
+    else
+    {
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
     }
 
     if (hasColors)
@@ -239,28 +300,75 @@ void Draw()
         glEnableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
         glVertexAttribPointer(
             CelestiaGLProgram::ColorAttributeIndex,
-            4, GL_FLOAT, false, sizeof(Vertex), &vertices[0].r
+            4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+            reinterpret_cast<const void*>(offsetof(Vertex, r))
         );
+    }
+    else
+    {
+        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
     }
 
     if (auto *prog = FindGLProgram(type); prog != nullptr)
     {
         prog->use();
         prog->setMVPMatrix(g_projectionStack[g_projectionPosition] * g_modelViewStack[g_modelViewPosition]);
+        prog->setPointSize(g_pointSize);
+#ifndef GL_ES
+        // Desktop Core: gl_PointSize is only honored when this is enabled.
+        // Use orig_glEnable because glEnable is macro-redirected to fpcEnable.
+        GLboolean wasPointSizeEnabled = glIsEnabled(GL_PROGRAM_POINT_SIZE);
+        if (!wasPointSizeEnabled)
+            orig_glEnable(GL_PROGRAM_POINT_SIZE);
+#endif
+        // Snapshot real GL blend state, apply Lua-emulator blend state for this
+        // draw only, then restore. This keeps the engine's Renderer pipeline
+        // state cache in sync with actual GL state across the Lua hook.
+        GLboolean prevBlend = glIsEnabled(GL_BLEND);
+        GLint prevSrcRGB = 0, prevDstRGB = 0, prevSrcA = 0, prevDstA = 0;
+        glGetIntegerv(GL_BLEND_SRC_RGB, &prevSrcRGB);
+        glGetIntegerv(GL_BLEND_DST_RGB, &prevDstRGB);
+        glGetIntegerv(GL_BLEND_SRC_ALPHA, &prevSrcA);
+        glGetIntegerv(GL_BLEND_DST_ALPHA, &prevDstA);
+        if (g_blendEnabled && !prevBlend)
+            orig_glEnable(GL_BLEND);
+        else if (!g_blendEnabled && prevBlend)
+            orig_glDisable(GL_BLEND);
+        if (g_blendEnabled)
+            glBlendFuncSeparate(g_blendSrc, g_blendDst, GL_ZERO, GL_ONE);
+
         glDrawArrays(gPrimitive, 0, gVertexCounter);
+
+        // Restore blend state exactly as the engine left it.
+        if (g_blendEnabled && !prevBlend)
+            orig_glDisable(GL_BLEND);
+        else if (!g_blendEnabled && prevBlend)
+            orig_glEnable(GL_BLEND);
+        glBlendFuncSeparate(static_cast<GLenum>(prevSrcRGB),
+                                  static_cast<GLenum>(prevDstRGB),
+                                  static_cast<GLenum>(prevSrcA),
+                                  static_cast<GLenum>(prevDstA));
+#ifndef GL_ES
+        if (!wasPointSizeEnabled)
+            orig_glDisable(GL_PROGRAM_POINT_SIZE);
+#endif
     }
 
-    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-    if (hasTexCoords)
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
-    if (hasColors)
-        glDisableVertexAttribArray(CelestiaGLProgram::ColorAttributeIndex);
+    // Restore previous binding so we don't pollute the engine's VAO.
+    glBindBuffer(GL_ARRAY_BUFFER, static_cast<GLuint>(prevVbo));
+    glBindVertexArray(static_cast<GLuint>(prevVao));
+
+    // Restore generic color attribute so the engine's HUD/labels don't
+    // inherit the last Lua gl.Color value.
+    glVertexAttrib4fv(CelestiaGLProgram::ColorAttributeIndex, prevGenericColor.data());
+    if (prevProgram >= 0)
+        glUseProgram(static_cast<GLuint>(prevProgram));
 
     // reset state
     gVertexCounter = 0;
     gTexCoordCounter = 0;
     gColorCounter = 0;
-    gPrimitive = GL_NONE;
+    gPrimitive = kNoPrimitive;
 }
 
 void PushVertex(float x, float y)
@@ -303,20 +411,32 @@ fpcMatrixMode(int _g_matrixMode) noexcept
 }
 
 void
+fpcPointSize(float size) noexcept
+{
+    g_pointSize = size;
+}
+
+void
 fpcPushMatrix() noexcept
 {
     switch (g_matrixMode)
     {
     case GL_MODELVIEW:
         if (g_modelViewPosition < MODELVIEW_STACK_DEPTH - 1)
+        {
+            g_modelViewStack[g_modelViewPosition + 1] = g_modelViewStack[g_modelViewPosition];
             g_modelViewPosition++;
+        }
         else
             assert(0 && "Matrix stack overflow");
         break;
 
     case GL_PROJECTION:
         if (g_projectionPosition < PROJECTION_STACK_DEPTH - 1)
+        {
+            g_projectionStack[g_projectionPosition + 1] = g_projectionStack[g_projectionPosition];
             g_projectionPosition++;
+        }
         else
             assert(0 && "Matrix stack overflow");
         break;
@@ -492,35 +612,30 @@ void fpcGetFloatv(GLenum pname, GLfloat *params) noexcept
 
 void fpcEnable(GLenum param) noexcept
 {
-    switch(param)
-    {
-#ifndef GL_ES
-    case GL_LINE_SMOOTH:
-#endif
-    case GL_BLEND:
-        orig_glEnable(param);
-    default:
-        break;
-    }
+    // Do NOT touch real GL state from the Lua hook. The engine maintains a
+    // cached PipelineState that would otherwise get out of sync. We shadow
+    // blend state and apply it only inside Draw() with save/restore.
+    if (param == GL_BLEND)
+        g_blendEnabled = true;
 }
 
 void fpcDisable(GLenum param) noexcept
 {
-    switch(param)
-    {
-#ifndef GL_ES
-    case GL_LINE_SMOOTH:
-#endif
-    case GL_BLEND:
-        orig_glDisable(param);
-    default:
-        break;
-    }
+    if (param == GL_BLEND)
+        g_blendEnabled = false;
+}
+
+void fpcBlendFunc(GLenum src, GLenum dst) noexcept
+{
+    // Shadow only; applied inside Draw() with save/restore so the engine's
+    // cached blend func stays consistent across the Lua hook.
+    g_blendSrc = src;
+    g_blendDst = dst;
 }
 
 void fpcBegin(GLenum param) noexcept
 {
-    if (gPrimitive == 0)
+    if (gPrimitive == kNoPrimitive)
         gPrimitive = (param == GL_POLYGON || param == GL_QUADS) ? GL_TRIANGLE_FAN : param;
 }
 
@@ -531,7 +646,7 @@ void fpcEnd() noexcept
 
 void fpcColor4f(float r, float g, float b, float a) noexcept
 {
-    if (gPrimitive == GL_NONE)
+    if (gPrimitive == kNoPrimitive)
         glVertexAttrib4f(CelestiaGLProgram::ColorAttributeIndex, r, g, b, a);
     else
         PushColor(r, g, b, a);

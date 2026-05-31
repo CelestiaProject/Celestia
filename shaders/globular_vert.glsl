@@ -1,5 +1,5 @@
-attribute vec3 in_Position;
-attribute vec3 in_TexCoord0; // reuse it for starSize, relStarDensity and colorIndex
+layout(location = 0) in vec3 in_Position;
+layout(location = 2) in vec3 in_TexCoord0; // reuse it for starSize, relStarDensity and colorIndex
 
 uniform sampler2D colorTex;
 uniform mat3 m;
@@ -12,7 +12,7 @@ const float clipDistance = 100.0; // observer distance [ly] from globular, where
                                   // start "morphing" the star-sprite sizes towards
                                   // their physical values
 
-varying vec4 color;
+out vec4 color;
 
 void main(void)
 {
@@ -30,6 +30,6 @@ void main(void)
     float obsDistanceToStarRatio = length(p + offset) / clipDistance;
     gl_PointSize = s * min(obsDistanceToStarRatio, 1.0);
 
-    color = vec4(texture2D(colorTex, vec2(colorIndex, 0.0)).rgb, min(1.0, br * (1.0 - pixelWeight * relStarDensity)));
+    color = vec4(texture(colorTex, vec2(colorIndex, 0.0)).rgb, min(1.0, br * (1.0 - pixelWeight * relStarDensity)));
     set_vp(vec4(p, 1.0));
 }
