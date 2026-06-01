@@ -128,6 +128,14 @@ IsBPTCFormat(PixelFormat format)
     return format == PixelFormat::BC7 || format == PixelFormat::BC7_sRGBA;
 }
 
+constexpr bool
+IsSRGBS3TCFormat(PixelFormat format)
+{
+    return format == PixelFormat::DXT1_sRGBA ||
+           format == PixelFormat::DXT3_sRGBA ||
+           format == PixelFormat::DXT5_sRGBA;
+}
+
 PixelFormat
 GetUncompressedFormat(const DDSurfaceDesc& ddsd)
 {
@@ -139,7 +147,7 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
             ddsd.format.greenMask == 0x0000ff00 &&
             ddsd.format.blueMask  == 0x00ff0000)
         {
-            return PixelFormat::RGB8;
+            return PixelFormat::sRGB;
         }
 
 #ifndef GL_ES
@@ -147,7 +155,8 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
                     ddsd.format.greenMask == 0x0000ff00 &&
                     ddsd.format.blueMask  == 0x000000ff)
         {
-            return PixelFormat::BGR8;
+            util::GetLogger()->warn("Uncompressed BGR DDS texture loaded as linear; GL has no sBGR internal format.\n");
+            return PixelFormat::BGR;
         }
 #endif
 
@@ -159,7 +168,8 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
             ddsd.format.blueMask  == 0x000000ff &&
             ddsd.format.alphaMask == 0xff000000)
         {
-            return PixelFormat::BGRA8;
+            util::GetLogger()->warn("Uncompressed BGRA DDS texture loaded as linear; GL has no sBGRA internal format.\n");
+            return PixelFormat::BGRA;
         }
 
         if (ddsd.format.redMask           == 0x000000ff &&
@@ -167,7 +177,7 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
                     ddsd.format.blueMask  == 0x00ff0000 &&
                     ddsd.format.alphaMask == 0xff000000)
         {
-            return PixelFormat::RGBA8;
+            return PixelFormat::sRGBA;
         }
 
         break;
@@ -207,13 +217,13 @@ GetFormat(const DDSurfaceDesc& ddsd)
         return GetUncompressedFormat(ddsd);
 
     case FourCC("DXT1"):
-        return PixelFormat::DXT1;
+        return PixelFormat::DXT1_sRGBA;
 
     case FourCC("DXT3"):
-        return PixelFormat::DXT3;
+        return PixelFormat::DXT3_sRGBA;
 
     case FourCC("DXT5"):
-        return PixelFormat::DXT5;
+        return PixelFormat::DXT5_sRGBA;
 
     // DX10 extended header is handled by the caller before reaching here.
 
@@ -324,7 +334,16 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
         }
     }
 
-    auto img = std::make_unique<Image>(transparent0 ? PixelFormat::RGB : PixelFormat::RGBA, ddsd.width, ddsd.height);
+    const bool isSRGB = format == PixelFormat::DXT1_sRGBA ||
+                        format == PixelFormat::DXT3_sRGBA ||
+                        format == PixelFormat::DXT5_sRGBA ||
+                        format == PixelFormat::BC7_sRGBA;
+    PixelFormat outFormat;
+    if (transparent0)
+        outFormat = isSRGB ? PixelFormat::sRGB : PixelFormat::RGB;
+    else
+        outFormat = isSRGB ? PixelFormat::sRGBA : PixelFormat::RGBA;
+    auto img = std::make_unique<Image>(outFormat, ddsd.width, ddsd.height);
     std::memcpy(img->getPixels(), pixels.get(), (transparent0 ? 3 : 4) * ddsd.width * ddsd.height);
     return img;
 }
@@ -407,8 +426,10 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    // Check if the platform supports compressed DTXc textures
-    if (IsCompressedFormat(format) && !IsBPTCFormat(format) && !gl::EXT_texture_compression_s3tc)
+    // Decompress in software when the platform doesn't support the compressed format.
+    if (IsCompressedFormat(format) && !IsBPTCFormat(format)
+        && (!gl::EXT_texture_compression_s3tc
+            || (IsSRGBS3TCFormat(format) && !gl::EXT_texture_compression_s3tc_srgb)))
         return CreateDecompressedImage(ddsd, format, in, filename).release();
 
     // TODO: Verify that the reported texture size matches the amount of
