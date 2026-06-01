@@ -1912,7 +1912,49 @@ void CelestiaCore::tick(double dt)
     if (m_scriptHook != nullptr)
         m_scriptHook->call("tick", dt);
 
+    // Alt-azimuth mode: re-level the camera each frame to keep the horizon
+    // flat, and stop the view from entering a small cone around the
+    // zenith/nadir where the right axis (forward x up) is undefined.
+    auto altAzActive = altAzimuthMode && !refObject.empty();
+    Quaterniond preUpdateOrientation;
+    if (altAzActive)
+        preUpdateOrientation = sim->getObserver().getOrientation();
+
     sim->update(dt);
+
+    if (altAzActive)
+    {
+        Observer& observer = sim->getObserver();
+        Vector3d upWorld = observer.getPosition().offsetFromKm(
+            refObject.getPosition(sim->getTime()));
+        if (double upN = upWorld.norm(); upN > 0.0)
+        {
+            upWorld /= upN;
+            Quaterniond q = observer.getOrientation();
+            Vector3d forward = q.conjugate() * Vector3d(0.0, 0.0, -1.0);
+            Vector3d desiredUp = upWorld - forward * forward.dot(upWorld);
+            double sinAngle = desiredUp.norm(); // 0 at zenith/nadir, 1 at horizon
+
+            // Prevent the view from crossing zenith/nadir.
+            constexpr double kZenithLimit = 0.05; // sin(~3 deg)
+            if (sinAngle > kZenithLimit)
+            {
+                // Eliminate roll: rebuild the orientation from a leveled basis.
+                desiredUp /= sinAngle;
+                Eigen::Matrix3d basis;
+                basis.col(0) = forward.cross(desiredUp);
+                basis.col(1) = desiredUp;
+                basis.col(2) = -forward;
+                observer.setOrientation(Quaterniond(basis).conjugate());
+            }
+            else
+            {
+                // Inside the zenith/nadir cone: reject this frame's rotation.
+                observer.setOrientation(preUpdateOrientation);
+                observer.setAngularVelocity(Vector3d::Zero());
+            }
+        }
+    }
 }
 
 
