@@ -215,13 +215,13 @@ GetFormat(const DDSurfaceDesc& ddsd)
         return GetUncompressedFormat(ddsd);
 
     case FourCC("DXT1"):
-        return PixelFormat::DXT1;
+        return PixelFormat::DXT1_sRGBA;
 
     case FourCC("DXT3"):
-        return PixelFormat::DXT3;
+        return PixelFormat::DXT3_sRGBA;
 
     case FourCC("DXT5"):
-        return PixelFormat::DXT5;
+        return PixelFormat::DXT5_sRGBA;
 
     // DX10 extended header is handled by the caller before reaching here.
 
