@@ -104,7 +104,6 @@ void main(void)
 )glsl"sv;
 
 constexpr std::string_view errorFragmentShaderSource = R"glsl(
-out vec4 fragColor;
 void main(void)
 {
    fragColor = vec4(1.0, 0.0, 0.0, 1.0);
@@ -1197,7 +1196,7 @@ R"glsl(
 
     source += DeclareLights(props);
     source += TextureCoordDeclarations(props, Shader_Out);
-    source += DeclareUniform("textureOffset", Shader_Float);
+    source += DeclareUniform("texCoordOffset", Shader_Float);
 
     if (props.usePointSize())
         source += PointSizeDeclaration();
@@ -1282,20 +1281,20 @@ R"glsl(
                                          TexUsage::OverlayTexture))
         {
             source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-            source += "diffTexCoord.x += textureOffset;\n";
+            source += "diffTexCoord.x += texCoordOffset;\n";
         }
     }
     else
     {
         if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         {
-            source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(texCoordOffset, 0.0);\n";
             nTexCoords++;
         }
 
         if (util::is_set(props.texUsage, TexUsage::NormalTexture))
         {
-            source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(textureOffset, 0.0);\n";
+            source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(texCoordOffset, 0.0);\n";
             nTexCoords++;
         }
 
@@ -2840,7 +2839,7 @@ CelestiaGLProgram::initParameters()
         ringRadius           = floatParam("ringRadius");
     }
 
-    textureOffset = floatParam("textureOffset");
+    textureOffset = floatParam("texCoordOffset");
 
     if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
     {
