@@ -147,7 +147,7 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
             ddsd.format.greenMask == 0x0000ff00 &&
             ddsd.format.blueMask  == 0x00ff0000)
         {
-            return PixelFormat::RGB8;
+            return PixelFormat::sRGB;
         }
 
 #ifndef GL_ES
@@ -155,7 +155,8 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
                     ddsd.format.greenMask == 0x0000ff00 &&
                     ddsd.format.blueMask  == 0x000000ff)
         {
-            return PixelFormat::BGR8;
+            util::GetLogger()->warn("Uncompressed BGR DDS texture loaded as linear; GL has no sBGR internal format.\n");
+            return PixelFormat::BGR;
         }
 #endif
 
@@ -167,7 +168,8 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
             ddsd.format.blueMask  == 0x000000ff &&
             ddsd.format.alphaMask == 0xff000000)
         {
-            return PixelFormat::BGRA8;
+            util::GetLogger()->warn("Uncompressed BGRA DDS texture loaded as linear; GL has no sBGRA internal format.\n");
+            return PixelFormat::BGRA;
         }
 
         if (ddsd.format.redMask           == 0x000000ff &&
@@ -175,7 +177,7 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
                     ddsd.format.blueMask  == 0x00ff0000 &&
                     ddsd.format.alphaMask == 0xff000000)
         {
-            return PixelFormat::RGBA8;
+            return PixelFormat::sRGBA;
         }
 
         break;
