@@ -498,6 +498,9 @@ LineRenderer::render(const Matrices &mvp, int count, int offset)
     if (!m_inUse)
         prerender();
 
+    if (m_prog == nullptr)
+        return;
+
     m_prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
 
     if (m_useTriangles)
