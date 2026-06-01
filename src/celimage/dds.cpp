@@ -128,6 +128,14 @@ IsBPTCFormat(PixelFormat format)
     return format == PixelFormat::BC7 || format == PixelFormat::BC7_sRGBA;
 }
 
+constexpr bool
+IsSRGBS3TCFormat(PixelFormat format)
+{
+    return format == PixelFormat::DXT1_sRGBA ||
+           format == PixelFormat::DXT3_sRGBA ||
+           format == PixelFormat::DXT5_sRGBA;
+}
+
 PixelFormat
 GetUncompressedFormat(const DDSurfaceDesc& ddsd)
 {
@@ -416,8 +424,10 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    // Check if the platform supports compressed DTXc textures
-    if (IsCompressedFormat(format) && !IsBPTCFormat(format)/* && !gl::EXT_texture_compression_s3tc*/)
+    // Decompress in software when the platform doesn't support the compressed format.
+    if (IsCompressedFormat(format) && !IsBPTCFormat(format)
+        && (!gl::EXT_texture_compression_s3tc
+            || (IsSRGBS3TCFormat(format) && !gl::EXT_texture_compression_s3tc_srgb)))
         return CreateDecompressedImage(ddsd, format, in, filename).release();
 
     // TODO: Verify that the reported texture size matches the amount of
