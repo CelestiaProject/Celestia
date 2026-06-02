@@ -1642,19 +1642,19 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 
     if (discSizeInPixels >= maxBlendDiscSize && !useHalos) return;
 
-    // In PSF mode, render the star as a PSF point-sprite when the PSF
-    // blob still dominates the star's true angular disc.  This is the
-    // close-star counterpart to the far-star PSF path in
+    // In PSF mode, render any light source as a PSF point-sprite when
+    // the PSF blob still dominates its true angular disc.  This is the
+    // close-object counterpart to the far-star PSF path in
     // PointStarRenderer: the per-interval projection (km-scale) used
-    // here is what allows Sol at 1 AU to escape the ly-scale near
+    // here is what allows e.g. Sol at 1 AU to escape the ly-scale near
     // plane of renderPointStars.
-    if (emissive && starStyle == StarStyle::PointSpreadFunction)
+    if (starStyle == StarStyle::PointSpreadFunction)
     {
         float pointScale = static_cast<float>(screenDpi) / 96.0f;
         float psfDiscPx  = 2.0f * std::max(starPointRadius, 1.0e-3f) * pointScale;
         if (psfDiscPx > discSizeInPixels)
         {
-            addStarAsPsfPoint(position, color, appMag, pointScale, mvp);
+            addStarAsPsfPoint(position, color, appMag, pointScale, mvp, emissive);
             return;
         }
     }
@@ -1716,7 +1716,8 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
                                  const Color    &color,
                                  float           appMag,
                                  float           pointScale,
-                                 const Matrices &mvp)
+                                 const Matrices &mvp,
+                                 bool            emissive)
 {
     // Mirrors the PSF math in PointStarRenderer::process for far stars,
     // but submits to the same psfPointBuffer / psfGlowBuffer with KM-scale
@@ -1741,7 +1742,7 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     if (peakRadCol > minPeak)
         psfPointBuffer->addStar(position, linearStarColor, peakRadCol);
 
-    if (peakRadCol > 1.0f && starOptimization > 0.0f)
+    if (peakRadCol > 1.0f && emissive && starOptimization > 0.0f)
     {
         float glowPeak = peakRadCol;
         if (starMaxIrradiance > 0.0f)

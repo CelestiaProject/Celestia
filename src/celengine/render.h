@@ -545,7 +545,8 @@ class Renderer
                            const Color           &color,
                            float                  appMag,
                            float                  pointScale,
-                           const Matrices        &mvp);
+                           const Matrices        &mvp,
+                           bool                   emissive);
 
     void locationsToAnnotations(const Body& body,
                                 const Eigen::Vector3d& bodyPosition,
