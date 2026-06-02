@@ -22,6 +22,7 @@
 
 class ColorTemperatureTable;
 class PointStarVertexBuffer;
+namespace celestia::render { class PsfGlowLargeRenderer; }
 namespace celestia::render { class PsfStarVertexBuffer; }
 class Star;
 class StarDatabase;
@@ -47,6 +48,7 @@ public:
     PointStarVertexBuffer* glareVertexBuffer    { nullptr };
     celestia::render::PsfStarVertexBuffer* psfPointBuffer { nullptr };
     celestia::render::PsfStarVertexBuffer* psfGlowBuffer  { nullptr };
+    celestia::render::PsfGlowLargeRenderer* psfGlowLargeRenderer { nullptr };
     const StarDatabase* starDB                  { nullptr };
     const ColorTemperatureTable* colorTemp      { nullptr };
     float SolarSystemMaxDistance                { 1.0f };
@@ -54,7 +56,14 @@ public:
 
     StarStyle starStyle                         { StarStyle::FuzzyPointStars };
     float pointRadius                           { 1.5f };   // px
+    float pointScale                            { 1.0f };   // DPI scale
     float optimization                          { 0.1f };
     float maxIrradiance                         { 0.0f };   // 0 = disabled
     float exposure                              { 1.0f };
+
+    // Projection/modelview used by the large-glow fallback for far-star
+    // PSF blooms whose gl_PointSize would exceed the driver's maximum.
+    // Same matrices the psf glow buffer flushes against.
+    const Eigen::Matrix4f* psfProj              { nullptr };
+    const Eigen::Matrix4f* psfModelView         { nullptr };
 };

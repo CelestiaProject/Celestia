@@ -19,6 +19,7 @@
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
+#include <celrender/psfglowlargerenderer.h>
 #include "observer.h"
 #include "pointstarvertexbuffer.h"
 #include "psfstarvertexbuffer.h"
@@ -166,7 +167,36 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                    * maxIrradiance;
                     }
 
-                    psfGlowBuffer->addStar(relPos, linearStarColor, glowPeak);
+                    // If the resulting gl_PointSize would exceed the driver
+                    // cap, fall back to the clip-space billboard renderer
+                    // so the bloom keeps growing past GL_POINT_SIZE_MAX
+                    // (otherwise maxIrradiance=0 silently appears capped).
+                    float a        = (r > 0.0f) ? (optimization / r) : 0.0f;
+                    float rGlowLog = std::pow(glowPeak, 0.4f) / std::max(a, 1.0e-6f);
+                    float sizePhys = 2.0f * rGlowLog * pointScale;
+
+                    if (sizePhys > static_cast<float>(celestia::gl::maxPointSize)
+                        && psfGlowLargeRenderer != nullptr
+                        && psfProj != nullptr && psfModelView != nullptr)
+                    {
+                        // Flush the in-flight PSF buffers first; the
+                        // billboard renderer binds its own program and
+                        // would otherwise strand a half-filled buffer.
+                        renderer->starPipelineOwner().flush();
+                        Matrices mvp { psfProj, psfModelView };
+                        psfGlowLargeRenderer->render(relPos,
+                                                     linearStarColor,
+                                                     glowPeak,
+                                                     pointRadius,
+                                                     optimization,
+                                                     pointScale,
+                                                     sizePhys,
+                                                     mvp);
+                    }
+                    else
+                    {
+                        psfGlowBuffer->addStar(relPos, linearStarColor, glowPeak);
+                    }
                 }
             }
             else

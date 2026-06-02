@@ -3793,6 +3793,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.glareVertexBuffer = glareVertexBuffer.get();
     starRenderer.psfPointBuffer    = psfPointBuffer.get();
     starRenderer.psfGlowBuffer     = psfGlowBuffer.get();
+    starRenderer.psfGlowLargeRenderer = m_psfGlowLargeRenderer.get();
+    starRenderer.psfProj           = &getCurrentProjectionMatrix();
+    starRenderer.psfModelView      = &getCurrentModelViewMatrix();
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3802,6 +3805,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
     starRenderer.starStyle         = starStyle;
     starRenderer.pointRadius       = starPointRadius;
+    starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
     starRenderer.optimization      = starOptimization;
     starRenderer.maxIrradiance     = starMaxIrradiance;
     starRenderer.exposure          = starExposure;
