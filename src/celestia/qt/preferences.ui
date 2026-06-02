@@ -1120,7 +1120,7 @@ Valid range: 1.0 to 10.0.</string>
                     <double>0.500000000000000</double>
                    </property>
                    <property name="value">
-                    <double>2.000000000000000</double>
+                    <double>1.500000000000000</double>
                    </property>
                   </widget>
                  </item>
@@ -1172,7 +1172,7 @@ Valid range: 0.05 to 1.0.</string>
                  <item>
                   <widget class="QDoubleSpinBox" name="psfMaxIrradianceSpinBox">
                    <property name="toolTip">
-                    <string>Soft-clip on per-star peak radiance. 0 = disabled.
+                    <string>Soft-clip on per-star peak irradiance. 0 = disabled.
 Valid range: 1.0 to 1.0e6.</string>
                    </property>
                    <property name="decimals">

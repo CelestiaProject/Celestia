@@ -79,7 +79,7 @@ private:
     capacity_t                      m_nStars                { 0 };
     std::vector<StarVertex>         m_vertices;
     Mode                            m_mode                  { Mode::Point };
-    float                           m_pointRadius           { 2.0f };
+    float                           m_pointRadius           { 1.5f };
     float                           m_optimization          { 0.1f };
     float                           m_pointScale            { 1.0f };
     CelestiaGLProgram              *m_prog                  { nullptr };

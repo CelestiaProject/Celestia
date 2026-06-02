@@ -53,7 +53,7 @@ public:
     float cosFOV                                { 1.0f };
 
     StarStyle starStyle                         { StarStyle::FuzzyPointStars };
-    float pointRadius                           { 2.0f };   // px
+    float pointRadius                           { 1.5f };   // px
     float optimization                          { 0.1f };
     float maxIrradiance                         { 0.0f };   // 0 = disabled
     float exposure                              { 1.0f };

@@ -663,7 +663,7 @@ class Renderer
     float saturationMagNight{ 1.0f };
     float saturationMag{ 1.0f };
     StarStyle starStyle{ StarStyle::FuzzyPointStars };
-    float starPointRadius{ 2.0f };
+    float starPointRadius{ 1.5f };
     float starOptimization{ 0.1f };
     float starMaxIrradiance{ 100.0f };
     float starExposure{ 100.0f };

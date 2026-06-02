@@ -283,7 +283,7 @@ StarTextures
 # magnitude limit via the minPeak cutoff).  Valid range: 1e-3 to 1e6.
 # Default: 100.0.
 #------------------------------------------------------------------------
-  StarPointRadius   2.0
+  StarPointRadius   1.5
   StarOptimization  0.1
   StarMaxIrradiance 100.0
   StarExposure      100.0
