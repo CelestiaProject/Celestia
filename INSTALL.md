@@ -8,15 +8,18 @@ Stable version installation on Windows and OSX:
 * Check https://celestiaproject.space/download.html.
 
 Development snapshots installation on Unix-like systems:
-### On Debian 11/12 (bullseye/bookworm) and derived systems:
+
+[![build result](https://build.opensuse.org/projects/home:munix9:celestia:1.7/packages/celestia/badge.svg?type=percent)](https://build.opensuse.org/package/show/home:munix9:celestia:1.7/celestia)
+
+### On Debian 12/13/Testing (bookworm/trixie/forky) and derived systems:
 
 Download and check the GPG public key fingerprint and expiration date:
 ```
-❯ curl -fsSL -o celestia.gpg https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_${VERSION}/Release.key
+❯ curl -fsSL -o celestia.gpg https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/Debian_${VERSION}/Release.key
 
 ❯ gpg --keyid-format long celestia.gpg
 gpg: WARNING: no command supplied.  Trying to guess what you mean ...
-pub   rsa2048/BDF3F6ACD4D81407 2014-06-09 [SC] [expires: 2025-04-10]
+pub   rsa2048/BDF3F6ACD4D81407 2014-06-09 [SC] [expires: 2027-06-06]
       3FE0C0AC1FD6F1034B818A14BDF3F6ACD4D81407
 uid                           home:munix9 OBS Project <home:munix9@build.opensuse.org>
 ```
@@ -25,62 +28,61 @@ Deploy GPG public key and set up sources.list file:
 ```
 ❯ sudo mv celestia.gpg /usr/share/keyrings/celestia.asc
 
-❯ echo "deb [signed-by=/usr/share/keyrings/celestia.asc] https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+❯ echo "deb [signed-by=/usr/share/keyrings/celestia.asc] https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/Debian_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
 ❯ sudo apt update && sudo apt install celestia
 ```
 
-Where ${VERSION} is 11 or 12.
+Where VERSION is 12, 13 or Testing.
 
 When the public key has expired, `apt update` complains:
 
 ```
 ❯ sudo apt update
 [...]
-Err:14 https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_11 ./ InRelease
+Err:14 https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/Debian_13 ./ InRelease
   The following signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
 Fetched 19.0 kB in 1s (14.7 kB/s)
 Reading package lists... Done
 Building dependency tree... Done
 Reading state information... Done
 12 packages can be upgraded. Run 'apt list --upgradable' to see them.
-W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_11 ./ InRelease: The foll
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/Debian_13 ./ InRelease: The foll
 owing signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
-W: Failed to fetch https://download.opensuse.org/repositories/home:/munix9:/unstable/Debian_11/./InRelease  The following signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
+W: Failed to fetch https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/Debian_13/./InRelease  The following signatures were invalid: EXPKEYSIG BDF3F6ACD4D81407 home:munix9 OBS Project <home:munix9@build.opensuse.org>
 W: Some index files failed to download. They have been ignored, or old ones used instead.
 ```
 
 The `Release.key` should already have been updated.
 Just download the GPG public key again, check the fingerprint and expiration date and re-deploy it.
 
-### On Ubuntu 22.04/24.04 and derived systems:
+### On Ubuntu 22.04/24.04/26.04 and derived systems:
 
 ```
-curl https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_${VERSION}/Release.key | sudo apt-key add -
-echo "deb https://download.opensuse.org/repositories/home:/munix9:/unstable/Ubuntu_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
+curl https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/xUbuntu_${VERSION}/Release.key | sudo apt-key add -
+echo "deb https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/xUbuntu_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
 sudo apt update && sudo apt install celestia
 ```
 
-Where VERSION is 22.04 or 24.04.
-
+Where VERSION is 22.04, 24.04 or 26.04.
 
 ### On openSUSE Leap/Tumbleweed:
 
 ```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:munix9:unstable/${VERSION}/home:munix9:unstable.repo
+sudo zypper addrepo https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/${VERSION}/home:munix9:celestia:1.7.repo
 sudo zypper refresh
 sudo zypper install celestia
 ```
 
-Where VERSION is '15.5', '15.6' or 'openSUSE_Tumbleweed'.
+Where VERSION is 15.6, 16.0, 16.1 or openSUSE_Tumbleweed.
 
-See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:unstable&package=celestia-data).
+See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:celestia:1.7&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:celestia:1.7&package=celestia-data).
 
 ### On other GNU/Linux distributions:
 
 Try experimental portable AppImage (see https://github.com/CelestiaProject/Celestia/issues/333):
 ```
-wget -O celestia-1.7.0-git-x86_64.AppImage https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/celestia-latest-x86_64.AppImage
-chmod 755 celestia-1.7.0-git-x86_64.AppImage
+wget -O celestia-1.7-x86_64.AppImage https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/AppImage/celestia-latest-x86_64.AppImage
+chmod 755 celestia-1.7-x86_64.AppImage
 ```
 
 Optionally create a portable, main version-independent `$HOME` directory in the same folder as the AppImage file:
@@ -89,7 +91,6 @@ mkdir celestia-1.7.home
 ```
 
 To build from sources please follow instructions below.
-
 
 
 ## Common building instructions
