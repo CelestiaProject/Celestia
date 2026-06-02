@@ -99,7 +99,7 @@ struct CelestiaConfig
             float pointRadius{ 1.5f };
             float optimization{ 0.1f };
             float maxIrradiance{ 100.0f };
-            float exposure{ 100.0f };
+            float exposure{ 10.0f };
         };
         StarRendering stars{ };
     };

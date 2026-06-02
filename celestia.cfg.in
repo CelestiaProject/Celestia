@@ -281,12 +281,12 @@ StarTextures
 # computation:  peak = StarExposure * 3 * irradiance / (pi * r^2)
 # Larger values brighten every star uniformly (and extend the visible
 # magnitude limit via the minPeak cutoff).  Valid range: 1e-3 to 1e6.
-# Default: 100.0.
+# Default: 10.0.
 #------------------------------------------------------------------------
   StarPointRadius   1.5
   StarOptimization  0.1
   StarMaxIrradiance 100.0
-  StarExposure      100.0
+  StarExposure      10.0
 
 
 #------------------------------------------------------------------------

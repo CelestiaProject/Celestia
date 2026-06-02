@@ -665,7 +665,7 @@ class Renderer
     float starPointRadius{ 1.5f };
     float starOptimization{ 0.1f };
     float starMaxIrradiance{ 100.0f };
-    float starExposure{ 100.0f };
+    float starExposure{ 10.0f };
 
     Color ambientColor;
     std::string displayedSurface;
