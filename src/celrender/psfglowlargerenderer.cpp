@@ -37,7 +37,6 @@ PsfGlowLargeRenderer::render(
     float                  peakRadiance,
     float                  pointRadius,
     float                  optimization,
-    float                  pointScale,
     float                  sizePhys,
     const Matrices        &mvp)
 {
@@ -66,11 +65,13 @@ PsfGlowLargeRenderer::render(
     prog->floatParam("psfA")         = a;
     prog->floatParam("psfB")         = b;
 
-    (void)pointScale; // pointScale not needed on fragment side; sizePhys already includes it
-
     // Clip-space full extent of the quad (matches LargeStarRenderer convention).
-    prog->floatParam("pointWidth")   = sizePhys / static_cast<float>(m_renderer.getWindowWidth())  * 2.0f;
-    prog->floatParam("pointHeight")  = sizePhys / static_cast<float>(m_renderer.getWindowHeight()) * 2.0f;
+    // Use the current viewport, not the window — multi-view installs sub-rect
+    // viewports and clip-space [-1,1] maps to the active viewport.
+    std::array<int, 4> vp{};
+    m_renderer.getViewport(vp);
+    prog->floatParam("pointWidth")   = sizePhys / static_cast<float>(vp[2]) * 2.0f;
+    prog->floatParam("pointHeight")  = sizePhys / static_cast<float>(vp[3]) * 2.0f;
 
     initialize();
     m_vo->draw();

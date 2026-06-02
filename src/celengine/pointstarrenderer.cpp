@@ -121,8 +121,8 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // exposure.
 
                 // User-controlled brightness multiplier.  Independent of
-                // the magnitude limit; default 1.0 gives visibility down
-                // to ~mag 7 with r=2 on an sRGB framebuffer.
+                // the magnitude limit; the per-star fade-out point is
+                // computed dynamically (see psfFaintMag in renderPointStars).
                 float exposureFactor = std::max(exposure, 1.0e-6f);
 
                 float irradiance = astro::magToIrradiance(appMag);
@@ -190,7 +190,6 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                                      glowPeak,
                                                      pointRadius,
                                                      optimization,
-                                                     pointScale,
                                                      sizePhys,
                                                      mvp);
                     }

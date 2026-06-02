@@ -38,14 +38,13 @@ public:
     ~PsfGlowLargeRenderer();
 
     // pointRadius/optimization define the Spencer kernel shape (must match
-    // the point-sprite glow pass).  size is the full diameter of the
+    // the point-sprite glow pass).  sizePhys is the full diameter of the
     // bounding box in physical pixels (= 2 * r_glow_logical * pointScale).
     void render(const Eigen::Vector3f &position,
                 const Color           &linearColor,
                 float                  peakRadiance,
                 float                  pointRadius,
                 float                  optimization,
-                float                  pointScale,
                 float                  sizePhys,
                 const Matrices        &mvp);
 

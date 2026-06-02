@@ -171,8 +171,7 @@ void
 PsfStarVertexBuffer::enable()
 {
 #ifndef GL_ES
-    glEnable(GL_POINT_SPRITE);
-    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 }
 
@@ -180,8 +179,7 @@ void
 PsfStarVertexBuffer::disable()
 {
 #ifndef GL_ES
-    glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
-    glDisable(GL_POINT_SPRITE);
+    glDisable(GL_PROGRAM_POINT_SIZE);
 #endif
 }
 

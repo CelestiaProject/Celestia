@@ -1,5 +1,7 @@
 #include "largestarrenderer.h"
 
+#include <array>
+
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celrender/gl/buffer.h>
@@ -41,8 +43,10 @@ LargeStarRenderer::render(
     prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
     prog->vec4Param("color") = color.toVector4();
     prog->vec3Param("center") = position;
-    prog->floatParam("pointWidth") = size / m_renderer.getWindowWidth() * 2.0f;
-    prog->floatParam("pointHeight") = size / m_renderer.getWindowHeight() * 2.0f;
+    std::array<int, 4> vp{};
+    m_renderer.getViewport(vp);
+    prog->floatParam("pointWidth") = size / static_cast<float>(vp[2]) * 2.0f;
+    prog->floatParam("pointHeight") = size / static_cast<float>(vp[3]) * 2.0f;
 
     initialize();
     m_vo->draw();

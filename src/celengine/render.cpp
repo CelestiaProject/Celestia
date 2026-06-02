@@ -1770,7 +1770,6 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
                                            glowPeak,
                                            starPointRadius,
                                            starOptimization,
-                                           pointScale,
                                            sizePhys,
                                            mvp);
         }
