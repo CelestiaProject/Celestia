@@ -244,7 +244,7 @@ LoadPreferencesFromRegistry(AppPreferences& prefs)
     GetRegistryInt(key, L"HudDetail", prefs.hudDetail);
     GetRegistryInt(key, L"FullScreenMode", prefs.fullScreenMode);
     GetRegistryInt(key, L"StarsColor", prefs.starsColor);
-    GetRegistryEnum(key, L"StarStyle", prefs.starStyle, StarStyle::FuzzyPointStars, StarStyle::ScaledDiscStars);
+    GetRegistryEnum(key, L"StarStyle", prefs.starStyle, StarStyle::FuzzyPointStars, StarStyle::PointSpreadFunction);
     GetRegistryInt(key, L"LastVersion", prefs.lastVersion);
     GetRegistryEnum(key, L"TextureResolution", prefs.textureResolution, engine::TextureResolution::lores, engine::TextureResolution::hires);
 

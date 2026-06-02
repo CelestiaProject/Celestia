@@ -126,6 +126,11 @@ private slots:
     void on_psfOptimizationSpinBox_valueChanged(double) const;
     void on_psfMaxIrradianceSpinBox_valueChanged(double) const;
     void on_psfExposureSpinBox_valueChanged(double) const;
+
+private:
+    void updatePsfControlsVisibility() const;
+
+private slots:
     void on_autoMagnitudeCheck_stateChanged(int state);
 
     void on_starColorBox_currentIndexChanged(int index);

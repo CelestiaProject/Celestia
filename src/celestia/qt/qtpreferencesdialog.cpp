@@ -286,6 +286,8 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.psfMaxIrradianceSpinBox->setValue(renderer->getStarMaxIrradiance());
     ui.psfExposureSpinBox->setValue(renderer->getStarExposure());
 
+    updatePsfControlsVisibility();
+
     {
         QSignalBlocker blocker(ui.starColorBox);
         ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
@@ -852,6 +854,7 @@ PreferencesDialog::on_pointStarsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::PointStars);
+        updatePsfControlsVisibility();
     }
 }
 
@@ -862,6 +865,7 @@ PreferencesDialog::on_scaledDiscsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::ScaledDiscStars);
+        updatePsfControlsVisibility();
     }
 }
 
@@ -872,6 +876,7 @@ PreferencesDialog::on_fuzzyPointStarsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::FuzzyPointStars);
+        updatePsfControlsVisibility();
     }
 }
 
@@ -882,7 +887,14 @@ PreferencesDialog::on_psfStarsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::PointSpreadFunction);
+        updatePsfControlsVisibility();
     }
+}
+
+void
+PreferencesDialog::updatePsfControlsVisibility() const
+{
+    ui.psfOptionsGroup->setVisible(ui.psfStarsButton->isChecked());
 }
 
 void
