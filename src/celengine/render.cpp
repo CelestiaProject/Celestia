@@ -1734,9 +1734,8 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
                         ? astro::LOWEST_IRRADIATION_SRGB
                         : astro::LOWEST_IRRADIATION;
 
-    Color linearStarColor = color.linearize(celestia::gl::sRGBRendering);
     float greenScale = 1.0f;
-    linearStarColor = psfGreenNormalization(linearStarColor, 0.1f, greenScale);
+    Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);
     float peakRadCol = peakRad * greenScale;
 
     if (peakRadCol > minPeak)

@@ -112,22 +112,24 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         {
             if (starStyle == StarStyle::PointSpreadFunction)
             {
-                // Linear-radiance PSF renderer.
-                // peak_radiance = exposure * 3 * irradiance / (pi * r^2)
-                // (Vega-normalised; SI conversion is a constant the framebuffer absorbs.)
+                // Linear-radiance PSF renderer.  The shader receives a
+                // per-vertex peak radiance (cone volume = 1/3 base area
+                // x peak):  peakRad = exposure * 3 * irradiance / (pi * r^2).
+                // Irradiance is in the Vega-normalised system; the constant
+                // SI conversion factor is absorbed by the framebuffer
+                // exposure.
 
-                // Exposure: per-CSR.py, a user-controlled brightness multiplier
-                // (independent of the magnitude limit).  Default 1.0 yields
-                // visibility down to ~mag 7 with r=2 on an sRGB framebuffer.
+                // User-controlled brightness multiplier.  Independent of
+                // the magnitude limit; default 1.0 gives visibility down
+                // to ~mag 7 with r=2 on an sRGB framebuffer.
                 float exposureFactor = std::max(exposure, 1.0e-6f);
 
                 float irradiance = astro::magToIrradiance(appMag);
-                // Use the LOGICAL point radius here.  pointRadius is a visual
-                // size (in points), and gl_PointSize in the shader is scaled by
-                // pointScale to produce the physical-pixel footprint.  Keeping
-                // peakRadiance DPI-invariant means per-pixel-area brightness is
-                // invariant across DPIs (visually correct) and lets the glow
-                // mode's gl_PointSize = 2*r*pointScale scale linearly with DPI.
+                // pointRadius is the LOGICAL size in points; gl_PointSize
+                // in the shader scales it by pointScale to physical pixels.
+                // Computing peakRadiance from the logical radius keeps
+                // per-pixel-area brightness invariant across DPIs and lets
+                // the glow's gl_PointSize = 2*r*pointScale scale linearly.
                 float r          = std::max(pointRadius, 1.0e-3f);
                 float peakRad    = exposureFactor * 3.0f * irradiance
                                    / (celestia::numbers::pi_v<float> * r * r);
@@ -136,13 +138,14 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                     ? astro::LOWEST_IRRADIATION_SRGB
                                     : astro::LOWEST_IRRADIATION;
 
-                // Green-normalised, saturation-limited colour (CSR.py
-                // `green_normalization`, color_saturation_limit = 0.1).
-                // The `1/green` factor is folded into peakRadiance so the
-                // shader's `color * peak` matches `(color_arr/green) * peak`.
-                Color linearStarColor = starColor.linearize(celestia::gl::sRGBRendering);
+                // Normalise the star colour against its green channel
+                // (with a saturation floor) so the brightest channel
+                // can't blow out the per-vertex UByte attribute.  The
+                // 1/green factor gets folded into peakRadiance so the
+                // shader's color * peak still equals the original
+                // unnormalised (color * peak).
                 float greenScale = 1.0f;
-                linearStarColor = psfGreenNormalization(linearStarColor, 0.1f, greenScale);
+                Color linearStarColor = psfGreenNormalization(starColor, 0.1f, greenScale);
                 float peakRadCol = peakRad * greenScale;
 
                 // Point (cone) contribution
@@ -152,11 +155,10 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // Glow (eye-PSF) contribution, additive on top of the point cone
                 if (peakRadCol > 1.0f && psfGlowBuffer != nullptr && optimization > 0.0f)
                 {
-                    // Soft-clip peakRadiance to bound the Spencer kernel radius.
-                    // Matches CSR.py brightness_rescaler() applied before the
-                    // eye-PSF computation; without it, very bright stars or
-                    // high faintest-magnitude settings produce a runaway bloom
-                    // that washes out the whole screen.
+                    // Soft-clip very bright stars so the eye-PSF radius
+                    // stays bounded.  Without this, a single bright star
+                    // (or a high faintest-magnitude setting) produces a
+                    // runaway bloom that washes out the whole frame.
                     float glowPeak = peakRadCol;
                     if (maxIrradiance > 0.0f)
                     {
