@@ -22,7 +22,7 @@
 
 class ColorTemperatureTable;
 class PointStarVertexBuffer;
-class PsfStarVertexBuffer;
+namespace celestia::render { class PsfStarVertexBuffer; }
 class Star;
 class StarDatabase;
 
@@ -45,8 +45,8 @@ public:
     std::vector<RenderListEntry>* renderList    { nullptr };
     PointStarVertexBuffer* starVertexBuffer     { nullptr };
     PointStarVertexBuffer* glareVertexBuffer    { nullptr };
-    PsfStarVertexBuffer*   psfPointBuffer       { nullptr };
-    PsfStarVertexBuffer*   psfGlowBuffer        { nullptr };
+    celestia::render::PsfStarVertexBuffer* psfPointBuffer { nullptr };
+    celestia::render::PsfStarVertexBuffer* psfGlowBuffer  { nullptr };
     const StarDatabase* starDB                  { nullptr };
     const ColorTemperatureTable* colorTemp      { nullptr };
     float SolarSystemMaxDistance                { 1.0f };

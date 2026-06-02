@@ -25,6 +25,9 @@ class Buffer;
 class VertexObject;
 }
 
+namespace celestia::render
+{
+
 // Vertex buffer used by StarStyle::PointSpreadFunction.
 // Vertices carry per-star peak radiance (HDR float) and a linear, green-
 // normalised colour.  The shader is the same in both modes; a uniform
@@ -88,3 +91,14 @@ private:
     void makeCurrent();
     void setupVertexArrayObject();
 };
+
+// Normalises a linear-RGB star colour following CSR.py's
+// `green_normalization()` (V-band reference + saturation limit).  The
+// returned colour has max channel = 1 (fits in a UByte attribute) and
+// no channel below `saturationLimit`; `greenScale` receives the
+// `1 / green` factor that the caller bakes into the per-star peak
+// radiance so the shader's `color * peak` product reproduces
+// `(color_arr / green) * peak`.
+Color psfGreenNormalization(const Color &c, float saturationLimit, float &greenScale);
+
+} // namespace celestia::render

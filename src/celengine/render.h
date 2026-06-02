@@ -43,7 +43,7 @@ class ReferenceMark;
 class CurvePlot;
 class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
-class PsfStarVertexBuffer;
+namespace celestia::render { class PsfStarVertexBuffer; }
 class Observer;
 struct Surface;
 class Texture;
@@ -527,6 +527,17 @@ class Renderer
                              bool emissive,
                              const Matrices&);
 
+    // PSF-mode point-sprite for a close star.  Called from
+    // renderObjectAsPoint when the PSF blob still dominates the star's
+    // true angular disc.  Adds to psfPointBuffer / psfGlowBuffer (drained
+    // per-interval inside renderSolarSystemObjects), or falls back to the
+    // m_psfGlowLargeRenderer billboard path for oversize glows.
+    void addStarAsPsfPoint(const Eigen::Vector3f &position,
+                           const Color           &color,
+                           float                  appMag,
+                           float                  pointScale,
+                           const Matrices        &mvp);
+
     void locationsToAnnotations(const Body& body,
                                 const Eigen::Vector3d& bodyPosition,
                                 const Eigen::Quaterniond& bodyOrientation);
@@ -654,8 +665,8 @@ class Renderer
     Eigen::Matrix3d m_cameraTransform{ Eigen::Matrix3d::Identity() };
     std::unique_ptr<PointStarVertexBuffer> pointStarVertexBuffer;
     std::unique_ptr<PointStarVertexBuffer> glareVertexBuffer;
-    std::unique_ptr<PsfStarVertexBuffer>   psfPointBuffer;
-    std::unique_ptr<PsfStarVertexBuffer>   psfGlowBuffer;
+    std::unique_ptr<celestia::render::PsfStarVertexBuffer>   psfPointBuffer;
+    std::unique_ptr<celestia::render::PsfStarVertexBuffer>   psfGlowBuffer;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;

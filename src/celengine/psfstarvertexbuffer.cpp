@@ -23,7 +23,44 @@
 namespace gl  = celestia::gl;
 namespace util = celestia::util;
 
+namespace celestia::render
+{
+
 PsfStarVertexBuffer* PsfStarVertexBuffer::current = nullptr;
+
+Color
+psfGreenNormalization(const Color &c, float saturationLimit, float &greenScale)
+{
+    float r = c.red();
+    float g = c.green();
+    float b = c.blue();
+
+    float mx = std::max({ r, g, b });
+    if (mx <= 0.0f)
+    {
+        greenScale = 1.0f;
+        return c;
+    }
+
+    r /= mx;
+    g /= mx;
+    b /= mx;
+
+    float mn = std::min({ r, g, b });
+    if (float delta = saturationLimit - mn; delta > 0.0f)
+    {
+        // Desaturate toward white so no channel falls below the limit.
+        float dr = 1.0f - r;
+        float dg = 1.0f - g;
+        float db = 1.0f - b;
+        r = std::min(1.0f, r + delta * dr * dr);
+        g = std::min(1.0f, g + delta * dg * dg);
+        b = std::min(1.0f, b + delta * db * db);
+    }
+
+    greenScale = (g > 0.0f) ? (1.0f / g) : 1.0f;
+    return Color(r, g, b);
+}
 
 PsfStarVertexBuffer::PsfStarVertexBuffer(const Renderer &renderer,
                                          capacity_t capacity) :
@@ -170,3 +207,4 @@ PsfStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
         m_nStars = 0;
     }
 }
+} // namespace celestia::render
