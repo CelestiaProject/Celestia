@@ -135,9 +135,10 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float peakRad    = exposureFactor * 3.0f * irradiance
                                    / (celestia::numbers::pi_v<float> * r * r);
 
-                float minPeak = celestia::gl::sRGBRendering
+                float minPeak = (celestia::gl::sRGBRendering
                                     ? astro::LOWEST_IRRADIATION_SRGB
-                                    : astro::LOWEST_IRRADIATION;
+                                    : astro::LOWEST_IRRADIATION)
+                                * astro::PSF_PEAK_GATE_FACTOR;
 
                 // Normalise the star colour against its green channel
                 // (with a saturation floor) so the brightest channel

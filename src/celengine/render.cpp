@@ -1731,9 +1731,10 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     float peakRad        = exposureFactor * 3.0f * irradiance
                            / (celestia::numbers::pi_v<float> * r * r);
 
-    float minPeak = celestia::gl::sRGBRendering
+    float minPeak = (celestia::gl::sRGBRendering
                         ? astro::LOWEST_IRRADIATION_SRGB
-                        : astro::LOWEST_IRRADIATION;
+                        : astro::LOWEST_IRRADIATION)
+                    * astro::PSF_PEAK_GATE_FACTOR;
 
     float greenScale = 1.0f;
     Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);
@@ -3854,9 +3855,10 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         // Celestia's perceptual faintestMag cutoff.
         //   peakRad = exposure * 3 * irradiance / (pi * r^2),  irradiance = 10^(-0.4*m)
         //   peakRad = minPeak  =>  m = (1/0.4) * log10(exposure * 3 / (pi * r^2 * minPeak))
-        float minPeak = celestia::gl::sRGBRendering
+        float minPeak = (celestia::gl::sRGBRendering
                             ? astro::LOWEST_IRRADIATION_SRGB
-                            : astro::LOWEST_IRRADIATION;
+                            : astro::LOWEST_IRRADIATION)
+                        * astro::PSF_PEAK_GATE_FACTOR;
         float rLog = std::max(starPointRadius, 1.0e-3f);
         float psfFaintMag = std::log10(starExposure * 3.0f
                                        / (celestia::numbers::pi_v<float> * rLog * rLog * minPeak)) / 0.4f;
