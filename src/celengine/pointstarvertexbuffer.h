@@ -13,6 +13,8 @@
 #include <memory>
 #include <Eigen/Core>
 
+#include "starpipelineowner.h"
+
 class Color;
 class Renderer;
 class Texture;
@@ -25,13 +27,13 @@ class VertexObject;
 }
 
 // PointStarVertexBuffer is used when hardware supports point sprites.
-class PointStarVertexBuffer
+class PointStarVertexBuffer : public celestia::render::StarPipelineFlushable
 {
 public:
     using capacity_t = unsigned int;
 
     PointStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
-    ~PointStarVertexBuffer() = default;
+    ~PointStarVertexBuffer() override = default;
     PointStarVertexBuffer() = delete;
     PointStarVertexBuffer(const PointStarVertexBuffer&) = delete;
     PointStarVertexBuffer(PointStarVertexBuffer&&) = delete;
@@ -41,7 +43,7 @@ public:
     void startBasicPoints();
     void startSprites();
     void render();
-    void finish();
+    void finish() override;
     void addStar(const Eigen::Vector3f &pos, const Color &color, float size);
     void setTexture(Texture* texture);
     void setPointScale(float);
@@ -70,8 +72,6 @@ private:
     std::unique_ptr<celestia::gl::VertexObject>  m_vo1;
     std::unique_ptr<celestia::gl::VertexObject>  m_vo2;
     bool m_initialized{ false };
-
-    static PointStarVertexBuffer    *current;
 
     void makeCurrent();
     void setupVertexArrayObject();

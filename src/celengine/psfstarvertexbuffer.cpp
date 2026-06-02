@@ -19,14 +19,13 @@
 #include "glsupport.h"
 #include "render.h"
 #include "shadermanager.h"
+#include "starpipelineowner.h"
 
 namespace gl  = celestia::gl;
 namespace util = celestia::util;
 
 namespace celestia::render
 {
-
-PsfStarVertexBuffer* PsfStarVertexBuffer::current = nullptr;
 
 Color
 psfGreenNormalization(const Color &c, float saturationLimit, float &greenScale)
@@ -98,11 +97,11 @@ PsfStarVertexBuffer::render()
 void
 PsfStarVertexBuffer::makeCurrent()
 {
-    if (m_prog == nullptr)
+    auto &owner = m_renderer.starPipelineOwner();
+    if (owner.isActive(this) || m_prog == nullptr)
         return;
 
-    if (current != nullptr && current != this)
-        current->finish();
+    owner.setActive(this);  // flushes whoever held the pipeline before
 
     setupVertexArrayObject();
 
@@ -119,8 +118,6 @@ PsfStarVertexBuffer::makeCurrent()
         m_prog->floatParam("psfA") = a;
         m_prog->floatParam("psfB") = b;
     }
-
-    current = this;
 }
 
 void
@@ -167,7 +164,7 @@ void
 PsfStarVertexBuffer::finish()
 {
     render();
-    current = nullptr;
+    m_renderer.starPipelineOwner().clearIfActive(this);
 }
 
 void

@@ -43,7 +43,7 @@ class ReferenceMark;
 class CurvePlot;
 class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
-namespace celestia::render { class PsfStarVertexBuffer; }
+namespace celestia::render { class PsfStarVertexBuffer; class StarPipelineOwner; }
 class Observer;
 struct Surface;
 class Texture;
@@ -275,6 +275,15 @@ class Renderer
     }
 
     void buildProjectionMatrix(Eigen::Matrix4f &mat, float nearZ, float farZ, float zoom) const;
+
+    // Shared interlock so any star-pipeline buffer that wants to bind
+    // its program can first flush whichever buffer (of any class) was
+    // last to bind.  Returned via const accessor because the owner is
+    // transient draw-time state.
+    celestia::render::StarPipelineOwner& starPipelineOwner() const
+    {
+        return *m_starPipelineOwner;
+    }
 
     void setStarStyle(StarStyle);
     StarStyle getStarStyle() const;
@@ -667,6 +676,7 @@ class Renderer
     std::unique_ptr<PointStarVertexBuffer> glareVertexBuffer;
     std::unique_ptr<celestia::render::PsfStarVertexBuffer>   psfPointBuffer;
     std::unique_ptr<celestia::render::PsfStarVertexBuffer>   psfGlowBuffer;
+    std::unique_ptr<celestia::render::StarPipelineOwner>     m_starPipelineOwner;
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;

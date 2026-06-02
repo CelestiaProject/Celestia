@@ -44,6 +44,7 @@
 #include "pointstarvertexbuffer.h"
 #include "pointstarrenderer.h"
 #include "psfstarvertexbuffer.h"
+#include "starpipelineowner.h"
 #include "orbitsampler.h"
 #include "rendcontext.h"
 #include "textlayout.h"
@@ -169,6 +170,7 @@ Renderer::Renderer() :
     glareVertexBuffer(std::make_unique<PointStarVertexBuffer>(*this, 2048)),
     psfPointBuffer(std::make_unique<PsfStarVertexBuffer>(*this, 2048)),
     psfGlowBuffer(std::make_unique<PsfStarVertexBuffer>(*this, 2048)),
+    m_starPipelineOwner(std::make_unique<celestia::render::StarPipelineOwner>()),
     curvePlotVertexBuffer(std::make_unique<CurvePlotVertexBuffer>(*this)),
     m_atmosphereRenderer(std::make_unique<AtmosphereRenderer>(*this)),
     m_cometRenderer(std::make_unique<CometRenderer>(*this)),
@@ -1755,8 +1757,14 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
 
         if (sizePhys > static_cast<float>(celestia::gl::maxPointSize))
         {
-            // Oversize glow: draw synchronously as a clip-space billboard
-            // using the current per-interval MVP.
+            // Oversize glow (typical for very close stars like Sol at 1 AU):
+            // draw synchronously as a clip-space billboard using the current
+            // per-interval MVP.  Flush any PSF-buffer in-flight first: the
+            // billboard renderer binds its own program, and without the
+            // flush the next addStar() would early-return from makeCurrent
+            // (owner still thinks the buffer is active) and draw against
+            // the billboard's program.
+            starPipelineOwner().flush();
             m_psfGlowLargeRenderer->render(position,
                                            linearStarColor,
                                            glowPeak,
@@ -3797,9 +3805,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.optimization      = starOptimization;
     starRenderer.maxIrradiance     = starMaxIrradiance;
     starRenderer.exposure          = starExposure;
-    starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
-    starRenderer.maxPointSize      = static_cast<float>(celestia::gl::maxPointSize);
-    starRenderer.largeGlowStars.clear();
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -3807,16 +3812,22 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     starRenderer.colorTemp = &starColors;
 
-    // Even in PSF mode the legacy point-sprite buffers are still used by
-    // renderObjectAsPoint for close stars (Sol, etc.) flushed inside
-    // renderSolarSystemObjects.  Configure their texture and point
-    // scale here so they're in a valid state before that path runs.
     float scale = static_cast<float>(screenDpi) / 96.0f;
+
+    // Even in PSF mode, renderObjectAsPoint falls back to the legacy
+    // point-sprite buffers for close bodies whose true angular disc
+    // exceeds the PSF blob (psfDiscPx <= discSizeInPixels).  Configure
+    // their texture and point scale here so they're in a valid state
+    // before that path runs.
     m_gaussianDiscTex->bind();
     starRenderer.starVertexBuffer->setTexture(m_gaussianDiscTex.get());
     starRenderer.starVertexBuffer->setPointScale(scale);
     starRenderer.glareVertexBuffer->setTexture(m_gaussianGlareTex.get());
     starRenderer.glareVertexBuffer->setPointScale(scale);
+
+    float iterFaintestMag = faintestMagNight;
+    Renderer::PipelineState ps;
+    ps.blending = true;
 
     if (starStyle == StarStyle::PointSpreadFunction)
     {
@@ -3831,10 +3842,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         starRenderer.psfPointBuffer->start(PsfStarVertexBuffer::Mode::Point);
         starRenderer.psfGlowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
 
-        Renderer::PipelineState ps;
-        ps.blending  = true;
         ps.blendFunc = {GL_ONE, GL_ONE};
-        setPipelineState(ps);
 
         // Extend the iteration cutoff to the PSF's natural fade-in
         // threshold so stars actually grow through minPeak instead of
@@ -3848,57 +3856,20 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         float rLog = std::max(starPointRadius, 1.0e-3f);
         float psfFaintMag = std::log10(starExposure * 3.0f
                                        / (celestia::numbers::pi_v<float> * rLog * rLog * minPeak)) / 0.4f;
-        float psfIterMag  = std::max(faintestMagNight, psfFaintMag);
+        iterFaintestMag = std::max(faintestMagNight, psfFaintMag);
+    }
+    else
+    {
+        PointStarVertexBuffer::enable();
+        starRenderer.glareVertexBuffer->startSprites();
+        if (starStyle == StarStyle::PointStars)
+            starRenderer.starVertexBuffer->startBasicPoints();
+        else
+            starRenderer.starVertexBuffer->startSprites();
 
-        starDB.findVisibleStars(starRenderer,
-                                obsPos.cast<float>(),
-                                getCameraOrientationf(),
-                                math::degToRad(fov),
-                                getAspectRatio(),
-                                psfIterMag);
-
-        starRenderer.psfPointBuffer->finish();
-        starRenderer.psfGlowBuffer->finish();
-        PsfStarVertexBuffer::disable();
-
-        // Drain large-glow fallback stars (those whose computed gl_PointSize
-        // exceeds gl::maxPointSize).  Drawn as per-star clip-space billboards
-        // using the same Spencer PSF math.
-        if (!starRenderer.largeGlowStars.empty())
-        {
-            Eigen::Matrix4f proj = getCurrentProjectionMatrix();
-            Eigen::Matrix4f mv   = getCurrentModelViewMatrix();
-            Matrices mvp{ &proj, &mv };
-            for (const auto &s : starRenderer.largeGlowStars)
-            {
-                m_psfGlowLargeRenderer->render(s.position,
-                                               s.color,
-                                               s.peakRadiance,
-                                               starPointRadius,
-                                               starOptimization,
-                                               starRenderer.pointScale,
-                                               s.sizePhys,
-                                               mvp);
-            }
-        }
-
-#ifndef GL_ES
-        if (toggleAA)
-            enableMSAA();
-#endif
-        return;
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
     }
 
-    PointStarVertexBuffer::enable();
-    starRenderer.glareVertexBuffer->startSprites();
-    if (starStyle == StarStyle::PointStars)
-        starRenderer.starVertexBuffer->startBasicPoints();
-    else
-        starRenderer.starVertexBuffer->startSprites();
-
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
     setPipelineState(ps);
 
     starDB.findVisibleStars(starRenderer,
@@ -3906,11 +3877,20 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             getCameraOrientationf(),
                             math::degToRad(fov),
                             getAspectRatio(),
-                            faintestMagNight);
+                            iterFaintestMag);
 
-    starRenderer.starVertexBuffer->finish();
-    starRenderer.glareVertexBuffer->finish();
-    PointStarVertexBuffer::disable();
+    if (starStyle == StarStyle::PointSpreadFunction)
+    {
+        starRenderer.psfPointBuffer->finish();
+        starRenderer.psfGlowBuffer->finish();
+        PsfStarVertexBuffer::disable();
+    }
+    else
+    {
+        starRenderer.starVertexBuffer->finish();
+        starRenderer.glareVertexBuffer->finish();
+        PointStarVertexBuffer::disable();
+    }
 
 #ifndef GL_ES
     if (toggleAA)

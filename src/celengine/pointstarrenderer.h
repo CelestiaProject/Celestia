@@ -57,18 +57,4 @@ public:
     float optimization                          { 0.1f };
     float maxIrradiance                         { 0.0f };   // 0 = disabled
     float exposure                              { 1.0f };
-    float pointScale                            { 1.0f };
-    float maxPointSize                          { 64.0f };
-
-    // Deferred large-glow stars (gl_PointSize would exceed driver cap).
-    // Drawn after the point-sprite glow batch finishes so we don't disturb
-    // the active PsfStarVertexBuffer program binding.
-    struct LargeGlow
-    {
-        Eigen::Vector3f position;
-        Color           color;
-        float           peakRadiance;
-        float           sizePhys;
-    };
-    std::vector<LargeGlow> largeGlowStars;
 };

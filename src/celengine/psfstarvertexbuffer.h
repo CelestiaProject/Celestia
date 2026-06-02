@@ -15,6 +15,8 @@
 
 #include <Eigen/Core>
 
+#include "starpipelineowner.h"
+
 class Color;
 class Renderer;
 class CelestiaGLProgram;
@@ -32,7 +34,7 @@ namespace celestia::render
 // Vertices carry per-star peak radiance (HDR float) and a linear, green-
 // normalised colour.  The shader is the same in both modes; a uniform
 // selects "point" (fixed pixel disc) or "glow" (PSF approximation).
-class PsfStarVertexBuffer
+class PsfStarVertexBuffer : public StarPipelineFlushable
 {
 public:
     using capacity_t = unsigned int;
@@ -44,7 +46,7 @@ public:
     };
 
     PsfStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
-    ~PsfStarVertexBuffer() = default;
+    ~PsfStarVertexBuffer() override = default;
     PsfStarVertexBuffer() = delete;
     PsfStarVertexBuffer(const PsfStarVertexBuffer&) = delete;
     PsfStarVertexBuffer(PsfStarVertexBuffer&&) = delete;
@@ -53,7 +55,7 @@ public:
 
     void start(Mode mode);
     void render();
-    void finish();
+    void finish() override;
 
     void addStar(const Eigen::Vector3f &pos, const Color &color, float peakRadiance);
 
@@ -85,8 +87,6 @@ private:
     std::unique_ptr<celestia::gl::Buffer>        m_bo;
     std::unique_ptr<celestia::gl::VertexObject>  m_vo;
     bool m_initialized{ false };
-
-    static PsfStarVertexBuffer *current;
 
     void makeCurrent();
     void setupVertexArrayObject();

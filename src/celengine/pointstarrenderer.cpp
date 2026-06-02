@@ -164,20 +164,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                    * maxIrradiance;
                     }
 
-                    float a        = optimization / r;
-                    float rGlowLog = std::pow(glowPeak, 0.4f) / std::max(a, 1.0e-6f);
-                    float sizePhys = 2.0f * rGlowLog * pointScale;
-                    if (sizePhys > maxPointSize)
-                    {
-                        largeGlowStars.push_back({relPos,
-                                                  linearStarColor,
-                                                  glowPeak,
-                                                  sizePhys});
-                    }
-                    else
-                    {
-                        psfGlowBuffer->addStar(relPos, linearStarColor, glowPeak);
-                    }
+                    psfGlowBuffer->addStar(relPos, linearStarColor, glowPeak);
                 }
             }
             else
