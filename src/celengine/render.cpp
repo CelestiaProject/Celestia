@@ -1743,7 +1743,7 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     if (peakRadCol > minPeak)
         psfPointBuffer->addStar(position, linearStarColor, peakRadCol);
 
-    if (peakRadCol > 1.0f && emissive && starOptimization > 0.0f)
+    if (peakRadCol > 1.0f && starOptimization > 0.0f)
     {
         float glowPeak = peakRadCol;
         if (starMaxIrradiance > 0.0f)
