@@ -1493,6 +1493,7 @@ CelestiaAppWindow::createMenus()
     starStyleMenu->addAction(actions->pointStarAction);
     starStyleMenu->addAction(actions->fuzzyPointStarAction);
     starStyleMenu->addAction(actions->scaledDiscStarAction);
+    starStyleMenu->addAction(actions->psfStarAction);
 
     displayMenu->addSeparator();
 

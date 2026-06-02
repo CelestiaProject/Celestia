@@ -205,7 +205,7 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.stars.pointRadius, hash, "StarPointRadius"sv);
     renderDetails.stars.pointRadius = std::clamp(renderDetails.stars.pointRadius, 1.0f, 10.0f);
     applyNumber(renderDetails.stars.optimization, hash, "StarOptimization"sv);
-    renderDetails.stars.optimization = std::clamp(renderDetails.stars.optimization, 0.1f, 1.0f);
+    renderDetails.stars.optimization = std::clamp(renderDetails.stars.optimization, 0.05f, 1.0f);
     applyNumber(renderDetails.stars.maxIrradiance, hash, "StarMaxIrradiance"sv);
     if (renderDetails.stars.maxIrradiance < 0.0f)
         renderDetails.stars.maxIrradiance = 0.0f;

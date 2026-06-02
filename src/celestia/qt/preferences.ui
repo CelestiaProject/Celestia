@@ -1103,6 +1103,10 @@
                  </item>
                  <item>
                   <widget class="QDoubleSpinBox" name="psfRadiusSpinBox">
+                   <property name="toolTip">
+                    <string>Radius of the unresolved star disc in points. Larger values make every star bigger and brighter.
+Valid range: 1.0 to 10.0.</string>
+                   </property>
                    <property name="decimals">
                     <number>1</number>
                    </property>
@@ -1127,17 +1131,21 @@
                  <item>
                   <widget class="QLabel" name="psfOptimizationLabel">
                    <property name="text">
-                    <string>Optimization:</string>
+                    <string>Bloom compactness:</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QDoubleSpinBox" name="psfOptimizationSpinBox">
+                   <property name="toolTip">
+                    <string>Controls how tightly the eye-PSF bloom is confined around each bright star. Higher values keep the glow compact; lower values let it spread further.
+Valid range: 0.05 to 1.0.</string>
+                   </property>
                    <property name="decimals">
                     <number>2</number>
                    </property>
                    <property name="minimum">
-                    <double>0.100000000000000</double>
+                    <double>0.050000000000000</double>
                    </property>
                    <property name="maximum">
                     <double>1.000000000000000</double>
