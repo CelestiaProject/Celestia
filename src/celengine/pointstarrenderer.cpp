@@ -137,11 +137,11 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float peakRadCol = peakRad * greenScale;
 
                 // Point (cone) contribution
-                if (peakRadCol > psf.minPeak && psf.pointBuffer != nullptr)
+                if (peakRadCol > psf.minPeak)
                     psf.pointBuffer->addStar(relPos, linearStarColor, peakRadCol);
 
                 // Glow (eye-PSF) contribution, additive on top of the point cone
-                if (peakRadCol > 1.0f && psf.glowBuffer != nullptr && psf.optimization > 0.0f)
+                if (peakRadCol > 1.0f && psf.optimization > 0.0f)
                 {
                     // Soft-clip very bright stars so the eye-PSF radius
                     // stays bounded.  Without this, a single bright star
