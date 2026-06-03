@@ -61,6 +61,14 @@ public:
     float maxIrradiance                         { 0.0f };   // 0 = disabled
     float exposure                              { 1.0f };
 
+    // Per-frame derived PSF constants, hoisted out of process() to keep
+    // the per-star inner loop tight.  Filled in renderPointStars before
+    // findVisibleStars runs.
+    float psfPeakRadScale                       { 0.0f };   // exposure * 3 / (pi * r^2)
+    float psfMinPeak                            { 0.0f };   // fade-in cutoff
+    float psfGlowA                              { 0.0f };   // optimization / r
+    float psfGlowPeakLargeThreshold             { 0.0f };   // glowPeak above which sizePhys > maxPointSize
+
     // Projection/modelview used by the large-glow fallback for far-star
     // PSF blooms whose gl_PointSize would exceed the driver's maximum.
     // Same matrices the psf glow buffer flushes against.

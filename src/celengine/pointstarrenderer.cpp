@@ -118,27 +118,13 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // x peak):  peakRad = exposure * 3 * irradiance / (pi * r^2).
                 // Irradiance is in the Vega-normalised system; the constant
                 // SI conversion factor is absorbed by the framebuffer
-                // exposure.
-
-                // User-controlled brightness multiplier.  Independent of
-                // the magnitude limit; the per-star fade-out point is
-                // computed dynamically (see psfFaintMag in renderPointStars).
-                float exposureFactor = std::max(exposure, 1.0e-6f);
+                // exposure.  Per-frame constants (psfPeakRadScale,
+                // psfMinPeak, psfGlowA, psfGlowPeakLargeThreshold) are
+                // precomputed in renderPointStars so the inner loop only
+                // does the per-star irradiance and green normalisation.
 
                 float irradiance = astro::magToIrradiance(appMag);
-                // pointRadius is the LOGICAL size in points; gl_PointSize
-                // in the shader scales it by pointScale to physical pixels.
-                // Computing peakRadiance from the logical radius keeps
-                // per-pixel-area brightness invariant across DPIs and lets
-                // the glow's gl_PointSize = 2*r*pointScale scale linearly.
-                float r          = std::max(pointRadius, 1.0e-3f);
-                float peakRad    = exposureFactor * 3.0f * irradiance
-                                   / (celestia::numbers::pi_v<float> * r * r);
-
-                float minPeak = (celestia::gl::sRGBRendering
-                                    ? astro::LOWEST_IRRADIATION_SRGB
-                                    : astro::LOWEST_IRRADIATION)
-                                * astro::PSF_PEAK_GATE_FACTOR;
+                float peakRad    = psfPeakRadScale * irradiance;
 
                 // Normalise the star colour against its green channel
                 // (with a saturation floor) so the brightest channel
@@ -151,7 +137,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float peakRadCol = peakRad * greenScale;
 
                 // Point (cone) contribution
-                if (peakRadCol > minPeak && psfPointBuffer != nullptr)
+                if (peakRadCol > psfMinPeak && psfPointBuffer != nullptr)
                     psfPointBuffer->addStar(relPos, linearStarColor, peakRadCol);
 
                 // Glow (eye-PSF) contribution, additive on top of the point cone
@@ -168,18 +154,17 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                    * maxIrradiance;
                     }
 
-                    // If the resulting gl_PointSize would exceed the driver
-                    // cap, fall back to the clip-space billboard renderer
-                    // so the bloom keeps growing past GL_POINT_SIZE_MAX
-                    // (otherwise maxIrradiance=0 silently appears capped).
-                    float a        = (r > 0.0f) ? (optimization / r) : 0.0f;
-                    float rGlowLog = std::pow(glowPeak, 0.4f) / std::max(a, 1.0e-6f);
-                    float sizePhys = 2.0f * rGlowLog * pointScale;
-
-                    if (sizePhys > static_cast<float>(celestia::gl::maxPointSize)
+                    // Fast path: compare glowPeak against the precomputed
+                    // threshold instead of computing sizePhys = 2*pow(glowPeak,0.4)/a*pointScale
+                    // and comparing to maxPointSize.  Only the rare
+                    // oversize fallback actually needs the pow.
+                    if (glowPeak > psfGlowPeakLargeThreshold
                         && psfGlowLargeRenderer != nullptr
                         && psfProj != nullptr && psfModelView != nullptr)
                     {
+                        float rGlowLog = std::pow(glowPeak, 0.4f) / psfGlowA;
+                        float sizePhys = 2.0f * rGlowLog * pointScale;
+
                         // Flush the in-flight PSF buffers first; the
                         // billboard renderer binds its own program and
                         // would otherwise strand a half-filled buffer.

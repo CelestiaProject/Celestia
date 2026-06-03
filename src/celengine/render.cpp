@@ -1725,10 +1725,11 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     // projection — this is what lets close stars (e.g. Sol at 1 AU)
     // escape the ly-scale near plane of renderPointStars.
     float exposureFactor = std::max(starExposure, 1.0e-6f);
-    float irradiance     = astro::magToIrradiance(appMag);
     float r              = std::max(starPointRadius, 1.0e-3f);
-    float peakRad        = exposureFactor * 3.0f * irradiance
+    float peakRadScale   = exposureFactor * 3.0f
                            / (celestia::numbers::pi_v<float> * r * r);
+    float irradiance     = astro::magToIrradiance(appMag);
+    float peakRad        = peakRadScale * irradiance;
 
     float minPeak = (celestia::gl::sRGBRendering
                         ? astro::LOWEST_IRRADIATION_SRGB
@@ -1751,12 +1752,19 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
                        * starMaxIrradiance;
         }
 
-        float a        = starOptimization / r;
-        float rGlowLog = std::pow(glowPeak, 0.4f) / std::max(a, 1.0e-6f);
-        float sizePhys = 2.0f * rGlowLog * pointScale;
+        // Fast oversize check: avoid computing pow unless we actually
+        // need sizePhys.  sizePhys > maxPointSize is equivalent to
+        // glowPeak > (maxPointSize * a / (2 * pointScale))^2.5.
+        float a = starOptimization / r;
+        float glowPeakLargeThreshold = std::pow(static_cast<float>(celestia::gl::maxPointSize)
+                                                * a / (2.0f * pointScale),
+                                                2.5f);
 
-        if (sizePhys > static_cast<float>(celestia::gl::maxPointSize))
+        if (glowPeak > glowPeakLargeThreshold)
         {
+            float rGlowLog = std::pow(glowPeak, 0.4f) / a;
+            float sizePhys = 2.0f * rGlowLog * pointScale;
+
             // Oversize glow (typical for very close stars like Sol at 1 AU):
             // draw synchronously as a clip-space billboard using the current
             // per-interval MVP.  Flush any PSF-buffer in-flight first: the
@@ -3847,19 +3855,35 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
         ps.blendFunc = {GL_ONE, GL_ONE};
 
+        // Precompute per-frame PSF constants once instead of recomputing
+        // them per-star inside PointStarRenderer::process.
+        //   peakRad = exposure * 3 * irradiance / (pi * r^2)
+        //   minPeak = fade-in gate (sRGB-aware)
+        //   a       = optimization / r  (Spencer eye-PSF coefficient)
+        //   sizePhys > maxPointSize  <=>  glowPeak > (maxPointSize*a/(2*pointScale))^2.5
+        float exposureFactor = std::max(starExposure, 1.0e-6f);
+        float rLog           = std::max(starPointRadius, 1.0e-3f);
+        float minPeak        = (celestia::gl::sRGBRendering
+                                    ? astro::LOWEST_IRRADIATION_SRGB
+                                    : astro::LOWEST_IRRADIATION)
+                               * astro::PSF_PEAK_GATE_FACTOR;
+        float glowA = starOptimization / rLog;
+        float glowPeakLargeThreshold = std::pow(static_cast<float>(celestia::gl::maxPointSize)
+                                                * glowA / (2.0f * scale),
+                                                2.5f);
+
+        starRenderer.psfPeakRadScale         = exposureFactor * 3.0f
+                                               / (celestia::numbers::pi_v<float> * rLog * rLog);
+        starRenderer.psfMinPeak              = minPeak;
+        starRenderer.psfGlowA                = glowA;
+        starRenderer.psfGlowPeakLargeThreshold = glowPeakLargeThreshold;
+
         // Extend the iteration cutoff to the PSF's natural fade-in
         // threshold so stars actually grow through minPeak instead of
         // popping in at whatever peakRad they happen to have just past
         // Celestia's perceptual faintestMag cutoff.
-        //   peakRad = exposure * 3 * irradiance / (pi * r^2),  irradiance = 10^(-0.4*m)
         //   peakRad = minPeak  =>  m = (1/0.4) * log10(exposure * 3 / (pi * r^2 * minPeak))
-        float minPeak = (celestia::gl::sRGBRendering
-                            ? astro::LOWEST_IRRADIATION_SRGB
-                            : astro::LOWEST_IRRADIATION)
-                        * astro::PSF_PEAK_GATE_FACTOR;
-        float rLog = std::max(starPointRadius, 1.0e-3f);
-        float psfFaintMag = std::log10(starExposure * 3.0f
-                                       / (celestia::numbers::pi_v<float> * rLog * rLog * minPeak)) / 0.4f;
+        float psfFaintMag = std::log10(starRenderer.psfPeakRadScale / minPeak) / 0.4f;
         iterFaintestMag = std::max(faintestMagNight, psfFaintMag);
     }
     else
