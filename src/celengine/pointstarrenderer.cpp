@@ -118,13 +118,13 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // x peak):  peakRad = exposure * 3 * irradiance / (pi * r^2).
                 // Irradiance is in the Vega-normalised system; the constant
                 // SI conversion factor is absorbed by the framebuffer
-                // exposure.  Per-frame constants (psfPeakRadScale,
-                // psfMinPeak, psfGlowA, psfGlowPeakLargeThreshold) are
+                // exposure.  Per-frame constants (psf.peakRadScale,
+                // psf.minPeak, psf.glowA, psf.glowPeakLargeThreshold) are
                 // precomputed in renderPointStars so the inner loop only
                 // does the per-star irradiance and green normalisation.
 
                 float irradiance = astro::magToIrradiance(appMag);
-                float peakRad    = psfPeakRadScale * irradiance;
+                float peakRad    = psf.peakRadScale * irradiance;
 
                 // Normalise the star colour against its green channel
                 // (with a saturation floor) so the brightest channel
@@ -137,50 +137,50 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float peakRadCol = peakRad * greenScale;
 
                 // Point (cone) contribution
-                if (peakRadCol > psfMinPeak && psfPointBuffer != nullptr)
-                    psfPointBuffer->addStar(relPos, linearStarColor, peakRadCol);
+                if (peakRadCol > psf.minPeak && psf.pointBuffer != nullptr)
+                    psf.pointBuffer->addStar(relPos, linearStarColor, peakRadCol);
 
                 // Glow (eye-PSF) contribution, additive on top of the point cone
-                if (peakRadCol > 1.0f && psfGlowBuffer != nullptr && optimization > 0.0f)
+                if (peakRadCol > 1.0f && psf.glowBuffer != nullptr && psf.optimization > 0.0f)
                 {
                     // Soft-clip very bright stars so the eye-PSF radius
                     // stays bounded.  Without this, a single bright star
                     // (or a high faintest-magnitude setting) produces a
                     // runaway bloom that washes out the whole frame.
                     float glowPeak = peakRadCol;
-                    if (maxIrradiance > 0.0f)
+                    if (psf.maxIrradiance > 0.0f)
                     {
-                        glowPeak = (1.0f - 1.0f / (peakRadCol / maxIrradiance + 1.0f))
-                                   * maxIrradiance;
+                        glowPeak = (1.0f - 1.0f / (peakRadCol / psf.maxIrradiance + 1.0f))
+                                   * psf.maxIrradiance;
                     }
 
                     // Fast path: compare glowPeak against the precomputed
                     // threshold instead of computing sizePhys = 2*pow(glowPeak,0.4)/a*pointScale
                     // and comparing to maxPointSize.  Only the rare
                     // oversize fallback actually needs the pow.
-                    if (glowPeak > psfGlowPeakLargeThreshold
-                        && psfGlowLargeRenderer != nullptr
-                        && psfProj != nullptr && psfModelView != nullptr)
+                    if (glowPeak > psf.glowPeakLargeThreshold
+                        && psf.glowLargeRenderer != nullptr
+                        && psf.proj != nullptr && psf.modelView != nullptr)
                     {
-                        float rGlowLog = std::pow(glowPeak, 0.4f) / psfGlowA;
-                        float sizePhys = 2.0f * rGlowLog * pointScale;
+                        float rGlowLog = std::pow(glowPeak, 0.4f) / psf.glowA;
+                        float sizePhys = 2.0f * rGlowLog * psf.pointScale;
 
                         // Flush the in-flight PSF buffers first; the
                         // billboard renderer binds its own program and
                         // would otherwise strand a half-filled buffer.
                         renderer->starPipelineOwner().flush();
-                        Matrices mvp { psfProj, psfModelView };
-                        psfGlowLargeRenderer->render(relPos,
-                                                     linearStarColor,
-                                                     glowPeak,
-                                                     pointRadius,
-                                                     optimization,
-                                                     sizePhys,
-                                                     mvp);
+                        Matrices mvp { psf.proj, psf.modelView };
+                        psf.glowLargeRenderer->render(relPos,
+                                                      linearStarColor,
+                                                      glowPeak,
+                                                      psf.pointRadius,
+                                                      psf.optimization,
+                                                      sizePhys,
+                                                      mvp);
                     }
                     else
                     {
-                        psfGlowBuffer->addStar(relPos, linearStarColor, glowPeak);
+                        psf.glowBuffer->addStar(relPos, linearStarColor, glowPeak);
                     }
                 }
             }

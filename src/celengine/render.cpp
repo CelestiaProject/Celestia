@@ -3798,11 +3798,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.renderList        = &renderList;
     starRenderer.starVertexBuffer  = pointStarVertexBuffer.get();
     starRenderer.glareVertexBuffer = glareVertexBuffer.get();
-    starRenderer.psfPointBuffer    = psfPointBuffer.get();
-    starRenderer.psfGlowBuffer     = psfGlowBuffer.get();
-    starRenderer.psfGlowLargeRenderer = m_psfGlowLargeRenderer.get();
-    starRenderer.psfProj           = &getCurrentProjectionMatrix();
-    starRenderer.psfModelView      = &getCurrentModelViewMatrix();
+    starRenderer.psf.pointBuffer       = psfPointBuffer.get();
+    starRenderer.psf.glowBuffer        = psfGlowBuffer.get();
+    starRenderer.psf.glowLargeRenderer = m_psfGlowLargeRenderer.get();
+    starRenderer.psf.proj              = &getCurrentProjectionMatrix();
+    starRenderer.psf.modelView         = &getCurrentModelViewMatrix();
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
@@ -3811,11 +3811,11 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
     starRenderer.starStyle         = starStyle;
-    starRenderer.pointRadius       = starPointRadius;
-    starRenderer.pointScale        = static_cast<float>(screenDpi) / 96.0f;
-    starRenderer.optimization      = starOptimization;
-    starRenderer.maxIrradiance     = starMaxIrradiance;
-    starRenderer.exposure          = starExposure;
+    starRenderer.psf.pointRadius   = starPointRadius;
+    starRenderer.psf.pointScale    = static_cast<float>(screenDpi) / 96.0f;
+    starRenderer.psf.optimization  = starOptimization;
+    starRenderer.psf.maxIrradiance = starMaxIrradiance;
+    starRenderer.psf.exposure      = starExposure;
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
@@ -3842,16 +3842,16 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     if (starStyle == StarStyle::PointSpreadFunction)
     {
-        starRenderer.psfPointBuffer->setPointScale(scale);
-        starRenderer.psfPointBuffer->setPointRadius(starPointRadius);
-        starRenderer.psfPointBuffer->setOptimization(starOptimization);
-        starRenderer.psfGlowBuffer->setPointScale(scale);
-        starRenderer.psfGlowBuffer->setPointRadius(starPointRadius);
-        starRenderer.psfGlowBuffer->setOptimization(starOptimization);
+        starRenderer.psf.pointBuffer->setPointScale(scale);
+        starRenderer.psf.pointBuffer->setPointRadius(starPointRadius);
+        starRenderer.psf.pointBuffer->setOptimization(starOptimization);
+        starRenderer.psf.glowBuffer->setPointScale(scale);
+        starRenderer.psf.glowBuffer->setPointRadius(starPointRadius);
+        starRenderer.psf.glowBuffer->setOptimization(starOptimization);
 
         PsfStarVertexBuffer::enable();
-        starRenderer.psfPointBuffer->start(PsfStarVertexBuffer::Mode::Point);
-        starRenderer.psfGlowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
+        starRenderer.psf.pointBuffer->start(PsfStarVertexBuffer::Mode::Point);
+        starRenderer.psf.glowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
 
         ps.blendFunc = {GL_ONE, GL_ONE};
 
@@ -3872,18 +3872,18 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                                 * glowA / (2.0f * scale),
                                                 2.5f);
 
-        starRenderer.psfPeakRadScale         = exposureFactor * 3.0f
-                                               / (celestia::numbers::pi_v<float> * rLog * rLog);
-        starRenderer.psfMinPeak              = minPeak;
-        starRenderer.psfGlowA                = glowA;
-        starRenderer.psfGlowPeakLargeThreshold = glowPeakLargeThreshold;
+        starRenderer.psf.peakRadScale          = exposureFactor * 3.0f
+                                                 / (celestia::numbers::pi_v<float> * rLog * rLog);
+        starRenderer.psf.minPeak               = minPeak;
+        starRenderer.psf.glowA                 = glowA;
+        starRenderer.psf.glowPeakLargeThreshold = glowPeakLargeThreshold;
 
         // Extend the iteration cutoff to the PSF's natural fade-in
         // threshold so stars actually grow through minPeak instead of
         // popping in at whatever peakRad they happen to have just past
         // Celestia's perceptual faintestMag cutoff.
         //   peakRad = minPeak  =>  m = (1/0.4) * log10(exposure * 3 / (pi * r^2 * minPeak))
-        float psfFaintMag = std::log10(starRenderer.psfPeakRadScale / minPeak) / 0.4f;
+        float psfFaintMag = std::log10(starRenderer.psf.peakRadScale / minPeak) / 0.4f;
         iterFaintestMag = std::max(faintestMagNight, psfFaintMag);
     }
     else
@@ -3909,8 +3909,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     if (starStyle == StarStyle::PointSpreadFunction)
     {
-        starRenderer.psfPointBuffer->finish();
-        starRenderer.psfGlowBuffer->finish();
+        starRenderer.psf.pointBuffer->finish();
+        starRenderer.psf.glowBuffer->finish();
         PsfStarVertexBuffer::disable();
     }
     else
