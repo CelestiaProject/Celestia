@@ -174,21 +174,33 @@ SetPreferredPixelFormat(HDC hDC, int aaSamples)
     return SetPixelFormat(hDC, pixelFormatIndex, &pfd);
 }
 
-// Select the pixel format for a given device context
-bool
-SetDCPixelFormat(HDC hDC, const CelestiaCore* appCore)
+// We can't check WGL extensions or create a context with attributes without
+// already having an OpenGL context. This class manages a dummy context for
+// doing these queries.
+class DummyWindow
 {
-    // We can't check WGL extensions without having an OpenGL context
-    // So create a dummy context
-    bool result = false;
-    WNDCLASS dummyClass;
-    HWND dummyWindow;
-    HDC dummyDC;
-    PIXELFORMATDESCRIPTOR pfd;
-    int dummyPixelFormat;
-    HGLRC dummyContext;
-    int aaSamples;
+public:
+    DummyWindow();
+    ~DummyWindow();
 
+    static void pixelFormatError();
+
+    bool ok() const noexcept { return m_ok; }
+    bool hasMultisample() const noexcept { return m_hasMultisample; }
+
+private:
+    LPCWSTR m_className{ nullptr };
+    HINSTANCE m_instance{ nullptr };
+    HWND m_window{ nullptr };
+    HDC m_dc{ nullptr };
+    HGLRC m_context{ nullptr };
+    bool m_hasMultisample{ false };
+    bool m_ok{ false };
+};
+
+DummyWindow::DummyWindow()
+{
+    WNDCLASS dummyClass;
     dummyClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     dummyClass.lpfnWndProc = &DefWindowProc;
     dummyClass.cbClsExtra = 0;
@@ -201,9 +213,12 @@ SetDCPixelFormat(HDC hDC, const CelestiaCore* appCore)
     dummyClass.lpszClassName = L"Celestia-dummy-OpenGL";
 
     if (RegisterClass(&dummyClass) == 0)
-        return result;
+        return;
 
-    dummyWindow = CreateWindow(
+    m_className = dummyClass.lpszClassName;
+    m_instance = dummyClass.hInstance;
+
+    m_window = CreateWindow(
         dummyClass.lpszClassName,
         L"Celestia OpenGL feature detection",
         0,
@@ -212,18 +227,19 @@ SetDCPixelFormat(HDC hDC, const CelestiaCore* appCore)
         nullptr, nullptr,
         dummyClass.hInstance,
         0);
-    if (!dummyWindow)
-        goto unregisterDummyClass;
+    if (!m_window)
+        return;
 
-    dummyDC = GetDC(dummyWindow);
-    if (!dummyDC)
-        goto destroyWindow;
+    m_dc = GetDC(m_window);
+    if (!m_dc)
+        return;
 
+    PIXELFORMATDESCRIPTOR pfd;
     pfd.nSize = static_cast<WORD>(sizeof(PIXELFORMATDESCRIPTOR));
     pfd.nVersion = 1;
     pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
     pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = static_cast<BYTE>(GetDeviceCaps(dummyDC, BITSPIXEL));
+    pfd.cColorBits = static_cast<BYTE>(GetDeviceCaps(m_dc, BITSPIXEL));
     pfd.cRedBits = 0;
     pfd.cRedShift = 0;
     pfd.cGreenBits = 0;
@@ -246,36 +262,49 @@ SetDCPixelFormat(HDC hDC, const CelestiaCore* appCore)
     pfd.dwVisibleMask = 0;
     pfd.dwDamageMask = 0;
 
-    dummyPixelFormat = ChoosePixelFormat(dummyDC, &pfd);
-    if (!dummyPixelFormat || !SetPixelFormat(dummyDC, dummyPixelFormat, &pfd))
-        goto releaseDC;
+    int pixelFormat = ChoosePixelFormat(m_dc, &pfd);
+    if (!pixelFormat || !SetPixelFormat(m_dc, pixelFormat, &pfd))
+        return;
 
-    dummyContext = wglCreateContext(dummyDC);
-    if (!dummyContext)
-        goto releaseDC;
+    m_context = wglCreateContext(m_dc);
+    if (!m_context)
+        return;
 
-    if (!wglMakeCurrent(dummyDC, dummyContext) ||
-        !epoxy_has_wgl_extension(dummyDC, "WGL_ARB_pixel_format"))
+    if (!wglMakeCurrent(m_dc, m_context) ||
+        !epoxy_has_wgl_extension(m_dc, "WGL_ARB_pixel_format") ||
+        !epoxy_has_wgl_extension(m_dc, "WGL_ARB_create_context"))
     {
-        goto destroyContext;
+        return;
     }
 
-    aaSamples = epoxy_has_wgl_extension(dummyDC, "WGL_ARB_multisample")
-        ? static_cast<int>(appCore->getConfig()->renderDetails.aaSamples)
-        : 1;
+    m_hasMultisample = epoxy_has_wgl_extension(m_dc, "WGL_ARB_pixel_format");
+    m_ok = true;
+}
 
-    result = SetPreferredPixelFormat(hDC, aaSamples);
+DummyWindow::~DummyWindow()
+{
+    if (m_context)
+    {
+        wglMakeCurrent(m_dc, nullptr);
+        wglDeleteContext(m_context);
+    }
 
-destroyContext:
-    wglMakeCurrent(dummyDC, nullptr);
-    wglDeleteContext(dummyContext);
-releaseDC:
-    ReleaseDC(dummyWindow, dummyDC);
-destroyWindow:
-    DestroyWindow(dummyWindow);
-unregisterDummyClass:
-    UnregisterClass(dummyClass.lpszClassName, dummyClass.hInstance);
-    return result;
+    if (m_dc)
+        ReleaseDC(m_window, m_dc);
+
+    if (m_window)
+        DestroyWindow(m_window);
+
+    if (m_className)
+        UnregisterClass(m_className, m_instance);
+}
+
+void
+DummyWindow::pixelFormatError()
+{
+    std::wstring message = UTF8ToWideString(_("Could not get appropriate pixel format for OpenGL rendering."));
+    std::wstring caption = UTF8ToWideString(_("Fatal Error"));
+    MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
 }
 
 bool
@@ -1149,31 +1178,51 @@ bool
 MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
 {
     deviceContext = GetDC(hWnd);
-    if (!SetDCPixelFormat(deviceContext, appCore))
-    {
-        std::wstring message = UTF8ToWideString(_("Could not get appropriate pixel format for OpenGL rendering."));
-        std::wstring caption = UTF8ToWideString(_("Fatal Error"));
-        MessageBox(NULL, message.c_str(), caption.c_str(), MB_OK | MB_ICONERROR);
-        return false;
-    }
-
     bool firstContext = false;
-    if (glContext == nullptr)
-    {
-        glContext = wglCreateContext(deviceContext);
-        firstContext = true;
-    }
-    wglMakeCurrent(deviceContext, glContext);
 
-    if (firstContext)
     {
-        if (!gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_3_3))
+        // block scope to ensure the lifetime of the dummy context ends
+        // before we switch to the real context
+        DummyWindow dummy;
+        if (!dummy.ok())
         {
-            std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 3.3!"));
-            std::wstring error = UTF8ToWideString(_("Fatal Error"));
-            MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
+            DummyWindow::pixelFormatError();
             return false;
         }
+
+        int aaSamples = dummy.hasMultisample()
+            ? static_cast<int>(appCore->getConfig()->renderDetails.aaSamples)
+            : 1;
+
+        if (!SetPreferredPixelFormat(deviceContext, aaSamples))
+        {
+            DummyWindow::pixelFormatError();
+            return false;
+        }
+
+        if (!glContext)
+        {
+            constexpr int attribList[] = {
+                WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+                WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+                WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+                0,
+            };
+
+            // calling the wglCreateContextAttribsARB requires the dummy context
+            glContext = wglCreateContextAttribsARB(deviceContext, nullptr, attribList);
+            firstContext = true;
+        }
+    }
+
+    wglMakeCurrent(deviceContext, glContext);
+
+    if (firstContext && !gl::init(ignoreGLExtensions) || !gl::checkVersion(gl::GL_3_3))
+    {
+        std::wstring message = UTF8ToWideString(_("Your system doesn't support OpenGL 3.3!"));
+        std::wstring error = UTF8ToWideString(_("Fatal Error"));
+        MessageBox(NULL, message.c_str(), error.c_str(), MB_OK | MB_ICONERROR);
+        return false;
     }
 
     return true;
