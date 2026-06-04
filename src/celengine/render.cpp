@@ -488,12 +488,12 @@ float Renderer::getScaleFactor() const
 
 float Renderer::getPointWidth() const
 {
-    return 2.0f / viewportWidth * getScaleFactor();
+    return 2.0f / static_cast<float>(viewportWidth) * getScaleFactor();
 }
 
 float Renderer::getPointHeight() const
 {
-    return 2.0f / viewportHeight * getScaleFactor();
+    return 2.0f / static_cast<float>(viewportHeight) * getScaleFactor();
 }
 
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
