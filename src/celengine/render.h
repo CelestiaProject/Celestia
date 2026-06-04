@@ -183,8 +183,6 @@ class Renderer
     void setScreenDpi(int);
     float getTextScaleFactor() const;
     void setTextScaleFactor(float);
-    int getWindowWidth() const;
-    int getWindowHeight() const;
 
     float getScaleFactor() const;
     float getPointWidth() const;
@@ -633,8 +631,8 @@ class Renderer
  private:
     std::unique_ptr<ShaderManager> shaderManager{ std::make_unique<ShaderManager>() };
 
-    int windowWidth{ 0 };
-    int windowHeight{ 0 };
+    int viewportWidth{ 0 };
+    int viewportHeight{ 0 };
     float fov{ celestia::engine::standardFOV };
     double cosViewConeAngle{ 0.0 };
     int screenDpi{ 96 };

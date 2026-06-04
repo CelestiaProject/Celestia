@@ -459,7 +459,7 @@ void
 SkyGridRenderer::render(const engine::SkyGrid& grid, float zoom)
 {
     auto vfov = static_cast<double>(m_renderer.getProjectionMode()->getFOV(zoom));
-    double viewAspectRatio = static_cast<double>(m_renderer.getWindowWidth()) / static_cast<double>(m_renderer.getWindowHeight());
+    double viewAspectRatio = static_cast<double>(m_renderer.getAspectRatio());
     Eigen::Quaterniond cameraOrientation = m_renderer.getCameraOrientation();
 
     RenderInfo renderInfo(vfov, viewAspectRatio, cameraOrientation, grid);
