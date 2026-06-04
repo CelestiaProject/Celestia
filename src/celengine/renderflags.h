@@ -105,8 +105,9 @@ ENUM_CLASS_BITWISE_OPS(RenderFlags);
 
 enum class StarStyle : int
 {
-    FuzzyPointStars  = 0,
-    PointStars       = 1,
-    ScaledDiscStars  = 2,
+    FuzzyPointStars      = 0,
+    PointStars           = 1,
+    ScaledDiscStars      = 2,
+    PointSpreadFunction  = 3,
     StarStyleCount,
 };

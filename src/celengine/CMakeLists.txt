@@ -88,6 +88,9 @@ set(CELENGINE_SOURCES
   pointstarrenderer.h
   pointstarvertexbuffer.cpp
   pointstarvertexbuffer.h
+  psfstarvertexbuffer.cpp
+  psfstarvertexbuffer.h
+  starpipelineowner.h
   projectionmode.cpp
   projectionmode.h
   rectangle.h

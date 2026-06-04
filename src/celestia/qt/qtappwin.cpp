@@ -599,6 +599,10 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("AmbientLightLevel", renderer->getAmbientLightLevel());
     settings.setValue("TintSaturation", renderer->getTintSaturation());
     settings.setValue("StarStyle", static_cast<int>(renderer->getStarStyle()));
+    settings.setValue("StarPointRadius", renderer->getStarPointRadius());
+    settings.setValue("StarOptimization", renderer->getStarOptimization());
+    settings.setValue("StarMaxIrradiance", renderer->getStarMaxIrradiance());
+    settings.setValue("StarExposure", renderer->getStarExposure());
     settings.setValue("TextureResolution", static_cast<unsigned int>(renderer->getResolution()));
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 
@@ -1489,6 +1493,7 @@ CelestiaAppWindow::createMenus()
     starStyleMenu->addAction(actions->pointStarAction);
     starStyleMenu->addAction(actions->fuzzyPointStarAction);
     starStyleMenu->addAction(actions->scaledDiscStarAction);
+    starStyleMenu->addAction(actions->psfStarAction);
 
     displayMenu->addSeparator();
 

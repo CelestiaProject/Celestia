@@ -265,14 +265,17 @@ CelestiaActions::CelestiaActions(QObject* parent,
     pointStarAction      = createCheckableAction(_("Points"),       this, StarStyle::PointStars);
     fuzzyPointStarAction = createCheckableAction(_("Fuzzy Points"), this, StarStyle::FuzzyPointStars);
     scaledDiscStarAction = createCheckableAction(_("Scaled Discs"), this, StarStyle::ScaledDiscStars);
+    psfStarAction        = createCheckableAction(_("Point Spread Function"), this, StarStyle::PointSpreadFunction);
     QActionGroup *starStyleGroup = new QActionGroup(this);
     starStyleGroup->addAction(pointStarAction);
     starStyleGroup->addAction(fuzzyPointStarAction);
     starStyleGroup->addAction(scaledDiscStarAction);
+    starStyleGroup->addAction(psfStarAction);
     starStyleGroup->setExclusive(true);
     connect(pointStarAction,      SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
     connect(fuzzyPointStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
     connect(scaledDiscStarAction, SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
+    connect(psfStarAction,        SIGNAL(triggered()), this, SLOT(slotSetStarStyle()));
 
     lightTimeDelayAction = new QAction(_("Light Time Delay"), this);
     lightTimeDelayAction->setCheckable(true);
@@ -341,6 +344,7 @@ CelestiaActions::syncWithRenderer(const Renderer* renderer)
     pointStarAction->setChecked(starStyle == StarStyle::PointStars);
     fuzzyPointStarAction->setChecked(starStyle == StarStyle::FuzzyPointStars);
     scaledDiscStarAction->setChecked(starStyle == StarStyle::ScaledDiscStars);
+    psfStarAction->setChecked(starStyle == StarStyle::PointSpreadFunction);
 
     // Features
     cloudsAction->setChecked(util::is_set(renderFlags, RenderFlags::ShowCloudMaps));

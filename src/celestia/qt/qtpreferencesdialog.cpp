@@ -272,10 +272,21 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
             ui.scaledDiscsButton->setChecked(true);
             break;
 
+        case StarStyle::PointSpreadFunction:
+            ui.psfStarsButton->setChecked(true);
+            break;
+
         default:
             assert(0);
             break;
     }
+
+    ui.psfRadiusSpinBox->setValue(renderer->getStarPointRadius());
+    ui.psfOptimizationSpinBox->setValue(renderer->getStarOptimization());
+    ui.psfMaxIrradianceSpinBox->setValue(renderer->getStarMaxIrradiance());
+    ui.psfExposureSpinBox->setValue(renderer->getStarExposure());
+
+    updatePsfControlsVisibility();
 
     {
         QSignalBlocker blocker(ui.starColorBox);
@@ -843,6 +854,7 @@ PreferencesDialog::on_pointStarsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::PointStars);
+        updatePsfControlsVisibility();
     }
 }
 
@@ -853,6 +865,7 @@ PreferencesDialog::on_scaledDiscsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::ScaledDiscStars);
+        updatePsfControlsVisibility();
     }
 }
 
@@ -863,7 +876,49 @@ PreferencesDialog::on_fuzzyPointStarsButton_clicked() const
     {
         Renderer* renderer = appCore->getRenderer();
         renderer->setStarStyle(StarStyle::FuzzyPointStars);
+        updatePsfControlsVisibility();
     }
+}
+
+void
+PreferencesDialog::on_psfStarsButton_clicked() const
+{
+    if (ui.psfStarsButton->isChecked())
+    {
+        Renderer* renderer = appCore->getRenderer();
+        renderer->setStarStyle(StarStyle::PointSpreadFunction);
+        updatePsfControlsVisibility();
+    }
+}
+
+void
+PreferencesDialog::updatePsfControlsVisibility() const
+{
+    ui.psfOptionsGroup->setVisible(ui.psfStarsButton->isChecked());
+}
+
+void
+PreferencesDialog::on_psfRadiusSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarPointRadius(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfOptimizationSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarOptimization(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfMaxIrradianceSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarMaxIrradiance(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfExposureSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarExposure(static_cast<float>(value));
 }
 
 void

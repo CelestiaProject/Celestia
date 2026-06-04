@@ -218,6 +218,7 @@ IDR_MAIN_MENU MENU
             MENUITEM "&Points", ID_RENDER_STARSTYLE_POINTS
             MENUITEM "&Fuzzy Points", ID_RENDER_STARSTYLE_FUZZY, CHECKED
             MENUITEM "Scaled &Discs", ID_RENDER_STARSTYLE_DISCS
+            MENUITEM "Point &Spread Function", ID_RENDER_STARSTYLE_PSF
         }
         POPUP "Star &Color"
         {

@@ -56,9 +56,17 @@ constexpr inline float VEGAN_IRRADIANCE   = 3.640e-11f; // W / m^2
 // Auxiliary magnitude conversion factor
 constexpr inline float LN_MAG             = 1.0857362f; // 5/ln(100)
 
-// Lowest screen brightness of a point to render
-constexpr inline float LOWEST_IRRADIATION = 1.0f / 255.0f;
-//                                        = 1.0f / (255.0f * 12.92f); after implementing gamma correction
+// Lowest screen brightness of a point to render (one perceptual step)
+constexpr inline float LOWEST_IRRADIATION      = 1.0f / 255.0f;
+// sRGB-encoded variant: one sRGB-encoded LSB corresponds to ~1/(255*12.92)
+// in linear space (within the linear segment of the sRGB curve).
+constexpr inline float LOWEST_IRRADIATION_SRGB = 1.0f / (255.0f * 12.92f);
+
+// Multiplier applied to the per-pixel visibility threshold above for the
+// PSF star renderer.  Raising the gate culls stars whose cone peak would
+// only contribute ~1 sRGB LSB; gives a noticeable FPS bump in dense
+// fields (e.g. Milky Way) at no perceptible visual cost.
+constexpr inline float PSF_PEAK_GATE_FACTOR    = 2.0f;
 
 // Approximately 10 parsecs in light-years
 // used to determine when to switch from AppMag to AbsMag

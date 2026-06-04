@@ -1080,7 +1080,158 @@
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer_15">
+             <widget class="QRadioButton" name="psfStarsButton">
+              <property name="text">
+               <string>Point spread function</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="psfOptionsGroup">
+              <property name="title">
+               <string>Point spread function options</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_psfOptions">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_psfRadius">
+                 <item>
+                  <widget class="QLabel" name="psfRadiusLabel">
+                   <property name="text">
+                    <string>Point radius (pt):</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="psfRadiusSpinBox">
+                   <property name="toolTip">
+                    <string>Radius of the unresolved star disc in points. Larger values make every star appear bigger while conserving the flux.
+Valid range: 1.0 to 10.0.</string>
+                   </property>
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>10.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.500000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>1.500000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_psfOpt">
+                 <item>
+                  <widget class="QLabel" name="psfOptimizationLabel">
+                   <property name="text">
+                    <string>Bloom compactness:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="psfOptimizationSpinBox">
+                   <property name="toolTip">
+                    <string>Controls how tightly the eye-PSF bloom is confined around each bright star. Higher values keep the glow compact; lower values let it spread further.
+Valid range: 0.05 to 1.0.</string>
+                   </property>
+                   <property name="decimals">
+                    <number>2</number>
+                   </property>
+                   <property name="minimum">
+                    <double>0.050000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.050000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>0.100000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_psfMaxIrr">
+                 <item>
+                  <widget class="QLabel" name="psfMaxIrradianceLabel">
+                   <property name="text">
+                    <string>Max irradiance:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="psfMaxIrradianceSpinBox">
+                   <property name="toolTip">
+                    <string>Soft-clip on per-star irradiance. 0 = disabled.
+Valid range: 1.0 to 1.0e6.</string>
+                   </property>
+                   <property name="decimals">
+                    <number>2</number>
+                   </property>
+                   <property name="minimum">
+                    <double>0.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>1000000.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>10.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>100.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_psfExposure">
+                 <item>
+                  <widget class="QLabel" name="psfExposureLabel">
+                   <property name="text">
+                    <string>Exposure:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="psfExposureSpinBox">
+                   <property name="toolTip">
+                    <string>Per-star brightness multiplier. Valid range: 0.001 to 1.0e6.</string>
+                   </property>
+                   <property name="decimals">
+                    <number>3</number>
+                   </property>
+                   <property name="minimum">
+                    <double>0.001000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>1000000.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>10.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>10.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+            <spacer name="verticalSpacer_15">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>

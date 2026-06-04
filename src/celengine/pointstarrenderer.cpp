@@ -10,18 +10,31 @@
 
 #include "pointstarrenderer.h"
 
+#include <algorithm>
+#include <cmath>
+
+#include <celastro/astro.h>
+#include <celcompat/numbers.h>
+#include <celengine/glsupport.h>
 #include <celengine/starcolors.h>
 #include <celengine/star.h>
 #include <celengine/univcoord.h>
+#include <celrender/psfglowlargerenderer.h>
 #include "observer.h"
 #include "pointstarvertexbuffer.h"
+#include "psfstarvertexbuffer.h"
 #include "render.h"
+
+#include <fmt/printf.h>
 
 using namespace std;
 using namespace Eigen;
 
 namespace astro = celestia::astro;
 namespace util = celestia::util;
+namespace render = celestia::render;
+using render::PsfStarVertexBuffer;
+using render::psfGreenNormalization;
 
 // Convert a position in the universal coordinate system to astrocentric
 // coordinates, taking into account possible orbital motion of the star.
@@ -98,19 +111,95 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         // planets.
         if (distance > SolarSystemMaxDistance)
         {
-            float pointSize, alpha, glareSize, glareAlpha;
-            float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
-            renderer->calculatePointSize(appMag,
-                                         size,
-                                         pointSize,
-                                         alpha,
-                                         glareSize,
-                                         glareAlpha);
+            if (starStyle == StarStyle::PointSpreadFunction)
+            {
+                // Linear-radiance PSF renderer.  The shader receives a
+                // per-vertex peak radiance (cone volume = 1/3 base area
+                // x peak):  peakRad = exposure * 3 * irradiance / (pi * r^2).
+                // Irradiance is in the Vega-normalised system; the constant
+                // SI conversion factor is absorbed by the framebuffer
+                // exposure.  Per-frame constants (psf.peakRadScale,
+                // psf.minPeak, psf.glowA, psf.glowPeakLargeThreshold) are
+                // precomputed in renderPointStars so the inner loop only
+                // does the per-star irradiance and green normalisation.
 
-            if (glareSize != 0.0f)
-                glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
-            if (pointSize != 0.0f)
-                starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
+                float irradiance = astro::magToIrradiance(appMag);
+                float peakRad    = psf.peakRadScale * irradiance;
+
+                // Normalise the star colour against its green channel
+                // (with a saturation floor) so the brightest channel
+                // can't blow out the per-vertex UByte attribute.  The
+                // 1/green factor gets folded into peakRadiance so the
+                // shader's color * peak still equals the original
+                // unnormalised (color * peak).
+                float greenScale = 1.0f;
+                Color linearStarColor = psfGreenNormalization(starColor, 0.1f, greenScale);
+                float peakRadCol = peakRad * greenScale;
+
+                // Point (cone) contribution
+                if (peakRadCol > psf.minPeak)
+                    psf.pointBuffer->addStar(relPos, linearStarColor, peakRadCol);
+
+                // Glow (eye-PSF) contribution, additive on top of the point cone
+                if (peakRadCol > 1.0f && psf.optimization > 0.0f)
+                {
+                    // Soft-clip very bright stars so the eye-PSF radius
+                    // stays bounded.  Without this, a single bright star
+                    // (or a high faintest-magnitude setting) produces a
+                    // runaway bloom that washes out the whole frame.
+                    float glowPeak = peakRadCol;
+                    if (psf.maxIrradiance > 0.0f)
+                    {
+                        glowPeak = (1.0f - 1.0f / (peakRadCol / psf.maxIrradiance + 1.0f))
+                                   * psf.maxIrradiance;
+                    }
+
+                    // Fast path: compare glowPeak against the precomputed
+                    // threshold instead of computing sizePhys = 2*pow(glowPeak,0.4)/a*pointScale
+                    // and comparing to maxPointSize.  Only the rare
+                    // oversize fallback actually needs the pow.
+                    if (glowPeak > psf.glowPeakLargeThreshold
+                        && psf.glowLargeRenderer != nullptr
+                        && psf.proj != nullptr && psf.modelView != nullptr)
+                    {
+                        float rGlowLog = std::pow(glowPeak, 0.4f) / psf.glowA;
+                        float sizePhys = 2.0f * rGlowLog * psf.pointScale;
+
+                        // Flush the in-flight PSF buffers first; the
+                        // billboard renderer binds its own program and
+                        // would otherwise strand a half-filled buffer.
+                        renderer->starPipelineOwner().flush();
+                        Matrices mvp { psf.proj, psf.modelView };
+                        psf.glowLargeRenderer->render(relPos,
+                                                      linearStarColor,
+                                                      glowPeak,
+                                                      psf.pointRadius,
+                                                      psf.optimization,
+                                                      sizePhys,
+                                                      mvp);
+                    }
+                    else
+                    {
+                        psf.glowBuffer->addStar(relPos, linearStarColor, glowPeak);
+                    }
+                }
+            }
+            else
+            {
+                float pointSize, alpha, glareSize, glareAlpha;
+                float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
+                renderer->calculatePointSize(appMag,
+                                             size,
+                                             pointSize,
+                                             alpha,
+                                             glareSize,
+                                             glareAlpha);
+
+                if (glareSize != 0.0f)
+                    glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
+                if (pointSize != 0.0f)
+                    starVertexBuffer->addStar(relPos, Color(starColor, alpha), pointSize);
+            }
 
             // Place labels for stars brighter than the specified label threshold brightness
             if (util::is_set(labelMode, RenderLabels::StarLabels) && appMag < labelThresholdMag)

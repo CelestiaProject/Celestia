@@ -703,6 +703,10 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     appCore->getRenderer()->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
     appCore->getRenderer()->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
+    appCore->getRenderer()->setStarPointRadius(appCore->getConfig()->renderDetails.stars.pointRadius);
+    appCore->getRenderer()->setStarOptimization(appCore->getConfig()->renderDetails.stars.optimization);
+    appCore->getRenderer()->setStarMaxIrradiance(appCore->getConfig()->renderDetails.stars.maxIrradiance);
+    appCore->getRenderer()->setStarExposure(appCore->getConfig()->renderDetails.stars.exposure);
 
     auto cursorHandler = std::make_unique<WinCursorHandler>(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler.get());

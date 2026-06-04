@@ -121,6 +121,16 @@ private slots:
     void on_pointStarsButton_clicked() const;
     void on_scaledDiscsButton_clicked() const;
     void on_fuzzyPointStarsButton_clicked() const;
+    void on_psfStarsButton_clicked() const;
+    void on_psfRadiusSpinBox_valueChanged(double) const;
+    void on_psfOptimizationSpinBox_valueChanged(double) const;
+    void on_psfMaxIrradianceSpinBox_valueChanged(double) const;
+    void on_psfExposureSpinBox_valueChanged(double) const;
+
+private:
+    void updatePsfControlsVisibility() const;
+
+private slots:
     void on_autoMagnitudeCheck_stateChanged(int state);
 
     void on_starColorBox_currentIndexChanged(int index);

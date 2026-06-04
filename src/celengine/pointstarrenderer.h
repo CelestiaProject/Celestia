@@ -14,11 +14,16 @@
 
 #include <Eigen/Core>
 
+#include <celutil/color.h>
+
 #include "objectrenderer.h"
+#include "renderflags.h"
 #include "renderlistentry.h"
 
 class ColorTemperatureTable;
 class PointStarVertexBuffer;
+namespace celestia::render { class PsfGlowLargeRenderer; }
+namespace celestia::render { class PsfStarVertexBuffer; }
 class Star;
 class StarDatabase;
 
@@ -33,6 +38,37 @@ constexpr inline float GlareOpacity          = 0.65f;
 class PointStarRenderer : public ObjectRenderer<Star, float>
 {
 public:
+    // PSF-specific configuration and per-frame state, grouped to keep
+    // PointStarRenderer's top-level field count manageable.
+    struct PsfState
+    {
+        celestia::render::PsfStarVertexBuffer*  pointBuffer       { nullptr };
+        celestia::render::PsfStarVertexBuffer*  glowBuffer        { nullptr };
+        celestia::render::PsfGlowLargeRenderer* glowLargeRenderer { nullptr };
+
+        // Projection/modelview used by the large-glow fallback for
+        // far-star PSF blooms whose gl_PointSize would exceed the
+        // driver's maximum.  Same matrices the psf glow buffer flushes
+        // against.
+        const Eigen::Matrix4f* proj      { nullptr };
+        const Eigen::Matrix4f* modelView { nullptr };
+
+        // User-facing parameters (set per-frame from Renderer state).
+        float pointRadius    { 1.5f };   // px
+        float pointScale     { 1.0f };   // DPI scale
+        float optimization   { 0.1f };
+        float maxIrradiance  { 0.0f };   // 0 = disabled
+        float exposure       { 1.0f };
+
+        // Per-frame derived constants, hoisted out of process() to keep
+        // the per-star inner loop tight.  Filled in renderPointStars
+        // before findVisibleStars runs.
+        float peakRadScale          { 0.0f }; // exposure * 3 / (pi * r^2)
+        float minPeak               { 0.0f }; // fade-in cutoff
+        float glowA                 { 0.0f }; // optimization / r
+        float glowPeakLargeThreshold{ 0.0f }; // glowPeak above which sizePhys > maxPointSize
+    };
+
     PointStarRenderer();
     void process(const Star &star, float distance, float appMag) override;
 
@@ -45,4 +81,7 @@ public:
     const ColorTemperatureTable* colorTemp      { nullptr };
     float SolarSystemMaxDistance                { 1.0f };
     float cosFOV                                { 1.0f };
+
+    StarStyle starStyle                         { StarStyle::FuzzyPointStars };
+    PsfState  psf;
 };

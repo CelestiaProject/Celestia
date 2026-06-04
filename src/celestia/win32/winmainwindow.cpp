@@ -943,6 +943,11 @@ MainWindow::command(WPARAM wParam, LPARAM lParam)
         SyncMenusWithRendererState(appCore, menuBar);
         break;
 
+    case ID_RENDER_STARSTYLE_PSF:
+        appCore->getRenderer()->setStarStyle(StarStyle::PointSpreadFunction);
+        SyncMenusWithRendererState(appCore, menuBar);
+        break;
+
     case ID_STARCOLOR_CLASSIC:
         appCore->getRenderer()->setStarColorTable(ColorTableType::Enhanced);
         SyncMenusWithRendererState(appCore, menuBar);
@@ -1675,6 +1680,8 @@ SyncMenusWithRendererState(CelestiaCore* appCore, HMENU menuBar)
                   style == StarStyle::PointStars ? MF_CHECKED : MF_UNCHECKED);
     CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_DISCS,
                   style == StarStyle::ScaledDiscStars ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(menuBar, ID_RENDER_STARSTYLE_PSF,
+                  style == StarStyle::PointSpreadFunction ? MF_CHECKED : MF_UNCHECKED);
 
     auto colorType = appCore->getRenderer()->getStarColorTable();
     CheckMenuItem(menuBar, ID_STARCOLOR_CLASSIC, colorType == ColorTableType::Enhanced ? MF_CHECKED : MF_UNCHECKED);

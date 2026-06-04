@@ -17,11 +17,10 @@
 #include "render.h"
 #include "texture.h"
 #include "pointstarvertexbuffer.h"
+#include "starpipelineowner.h"
 
 namespace gl = celestia::gl;
 namespace util = celestia::util;
-
-PointStarVertexBuffer* PointStarVertexBuffer::current = nullptr;
 
 PointStarVertexBuffer::PointStarVertexBuffer(const Renderer &renderer,
                                              capacity_t capacity) :
@@ -69,11 +68,11 @@ void PointStarVertexBuffer::render()
 
 void PointStarVertexBuffer::makeCurrent()
 {
-    if (current == this || m_prog == nullptr)
+    auto &owner = m_renderer.starPipelineOwner();
+    if (owner.isActive(this) || m_prog == nullptr)
         return;
 
-    if (current != nullptr)
-        current->finish();
+    owner.setActive(this);  // flushes whoever held the pipeline before
 
     setupVertexArrayObject();
 
@@ -88,7 +87,6 @@ void PointStarVertexBuffer::makeCurrent()
         m_prog->pointScale = m_pointScale;
         glVertexAttrib1f(CelestiaGLProgram::PointSizeAttributeIndex, 1.0f);
     }
-    current = this;
 }
 
 void PointStarVertexBuffer::setupVertexArrayObject()
@@ -151,7 +149,7 @@ void PointStarVertexBuffer::setupVertexArrayObject()
 void PointStarVertexBuffer::finish()
 {
     render();
-    current = nullptr;
+    m_renderer.starPipelineOwner().clearIfActive(this);
 }
 
 void PointStarVertexBuffer::enable()
