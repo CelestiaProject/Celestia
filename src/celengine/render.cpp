@@ -5084,8 +5084,10 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
             float nearZcoeff = std::cos(math::degToRad(fov / 2.0f)) * (static_cast<float>(viewportHeight) / maxSpan);
             nearZ = -nearZ * nearZcoeff;
 
+            // Use MinNearPlaneDistance as the floor; the old `radius/2000`
+            // fallback hid the surface at low altitudes on large bodies.
             if (nearZ > -MinNearPlaneDistance)
-                ri.nearZ = -max(MinNearPlaneDistance, radius / 2000.0f);
+                ri.nearZ = -MinNearPlaneDistance;
             else
                 ri.nearZ = nearZ;
 
@@ -5097,9 +5099,6 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
             }
             else
             {
-                // Make the far plane as close as possible
-                float d = center.norm();
-
                 // Account for ellipsoidal objects
                 float eradius = radius;
                 if (ri.renderableType == RenderListEntry::RenderableBody)
@@ -5108,23 +5107,25 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
                     eradius *= minSemiAxis / radius;
                 }
 
-                if (d > eradius)
+                // With an atmosphere, the shell wraps the camera and extends
+                // far past the planet horizon; use the back of the cloud-
+                // extended bounding sphere. Without one, the horizon tangent
+                // is tight and continuous in d.
+                if (cloudHeight > 0.0f)
                 {
-                    ri.farZ = ri.centerZ - ri.radius;
+                    float cloudLayerRadius = eradius + cloudHeight;
+                    ri.farZ = center.z() - cloudLayerRadius
+                            - std::sqrt(math::square(cloudLayerRadius)
+                                        - math::square(eradius));
                 }
                 else
                 {
-                    // We're inside the bounding sphere (and, if the planet
-                    // is spherical, inside the planet.)
-                    ri.farZ = ri.nearZ * 2.0f;
-                }
-
-                if (cloudHeight > 0.0f)
-                {
-                    // If there's a cloud layer, we need to move the
-                    // far plane out so that the clouds aren't clipped
-                    float cloudLayerRadius = eradius + cloudHeight;
-                    ri.farZ -= sqrt(math::square(cloudLayerRadius) - math::square(eradius));
+                    float d = center.norm();
+                    float tangentSq = math::square(d) - math::square(eradius);
+                    float horizon = tangentSq > 0.0f
+                                      ? std::sqrt(tangentSq) * 1.1f
+                                      : MinNearPlaneDistance;
+                    ri.farZ = -horizon;
                 }
             }
 
