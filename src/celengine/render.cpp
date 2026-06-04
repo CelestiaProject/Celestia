@@ -3132,7 +3132,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         }
         rle.radius = body.getRadius();
         if (const RingSystem* rings = bodyFeaturesManager->getRings(&body); rings != nullptr)
-            rle.radius += rings->outerRadius;
+            rle.radius = std::max(rle.radius, rings->outerRadius);
         renderList.push_back(rle);
     }
 
