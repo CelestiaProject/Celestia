@@ -27,12 +27,6 @@ LegacyLargeStarRenderer::~LegacyLargeStarRenderer() = default;
 void
 LegacyLargeStarRenderer::onMakeCurrent(const Eigen::Vector2f &viewportRcp)
 {
-    Renderer::PipelineState ps;
-    ps.blending  = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
-    ps.depthTest = true;
-    renderer().setPipelineState(ps);
-
     if (m_texture != nullptr)
         m_texture->bind();
 

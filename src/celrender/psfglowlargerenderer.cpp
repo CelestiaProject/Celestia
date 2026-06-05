@@ -13,7 +13,6 @@
 
 #include <celcompat/numbers.h>
 #include <celengine/glsupport.h>
-#include <celengine/render.h>
 #include <celengine/shadermanager.h>
 
 namespace celestia::render
@@ -29,11 +28,6 @@ PsfGlowLargeRenderer::~PsfGlowLargeRenderer() = default;
 void
 PsfGlowLargeRenderer::onMakeCurrent(const Eigen::Vector2f &viewportRcp)
 {
-    Renderer::PipelineState ps;
-    ps.blending  = true;
-    ps.blendFunc = {GL_ONE, GL_ONE};
-    renderer().setPipelineState(ps);
-
     float a     = (m_pointRadius > 0.0f) ? (m_optimization / m_pointRadius) : 0.0f;
     float denom = (celestia::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
     float b     = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
