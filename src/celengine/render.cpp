@@ -63,7 +63,7 @@
 #include <celrender/boundariesrenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
-#include <celrender/largestarrenderer.h>
+#include <celrender/legacylargestarrenderer.h>
 #include <celrender/psfglowlargerenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/galaxyrenderer.h>
@@ -177,8 +177,8 @@ Renderer::Renderer() :
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
     m_galaxyRenderer(std::make_unique<GalaxyRenderer>(*this)),
     m_globularRenderer(std::make_unique<GlobularRenderer>(*this)),
-    m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
-    m_largeGlareRenderer(std::make_unique<LargeStarRenderer>(*this)),
+    m_legacyLargeStarRenderer(std::make_unique<LegacyLargeStarRenderer>(*this)),
+    m_legacyLargeGlareRenderer(std::make_unique<LegacyLargeStarRenderer>(*this)),
     m_psfGlowLargeRenderer(std::make_unique<PsfGlowLargeRenderer>(*this)),
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
@@ -428,8 +428,8 @@ bool Renderer::init(int winWidth, int winHeight,
     m_gaussianDiscTex = BuildGaussianDiscTexture(8);
     m_gaussianGlareTex = BuildGaussianGlareTexture(9);
 
-    m_largeStarRenderer->setTexture(m_gaussianDiscTex.get());
-    m_largeGlareRenderer->setTexture(m_gaussianGlareTex.get());
+    m_legacyLargeStarRenderer->setTexture(m_gaussianDiscTex.get());
+    m_legacyLargeGlareRenderer->setTexture(m_gaussianGlareTex.get());
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -1694,7 +1694,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         m_gaussianDiscTex->bind();
 
     if (pointSize > gl::maxPointSize)
-        m_largeStarRenderer->addStar(position, {color, alpha}, pointSize);
+        m_legacyLargeStarRenderer->addStar(position, {color, alpha}, pointSize);
     else
         pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
 
@@ -1709,7 +1709,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         Eigen::Vector3f center = calculateQuadCenter(getCameraOrientationf(), position, radius);
         m_gaussianGlareTex->bind();
         if (glareSize > gl::maxPointSize)
-            m_largeGlareRenderer->addStar(center, {color, glareAlpha}, glareSize);
+            m_legacyLargeGlareRenderer->addStar(center, {color, glareAlpha}, glareSize);
         else
             glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
     }
@@ -5401,8 +5401,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
     auto annotation = depthSortedAnnotations.begin();
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
     int i = static_cast<int>(renderList.size()) - 1;
-    m_largeStarRenderer->start();
-    m_largeGlareRenderer->start();
+    m_legacyLargeStarRenderer->start();
+    m_legacyLargeGlareRenderer->start();
     for (int interval = 0; interval < nIntervals; interval++)
     {
         currentIntervalIndex = interval;
@@ -5494,8 +5494,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         pointStarVertexBuffer->finish();
         PointStarVertexBuffer::disable();
 
-        m_largeStarRenderer->render();
-        m_largeGlareRenderer->render();
+        m_legacyLargeStarRenderer->render();
+        m_legacyLargeGlareRenderer->render();
 
         // Drain any close-star PSF point-sprites added by
         // Drain any close-star PSF point-sprites added by
@@ -5530,8 +5530,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         endObjectAnnotations();
     }
 
-    m_largeStarRenderer->finish();
-    m_largeGlareRenderer->finish();
+    m_legacyLargeStarRenderer->finish();
+    m_legacyLargeGlareRenderer->finish();
 
     // reset the depth range
     glDepthRange(0, 1);

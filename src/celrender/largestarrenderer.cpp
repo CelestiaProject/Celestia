@@ -15,13 +15,12 @@
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
-#include <celengine/texture.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/array_view.h>
 #include <celutil/color.h>
 
-namespace gl  = celestia::gl;
+namespace gl   = celestia::gl;
 namespace util = celestia::util;
 
 namespace celestia::render
@@ -35,6 +34,8 @@ struct Corner
     unsigned char u, v;
 };
 
+// 6-vertex quad: two triangles, corner ∈ ±1.0, uv ∈ {0,1}.  Subclasses
+// pick the unflipped or v-flipped UVs to match their texture orientation.
 constexpr std::array<Corner, 6> kQuadCorners = {{
     { -127,  127, 0, 0   },
     { -127, -127, 0, 255 },
@@ -45,9 +46,14 @@ constexpr std::array<Corner, 6> kQuadCorners = {{
 }};
 } // namespace
 
-LargeStarRenderer::LargeStarRenderer(Renderer &renderer, capacity_t capacity) :
+LargeStarRenderer::LargeStarRenderer(Renderer    &renderer,
+                                               StaticShader shaderId,
+                                               capacity_t   capacity,
+                                               bool         flipV) :
     m_renderer(renderer),
+    m_shaderId(shaderId),
     m_capacity(capacity),
+    m_flipV(flipV),
     m_vertices(static_cast<std::size_t>(capacity) * 6)
 {
 }
@@ -57,7 +63,7 @@ LargeStarRenderer::~LargeStarRenderer() = default;
 void
 LargeStarRenderer::start()
 {
-    m_prog = m_renderer.getShaderManager().getShader(StaticShader::LargeStar);
+    m_prog   = m_renderer.getShaderManager().getShader(m_shaderId);
     m_nStars = 0;
 }
 
@@ -93,20 +99,9 @@ LargeStarRenderer::makeCurrent()
 
     owner.setActive(this);
 
-    // Match the pipeline state callers used to set per-draw.
-    Renderer::PipelineState ps;
-    ps.blending  = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE};
-    ps.depthTest = true;
-    m_renderer.setPipelineState(ps);
-
-    if (m_texture != nullptr)
-        m_texture->bind();
-
     setupVertexArrayObject();
 
     m_prog->use();
-    m_prog->samplerParam("starTex") = 0;
     m_prog->setMVPMatrices(m_renderer.getCurrentProjectionMatrix(),
                            m_renderer.getCurrentModelViewMatrix());
 
@@ -114,7 +109,8 @@ LargeStarRenderer::makeCurrent()
     m_renderer.getViewport(vp);
     float invW = (vp[2] > 0) ? (1.0f / static_cast<float>(vp[2])) : 0.0f;
     float invH = (vp[3] > 0) ? (1.0f / static_cast<float>(vp[3])) : 0.0f;
-    m_prog->vec2Param("viewportRcp") = Eigen::Vector2f(invW, invH);
+
+    onMakeCurrent(Eigen::Vector2f(invW, invH));
 }
 
 void
@@ -171,13 +167,13 @@ LargeStarRenderer::setupVertexArrayObject()
         gl::VertexObject::DataType::Float,
         false,
         sizeof(StarVertex),
-        offsetof(StarVertex, size));
+        offsetof(StarVertex, scalar));
 }
 
 void
 LargeStarRenderer::addStar(const Eigen::Vector3f &center,
-                           const Color           &color,
-                           float                  size)
+                                const Color           &color,
+                                float                  scalar)
 {
     if (m_nStars < m_capacity)
     {
@@ -188,19 +184,18 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
         for (std::size_t i = 0; i < 6; ++i)
         {
             out[i].center = center;
-            out[i].size   = size;
+            out[i].scalar = scalar;
             out[i].color  = packedColor;
             out[i].corner = { kQuadCorners[i].x, kQuadCorners[i].y };
-            out[i].uv     = { kQuadCorners[i].u, kQuadCorners[i].v };
+            unsigned char v = m_flipV ? static_cast<unsigned char>(255 - kQuadCorners[i].v)
+                                      : kQuadCorners[i].v;
+            out[i].uv     = { kQuadCorners[i].u, v };
         }
         m_nStars++;
     }
 
     if (m_nStars == m_capacity)
-    {
         render();
-        m_nStars = 0;
-    }
 }
 
 } // namespace celestia::render

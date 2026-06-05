@@ -9,83 +9,30 @@
 
 #pragma once
 
-#include <array>
-#include <memory>
-#include <vector>
-
-#include <Eigen/Core>
-
-#include <celengine/starpipelineowner.h>
-
-class Color;
-class Renderer;
-class CelestiaGLProgram;
-
-namespace celestia::gl
-{
-class Buffer;
-class VertexObject;
-} // namespace celestia::gl
+#include <celrender/largestarrenderer.h>
 
 namespace celestia::render
 {
 
 // Batched billboard renderer for PSF glow stars whose gl_PointSize
-// would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.  Each star
-// is expanded to a 6-vertex quad and submitted with the rest of the
-// frame's large glows in a single draw.
-class PsfGlowLargeRenderer : public StarPipelineFlushable
+// would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.
+class PsfGlowLargeRenderer : public LargeStarRenderer
 {
 public:
-    using capacity_t = unsigned int;
-
     explicit PsfGlowLargeRenderer(Renderer &renderer, capacity_t capacity = 2048);
     ~PsfGlowLargeRenderer() override;
 
-    PsfGlowLargeRenderer() = delete;
-    PsfGlowLargeRenderer(const PsfGlowLargeRenderer&) = delete;
-    PsfGlowLargeRenderer(PsfGlowLargeRenderer&&) = delete;
-    PsfGlowLargeRenderer& operator=(const PsfGlowLargeRenderer&) = delete;
-    PsfGlowLargeRenderer& operator=(PsfGlowLargeRenderer&&) = delete;
-
-    void start();
-    void render();
-    void finish() override;
-
-    void addStar(const Eigen::Vector3f &center,
-                 const Color           &linearColor,
-                 float                  peakRadiance);
-
-    void setPointRadius(float r)    { m_pointRadius = r; }
+    void setPointRadius(float r)    { m_pointRadius  = r; }
     void setOptimization(float opt) { m_optimization = opt; }
-    void setPointScale(float scale) { m_pointScale = scale; }
+    void setPointScale(float scale) { m_pointScale   = scale; }
+
+protected:
+    void onMakeCurrent(const Eigen::Vector2f &viewportRcp) override;
 
 private:
-    struct StarVertex
-    {
-        Eigen::Vector3f              center;
-        float                        peakRadiance;
-        std::array<unsigned char, 4> color;
-        std::array<signed char, 2>   corner;  // ±64  -> ±0.5  (signed byte normalized)
-        std::array<unsigned char, 2> uv;      // 0/255 -> 0/1  (unsigned byte normalized)
-    };
-
-    void makeCurrent();
-    void setupVertexArrayObject();
-
-    Renderer                       &m_renderer;
-    capacity_t                      m_capacity;
-    capacity_t                      m_nStars        { 0 };
-    std::vector<StarVertex>         m_vertices;
-
-    float                           m_pointRadius   { 1.5f };
-    float                           m_optimization  { 0.1f };
-    float                           m_pointScale    { 1.0f };
-
-    CelestiaGLProgram              *m_prog          { nullptr };
-    std::unique_ptr<gl::Buffer>     m_bo;
-    std::unique_ptr<gl::VertexObject> m_vo;
-    bool                            m_initialized   { false };
+    float m_pointRadius  { 1.5f };
+    float m_optimization { 0.1f };
+    float m_pointScale   { 1.0f };
 };
 
 } // namespace celestia::render

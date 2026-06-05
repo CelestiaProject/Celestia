@@ -763,8 +763,8 @@ class Renderer
     std::unique_ptr<celestia::render::EclipticLineRenderer> m_eclipticLineRenderer;
     std::unique_ptr<celestia::render::GalaxyRenderer> m_galaxyRenderer;
     std::unique_ptr<celestia::render::GlobularRenderer> m_globularRenderer;
-    std::unique_ptr<celestia::render::LargeStarRenderer> m_largeStarRenderer;
-    std::unique_ptr<celestia::render::LargeStarRenderer> m_largeGlareRenderer;
+    std::unique_ptr<celestia::render::LegacyLargeStarRenderer> m_legacyLargeStarRenderer;
+    std::unique_ptr<celestia::render::LegacyLargeStarRenderer> m_legacyLargeGlareRenderer;
     std::unique_ptr<celestia::render::PsfGlowLargeRenderer> m_psfGlowLargeRenderer;
     std::unique_ptr<celestia::render::LineRenderer> m_hollowMarkerRenderer;
     std::unique_ptr<celestia::render::NebulaRenderer> m_nebulaRenderer;

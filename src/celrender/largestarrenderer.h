@@ -19,8 +19,8 @@
 
 class Color;
 class Renderer;
-class Texture;
 class CelestiaGLProgram;
+enum class StaticShader;
 
 namespace celestia::gl
 {
@@ -31,16 +31,16 @@ class VertexObject;
 namespace celestia::render
 {
 
-// Batched textured-billboard renderer for point-sprite stars whose
-// gl_PointSize would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.
+// Shared infrastructure for batched billboard renderers that draw point
+// stars whose gl_PointSize would exceed GL_ALIASED_POINT_SIZE_RANGE.
 // Each star expands to a 6-vertex quad and the whole frame's oversized
-// stars draw in a single call.
+// stars draw in a single call.  Subclasses supply the shader id and the
+// per-frame GL/shader configuration via onMakeCurrent().
 class LargeStarRenderer : public StarPipelineFlushable
 {
 public:
     using capacity_t = unsigned int;
 
-    explicit LargeStarRenderer(Renderer &renderer, capacity_t capacity = 512);
     ~LargeStarRenderer() override;
 
     LargeStarRenderer() = delete;
@@ -53,34 +53,43 @@ public:
     void render();
     void finish() override;
 
-    void addStar(const Eigen::Vector3f &center, const Color &color, float size);
+    void addStar(const Eigen::Vector3f &center, const Color &color, float scalar);
 
-    void setTexture(Texture *texture) { m_texture = texture; }
+protected:
+    LargeStarRenderer(Renderer &renderer, StaticShader shaderId, capacity_t capacity, bool flipV = false);
+
+    Renderer&          renderer() noexcept       { return m_renderer; }
+    CelestiaGLProgram* program()  const noexcept { return m_prog; }
+
+    // Called from makeCurrent() after the program is bound and MVP set.
+    // Derived classes set pipeline state, bind textures, and assign
+    // shader-specific uniforms.
+    virtual void onMakeCurrent(const Eigen::Vector2f &viewportRcp) = 0;
 
 private:
     struct StarVertex
     {
         Eigen::Vector3f              center;
-        float                        size;
+        float                        scalar;  // peak radiance or pixel size
         std::array<unsigned char, 4> color;
-        std::array<signed char, 2>   corner;  // ±64  -> ±0.5  (signed byte normalized)
-        std::array<unsigned char, 2> uv;      // 0/255 -> 0/1  (unsigned byte normalized)
+        std::array<signed char, 2>   corner;  // ±127 -> ±1.0 (signed byte normalized)
+        std::array<unsigned char, 2> uv;      // 0/255 -> 0/1 (unsigned byte normalized)
     };
 
     void makeCurrent();
     void setupVertexArrayObject();
 
-    Renderer                       &m_renderer;
-    capacity_t                      m_capacity;
-    capacity_t                      m_nStars        { 0 };
-    std::vector<StarVertex>         m_vertices;
+    Renderer                         &m_renderer;
+    StaticShader                      m_shaderId;
+    capacity_t                        m_capacity;
+    capacity_t                        m_nStars      { 0 };
+    bool                              m_flipV;
+    std::vector<StarVertex>           m_vertices;
 
-    Texture                        *m_texture       { nullptr };
-
-    CelestiaGLProgram              *m_prog          { nullptr };
-    std::unique_ptr<gl::Buffer>     m_bo;
+    CelestiaGLProgram                *m_prog        { nullptr };
+    std::unique_ptr<gl::Buffer>       m_bo;
     std::unique_ptr<gl::VertexObject> m_vo;
-    bool                            m_initialized   { false };
+    bool                              m_initialized { false };
 };
 
 } // namespace celestia::render
