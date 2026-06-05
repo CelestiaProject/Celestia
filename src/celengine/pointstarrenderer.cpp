@@ -156,8 +156,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
 
                     // Oversize glows go to the batched billboard renderer;
                     // everything smaller stays on the point-sprite path.
-                    if (glowPeak > psf.glowPeakLargeThreshold
-                        && psf.glowLargeRenderer != nullptr)
+                    if (glowPeak > psf.glowPeakLargeThreshold)
                     {
                         psf.glowLargeRenderer->addStar(relPos, linearStarColor, glowPeak);
                     }

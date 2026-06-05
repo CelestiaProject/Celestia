@@ -35,10 +35,7 @@ void main(void)
 
     set_vp(vec4(in_Normal, 1.0));
 
-    // sizePhys is the full diameter in pixels (matches CPU formula in the
-    // pre-batched path).  Convert to clip-space extent and offset by corner.
-    float p04      = pow(max(in_Intensity, 1e-6), 0.4);
-    float sizePhys = 2.0 * p04 / max(psfA, 1e-6) * psfPointScale;
+    float sizePhys = 2.0 * pow(in_Intensity, 0.4) / psfA * psfPointScale;
     vec2  extent   = 2.0 * sizePhys * psfViewportRcp;
     gl_Position.xy += in_Position * extent * gl_Position.w;
 }
