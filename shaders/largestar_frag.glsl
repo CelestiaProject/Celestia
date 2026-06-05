@@ -1,9 +1,9 @@
 uniform sampler2D starTex;
-uniform vec4 color;
 
 in vec2 texCoord;
+in vec4 v_color;
 
 void main(void)
 {
-    fragColor = texture(starTex, texCoord) * color;
+    fragColor = texture(starTex, texCoord) * v_color;
 }

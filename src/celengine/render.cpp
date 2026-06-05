@@ -178,6 +178,7 @@ Renderer::Renderer() :
     m_galaxyRenderer(std::make_unique<GalaxyRenderer>(*this)),
     m_globularRenderer(std::make_unique<GlobularRenderer>(*this)),
     m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
+    m_largeGlareRenderer(std::make_unique<LargeStarRenderer>(*this)),
     m_psfGlowLargeRenderer(std::make_unique<PsfGlowLargeRenderer>(*this)),
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
@@ -426,6 +427,9 @@ bool Renderer::init(int winWidth, int winHeight,
 
     m_gaussianDiscTex = BuildGaussianDiscTexture(8);
     m_gaussianGlareTex = BuildGaussianGlareTexture(9);
+
+    m_largeStarRenderer->setTexture(m_gaussianDiscTex.get());
+    m_largeGlareRenderer->setTexture(m_gaussianGlareTex.get());
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -1690,7 +1694,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         m_gaussianDiscTex->bind();
 
     if (pointSize > gl::maxPointSize)
-        m_largeStarRenderer->render(position, {color, alpha}, pointSize, mvp);
+        m_largeStarRenderer->addStar(position, {color, alpha}, pointSize);
     else
         pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
 
@@ -1705,7 +1709,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         Eigen::Vector3f center = calculateQuadCenter(getCameraOrientationf(), position, radius);
         m_gaussianGlareTex->bind();
         if (glareSize > gl::maxPointSize)
-            m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
+            m_largeGlareRenderer->addStar(center, {color, glareAlpha}, glareSize);
         else
             glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
     }
@@ -5398,6 +5402,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
     auto annotation = depthSortedAnnotations.begin();
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
     int i = static_cast<int>(renderList.size()) - 1;
+    m_largeStarRenderer->start();
+    m_largeGlareRenderer->start();
     for (int interval = 0; interval < nIntervals; interval++)
     {
         currentIntervalIndex = interval;
@@ -5489,6 +5495,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         pointStarVertexBuffer->finish();
         PointStarVertexBuffer::disable();
 
+        m_largeStarRenderer->render();
+        m_largeGlareRenderer->render();
+
         // Drain any close-star PSF point-sprites added by
         // Drain any close-star PSF point-sprites added by
         // renderObjectAsPoint during renderItem above.  Uses the current
@@ -5521,6 +5530,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                              FontStyle::Normal);
         endObjectAnnotations();
     }
+
+    m_largeStarRenderer->finish();
+    m_largeGlareRenderer->finish();
 
     // reset the depth range
     glDepthRange(0, 1);
