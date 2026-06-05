@@ -452,11 +452,10 @@ bool Renderer::init(int winWidth, int winHeight,
 
 void Renderer::resize(int width, int height)
 {
-    windowWidth = width;
-    windowHeight = height;
-    projectionMode->setSize(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
-    // glViewport(windowWidth, windowHeight);
-    m_orthoProjMatrix = math::Ortho2D(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    viewportWidth = width;
+    viewportHeight = height;
+    projectionMode->setSize(static_cast<float>(viewportWidth), static_cast<float>(viewportHeight));
+    m_orthoProjMatrix = math::Ortho2D(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
 }
 
 void Renderer::setFieldOfView(float _fov)
@@ -468,16 +467,6 @@ void Renderer::setFieldOfView(float _fov)
 int Renderer::getScreenDpi() const
 {
     return screenDpi;
-}
-
-int Renderer::getWindowWidth() const
-{
-    return windowWidth;
-}
-
-int Renderer::getWindowHeight() const
-{
-    return windowHeight;
 }
 
 void Renderer::setScreenDpi(int _dpi)
@@ -503,12 +492,12 @@ float Renderer::getScaleFactor() const
 
 float Renderer::getPointWidth() const
 {
-    return 2.0f / windowWidth * getScaleFactor();
+    return 2.0f / static_cast<float>(viewportWidth) * getScaleFactor();
 }
 
 float Renderer::getPointHeight() const
 {
-    return 2.0f / windowHeight * getScaleFactor();
+    return 2.0f / static_cast<float>(viewportHeight) * getScaleFactor();
 }
 
 void Renderer::setFaintestAM45deg(float _faintestAutoMag45deg)
@@ -771,7 +760,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                              float size,
                              bool special)
 {
-    std::array<int, 4> view{ 0, 0, windowWidth, windowHeight };
+    std::array<int, 4> view{ 0, 0, viewportWidth, viewportHeight };
     Vector3f win;
     bool success = projectionMode->project(pos, m_modelMatrix, m_projMatrix, m_MVPMatrix, view, win);
     if (success)
@@ -3963,7 +3952,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.labelMode        = labelMode;
 
     dsoRenderer.frustum = projectionMode->getInfiniteFrustum(MinNearPlaneDistance, observer.getZoom());
-    // Use pixelSize * screenDpi instead of FoV, to eliminate windowHeight dependence.
+    // Use pixelSize * screenDpi instead of FoV, to eliminate viewportHeight dependence.
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
@@ -4808,7 +4797,7 @@ void Renderer::setRenderRegion(int x, int y, int width, int height, bool withSci
 
 float Renderer::getAspectRatio() const
 {
-    return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+    return static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight);
 }
 
 bool Renderer::getInfo(map<string, string>& info) const
@@ -5029,8 +5018,8 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         if (frustum.testSphere(center, cullRadius) != math::FrustumAspect::Outside)
         {
             float nearZ = center.norm() - radius;
-            float maxSpan = hypot((float) windowWidth, (float) windowHeight);
-            float nearZcoeff = cos(math::degToRad(fov / 2.0f)) * ((float) windowHeight / maxSpan);
+            float maxSpan = std::hypot(static_cast<float>(viewportWidth), static_cast<float>(viewportHeight));
+            float nearZcoeff = std::cos(math::degToRad(fov / 2.0f)) * (static_cast<float>(viewportHeight) / maxSpan);
             nearZ = -nearZ * nearZcoeff;
 
             if (nearZ > -MinNearPlaneDistance)
