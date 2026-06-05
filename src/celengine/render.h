@@ -543,7 +543,10 @@ class Renderer
     void addStarAsPsfPoint(const Eigen::Vector3f &position,
                            const Color           &color,
                            float                  appMag,
-                           float                  pointScale);
+                           float                  pointScale,
+                           float                  radius,
+                           float                  discSizeInPixels,
+                           bool                   emissive);
 
     void locationsToAnnotations(const Body& body,
                                 const Eigen::Vector3d& bodyPosition,
