@@ -9,22 +9,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-// Billboard fallback for PSF glow stars - Spencer (1995) photopic PSF in
-// fragment.  Identical math to psfstarglow_frag, but parameterised over the
-// quad's UV instead of gl_PointCoord so we can exceed gl_PointSize limits.
+// Batched billboard fragment shader for PSF glow stars.
 
-uniform vec3  color;
-uniform float peakRadiance;
 uniform float psfA;
 uniform float psfB;
 
-in vec2 v_uv;
+in vec2  v_uv;
+in vec4  v_color;
+in float v_peakRadiance;
 
 void main(void)
 {
-    // r = peak^0.4 / a is the PSF support radius in logical pixels.
-    // The quad spans [-r, +r] in each axis, so px = length(uv - 0.5) * 2 * r.
-    float p04 = pow(max(peakRadiance, 1e-6), 0.4);
+    // r = peak^0.4 / a is the PSF support radius in logical pixels; the
+    // quad spans [-r, +r] so px = length(uv - 0.5) * 2 * r.
+    float p04 = pow(max(v_peakRadiance, 1e-6), 0.4);
     float r   = (psfA > 0.0) ? (p04 / psfA) : 1.0;
 
     vec2  d  = (v_uv - vec2(0.5)) * 2.0 * r;
@@ -37,7 +35,7 @@ void main(void)
         discard;
 
     float val = pow(base * psfB, 2.5);
-    val = clamp(val, 0.0, peakRadiance);
+    val = clamp(val, 0.0, v_peakRadiance);
 
-    fragColor = vec4(color * val, 1.0);
+    fragColor = vec4(v_color.rgb * val, 1.0);
 }

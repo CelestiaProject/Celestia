@@ -63,7 +63,7 @@
 #include <celrender/boundariesrenderer.h>
 #include <celrender/cometrenderer.h>
 #include <celrender/eclipticlinerenderer.h>
-#include <celrender/largestarrenderer.h>
+#include <celrender/legacylargestarrenderer.h>
 #include <celrender/psfglowlargerenderer.h>
 #include <celrender/linerenderer.h>
 #include <celrender/galaxyrenderer.h>
@@ -177,7 +177,8 @@ Renderer::Renderer() :
     m_eclipticLineRenderer(std::make_unique<EclipticLineRenderer>(*this)),
     m_galaxyRenderer(std::make_unique<GalaxyRenderer>(*this)),
     m_globularRenderer(std::make_unique<GlobularRenderer>(*this)),
-    m_largeStarRenderer(std::make_unique<LargeStarRenderer>(*this)),
+    m_legacyLargeStarRenderer(std::make_unique<LegacyLargeStarRenderer>(*this)),
+    m_legacyLargeGlareRenderer(std::make_unique<LegacyLargeStarRenderer>(*this)),
     m_psfGlowLargeRenderer(std::make_unique<PsfGlowLargeRenderer>(*this)),
     m_hollowMarkerRenderer(std::make_unique<LineRenderer>(*this, 1.0f, LineRenderer::PrimType::Lines, LineRenderer::StorageType::Static)),
     m_nebulaRenderer(std::make_unique<NebulaRenderer>(*this)),
@@ -426,6 +427,9 @@ bool Renderer::init(int winWidth, int winHeight,
 
     m_gaussianDiscTex = BuildGaussianDiscTexture(8);
     m_gaussianGlareTex = BuildGaussianGlareTexture(9);
+
+    m_legacyLargeStarRenderer->setTexture(m_gaussianDiscTex.get());
+    m_legacyLargeGlareRenderer->setTexture(m_gaussianGlareTex.get());
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -1633,8 +1637,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
                                    float discSizeInPixels,
                                    const Color &color,
                                    bool useHalos,
-                                   bool emissive,
-                                   const Matrices &mvp)
+                                   bool emissive)
 {
     const bool useScaledDiscs = starStyle == StarStyle::ScaledDiscStars;
     float maxDiscSize = useScaledDiscs ? MaxScaledDiscStarSize : 1.0f;
@@ -1654,7 +1657,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         float psfDiscPx  = 2.0f * std::max(starPointRadius, 1.0e-3f) * pointScale;
         if (psfDiscPx > discSizeInPixels)
         {
-            addStarAsPsfPoint(position, color, appMag, pointScale, mvp);
+            addStarAsPsfPoint(position, color, appMag, pointScale);
             return;
         }
     }
@@ -1690,7 +1693,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         m_gaussianDiscTex->bind();
 
     if (pointSize > gl::maxPointSize)
-        m_largeStarRenderer->render(position, {color, alpha}, pointSize, mvp);
+        m_legacyLargeStarRenderer->addStar(position, {color, alpha}, pointSize);
     else
         pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
 
@@ -1705,7 +1708,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         Eigen::Vector3f center = calculateQuadCenter(getCameraOrientationf(), position, radius);
         m_gaussianGlareTex->bind();
         if (glareSize > gl::maxPointSize)
-            m_largeStarRenderer->render(center, {color, glareAlpha}, glareSize, mvp);
+            m_legacyLargeGlareRenderer->addStar(center, {color, glareAlpha}, glareSize);
         else
             glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
     }
@@ -1715,8 +1718,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 void Renderer::addStarAsPsfPoint(const Vector3f &position,
                                  const Color    &color,
                                  float           appMag,
-                                 float           pointScale,
-                                 const Matrices &mvp)
+                                 float           pointScale)
 {
     // Mirrors the PSF math in PointStarRenderer::process for far stars,
     // but submits to the same psfPointBuffer / psfGlowBuffer with KM-scale
@@ -1724,6 +1726,15 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     // renderSolarSystemObjects, which uses the per-interval (km-scale)
     // projection — this is what lets close stars (e.g. Sol at 1 AU)
     // escape the ly-scale near plane of renderPointStars.
+    //
+    // Pre-set the PSF pipeline state so that an auto-flush from
+    // addStar() (when a buffer fills) draws with the correct blending.
+    Renderer::PipelineState ps;
+    ps.blending  = true;
+    ps.blendFunc = {GL_ONE, GL_ONE};
+    ps.depthTest = true;
+    setPipelineState(ps);
+
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
     float peakRadScale   = exposureFactor * 3.0f
@@ -1762,24 +1773,9 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
 
         if (glowPeak > glowPeakLargeThreshold)
         {
-            float rGlowLog = std::pow(glowPeak, 0.4f) / a;
-            float sizePhys = 2.0f * rGlowLog * pointScale;
-
-            // Oversize glow (typical for very close stars like Sol at 1 AU):
-            // draw synchronously as a clip-space billboard using the current
-            // per-interval MVP.  Flush any PSF-buffer in-flight first: the
-            // billboard renderer binds its own program, and without the
-            // flush the next addStar() would early-return from makeCurrent
-            // (owner still thinks the buffer is active) and draw against
-            // the billboard's program.
-            starPipelineOwner().flush();
-            m_psfGlowLargeRenderer->render(position,
-                                           linearStarColor,
-                                           glowPeak,
-                                           starPointRadius,
-                                           starOptimization,
-                                           sizePhys,
-                                           mvp);
+            // Oversize glow (typical for Sol at ~1 AU): hand it to the
+            // batched billboard renderer.
+            m_psfGlowLargeRenderer->addStar(position, linearStarColor, glowPeak);
         }
         else
         {
@@ -2951,7 +2947,7 @@ void Renderer::renderPlanet(Body& body,
                                 appMag,
                                 discSizeInPixels,
                                 surfaceColor * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
-                                false, false, m);
+                                false, false);
         }
     }
 }
@@ -3023,8 +3019,7 @@ void Renderer::renderStar(const Star& star,
                         appMag,
                         discSizeInPixels,
                         color,
-                        star.hasCorona(), true,
-                        m);
+                        star.hasCorona(), true);
 }
 
 
@@ -3848,10 +3843,14 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         starRenderer.psf.glowBuffer->setPointScale(scale);
         starRenderer.psf.glowBuffer->setPointRadius(starPointRadius);
         starRenderer.psf.glowBuffer->setOptimization(starOptimization);
+        m_psfGlowLargeRenderer->setPointScale(scale);
+        m_psfGlowLargeRenderer->setPointRadius(starPointRadius);
+        m_psfGlowLargeRenderer->setOptimization(starOptimization);
 
         PsfStarVertexBuffer::enable();
         starRenderer.psf.pointBuffer->start(PsfStarVertexBuffer::Mode::Point);
         starRenderer.psf.glowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
+        m_psfGlowLargeRenderer->start();
 
         ps.blendFunc = {GL_ONE, GL_ONE};
 
@@ -3911,6 +3910,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     {
         starRenderer.psf.pointBuffer->finish();
         starRenderer.psf.glowBuffer->finish();
+        m_psfGlowLargeRenderer->finish();
         PsfStarVertexBuffer::disable();
     }
     else
@@ -5408,6 +5408,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
     auto annotation = depthSortedAnnotations.begin();
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
     int i = static_cast<int>(renderList.size()) - 1;
+    m_legacyLargeStarRenderer->start();
+    m_legacyLargeGlareRenderer->start();
     for (int interval = 0; interval < nIntervals; interval++)
     {
         currentIntervalIndex = interval;
@@ -5499,6 +5501,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         pointStarVertexBuffer->finish();
         PointStarVertexBuffer::disable();
 
+        m_legacyLargeStarRenderer->render();
+        m_legacyLargeGlareRenderer->render();
+
         // Drain any close-star PSF point-sprites added by
         // Drain any close-star PSF point-sprites added by
         // renderObjectAsPoint during renderItem above.  Uses the current
@@ -5517,8 +5522,10 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             PsfStarVertexBuffer::enable();
             psfPointBuffer->render();
             psfGlowBuffer->render();
+            m_psfGlowLargeRenderer->render();
             psfPointBuffer->finish();
             psfGlowBuffer->finish();
+            m_psfGlowLargeRenderer->finish();
             PsfStarVertexBuffer::disable();
         }
 
@@ -5529,6 +5536,9 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                              FontStyle::Normal);
         endObjectAnnotations();
     }
+
+    m_legacyLargeStarRenderer->finish();
+    m_legacyLargeGlareRenderer->finish();
 
     // reset the depth range
     glDepthRange(0, 1);

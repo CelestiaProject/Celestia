@@ -9,53 +9,30 @@
 
 #pragma once
 
-#include <memory>
-
-#include <Eigen/Core>
-
-class Color;
-class Renderer;
-struct Matrices;
-
-namespace celestia::gl
-{
-class Buffer;
-class VertexObject;
-} // namespace celestia::gl
+#include <celrender/largestarrenderer.h>
 
 namespace celestia::render
 {
 
-// Billboard-based fallback for PSF glow stars whose computed gl_PointSize
-// would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE upper bound.
-// Draws a per-star quad sized in clip space and runs the Spencer (1995)
-// photopic-PSF math in the fragment shader, identical to the point-sprite
-// path but without the size cap.
-class PsfGlowLargeRenderer
+// Batched billboard renderer for PSF glow stars whose gl_PointSize
+// would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.
+class PsfGlowLargeRenderer : public LargeStarRenderer
 {
 public:
-    explicit PsfGlowLargeRenderer(Renderer &renderer);
-    ~PsfGlowLargeRenderer();
+    explicit PsfGlowLargeRenderer(Renderer &renderer, capacity_t capacity = 2048);
+    ~PsfGlowLargeRenderer() override;
 
-    // pointRadius/optimization define the Spencer kernel shape (must match
-    // the point-sprite glow pass).  sizePhys is the full diameter of the
-    // bounding box in physical pixels (= 2 * r_glow_logical * pointScale).
-    void render(const Eigen::Vector3f &position,
-                const Color           &linearColor,
-                float                  peakRadiance,
-                float                  pointRadius,
-                float                  optimization,
-                float                  sizePhys,
-                const Matrices        &mvp);
+    void setPointRadius(float r)    { m_pointRadius  = r; }
+    void setOptimization(float opt) { m_optimization = opt; }
+    void setPointScale(float scale) { m_pointScale   = scale; }
+
+protected:
+    void onMakeCurrent(const Eigen::Vector2f &viewportRcp) override;
 
 private:
-    void initialize();
-    bool m_initialized{ false };
-
-    Renderer &m_renderer;
-
-    std::unique_ptr<gl::Buffer> m_bo;
-    std::unique_ptr<gl::VertexObject> m_vo;
+    float m_pointRadius  { 1.5f };
+    float m_optimization { 0.1f };
+    float m_pointScale   { 1.0f };
 };
 
 } // namespace celestia::render

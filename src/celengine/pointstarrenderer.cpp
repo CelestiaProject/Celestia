@@ -154,29 +154,11 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                                    * psf.maxIrradiance;
                     }
 
-                    // Fast path: compare glowPeak against the precomputed
-                    // threshold instead of computing sizePhys = 2*pow(glowPeak,0.4)/a*pointScale
-                    // and comparing to maxPointSize.  Only the rare
-                    // oversize fallback actually needs the pow.
-                    if (glowPeak > psf.glowPeakLargeThreshold
-                        && psf.glowLargeRenderer != nullptr
-                        && psf.proj != nullptr && psf.modelView != nullptr)
+                    // Oversize glows go to the batched billboard renderer;
+                    // everything smaller stays on the point-sprite path.
+                    if (glowPeak > psf.glowPeakLargeThreshold)
                     {
-                        float rGlowLog = std::pow(glowPeak, 0.4f) / psf.glowA;
-                        float sizePhys = 2.0f * rGlowLog * psf.pointScale;
-
-                        // Flush the in-flight PSF buffers first; the
-                        // billboard renderer binds its own program and
-                        // would otherwise strand a half-filled buffer.
-                        renderer->starPipelineOwner().flush();
-                        Matrices mvp { psf.proj, psf.modelView };
-                        psf.glowLargeRenderer->render(relPos,
-                                                      linearStarColor,
-                                                      glowPeak,
-                                                      psf.pointRadius,
-                                                      psf.optimization,
-                                                      sizePhys,
-                                                      mvp);
+                        psf.glowLargeRenderer->addStar(relPos, linearStarColor, glowPeak);
                     }
                     else
                     {
