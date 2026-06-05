@@ -5079,17 +5079,18 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         // Test the object's bounding sphere against the view frustum
         if (frustum.testSphere(center, cullRadius) != math::FrustumAspect::Outside)
         {
-            float nearZ = center.norm() - radius;
+            float d = center.norm();
+            float nearZ = d - radius;
             float maxSpan = std::hypot(static_cast<float>(viewportWidth), static_cast<float>(viewportHeight));
             float nearZcoeff = std::cos(math::degToRad(fov / 2.0f)) * (static_cast<float>(viewportHeight) / maxSpan);
             nearZ = -nearZ * nearZcoeff;
 
-            // Use MinNearPlaneDistance as the floor; the old `radius/2000`
-            // fallback hid the surface at low altitudes on large bodies.
-            if (nearZ > -MinNearPlaneDistance)
-                ri.nearZ = -MinNearPlaneDistance;
-            else
-                ri.nearZ = nearZ;
+            // Floor at 2 ULPs of `radius`: below that, float32 noise in `d`
+            // makes nearZ jump between discrete values and the atmosphere
+            // shell flickers.
+            float ulp = std::nextafter(radius, radius * 2.0f) - radius;
+            float bodyMinNearZ = std::max(MinNearPlaneDistance, ulp * 2.0f);
+            ri.nearZ = std::min(nearZ, -bodyMinNearZ);
 
             if (!convex)
             {
@@ -5120,10 +5121,8 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
                 }
                 else
                 {
-                    float d = center.norm();
-                    float tangentSq = math::square(d) - math::square(eradius);
-                    float horizon = tangentSq > 0.0f
-                                      ? std::sqrt(tangentSq) * 1.1f
+                    float horizon = d > eradius
+                                      ? std::sqrt(math::square(d) - math::square(eradius)) * 1.1f
                                       : MinNearPlaneDistance;
                     ri.farZ = -horizon;
                 }
