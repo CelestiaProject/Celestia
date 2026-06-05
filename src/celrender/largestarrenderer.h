@@ -56,7 +56,7 @@ public:
     void addStar(const Eigen::Vector3f &center, const Color &color, float scalar);
 
 protected:
-    LargeStarRenderer(Renderer &renderer, StaticShader shaderId, capacity_t capacity, bool flipV = false);
+    explicit LargeStarRenderer(Renderer &renderer, StaticShader shaderId, capacity_t capacity);
 
     Renderer&          renderer() noexcept       { return m_renderer; }
     CelestiaGLProgram* program()  const noexcept { return m_prog; }
@@ -83,7 +83,6 @@ private:
     StaticShader                      m_shaderId;
     capacity_t                        m_capacity;
     capacity_t                        m_nStars      { 0 };
-    bool                              m_flipV;
     std::vector<StarVertex>           m_vertices;
 
     CelestiaGLProgram                *m_prog        { nullptr };

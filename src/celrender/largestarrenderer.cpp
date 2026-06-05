@@ -34,8 +34,7 @@ struct Corner
     unsigned char u, v;
 };
 
-// 6-vertex quad: two triangles, corner ∈ ±1.0, uv ∈ {0,1}.  Subclasses
-// pick the unflipped or v-flipped UVs to match their texture orientation.
+// 6-vertex quad: two triangles, corner ∈ ±1.0, uv ∈ {0,1}.
 constexpr std::array<Corner, 6> kQuadCorners = {{
     { -127,  127, 0, 0   },
     { -127, -127, 0, 255 },
@@ -47,13 +46,11 @@ constexpr std::array<Corner, 6> kQuadCorners = {{
 } // namespace
 
 LargeStarRenderer::LargeStarRenderer(Renderer    &renderer,
-                                               StaticShader shaderId,
-                                               capacity_t   capacity,
-                                               bool         flipV) :
+                                     StaticShader shaderId,
+                                     capacity_t   capacity) :
     m_renderer(renderer),
     m_shaderId(shaderId),
     m_capacity(capacity),
-    m_flipV(flipV),
     m_vertices(static_cast<std::size_t>(capacity) * 6)
 {
 }
@@ -172,8 +169,8 @@ LargeStarRenderer::setupVertexArrayObject()
 
 void
 LargeStarRenderer::addStar(const Eigen::Vector3f &center,
-                                const Color           &color,
-                                float                  scalar)
+                           const Color           &color,
+                           float                  scalar)
 {
     if (m_nStars < m_capacity)
     {
@@ -187,9 +184,7 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
             out[i].scalar = scalar;
             out[i].color  = packedColor;
             out[i].corner = { kQuadCorners[i].x, kQuadCorners[i].y };
-            unsigned char v = m_flipV ? static_cast<unsigned char>(255 - kQuadCorners[i].v)
-                                      : kQuadCorners[i].v;
-            out[i].uv     = { kQuadCorners[i].u, v };
+            out[i].uv     = { kQuadCorners[i].u, kQuadCorners[i].v };
         }
         m_nStars++;
     }
