@@ -11,6 +11,7 @@
 
 #include <array>
 #include <cmath>
+#include <cstddef>
 
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
@@ -18,103 +19,194 @@
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celcompat/numbers.h>
+#include <celutil/array_view.h>
 #include <celutil/color.h>
+
+namespace gl  = celestia::gl;
+namespace util = celestia::util;
 
 namespace celestia::render
 {
 
-PsfGlowLargeRenderer::PsfGlowLargeRenderer(Renderer &renderer) :
-    m_renderer(renderer)
+namespace
+{
+// 6-vertex quad: two triangles, corner ∈ ±0.5, uv ∈ {0,1}.
+struct Corner
+{
+    signed char   x, y;
+    unsigned char u, v;
+};
+
+constexpr std::array<Corner, 6> kQuadCorners = {{
+    { -64,  64, 0, 255 },
+    { -64, -64, 0,   0 },
+    {  64, -64, 255, 0 },
+    { -64,  64, 0, 255 },
+    {  64, -64, 255, 0 },
+    {  64,  64, 255, 255 },
+}};
+} // namespace
+
+PsfGlowLargeRenderer::PsfGlowLargeRenderer(Renderer &renderer, capacity_t capacity) :
+    m_renderer(renderer),
+    m_capacity(capacity),
+    m_vertices(static_cast<std::size_t>(capacity) * 6)
 {
 }
 
 PsfGlowLargeRenderer::~PsfGlowLargeRenderer() = default;
 
 void
-PsfGlowLargeRenderer::render(
-    const Eigen::Vector3f &position,
-    const Color           &linearColor,
-    float                  peakRadiance,
-    float                  pointRadius,
-    float                  optimization,
-    float                  sizePhys,
-    const Matrices        &mvp)
+PsfGlowLargeRenderer::start()
 {
-    auto *prog = m_renderer.getShaderManager().getShader(StaticShader::PsfStarGlowLarge);
-    if (prog == nullptr)
+    m_prog = m_renderer.getShaderManager().getShader(StaticShader::PsfStarGlowLarge);
+    m_nStars = 0;
+}
+
+void
+PsfGlowLargeRenderer::render()
+{
+    if (m_nStars == 0 || m_prog == nullptr)
         return;
 
-    // Same additive linear-radiance pipeline as the point-sprite glow pass.
+    makeCurrent();
+
+    m_bo->invalidateData().setData(
+        util::array_view(m_vertices.data(), static_cast<std::size_t>(m_nStars) * 6),
+        gl::Buffer::BufferUsage::StreamDraw);
+
+    m_vo->draw(static_cast<int>(m_nStars) * 6);
+    m_nStars = 0;
+}
+
+void
+PsfGlowLargeRenderer::finish()
+{
+    render();
+    m_renderer.starPipelineOwner().clearIfActive(this);
+}
+
+void
+PsfGlowLargeRenderer::makeCurrent()
+{
+    auto &owner = m_renderer.starPipelineOwner();
+    if (owner.isActive(this) || m_prog == nullptr)
+        return;
+
+    owner.setActive(this);  // flushes whoever held the pipeline before
+
+    // The pre-batched renderer always drew with depthTest=false; re-apply
+    // that so we don't start z-testing when invoked from the per-interval
+    // (solar-system) flush, where the surrounding state has depthTest=true.
     Renderer::PipelineState ps;
     ps.blending  = true;
     ps.blendFunc = {GL_ONE, GL_ONE};
     m_renderer.setPipelineState(ps);
 
-    prog->use();
-    prog->setMVPMatrices(*mvp.projection, *mvp.modelview);
-    prog->vec3Param("center")        = position;
+    setupVertexArrayObject();
 
-    auto col = linearColor.toVector4();
-    prog->vec3Param("color")         = Eigen::Vector3f(col.x(), col.y(), col.z());
+    m_prog->use();
+    m_prog->setMVPMatrices(m_renderer.getCurrentProjectionMatrix(),
+                           m_renderer.getCurrentModelViewMatrix());
 
-    prog->floatParam("peakRadiance") = peakRadiance;
-
-    float a = (pointRadius > 0.0f) ? (optimization / pointRadius) : 0.0f;
-    float denom = (celestia::numbers::pi_v<float> / std::max(pointRadius, 1e-6f)) - a;
+    float a = (m_pointRadius > 0.0f) ? (m_optimization / m_pointRadius) : 0.0f;
+    float denom = (celestia::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
     float b = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
-    prog->floatParam("psfA")         = a;
-    prog->floatParam("psfB")         = b;
+    m_prog->floatParam("psfA")          = a;
+    m_prog->floatParam("psfB")          = b;
+    m_prog->floatParam("psfPointScale") = m_pointScale;
 
-    // Clip-space full extent of the quad (matches LargeStarRenderer convention).
-    // Use the current viewport, not the window — multi-view installs sub-rect
-    // viewports and clip-space [-1,1] maps to the active viewport.
     std::array<int, 4> vp{};
     m_renderer.getViewport(vp);
-    prog->floatParam("pointWidth")   = sizePhys / static_cast<float>(vp[2]) * 2.0f;
-    prog->floatParam("pointHeight")  = sizePhys / static_cast<float>(vp[3]) * 2.0f;
-
-    initialize();
-    m_vo->draw();
+    float invW = (vp[2] > 0) ? (1.0f / static_cast<float>(vp[2])) : 0.0f;
+    float invH = (vp[3] > 0) ? (1.0f / static_cast<float>(vp[3])) : 0.0f;
+    m_prog->vec2Param("psfViewportRcp") = Eigen::Vector2f(invW, invH);
 }
 
 void
-PsfGlowLargeRenderer::initialize()
+PsfGlowLargeRenderer::setupVertexArrayObject()
 {
     if (m_initialized)
         return;
 
     m_initialized = true;
 
-    // 6 vertices: position offset in [-0.5, 0.5]^2, texCoord in [0, 1]^2.
-    const std::array verts = {
-        -0.5f,  0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f,
-         0.5f, -0.5f, 1.0f, 0.0f,
-        -0.5f,  0.5f, 0.0f, 1.0f,
-         0.5f, -0.5f, 1.0f, 0.0f,
-         0.5f,  0.5f, 1.0f, 1.0f,
-    };
-
-    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array, verts);
+    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
     m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Triangles);
 
-    m_vo->setCount(6);
     m_vo->addVertexBuffer(
         *m_bo,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         2,
+        gl::VertexObject::DataType::Byte,
+        true,
+        sizeof(StarVertex),
+        offsetof(StarVertex, corner));
+
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::NormalAttributeIndex,
+        3,
         gl::VertexObject::DataType::Float,
         false,
-        4 * sizeof(float),
-        0);
+        sizeof(StarVertex),
+        offsetof(StarVertex, center));
+
     m_vo->addVertexBuffer(
         *m_bo,
         CelestiaGLProgram::TextureCoord0AttributeIndex,
         2,
+        gl::VertexObject::DataType::UnsignedByte,
+        true,
+        sizeof(StarVertex),
+        offsetof(StarVertex, uv));
+
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::ColorAttributeIndex,
+        4,
+        gl::VertexObject::DataType::UnsignedByte,
+        true,
+        sizeof(StarVertex),
+        offsetof(StarVertex, color));
+
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::IntensityAttributeIndex,
+        1,
         gl::VertexObject::DataType::Float,
         false,
-        4 * sizeof(float),
-        2 * sizeof(float));
+        sizeof(StarVertex),
+        offsetof(StarVertex, peakRadiance));
+}
+
+void
+PsfGlowLargeRenderer::addStar(const Eigen::Vector3f &center,
+                              const Color           &linearColor,
+                              float                  peakRadiance)
+{
+    if (m_nStars < m_capacity)
+    {
+        std::array<unsigned char, 4> packedColor{};
+        linearColor.get(packedColor.data());
+
+        StarVertex *out = &m_vertices[static_cast<std::size_t>(m_nStars) * 6];
+        for (std::size_t i = 0; i < 6; ++i)
+        {
+            out[i].center       = center;
+            out[i].peakRadiance = peakRadiance;
+            out[i].color        = packedColor;
+            out[i].corner       = { kQuadCorners[i].x, kQuadCorners[i].y };
+            out[i].uv           = { kQuadCorners[i].u, kQuadCorners[i].v };
+        }
+        m_nStars++;
+    }
+
+    if (m_nStars == m_capacity)
+    {
+        render();
+        m_nStars = 0;
+    }
 }
 
 } // namespace celestia::render

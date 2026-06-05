@@ -1762,24 +1762,9 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
 
         if (glowPeak > glowPeakLargeThreshold)
         {
-            float rGlowLog = std::pow(glowPeak, 0.4f) / a;
-            float sizePhys = 2.0f * rGlowLog * pointScale;
-
-            // Oversize glow (typical for very close stars like Sol at 1 AU):
-            // draw synchronously as a clip-space billboard using the current
-            // per-interval MVP.  Flush any PSF-buffer in-flight first: the
-            // billboard renderer binds its own program, and without the
-            // flush the next addStar() would early-return from makeCurrent
-            // (owner still thinks the buffer is active) and draw against
-            // the billboard's program.
-            starPipelineOwner().flush();
-            m_psfGlowLargeRenderer->render(position,
-                                           linearStarColor,
-                                           glowPeak,
-                                           starPointRadius,
-                                           starOptimization,
-                                           sizePhys,
-                                           mvp);
+            // Oversize glow (typical for Sol at ~1 AU): hand it to the
+            // batched billboard renderer.
+            m_psfGlowLargeRenderer->addStar(position, linearStarColor, glowPeak);
         }
         else
         {
@@ -3848,10 +3833,14 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         starRenderer.psf.glowBuffer->setPointScale(scale);
         starRenderer.psf.glowBuffer->setPointRadius(starPointRadius);
         starRenderer.psf.glowBuffer->setOptimization(starOptimization);
+        m_psfGlowLargeRenderer->setPointScale(scale);
+        m_psfGlowLargeRenderer->setPointRadius(starPointRadius);
+        m_psfGlowLargeRenderer->setOptimization(starOptimization);
 
         PsfStarVertexBuffer::enable();
         starRenderer.psf.pointBuffer->start(PsfStarVertexBuffer::Mode::Point);
         starRenderer.psf.glowBuffer->start(PsfStarVertexBuffer::Mode::Glow);
+        m_psfGlowLargeRenderer->start();
 
         ps.blendFunc = {GL_ONE, GL_ONE};
 
@@ -3911,6 +3900,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     {
         starRenderer.psf.pointBuffer->finish();
         starRenderer.psf.glowBuffer->finish();
+        m_psfGlowLargeRenderer->finish();
         PsfStarVertexBuffer::disable();
     }
     else
@@ -5517,8 +5507,10 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             PsfStarVertexBuffer::enable();
             psfPointBuffer->render();
             psfGlowBuffer->render();
+            m_psfGlowLargeRenderer->render();
             psfPointBuffer->finish();
             psfGlowBuffer->finish();
+            m_psfGlowLargeRenderer->finish();
             PsfStarVertexBuffer::disable();
         }
 

@@ -9,13 +9,17 @@
 
 #pragma once
 
+#include <array>
 #include <memory>
+#include <vector>
 
 #include <Eigen/Core>
 
+#include <celengine/starpipelineowner.h>
+
 class Color;
 class Renderer;
-struct Matrices;
+class CelestiaGLProgram;
 
 namespace celestia::gl
 {
@@ -26,36 +30,62 @@ class VertexObject;
 namespace celestia::render
 {
 
-// Billboard-based fallback for PSF glow stars whose computed gl_PointSize
-// would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE upper bound.
-// Draws a per-star quad sized in clip space and runs the Spencer (1995)
-// photopic-PSF math in the fragment shader, identical to the point-sprite
-// path but without the size cap.
-class PsfGlowLargeRenderer
+// Batched billboard renderer for PSF glow stars whose gl_PointSize
+// would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.  Each star
+// is expanded to a 6-vertex quad and submitted with the rest of the
+// frame's large glows in a single draw.
+class PsfGlowLargeRenderer : public StarPipelineFlushable
 {
 public:
-    explicit PsfGlowLargeRenderer(Renderer &renderer);
-    ~PsfGlowLargeRenderer();
+    using capacity_t = unsigned int;
 
-    // pointRadius/optimization define the Spencer kernel shape (must match
-    // the point-sprite glow pass).  sizePhys is the full diameter of the
-    // bounding box in physical pixels (= 2 * r_glow_logical * pointScale).
-    void render(const Eigen::Vector3f &position,
-                const Color           &linearColor,
-                float                  peakRadiance,
-                float                  pointRadius,
-                float                  optimization,
-                float                  sizePhys,
-                const Matrices        &mvp);
+    explicit PsfGlowLargeRenderer(Renderer &renderer, capacity_t capacity = 2048);
+    ~PsfGlowLargeRenderer() override;
+
+    PsfGlowLargeRenderer() = delete;
+    PsfGlowLargeRenderer(const PsfGlowLargeRenderer&) = delete;
+    PsfGlowLargeRenderer(PsfGlowLargeRenderer&&) = delete;
+    PsfGlowLargeRenderer& operator=(const PsfGlowLargeRenderer&) = delete;
+    PsfGlowLargeRenderer& operator=(PsfGlowLargeRenderer&&) = delete;
+
+    void start();
+    void render();
+    void finish() override;
+
+    void addStar(const Eigen::Vector3f &center,
+                 const Color           &linearColor,
+                 float                  peakRadiance);
+
+    void setPointRadius(float r)    { m_pointRadius = r; }
+    void setOptimization(float opt) { m_optimization = opt; }
+    void setPointScale(float scale) { m_pointScale = scale; }
 
 private:
-    void initialize();
-    bool m_initialized{ false };
+    struct StarVertex
+    {
+        Eigen::Vector3f              center;
+        float                        peakRadiance;
+        std::array<unsigned char, 4> color;
+        std::array<signed char, 2>   corner;  // ±64  -> ±0.5  (signed byte normalized)
+        std::array<unsigned char, 2> uv;      // 0/255 -> 0/1  (unsigned byte normalized)
+    };
 
-    Renderer &m_renderer;
+    void makeCurrent();
+    void setupVertexArrayObject();
 
-    std::unique_ptr<gl::Buffer> m_bo;
+    Renderer                       &m_renderer;
+    capacity_t                      m_capacity;
+    capacity_t                      m_nStars        { 0 };
+    std::vector<StarVertex>         m_vertices;
+
+    float                           m_pointRadius   { 1.5f };
+    float                           m_optimization  { 0.1f };
+    float                           m_pointScale    { 1.0f };
+
+    CelestiaGLProgram              *m_prog          { nullptr };
+    std::unique_ptr<gl::Buffer>     m_bo;
     std::unique_ptr<gl::VertexObject> m_vo;
+    bool                            m_initialized   { false };
 };
 
 } // namespace celestia::render
