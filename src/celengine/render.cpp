@@ -1726,6 +1726,15 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     // renderSolarSystemObjects, which uses the per-interval (km-scale)
     // projection — this is what lets close stars (e.g. Sol at 1 AU)
     // escape the ly-scale near plane of renderPointStars.
+    //
+    // Pre-set the PSF pipeline state so that an auto-flush from
+    // addStar() (when a buffer fills) draws with the correct blending.
+    Renderer::PipelineState ps;
+    ps.blending  = true;
+    ps.blendFunc = {GL_ONE, GL_ONE};
+    ps.depthTest = true;
+    setPipelineState(ps);
+
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
     float peakRadScale   = exposureFactor * 3.0f
