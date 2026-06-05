@@ -1637,8 +1637,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
                                    float discSizeInPixels,
                                    const Color &color,
                                    bool useHalos,
-                                   bool emissive,
-                                   const Matrices &mvp)
+                                   bool emissive)
 {
     const bool useScaledDiscs = starStyle == StarStyle::ScaledDiscStars;
     float maxDiscSize = useScaledDiscs ? MaxScaledDiscStarSize : 1.0f;
@@ -2939,7 +2938,7 @@ void Renderer::renderPlanet(Body& body,
                                 appMag,
                                 discSizeInPixels,
                                 surfaceColor * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
-                                false, false, m);
+                                false, false);
         }
     }
 }
@@ -3011,8 +3010,7 @@ void Renderer::renderStar(const Star& star,
                         appMag,
                         discSizeInPixels,
                         color,
-                        star.hasCorona(), true,
-                        m);
+                        star.hasCorona(), true);
 }
 
 

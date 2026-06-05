@@ -533,8 +533,7 @@ class Renderer
                              float discSizeInPixels,
                              const Color& color,
                              bool useHalos,
-                             bool emissive,
-                             const Matrices&);
+                             bool emissive);
 
     // PSF-mode point-sprite for a close star.  Called from
     // renderObjectAsPoint when the PSF blob still dominates the star's
