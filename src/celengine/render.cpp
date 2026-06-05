@@ -1658,7 +1658,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
         float psfDiscPx  = 2.0f * std::max(starPointRadius, 1.0e-3f) * pointScale;
         if (psfDiscPx > discSizeInPixels)
         {
-            addStarAsPsfPoint(position, color, appMag, pointScale, mvp);
+            addStarAsPsfPoint(position, color, appMag, pointScale);
             return;
         }
     }
@@ -1719,8 +1719,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 void Renderer::addStarAsPsfPoint(const Vector3f &position,
                                  const Color    &color,
                                  float           appMag,
-                                 float           pointScale,
-                                 const Matrices &mvp)
+                                 float           pointScale)
 {
     // Mirrors the PSF math in PointStarRenderer::process for far stars,
     // but submits to the same psfPointBuffer / psfGlowBuffer with KM-scale

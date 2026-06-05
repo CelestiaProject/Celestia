@@ -13,7 +13,7 @@
 // exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.  Six vertices per star;
 // per-star fields are replicated so the whole frame's glows draw at once.
 
-layout(location = 0) in vec2  in_Position;    // quad corner in [-0.5, 0.5]
+layout(location = 0) in vec2  in_Position;    // quad corner in [-1, 1]
 layout(location = 1) in vec3  in_Normal;      // star world position
 layout(location = 2) in vec2  in_TexCoord0;   // quad UV in [0, 1]
 layout(location = 8) in vec4  in_Color;       // linear RGB
@@ -36,6 +36,6 @@ void main(void)
     set_vp(vec4(in_Normal, 1.0));
 
     float sizePhys = 2.0 * pow(in_Intensity, 0.4) / psfA * psfPointScale;
-    vec2  extent   = 2.0 * sizePhys * psfViewportRcp;
+    vec2  extent   = sizePhys * psfViewportRcp;
     gl_Position.xy += in_Position * extent * gl_Position.w;
 }

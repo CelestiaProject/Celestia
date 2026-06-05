@@ -30,7 +30,7 @@ namespace celestia::render
 
 namespace
 {
-// 6-vertex quad: two triangles, corner ∈ ±0.5, uv ∈ {0,1}.
+// 6-vertex quad: two triangles, corner ∈ ±1.0, uv ∈ {0,1}.
 struct Corner
 {
     signed char   x, y;
@@ -38,12 +38,12 @@ struct Corner
 };
 
 constexpr std::array<Corner, 6> kQuadCorners = {{
-    { -64,  64, 0, 255 },
-    { -64, -64, 0,   0 },
-    {  64, -64, 255, 0 },
-    { -64,  64, 0, 255 },
-    {  64, -64, 255, 0 },
-    {  64,  64, 255, 255 },
+    { -127,  127, 0, 255 },
+    { -127, -127, 0,   0 },
+    {  127, -127, 255, 0 },
+    { -127,  127, 0, 255 },
+    {  127, -127, 255, 0 },
+    {  127,  127, 255, 255 },
 }};
 } // namespace
 
