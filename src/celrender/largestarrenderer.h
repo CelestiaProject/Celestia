@@ -33,9 +33,9 @@ namespace celestia::render
 
 // Shared infrastructure for batched billboard renderers that draw point
 // stars whose gl_PointSize would exceed GL_ALIASED_POINT_SIZE_RANGE.
-// Each star expands to a 6-vertex quad and the whole frame's oversized
-// stars draw in a single call.  Subclasses supply the shader id and the
-// per-frame GL/shader configuration via onMakeCurrent().
+// Each star expands to a 4-vertex indexed quad, drawing the whole
+// frame's oversized stars in a single call.  Subclasses supply the
+// shader id and per-frame GL/shader configuration via onMakeCurrent().
 class LargeStarRenderer : public StarPipelineFlushable
 {
 public:

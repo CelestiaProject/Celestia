@@ -34,15 +34,17 @@ struct Corner
     unsigned char u, v;
 };
 
-// 6-vertex quad: two triangles, corner ∈ ±1.0, uv ∈ {0,1}.
-constexpr std::array<Corner, 6> kQuadCorners = {{
-    { -127,  127, 0, 0   },
-    { -127, -127, 0, 255 },
+// 4-vertex quad in TL, BL, BR, TR order; drawn as two triangles via
+// the static index buffer.
+constexpr std::array<Corner, 4> kQuadCorners = {{
+    { -127,  127, 0,   0   },
+    { -127, -127, 0,   255 },
     {  127, -127, 255, 255 },
-    { -127,  127, 0, 0   },
-    {  127, -127, 255, 255 },
-    {  127,  127, 255, 0 },
+    {  127,  127, 255, 0   },
 }};
+
+constexpr std::size_t kVerticesPerStar = 4;
+constexpr std::size_t kIndicesPerStar  = 6;
 } // namespace
 
 LargeStarRenderer::LargeStarRenderer(Renderer    &renderer,
@@ -51,7 +53,7 @@ LargeStarRenderer::LargeStarRenderer(Renderer    &renderer,
     m_renderer(renderer),
     m_shaderId(shaderId),
     m_capacity(capacity),
-    m_vertices(static_cast<std::size_t>(capacity) * 6)
+    m_vertices(static_cast<std::size_t>(capacity) * kVerticesPerStar)
 {
 }
 
@@ -73,10 +75,10 @@ LargeStarRenderer::render()
     makeCurrent();
 
     m_bo->invalidateData().setData(
-        util::array_view(m_vertices.data(), static_cast<std::size_t>(m_nStars) * 6),
+        util::array_view(m_vertices.data(), static_cast<std::size_t>(m_nStars) * kVerticesPerStar),
         gl::Buffer::BufferUsage::StreamDraw);
 
-    m_vo->draw(static_cast<int>(m_nStars) * 6);
+    m_vo->draw(static_cast<int>(m_nStars) * static_cast<int>(kIndicesPerStar));
     m_nStars = 0;
 }
 
@@ -120,6 +122,22 @@ LargeStarRenderer::setupVertexArrayObject()
 
     m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
     m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Triangles);
+
+    // Two triangles per quad: (0,1,2) and (0,2,3).
+    std::vector<GLushort> indices(static_cast<std::size_t>(m_capacity) * kIndicesPerStar);
+    for (std::size_t i = 0; i < m_capacity; ++i)
+    {
+        auto base = static_cast<GLushort>(i * kVerticesPerStar);
+        auto *out = &indices[i * kIndicesPerStar];
+        out[0] = base;
+        out[1] = static_cast<GLushort>(base + 1);
+        out[2] = static_cast<GLushort>(base + 2);
+        out[3] = base;
+        out[4] = static_cast<GLushort>(base + 2);
+        out[5] = static_cast<GLushort>(base + 3);
+    }
+    gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
+    m_vo->setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
 
     m_vo->addVertexBuffer(
         *m_bo,
@@ -177,8 +195,8 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
         std::array<unsigned char, 4> packedColor{};
         color.get(packedColor.data());
 
-        StarVertex *out = &m_vertices[static_cast<std::size_t>(m_nStars) * 6];
-        for (std::size_t i = 0; i < 6; ++i)
+        StarVertex *out = &m_vertices[static_cast<std::size_t>(m_nStars) * kVerticesPerStar];
+        for (std::size_t i = 0; i < kVerticesPerStar; ++i)
         {
             out[i].center = center;
             out[i].scalar = scalar;
