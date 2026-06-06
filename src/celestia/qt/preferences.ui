@@ -1195,6 +1195,40 @@ Valid range: 1.0 to 1.0e6.</string>
                 </layout>
                </item>
                <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_psfDimClip">
+                 <item>
+                  <widget class="QLabel" name="psfDimClipFactorLabel">
+                   <property name="text">
+                    <string>Dim star clipping:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="psfDimClipFactorSpinBox">
+                   <property name="toolTip">
+                    <string>Hyperbolic soft-clip on dim stars; higher values cull more dim stars for performance.
+Valid range: 1.0 to 100.0.</string>
+                   </property>
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>100.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>10.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_psfExposure">
                  <item>
                   <widget class="QLabel" name="psfExposureLabel">

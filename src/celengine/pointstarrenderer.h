@@ -64,7 +64,7 @@ public:
         // the per-star inner loop tight.  Filled in renderPointStars
         // before findVisibleStars runs.
         float peakRadScale          { 0.0f }; // exposure * 3 / (pi * r^2)
-        float minPeak               { 0.0f }; // fade-in cutoff
+        float dimGate               { 0.0f }; // soft-clip threshold; peak <= dimGate culled
         float glowA                 { 0.0f }; // optimization / r
         float glowPeakLargeThreshold{ 0.0f }; // glowPeak above which sizePhys > maxPointSize
     };

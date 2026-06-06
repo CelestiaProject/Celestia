@@ -284,6 +284,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.psfRadiusSpinBox->setValue(renderer->getStarPointRadius());
     ui.psfOptimizationSpinBox->setValue(renderer->getStarOptimization());
     ui.psfMaxIrradianceSpinBox->setValue(renderer->getStarMaxIrradiance());
+    ui.psfDimClipFactorSpinBox->setValue(renderer->getStarDimClipFactor());
     ui.psfExposureSpinBox->setValue(renderer->getStarExposure());
 
     updatePsfControlsVisibility();
@@ -913,6 +914,12 @@ void
 PreferencesDialog::on_psfMaxIrradianceSpinBox_valueChanged(double value) const
 {
     appCore->getRenderer()->setStarMaxIrradiance(static_cast<float>(value));
+}
+
+void
+PreferencesDialog::on_psfDimClipFactorSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setStarDimClipFactor(static_cast<float>(value));
 }
 
 void

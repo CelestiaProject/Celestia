@@ -293,6 +293,8 @@ class Renderer
     float getStarOptimization() const;
     void  setStarMaxIrradiance(float v);
     float getStarMaxIrradiance() const;
+    void  setStarDimClipFactor(float v);
+    float getStarDimClipFactor() const;
     void  setStarExposure(float e);
     float getStarExposure() const;
     void setResolution(celestia::engine::TextureResolution resolution);
@@ -674,6 +676,7 @@ class Renderer
     float starPointRadius{ 1.5f };
     float starOptimization{ 0.1f };
     float starMaxIrradiance{ 100.0f };
+    float starDimClipFactor{ 10.0f };
     float starExposure{ 10.0f };
 
     Color ambientColor;

@@ -211,6 +211,8 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
         renderDetails.stars.maxIrradiance = 0.0f;
     else if (renderDetails.stars.maxIrradiance > 0.0f)
         renderDetails.stars.maxIrradiance = std::clamp(renderDetails.stars.maxIrradiance, 1.0f, 1.0e6f);
+    applyNumber(renderDetails.stars.dimClipFactor, hash, "StarDimClipFactor"sv);
+    renderDetails.stars.dimClipFactor = std::clamp(renderDetails.stars.dimClipFactor, 1.0f, 100.0f);
     applyNumber(renderDetails.stars.exposure, hash, "StarExposure"sv);
     renderDetails.stars.exposure = std::clamp(renderDetails.stars.exposure, 1.0e-3f, 1.0e6f);
 }

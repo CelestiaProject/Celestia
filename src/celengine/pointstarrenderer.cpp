@@ -119,12 +119,19 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // Irradiance is in the Vega-normalised system; the constant
                 // SI conversion factor is absorbed by the framebuffer
                 // exposure.  Per-frame constants (psf.peakRadScale,
-                // psf.minPeak, psf.glowA, psf.glowPeakLargeThreshold) are
+                // psf.dimGate, psf.glowA, psf.glowPeakLargeThreshold) are
                 // precomputed in renderPointStars so the inner loop only
                 // does the per-star irradiance and green normalisation.
 
                 float irradiance = astro::magToIrradiance(appMag);
                 float peakRad    = psf.peakRadScale * irradiance;
+
+                // Hyperbolic soft-clip: stars with peakRad close to dimGate
+                // fade smoothly toward zero, while peakRad >> dimGate is
+                // asymptotically unchanged.  See issue #2559.
+                if (peakRad <= psf.dimGate)
+                    return;
+                peakRad = std::sqrt(peakRad * peakRad - psf.dimGate * psf.dimGate);
 
                 // Normalise the star colour against its green channel
                 // (with a saturation floor) so the brightest channel
@@ -137,8 +144,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 float peakRadCol = peakRad * greenScale;
 
                 // Point (cone) contribution
-                if (peakRadCol > psf.minPeak)
-                    psf.pointBuffer->addStar(relPos, linearStarColor, peakRadCol);
+                psf.pointBuffer->addStar(relPos, linearStarColor, peakRadCol);
 
                 // Glow (eye-PSF) contribution, additive on top of the point cone
                 if (peakRadCol > 1.0f && psf.optimization > 0.0f)

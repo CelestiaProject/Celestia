@@ -177,6 +177,9 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setStarMaxIrradiance(
         (float) settings.value("StarMaxIrradiance",
                                appCore->getConfig()->renderDetails.stars.maxIrradiance).toDouble());
+    appRenderer->setStarDimClipFactor(
+        (float) settings.value("StarDimClipFactor",
+                               appCore->getConfig()->renderDetails.stars.dimClipFactor).toDouble());
     appRenderer->setStarExposure(
         (float) settings.value("StarExposure",
                                appCore->getConfig()->renderDetails.stars.exposure).toDouble());
