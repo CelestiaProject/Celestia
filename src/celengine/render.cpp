@@ -1618,15 +1618,15 @@ Renderer::calculatePointSize(float appMag,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
-void Renderer::renderObjectAsPoint(const Vector3f& position,
-                                   float distance,
-                                   float radius,
+void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
                                    float appMag,
                                    float discSizeInPixels,
                                    const Color &color,
                                    bool useHalos,
                                    bool emissive)
 {
+    const Vector3f& position = info.position;
+    float radius = info.radius;
     // In PSF mode, route through the PSF path when the body is a
     // genuine light source (stars), or when it's still unresolved
     // (any body — the point representation works regardless of
@@ -1638,7 +1638,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
     if (starStyle == StarStyle::PointSpreadFunction)
     {
         float pointScale = static_cast<float>(screenDpi) / 96.0f;
-        addStarAsPsfPoint(position, color, appMag, pointScale, distance, radius, discSizeInPixels, emissive);
+        addStarAsPsfPoint(info, color, appMag, pointScale, discSizeInPixels, emissive);
         return;
     }
 
@@ -1701,15 +1701,36 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 }
 
 
-void Renderer::addStarAsPsfPoint(const Vector3f &position,
+// Alpha for the disc-pinned PSF glow: 1 at the distance where
+// glowPeak == linkedGlowPeak (bloom just reaches the limb), 0 at
+// the body's surface.  In the saturated regime glowPeak is roughly
+// constant in d while linkedGlowPeak ∝ 1/d^2.5, so the match
+// distance is d_match = d_now * (linkedGlowPeak / glowPeak)^(1/2.5).
+static float
+computePsfGlowAlpha(float distance, float radius,
+                    float linkedGlowPeak, float glowPeak)
+{
+    if (radius <= 0.0f)
+        return 1.0f;
+    float distToSurface = distance - radius;
+    float distMatch     = distance * std::pow(linkedGlowPeak / glowPeak, 0.4f);
+    float distToMatch   = distMatch - radius;
+    if (distToMatch <= 0.0f)
+        return 0.0f;
+    return std::clamp(distToSurface / distToMatch, 0.0f, 1.0f);
+}
+
+
+void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
                                  const Color    &color,
                                  float           appMag,
                                  float           pointScale,
-                                 float           distance,
-                                 float           radius,
                                  float           discSizeInPixels,
                                  bool            emissive)
 {
+    const Vector3f& position = info.position;
+    float distance = info.distance;
+    float radius   = info.radius;
     // Mirrors the PSF math in PointStarRenderer::process for far stars,
     // but submits to the same psfPointBuffer / psfGlowBuffer with KM-scale
     // positions.  The buffers are drained per-interval inside
@@ -1779,24 +1800,14 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
             : spritePos;
         float glowPeakToUse = overflow ? glowPeak : linkedGlowPeak;
 
-        // Fade the glow between two anchors: alpha = 1 at the
-        // distance where glowPeak == linkedGlowPeak (bloom just
-        // reaches the limb), alpha = 0 at the body's surface.  In the
-        // saturated regime glowPeak ≈ starMaxIrradiance (~constant in
-        // d) while linkedGlowPeak ∝ 1/d^2.5, so the match distance is
-        //   d_match = d_now * (linkedGlowPeak_now / glowPeak)^(1/2.5)
-        float alpha = 1.0f;
-        if (!overflow && radius > 0.0f)
-        {
-            float distToSurface = distance - radius;
-            float distMatch     = distance * std::pow(linkedGlowPeak / glowPeak, 0.4f);
-            float distToMatch   = distMatch - radius;
-            alpha = (distToMatch > 0.0f)
-                ? std::clamp(distToSurface / distToMatch, 0.0f, 1.0f)
-                : 0.0f;
-            if (alpha <= 0.0f)
-                return;
-        }
+        // Fade the glow as the camera approaches the surface so the
+        // disc-pinned bloom doesn't double-render over the resolved
+        // body.  See computePsfGlowAlpha for the derivation.
+        float alpha = overflow
+            ? 1.0f
+            : computePsfGlowAlpha(distance, radius, linkedGlowPeak, glowPeak);
+        if (alpha <= 0.0f)
+            return;
         Color glowColor(linearStarColor, alpha);
 
         // Fast oversize check: avoid computing pow unless we actually
@@ -2983,9 +2994,7 @@ void Renderer::renderPlanet(Body& body,
         const auto surfaceColor = body.getSurface().color.linearize(gl::sRGBRendering);
         if (float maxCoeff = surfaceColor.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
-            renderObjectAsPoint(pos,
-                                distance,
-                                body.getRadius(),
+            renderObjectAsPoint(PointObjectInfo{pos, distance, body.getRadius()},
                                 appMag,
                                 discSizeInPixels,
                                 surfaceColor * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
@@ -3061,9 +3070,7 @@ void Renderer::renderStar(const Star& star,
                      rp, LightingState(), m);
     }
 
-    renderObjectAsPoint(pos,
-                        distance,
-                        star.getRadius(),
+    renderObjectAsPoint(PointObjectInfo{pos, distance, star.getRadius()},
                         appMag,
                         discSizeInPixels,
                         color,
