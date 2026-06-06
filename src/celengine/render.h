@@ -528,6 +528,7 @@ class Renderer
                             float &glareAlpha) const;
 
     void renderObjectAsPoint(const Eigen::Vector3f& center,
+                             float distance,
                              float radius,
                              float appMag,
                              float discSizeInPixels,
@@ -544,6 +545,7 @@ class Renderer
                            const Color           &color,
                            float                  appMag,
                            float                  pointScale,
+                           float                  distance,
                            float                  radius,
                            float                  discSizeInPixels,
                            bool                   emissive);

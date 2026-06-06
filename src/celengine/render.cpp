@@ -1619,6 +1619,7 @@ Renderer::calculatePointSize(float appMag,
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
 void Renderer::renderObjectAsPoint(const Vector3f& position,
+                                   float distance,
                                    float radius,
                                    float appMag,
                                    float discSizeInPixels,
@@ -1637,7 +1638,7 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
     if (starStyle == StarStyle::PointSpreadFunction)
     {
         float pointScale = static_cast<float>(screenDpi) / 96.0f;
-        addStarAsPsfPoint(position, color, appMag, pointScale, radius, discSizeInPixels, emissive);
+        addStarAsPsfPoint(position, color, appMag, pointScale, distance, radius, discSizeInPixels, emissive);
         return;
     }
 
@@ -1704,6 +1705,7 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
                                  const Color    &color,
                                  float           appMag,
                                  float           pointScale,
+                                 float           distance,
                                  float           radius,
                                  float           discSizeInPixels,
                                  bool            emissive)
@@ -1749,7 +1751,7 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     // Peak radiance whose bloom radius (per the shader's PSF formula)
     // equals the body's angular disc.  kLimbFudge < 1 pulls the bright
     // edge inside the limb (Askaniy's overexposure mitigation).
-    constexpr float kLimbFudge = 0.9f;
+    constexpr float kLimbFudge = 0.7f;
     float a    = starOptimization / r;
     float invB = celestia::numbers::pi_v<float> / r - a;
     float angR = kLimbFudge * discSizeInPixels / pointScale;
@@ -1777,6 +1779,26 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
             : spritePos;
         float glowPeakToUse = overflow ? glowPeak : linkedGlowPeak;
 
+        // Fade the glow between two anchors: alpha = 1 at the
+        // distance where glowPeak == linkedGlowPeak (bloom just
+        // reaches the limb), alpha = 0 at the body's surface.  In the
+        // saturated regime glowPeak ≈ starMaxIrradiance (~constant in
+        // d) while linkedGlowPeak ∝ 1/d^2.5, so the match distance is
+        //   d_match = d_now * (linkedGlowPeak_now / glowPeak)^(1/2.5)
+        float alpha = 1.0f;
+        if (!overflow && radius > 0.0f)
+        {
+            float distToSurface = distance - radius;
+            float distMatch     = distance * std::pow(linkedGlowPeak / glowPeak, 0.4f);
+            float distToMatch   = distMatch - radius;
+            alpha = (distToMatch > 0.0f)
+                ? std::clamp(distToSurface / distToMatch, 0.0f, 1.0f)
+                : 0.0f;
+            if (alpha <= 0.0f)
+                return;
+        }
+        Color glowColor(linearStarColor, alpha);
+
         // Fast oversize check: avoid computing pow unless we actually
         // need sizePhys.  sizePhys > maxPointSize is equivalent to
         // glowPeak > (maxPointSize * a / (2 * pointScale))^2.5.
@@ -1788,11 +1810,11 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
         {
             // Oversize glow (typical for Sol at ~1 AU): hand it to the
             // batched billboard renderer.
-            m_psfGlowLargeRenderer->addStar(glowPos, linearStarColor, glowPeakToUse);
+            m_psfGlowLargeRenderer->addStar(glowPos, glowColor, glowPeakToUse);
         }
         else
         {
-            psfGlowBuffer->addStar(glowPos, linearStarColor, glowPeakToUse);
+            psfGlowBuffer->addStar(glowPos, glowColor, glowPeakToUse);
         }
     }
 }
@@ -2962,6 +2984,7 @@ void Renderer::renderPlanet(Body& body,
         if (float maxCoeff = surfaceColor.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
             renderObjectAsPoint(pos,
+                                distance,
                                 body.getRadius(),
                                 appMag,
                                 discSizeInPixels,
@@ -3039,6 +3062,7 @@ void Renderer::renderStar(const Star& star,
     }
 
     renderObjectAsPoint(pos,
+                        distance,
                         star.getRadius(),
                         appMag,
                         discSizeInPixels,

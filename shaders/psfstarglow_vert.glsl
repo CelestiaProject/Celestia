@@ -27,7 +27,7 @@ out float v_pointSize;
 
 void main(void)
 {
-    v_color = in_Color.rgb;
+    v_color = in_Color.rgb * in_Color.a;
     v_peakRadiance = in_Intensity;
 
     // Glow mode: PSF support radius depends on peak radiance.
