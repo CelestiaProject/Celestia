@@ -1771,7 +1771,6 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
 
     // Peak radiance whose bloom radius (per the shader's PSF formula)
     // equals the body's angular disc.
-    constexpr float kLimbFudge = 1.0f;
     float a    = starOptimization / r;
     float invB = celestia::numbers::pi_v<float> / r - a;
     float angR = discSizeInPixels / pointScale;
@@ -1791,8 +1790,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         // Always render the glow in front of the body (calculateQuadCenter
         // puts it on the near-side tangent plane).  Skip entirely for
         // resolved reflective bodies that aren't bright enough to overflow.
-        bool overflow = glowPeak > linkedGlowPeak;
-        if (!overflow && !emissive)
+        if (glowPeak <= linkedGlowPeak && !emissive)
             return;
 
         Vector3f glowPos = calculateQuadCenter(getCameraOrientationf(), spritePos, radius);
