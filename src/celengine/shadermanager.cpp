@@ -1760,9 +1760,10 @@ buildFragmentShader(const ShaderProperties& props)
         source += "fragColor.rgb = fragColor.rgb * scatterEx + scatterColor;\n";
     }
 
+    // Limb darkening
     if (props.lightModel == LightingModel::StarModel)
     {
-        source += "fragColor.rgb = fragColor.rgb - vec3(1.0 - NV) * vec3(0.56, 0.61, 0.72);\n";
+        source += "fragColor.rgb = fragColor.rgb * (1.0 - vec3(1.0 - NV) * vec3(0.56, 0.61, 0.72));\n";
     }
 
     if (emitLineAA)
