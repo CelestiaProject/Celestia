@@ -125,8 +125,6 @@ static constexpr float MaxFarNearRatio      = 2000000.0f;
 
 static constexpr float MinRelativeOccluderRadius = 0.005f;
 
-static constexpr float CoronaHeight = 0.2f;
-
 // Size at which the orbit cache will be flushed of old orbit paths
 static constexpr unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
@@ -1802,6 +1800,9 @@ static void renderSphereUnlit(const RenderInfo& ri,
         textures.push_back(ri.overlayTex);
     }
 
+    if (ri.isStar)
+        shadprop.lightModel = LightingModel::StarModel;
+
     // Get a shader for the current rendering configuration
     auto* prog = r->getShaderManager().getShader(shadprop);
     if (prog == nullptr)
@@ -1812,6 +1813,8 @@ static void renderSphereUnlit(const RenderInfo& ri,
     prog->textureOffset = 0.0f;
     prog->ambientColor = ri.color.toVector3();
     prog->opacity = 1.0f;
+    if (ri.isStar)
+        prog->eyePosition = ri.eyePos_obj;
 
     Renderer::PipelineState ps;
     ps.depthMask = true;
@@ -2384,6 +2387,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
         else
         {
+            ri.isStar = obj.isStar;
             renderSphereUnlit(ri, viewFrustum, planetMVP, this, m_lodSphere.get());
         }
     }
@@ -2972,19 +2976,21 @@ void Renderer::renderStar(const Star& star,
         surface.appearanceFlags |= Surface::ApplyBaseTexture;
         surface.appearanceFlags |= Surface::Emissive;
 
+        rp.isStar = true;
         rp.surface = &surface;
         rp.rings = nullptr;
         rp.radius = star.getRadius();
         rp.semiAxes = star.getEllipsoidSemiAxes();
         rp.geometry = star.getGeometry();
 
+#if 0 // disabled for limb darkening
         Atmosphere atmosphere;
 
         // Use atmosphere effect to give stars a fuzzy fringe
         if (star.hasCorona() && rp.geometry == engine::GeometryHandle::Invalid)
         {
             Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
-            atmosphere.height = radius * CoronaHeight;
+            atmosphere.height = radius * 0.2f /* CoronaHeight */;
             atmosphere.lowerColor = atmColor;
             atmosphere.upperColor = atmColor;
             atmosphere.skyColor = atmColor;
@@ -2995,6 +3001,9 @@ void Renderer::renderStar(const Star& star,
         {
             rp.atmosphere = nullptr;
         }
+#else
+        rp.atmosphere = nullptr;
+#endif
 
         rp.orientation = star.getRotationModel()->orientationAtTime(observer.getTime()).cast<float>();
 
@@ -4979,7 +4988,7 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         {
         case RenderListEntry::RenderableStar:
             radius = ri.star->getRadius();
-            cullRadius = radius * (1.0f + CoronaHeight);
+            cullRadius = radius;
             break;
 
         case RenderListEntry::RenderableCometTail:
