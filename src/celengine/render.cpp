@@ -1770,12 +1770,11 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         psfPointBuffer->addStar(spritePos, linearStarColor, peakRadCol);
 
     // Peak radiance whose bloom radius (per the shader's PSF formula)
-    // equals the body's angular disc.  kLimbFudge < 1 pulls the bright
-    // edge inside the limb (Askaniy's overexposure mitigation).
-    constexpr float kLimbFudge = 0.7f;
+    // equals the body's angular disc.
+    constexpr float kLimbFudge = 1.0f;
     float a    = starOptimization / r;
     float invB = celestia::numbers::pi_v<float> / r - a;
-    float angR = kLimbFudge * discSizeInPixels / pointScale;
+    float angR = discSizeInPixels / pointScale;
     float linkedGlowPeak = std::pow(angR * (a + invB), 2.5f);
 
     // Gate on the irradiance-based peak so the linked term only
@@ -1789,23 +1788,22 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
             glowPeak = (1.0f - 1.0f / (peakRadCol / starMaxIrradiance + 1.0f))
                        * starMaxIrradiance;
         }
-        // Place glow in front when the bloom overflows the disc;
-        // otherwise pin it to the limb (emissive only).
+        // Always render the glow in front of the body (calculateQuadCenter
+        // puts it on the near-side tangent plane).  Skip entirely for
+        // resolved reflective bodies that aren't bright enough to overflow.
         bool overflow = glowPeak > linkedGlowPeak;
         if (!overflow && !emissive)
             return;
 
-        Vector3f glowPos = overflow && radius > 0.0f
-            ? calculateQuadCenter(getCameraOrientationf(), spritePos, radius)
-            : spritePos;
-        float glowPeakToUse = overflow ? glowPeak : linkedGlowPeak;
+        Vector3f glowPos = calculateQuadCenter(getCameraOrientationf(), spritePos, radius);
+        // Size tracks whichever peak is larger: glowPeak in the far/overflow
+        // regime, linkedGlowPeak once the disc resolves so the sprite keeps
+        // pace with the growing disc instead of capping at starMaxIrradiance.
+        float glowPeakToUse = std::max(glowPeak, linkedGlowPeak);
 
-        // Fade the glow as the camera approaches the surface so the
-        // disc-pinned bloom doesn't double-render over the resolved
-        // body.  See computePsfGlowAlpha for the derivation.
-        float alpha = overflow
-            ? 1.0f
-            : computePsfGlowAlpha(distance, radius, linkedGlowPeak, glowPeak);
+        // Fade alpha 1 → 0 between d_match and the body surface so the
+        // sprite vanishes smoothly as the disc takes over.
+        float alpha = computePsfGlowAlpha(distance, radius, linkedGlowPeak, glowPeak);
         if (alpha <= 0.0f)
             return;
         Color glowColor(linearStarColor, alpha);
