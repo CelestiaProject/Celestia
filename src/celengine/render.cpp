@@ -1618,36 +1618,35 @@ Renderer::calculatePointSize(float appMag,
 // jarring, however . . . so we'll blend in the particle view of the
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
-void Renderer::renderObjectAsPoint(const Vector3f& position,
-                                   float radius,
+void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
                                    float appMag,
                                    float discSizeInPixels,
                                    const Color &color,
                                    bool useHalos,
                                    bool emissive)
 {
+    const Vector3f& position = info.position;
+    float radius = info.radius;
+    // In PSF mode, route through the PSF path when the body is a
+    // genuine light source (stars), or when it's still unresolved
+    // (any body — the point representation works regardless of
+    // whether it emits).  A resolved reflective body is excluded
+    // because the PSF's radial falloff inevitably paints a bright
+    // saturated core inside the mesh and a dim tail extending many
+    // disc radii past the limb, both of which are visible artifacts
+    // on a planet whose true visual is just the sharp-edged disc.
+    if (starStyle == StarStyle::PointSpreadFunction)
+    {
+        float pointScale = static_cast<float>(screenDpi) / 96.0f;
+        addStarAsPsfPoint(info, color, appMag, pointScale, discSizeInPixels, emissive);
+        return;
+    }
+
     const bool useScaledDiscs = starStyle == StarStyle::ScaledDiscStars;
     float maxDiscSize = useScaledDiscs ? MaxScaledDiscStarSize : 1.0f;
     float maxBlendDiscSize = maxDiscSize + 3.0f;
 
     if (discSizeInPixels >= maxBlendDiscSize && !useHalos) return;
-
-    // In PSF mode, render any light source as a PSF point-sprite when
-    // the PSF blob still dominates its true angular disc.  This is the
-    // close-object counterpart to the far-star PSF path in
-    // PointStarRenderer: the per-interval projection (km-scale) used
-    // here is what allows e.g. Sol at 1 AU to escape the ly-scale near
-    // plane of renderPointStars.
-    if (starStyle == StarStyle::PointSpreadFunction)
-    {
-        float pointScale = static_cast<float>(screenDpi) / 96.0f;
-        float psfDiscPx  = 2.0f * std::max(starPointRadius, 1.0e-3f) * pointScale;
-        if (psfDiscPx > discSizeInPixels)
-        {
-            addStarAsPsfPoint(position, color, appMag, pointScale);
-            return;
-        }
-    }
 
     float fade = 1.0f;
     if (discSizeInPixels > maxDiscSize)
@@ -1702,11 +1701,36 @@ void Renderer::renderObjectAsPoint(const Vector3f& position,
 }
 
 
-void Renderer::addStarAsPsfPoint(const Vector3f &position,
+// Alpha for the disc-pinned PSF glow: 1 at the distance where
+// glowPeak == linkedGlowPeak (bloom just reaches the limb), 0 at
+// the body's surface.  In the saturated regime glowPeak is roughly
+// constant in d while linkedGlowPeak ∝ 1/d^2.5, so the match
+// distance is d_match = d_now * (linkedGlowPeak / glowPeak)^(1/2.5).
+static float
+computePsfGlowAlpha(float distance, float radius,
+                    float linkedGlowPeak, float glowPeak)
+{
+    if (radius <= 0.0f)
+        return 1.0f;
+    float distToSurface = distance - radius;
+    float distMatch     = distance * std::pow(linkedGlowPeak / glowPeak, 0.4f);
+    float distToMatch   = distMatch - radius;
+    if (distToMatch <= 0.0f)
+        return 0.0f;
+    return std::clamp(distToSurface / distToMatch, 0.0f, 1.0f);
+}
+
+
+void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
                                  const Color    &color,
                                  float           appMag,
-                                 float           pointScale)
+                                 float           pointScale,
+                                 float           discSizeInPixels,
+                                 bool            emissive)
 {
+    const Vector3f& position = info.position;
+    float distance = info.distance;
+    float radius   = info.radius;
     // Mirrors the PSF math in PointStarRenderer::process for far stars,
     // but submits to the same psfPointBuffer / psfGlowBuffer with KM-scale
     // positions.  The buffers are drained per-interval inside
@@ -1721,6 +1745,8 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     ps.blendFunc = {GL_ONE, GL_ONE};
     ps.depthTest = true;
     setPipelineState(ps);
+
+    const Vector3f &spritePos = position;
 
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
@@ -1738,9 +1764,21 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
     Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);
     float peakRadCol = peakRad * greenScale;
 
-    if (peakRadCol > minPeak)
-        psfPointBuffer->addStar(position, linearStarColor, peakRadCol);
+    // Suppress the cone-cap sprite once the body is resolved as a
+    // mesh; the linked glow below handles the bloom around the disc.
+    if (peakRadCol > minPeak && discSizeInPixels <= 1.0f)
+        psfPointBuffer->addStar(spritePos, linearStarColor, peakRadCol);
 
+    // Peak radiance whose bloom radius (per the shader's PSF formula)
+    // equals the body's angular disc.
+    float a    = starOptimization / r;
+    float invB = celestia::numbers::pi_v<float> / r - a;
+    float angR = discSizeInPixels / pointScale;
+    float linkedGlowPeak = std::pow(angR * (a + invB), 2.5f);
+
+    // Gate on the irradiance-based peak so the linked term only
+    // enhances an already-firing glow, never starts one (keeps
+    // reflective bodies with large angular radius from blooming).
     if (peakRadCol > 1.0f && starOptimization > 0.0f)
     {
         float glowPeak = peakRadCol;
@@ -1749,24 +1787,41 @@ void Renderer::addStarAsPsfPoint(const Vector3f &position,
             glowPeak = (1.0f - 1.0f / (peakRadCol / starMaxIrradiance + 1.0f))
                        * starMaxIrradiance;
         }
+        // Always render the glow in front of the body (calculateQuadCenter
+        // puts it on the near-side tangent plane).  Skip entirely for
+        // resolved reflective bodies that aren't bright enough to overflow.
+        if (glowPeak <= linkedGlowPeak && !emissive)
+            return;
+
+        Vector3f glowPos = calculateQuadCenter(getCameraOrientationf(), spritePos, radius);
+        // Size tracks whichever peak is larger: glowPeak in the far/overflow
+        // regime, linkedGlowPeak once the disc resolves so the sprite keeps
+        // pace with the growing disc instead of capping at starMaxIrradiance.
+        float glowPeakToUse = std::max(glowPeak, linkedGlowPeak);
+
+        // Fade alpha 1 → 0 between d_match and the body surface so the
+        // sprite vanishes smoothly as the disc takes over.
+        float alpha = computePsfGlowAlpha(distance, radius, linkedGlowPeak, glowPeak);
+        if (alpha <= 0.0f)
+            return;
+        Color glowColor(linearStarColor, alpha);
 
         // Fast oversize check: avoid computing pow unless we actually
         // need sizePhys.  sizePhys > maxPointSize is equivalent to
         // glowPeak > (maxPointSize * a / (2 * pointScale))^2.5.
-        float a = starOptimization / r;
         float glowPeakLargeThreshold = std::pow(static_cast<float>(celestia::gl::maxPointSize)
                                                 * a / (2.0f * pointScale),
                                                 2.5f);
 
-        if (glowPeak > glowPeakLargeThreshold)
+        if (glowPeakToUse > glowPeakLargeThreshold)
         {
             // Oversize glow (typical for Sol at ~1 AU): hand it to the
             // batched billboard renderer.
-            m_psfGlowLargeRenderer->addStar(position, linearStarColor, glowPeak);
+            m_psfGlowLargeRenderer->addStar(glowPos, glowColor, glowPeakToUse);
         }
         else
         {
-            psfGlowBuffer->addStar(position, linearStarColor, glowPeak);
+            psfGlowBuffer->addStar(glowPos, glowColor, glowPeakToUse);
         }
     }
 }
@@ -2935,8 +2990,7 @@ void Renderer::renderPlanet(Body& body,
         const auto surfaceColor = body.getSurface().color.linearize(gl::sRGBRendering);
         if (float maxCoeff = surfaceColor.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
-            renderObjectAsPoint(pos,
-                                body.getRadius(),
+            renderObjectAsPoint(PointObjectInfo{pos, distance, body.getRadius()},
                                 appMag,
                                 discSizeInPixels,
                                 surfaceColor * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
@@ -2987,7 +3041,7 @@ void Renderer::renderStar(const Star& star,
         Atmosphere atmosphere;
 
         // Use atmosphere effect to give stars a fuzzy fringe
-        if (star.hasCorona() && rp.geometry == engine::GeometryHandle::Invalid)
+        if (starStyle != StarStyle::PointSpreadFunction && star.hasCorona() && rp.geometry == engine::GeometryHandle::Invalid)
         {
             Color atmColor(color.red() * 0.5f, color.green() * 0.5f, color.blue() * 0.5f);
             atmosphere.height = radius * 0.2f /* CoronaHeight */;
@@ -3012,8 +3066,7 @@ void Renderer::renderStar(const Star& star,
                      rp, LightingState(), m);
     }
 
-    renderObjectAsPoint(pos,
-                        star.getRadius(),
+    renderObjectAsPoint(PointObjectInfo{pos, distance, star.getRadius()},
                         appMag,
                         discSizeInPixels,
                         color,

@@ -19,6 +19,7 @@ uniform float psfB;
 uniform float pointScale;
 
 in vec3  v_color;
+in float v_alpha;
 in float v_peakRadiance;
 in float v_psfRadius;
 in float v_pointSize;
@@ -39,6 +40,15 @@ void main(void)
 
     float val = pow(base * psfB, 2.5);
     val = clamp(val, 0.0, v_peakRadiance);
+
+    // Cap per-fragment output radiance at v_alpha (hue-preserving): the
+    // PSF center can otherwise dump arbitrarily large values into the
+    // additive accumulation, oversaturating any single pixel.  Scaling
+    // by v_alpha is what actually makes the C++-side alpha fade visible
+    // — without it, premultiplied v_color and the inverse-max clamp
+    // cancel out, defeating the fade.
+    float maxCh = max(max(v_color.r, v_color.g), v_color.b);
+    val = min(val, v_alpha / max(maxCh, 1e-6));
 
     fragColor = vec4(v_color * val, 1.0);
 }

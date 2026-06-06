@@ -37,5 +37,11 @@ void main(void)
     float val = pow(base * psfB, 2.5);
     val = clamp(val, 0.0, v_peakRadiance);
 
+    // Cap per-fragment output radiance at v_color.a (hue-preserving):
+    // see psfstarglow_frag.glsl for the rationale — scaling by alpha
+    // is what makes the C++-side alpha fade visible.
+    float maxCh = max(max(v_color.r, v_color.g), v_color.b);
+    val = min(val, v_color.a / max(maxCh, 1e-6));
+
     fragColor = vec4(v_color.rgb * val, 1.0);
 }

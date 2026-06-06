@@ -30,7 +30,7 @@ out float v_peakRadiance;
 void main(void)
 {
     v_uv           = in_TexCoord0;
-    v_color        = in_Color;
+    v_color        = vec4(in_Color.rgb * in_Color.a, in_Color.a);
     v_peakRadiance = in_Intensity;
 
     set_vp(vec4(in_Normal, 1.0));

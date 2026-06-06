@@ -21,13 +21,15 @@ uniform float psfB;        // = 1 / (pi/pointRadius - a)
 uniform float pointScale;  // DPI scale
 
 out vec3  v_color;
+out float v_alpha;
 out float v_peakRadiance;
 out float v_psfRadius;  // PSF cutoff radius in px (>0)
 out float v_pointSize;
 
 void main(void)
 {
-    v_color = in_Color.rgb;
+    v_color = in_Color.rgb * in_Color.a;
+    v_alpha = in_Color.a;
     v_peakRadiance = in_Intensity;
 
     // Glow mode: PSF support radius depends on peak radiance.
