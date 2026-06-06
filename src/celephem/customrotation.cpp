@@ -343,7 +343,7 @@ public:
 class IAUNeptuneRotationModel : public IAURotationModel
 {
 public:
-    IAUNeptuneRotationModel() : IAURotationModel(360.0 / 536.3128492) {}
+    IAUNeptuneRotationModel() : IAURotationModel(360.0 / 541.1397757) {}
 
     void pole(double d, double& ra, double &dec) const override
     {
@@ -357,14 +357,14 @@ public:
     {
         double T = d / 36525.0;
         double N = math::degToRad(357.85 + 52.316 * T);
-        return 253.18 + 536.3128492 * d - 0.48 * sin(N);
+        return 249.978 + 541.1397757 * d - 0.48 * sin(N);
     }
 };
 
 
 /*! IAU rotation model for the Moon.
  *  From the 2009 report of the IAU Working Group on Cartographic Coordinates and Rotational Elements:
- *  https://astropedia.astrogeology.usgs.gov/alfresco/d/d/workspace/SpacesStore/28fd9e81-1964-44d6-a58b-fbbf61e64e15/WGCCRE2009reprint.pdf
+ *  https://link.springer.com/article/10.1007/s10569-010-9320-4
  */
 class IAULunarRotationModel : public IAURotationModel
 {
@@ -451,7 +451,8 @@ public:
 
 // Rotations of Martian, Jovian, Saturnian, and Uranian satellites from IAU Working Group
 // on Cartographic Coordinates and Rotational Elements (2015 report)
-// See: https://astropedia.astrogeology.usgs.gov/download/Docs/WGCCRE/WGCCRE2015reprint.pdf
+// See: https://www.iau.org/WG100/WG100/Home.aspx
+//      https://www.usgs.gov/centers/astrogeology-science-center/science/iau-wgccre
 
 class IAUPhobosRotationModel : public IAURotationModel
 {
