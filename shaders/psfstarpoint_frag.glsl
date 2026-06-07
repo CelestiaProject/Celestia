@@ -23,11 +23,10 @@ void main(void)
 {
     // Pixel offset from the centre of the point sprite (in screen pixels).
     vec2  d  = (gl_PointCoord.xy - vec2(0.5)) * v_pointSize;
-    float px = length(d) / max(pointScale, 1e-6);
+    float px = length(d) / pointScale;
 
     // Linear cone of radius `pointRadius`, height min(peakRadiance, 1).
-    float r = max(pointRadius, 1e-6);
-    float falloff = clamp(1.0 - px / r, 0.0, 1.0);
+    float falloff = clamp(1.0 - px / pointRadius, 0.0, 1.0);
     float height  = min(v_peakRadiance, 1.0);
     vec3  radiance = v_color * (falloff * height);
 

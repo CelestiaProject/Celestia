@@ -26,16 +26,20 @@ uniform vec2  psfViewportRcp;   // (1/width, 1/height)
 out vec2  v_uv;
 out vec4  v_color;
 out float v_peakRadiance;
+out float v_psfRadius;
 
 void main(void)
 {
     v_uv           = in_TexCoord0;
-    v_color        = vec4(in_Color.rgb * in_Color.a, in_Color.a);
+    v_color        = in_Color;
     v_peakRadiance = in_Intensity;
+
+    float r        = pow(in_Intensity, 0.4) / psfA;
+    v_psfRadius    = r;
 
     set_vp(vec4(in_Normal, 1.0));
 
-    float sizePhys = 2.0 * pow(in_Intensity, 0.4) / psfA * psfPointScale;
+    float sizePhys = 2.0 * r * psfPointScale;
     vec2  extent   = sizePhys * psfViewportRcp;
     gl_Position.xy += in_Position * extent * gl_Position.w;
 }
