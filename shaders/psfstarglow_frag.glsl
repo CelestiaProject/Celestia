@@ -22,21 +22,27 @@ in vec3  v_color;
 in float v_alpha;
 in float v_peakRadiance;
 in float v_psfRadius;
-in float v_pointSize;
 
 void main(void)
 {
     // Pixel offset from the centre of the point sprite (in screen pixels).
-    vec2  d  = (gl_PointCoord.xy - vec2(0.5)) * v_pointSize;
-    float px = length(d) / pointScale;
+    // gl_PointSize was set to 2 * v_psfRadius * pointScale in the vertex
+    // shader, so length(gl_PointCoord - 0.5) * 2 * v_psfRadius equals the
+    // distance from the sprite centre in unscaled pixels (pointScale
+    // cancels out).
+    float px = length(gl_PointCoord.xy - vec2(0.5)) * 2.0 * v_psfRadius;
 
     // intensity = clamp(((peak^0.4 / px - a) * b)^2.5, 0, peak)
     if (px >= v_psfRadius)
         discard;
 
-    float base = pow(v_peakRadiance, 0.4) / px - psfA;
+    // p04 = pow(v_peakRadiance, 0.4) was already computed in the vertex
+    // shader as v_psfRadius * psfA -- recover it with a multiply instead
+    // of paying for a pow per fragment.
+    float p04 = v_psfRadius * psfA;
+    float base = p04 / px - psfA;
     float val = pow(base * psfB, 2.5);
-    val = clamp(val, 0.0, v_peakRadiance);
+    val = min(val, v_peakRadiance);
 
     // Clamp each channel of v_color * val to 1 BEFORE applying the
     // fade alpha so the bleached-white centre of a colored (e.g.

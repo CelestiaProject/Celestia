@@ -24,7 +24,6 @@ out vec3  v_color;
 out float v_alpha;
 out float v_peakRadiance;
 out float v_psfRadius;  // PSF cutoff radius in px (>0)
-out float v_pointSize;
 
 void main(void)
 {
@@ -36,9 +35,7 @@ void main(void)
     // psf_radius = peakRadiance^0.4 / a  (px, in unscaled coordinates)
     float r = pow(in_Intensity, 0.4) / psfA;
     v_psfRadius = r;
-    float size = 2.0 * r * pointScale;
 
-    v_pointSize = size;
-    gl_PointSize = size;
+    gl_PointSize = 2.0 * r * pointScale;
     set_vp(in_Position);
 }

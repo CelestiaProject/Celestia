@@ -17,22 +17,24 @@ uniform float psfB;
 in vec2  v_uv;
 in vec4  v_color;
 in float v_peakRadiance;
+in float v_psfRadius;
 
 void main(void)
 {
     // r = peak^0.4 / a is the PSF support radius in logical pixels; the
     // quad spans [-r, +r] so px = length(uv - 0.5) * 2 * r.
-    float p04 = pow(v_peakRadiance, 0.4);
-    float r   = p04 / psfA;
-
+    float r  = v_psfRadius;
     vec2  d  = (v_uv - vec2(0.5)) * 2.0 * r;
     float px = length(d);
     if (px >= r)
         discard;
 
+    // p04 = pow(v_peakRadiance, 0.4) = r * psfA -- recover with a multiply
+    // instead of paying for a pow per fragment.
+    float p04  = r * psfA;
     float base = p04 / px - psfA;
     float val = pow(base * psfB, 2.5);
-    val = clamp(val, 0.0, v_peakRadiance);
+    val = min(val, v_peakRadiance);
 
     // Clamp each channel of v_color * val to 1 BEFORE applying the
     // fade alpha (v_color.a) so the bleached-white centre of a
