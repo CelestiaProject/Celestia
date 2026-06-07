@@ -10,18 +10,21 @@
 
 #pragma once
 
+#include <celutil/flag.h>
 #include "glsupport.h"
 
 class FramebufferObject
 {
  public:
-    enum
+    enum class Attachment : unsigned int
     {
-        ColorAttachment = 0x1,
-        DepthAttachment = 0x2
+        None  = 0,
+        Color = 0x1,
+        Depth = 0x2,
     };
+
     FramebufferObject() = delete;
-    FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples = 1, bool useFloatColor = false);
+    FramebufferObject(GLuint width, GLuint height, Attachment attachments, int samples = 1, bool useFloatColor = false);
     FramebufferObject(const FramebufferObject&) = delete;
     FramebufferObject(FramebufferObject&&) noexcept;
     FramebufferObject& operator=(const FramebufferObject&) = delete;
@@ -60,13 +63,17 @@ class FramebufferObject
     bool unbind(GLint oldfboId);
     bool resolve() const;
 
+    // Hint that the listed attachments' contents may be discarded.
+    // Framebuffer must currently be bound to GL_FRAMEBUFFER.
+    void discard(Attachment attachments) const;
+
  private:
     explicit FramebufferObject(GLuint fboId); // non-owning wrapper; only bind() is valid
 
     void generateColorTexture();
     void generateDepthTexture();
-    void generateFbo(unsigned int attachments);
-    void generateMSAAFbo(unsigned int attachments);
+    void generateFbo(Attachment attachments);
+    void generateMSAAFbo(Attachment attachments);
     void cleanup();
 
  private:
@@ -83,3 +90,5 @@ class FramebufferObject
     GLenum m_status;
     bool   m_owned;
 };
+
+ENUM_CLASS_BITWISE_OPS(FramebufferObject::Attachment)

@@ -10,9 +10,35 @@
 
 #include "framebuffer.h"
 
+#include <array>
 #include <cassert>
 
-FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int attachments, int samples, bool useFloatColor) :
+namespace
+{
+
+// glInvalidateFramebuffer: core in GLES 3.0 and desktop GL 4.3 (or via GL_ARB_invalidate_subdata).
+inline bool
+hasInvalidateFramebuffer()
+{
+#ifdef GL_ES
+    return true;
+#else
+    return celestia::gl::checkVersion(celestia::gl::GL_4_3)
+        || celestia::gl::ARB_invalidate_subdata;
+#endif
+}
+
+inline void
+invalidateAttachments(GLenum target, GLsizei count, const GLenum *tokens)
+{
+    if (!hasInvalidateFramebuffer() || count == 0)
+        return;
+    glInvalidateFramebuffer(target, count, tokens);
+}
+
+} // namespace
+
+FramebufferObject::FramebufferObject(GLuint width, GLuint height, Attachment attachments, int samples, bool useFloatColor) :
     m_width(width),
     m_height(height),
     m_colorTexId(0),
@@ -23,7 +49,7 @@ FramebufferObject::FramebufferObject(GLuint width, GLuint height, unsigned int a
     m_status(GL_FRAMEBUFFER_UNSUPPORTED),
     m_owned(true)
 {
-    if (attachments != 0)
+    if (attachments != Attachment::None)
     {
         generateFbo(attachments);
     }
@@ -182,9 +208,9 @@ FramebufferObject::generateDepthTexture()
 }
 
 void
-FramebufferObject::generateFbo(unsigned int attachments)
+FramebufferObject::generateFbo(Attachment attachments)
 {
-    bool useRenderbufferMSAA = m_samples > 1 && (attachments & ColorAttachment) != 0;
+    bool useRenderbufferMSAA = m_samples > 1 && celestia::util::is_set(attachments, Attachment::Color);
 
     // Create the texture-based FBO (resolve target for renderbuffer MSAA,
     // or the sole FBO for non-MSAA paths).
@@ -197,7 +223,7 @@ FramebufferObject::generateFbo(unsigned int attachments)
     glReadBuffer(GL_NONE);
 #endif
 
-    if ((attachments & ColorAttachment) != 0)
+    if (celestia::util::is_set(attachments, Attachment::Color))
     {
         generateColorTexture();
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorTexId, 0);
@@ -218,29 +244,18 @@ FramebufferObject::generateFbo(unsigned int attachments)
     }
 #endif
 
-    if ((attachments & DepthAttachment) != 0)
+    if (celestia::util::is_set(attachments, Attachment::Depth) && !useRenderbufferMSAA)
     {
-        if (!useRenderbufferMSAA)
-        {
-            generateDepthTexture();
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexId, 0);
-        }
-        // else (renderbuffer MSAA): depth goes into m_msaaFboId; nothing to attach here.
+        generateDepthTexture();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexId, 0);
 
-        if (!useRenderbufferMSAA)
+        m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (m_status != GL_FRAMEBUFFER_COMPLETE)
         {
-            m_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-            if (m_status != GL_FRAMEBUFFER_COMPLETE)
-            {
-                glBindFramebuffer(GL_FRAMEBUFFER, oldFboId);
-                cleanup();
-                return;
-            }
+            glBindFramebuffer(GL_FRAMEBUFFER, oldFboId);
+            cleanup();
+            return;
         }
-    }
-    else if (!useRenderbufferMSAA)
-    {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
     }
 
     // Restore previous framebuffer before potentially creating the MSAA FBO.
@@ -251,7 +266,7 @@ FramebufferObject::generateFbo(unsigned int attachments)
 }
 
 void
-FramebufferObject::generateMSAAFbo(unsigned int attachments)
+FramebufferObject::generateMSAAFbo(Attachment attachments)
 {
     // Create an MSAA FBO backed by renderbuffers.  The scene is rendered here;
     // resolve() blits the color buffer to the texture-based m_fboId afterward.
@@ -268,7 +283,7 @@ FramebufferObject::generateMSAAFbo(unsigned int attachments)
     glGenFramebuffers(1, &m_msaaFboId);
     glBindFramebuffer(GL_FRAMEBUFFER, m_msaaFboId);
 
-    if ((attachments & ColorAttachment) != 0)
+    if (celestia::util::is_set(attachments, Attachment::Color))
     {
         glGenRenderbuffers(1, &m_colorRboId);
         glBindRenderbuffer(GL_RENDERBUFFER, m_colorRboId);
@@ -281,7 +296,7 @@ FramebufferObject::generateMSAAFbo(unsigned int attachments)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorRboId);
     }
 
-    if ((attachments & DepthAttachment) != 0)
+    if (celestia::util::is_set(attachments, Attachment::Depth))
     {
         glGenRenderbuffers(1, &m_depthRboId);
         glBindRenderbuffer(GL_RENDERBUFFER, m_depthRboId);
@@ -315,7 +330,7 @@ FramebufferObject::generateMSAAFbo(unsigned int attachments)
         // it becomes the sole render target we need to add depth so the scene
         // renders correctly.
         glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
-        if ((attachments & DepthAttachment) != 0)
+        if (celestia::util::is_set(attachments, Attachment::Depth))
         {
             generateDepthTexture();
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTexId, 0);
@@ -416,7 +431,28 @@ FramebufferObject::resolve() const
                       0, 0, static_cast<GLint>(m_width), static_cast<GLint>(m_height),
                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
+    // Discard the MSAA renderbuffers now that color has been resolved.
+    std::array<GLenum, 2> msaaAttachments{};
+    GLsizei count = 0;
+    if (m_colorRboId != 0)
+        msaaAttachments[count++] = GL_COLOR_ATTACHMENT0;
+    if (m_depthRboId != 0)
+        msaaAttachments[count++] = GL_DEPTH_ATTACHMENT;
+    invalidateAttachments(GL_READ_FRAMEBUFFER, count, msaaAttachments.data());
+
     if (scissorEnabled)
         glEnable(GL_SCISSOR_TEST);
     return true;
+}
+
+void
+FramebufferObject::discard(Attachment attachments) const
+{
+    std::array<GLenum, 2> tokens{};
+    GLsizei count = 0;
+    if (celestia::util::is_set(attachments, Attachment::Color))
+        tokens[count++] = GL_COLOR_ATTACHMENT0;
+    if (celestia::util::is_set(attachments, Attachment::Depth))
+        tokens[count++] = GL_DEPTH_ATTACHMENT;
+    invalidateAttachments(GL_FRAMEBUFFER, count, tokens.data());
 }

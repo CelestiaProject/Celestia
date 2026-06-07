@@ -16,9 +16,9 @@
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include "framebuffer.h"
 #include "shadermanager.h"
 
-class FramebufferObject;
 class Renderer;
 class CelestiaGLProgram;
 class WarpMesh;
@@ -32,6 +32,13 @@ public:
     virtual bool prerender(Renderer*, FramebufferObject* fbo, FramebufferObject* dst);
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
+
+    // Bitmask of FramebufferObject attachment flags this effect samples
+    // from the source FBO. Anything else may be discarded before resolve.
+    virtual FramebufferObject::Attachment sourceAttachments() const
+    {
+        return FramebufferObject::Attachment::Color;
+    }
 
     // Whether this effect needs its source FBO to use a floating-point
     // color buffer (GL_RGBA16F) instead of the default GL_RGBA8.

@@ -11,6 +11,8 @@ namespace celestia::gl
 #ifdef GL_ES
 CELAPI bool OES_texture_border_clamp          = false; //NOSONAR
 CELAPI bool OES_geometry_shader               = false; //NOSONAR
+#else
+CELAPI bool ARB_invalidate_subdata             = false; //NOSONAR
 #endif
 CELAPI bool ARB_texture_compression_bptc      = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc      = false; //NOSONAR
@@ -86,6 +88,7 @@ bool init(util::array_view<std::string> ignore) noexcept
     // upload paths.
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_EXT_texture_compression_bptc");
 #else
+    ARB_invalidate_subdata         = check_extension(ignore, "GL_ARB_invalidate_subdata");
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
 #endif
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");

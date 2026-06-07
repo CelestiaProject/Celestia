@@ -302,7 +302,7 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
             continue;
 
         fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,
-                                                  FramebufferObject::ColorAttachment | FramebufferObject::DepthAttachment,
+                                                  FramebufferObject::Attachment::Color | FramebufferObject::Attachment::Depth,
                                                   samples,
                                                   useFloat);
         if (!fbo->isValid())
