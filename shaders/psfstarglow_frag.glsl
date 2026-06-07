@@ -28,27 +28,21 @@ void main(void)
 {
     // Pixel offset from the centre of the point sprite (in screen pixels).
     vec2  d  = (gl_PointCoord.xy - vec2(0.5)) * v_pointSize;
-    float px = length(d) / max(pointScale, 1e-6);
+    float px = length(d) / pointScale;
 
     // intensity = clamp(((peak^0.4 / px - a) * b)^2.5, 0, peak)
-    if (px <= 0.0 || px >= v_psfRadius)
+    if (px >= v_psfRadius)
         discard;
 
-    float base = pow(max(v_peakRadiance, 1e-6), 0.4) / px - psfA;
-    if (base <= 0.0)
-        discard;
-
+    float base = pow(v_peakRadiance, 0.4) / px - psfA;
     float val = pow(base * psfB, 2.5);
     val = clamp(val, 0.0, v_peakRadiance);
 
-    // Cap per-fragment output radiance at v_alpha (hue-preserving): the
-    // PSF center can otherwise dump arbitrarily large values into the
-    // additive accumulation, oversaturating any single pixel.  Scaling
-    // by v_alpha is what actually makes the C++-side alpha fade visible
-    // — without it, premultiplied v_color and the inverse-max clamp
-    // cancel out, defeating the fade.
-    float maxCh = max(max(v_color.r, v_color.g), v_color.b);
-    val = min(val, v_alpha / max(maxCh, 1e-6));
-
-    fragColor = vec4(v_color * val, 1.0);
+    // Clamp each channel of v_color * val to 1 BEFORE applying the
+    // fade alpha so the bleached-white centre of a colored (e.g.
+    // blue) star stays white through the fade, instead of reverting
+    // to its underlying tint once v_alpha drops the per-channel value
+    // back below saturation.
+    vec3 clampedColor = min(vec3(1.0), v_color * val);
+    fragColor = vec4(clampedColor * v_alpha, 1.0);
 }
