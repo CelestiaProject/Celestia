@@ -46,9 +46,7 @@ namespace util = celestia::util;
 
 namespace
 {
-#if GL_ONLY_SHADOWS
 constexpr const int ShadowSampleKernelWidth = 2;
-#endif
 
 const std::filesystem::path ShaderDirectory{ "shaders" };
 
@@ -116,7 +114,7 @@ void main(void)
 #ifdef GL_ES
 constexpr std::string_view VersionHeader = "#version 300 es\n"sv;
 constexpr std::string_view VersionHeaderGeom = "#version 320 es\n"sv;
-constexpr std::string_view CommonHeader = "precision highp float;\n"sv;
+constexpr std::string_view CommonHeader = "precision highp float;\nprecision highp sampler2DShadow;\n"sv;
 #else
 constexpr std::string_view VersionHeader = "#version 330\n"sv;
 constexpr std::string_view VersionHeaderGeom = "#version 330\n"sv;
@@ -924,11 +922,7 @@ TextureSamplerDeclarations(const ShaderProperties& props)
 
     if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {
-#if GL_ONLY_SHADOWS
         source += DeclareUniform("shadowMapTex0", Shader_Sampler2DShadow);
-#else
-        source += DeclareUniform("shadowMapTex0", Shader_Sampler2D);
-#endif
     }
 
     return source;
@@ -1037,7 +1031,6 @@ std::string
 CalculateShadow()
 {
     std::string source;
-#if GL_ONLY_SHADOWS
     source += R"glsl(
 float calculateShadow()
 {
@@ -1045,34 +1038,17 @@ float calculateShadow()
     float s = 0.0;
     float bias = max(0.005 * (1.0 - cosNormalLightDir), 0.0005);
 )glsl"sv;
-    float boxFilterWidth = (float) ShadowSampleKernelWidth - 1.0f;
+    float boxFilterWidth = static_cast<float>(ShadowSampleKernelWidth) - 1.0f;
     float firstSample = -boxFilterWidth / 2.0f;
     float lastSample = firstSample + boxFilterWidth;
-    float sampleWeight = 1.0f / (float) (ShadowSampleKernelWidth * ShadowSampleKernelWidth);
+    float sampleWeight = 1.0f / static_cast<float>(ShadowSampleKernelWidth * ShadowSampleKernelWidth);
     source += fmt::format("    for (float y = {:f}; y <= {:f}; y += 1.0)\n", firstSample, lastSample);
     source += fmt::format("        for (float x = {:f}; x <= {:f}; x += 1.0)\n", firstSample, lastSample);
-    source += "            s += shadow2D(shadowMapTex0, shadowTexCoord0.xyz + vec3(x * texelSize, y * texelSize, bias)).z;\n";
+    // Modern GLSL hardware compare: returns single float (PCF result when
+    // GL_LINEAR filter + GL_COMPARE_REF_TO_TEXTURE).
+    source += "            s += texture(shadowMapTex0, shadowTexCoord0.xyz + vec3(x * texelSize, y * texelSize, bias));\n";
     source += fmt::format("    return s * {:f};\n", sampleWeight);
     source += "}\n";
-#else
-    source += R"glsl(
-float calculateShadow()
-{
-    float texelSize = 1.0 / shadowMapSize;
-    float s = 0.0;
-    float bias = max(0.005 * (1.0 - cosNormalLightDir), 0.0005);
-    for(float x = -1.0; x <= 1.0; x += 1.0)
-    {
-        for(float y = -1.0; y <= 1.0; y += 1.0)
-        {
-            float pcfDepth = texture(shadowMapTex0, shadowTexCoord0.xy + vec2(x * texelSize, y * texelSize)).r;
-            s += shadowTexCoord0.z - bias > pcfDepth ? 1.0 : 0.0;
-        }
-    }
-    return 1.0 - s / 9.0;
-}
-)glsl"sv;
-#endif
     return source;
 }
 

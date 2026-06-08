@@ -38,7 +38,6 @@
 #include "renderglsl.h"
 #include "renderinfo.h"
 #include "shadermanager.h"
-#include "shadowmap.h" // GL_ONLY_SHADOWS definition
 #include "texture.h"
 
 using namespace celestia;
@@ -413,9 +412,7 @@ void renderGeometry_GLSL(RenderGeometry* geometry,
         glActiveTexture(GL_TEXTURE0);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, shadowBuffer->depthTexture());
-#if GL_ONLY_SHADOWS
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-#endif
 
         glBegin(GL_QUADS);
         float side = 300.0f;
