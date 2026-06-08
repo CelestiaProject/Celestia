@@ -139,7 +139,12 @@ CelestiaGlWidget::initializeGL()
     if (settings.contains("sRGBRendering"))
         sRGBOverride = settings.value("sRGBRendering").toBool();
 
-    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), sRGBOverride, false))
+    std::optional<bool> reverseZOverride;
+    if (settings.contains("ReverseZ"))
+        reverseZOverride = settings.value("ReverseZ").toBool();
+
+    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution),
+                               sRGBOverride, reverseZOverride, false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);

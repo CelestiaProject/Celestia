@@ -2741,9 +2741,11 @@ LoadFontHelper(const Renderer* renderer,
 
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
+                                std::optional<bool> reverseZ,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.sRGBRendering);
+    gl::reverseZ = reverseZ.value_or(config->renderDetails.reverseZ);
 
     if (gl::sRGBRendering)
     {

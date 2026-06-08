@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "perspectiveprojectionmode.h"
+#include <celengine/glsupport.h>
 #include <celmath/frustum.h>
 #include <celmath/geomutil.h>
 #include <celengine/shadermanager.h>
@@ -22,6 +23,11 @@ PerspectiveProjectionMode::PerspectiveProjectionMode(float width, float height, 
 
 Eigen::Matrix4f PerspectiveProjectionMode::getProjectionMatrix(float nearZ, float farZ, float zoom) const
 {
+    if (gl::reverseZ)
+    {
+        return math::PerspectiveReverseZInfiniteZeroToOne(
+            math::radToDeg(getFOV(zoom)), width / height, nearZ);
+    }
     return math::Perspective(math::radToDeg(getFOV(zoom)), width / height, nearZ, farZ);
 }
 
@@ -79,6 +85,11 @@ double PerspectiveProjectionMode::getViewConeAngleMax(float zoom) const
 
 float PerspectiveProjectionMode::getNormalizedDeviceZ(float nearZ, float farZ, float z) const
 {
+    if (gl::reverseZ)
+    {
+        // -1 at near, +1 at far; Ortho2D negates this for the annotation pass.
+        return 1.0f - 2.0f * nearZ / z;
+    }
     float d0 = farZ - nearZ;
     float d1 = -(farZ + nearZ) / d0;
     float d2 = -2.0f * nearZ * farZ / d0;
