@@ -21,7 +21,6 @@
 #include "lightenv.h"
 #include "rendcontext.h"
 #include "render.h"
-#include "shadowmap.h" // GL_ONLY_SHADOWS definition
 #include "texmanager.h"
 #include "texture.h"
 
@@ -410,9 +409,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     {
         glActiveTexture(GL_TEXTURE0 + nTextures);
         glBindTexture(GL_TEXTURE_2D, shadowMap);
-#if GL_ONLY_SHADOWS
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-#endif
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         Eigen::Matrix4f shadowBias(Eigen::Matrix4f::Zero());
         shadowBias.diagonal() = Eigen::Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
         shadowBias.col(3) = Eigen::Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
