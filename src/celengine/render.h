@@ -498,6 +498,13 @@ class Renderer
                       float, float,
                       const Matrices&);
 
+    void renderRingSystem(Body& body,
+                          const Eigen::Vector3f& pos,
+                          float distance,
+                          const Observer& observer,
+                          float nearPlaneDistance,
+                          const Matrices&);
+
     void renderStar(const Star& star,
                     const Eigen::Vector3f& pos,
                     float distance,
