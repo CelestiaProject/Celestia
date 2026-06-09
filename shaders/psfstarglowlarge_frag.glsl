@@ -18,21 +18,21 @@ in vec2  v_uv;
 in vec4  v_color;
 in float v_peakRadiance;
 in float v_psfRadius;
+in float v_p04;
 
 void main(void)
 {
-    // r = peak^0.4 / a is the PSF support radius in logical pixels; the
-    // quad spans [-r, +r] so px = length(uv - 0.5) * 2 * r.
+    // r is now the visibility-clipped radius (see vert shader).
     float r  = v_psfRadius;
     vec2  d  = (v_uv - vec2(0.5)) * 2.0 * r;
     float px = length(d);
     if (px >= r)
         discard;
 
-    // p04 = pow(v_peakRadiance, 0.4) = r * psfA -- recover with a multiply
-    // instead of paying for a pow per fragment.
-    float p04  = r * psfA;
-    float base = p04 / px - psfA;
+    // p04 comes through the varying; it isn't recoverable from r
+    // anymore because r is the visibility-clipped radius rather than
+    // p04/psfA.
+    float base = v_p04 / px - psfA;
     float val = pow(base * psfB, 2.5);
     val = min(val, v_peakRadiance);
 

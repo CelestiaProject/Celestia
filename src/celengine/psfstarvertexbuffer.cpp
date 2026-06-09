@@ -13,6 +13,7 @@
 
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
 #include <celutil/color.h>
 
@@ -117,6 +118,9 @@ PsfStarVertexBuffer::makeCurrent()
         float b = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
         m_prog->floatParam("psfA") = a;
         m_prog->floatParam("psfB") = b;
+        m_prog->floatParam("psfMinVisRad") = celestia::gl::sRGBRendering
+                                                 ? celestia::astro::LOWEST_IRRADIATION_SRGB
+                                                 : celestia::astro::LOWEST_IRRADIATION;
     }
 }
 

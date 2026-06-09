@@ -11,6 +11,7 @@
 
 #include <algorithm>
 
+#include <celastro/astro.h>
 #include <celcompat/numbers.h>
 #include <celengine/glsupport.h>
 #include <celengine/shadermanager.h>
@@ -34,6 +35,9 @@ PsfGlowLargeRenderer::onMakeCurrent(const Eigen::Vector2f &viewportRcp)
 
     program()->floatParam("psfA")           = a;
     program()->floatParam("psfB")           = b;
+    program()->floatParam("psfMinVisRad")   = celestia::gl::sRGBRendering
+                                                  ? celestia::astro::LOWEST_IRRADIATION_SRGB
+                                                  : celestia::astro::LOWEST_IRRADIATION;
     program()->floatParam("psfPointScale")  = m_pointScale;
     program()->vec2Param ("psfViewportRcp") = viewportRcp;
 }
