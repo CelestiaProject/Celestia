@@ -20,6 +20,9 @@ layout(location = 8) in vec4  in_Color;       // linear RGB
 layout(location = 9) in float in_Intensity;   // peak radiance
 
 uniform float psfA;             // optimization / pointRadius
+uniform float psfB;             // 1 / (pi/pointRadius - a)
+uniform float psfMinVisRad;     // smallest linear radiance the framebuffer
+                                // encodes non-zero (see psfstarglow_vert).
 uniform float psfPointScale;    // DPI scale
 uniform vec2  psfViewportRcp;   // (1/width, 1/height)
 
@@ -27,6 +30,7 @@ out vec2  v_uv;
 out vec4  v_color;
 out float v_peakRadiance;
 out float v_psfRadius;
+out float v_p04;
 
 void main(void)
 {
@@ -34,12 +38,22 @@ void main(void)
     v_color        = in_Color;
     v_peakRadiance = in_Intensity;
 
-    float r        = pow(in_Intensity, 0.4) / psfA;
-    v_psfRadius    = r;
+    float p04   = pow(in_Intensity, 0.4);
+    float rFull = p04 / psfA;
+
+    // Match psfstarglow_vert.glsl: tighten the rasterised radius to
+    // where the post-alpha brightest channel falls below one
+    // framebuffer code (psfMinVisRad linear).
+    float tVal  = psfMinVisRad / max(in_Color.a, 1.0e-3);
+    float rEff  = p04 / (psfA + pow(tVal, 0.4) / psfB);
+    rEff        = min(rEff, rFull);
+
+    v_psfRadius = rEff;
+    v_p04       = p04;
 
     set_vp(vec4(in_Normal, 1.0));
 
-    float sizePhys = 2.0 * r * psfPointScale;
+    float sizePhys = 2.0 * rEff * psfPointScale;
     vec2  extent   = sizePhys * psfViewportRcp;
     gl_Position.xy += in_Position * extent * gl_Position.w;
 }

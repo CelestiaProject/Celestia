@@ -22,6 +22,7 @@ in vec3  v_color;
 in float v_alpha;
 in float v_peakRadiance;
 in float v_psfRadius;
+in float v_p04;
 
 void main(void)
 {
@@ -33,14 +34,15 @@ void main(void)
     float px = length(gl_PointCoord.xy - vec2(0.5)) * 2.0 * v_psfRadius;
 
     // intensity = clamp(((peak^0.4 / px - a) * b)^2.5, 0, peak)
+    // v_psfRadius now bounds the visible disc (where val*alpha >= 1 sRGB
+    // code); the discard mostly fires for the corners of the point quad.
     if (px >= v_psfRadius)
         discard;
 
-    // p04 = pow(v_peakRadiance, 0.4) was already computed in the vertex
-    // shader as v_psfRadius * psfA -- recover it with a multiply instead
-    // of paying for a pow per fragment.
-    float p04 = v_psfRadius * psfA;
-    float base = p04 / px - psfA;
+    // p04 comes through the varying; it isn't recoverable from
+    // v_psfRadius anymore because v_psfRadius is the visibility-clipped
+    // radius rather than p04/psfA.
+    float base = v_p04 / px - psfA;
     float val = pow(base * psfB, 2.5);
     val = min(val, v_peakRadiance);
 
