@@ -602,6 +602,7 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("StarPointRadius", renderer->getStarPointRadius());
     settings.setValue("StarOptimization", renderer->getStarOptimization());
     settings.setValue("StarMaxIrradiance", renderer->getStarMaxIrradiance());
+    settings.setValue("StarDimClipFactor", renderer->getStarDimClipFactor());
     settings.setValue("StarExposure", renderer->getStarExposure());
     settings.setValue("TextureResolution", static_cast<unsigned int>(renderer->getResolution()));
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));

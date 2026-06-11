@@ -125,6 +125,7 @@ private slots:
     void on_psfRadiusSpinBox_valueChanged(double) const;
     void on_psfOptimizationSpinBox_valueChanged(double) const;
     void on_psfMaxIrradianceSpinBox_valueChanged(double) const;
+    void on_psfDimClipFactorSpinBox_valueChanged(double) const;
     void on_psfExposureSpinBox_valueChanged(double) const;
 
 private:

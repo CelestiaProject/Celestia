@@ -62,12 +62,6 @@ constexpr inline float LOWEST_IRRADIATION      = 1.0f / 255.0f;
 // in linear space (within the linear segment of the sRGB curve).
 constexpr inline float LOWEST_IRRADIATION_SRGB = 1.0f / (255.0f * 12.92f);
 
-// Multiplier applied to the per-pixel visibility threshold above for the
-// PSF star renderer.  Raising the gate culls stars whose cone peak would
-// only contribute ~1 sRGB LSB; gives a noticeable FPS bump in dense
-// fields (e.g. Milky Way) at no perceptible visual cost.
-constexpr inline float PSF_PEAK_GATE_FACTOR    = 2.0f;
-
 // Approximately 10 parsecs in light-years
 // used to determine when to switch from AppMag to AbsMag
 constexpr inline double LY_PER_10PARSEC = 32.615637771674336;

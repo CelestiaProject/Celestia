@@ -1755,10 +1755,17 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     float irradiance     = astro::magToIrradiance(appMag);
     float peakRad        = peakRadScale * irradiance;
 
-    float minPeak = (celestia::gl::sRGBRendering
+    float dimGate = (celestia::gl::sRGBRendering
                         ? astro::LOWEST_IRRADIATION_SRGB
                         : astro::LOWEST_IRRADIATION)
-                    * astro::PSF_PEAK_GATE_FACTOR;
+                    * starDimClipFactor;
+
+    // Hyperbolic soft-clip: stars with peakRad close to dimGate fade
+    // smoothly toward zero, while peakRad >> dimGate is asymptotically
+    // unchanged.  See issue #2559.
+    if (peakRad <= dimGate)
+        return;
+    peakRad = std::sqrt(peakRad * peakRad - dimGate * dimGate);
 
     float greenScale = 1.0f;
     Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);
@@ -1766,7 +1773,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
 
     // Suppress the cone-cap sprite once the body is resolved as a
     // mesh; the linked glow below handles the bloom around the disc.
-    if (peakRadCol > minPeak && discSizeInPixels <= 1.0f)
+    if (discSizeInPixels <= 1.0f)
         psfPointBuffer->addStar(spritePos, linearStarColor, peakRadCol);
 
     // Peak radiance whose bloom radius (per the shader's PSF formula)
@@ -3908,15 +3915,16 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         // Precompute per-frame PSF constants once instead of recomputing
         // them per-star inside PointStarRenderer::process.
         //   peakRad = exposure * 3 * irradiance / (pi * r^2)
-        //   minPeak = fade-in gate (sRGB-aware)
+        //   dimGate = soft-clip threshold; peakRad <= dimGate -> star culled,
+        //             dimmed = sqrt(peakRad^2 - dimGate^2) above it
         //   a       = optimization / r  (Spencer eye-PSF coefficient)
         //   sizePhys > maxPointSize  <=>  glowPeak > (maxPointSize*a/(2*pointScale))^2.5
         float exposureFactor = std::max(starExposure, 1.0e-6f);
         float rLog           = std::max(starPointRadius, 1.0e-3f);
-        float minPeak        = (celestia::gl::sRGBRendering
+        float dimGate        = (celestia::gl::sRGBRendering
                                     ? astro::LOWEST_IRRADIATION_SRGB
                                     : astro::LOWEST_IRRADIATION)
-                               * astro::PSF_PEAK_GATE_FACTOR;
+                               * starDimClipFactor;
         float glowA = starOptimization / rLog;
         float glowPeakLargeThreshold = std::pow(static_cast<float>(celestia::gl::maxPointSize)
                                                 * glowA / (2.0f * scale),
@@ -3924,16 +3932,16 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
         starRenderer.psf.peakRadScale          = exposureFactor * 3.0f
                                                  / (celestia::numbers::pi_v<float> * rLog * rLog);
-        starRenderer.psf.minPeak               = minPeak;
+        starRenderer.psf.dimGate               = dimGate;
         starRenderer.psf.glowA                 = glowA;
         starRenderer.psf.glowPeakLargeThreshold = glowPeakLargeThreshold;
 
-        // Extend the iteration cutoff to the PSF's natural fade-in
-        // threshold so stars actually grow through minPeak instead of
+        // Extend the iteration cutoff to the soft-clip's natural fade-in
+        // threshold so stars actually grow through dimGate instead of
         // popping in at whatever peakRad they happen to have just past
         // Celestia's perceptual faintestMag cutoff.
-        //   peakRad = minPeak  =>  m = (1/0.4) * log10(exposure * 3 / (pi * r^2 * minPeak))
-        float psfFaintMag = std::log10(starRenderer.psf.peakRadScale / minPeak) / 0.4f;
+        //   peakRad = dimGate  =>  m = (1/0.4) * log10(exposure * 3 / (pi * r^2 * dimGate))
+        float psfFaintMag = std::log10(starRenderer.psf.peakRadScale / dimGate) / 0.4f;
         iterFaintestMag = std::max(faintestMagNight, psfFaintMag);
     }
     else
@@ -4476,6 +4484,21 @@ void Renderer::setStarMaxIrradiance(float v)
 float Renderer::getStarMaxIrradiance() const
 {
     return starMaxIrradiance;
+}
+
+
+void Renderer::setStarDimClipFactor(float v)
+{
+    // 1 == no clip (gate ≈ the perceptual visibility floor), larger values
+    // soft-clip a wider band of dim stars to reclaim per-frame cost.
+    starDimClipFactor = std::clamp(v, 1.0f, 100.0f);
+    markSettingsChanged();
+}
+
+
+float Renderer::getStarDimClipFactor() const
+{
+    return starDimClipFactor;
 }
 
 
