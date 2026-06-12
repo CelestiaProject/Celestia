@@ -44,6 +44,7 @@ class CurvePlot;
 class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
 namespace celestia::render { class PsfStarVertexBuffer; class StarPipelineOwner; }
+namespace celestia::engine { class ResourceSystem; }
 class Observer;
 struct Surface;
 class Texture;
@@ -793,6 +794,7 @@ class Renderer
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
+    std::unique_ptr<celestia::engine::ResourceSystem> m_resourceSystem;
     std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
     std::unique_ptr<celestia::engine::TextureManager> m_textureManager;
 

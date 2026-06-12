@@ -203,6 +203,15 @@ public:
         }
     }
 
+    // Drop every entry. In-flight decode tasks may still complete after
+    // this returns; their payloads are silently dropped on the next
+    // drainReady() because the handle is no longer present. Main thread
+    // only.
+    void clear()
+    {
+        m_entries.clear();
+    }
+
     // Diagnostic helpers — main thread only.
     std::size_t size() const noexcept { return m_entries.size(); }
     std::size_t pendingReady() const

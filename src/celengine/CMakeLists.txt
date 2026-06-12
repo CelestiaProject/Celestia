@@ -146,6 +146,8 @@ set(CELENGINE_SOURCES
   textlayout.h
   texture.cpp
   texture.h
+  texturetraits.cpp
+  texturetraits.h
   timeline.cpp
   timeline.h
   timelinephase.cpp

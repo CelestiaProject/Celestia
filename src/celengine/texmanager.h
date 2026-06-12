@@ -102,10 +102,15 @@ private:
     std::unordered_map<Info, util::TextureHandle, InfoHash, InfoEqual> m_handles;
 };
 
+class TextureTraits;
+template <typename Traits> class AsyncResourceCache;
+class ResourceSystem;
+
 class TextureManager
 {
 public:
-    TextureManager(std::shared_ptr<const TexturePaths>, TextureResolution);
+    TextureManager(std::shared_ptr<const TexturePaths>, TextureResolution, ResourceSystem&);
+    ~TextureManager();
 
     Texture* find(util::TextureHandle handle);
     Texture* findShadow(util::TextureHandle handle);
@@ -114,9 +119,9 @@ public:
 
 private:
     std::shared_ptr<const TexturePaths> m_paths;
-    std::unordered_map<util::TextureHandle, std::shared_ptr<Texture>> m_textures;
-    std::unordered_map<util::TextureHandle, std::shared_ptr<Texture>> m_shadowTextures;
     TextureResolution m_resolution;
+    std::unique_ptr<AsyncResourceCache<TextureTraits>> m_cache;
+    std::unique_ptr<AsyncResourceCache<TextureTraits>> m_shadowCache;
 };
 
 } // end namespace celestia::engine

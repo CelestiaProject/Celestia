@@ -27,6 +27,7 @@
 #include "spheremesh.h"
 #include "lodspheremesh.h"
 #include "geometry.h"
+#include "resourcesystem.h"
 #include "texmanager.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
@@ -407,8 +408,9 @@ bool Renderer::init(int winWidth, int winHeight,
                     std::shared_ptr<engine::GeometryManager> geometryManager,
                     std::shared_ptr<const engine::TexturePaths> texturePaths)
 {
+    m_resourceSystem = std::make_unique<engine::ResourceSystem>();
     m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager);
-    m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution);
+    m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution, *m_resourceSystem);
     detailOptions = _detailOptions;
 
     m_atmosphereRenderer->initGL();
@@ -1381,6 +1383,18 @@ void Renderer::render(const Observer& observer,
     realTime = observer.getRealTime();
 
     frameCount++;
+    if (m_resourceSystem != nullptr)
+    {
+        // 1. Stamp the frame counter so cache hits this frame appear "fresh"
+        //    to the LRU evictor.
+        // 2. Drain any decode results that completed since the previous frame
+        //    (bounded by the per-frame upload budget).
+        // 3. Periodically evict cache entries that haven't been touched in
+        //    a while.
+        m_resourceSystem->beginFrame();
+        m_resourceSystem->drainCaches();
+        m_resourceSystem->purgeIfDue();
+    }
     settingsChanged = false;
 
     // Compute the size of a pixel
