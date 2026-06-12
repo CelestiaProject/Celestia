@@ -83,9 +83,8 @@ ResourceSystem::drainCaches()
 void
 ResourceSystem::purgeIfDue()
 {
-    if (m_purgeIntervalFrames == 0)
-        return;
-    if (m_currentFrame == 0 || (m_currentFrame % m_purgeIntervalFrames) != 0)
+    if (m_purgeIntervalFrames == 0 || m_currentFrame == 0 ||
+        (m_currentFrame % m_purgeIntervalFrames) != 0)
         return;
 
     for (auto* cache : m_caches)

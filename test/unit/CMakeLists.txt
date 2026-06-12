@@ -7,6 +7,7 @@ set(UNIT_TEST_SOURCES
   kepler_test.cpp
   logger_test.cpp
   ranges_test.cpp
+  resourcesystem_test.cpp
   stellarclass_test.cpp
   strnatcmp_test.cpp
   tokenizer_test.cpp)

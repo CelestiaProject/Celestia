@@ -73,7 +73,8 @@ set(CELENGINE_SOURCES
   octree.h
   octreebuilder.h
   opencluster.cpp
-  opencluster.h  orbitsampler.h
+  opencluster.h
+  orbitsampler.h
   overlay.cpp
   overlay.h
   imageoverlay.cpp
