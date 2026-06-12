@@ -1331,6 +1331,15 @@ void Renderer::renderItem(const RenderListEntry& rle,
                      m);
         break;
 
+    case RenderListEntry::RenderableRingSystem:
+        renderRingSystem(*rle.body,
+                         rle.position,
+                         rle.distance,
+                         observer,
+                         nearPlaneDistance,
+                         m);
+        break;
+
     case RenderListEntry::RenderableCometTail:
         renderCometTail(*rle.body,
                         rle.position,
@@ -2301,14 +2310,12 @@ void Renderer::renderObject(const Vector3f& pos,
     // support.)
     float radius = obj.radius;
     Vector3f scaleFactors;
-    float ringsScaleFactor;
     float geometryScale;
     Matrix4f invMV;
     if (geometry == nullptr || geometry->isNormalized())
     {
         geometryScale = obj.radius;
         scaleFactors = obj.radius * obj.semiAxes;
-        ringsScaleFactor = obj.radius * obj.semiAxes.maxCoeff();
         ri.pointScale = 2.0f * obj.radius / pixelSize;
         // Compute the inverse model/view matrix
         Affine3f invModelView = Scaling(obj.semiAxes).inverse() *
@@ -2321,7 +2328,6 @@ void Renderer::renderObject(const Vector3f& pos,
     {
         geometryScale = obj.geometryScale;
         scaleFactors = Vector3f::Constant(geometryScale);
-        ringsScaleFactor = geometryScale;
         ri.pointScale = 2.0f * geometryScale / pixelSize;
         // Compute the inverse model/view matrix
         Affine3f invModelView = obj.orientation *
@@ -2333,15 +2339,6 @@ void Renderer::renderObject(const Vector3f& pos,
     Affine3f transform = Translation3f(pos) * obj.orientation.conjugate();
     Matrix4f planetMV  = (*m.modelview) * (transform * Scaling(scaleFactors)).matrix();
     Matrices planetMVP = { m.projection, &planetMV };
-
-    Matrices ringsMVP;
-    Matrix4f ringsMV;
-    bool showRings = obj.rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings);
-    if (showRings)
-    {
-        ringsMV  = (*m.modelview) * (transform * Scaling(ringsScaleFactor)).matrix();
-        ringsMVP = { m.projection, &ringsMV  };
-    }
 
     Matrix3f planetRotation = obj.orientation.toRotationMatrix();
 
@@ -2480,21 +2477,6 @@ void Renderer::renderObject(const Vector3f& pos,
         glActiveTexture(GL_TEXTURE0);
     }
 
-    float segmentSizeInPixels = 0.0f;
-    if (showRings)
-    {
-        // calculate ring segment size in pixels, actual size is segmentSizeInPixels * tan(segmentAngle)
-        segmentSizeInPixels = 2.0f * obj.rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
-        if (distance <= obj.rings->innerRadius)
-        {
-            m_ringRenderer->renderRings(*obj.rings, ri, ls,
-                                        radius, 1.0f - obj.semiAxes.y(),
-                                        util::is_set(renderFlags, RenderFlags::ShowRingShadows) && lit,
-                                        segmentSizeInPixels,
-                                        ringsMVP, true);
-        }
-    }
-
     if (atmosphere != nullptr)
     {
         // Compute the apparent thickness in pixels of the atmosphere.
@@ -2594,25 +2576,6 @@ void Renderer::renderObject(const Vector3f& pos,
 
             glDisable(GL_POLYGON_OFFSET_FILL);
             glFrontFace(GL_CCW);
-        }
-    }
-
-    if (showRings)
-    {
-        if (lit && util::is_set(renderFlags, RenderFlags::ShowRingShadows))
-        {
-            Texture* ringsTex = m_textureManager->find(obj.rings->texture);
-            if (ringsTex != nullptr)
-                ringsTex->bind();
-        }
-
-        if (distance > obj.rings->innerRadius)
-        {
-            m_ringRenderer->renderRings(*obj.rings, ri, ls,
-                                        radius, 1.0f - obj.semiAxes.y(),
-                                        util::is_set(renderFlags, RenderFlags::ShowRingShadows) && lit,
-                                        segmentSizeInPixels,
-                                        ringsMVP, false);
         }
     }
 }
@@ -3007,6 +2970,107 @@ void Renderer::renderPlanet(Body& body,
 }
 
 
+void Renderer::renderRingSystem(Body& body,
+                                const Vector3f& pos,
+                                float distance,
+                                const Observer& observer,
+                                float nearPlaneDistance,
+                                const Matrices &m)
+{
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+
+    const RingSystem* rings = bodyFeaturesManager->getRings(&body);
+    if (rings == nullptr || !util::is_set(renderFlags, RenderFlags::ShowPlanetRings))
+        return;
+
+    double now = observer.getTime();
+    float radius = body.getRadius();
+    float altitude = distance - radius;
+
+    // Replicate the subset of renderPlanet's setup needed for ring shading:
+    // orientation, scale factors, and a LightingState.
+    const Surface* surface;
+    if (displayedSurface.empty())
+    {
+        surface = &body.getSurface();
+    }
+    else
+    {
+        surface = bodyFeaturesManager->getAlternateSurface(&body, displayedSurface);
+        if (surface == nullptr)
+            surface = &body.getSurface();
+    }
+
+    Vector3f semiAxes = body.getSemiAxes() / radius;
+    Quaterniond q = body.getRotationModel(now)->spin(now) *
+                    body.getEclipticToEquatorial(now);
+    Quaternionf bodyOrientation = body.getGeometryOrientation() * q.cast<float>();
+
+    // Determine geometry scale and ring scale factor (matches renderObject).
+    engine::GeometryHandle geomHandle = body.getGeometry();
+    const RenderGeometry* geometry = nullptr;
+    if (geomHandle != engine::GeometryHandle::Invalid)
+        geometry = m_geometryManager->find(geomHandle);
+
+    Vector3f scaleFactors;
+    float ringsScaleFactor;
+    bool isNormalized = false;
+    if (geometry == nullptr || geometry->isNormalized())
+    {
+        scaleFactors = radius * semiAxes;
+        ringsScaleFactor = radius * semiAxes.maxCoeff();
+        isNormalized = true;
+    }
+    else
+    {
+        float geometryScale = body.getGeometryScale();
+        scaleFactors = Vector3f::Constant(geometryScale);
+        ringsScaleFactor = geometryScale;
+    }
+
+    LightingState lights;
+    setupObjectLighting(lightSourceList,
+                        secondaryIlluminators,
+                        bodyOrientation,
+                        scaleFactors,
+                        pos,
+                        isNormalized,
+                        lights);
+    assert(lights.nLights <= MaxLights);
+    lights.ambientColor = ambientColor.toVector3();
+
+    // Build the rings model-view matrix.
+    Affine3f transform = Translation3f(pos) * bodyOrientation.conjugate();
+    Matrix4f ringsMV = (*m.modelview) * (transform * Scaling(ringsScaleFactor)).matrix();
+    Matrices ringsMVP = { m.projection, &ringsMV };
+
+    // Populate only the RenderInfo fields read by RingRenderer::renderRings:
+    // color, ambientColor, specularColor. Mirror renderObject's color rule so
+    // the ring tint stays consistent for textured vs untextured bodies.
+    RenderInfo ri;
+    const Texture* baseTex = nullptr;
+    if (surface->baseTexture != util::TextureHandle::Invalid)
+        baseTex = m_textureManager->find(surface->baseTexture);
+    if (baseTex == nullptr || (surface->appearanceFlags & Surface::BlendTexture) != 0)
+        ri.color = surface->color.linearize(gl::sRGBRendering);
+    ri.ambientColor = ambientColor;
+    ri.specularColor = surface->specularColor.linearize(gl::sRGBRendering);
+
+    // Self-shadow of the body on the rings requires at least one lit light
+    // source and the user setting.
+    bool lit = (surface->appearanceFlags & Surface::Emissive) == 0;
+    bool renderShadow = lit && util::is_set(renderFlags, RenderFlags::ShowRingShadows);
+
+    float segmentSizeInPixels = 2.0f * rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
+
+    m_ringRenderer->renderRings(*rings, ri, lights,
+                                radius, 1.0f - semiAxes.y(),
+                                renderShadow,
+                                segmentSizeInPixels,
+                                ringsMVP);
+}
+
+
 void Renderer::renderStar(const Star& star,
                           const Vector3f& pos,
                           float distance,
@@ -3284,9 +3348,22 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
             rle.isOpaque = true;
         }
         rle.radius = body.getRadius();
-        if (const RingSystem* rings = bodyFeaturesManager->getRings(&body); rings != nullptr)
-            rle.radius = std::max(rle.radius, rings->outerRadius);
         renderList.push_back(rle);
+    }
+
+    if (const RingSystem* rings = bodyFeaturesManager->getRings(&body);
+        rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings))
+    {
+        float ringDiscSize = (rings->outerRadius / rle.distance) / pixelSize;
+        if (ringDiscSize > 1)
+        {
+            rle.renderableType = RenderListEntry::RenderableRingSystem;
+            rle.body = &body;
+            rle.isOpaque = false;
+            rle.radius = rings->outerRadius;
+            rle.discSizeInPixels = ringDiscSize;
+            renderList.push_back(rle);
+        }
     }
 
     if (body.getClassification() == BodyClassification::Comet && util::is_set(renderFlags, RenderFlags::ShowCometTails))
@@ -5069,6 +5146,7 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
 
         case RenderListEntry::RenderableCometTail:
         case RenderListEntry::RenderableReferenceMark:
+        case RenderListEntry::RenderableRingSystem:
             radius = ri.radius;
             cullRadius = radius;
             convex = false;
@@ -5076,11 +5154,6 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
 
         case RenderListEntry::RenderableBody:
             radius = ri.body->getBoundingRadius();
-            if (const RingSystem* rings = bodyFeaturesManager->getRings(ri.body); rings != nullptr)
-            {
-                radius = rings->outerRadius;
-                convex = false;
-            }
 
             if (!ri.body->isEllipsoid())
                 convex = false;
