@@ -108,11 +108,13 @@ public:
 
     bool isOpaque() const override { return m_model->isOpaque(); }
     bool isNormalized() const override { return m_model->isNormalized(); }
+    std::size_t gpuBytes() const override { return m_gpuBytes; }
 
 private:
     std::shared_ptr<const cmod::Model> m_model;
     std::vector<gl::Buffer> m_vbos;
     std::vector<gl::VertexObject> m_vaos;
+    std::size_t m_gpuBytes{ 0 };
 };
 
 ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> model) :
@@ -131,9 +133,10 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
         const cmod::Mesh* mesh = model->getMesh(i);
         const cmod::VertexDescription& vertexDesc = mesh->getVertexDescription();
 
+        const std::size_t vertexBytes = mesh->getVertexCount() * vertexDesc.strideBytes();
         m_vbos.emplace_back(gl::Buffer::TargetHint::Array,
-                            util::array_view<void>(mesh->getVertexData(),
-                                                   mesh->getVertexCount() * vertexDesc.strideBytes()));
+                            util::array_view<void>(mesh->getVertexData(), vertexBytes));
+        m_gpuBytes += vertexBytes;
 
         indices.reserve(std::max(indices.capacity(), static_cast<std::size_t>(mesh->getIndexCount())));
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
@@ -142,6 +145,7 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
             std::copy(group->indices.begin(), group->indices.end(), std::back_inserter(indices));
         }
 
+        m_gpuBytes += indices.size() * sizeof(cmod::Index32);
         gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
         indices.clear();
 

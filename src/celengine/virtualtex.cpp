@@ -158,10 +158,28 @@ VirtualTexture::VirtualTexture(const std::filesystem::path& _tilePath,
         setFormatOptions(Texture::DXT5NormalMap);
 }
 
+VirtualTexture::~VirtualTexture()
+{
+    // Unregister first so we stop getting per-frame ticks. In-flight workers
+    // still hold m_queue via shared_ptr; their payloads are dropped once the
+    // last reference goes away.
+    if (m_system != nullptr)
+        m_system->unregisterCache(this);
+}
+
+void
+VirtualTexture::attachToResourceSystem(celestia::engine::ResourceSystem& system)
+{
+    assert(m_system == nullptr);
+    m_system = &system;
+    m_system->registerCache(this);
+}
+
 
 TextureTile
 VirtualTexture::getTile(int lod, int u, int v)
 {
+    assert(m_system != nullptr);
     tilesRequested++;
 
     lod += baseSplit;
@@ -173,9 +191,27 @@ VirtualTexture::getTile(int lod, int u, int v)
         return TextureTile(0);
     }
 
+    // Walk the quadtree toward (lod, u, v), tracking the deepest existing
+    // tile and the deepest one that's already Loaded.
     const TileQuadtreeNode* node = &tileTree[u >> lod];
-    Tile* tile = node->tile.get();
-    unsigned int tileLOD = 0;
+    Tile* deepestExisting = node->tile.get();
+    unsigned int deepestExistingLOD = 0;
+    Tile* bestResident = nullptr;
+    unsigned int bestResidentLOD = 0;
+
+    auto consider = [&](Tile* t, unsigned int n)
+    {
+        if (t == nullptr)
+            return;
+        deepestExisting    = t;
+        deepestExistingLOD = n;
+        if (t->state == TileState::Loaded)
+        {
+            bestResident    = t;
+            bestResidentLOD = n;
+        }
+    };
+    consider(deepestExisting, 0);
 
     for (int n = 0; n < lod; n++)
     {
@@ -185,43 +221,38 @@ VirtualTexture::getTile(int lod, int u, int v)
             break;
 
         node = node->children[child].get();
-        if (node->tile != nullptr)
-        {
-            tile = node->tile.get();
-            tileLOD = n + 1;
-        }
+        consider(node->tile.get(), n + 1);
     }
 
-    // No tile was found at all--not even the base texture was found
-    if (!tile)
+    // No tile exists here at all - transparent.
+    if (deepestExisting == nullptr)
         return TextureTile(0);
 
-    // Make the tile resident.
-    unsigned int tileU = u >> (lod - tileLOD);
-    unsigned int tileV = v >> (lod - tileLOD);
-    makeResident(tile, tileLOD, tileU, tileV);
+    // Kick off the async load if it hasn't been requested (or was evicted).
+    if (deepestExisting->state == TileState::NotLoaded)
+    {
+        unsigned int tileU = u >> (lod - deepestExistingLOD);
+        unsigned int tileV = v >> (lod - deepestExistingLOD);
+        requestTile(deepestExisting, deepestExistingLOD, tileU, tileV);
+    }
 
-    // It's possible that we failed to make the tile resident, either
-    // because the texture file was bad, or there was an unresolvable
-    // out of memory situation.  In that case there is nothing else to
-    // do but return a texture tile with a null texture name.
-    if (!tile->tex)
+    // While it decodes, fall back to the coarsest resident ancestor.
+    if (bestResident == nullptr)
         return TextureTile(0);
 
-    // Set up the texture subrect to be the entire texture
+    bestResident->lastUsedFrame = m_system->currentFrame();
+
     float texU = 0.0f;
     float texV = 0.0f;
     float texDU = 1.0f;
     float texDV = 1.0f;
 
-    // If the tile came from a lower LOD than the requested one,
-    // we'll only use a subsection of it.
-    unsigned int lodDiff = lod - tileLOD;
+    unsigned int lodDiff = lod - bestResidentLOD;
     texDU = texDV = 1.0f / (float) (1 << lodDiff);
     texU = (u & ((1 << lodDiff) - 1)) * texDU;
     texV = (v & ((1 << lodDiff) - 1)) * texDV;
 
-    return TextureTile(tile->tex->getName(), texU, texV, texDU, texDV);
+    return TextureTile(bestResident->tex->getName(), texU, texV, texDU, texDV);
 }
 
 
@@ -268,50 +299,142 @@ VirtualTexture::endUsage()
 }
 
 
-std::unique_ptr<ImageTexture>
-VirtualTexture::loadTileTexture(unsigned int lod, unsigned int u, unsigned int v)
+void
+VirtualTexture::requestTile(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
 {
-    lod >>= baseSplit;
-    assert(lod < (unsigned)MaxResolutionLevels);
+    assert(tile != nullptr);
+    assert(tile->state == TileState::NotLoaded);
+    assert(m_system != nullptr);
 
+    tile->state = TileState::Loading;
+
+    unsigned int diskLod = lod >> baseSplit;
     auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
     filename += tileExt;
+    auto path = tilePath / fmt::format("level{:d}", diskLod) / filename;
 
-    auto path = tilePath /
-                fmt::format("level{:d}", lod) /
-                filename;
+    // Capture the queue by shared_ptr so an in-flight worker can outlive this
+    // VirtualTexture; no raw VirtualTexture* is captured.
+    auto queue = m_queue;
+    Colorspace cs = colorspace;
+    m_system->submit([queue, path = std::move(path), lod, u, v, cs]()
+    {
+        ReadyTile ready;
+        ready.lod = lod;
+        ready.u = u;
+        ready.v = v;
+        ready.image = celestia::engine::Image::load(path);
+        ready.decoded = ready.image != nullptr;
+        if (ready.decoded && cs == Texture::Colorspace::LinearColorspace)
+            ready.image->forceLinear();
 
-    auto img = Image::load(path);
-    if (!img)
-        return nullptr;
-
-    if (colorspace == Texture::Colorspace::LinearColorspace)
-        img->forceLinear();
-
-    std::unique_ptr<ImageTexture> tex = nullptr;
-
-    // Only use mip maps for the LOD 0; for higher LODs, the function of mip
-    // mapping is built into the texture.
-    MipMapMode mipMapMode = lod == 0 ? DefaultMipMaps : NoMipMaps;
-
-    if (isPow2(img->getWidth()) && isPow2(img->getHeight()))
-        tex = std::make_unique<ImageTexture>(*img, EdgeClamp, mipMapMode);
-
-    return tex;
+        std::scoped_lock lock(queue->mutex);
+        queue->ready.push_back(std::move(ready));
+    });
 }
 
 
-void VirtualTexture::makeResident(Tile* tile, unsigned int lod, unsigned int u, unsigned int v)
+VirtualTexture::Tile*
+VirtualTexture::findTile(unsigned int lod, unsigned int u, unsigned int v) const noexcept
 {
-    if (tile->tex == nullptr && !tile->loadFailed)
+    const TileQuadtreeNode* node = &tileTree[u >> lod];
+    for (unsigned int i = 0; i < lod; i++)
     {
-        // Potentially evict other tiles in order to make this one fit
-        tile->tex = loadTileTexture(lod, u, v);
-        if (tile->tex == nullptr)
+        unsigned int mask = 1 << (lod - i - 1);
+        unsigned int child = (((v & mask) << 1) | (u & mask)) >> (lod - i - 1);
+        if (!node->children[child])
+            return nullptr;
+        node = node->children[child].get();
+    }
+    return node->tile.get();
+}
+
+
+std::size_t
+VirtualTexture::drainReady(std::size_t byteBudget)
+{
+    assert(m_system != nullptr);
+
+    std::size_t bytes = 0;
+    while (bytes < byteBudget)
+    {
+        ReadyTile ready;
         {
-            tile->loadFailed = true;
+            std::scoped_lock lock(m_queue->mutex);
+            if (m_queue->ready.empty())
+                break;
+            ready = std::move(m_queue->ready.front());
+            m_queue->ready.pop_front();
+        }
+
+        Tile* tile = findTile(ready.lod, ready.u, ready.v);
+        // Drop the result if the tile was evicted or the node is gone.
+        if (tile == nullptr || tile->state != TileState::Loading)
+            continue;
+
+        if (!ready.decoded || !ready.image)
+        {
+            tile->state = TileState::Failed;
+            continue;
+        }
+
+        if (!isPow2(ready.image->getWidth()) || !isPow2(ready.image->getHeight()))
+        {
+            tile->state = TileState::Failed;
+            continue;
+        }
+
+        unsigned int diskLod = ready.lod >> baseSplit;
+        MipMapMode mipMapMode = diskLod == 0 ? DefaultMipMaps : NoMipMaps;
+        tile->tex = std::make_unique<ImageTexture>(*ready.image, EdgeClamp, mipMapMode);
+        tile->state = TileState::Loaded;
+        tile->lastUsedFrame = m_system->currentFrame();
+        bytes += static_cast<std::size_t>(ready.image->getSize());
+    }
+    return bytes;
+}
+
+
+bool
+VirtualTexture::purgeTreeRecursive(TileQuadtreeNode& node,
+                                   std::uint64_t now,
+                                   std::uint64_t graceFrames)
+{
+    // Recurse first so we know whether any finer descendant is still resident.
+    bool subtreeLoaded = false;
+    for (const auto& child : node.children)
+    {
+        if (child)
+            subtreeLoaded |= purgeTreeRecursive(*child, now, graceFrames);
+    }
+
+    if (node.tile && node.tile->state == TileState::Loaded)
+    {
+        // Keep a coarser tile while a finer descendant is still loaded: it's a
+        // cheap fallback and avoids blank tiles when zooming back out.
+        if (!subtreeLoaded && (now - node.tile->lastUsedFrame) > graceFrames)
+        {
+            // Drop the GPU texture; reset so a later getTile() reloads from disk.
+            node.tile->tex.reset();
+            node.tile->state = TileState::NotLoaded;
+        }
+        else
+        {
+            subtreeLoaded = true;
         }
     }
+
+    return subtreeLoaded;
+}
+
+
+void
+VirtualTexture::purgeStale(std::uint64_t graceFrames)
+{
+    assert(m_system != nullptr);
+    std::uint64_t now = m_system->currentFrame();
+    for (auto& root : tileTree)
+        purgeTreeRecursive(root, now, graceFrames);
 }
 
 

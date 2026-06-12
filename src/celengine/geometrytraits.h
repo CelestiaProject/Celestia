@@ -23,15 +23,13 @@ namespace celestia::engine
 
 // Traits adapter that plugs cmod model loading into AsyncResourceCache.
 //
-// decode() runs on a worker thread: it parses the model file (.cmod /
-// .3ds / .cms), runs the post-load conditioning (uniquifyMaterials,
-// sortMeshes, determineOpacity, normalize/transform) and returns the
-// fully-prepared cmod::Model.
+// decode() runs on a worker: it parses the model (.cmod/.3ds/.cms), does
+// the post-load conditioning (uniquify materials, sort meshes, opacity,
+// normalize) and returns the prepared cmod::Model.
 //
-// upload() runs on the render thread but performs no GL work — it just
-// wraps the model in a ModelGeometry. The actual GL-side construction
-// (VBOs/VAOs) is deferred to RenderGeometryManager::find() which calls
-// Geometry::createRenderGeometry() the first time the body is rendered.
+// upload() runs on the render thread but does no GL — it just wraps the
+// model in a ModelGeometry. VBO/VAO creation is deferred to
+// RenderGeometryManager::find() on first render.
 class GeometryTraits
 {
 public:
@@ -49,10 +47,8 @@ public:
 
     std::size_t gpuBytes(const GpuResource& /*geom*/) const noexcept
     {
-        // No GL allocations happen at this layer (those live in
-        // RenderGeometryManager / ModelRenderGeometry). Returning zero
-        // means GeometryManager doesn't consume any of the per-frame
-        // upload budget, which is correct.
+        // No GL allocations at this layer (those live in
+        // RenderGeometryManager), so geometry uses none of the upload budget.
         return 0;
     }
 

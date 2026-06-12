@@ -1406,10 +1406,8 @@ BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager&
     const Geometry* g = geometryManager.find(geometry);
     if (g == nullptr)
     {
-        // GeometryManager may still be decoding the model on a worker
-        // thread; leave locationsComputed false so we retry on the next
-        // frame. Once the model is permanently unavailable (Failed in the
-        // cache) it will continue to return null and we'll quietly retry
+        // Still decoding on a worker: leave locationsComputed false and retry
+        // next frame. If the model is permanently unavailable we just retry
         // forever, which is harmless.
         return;
     }

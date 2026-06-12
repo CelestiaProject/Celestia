@@ -645,16 +645,15 @@ GeometryTraits::upload(CpuData&& model) const
 {
     if (model == nullptr)
         return nullptr;
-    // No GL allocations here: ModelGeometry is the CPU-side wrapper that
-    // a later RenderGeometryManager::find() will turn into VBOs/VAOs.
+    // No GL here: ModelGeometry is the CPU wrapper that a later
+    // RenderGeometryManager::find() turns into VBOs/VAOs.
     return std::make_unique<ModelGeometry>(std::move(model));
 }
 
 Geometry*
 GeometryTraits::placeholder() const noexcept
 {
-    // No placeholder geometry: callers (rendcontext / Renderer) already
-    // skip null geometry results.
+    // No placeholder: callers already skip null geometry.
     return nullptr;
 }
 
@@ -663,7 +662,6 @@ GeometryManager::GeometryManager(std::shared_ptr<const GeometryPaths> geometryPa
                                  ResourceSystem& system) :
     m_geometryPaths(geometryPaths),
     m_texturePaths(texturePaths),
-    m_emptyGeometry(std::make_unique<EmptyGeometry>()),
     m_cache(std::make_unique<AsyncResourceCache<GeometryTraits>>(
         system, GeometryTraits(geometryPaths, texturePaths)))
 {
@@ -681,9 +679,17 @@ GeometryManager::find(GeometryHandle handle)
     return m_cache->find(handle);
 }
 
-RenderGeometryManager::RenderGeometryManager(std::shared_ptr<GeometryManager> geometryManager) :
-    m_geometryManager(geometryManager)
+RenderGeometryManager::RenderGeometryManager(std::shared_ptr<GeometryManager> geometryManager,
+                                             ResourceSystem& system) :
+    m_geometryManager(geometryManager),
+    m_system(&system)
 {
+    m_system->registerCache(this);
+}
+
+RenderGeometryManager::~RenderGeometryManager()
+{
+    m_system->unregisterCache(this);
 }
 
 RenderGeometry*
@@ -692,19 +698,38 @@ RenderGeometryManager::find(GeometryHandle handle)
     if (handle == GeometryHandle::Invalid)
         return nullptr;
 
-    auto it = m_geometry.find(handle);
-    if (it != m_geometry.end())
-        return it->second.get();
+    const std::uint64_t frame = m_system->currentFrame();
 
-    // Inner GeometryManager may still be decoding the model on a worker
-    // thread; in that case we get nullptr and must not memoize it (the
-    // next frame the decode may have completed).
+    if (auto it = m_geometry.find(handle); it != m_geometry.end())
+    {
+        it->second.lastUsedFrame = frame;
+        return it->second.geometry.get();
+    }
+
+    // Still decoding on a worker: don't memoize the nullptr, the decode may
+    // finish next frame.
     const Geometry* geometry = m_geometryManager->find(handle);
     if (!geometry)
         return nullptr;
 
-    auto inserted = m_geometry.emplace(handle, geometry->createRenderGeometry());
-    return inserted.first->second.get();
+    Entry entry;
+    entry.geometry = geometry->createRenderGeometry();
+    entry.lastUsedFrame = frame;
+    auto [it, inserted] = m_geometry.try_emplace(handle, std::move(entry));
+    return it->second.geometry.get();
+}
+
+void
+RenderGeometryManager::purgeStale(std::uint64_t graceFrames)
+{
+    const std::uint64_t now = m_system->currentFrame();
+    for (auto it = m_geometry.begin(); it != m_geometry.end(); )
+    {
+        if ((now - it->second.lastUsedFrame) > graceFrames)
+            it = m_geometry.erase(it);
+        else
+            ++it;
+    }
 }
 
 } // end namespace celestia::engine

@@ -21,6 +21,7 @@
 #include <celutil/classops.h>
 #include <celutil/fsutils.h>
 #include "geometry.h"
+#include "resourcesystem.h"
 #include "texmanager.h"
 
 namespace celestia::engine
@@ -111,30 +112,45 @@ public:
                     ResourceSystem&);
     ~GeometryManager();
 
-    // Returns the parsed Geometry once decoding has finished, or nullptr
-    // while the decode is still in flight (callers fall back to omitting
-    // the body's mesh that frame). Always returns the EmptyGeometry
-    // sentinel for GeometryHandle::Empty.
+    // Returns the parsed Geometry, or nullptr while the decode is still in
+    // flight (callers skip the body's mesh that frame). GeometryHandle::Empty
+    // always returns the EmptyGeometry sentinel.
     const Geometry* find(GeometryHandle);
 
 private:
     std::shared_ptr<const GeometryPaths> m_geometryPaths;
     std::shared_ptr<TexturePaths> m_texturePaths;
-    std::unique_ptr<Geometry> m_emptyGeometry;
+    std::unique_ptr<Geometry> m_emptyGeometry{ std::make_unique<EmptyGeometry>() };
     std::unique_ptr<AsyncResourceCache<GeometryTraits>> m_cache;
 };
 
-class RenderGeometryManager
+// Caches the GL-side RenderGeometry (VBOs/VAOs) built from the CPU-side
+// Geometry. Registers with the ResourceSystem so idle geometry is evicted
+// like any other GPU resource; a later find() rebuilds it on demand.
+class RenderGeometryManager : public ResourceCacheBase, private util::NoCopy
 {
 public:
-    explicit RenderGeometryManager(std::shared_ptr<GeometryManager>);
+    RenderGeometryManager(std::shared_ptr<GeometryManager>, ResourceSystem&);
+    ~RenderGeometryManager() override;
 
     GeometryManager* geometryManager() const noexcept { return m_geometryManager.get(); }
     RenderGeometry* find(GeometryHandle);
 
+    // ResourceCacheBase. Geometry is built lazily in find() rather than from a
+    // ready queue, so drainReady has nothing to upload.
+    std::size_t drainReady(std::size_t) override { return 0; }
+    void purgeStale(std::uint64_t graceFrames) override;
+
 private:
+    struct Entry
+    {
+        std::unique_ptr<RenderGeometry> geometry;
+        std::uint64_t lastUsedFrame{ 0 };
+    };
+
     std::shared_ptr<GeometryManager> m_geometryManager;
-    std::unordered_map<GeometryHandle, std::unique_ptr<RenderGeometry>> m_geometry;
+    ResourceSystem* m_system;
+    std::unordered_map<GeometryHandle, Entry> m_geometry;
 };
 
 } // end namespace celestia::engine

@@ -410,7 +410,7 @@ bool Renderer::init(int winWidth, int winHeight,
                     std::shared_ptr<engine::ResourceSystem> resourceSystem)
 {
     m_resourceSystem = std::move(resourceSystem);
-    m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager);
+    m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager, *m_resourceSystem);
     m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution, *m_resourceSystem);
     detailOptions = _detailOptions;
 
@@ -1384,18 +1384,11 @@ void Renderer::render(const Observer& observer,
     realTime = observer.getRealTime();
 
     frameCount++;
-    if (m_resourceSystem != nullptr)
-    {
-        // 1. Stamp the frame counter so cache hits this frame appear "fresh"
-        //    to the LRU evictor.
-        // 2. Drain any decode results that completed since the previous frame
-        //    (bounded by the per-frame upload budget).
-        // 3. Periodically evict cache entries that haven't been touched in
-        //    a while.
-        m_resourceSystem->beginFrame();
-        m_resourceSystem->drainCaches();
-        m_resourceSystem->purgeIfDue();
-    }
+    // Advance the frame, upload finished decodes (within budget), and
+    // periodically evict stale cache entries.
+    m_resourceSystem->beginFrame();
+    m_resourceSystem->drainCaches();
+    m_resourceSystem->purgeIfDue();
     settingsChanged = false;
 
     // Compute the size of a pixel

@@ -23,37 +23,32 @@
 namespace celestia::engine
 {
 
-// Interface implemented by per-resource-type caches (textures, geometry, ...).
-// The ResourceSystem owns the worker thread pool and the per-frame tick; the
-// caches own the per-handle entries and the cross-thread ready queue.
-//
-// All methods on this interface run on the main (render/GL) thread.
+// Implemented by per-resource-type caches (textures, geometry, ...). The
+// ResourceSystem owns the worker pool and frame tick; caches own their
+// entries and ready queue. All methods run on the render (GL) thread.
 class ResourceCacheBase
 {
 public:
     virtual ~ResourceCacheBase() = default;
 
-    // Drain ready-to-upload entries, performing GL uploads, until at least
-    // `byteBudget` bytes have been uploaded or the ready queue is empty.
-    // Returns the number of bytes actually uploaded.
+    // Upload ready entries until at least `byteBudget` bytes are uploaded or
+    // the ready queue drains. Returns bytes actually uploaded.
     virtual std::size_t drainReady(std::size_t byteBudget) = 0;
 
-    // Evict entries whose last access frame is older than (currentFrame -
-    // graceFrames). Implementations must not evict entries that are pinned
-    // or currently in-flight on a worker thread.
+    // Evict entries untouched for more than `graceFrames`. Must skip pinned
+    // or in-flight entries.
     virtual void purgeStale(std::uint64_t graceFrames) = 0;
 };
 
 // Coordinator for asynchronous resource loading.
 //
-// Owns a worker thread pool that runs CPU-bound decode tasks. Provides
-// per-frame lifecycle hooks that the renderer drives:
-//   1. beginFrame()        — bumps the frame counter (call at top of frame)
-//   2. drainCaches()       — main-thread GL uploads, bounded by upload budget
-//   3. purgeIfDue()        — periodic LRU eviction across all caches
+// Owns a worker pool that runs CPU-bound decode tasks, plus the per-frame
+// hooks the renderer drives:
+//   beginFrame()  — bump the frame counter (top of frame)
+//   drainCaches() — render-thread GL uploads, bounded by the upload budget
+//   purgeIfDue()  — periodic LRU eviction across all caches
 //
-// The ResourceSystem itself does no GL work; uploads run inside the caches
-// via the ResourceCacheBase interface.
+// The ResourceSystem does no GL itself; uploads happen in the caches.
 class ResourceSystem : private util::NoCopy
 {
 public:
@@ -63,24 +58,30 @@ public:
     explicit ResourceSystem(unsigned numWorkers = 0);
     ~ResourceSystem();
 
-    // Submit a CPU-bound task to the worker pool. The task is invoked on a
-    // worker thread; it is responsible for posting any result back to the
-    // owning cache's ready queue. Higher priority values run first; within
-    // the same priority, submission order is preserved (FIFO).
+    // Stop and join all worker threads. Idempotent. Must be called (directly
+    // or via the destructor) before any registered cache is destroyed, so an
+    // in-flight decode can never post to a freed cache. Queued tasks still
+    // drain against their (live) caches before the join completes.
+    void shutdown() noexcept;
+
+    // Submit a CPU-bound task to the worker pool. It runs on a worker thread
+    // and is responsible for posting its result back to the owning cache.
+    // Higher priority runs first; ties keep submission order (FIFO).
     void submit(DecodeTask task, int priority = 0);
 
-    // Per-frame lifecycle. Call beginFrame() once per render frame, before
-    // any cache find() calls. Call drainCaches() and purgeIfDue() after the
-    // frame's logical work; they are safe to call back-to-back at the top
-    // of the next frame as well.
+    // Per-frame lifecycle. Call beginFrame() once per frame before any cache
+    // find(); call drainCaches() and purgeIfDue() after the frame's work.
     void beginFrame() noexcept;
     void drainCaches();
     void purgeIfDue();
 
     std::uint64_t currentFrame() const noexcept { return m_currentFrame; }
 
-    // Cache registration. Caches must call unregisterCache() in their
-    // destructor (before ~ResourceSystem) to avoid dangling references.
+    // Cache registration. Caches must unregister in their destructor (before
+    // ~ResourceSystem) to avoid dangling pointers. Both are safe to call
+    // reentrantly from drainCaches()/purgeIfDue() (e.g. a tile cache
+    // attaching/detaching while it streams): adds are deferred and removals
+    // tombstone the slot, so the in-progress iteration is never disturbed.
     void registerCache(ResourceCacheBase* cache);
     void unregisterCache(ResourceCacheBase* cache) noexcept;
 
@@ -100,7 +101,7 @@ private:
     {
         int           priority;
         std::uint64_t sequence;
-        DecodeTask    task;
+        mutable DecodeTask task;
 
         // std::priority_queue is a max-heap on operator<. We want higher
         // priority first, then lower sequence (FIFO) within a priority.
@@ -114,6 +115,10 @@ private:
 
     void workerLoop();
 
+    // Apply deferred register/unregister and compact tombstones after an
+    // iteration over m_caches completes.
+    void finishCacheIteration();
+
     // Worker thread pool + work queue.
     mutable std::mutex            m_workMutex;
     std::condition_variable       m_workCv;
@@ -122,14 +127,17 @@ private:
     std::vector<std::thread>      m_workers;
     bool                          m_stop{ false };
 
-    // Caches participating in per-frame lifecycle. Touched only from the
-    // main thread; no lock needed.
+    // Caches in the per-frame lifecycle. Render thread only, so no lock.
+    // While m_iterating, registerCache() defers into m_pendingCaches and
+    // unregisterCache() tombstones the slot; finishCacheIteration() reconciles
+    // both so the live iteration is never invalidated.
     std::vector<ResourceCacheBase*> m_caches;
+    std::vector<ResourceCacheBase*> m_pendingCaches;
+    std::size_t                     m_drainCursor{ 0 };
+    bool                            m_iterating{ false };
 
-    // Per-frame state. m_currentFrame is read by worker threads (e.g., for
-    // timestamp metadata) but written only on the main thread; atomic-ish
-    // semantics via plain std::uint64_t are acceptable because workers only
-    // use the value as a hint.
+    // Bumped on the render thread, read by workers only as a hint, so a plain
+    // counter suffices.
     std::uint64_t m_currentFrame{ 0 };
 
     // Tunables — defaults sized for desktop. Mobile callers should tighten.

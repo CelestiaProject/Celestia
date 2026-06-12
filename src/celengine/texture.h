@@ -246,9 +246,8 @@ LoadHeightMapFromFile(const std::filesystem::path& filename,
                       float height,
                       Texture::AddressMode addressMode = Texture::EdgeClamp);
 
-// Build an in-memory GL texture from a decoded Image. This is the only
-// step that touches GL, so it must run on the render thread; the decode
-// portion (Image::load) may run on a worker.
+// Build a GL texture from a decoded Image. This is the only GL step, so it
+// must run on the render thread; the decode (Image::load) can run on a worker.
 std::unique_ptr<Texture>
 CreateTextureFromImage(const celestia::engine::Image& img,
                        Texture::AddressMode addressMode,

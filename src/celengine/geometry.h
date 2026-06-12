@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <memory>
 
 #include <Eigen/Geometry>
@@ -27,6 +28,9 @@ public:
 
     virtual bool isOpaque() const { return true; }
     virtual bool isNormalized() const { return true; }
+
+    // Approximate GL memory held by this geometry (VBOs/index buffers).
+    virtual std::size_t gpuBytes() const { return 0; }
 };
 
 class Geometry

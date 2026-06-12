@@ -30,8 +30,16 @@ ResourceSystem::ResourceSystem(unsigned numWorkers)
 
 ResourceSystem::~ResourceSystem()
 {
+    shutdown();
+}
+
+void
+ResourceSystem::shutdown() noexcept
+{
     {
-        std::lock_guard<std::mutex> lock(m_workMutex);
+        std::scoped_lock lock(m_workMutex);
+        if (m_stop)
+            return;
         m_stop = true;
     }
     m_workCv.notify_all();
@@ -49,7 +57,7 @@ ResourceSystem::submit(DecodeTask task, int priority)
         return;
 
     {
-        std::lock_guard<std::mutex> lock(m_workMutex);
+        std::scoped_lock lock(m_workMutex);
         m_work.push(WorkItem{ priority, ++m_workSeq, std::move(task) });
     }
     m_workCv.notify_one();
@@ -65,19 +73,29 @@ void
 ResourceSystem::drainCaches()
 {
     const std::size_t budget = m_uploadBudgetBytes;
-    if (budget == 0 || m_caches.empty())
+    const std::size_t count = m_caches.size();
+    if (budget == 0 || count == 0)
         return;
 
-    // Round-robin caches so no single type starves the others when the
-    // budget is tight. Caches share the budget for the frame.
+    // Rotate the starting cache each frame so a perpetually-busy cache can't
+    // monopolise the budget and starve the others. No cache is added or
+    // removed during a drain (uploads neither attach nor evict), so the size
+    // and indices stay stable across the loop.
     std::size_t remaining = budget;
-    for (auto* cache : m_caches)
+    const std::size_t start = m_drainCursor % count;
+    m_iterating = true;
+    for (std::size_t k = 0; k < count; ++k)
     {
         if (remaining == 0)
             break;
+        auto* cache = m_caches[(start + k) % count];
+        if (cache == nullptr)
+            continue;
         const std::size_t uploaded = cache->drainReady(remaining);
         remaining = uploaded >= remaining ? 0 : remaining - uploaded;
     }
+    finishCacheIteration();
+    ++m_drainCursor;
 }
 
 void
@@ -87,8 +105,16 @@ ResourceSystem::purgeIfDue()
         (m_currentFrame % m_purgeIntervalFrames) != 0)
         return;
 
+    // Evicting an entry may destroy a resource that is itself a registered
+    // cache (e.g. a VirtualTexture), which reentrantly unregisters. The
+    // tombstone-and-defer scheme keeps this iteration valid.
+    m_iterating = true;
     for (auto* cache : m_caches)
-        cache->purgeStale(m_graceFrames);
+    {
+        if (cache != nullptr)
+            cache->purgeStale(m_graceFrames);
+    }
+    finishCacheIteration();
 }
 
 void
@@ -96,14 +122,54 @@ ResourceSystem::registerCache(ResourceCacheBase* cache)
 {
     if (cache == nullptr)
         return;
-    if (std::find(m_caches.begin(), m_caches.end(), cache) == m_caches.end())
+
+    auto present = [cache](const std::vector<ResourceCacheBase*>& v)
+    {
+        return std::find(v.begin(), v.end(), cache) != v.end();
+    };
+    if (present(m_caches) || present(m_pendingCaches))
+        return;
+
+    if (m_iterating)
+        m_pendingCaches.push_back(cache);
+    else
         m_caches.push_back(cache);
 }
 
 void
 ResourceSystem::unregisterCache(ResourceCacheBase* cache) noexcept
 {
-    m_caches.erase(std::remove(m_caches.begin(), m_caches.end(), cache), m_caches.end());
+    // Tombstone rather than erase so an in-progress iteration skips the slot
+    // instead of dereferencing a freed pointer; finishCacheIteration() compacts
+    // the nulls afterwards. When not iterating, drop it outright.
+    for (auto*& slot : m_caches)
+    {
+        if (slot == cache)
+            slot = nullptr;
+    }
+    m_pendingCaches.erase(
+        std::remove(m_pendingCaches.begin(), m_pendingCaches.end(), cache),
+        m_pendingCaches.end());
+
+    if (!m_iterating)
+    {
+        m_caches.erase(std::remove(m_caches.begin(), m_caches.end(), nullptr),
+                       m_caches.end());
+    }
+}
+
+void
+ResourceSystem::finishCacheIteration()
+{
+    m_iterating = false;
+    m_caches.erase(std::remove(m_caches.begin(), m_caches.end(), nullptr),
+                   m_caches.end());
+    for (auto* cache : m_pendingCaches)
+    {
+        if (std::find(m_caches.begin(), m_caches.end(), cache) == m_caches.end())
+            m_caches.push_back(cache);
+    }
+    m_pendingCaches.clear();
 }
 
 void
@@ -113,21 +179,19 @@ ResourceSystem::workerLoop()
     {
         WorkItem item;
         {
-            std::unique_lock<std::mutex> lock(m_workMutex);
+            std::unique_lock lock(m_workMutex);
             m_workCv.wait(lock, [this]() noexcept { return m_stop || !m_work.empty(); });
             if (m_stop && m_work.empty())
                 return;
 
-            // priority_queue::top() returns const&; we need to move the task
-            // out before pop(), so const_cast the held DecodeTask.
+            // top() is const&; task is mutable so it can be moved out before pop().
             item.priority = m_work.top().priority;
             item.sequence = m_work.top().sequence;
-            item.task     = std::move(const_cast<DecodeTask&>(m_work.top().task));
+            item.task     = std::move(m_work.top().task);
             m_work.pop();
         }
 
-        // Run the task outside the lock so other workers can pull in parallel.
-        // Tasks must not throw — exceptions are disabled project-wide.
+        // Run outside the lock so other workers can pull in parallel.
         item.task();
     }
 }

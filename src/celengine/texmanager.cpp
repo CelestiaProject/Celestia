@@ -92,7 +92,7 @@ TexturePaths::getHandle(const std::filesystem::path& filename,
     if (filename.empty())
         return util::TextureHandle::Invalid;
 
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     PathSetIndex pathSetIndex = getPathSetIndex(filename, directory);
     if (pathSetIndex == PathSetIndex::Invalid)
@@ -197,10 +197,10 @@ TexturePaths::getInfo(util::TextureHandle handle,
                       TextureResolution resolution,
                       TextureInfo& info) const
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     auto handleIdx = static_cast<std::size_t>(handle);
-    if (handleIdx > m_info.size())
+    if (handleIdx >= m_info.size())
         return false;
 
     const auto& item = m_info[handleIdx];
@@ -223,7 +223,7 @@ TexturePaths::samePath(util::TextureHandle handle,
                        TextureResolution resolution1,
                        TextureResolution resolution2) const
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     auto handleIdx = static_cast<std::size_t>(handle);
     if (handleIdx >= m_info.size())
@@ -247,9 +247,9 @@ TextureManager::TextureManager(std::shared_ptr<const TexturePaths> paths,
     m_paths(paths),
     m_resolution(resolution),
     m_cache(std::make_unique<AsyncResourceCache<TextureTraits>>(
-        system, TextureTraits(paths, &m_resolution, resolution))),
+        system, TextureTraits(paths, &m_resolution, resolution, &system))),
     m_shadowCache(std::make_unique<AsyncResourceCache<TextureTraits>>(
-        system, TextureTraits(paths, nullptr, ShadowResolution)))
+        system, TextureTraits(paths, nullptr, ShadowResolution, &system)))
 {
 }
 
@@ -264,11 +264,9 @@ TextureManager::find(util::TextureHandle handle)
 Texture*
 TextureManager::findShadow(util::TextureHandle handle)
 {
-    // When the requested shadow resolution coincides with the active
-    // resolution (either because we're already at lores/medres, or because
-    // the handle has the same file path at both resolutions) we route
-    // through the main cache so we don't double-load the same texture into
-    // GPU memory.
+    // If the shadow resolution matches the active one (already at lores/medres,
+    // or the handle resolves to the same file at both), route through the main
+    // cache to avoid loading the same texture into GPU memory twice.
     if (m_resolution <= ShadowResolution ||
         m_paths->samePath(handle, m_resolution, ShadowResolution))
     {
@@ -284,9 +282,9 @@ TextureManager::resolution(TextureResolution resolution)
     if (resolution == m_resolution)
         return;
 
-    // Both caches see the new resolution on their next decode (the main
-    // cache follows m_resolution through TextureTraits' pointer), so just
-    // drop everything they had cached for the old setting.
+    // Both caches pick up the new resolution on their next decode (the main
+    // cache follows m_resolution via TextureTraits' pointer), so just drop
+    // what they cached for the old setting.
     m_cache->clear();
     m_shadowCache->clear();
     m_resolution = resolution;

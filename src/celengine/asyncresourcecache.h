@@ -25,15 +25,11 @@
 namespace celestia::engine
 {
 
-// State machine for a cache entry. Transitions occur on specific threads:
-//   NotLoaded -> Queued           (main thread, find() miss)
-//   Queued    -> Loaded | Failed  (main thread, drainReady)
-//   Loaded    -> NotLoaded        (main thread, purgeStale)
-//   Failed    -> NotLoaded        (main thread, purgeStale; allows retry on
-//                                  the next find())
-//
-// Worker threads never mutate Entry::state — they only push results onto
-// the cross-thread ready queue.
+// Entry lifecycle. Every transition runs on the render thread; workers only
+// post results to the ready queue and never touch the state.
+//   NotLoaded     -> Queued          (find() miss)
+//   Queued        -> Loaded | Failed (drainReady)
+//   Loaded/Failed -> NotLoaded       (purgeStale; Failed lets find() retry)
 enum class ResourceState : std::uint8_t
 {
     NotLoaded,
@@ -53,16 +49,12 @@ enum class ResourceState : std::uint8_t
 // and the following member functions (on a Traits instance):
 //   bool                         getInfo(Handle, Info&) const;
 //   std::optional<CpuData>       decode(const Info&) const;     // worker
-//   std::unique_ptr<GpuResource> upload(CpuData&&) const;       // main
+//   std::unique_ptr<GpuResource> upload(CpuData&&) const;       // render
 //   std::size_t                  gpuBytes(const GpuResource&) const;
 //   GpuResource*                 placeholder() const noexcept;  // optional fallback
 //
-// decode() must NOT throw (exceptions are disabled project-wide); signal
-// failure by returning std::nullopt.
-//
-// All public methods on the cache (find/pin/unpin/drainReady/purgeStale)
-// must be called from the main (render/GL) thread. Worker threads only
-// touch the cache via the cross-thread ready queue inside drainReady().
+// All cache methods run on the render (GL) thread. Workers only touch
+// the cache through the ready queue drained in drainReady().
 template <typename Traits>
 class AsyncResourceCache : public ResourceCacheBase, private util::NoCopy
 {
@@ -81,15 +73,13 @@ public:
 
     ~AsyncResourceCache() override
     {
+        // ResourceSystem::shutdown() joins all workers before any cache is
+        // destroyed, so no decode is in flight here.
         m_system->unregisterCache(this);
-        // Any in-flight decode tasks may still call deliver() after this
-        // returns; the captured weak state on the worker side must guard
-        // against that. See enqueueDecode() for the lifetime model.
     }
 
-    // Returns the loaded resource if available, the placeholder while
-    // loading, or nullptr if no placeholder is configured and the resource
-    // is not yet ready. Stamps lastUsedFrame on every call.
+    // Returns the loaded resource, the placeholder while it loads, or nullptr.
+    // Stamps lastUsedFrame so the entry counts as used this frame.
     GpuResource* find(Handle handle)
     {
         if (!isValid(handle))
@@ -139,11 +129,11 @@ public:
     std::size_t drainReady(std::size_t byteBudget) override
     {
         std::size_t uploaded = 0;
-        for (;;)
+        while (uploaded < byteBudget)
         {
             ReadyItem item;
             {
-                std::lock_guard<std::mutex> lock(m_readyMutex);
+                std::scoped_lock lock(m_readyMutex);
                 if (m_ready.empty())
                     break;
                 item = std::move(m_ready.front());
@@ -151,9 +141,10 @@ public:
             }
 
             auto it = m_entries.find(item.handle);
-            if (it == m_entries.end() || it->second.state != ResourceState::Queued)
+            if (it == m_entries.end() || it->second.state != ResourceState::Queued
+                || it->second.generation != item.generation)
             {
-                // Evicted or replaced while in flight: drop the payload.
+                // Evicted, replaced, or decoded under a stale generation: drop.
                 continue;
             }
 
@@ -175,9 +166,6 @@ public:
             e.gpu   = std::move(gpu);
             e.state = ResourceState::Loaded;
             uploaded += bytes;
-
-            if (uploaded >= byteBudget)
-                break;
         }
         return uploaded;
     }
@@ -188,10 +176,8 @@ public:
         for (auto it = m_entries.begin(); it != m_entries.end(); )
         {
             const Entry& e = it->second;
-            // Only Loaded and Failed entries are candidates. Queued entries
-            // have a worker task that will eventually deliver, and we must
-            // not erase them while that pointer-equivalent (the handle) is
-            // captured in the in-flight task.
+            // Only terminal entries are evictable; Queued entries still have a
+            // worker task in flight.
             const bool terminal =
                 e.state == ResourceState::Loaded ||
                 e.state == ResourceState::Failed;
@@ -203,20 +189,21 @@ public:
         }
     }
 
-    // Drop every entry. In-flight decode tasks may still complete after
-    // this returns; their payloads are silently dropped on the next
-    // drainReady() because the handle is no longer present. Main thread
-    // only.
+    // Drop every entry. In-flight decodes finish but their payloads are
+    // dropped in drainReady() since the handle is gone. Render thread only.
     void clear()
     {
         m_entries.clear();
+        // Invalidate in-flight decodes so their results are dropped rather
+        // than uploaded against a re-queued entry.
+        ++m_generation;
     }
 
-    // Diagnostic helpers — main thread only.
+    // Diagnostic helpers — render thread only.
     std::size_t size() const noexcept { return m_entries.size(); }
     std::size_t pendingReady() const
     {
-        std::lock_guard<std::mutex> lock(m_readyMutex);
+        std::scoped_lock lock(m_readyMutex);
         return m_ready.size();
     }
 
@@ -227,43 +214,42 @@ private:
         std::unique_ptr<GpuResource> gpu;
         std::uint64_t                lastUsedFrame{ 0 };
         std::uint32_t                pinCount{ 0 };
+        std::uint64_t                generation{ 0 };
     };
 
     struct ReadyItem
     {
         Handle                 handle{};
         std::optional<CpuData> cpu{};
+        std::uint64_t          generation{ 0 };
     };
 
     static bool isValid(Handle h) noexcept
     {
-        // Convention used throughout celestia::engine: handle types declare
-        // an `Invalid` enumerator. Callers should not pass it; we treat it
-        // defensively as a no-op so misuse can't insert junk in the map.
+        // Handle types declare an Invalid enumerator; treat it as a no-op so
+        // misuse can't insert junk into the map.
         return h != Handle::Invalid;
     }
 
     void enqueueDecode(Handle handle, Info info)
     {
-        m_entries[handle].state = ResourceState::Queued;
+        Entry& entry = m_entries[handle];
+        entry.state = ResourceState::Queued;
+        entry.generation = m_generation;
+        const std::uint64_t generation = m_generation;
 
-        // Worker captures `this`, `handle`, and `info` by value. It does NOT
-        // touch m_entries — only the main thread mutates that map. The worker
-        // performs CPU decode and pushes the result onto m_ready under
-        // m_readyMutex. drainReady() (main thread) reconciles by looking up
-        // the entry; if it was evicted or replaced in the meantime, the
-        // payload is silently dropped.
-        //
-        // Lifetime: Renderer owns both this cache and the ResourceSystem.
-        // ~ResourceSystem joins all workers before returning, so the cache
-        // pointer remains valid for the lifetime of any worker task.
-        m_system->submit([this, handle, info = std::move(info)]() mutable
+        // The worker decodes and pushes the result onto m_ready; it never
+        // touches m_entries (render thread only). drainReady() drops the
+        // payload if the entry was evicted, replaced, or invalidated meanwhile.
+        // ~ResourceSystem joins every worker, so `this` outlives the task.
+        m_system->submit([this, handle, generation, info = std::move(info)]() mutable
         {
             ReadyItem item;
-            item.handle = handle;
-            item.cpu    = m_traits.decode(info);  // nullopt on failure
+            item.handle     = handle;
+            item.generation = generation;
+            item.cpu        = m_traits.decode(info);
 
-            std::lock_guard<std::mutex> lock(m_readyMutex);
+            std::scoped_lock lock(m_readyMutex);
             m_ready.push_back(std::move(item));
         });
     }
@@ -271,6 +257,7 @@ private:
     ResourceSystem*                  m_system;
     Traits                           m_traits;
     std::unordered_map<Handle, Entry> m_entries;
+    std::uint64_t                     m_generation{ 0 };
 
     mutable std::mutex      m_readyMutex;
     std::deque<ReadyItem>   m_ready;

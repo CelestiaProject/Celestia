@@ -20,9 +20,8 @@ namespace celestia::engine
 namespace
 {
 
-// Convert the SSC-derived TextureFlags into the lower-level enums consumed
-// by ImageTexture/TiledTexture. Kept in sync with the legacy LoadTexture()
-// in texmanager.cpp.
+// Translate SSC TextureFlags into the lower-level ImageTexture/TiledTexture
+// enums. Mirrors the legacy LoadTexture() in texmanager.cpp.
 void
 translateFlags(TextureFlags flags,
                Texture::AddressMode& addressMode,
@@ -55,8 +54,8 @@ TextureTraits::decode(const Info& info) const
     Texture::Colorspace  colorspace;
     translateFlags(info.flags, addressMode, mipMode, colorspace);
 
-    // Virtual textures are detected by extension; their loader only does
-    // file parsing (no GL), so we run it on the worker too.
+    // Virtual textures are detected by extension; their loader is file
+    // parsing only (no GL), so run it here on the worker.
     if (DetermineFileType(info.path) == ContentType::CelestiaTexture)
     {
         auto vtex = LoadVirtualTexture(info.path, colorspace);
@@ -68,7 +67,7 @@ TextureTraits::decode(const Info& info) const
         return out;
     }
 
-    // Bump map: load image, compute the normal map on the worker thread.
+    // Bump map: load image and compute the normal map, both on the worker.
     if (info.bumpHeight != 0.0f)
     {
         auto img = Image::load(info.path);
@@ -110,16 +109,24 @@ TextureTraits::decode(const Info& info) const
 std::unique_ptr<Texture>
 TextureTraits::upload(CpuData&& cpu) const
 {
-    // Virtual textures were fully built on the worker; just hand the
-    // unique_ptr off.
+    // Virtual textures were fully built on the worker. Attach to the
+    // ResourceSystem here (render thread) so they get per-frame ticks, then
+    // hand off the pointer.
     if (cpu.virtualTexture != nullptr)
+    {
+        if (m_system != nullptr)
+        {
+            if (auto* vt = dynamic_cast<VirtualTexture*>(cpu.virtualTexture.get()))
+                vt->attachToResourceSystem(*m_system);
+        }
         return std::move(cpu.virtualTexture);
+    }
 
     if (cpu.image == nullptr)
         return nullptr;
 
-    // CreateTextureFromImage performs the actual GL allocation; this is
-    // the only step that must run on the render thread.
+    // CreateTextureFromImage does the GL allocation — the only step that
+    // must run on the render thread.
     auto tex = CreateTextureFromImage(*cpu.image, cpu.addressMode, cpu.mipMode);
     if (tex != nullptr && cpu.dxt5NormalMap)
         tex->setFormatOptions(Texture::DXT5NormalMap);
