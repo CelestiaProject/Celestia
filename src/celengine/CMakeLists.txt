@@ -2,6 +2,7 @@ set(CELENGINE_SOURCES
   asterism.cpp
   asterism.h
   astroobj.h
+  asyncresourcecache.h
   atmosphere.cpp
   atmosphere.h
   axisarrow.cpp
@@ -72,8 +73,7 @@ set(CELENGINE_SOURCES
   octree.h
   octreebuilder.h
   opencluster.cpp
-  opencluster.h
-  orbitsampler.h
+  opencluster.h  orbitsampler.h
   overlay.cpp
   overlay.h
   imageoverlay.cpp
@@ -106,6 +106,8 @@ set(CELENGINE_SOURCES
   renderglsl.h
   renderinfo.h
   renderlistentry.h
+  resourcesystem.cpp
+  resourcesystem.h
   rotationmanager.cpp
   rotationmanager.h
   selection.cpp
