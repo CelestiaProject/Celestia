@@ -47,3 +47,4 @@ struct CustomRotationEntry { const char* name; CustomRotationModelType modelType
 "iau-umbriel",    CustomRotationModelType::IAUUmbriel
 "iau-titania",    CustomRotationModelType::IAUTitania
 "iau-oberon",     CustomRotationModelType::IAUOberon
+"iau-triton",     CustomRotationModelType::IAUTriton
