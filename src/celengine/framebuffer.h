@@ -63,8 +63,11 @@ class FramebufferObject
     bool unbind(GLint oldfboId);
     bool resolve() const;
 
-    // Hint that the listed attachments' contents may be discarded.
-    // Framebuffer must currently be bound to GL_FRAMEBUFFER.
+    // True for MSAA FBOs whose contents must be resolved before sampling.
+    bool isMultisample() const { return m_msaaFboId != 0; }
+
+    // Hint that the listed attachments may be discarded. Acts on the current
+    // GL_DRAW_FRAMEBUFFER binding.
     void discard(Attachment attachments) const;
 
  private:
