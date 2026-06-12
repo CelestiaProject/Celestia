@@ -1325,10 +1325,20 @@ void ReadRings(Body* body,
     if (auto color = ringsData->getColor("Color"); color.has_value())
         rings->color = *color;
 
+    if (auto unlitColor = ringsData->getColor("UnlitColor"); unlitColor.has_value())
+        rings->unlitColor = *unlitColor;
+
     if (auto textureName = GetFilename(*ringsData, "Texture"sv, "Invalid filename in rings Texture\n");
         textureName.has_value())
     {
         rings->texture = texturePaths.getHandle(*textureName, path);
+    }
+
+    if (auto colorTextureName = GetFilename(*ringsData, "ColorTexture"sv,
+                                            "Invalid filename in rings ColorTexture\n");
+        colorTextureName.has_value())
+    {
+        rings->colorTexture = texturePaths.getHandle(*colorTextureName, path);
     }
 
     if (newRings != nullptr)

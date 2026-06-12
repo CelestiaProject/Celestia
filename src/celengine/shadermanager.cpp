@@ -1856,6 +1856,8 @@ buildRingsVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 GLFragmentShader
 buildRingsFragmentShader(const ShaderProperties& props)
 {
+    bool useProfiles = util::is_set(props.texUsage, TexUsage::RingColorTexture);
+
     std::string source(VersionHeader);
     source += CommonHeader;
     source += FragmentHeader;
@@ -1871,6 +1873,12 @@ buildRingsFragmentShader(const ShaderProperties& props)
     {
         source += DeclareInput("diffTexCoord", Shader_Vector2);
         source += DeclareUniform("diffTex", Shader_Sampler2D);
+    }
+
+    if (useProfiles)
+    {
+        source += DeclareUniform("ringColorTex", Shader_Sampler2D);
+        source += DeclareUniform("ringUnlitColor", Shader_Vector3);
     }
 
     if (props.hasEclipseShadows())
@@ -1901,7 +1909,24 @@ buildRingsFragmentShader(const ShaderProperties& props)
         source += "color = texture(diffTex, diffTexCoord.st);\n";
     else
         source += "color = vec4(1.0);\n";
-    source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
+
+    if (useProfiles)
+    {
+        // BJ Jónsson radial-profile encoding:
+        //   diffTex.r = backscattered brightness (lit side, viewer ~ sun direction)
+        //   diffTex.g = forward-scattered brightness (lit side, viewer opposite sun)
+        //   diffTex.b = unlit-side brightness (transparent areas glow as sunlight filters through)
+        //   diffTex.a = transparency (1 - opticalDepth)
+        // ringColorTex supplies the lit-side color profile.
+        source += DeclareLocal("ringColor", Shader_Vector3,
+                               "texture(ringColorTex, diffTexCoord.st).rgb");
+        source += DeclareLocal("opticalDepth", Shader_Float, "1.0 - color.a");
+    }
+    else
+    {
+        source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
+    }
+
     if (props.hasEclipseShadows())
     {
         // Temporaries required for shadows
@@ -1913,41 +1938,55 @@ buildRingsFragmentShader(const ShaderProperties& props)
     // Sum the contributions from each light source
     source += DeclareLocal("intensity", Shader_Float);
     source += DeclareLocal("litSide", Shader_Float);
+    if (useProfiles)
+    {
+        source += DeclareLocal("phase", Shader_Float);
+        source += DeclareLocal("tint", Shader_Vector3);
+    }
 
     for (unsigned i = 0; i < props.nLights; i++)
     {
         // litSide is 1 when viewer and light are on the same side of the rings, 0 otherwise
         source += "litSide = 1.0 - step(0.0, " + LightProperty(i, "direction") + ".y * eyeDir.y);\n";
-        //source += assign("litSide", 1.0f - step(0.0f, sh_vec3("eyePosition")["y"]));
 
-        source += "intensity = (dot(" + LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
-        source += "intensity = mix(intensity, intensity * (1.0 - opticalDepth), litSide);\n";
+        if (useProfiles)
+        {
+            // phase: 0 at backscatter (light & eye aligned), 1 at forward scatter.
+            // BJ's forward-scattered profile was captured at phase 139 degrees,
+            // so remap so that phase=139 degrees saturates to the G channel.
+            source += "phase = clamp((1.0 - dot(" + LightProperty(i, "direction")
+                      + ", eyeDir)) * 0.5 * (180.0 / 139.0), 0.0, 1.0);\n";
+            // Lit-side brightness blends backscatter and forward-scatter profiles.
+            // Unlit-side brightness comes from the dedicated profile.
+            source += "intensity = mix(mix(color.r, color.g, phase), color.b, litSide);\n";
+            // Apply unlit color tint when viewer sees the unlit side.
+            source += "tint = mix(ringColor, ringColor * ringUnlitColor, litSide);\n";
+        }
+        else
+        {
+            source += "intensity = (dot(" + LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
+            source += "intensity = mix(intensity, intensity * (1.0 - opticalDepth), litSide);\n";
+        }
+
+        std::string lightTerm = useProfiles ? "(intensity * tint)" : "intensity";
+
         if (props.getEclipseShadowCountForLight(i) > 0)
         {
             source += "shadow = 1.0;\n";
             source += Shadow(i, 0);
             source += "shadow = min(1.0, shadow + step(0.0, " + ShadowDepth(i) + "));\n";
-#if 0
-            source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
-                FragLightProperty(i, "color") + ";\n";
-#endif
-            source += "diff.rgb += (shadow * intensity) * " + LightProperty(i, "diffuse") + ";\n";
+            source += "diff.rgb += shadow * " + lightTerm + " * " + LightProperty(i, "diffuse") + ";\n";
         }
         else
         {
-            source += "diff.rgb += intensity * " + LightProperty(i, "diffuse") + ";\n";
-#if 0
-            source += SeparateDiffuse(i) + " = (dot(" +
-                LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
-#endif
-#if 0
-            source += "diff.rgb += " + SeparateDiffuse(i) + " * " +
-                FragLightProperty(i, "color") + ";\n";
-#endif
+            source += "diff.rgb += " + lightTerm + " * " + LightProperty(i, "diffuse") + ";\n";
         }
     }
 
-    source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
+    if (useProfiles)
+        source += "fragColor = vec4(diff.rgb, opticalDepth);\n";
+    else
+        source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
 
     source += "}\n";
 
@@ -2860,6 +2899,8 @@ CelestiaGLProgram::initParameters()
     {
         ringWidth            = floatParam("ringWidth");
         ringRadius           = floatParam("ringRadius");
+        if (util::is_set(props.texUsage, TexUsage::RingColorTexture))
+            ringUnlitColor   = vec3Param("ringUnlitColor");
     }
 
     textureOffset = floatParam("texCoordOffset");
@@ -2973,6 +3014,13 @@ CelestiaGLProgram::initSamplers()
     {
         if (GLint slot = glGetUniformLocation(program.getID(), "shadowMapTex0"); slot != -1)
             glUniform1i(slot, nSamplers);
+    }
+
+    if (util::is_set(props.texUsage, TexUsage::RingColorTexture))
+    {
+        if (GLint slot = glGetUniformLocation(program.getID(), "ringColorTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
     }
 }
 

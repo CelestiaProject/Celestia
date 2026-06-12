@@ -102,7 +102,9 @@ struct RingSystem
     float innerRadius;
     float outerRadius;
     Color color{ 1.0f, 1.0f, 1.0f };
+    std::optional<Color> unlitColor;
     celestia::util::TextureHandle texture{ celestia::util::TextureHandle::Invalid };
+    celestia::util::TextureHandle colorTexture{ celestia::util::TextureHandle::Invalid };
 };
 
 // Object class enumeration:
