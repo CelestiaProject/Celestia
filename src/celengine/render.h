@@ -143,7 +143,8 @@ class Renderer
 
     bool init(int, int, const DetailOptions&, celestia::engine::TextureResolution,
               std::shared_ptr<celestia::engine::GeometryManager>,
-              std::shared_ptr<const celestia::engine::TexturePaths>);
+              std::shared_ptr<const celestia::engine::TexturePaths>,
+              std::shared_ptr<celestia::engine::ResourceSystem>);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
@@ -794,7 +795,7 @@ class Renderer
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
-    std::unique_ptr<celestia::engine::ResourceSystem> m_resourceSystem;
+    std::shared_ptr<celestia::engine::ResourceSystem> m_resourceSystem;
     std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
     std::unique_ptr<celestia::engine::TextureManager> m_textureManager;
 

@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -55,6 +56,10 @@ struct TextureInfo
 class TexturePaths : private util::NoCopy
 {
 public:
+    // Thread-safe: getHandle/getInfo/samePath may be called from any
+    // thread. Geometry decode (Load3DSModel/LoadCMODModel) runs on a
+    // worker thread and calls getHandle(); the texture cache reads back
+    // via getInfo()/samePath() on the render thread.
     util::TextureHandle getHandle(const std::filesystem::path& filename,
                                   const std::filesystem::path& directory,
                                   TextureFlags flags = TextureFlags::None,
@@ -100,6 +105,10 @@ private:
 
     std::unordered_map<std::filesystem::path, DirectoryPaths, util::PathHasher> m_dirPaths;
     std::unordered_map<Info, util::TextureHandle, InfoHash, InfoEqual> m_handles;
+
+    // Guards all member containers. See class comment for the threading
+    // contract.
+    mutable std::mutex m_mutex;
 };
 
 class TextureTraits;

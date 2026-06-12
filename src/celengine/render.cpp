@@ -406,9 +406,10 @@ bool Renderer::init(int winWidth, int winHeight,
                     const DetailOptions& _detailOptions,
                     engine::TextureResolution resolution,
                     std::shared_ptr<engine::GeometryManager> geometryManager,
-                    std::shared_ptr<const engine::TexturePaths> texturePaths)
+                    std::shared_ptr<const engine::TexturePaths> texturePaths,
+                    std::shared_ptr<engine::ResourceSystem> resourceSystem)
 {
-    m_resourceSystem = std::make_unique<engine::ResourceSystem>();
+    m_resourceSystem = std::move(resourceSystem);
     m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager);
     m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution, *m_resourceSystem);
     detailOptions = _detailOptions;

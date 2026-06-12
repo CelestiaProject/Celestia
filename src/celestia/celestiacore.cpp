@@ -46,6 +46,7 @@
 #include <celengine/body.h>
 #include <celengine/boundaries.h>
 #include <celengine/console.h>
+#include <celengine/resourcesystem.h>
 #include <celengine/framebuffer.h>
 #include <celengine/fisheyeprojectionmode.h>
 #include <celengine/frametree.h>
@@ -2528,7 +2529,8 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
         favorites = std::make_unique<FavoritesList>();
 
     auto geometryPaths = std::make_shared<engine::GeometryPaths>();
-    geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths, texturePaths);
+    resourceSystem = std::make_shared<engine::ResourceSystem>();
+    geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths, texturePaths, *resourceSystem);
     auto universe = std::make_unique<Universe>(geometryManager, std::make_unique<engine::UrlManager>());
 
     /***** Load star catalogs *****/
@@ -2780,7 +2782,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
 #endif
 
     // Prepare the scene for rendering.
-    if (!renderer->init(metrics.width, metrics.height, detailOptions, resolution, geometryManager, texturePaths))
+    if (!renderer->init(metrics.width, metrics.height, detailOptions, resolution, geometryManager, texturePaths, resourceSystem))
     {
         fatalError(_("Failed to initialize renderer"), false);
         return false;

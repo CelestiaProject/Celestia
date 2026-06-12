@@ -92,6 +92,8 @@ TexturePaths::getHandle(const std::filesystem::path& filename,
     if (filename.empty())
         return util::TextureHandle::Invalid;
 
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     PathSetIndex pathSetIndex = getPathSetIndex(filename, directory);
     if (pathSetIndex == PathSetIndex::Invalid)
         return util::TextureHandle::Invalid;
@@ -195,6 +197,8 @@ TexturePaths::getInfo(util::TextureHandle handle,
                       TextureResolution resolution,
                       TextureInfo& info) const
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto handleIdx = static_cast<std::size_t>(handle);
     if (handleIdx > m_info.size())
         return false;
@@ -219,6 +223,8 @@ TexturePaths::samePath(util::TextureHandle handle,
                        TextureResolution resolution1,
                        TextureResolution resolution2) const
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto handleIdx = static_cast<std::size_t>(handle);
     if (handleIdx >= m_info.size())
         return true;

@@ -1395,16 +1395,26 @@ BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager&
     if (bodyLocations.locationsComputed)
         return;
 
-    bodyLocations.locationsComputed = true;
-
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     auto geometry = body->getGeometry();
     if (geometry == engine::GeometryHandle::Invalid)
+    {
+        bodyLocations.locationsComputed = true;
         return;
+    }
 
     const Geometry* g = geometryManager.find(geometry);
     if (g == nullptr)
+    {
+        // GeometryManager may still be decoding the model on a worker
+        // thread; leave locationsComputed false so we retry on the next
+        // frame. Once the model is permanently unavailable (Failed in the
+        // cache) it will continue to return null and we'll quietly retry
+        // forever, which is harmless.
         return;
+    }
+
+    bodyLocations.locationsComputed = true;
 
     // TODO: Implement separate radius and bounding radius so that this hack is
     // not necessary.

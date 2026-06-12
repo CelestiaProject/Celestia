@@ -60,6 +60,7 @@ namespace celestia
 namespace engine
 {
 class GeometryManager;
+class ResourceSystem;
 class TexturePaths;
 }
 
@@ -551,6 +552,7 @@ private:
 
     std::vector<celestia::astro::LeapSecondRecord> leapSeconds;
 
+    std::shared_ptr<celestia::engine::ResourceSystem> resourceSystem;
     std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
     std::shared_ptr<celestia::engine::TexturePaths> texturePaths;
 

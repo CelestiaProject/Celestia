@@ -26,6 +26,10 @@
 namespace celestia::engine
 {
 
+class ResourceSystem;
+class GeometryTraits;
+template <typename Traits> class AsyncResourceCache;
+
 enum class GeometryHandle : std::uint32_t
 {
     Invalid = ~UINT32_C(0),
@@ -102,14 +106,22 @@ private:
 class GeometryManager
 {
 public:
-    GeometryManager(std::shared_ptr<const GeometryPaths>, std::shared_ptr<TexturePaths>);
+    GeometryManager(std::shared_ptr<const GeometryPaths>,
+                    std::shared_ptr<TexturePaths>,
+                    ResourceSystem&);
+    ~GeometryManager();
 
+    // Returns the parsed Geometry once decoding has finished, or nullptr
+    // while the decode is still in flight (callers fall back to omitting
+    // the body's mesh that frame). Always returns the EmptyGeometry
+    // sentinel for GeometryHandle::Empty.
     const Geometry* find(GeometryHandle);
 
 private:
     std::shared_ptr<const GeometryPaths> m_geometryPaths;
     std::shared_ptr<TexturePaths> m_texturePaths;
-    std::unordered_map<GeometryHandle, std::unique_ptr<const Geometry>> m_geometry;
+    std::unique_ptr<Geometry> m_emptyGeometry;
+    std::unique_ptr<AsyncResourceCache<GeometryTraits>> m_cache;
 };
 
 class RenderGeometryManager
