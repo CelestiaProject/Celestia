@@ -28,6 +28,15 @@ bool ViewportEffect::preprocess(Renderer* renderer, FramebufferObject* fbo)
 
 bool ViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo, FramebufferObject* dst)
 {
+    // Discard unused attachments now. MSAA path skips this since resolve()
+    // invalidates the MSAA renderbuffers itself.
+    if (!fbo->isMultisample())
+    {
+        constexpr auto allAttachments =
+            FramebufferObject::Attachment::Color | FramebufferObject::Attachment::Depth;
+        fbo->discard(allAttachments & ~sourceAttachments());
+    }
+
     // For renderbuffer MSAA (desktop GL / GLES3), blit the MSAA color buffer into
     // the resolve texture before switching to the destination framebuffer
     if (!fbo->resolve())

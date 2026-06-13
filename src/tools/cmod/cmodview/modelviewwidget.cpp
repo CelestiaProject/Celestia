@@ -862,8 +862,8 @@ ModelViewWidget::setShadows(bool enable)
         if (m_shadowsEnabled && m_shadowBuffers.size() < 2)
         {
             makeCurrent();
-            auto* fb0 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::DepthAttachment);
-            auto* fb1 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::DepthAttachment);
+            auto* fb0 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::Attachment::Depth);
+            auto* fb1 = new FramebufferObject(ShadowBufferSize, ShadowBufferSize, FramebufferObject::Attachment::Depth);
             m_shadowBuffers << fb0 << fb1;
             if (!fb0->isValid() || !fb1->isValid())
             {
