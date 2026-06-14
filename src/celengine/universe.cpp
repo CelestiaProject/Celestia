@@ -680,18 +680,6 @@ Universe::getSolarSystem(const Selection& sel) const
     }
 }
 
-// Create a new solar system for a star and return a pointer to it; if it
-// already has a solar system, just return a pointer to the existing one.
-SolarSystem*
-Universe::getOrCreateSolarSystem(Star* star) const
-{
-    auto starNum = star->getIndex();
-    auto [it, inserted] = solarSystemCatalog->try_emplace(starNum);
-    if (inserted)
-        it->second = std::make_unique<SolarSystem>(star);
-    return it->second.get();
-}
-
 const celestia::MarkerList&
 Universe::getMarkers() const
 {

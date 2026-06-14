@@ -18,7 +18,6 @@
 #include "selection.h"
 
 class FrameTree;
-class Universe;
 class Body;
 
 namespace celestia::ephem
@@ -41,7 +40,7 @@ public:
                   const std::shared_ptr<const celestia::ephem::Orbit>&,
                   const ReferenceFrame::SharedConstPtr&,
                   const std::shared_ptr<const celestia::ephem::RotationModel>&,
-                  FrameTree*);
+                  FrameTree&);
     ~TimelinePhase();
 
     TimelinePhase(const TimelinePhase& phase) = delete;
@@ -101,9 +100,8 @@ public:
     }
 
     static std::unique_ptr<TimelinePhase>
-    CreateTimelinePhase(Universe& universe,
-                        Body* body,
-                        const Selection& parent,
+    CreateTimelinePhase(Body* body,
+                        FrameTree* parent,
                         double startTime,
                         double endTime,
                         const ReferenceFrame::SharedConstPtr& orbitFrame,

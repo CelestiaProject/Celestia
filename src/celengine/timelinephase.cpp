@@ -30,7 +30,7 @@ TimelinePhase::TimelinePhase(CreateToken,
                              const std::shared_ptr<const celestia::ephem::Orbit>& orbit,
                              const ReferenceFrame::SharedConstPtr& bodyFrame,
                              const std::shared_ptr<const celestia::ephem::RotationModel>& rotationModel,
-                             FrameTree* owner) :
+                             FrameTree& owner) :
     m_body(body),
     m_startTime(startTime),
     m_endTime(endTime),
@@ -39,8 +39,7 @@ TimelinePhase::TimelinePhase(CreateToken,
     m_bodyFrame(bodyFrame),
     m_rotationModel(rotationModel)
 {
-    assert(owner);
-    owner->addChild(this);
+    owner.addChild(this);
 }
 
 TimelinePhase::~TimelinePhase()
@@ -52,9 +51,8 @@ TimelinePhase::~TimelinePhase()
 /*! Create a new timeline phase in the specified universe.
  */
 std::unique_ptr<TimelinePhase>
-TimelinePhase::CreateTimelinePhase(Universe& universe,
-                                   Body* body,
-                                   const Selection& parent,
+TimelinePhase::CreateTimelinePhase(Body* body, //NOSONAR
+                                   FrameTree* parent,
                                    double startTime,
                                    double endTime,
                                    const ReferenceFrame::SharedConstPtr& orbitFrame,
@@ -63,26 +61,8 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                    const std::shared_ptr<const celestia::ephem::RotationModel>& rotationModel)
 {
     // Validate the time range.
-    if (endTime <= startTime)
+    if (!parent || endTime <= startTime)
         return nullptr;
-
-    // Get the frame tree to add the new phase to. Verify that the reference frame
-    // center is either a star or solar system body.
-    FrameTree* frameTree = nullptr;
-    if (Body* parentBody = parent.body(); parentBody)
-    {
-        frameTree = parentBody->getOrCreateFrameTree();
-    }
-    else if (Star* star = parent.star(); star)
-    {
-        const SolarSystem* solarSystem = universe.getOrCreateSolarSystem(star);
-        frameTree = solarSystem->getFrameTree();
-    }
-    else
-    {
-        // Frame center is not a star or body.
-        return nullptr;
-    }
 
     return std::make_unique<TimelinePhase>(CreateToken(),
                                            body,
@@ -92,5 +72,5 @@ TimelinePhase::CreateTimelinePhase(Universe& universe,
                                            orbit,
                                            bodyFrame,
                                            rotationModel,
-                                           frameTree);
+                                           *parent);
 }

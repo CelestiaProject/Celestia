@@ -28,25 +28,17 @@ namespace
 class SolarSystemLoader final : public CatalogLoader
 {
 public:
-    SolarSystemLoader(Universe* universe,
+    SolarSystemLoader(SolarSystemsBuilder& builder,
                       ProgressNotifier* notifier,
-                      util::array_view<std::filesystem::path> skipPaths,
-                      engine::GeometryPaths& geometryPaths,
-                      engine::TexturePaths& texturePaths,
-                      engine::UrlManager& urlManager,
-                      FrameCache& frameCache) :
+                      util::array_view<std::filesystem::path> skipPaths) :
         CatalogLoader(notifier, skipPaths),
-        m_universe(universe),
-        m_geometryPaths(&geometryPaths),
-        m_texturePaths(&texturePaths),
-        m_urlManager(&urlManager),
-        m_frameCache(&frameCache)
+        m_builder(&builder)
     {
     }
 
     bool load(std::istream &in, const std::filesystem::path &dir) override
     {
-        return LoadSolarSystemObjects(in, *m_universe, dir, *m_geometryPaths, *m_texturePaths, *m_urlManager, *m_frameCache);
+        return m_builder->parseSsc(in, dir);
     }
 
 protected:
@@ -60,36 +52,25 @@ protected:
     }
 
 private:
-    Universe* m_universe;
-    engine::GeometryPaths* m_geometryPaths;
-    engine::TexturePaths* m_texturePaths;
-    engine::UrlManager* m_urlManager;
-    FrameCache* m_frameCache;
+    SolarSystemsBuilder* m_builder;
 };
 
 } // end unnamed namespace
 
 void
-loadSSO(const CelestiaConfig &config,
-        ProgressNotifier *progressNotifier,
-        Universe *universe,
+loadSSO(const CelestiaConfig& config,
+        ProgressNotifier* progressNotifier,
+        Universe& universe,
         engine::GeometryPaths& geometryPaths,
         engine::TexturePaths& texturePaths,
         engine::UrlManager& urlManager)
 {
-    auto solarSystem = std::make_unique<SolarSystemCatalog>();
-    universe->setSolarSystemCatalog(std::move(solarSystem));
+    universe.setSolarSystemCatalog(std::make_unique<SolarSystemCatalog>());
+    SolarSystemsBuilder builder(universe, geometryPaths, texturePaths, urlManager);
 
-    FrameCache frameCache;
-
-    SolarSystemLoader loader(universe,
+    SolarSystemLoader loader(builder,
                              progressNotifier,
-                             config.paths.skipExtras,
-                             geometryPaths,
-                             texturePaths,
-                             urlManager,
-                             frameCache);
-
+                             config.paths.skipExtras);
     // First read the solar system files listed individually in the config file.
     std::filesystem::path empty;
     for (const auto &file : config.paths.solarSystemFiles)

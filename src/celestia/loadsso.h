@@ -26,7 +26,7 @@ class UrlManager;
 
 void loadSSO(const CelestiaConfig& config,
              ProgressNotifier* progressNotifier,
-             Universe* universe,
+             Universe& universe,
              engine::GeometryPaths& geometryPaths,
              engine::TexturePaths& texturePaths,
              engine::UrlManager& urlManager);

@@ -45,18 +45,18 @@ enum class DataDisposition
 };
 
 bool
-ParseDate(const celestia::util::AssociativeArray* hash,
+ParseDate(const celestia::util::AssociativeArray& hash,
           std::string_view name,
           double& jd);
 
 std::shared_ptr<const celestia::ephem::Orbit>
 CreateOrbit(const Selection& centralObject,
-            const celestia::util::AssociativeArray* planetData,
+            const celestia::util::AssociativeArray& objectData,
             const std::filesystem::path& path,
             bool usePlanetUnits);
 
 std::shared_ptr<const celestia::ephem::RotationModel>
-CreateRotationModel(const celestia::util::AssociativeArray* rotationData,
+CreateRotationModel(const celestia::util::AssociativeArray& objectData,
                     const std::filesystem::path& path,
                     double syncRotationPeriod);
 
@@ -65,14 +65,14 @@ CreateDefaultRotationModel(double syncRotationPeriod);
 
 std::optional<FrameId>
 CreateOrbitFrame(const Universe& universe,
-                 const celestia::util::Value* frameValue,
+                 const celestia::util::Value& frameValue,
                  Selection& defaultCenter,
                  Body* defaultObserver,
                  FrameCache& frameCache);
 
 std::optional<FrameId>
 CreateReferenceFrame(const Universe& universe,
-                     const celestia::util::Value* frameValue,
+                     const celestia::util::Value& frameValue,
                      Body* defaultObserver,
                      FrameCache& frameCache);
 

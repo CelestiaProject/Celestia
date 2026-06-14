@@ -2555,7 +2555,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the solar system catalogs *****/
 
-    loadSSO(*config, progressNotifier, universe.get(), *geometryPaths, *texturePaths, *universe->getUrlManager());
+    loadSSO(*config, progressNotifier, *universe, *geometryPaths, *texturePaths, *universe->getUrlManager());
 
     if (!config->paths.boundariesFile.empty())
     {
