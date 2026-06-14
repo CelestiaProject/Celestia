@@ -58,6 +58,7 @@
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <celengine/rectangle.h>
+#include <celengine/urlmanager.h>
 #include <celengine/visibleregion.h>
 #include <celengine/warpmesh.h>
 #include <celestia/configfile.h>
@@ -2528,13 +2529,13 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     auto geometryPaths = std::make_shared<engine::GeometryPaths>();
     geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths, texturePaths);
-    auto universe = std::make_unique<Universe>(geometryManager);
+    auto universe = std::make_unique<Universe>(geometryManager, std::make_unique<engine::UrlManager>());
 
     /***** Load star catalogs *****/
 
     StarDetails::SetStarTextures(config->starTextures);
 
-    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier, *geometryPaths, *texturePaths);
+    std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier, *geometryPaths, *texturePaths, *universe->getUrlManager());
     if (starCatalog == nullptr)
     {
         fatalError(_("Cannot read star database."), false);
@@ -2544,7 +2545,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the deep sky catalogs *****/
 
-    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths);
+    std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths, *universe->getUrlManager());
     if (dsoCatalog == nullptr)
     {
         fatalError(_("Cannot read DSO database."), false);
@@ -2554,7 +2555,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     /***** Load the solar system catalogs *****/
 
-    loadSSO(*config, progressNotifier, universe.get(), *geometryPaths, *texturePaths);
+    loadSSO(*config, progressNotifier, universe.get(), *geometryPaths, *texturePaths, *universe->getUrlManager());
 
     if (!config->paths.boundariesFile.empty())
     {

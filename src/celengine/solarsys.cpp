@@ -50,6 +50,7 @@
 #include "timeline.h"
 #include "timelinephase.h"
 #include "universe.h"
+#include "urlmanager.h"
 
 // size_t and strncmp are used by the gperf output code
 using std::size_t;
@@ -1340,6 +1341,7 @@ Body* CreateBody(const std::string& name,
                  BodyType bodyType,
                  engine::GeometryPaths& geometryPaths,
                  engine::TexturePaths& texturePaths,
+                 engine::UrlManager& urlManager,
                  FrameCache& frameCache)
 {
     Body* body = nullptr;
@@ -1457,11 +1459,10 @@ Body* CreateBody(const std::string& name,
     if (util::is_set(classification, CLASSES_UNCLICKABLE))
         body->setClickable(false);
 
-    // TODO: should be own class
     if (const auto *infoURLValue = planetData->getString("InfoURL"); infoURLValue != nullptr)
     {
         if (std::string infoURL = util::BuildInfoURL(*infoURLValue, path); !infoURL.empty())
-            body->setInfoURL(std::move(infoURL));
+            urlManager.setURL(body, std::move(infoURL));
         else
             GetLogger()->error(_("Invalid InfoURL used in {} definition.\n"), name);
     }
@@ -1641,6 +1642,7 @@ bool LoadSolarSystemObjects(std::istream& in,
                             const std::filesystem::path& directory,
                             engine::GeometryPaths& geometryPaths,
                             engine::TexturePaths& texturePaths,
+                            engine::UrlManager& urlManager,
                             FrameCache& frameCache)
 {
     Tokenizer tokenizer(in);
@@ -1791,7 +1793,7 @@ bool LoadSolarSystemObjects(std::istream& in,
                 {
                     body = CreateBody(primaryName, parentSystem, universe, existingBody,
                                       objectData, directory, disposition, bodyType,
-                                      geometryPaths, texturePaths, frameCache);
+                                      geometryPaths, texturePaths, urlManager, frameCache);
                 }
 
                 if (body)

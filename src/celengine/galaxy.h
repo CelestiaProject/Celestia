@@ -58,7 +58,7 @@ enum class GalaxyType
 };
 
 
-class Galaxy : public DeepSkyObject
+class Galaxy final : public DeepSkyObject
 {
 public:
     constexpr static float kMaxSpiralThickness = 0.06f;
@@ -73,10 +73,6 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const celestia::util::AssociativeArray*,
-              const std::filesystem::path&,
-              celestia::engine::GeometryPaths&,
-              std::string_view) override;
 
     static void  increaseLightGain();
     static void  decreaseLightGain();
@@ -93,6 +89,11 @@ public:
     GalaxyType getGalaxyType() const;
 
     float getBrightnessCorrection(const Eigen::Vector3f &) const;
+
+protected:
+    bool loadDetails(const celestia::util::AssociativeArray*,
+                     const std::filesystem::path&,
+                     celestia::engine::GeometryPaths&) override;
 
 private:
     // TODO: This value is just a guess.

@@ -59,9 +59,10 @@ private:
 std::unique_ptr<DSODatabase>
 loadDSO(const CelestiaConfig& config,
         ProgressNotifier* progressNotifier,
-        engine::GeometryPaths& geometryPaths)
+        engine::GeometryPaths& geometryPaths,
+        engine::UrlManager& urlManager)
 {
-    auto dsoDB = std::make_unique<DSODatabaseBuilder>(geometryPaths);
+    auto dsoDB = std::make_unique<DSODatabaseBuilder>(geometryPaths, urlManager);
 
     DeepSkyLoader loader(*dsoDB,
                          progressNotifier,

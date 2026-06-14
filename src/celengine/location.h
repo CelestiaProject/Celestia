@@ -37,8 +37,6 @@ public:
     float getImportance() const;
     void setImportance(float);
 
-    const std::string& getInfoURL() const;
-
     bool isLabelColorOverridden() const { return overrideLabelColor; }
     void setLabelColorOverridden(bool _override) { overrideLabelColor = _override; }
 
@@ -129,13 +127,12 @@ public:
 
  private:
     Body* parent{ nullptr };
-    std::string name{};
-    std::string i18nName{};
+    std::string name;
+    std::string i18nName;
     Eigen::Vector3f position{ Eigen::Vector3f::Zero() };
     float size{ 0.0f };
     float importance{ -1.0f };
-    FeatureType featureType{ Other };
+    FeatureType featureType{ FeatureType::Other };
     bool overrideLabelColor{ false };
     Color labelColor{ 1.0f, 1.0f, 1.0f };
-    std::string infoURL{};
 };

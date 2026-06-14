@@ -25,6 +25,7 @@ namespace celestia::engine
 {
 class GeometryPaths;
 class TexturePaths;
+class UrlManager;
 }
 
 class SolarSystem
@@ -50,4 +51,5 @@ bool LoadSolarSystemObjects(std::istream& in,
                             const std::filesystem::path& dir,
                             celestia::engine::GeometryPaths& geometryPaths,
                             celestia::engine::TexturePaths& texturePaths,
+                            celestia::engine::UrlManager& urlManager,
                             FrameCache& frameCache);

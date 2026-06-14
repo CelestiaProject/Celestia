@@ -917,7 +917,6 @@ StarDetails::clone() const
     newDetails->barycenter = barycenter;
     newDetails->rotationModel = rotationModel;
     newDetails->semiAxes = semiAxes;
-    newDetails->infoURL = infoURL;
     newDetails->isShared = false;
     return newDetails;
 }
@@ -947,15 +946,6 @@ StarDetails::mergeFromStandard(const StarDetails* other)
             rotationModel = other->rotationModel;
     }
     visible = other->visible;
-}
-
-/*! Return the InfoURL. If the InfoURL has not been set, this method
- *  returns an empty string.
- */
-const std::string&
-StarDetails::getInfoURL() const
-{
-    return infoURL;
 }
 
 void
@@ -1040,15 +1030,6 @@ StarDetails::setRotationModel(boost::intrusive_ptr<StarDetails>& details,
     unshare(details);
     details->rotationModel = rm;
     details->knowledge |= Knowledge::KnowRotation;
-}
-
-/*! Set the InfoURL for this star.
-*/
-void
-StarDetails::setInfoURL(boost::intrusive_ptr<StarDetails>& details, std::string&& _infoURL)
-{
-    unshare(details);
-    details->infoURL = std::move(_infoURL);
 }
 
 void
@@ -1182,15 +1163,6 @@ engine::GeometryHandle
 Star::getGeometry() const
 {
     return details->getGeometry();
-}
-
-/*! Return the InfoURL. If the InfoURL has not been set, this method
-*  returns an empty string.
-*/
-const std::string&
-Star::getInfoURL() const
-{
-    return details->getInfoURL();
 }
 
 void

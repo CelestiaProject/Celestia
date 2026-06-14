@@ -20,11 +20,12 @@ namespace celestia
 namespace engine
 {
 class GeometryPaths;
-class TexturePaths;
+class UrlManager;
 }
 
 std::unique_ptr<DSODatabase> loadDSO(const CelestiaConfig& config,
                                      ProgressNotifier* progressNotifier,
-                                     engine::GeometryPaths& geometryPaths);
+                                     engine::GeometryPaths& geometryPaths,
+                                     engine::UrlManager& urlManager);
 
 } // namespace celestia

@@ -33,18 +33,20 @@ public:
                       util::array_view<std::filesystem::path> skipPaths,
                       engine::GeometryPaths& geometryPaths,
                       engine::TexturePaths& texturePaths,
+                      engine::UrlManager& urlManager,
                       FrameCache& frameCache) :
         CatalogLoader(notifier, skipPaths),
         m_universe(universe),
         m_geometryPaths(&geometryPaths),
         m_texturePaths(&texturePaths),
+        m_urlManager(&urlManager),
         m_frameCache(&frameCache)
     {
     }
 
     bool load(std::istream &in, const std::filesystem::path &dir) override
     {
-        return LoadSolarSystemObjects(in, *m_universe, dir, *m_geometryPaths, *m_texturePaths, *m_frameCache);
+        return LoadSolarSystemObjects(in, *m_universe, dir, *m_geometryPaths, *m_texturePaths, *m_urlManager, *m_frameCache);
     }
 
 protected:
@@ -61,6 +63,7 @@ private:
     Universe* m_universe;
     engine::GeometryPaths* m_geometryPaths;
     engine::TexturePaths* m_texturePaths;
+    engine::UrlManager* m_urlManager;
     FrameCache* m_frameCache;
 };
 
@@ -71,7 +74,8 @@ loadSSO(const CelestiaConfig &config,
         ProgressNotifier *progressNotifier,
         Universe *universe,
         engine::GeometryPaths& geometryPaths,
-        engine::TexturePaths& texturePaths)
+        engine::TexturePaths& texturePaths,
+        engine::UrlManager& urlManager)
 {
     auto solarSystem = std::make_unique<SolarSystemCatalog>();
     universe->setSolarSystemCatalog(std::move(solarSystem));
@@ -83,6 +87,7 @@ loadSSO(const CelestiaConfig &config,
                              config.paths.skipExtras,
                              geometryPaths,
                              texturePaths,
+                             urlManager,
                              frameCache);
 
     // First read the solar system files listed individually in the config file.

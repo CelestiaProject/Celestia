@@ -24,7 +24,7 @@ namespace celestia::util
 class AssociativeArray;
 }
 
-class Nebula : public DeepSkyObject
+class Nebula final : public DeepSkyObject
 {
 public:
     Nebula() = default;
@@ -32,12 +32,6 @@ public:
     const char* getType() const override;
     void setType(const std::string&) override;
     std::string getDescription() const override;
-
-    // pick: the preconditional sphere-ray intersection test is enough for now
-    bool load(const celestia::util::AssociativeArray*,
-              const std::filesystem::path&,
-              celestia::engine::GeometryPaths&,
-              std::string_view) override;
 
     RenderFlags getRenderMask() const override;
     RenderLabels getLabelMask() const override;
@@ -60,6 +54,11 @@ public:
     };
 
     Type getNebulaType() const;
+
+protected:
+    bool loadDetails(const celestia::util::AssociativeArray*,
+                     const std::filesystem::path&,
+                     celestia::engine::GeometryPaths&) override;
 
 private:
     celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };

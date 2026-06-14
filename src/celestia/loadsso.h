@@ -20,12 +20,15 @@ namespace celestia
 namespace engine
 {
 class GeometryPaths;
+class TexturePaths;
+class UrlManager;
 }
 
 void loadSSO(const CelestiaConfig& config,
              ProgressNotifier* progressNotifier,
              Universe* universe,
              engine::GeometryPaths& geometryPaths,
-             engine::TexturePaths& texturePaths);
+             engine::TexturePaths& texturePaths,
+             engine::UrlManager& urlManager);
 
 } // namespace celestia
