@@ -143,7 +143,7 @@ GetDefaultUnits(bool usePlanetUnits, double& distanceScale)
  *     SemiMajorAxis or PericenterDistance is in kilometers.
  */
 std::shared_ptr<const ephem::Orbit>
-CreateKeplerianOrbit(const AssociativeArray* orbitData,
+CreateKeplerianOrbit(const AssociativeArray& orbitData,
                      bool usePlanetUnits)
 {
 
@@ -155,7 +155,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
 
     astro::KeplerElements elements;
 
-    elements.eccentricity = orbitData->getNumber<double>("Eccentricity").value_or(0.0);
+    elements.eccentricity = orbitData.getNumber<double>("Eccentricity").value_or(0.0);
     if (elements.eccentricity < 0.0)
     {
         GetLogger()->error("Negative eccentricity is invalid.\n");
@@ -169,11 +169,11 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
 
     // SemiMajorAxis and Period are absolutely required; everything
     // else has a reasonable default.
-    if (auto semiMajorAxisValue = orbitData->getLength<double>("SemiMajorAxis", 1.0, distanceScale); semiMajorAxisValue.has_value())
+    if (auto semiMajorAxisValue = orbitData.getLength<double>("SemiMajorAxis", 1.0, distanceScale); semiMajorAxisValue.has_value())
     {
         elements.semimajorAxis = *semiMajorAxisValue;
     }
-    else if (auto pericenter = orbitData->getLength<double>("PericenterDistance", 1.0, distanceScale); pericenter.has_value())
+    else if (auto pericenter = orbitData.getLength<double>("PericenterDistance", 1.0, distanceScale); pericenter.has_value())
     {
         elements.semimajorAxis = *pericenter / (1.0 - elements.eccentricity);
     }
@@ -183,7 +183,7 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
         return nullptr;
     }
 
-    if (auto periodValue = orbitData->getTime<double>("Period", 1.0, timeScale); periodValue.has_value())
+    if (auto periodValue = orbitData.getTime<double>("Period", 1.0, timeScale); periodValue.has_value())
     {
         elements.period = *periodValue;
         if (elements.period == 0.0)
@@ -198,15 +198,15 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
         return nullptr;
     }
 
-    elements.inclination = orbitData->getAngle<double>("Inclination").value_or(0.0);
+    elements.inclination = orbitData.getAngle<double>("Inclination").value_or(0.0);
 
-    elements.longAscendingNode = orbitData->getAngle<double>("AscendingNode").value_or(0.0);
+    elements.longAscendingNode = orbitData.getAngle<double>("AscendingNode").value_or(0.0);
 
-    if (auto argPeri = orbitData->getAngle<double>("ArgOfPericenter"); argPeri.has_value())
+    if (auto argPeri = orbitData.getAngle<double>("ArgOfPericenter"); argPeri.has_value())
     {
         elements.argPericenter = *argPeri;
     }
-    else if (auto longPeri = orbitData->getAngle<double>("LongOfPericenter"); longPeri.has_value())
+    else if (auto longPeri = orbitData.getAngle<double>("LongOfPericenter"); longPeri.has_value())
     {
         elements.argPericenter = *longPeri - elements.longAscendingNode;
     }
@@ -216,9 +216,9 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
 
     // Accept either the mean anomaly or mean longitude--use mean anomaly
     // if both are specified.
-    if (auto meanAnomaly = orbitData->getAngle<double>("MeanAnomaly"); meanAnomaly.has_value())
+    if (auto meanAnomaly = orbitData.getAngle<double>("MeanAnomaly"); meanAnomaly.has_value())
         elements.meanAnomaly = *meanAnomaly;
-    else if (auto meanLongitude = orbitData->getAngle<double>("MeanLongitude"); meanLongitude.has_value())
+    else if (auto meanLongitude = orbitData.getAngle<double>("MeanLongitude"); meanLongitude.has_value())
         elements.meanAnomaly = *meanLongitude - (elements.argPericenter + elements.longAscendingNode);
 
     elements.inclination = math::degToRad(elements.inclination);
@@ -248,9 +248,9 @@ CreateKeplerianOrbit(const AssociativeArray* orbitData,
  * DoublePrecision defaults to true.
  */
 std::shared_ptr<const ephem::Orbit>
-CreateSampledTrajectory(const AssociativeArray* trajData, const std::filesystem::path& path)
+CreateSampledTrajectory(const AssociativeArray& trajData, const std::filesystem::path& path)
 {
-    const std::string* source = trajData->getString("Source");
+    const std::string* source = trajData.getString("Source");
     if (source == nullptr)
     {
         GetLogger()->error("SampledTrajectory is missing a source.\n");
@@ -267,7 +267,7 @@ CreateSampledTrajectory(const AssociativeArray* trajData, const std::filesystem:
     // Read interpolation type; string value must be either "Linear" or "Cubic"
     // Default interpolation type is cubic.
     TrajectoryInterpolation interpolation = TrajectoryInterpolation::Cubic;
-    if (const std::string* interpolationString = trajData->getString("Interpolation"); interpolationString != nullptr)
+    if (const std::string* interpolationString = trajData.getString("Interpolation"); interpolationString != nullptr)
     {
         if (!compareIgnoringCase(*interpolationString, "linear"))
             interpolation = TrajectoryInterpolation::Linear;
@@ -278,7 +278,7 @@ CreateSampledTrajectory(const AssociativeArray* trajData, const std::filesystem:
     }
 
     // Double precision is true by default
-    bool useDoublePrecision = trajData->getBoolean("DoublePrecision").value_or(true);
+    bool useDoublePrecision = trajData.getBoolean("DoublePrecision").value_or(true);
     TrajectoryPrecision precision = useDoublePrecision ? TrajectoryPrecision::Double : TrajectoryPrecision::Single;
 
     GetLogger()->verbose("Attempting to load sampled trajectory from source '{}'\n", *source);
@@ -303,19 +303,19 @@ CreateSampledTrajectory(const AssociativeArray* trajData, const std::filesystem:
  * is BodyFixed.
  */
 std::shared_ptr<const ephem::Orbit>
-CreateFixedPosition(const AssociativeArray* trajData, const Selection& centralObject, bool usePlanetUnits)
+CreateFixedPosition(const AssociativeArray& trajData, const Selection& centralObject, bool usePlanetUnits)
 {
     double distanceScale;
     GetDefaultUnits(usePlanetUnits, distanceScale);
 
     Eigen::Vector3d position = Eigen::Vector3d::Zero();
 
-    if (auto rectangular = trajData->getLengthVector<double>("Rectangular", 1.0, distanceScale); rectangular.has_value())
+    if (auto rectangular = trajData.getLengthVector<double>("Rectangular", 1.0, distanceScale); rectangular.has_value())
     {
         // Convert to Celestia's coordinate system
         position = Eigen::Vector3d(rectangular->x(), rectangular->z(), -rectangular->y());
     }
-    else if (auto planetographic = trajData->getSphericalTuple("Planetographic"); planetographic.has_value())
+    else if (auto planetographic = trajData.getSphericalTuple("Planetographic"); planetographic.has_value())
     {
         if (centralObject.getType() != SelectionType::Body)
         {
@@ -329,7 +329,7 @@ CreateFixedPosition(const AssociativeArray* trajData, const Selection& centralOb
                                                                    planetographic->y(),
                                                                    planetographic->z());
     }
-    else if (auto planetocentric = trajData->getSphericalTuple("Planetocentric"); planetocentric.has_value())
+    else if (auto planetocentric = trajData.getSphericalTuple("Planetocentric"); planetocentric.has_value())
     {
         if (centralObject.getType() != SelectionType::Body)
         {
@@ -356,11 +356,11 @@ CreateFixedPosition(const AssociativeArray* trajData, const Selection& centralOb
  * Parse a string list--either a single string or an array of strings is permitted.
  */
 bool
-ParseStringList(const AssociativeArray* table,
+ParseStringList(const AssociativeArray& table,
                 std::string_view propertyName,
                 std::vector<std::string>& stringList)
 {
-    const Value* v = table->getValue(propertyName);
+    const Value* v = table.getValue(propertyName);
     if (v == nullptr)
         return false;
 
@@ -424,7 +424,7 @@ ParseStringList(const AssociativeArray* table,
  *  used.
  */
 std::shared_ptr<const ephem::Orbit>
-CreateSpiceOrbit(const AssociativeArray* orbitData,
+CreateSpiceOrbit(const AssociativeArray& orbitData,
                  const std::filesystem::path& path,
                  bool usePlanetUnits)
 {
@@ -434,7 +434,7 @@ CreateSpiceOrbit(const AssociativeArray* orbitData,
 
     GetDefaultUnits(usePlanetUnits, distanceScale, timeScale);
 
-    if (orbitData->getValue("Kernel") != nullptr)
+    if (orbitData.getValue("Kernel") != nullptr)
     {
         // Kernel list is optional; a SPICE orbit may rely on kernels already loaded into
         // the kernel pool.
@@ -445,14 +445,14 @@ CreateSpiceOrbit(const AssociativeArray* orbitData,
         }
     }
 
-    const std::string* targetBodyName = orbitData->getString("Target");
+    const std::string* targetBodyName = orbitData.getString("Target");
     if (targetBodyName == nullptr)
     {
         GetLogger()->error("Target name missing from SPICE orbit\n");
         return nullptr;
     }
 
-    const std::string* originName = orbitData->getString("Origin");
+    const std::string* originName = orbitData.getString("Origin");
     if (originName == nullptr)
     {
         GetLogger()->error("Origin name missing from SPICE orbit\n");
@@ -461,7 +461,7 @@ CreateSpiceOrbit(const AssociativeArray* orbitData,
 
     // A bounding radius for culling is required for SPICE orbits
     double boundingRadius = 0.0;
-    if (auto bounding = orbitData->getLength<double>("BoundingRadius", 1.0, distanceScale); bounding.has_value())
+    if (auto bounding = orbitData.getLength<double>("BoundingRadius", 1.0, distanceScale); bounding.has_value())
     {
         boundingRadius = *bounding;
     }
@@ -474,12 +474,12 @@ CreateSpiceOrbit(const AssociativeArray* orbitData,
     // The period of the orbit may be specified if appropriate; a value
     // of zero for the period (the default), means that the orbit will
     // be considered aperiodic.
-    auto period = orbitData->getTime<double>("Period", 1.0, timeScale).value_or(0.0);
+    auto period = orbitData.getTime<double>("Period", 1.0, timeScale).value_or(0.0);
 
     // Either a complete time interval must be specified with Beginning/Ending, or
     // else neither field can be present.
-    const Value* beginningDate = orbitData->getValue("Beginning");
-    const Value* endingDate = orbitData->getValue("Ending");
+    const Value* beginningDate = orbitData.getValue("Beginning");
+    const Value* endingDate = orbitData.getValue("Ending");
     if (beginningDate != nullptr && endingDate == nullptr)
     {
         GetLogger()->error("Beginning specified for SPICE orbit, but ending is missing.\n");
@@ -569,7 +569,7 @@ CreateSpiceRotation(const Value& value,
                     const std::filesystem::path& path)
 {
     const AssociativeArray* rotationData = value.getHash();
-    if (rotationData == nullptr)
+    if (!rotationData)
     {
         GetLogger()->error("Object has incorrect spice rotation syntax.\n");
         return nullptr;
@@ -577,11 +577,11 @@ CreateSpiceRotation(const Value& value,
 
     std::vector<std::string> kernelList;
 
-    if (rotationData->getValue("Kernel") != nullptr)
+    if (rotationData->getValue("Kernel"))
     {
         // Kernel list is optional; a SPICE rotation may rely on kernels already loaded into
         // the kernel pool.
-        if (!ParseStringList(rotationData, "Kernel", kernelList))
+        if (!ParseStringList(*rotationData, "Kernel", kernelList))
         {
             GetLogger()->warn("Kernel list for SPICE rotation is neither a string nor array of strings\n");
             return nullptr;
@@ -610,30 +610,30 @@ CreateSpiceRotation(const Value& value,
     // else neither field can be present.
     const Value* beginningDate = rotationData->getValue("Beginning");
     const Value* endingDate = rotationData->getValue("Ending");
-    if (beginningDate != nullptr && endingDate == nullptr)
+    if (beginningDate && !endingDate)
     {
         GetLogger()->error("Beginning specified for SPICE rotation, but ending is missing.\n");
         return nullptr;
     }
 
-    if (endingDate != nullptr && beginningDate == nullptr)
+    if (endingDate && !beginningDate)
     {
         GetLogger()->error("Ending specified for SPICE rotation, but beginning is missing.\n");
         return nullptr;
     }
 
     std::shared_ptr<ephem::SpiceRotation> rotation = nullptr;
-    if (beginningDate != nullptr && endingDate != nullptr)
+    if (beginningDate && endingDate)
     {
         double beginningTDBJD = 0.0;
-        if (!ParseDate(rotationData, "Beginning", beginningTDBJD))
+        if (!ParseDate(*rotationData, "Beginning", beginningTDBJD))
         {
             GetLogger()->error("Invalid beginning date specified for SPICE rotation.\n");
             return nullptr;
         }
 
         double endingTDBJD = 0.0;
-        if (!ParseDate(rotationData, "Ending", endingTDBJD))
+        if (!ParseDate(*rotationData, "Ending", endingTDBJD))
         {
             GetLogger()->error("Invalid ending date specified for SPICE rotation.\n");
             return nullptr;
@@ -664,12 +664,12 @@ CreateSpiceRotation(const Value& value,
 #endif
 
 std::shared_ptr<const ephem::Orbit>
-CreateScriptedOrbit(const AssociativeArray* orbitData,
+CreateScriptedOrbit(const AssociativeArray& orbitData,
                     const std::filesystem::path& path)
 {
 #ifdef CELX
     // Function name is required
-    const std::string* funcName = orbitData->getString("Function");
+    const std::string* funcName = orbitData.getString("Function");
     if (funcName == nullptr)
     {
         GetLogger()->error("Function name missing from script orbit definition.\n");
@@ -677,12 +677,12 @@ CreateScriptedOrbit(const AssociativeArray* orbitData,
     }
 
     // Module name is optional
-    const std::string* moduleName = orbitData->getString("Module");
+    const std::string* moduleName = orbitData.getString("Module");
 
     //Value* pathValue = new Value(path.string());
     //orbitData->addValue("AddonPath", *pathValue);
 
-    return ephem::CreateScriptedOrbit(moduleName, *funcName, *orbitData, path);
+    return ephem::CreateScriptedOrbit(moduleName, *funcName, orbitData, path);
 #else
     GetLogger()->warn("ScriptedOrbit not usable without scripting support.\n");
     return nullptr;
@@ -706,7 +706,7 @@ CreateUniformRotationModel(const Value& value,
                            double syncRotationPeriod)
 {
     const AssociativeArray* rotationData = value.getHash();
-    if (rotationData == nullptr)
+    if (!rotationData)
     {
         GetLogger()->error("Object has incorrect UniformRotation syntax.\n");
         return nullptr;
@@ -718,7 +718,7 @@ CreateUniformRotationModel(const Value& value,
     auto offset = math::degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
 
     double epoch = astro::J2000;
-    ParseDate(rotationData, "Epoch", epoch);
+    ParseDate(*rotationData, "Epoch", epoch);
 
     auto inclination = math::degToRad(rotationData->getAngle<double>("Inclination").value_or(0.0));
     auto ascendingNode = math::degToRad(rotationData->getAngle<double>("AscendingNode").value_or(0.0));
@@ -784,7 +784,7 @@ CreatePrecessingRotationModel(const Value& value,
                               double syncRotationPeriod)
 {
     const AssociativeArray* rotationData = value.getHash();
-    if (rotationData == nullptr)
+    if (!rotationData)
     {
         GetLogger()->error("Object has incorrect syntax for precessing rotation.\n");
         return nullptr;
@@ -796,7 +796,7 @@ CreatePrecessingRotationModel(const Value& value,
     auto offset = math::degToRad(rotationData->getAngle<double>("MeridianAngle").value_or(0.0));
 
     double epoch = astro::J2000;
-    ParseDate(rotationData, "Epoch", epoch);
+    ParseDate(*rotationData, "Epoch", epoch);
 
     auto inclination = math::degToRad(rotationData->getAngle<double>("Inclination").value_or(0.0));
     auto ascendingNode = math::degToRad(rotationData->getAngle<double>("AscendingNode").value_or(0.0));
@@ -876,9 +876,9 @@ CreateSampledRotation(std::string_view filename, const std::filesystem::path& pa
  * if it's missing or refers to an object that doesn't exist.
  */
 Selection
-getFrameCenter(const Universe& universe, const AssociativeArray* frameData, const Selection& defaultCenter)
+getFrameCenter(const Universe& universe, const AssociativeArray& frameData, const Selection& defaultCenter)
 {
-    const std::string* centerName = frameData->getString("Center");
+    const std::string* centerName = frameData.getString("Center");
     if (!centerName)
         return defaultCenter;
 
@@ -907,7 +907,7 @@ getFrameCenter(const Universe& universe, const AssociativeArray* frameData, cons
 
 std::optional<FrameId>
 CreateBodyFixedFrame(const Universe& universe,
-                     const AssociativeArray* frameData,
+                     const AssociativeArray& frameData,
                      Selection& defaultCenter,
                      FrameCache& frameCache)
 {
@@ -923,14 +923,14 @@ CreateBodyFixedFrame(const Universe& universe,
 
 std::optional<FrameId>
 CreateMeanEquatorFrame(const Universe& universe,
-                       const AssociativeArray* frameData,
+                       const AssociativeArray& frameData,
                        Selection& defaultCenter,
                        FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
 
     Selection obj = defaultCenter;
-    if (const std::string* objName = frameData->getString("Object"); objName != nullptr)
+    if (const std::string* objName = frameData.getString("Object"); objName != nullptr)
     {
         obj = universe.findPath(*objName, {});
         if (obj.empty())
@@ -1146,7 +1146,7 @@ CreateFrameVector(const Universe& universe,
             FrameId frameId;
             if (const Value* frameValue = constVecData->getValue("Frame"); frameValue)
             {
-                if (auto f = CreateReferenceFrame(universe, frameValue, nullptr, frameCache); f.has_value())
+                if (auto f = CreateReferenceFrame(universe, *frameValue, nullptr, frameCache); f.has_value())
                     frameId = *f;
                 else
                     return std::nullopt;
@@ -1166,14 +1166,14 @@ CreateFrameVector(const Universe& universe,
 
 std::optional<FrameId>
 CreateTwoVectorFrame(const Universe& universe,
-                     const AssociativeArray* frameData,
+                     const AssociativeArray& frameData,
                      Selection& defaultCenter,
                      FrameCache& frameCache)
 {
     defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
 
     const AssociativeArray* primaryData;
-    if (const Value* primaryValue = frameData->getValue("Primary"); primaryValue)
+    if (const Value* primaryValue = frameData.getValue("Primary"); primaryValue)
     {
         primaryData = primaryValue->getHash();
         if (!primaryData)
@@ -1189,7 +1189,7 @@ CreateTwoVectorFrame(const Universe& universe,
     }
 
     const AssociativeArray* secondaryData;
-    if (const Value* secondaryValue = frameData->getValue("Secondary"); secondaryValue)
+    if (const Value* secondaryValue = frameData.getValue("Secondary"); secondaryValue)
     {
         secondaryData = secondaryValue->getHash();
         if (!secondaryData)
@@ -1235,7 +1235,7 @@ CreateTwoVectorFrame(const Universe& universe,
 
 std::optional<FrameId>
 CreateJ2000EclipticFrame(const Universe& universe,
-                         const AssociativeArray* frameData,
+                         const AssociativeArray& frameData,
                          Selection& defaultCenter,
                          FrameCache& frameCache)
 {
@@ -1245,7 +1245,7 @@ CreateJ2000EclipticFrame(const Universe& universe,
 
 std::optional<FrameId>
 CreateJ2000EquatorFrame(const Universe& universe,
-                        const AssociativeArray* frameData,
+                        const AssociativeArray& frameData,
                         Selection& defaultCenter,
                         FrameCache& frameCache)
 {
@@ -1295,7 +1295,7 @@ CreateJ2000EquatorFrame(const Universe& universe,
  */
 std::optional<FrameId>
 CreateTopocentricFrame(const Universe& universe,
-                       const AssociativeArray* frameData,
+                       const AssociativeArray& frameData,
                        Selection& defaultTarget,
                        const Selection& defaultObserver,
                        FrameCache& frameCache)
@@ -1303,7 +1303,7 @@ CreateTopocentricFrame(const Universe& universe,
     Selection target;
     Selection observer;
 
-    if (const std::string* centerName = frameData->getString("Center"); centerName != nullptr)
+    if (const std::string* centerName = frameData.getString("Center"); centerName != nullptr)
     {
         // If a center is provided, the default observer is the center and
         // the default target is the center's parent. This gives sensible results
@@ -1328,7 +1328,7 @@ CreateTopocentricFrame(const Universe& universe,
         observer = defaultObserver;
     }
 
-    if (const std::string* targetName = frameData->getString("Target"); targetName == nullptr)
+    if (const std::string* targetName = frameData.getString("Target"); targetName == nullptr)
     {
         if (target.empty())
         {
@@ -1350,7 +1350,7 @@ CreateTopocentricFrame(const Universe& universe,
         // the frame will be used.
     }
 
-    if (const std::string* observerName = frameData->getString("Observer"); observerName == nullptr)
+    if (const std::string* observerName = frameData.getString("Observer"); observerName == nullptr)
     {
         if (observer.empty())
         {
@@ -1373,12 +1373,12 @@ CreateTopocentricFrame(const Universe& universe,
 
 std::optional<FrameId>
 CreateComplexFrame(const Universe& universe,
-                   const AssociativeArray* frameData,
+                   const AssociativeArray& frameData,
                    Selection& defaultCenter,
                    Body* defaultObserver,
                    FrameCache& frameCache)
 {
-    if (const Value* value = frameData->getValue("BodyFixed"); value)
+    if (const Value* value = frameData.getValue("BodyFixed"); value)
     {
         const AssociativeArray* bodyFixedData = value->getHash();
         if (!bodyFixedData)
@@ -1387,10 +1387,10 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateBodyFixedFrame(universe, bodyFixedData, defaultCenter, frameCache);
+        return CreateBodyFixedFrame(universe, *bodyFixedData, defaultCenter, frameCache);
     }
 
-    if (const Value* value = frameData->getValue("MeanEquator"); value)
+    if (const Value* value = frameData.getValue("MeanEquator"); value)
     {
         const AssociativeArray* meanEquatorData = value->getHash();
         if (!meanEquatorData)
@@ -1399,10 +1399,10 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateMeanEquatorFrame(universe, meanEquatorData, defaultCenter, frameCache);
+        return CreateMeanEquatorFrame(universe, *meanEquatorData, defaultCenter, frameCache);
     }
 
-    if (const Value* value = frameData->getValue("TwoVector"); value != nullptr)
+    if (const Value* value = frameData.getValue("TwoVector"); value != nullptr)
     {
         const AssociativeArray* twoVectorData = value->getHash();
         if (twoVectorData == nullptr)
@@ -1411,10 +1411,10 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-       return CreateTwoVectorFrame(universe, twoVectorData, defaultCenter, frameCache);
+       return CreateTwoVectorFrame(universe, *twoVectorData, defaultCenter, frameCache);
     }
 
-    if (const Value* value = frameData->getValue("Topocentric"); value != nullptr)
+    if (const Value* value = frameData.getValue("Topocentric"); value != nullptr)
     {
         const AssociativeArray* topocentricData = value->getHash();
         if (topocentricData == nullptr)
@@ -1423,10 +1423,10 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateTopocentricFrame(universe, topocentricData, defaultCenter, defaultObserver, frameCache);
+        return CreateTopocentricFrame(universe, *topocentricData, defaultCenter, defaultObserver, frameCache);
     }
 
-    if (const Value* value = frameData->getValue("EclipticJ2000"); value != nullptr)
+    if (const Value* value = frameData.getValue("EclipticJ2000"); value != nullptr)
     {
         const AssociativeArray* eclipticData = value->getHash();
         if (eclipticData == nullptr)
@@ -1435,10 +1435,10 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateJ2000EclipticFrame(universe, eclipticData, defaultCenter, frameCache);
+        return CreateJ2000EclipticFrame(universe, *eclipticData, defaultCenter, frameCache);
     }
 
-    if (const Value* value = frameData->getValue("EquatorJ2000"); value != nullptr)
+    if (const Value* value = frameData.getValue("EquatorJ2000"); value != nullptr)
     {
         const AssociativeArray* equatorData = value->getHash();
         if (equatorData == nullptr)
@@ -1447,7 +1447,7 @@ CreateComplexFrame(const Universe& universe,
             return std::nullopt;
         }
 
-        return CreateJ2000EquatorFrame(universe, equatorData, defaultCenter, frameCache);
+        return CreateJ2000EquatorFrame(universe, *equatorData, defaultCenter, frameCache);
     }
 
     GetLogger()->error("Frame definition does not have a valid frame type.\n");
@@ -1458,16 +1458,16 @@ CreateComplexFrame(const Universe& universe,
 } // end unnamed namespace
 
 bool
-ParseDate(const AssociativeArray* hash, std::string_view name, double& jd)
+ParseDate(const AssociativeArray& hash, std::string_view name, double& jd)
 {
     // Check first for a number value representing a Julian date
-    if (auto jdVal = hash->getNumber<double>(name); jdVal.has_value())
+    if (auto jdVal = hash.getNumber<double>(name); jdVal.has_value())
     {
         jd = *jdVal;
         return true;
     }
 
-    if (const std::string* dateString = hash->getString(name); dateString != nullptr)
+    if (const std::string* dateString = hash.getString(name); dateString != nullptr)
     {
         astro::Date date(1, 1, 1);
         if (astro::parseDate(*dateString, date))
@@ -1482,29 +1482,29 @@ ParseDate(const AssociativeArray* hash, std::string_view name, double& jd)
 
 std::shared_ptr<const ephem::Orbit>
 CreateOrbit(const Selection& centralObject,
-            const AssociativeArray* planetData,
+            const AssociativeArray& objectData,
             const std::filesystem::path& path,
             bool usePlanetUnits)
 {
-    if (const std::string* customOrbitName = planetData->getString("CustomOrbit"); customOrbitName != nullptr)
+    if (const std::string* customOrbitName = objectData.getString("CustomOrbit"); customOrbitName != nullptr)
     {
         if (auto orbit = ephem::GetCustomOrbit(*customOrbitName); orbit != nullptr)
             return orbit;
         GetLogger()->error("Could not find custom orbit named '{}'\n", *customOrbitName);
     }
 
-    if (const Value* spiceOrbitDataValue = planetData->getValue("SpiceOrbit"); spiceOrbitDataValue != nullptr)
+    if (const Value* spiceOrbitDataValue = objectData.getValue("SpiceOrbit"); spiceOrbitDataValue != nullptr)
     {
 #ifdef USE_SPICE
         const AssociativeArray* spiceOrbitData = spiceOrbitDataValue->getHash();
-        if (spiceOrbitData == nullptr)
+        if (!spiceOrbitData)
         {
             GetLogger()->error("Object has incorrect spice orbit syntax.\n");
             return nullptr;
         }
         else
         {
-            auto orbit = CreateSpiceOrbit(spiceOrbitData, path, usePlanetUnits);
+            auto orbit = CreateSpiceOrbit(*spiceOrbitData, path, usePlanetUnits);
             if (orbit != nullptr)
                 return orbit;
 
@@ -1517,37 +1517,37 @@ CreateOrbit(const Selection& centralObject,
     }
 
     // Trajectory calculated by Lua script
-    if (const Value* scriptedOrbitValue = planetData->getValue("ScriptedOrbit"); scriptedOrbitValue != nullptr)
+    if (const Value* scriptedOrbitValue = objectData.getValue("ScriptedOrbit"); scriptedOrbitValue != nullptr)
     {
         const AssociativeArray* scriptedOrbitData = scriptedOrbitValue->getHash();
-        if (scriptedOrbitData == nullptr)
+        if (!scriptedOrbitData)
         {
             GetLogger()->error("Object has incorrect scripted orbit syntax.\n");
             return nullptr;
         }
 
-        auto orbit = CreateScriptedOrbit(scriptedOrbitData, path);
+        auto orbit = CreateScriptedOrbit(*scriptedOrbitData, path);
         if (orbit != nullptr)
             return orbit;
     }
 
     // New 1.5.0 style for sampled trajectories. Permits specification of
     // precision and interpolation type.
-    if (const Value* sampledTrajDataValue = planetData->getValue("SampledTrajectory"); sampledTrajDataValue != nullptr)
+    if (const Value* sampledTrajDataValue = objectData.getValue("SampledTrajectory"); sampledTrajDataValue != nullptr)
     {
         const AssociativeArray* sampledTrajData = sampledTrajDataValue->getHash();
-        if (sampledTrajData == nullptr)
+        if (!sampledTrajData)
         {
             GetLogger()->error("Object has incorrect syntax for SampledTrajectory.\n");
             return nullptr;
         }
 
-        return CreateSampledTrajectory(sampledTrajData, path);
+        return CreateSampledTrajectory(*sampledTrajData, path);
     }
 
     // Old style for sampled trajectories. Assumes cubic interpolation and
     // single precision.
-    if (const std::string* sampOrbitFile = planetData->getString("SampledOrbit"); sampOrbitFile != nullptr)
+    if (const std::string* sampOrbitFile = objectData.getString("SampledOrbit"); sampOrbitFile != nullptr)
     {
         if (auto sampOrbitFileName = util::U8FileName(*sampOrbitFile); sampOrbitFileName.has_value())
         {
@@ -1569,16 +1569,16 @@ CreateOrbit(const Selection& centralObject,
         }
     }
 
-    if (const Value* orbitDataValue = planetData->getValue("EllipticalOrbit"); orbitDataValue != nullptr)
+    if (const Value* orbitDataValue = objectData.getValue("EllipticalOrbit"); orbitDataValue != nullptr)
     {
         const AssociativeArray* orbitData = orbitDataValue->getHash();
-        if (orbitData == nullptr)
+        if (!orbitData)
         {
             GetLogger()->error("Object has incorrect elliptical orbit syntax.\n");
             return nullptr;
         }
 
-        return CreateKeplerianOrbit(orbitData, usePlanetUnits);
+        return CreateKeplerianOrbit(*orbitData, usePlanetUnits);
     }
 
     // Create an 'orbit' that places the object at a fixed point in its
@@ -1594,21 +1594,21 @@ CreateOrbit(const Selection& centralObject,
     //
     // In addition to Rectangular, other coordinate types for fixed position are
     // Planetographic and Planetocentric.
-    if (const Value* fixedPositionValue = planetData->getValue("FixedPosition"); fixedPositionValue != nullptr)
+    if (const Value* fixedPositionValue = objectData.getValue("FixedPosition"); fixedPositionValue != nullptr)
     {
         double distanceScale;
         GetDefaultUnits(usePlanetUnits, distanceScale);
 
-        if (auto fixed = planetData->getLengthVector<double>("FixedPosition", 1.0, distanceScale); fixed.has_value())
+        if (auto fixed = objectData.getLengthVector<double>("FixedPosition", 1.0, distanceScale); fixed.has_value())
         {
             // Convert to Celestia's coordinate system
             Eigen::Vector3d fixedPosition(fixed->x(), fixed->z(), -fixed->y());
             return std::make_shared<ephem::FixedOrbit>(fixedPosition);
         }
 
-        if (auto fixedPositionData = fixedPositionValue->getHash(); fixedPositionData != nullptr)
+        if (auto fixedPositionData = fixedPositionValue->getHash(); fixedPositionData)
         {
-            return CreateFixedPosition(fixedPositionData, centralObject, usePlanetUnits);
+            return CreateFixedPosition(*fixedPositionData, centralObject, usePlanetUnits);
         }
 
         GetLogger()->error("Object has incorrect FixedPosition syntax.\n");
@@ -1618,20 +1618,20 @@ CreateOrbit(const Selection& centralObject,
 }
 
 std::shared_ptr<const ephem::RotationModel>
-CreateLegacyRotationModel(const AssociativeArray* planetData,
+CreateLegacyRotationModel(const AssociativeArray& planetData,
                           double syncRotationPeriod)
 {
     // Default to synchronous rotation
     bool specified = false;
     double period = syncRotationPeriod;
-    if (auto periodVal = planetData->getNumber<double>("RotationPeriod"); periodVal.has_value())
+    if (auto periodVal = planetData.getNumber<double>("RotationPeriod"); periodVal.has_value())
     {
         specified = true;
         period = *periodVal / 24.0;
     }
 
     float offset = 0.0f;
-    if (auto offsetVal = planetData->getNumber<float>("RotationOffset"); offsetVal.has_value())
+    if (auto offsetVal = planetData.getNumber<float>("RotationOffset"); offsetVal.has_value())
     {
         specified = true;
         offset = math::degToRad(*offsetVal);
@@ -1644,21 +1644,21 @@ CreateLegacyRotationModel(const AssociativeArray* planetData,
     }
 
     float inclination = 0.0f;
-    if (auto inclinationVal = planetData->getNumber<float>("Obliquity"); inclinationVal.has_value())
+    if (auto inclinationVal = planetData.getNumber<float>("Obliquity"); inclinationVal.has_value())
     {
         specified = true;
         inclination = math::degToRad(*inclinationVal);
     }
 
     float ascendingNode = 0.0f;
-    if (auto ascendingNodeVal = planetData->getNumber<float>("EquatorAscendingNode"); ascendingNodeVal.has_value())
+    if (auto ascendingNodeVal = planetData.getNumber<float>("EquatorAscendingNode"); ascendingNodeVal.has_value())
     {
         specified = true;
         ascendingNode = math::degToRad(*ascendingNodeVal);
     }
 
     double precessionRate = 0.0f;
-    if (auto precessionVal = planetData->getNumber<double>("PrecessionRate"); precessionVal.has_value())
+    if (auto precessionVal = planetData.getNumber<double>("PrecessionRate"); precessionVal.has_value())
     {
         specified = true;
         precessionRate = *precessionVal;
@@ -1703,7 +1703,7 @@ CreateLegacyRotationModel(const AssociativeArray* planetData,
  * appear in the top level structure.
  */
 std::shared_ptr<const ephem::RotationModel>
-CreateRotationModel(const AssociativeArray* planetData,
+CreateRotationModel(const AssociativeArray& objectData,
                     const std::filesystem::path& path,
                     double syncRotationPeriod)
 {
@@ -1715,7 +1715,7 @@ CreateRotationModel(const AssociativeArray* planetData,
     //   PrecessingRotation
     //   UniformRotation
     //   legacy rotation parameters
-    if (const std::string* name = planetData->getString("CustomRotation"); name != nullptr)
+    if (const std::string* name = objectData.getString("CustomRotation"); name != nullptr)
     {
         if (auto rotationModel = ephem::GetCustomRotationModel(*name); rotationModel != nullptr)
             return rotationModel;
@@ -1723,7 +1723,7 @@ CreateRotationModel(const AssociativeArray* planetData,
         GetLogger()->error("Could not find custom rotation model named '{}'\n", *name);
     }
 
-    if (const Value* value = planetData->getValue("SpiceRotation"); value != nullptr)
+    if (const Value* value = objectData.getValue("SpiceRotation"); value != nullptr)
     {
 #ifdef USE_SPICE
         if (auto rotationModel = CreateSpiceRotation(*value, path); rotationModel != nullptr)
@@ -1733,7 +1733,7 @@ CreateRotationModel(const AssociativeArray* planetData,
 #endif
     }
 
-    if (const Value* value = planetData->getValue("ScriptedRotation"); value != nullptr)
+    if (const Value* value = objectData.getValue("ScriptedRotation"); value != nullptr)
     {
 #ifdef CELX
         if (auto rotationModel = CreateScriptedRotation(*value, path); rotationModel != nullptr)
@@ -1743,31 +1743,31 @@ CreateRotationModel(const AssociativeArray* planetData,
 #endif
     }
 
-    if (const std::string* sampOrientationFile = planetData->getString("SampledOrientation"); sampOrientationFile != nullptr)
+    if (const std::string* sampOrientationFile = objectData.getString("SampledOrientation"); sampOrientationFile != nullptr)
     {
         if (auto rotationModel = CreateSampledRotation(*sampOrientationFile, path); rotationModel != nullptr)
             return rotationModel;
     }
 
-    if (const Value* value = planetData->getValue("PrecessingRotation"); value != nullptr)
+    if (const Value* value = objectData.getValue("PrecessingRotation"); value != nullptr)
     {
         if (auto rotationModel = CreatePrecessingRotationModel(*value, syncRotationPeriod); rotationModel != nullptr)
             return rotationModel;
     }
 
-    if (const Value* value = planetData->getValue("UniformRotation"); value != nullptr)
+    if (const Value* value = objectData.getValue("UniformRotation"); value != nullptr)
     {
         if (auto rotationModel = CreateUniformRotationModel(*value, syncRotationPeriod); rotationModel != nullptr)
             return rotationModel;
     }
 
-    if (const Value* value = planetData->getValue("FixedRotation"); value != nullptr)
+    if (const Value* value = objectData.getValue("FixedRotation"); value != nullptr)
     {
         if (auto rotationModel = CreateFixedRotationModel(*value); rotationModel != nullptr)
             return rotationModel;
     }
 
-    if (const Value* value = planetData->getValue("FixedAttitude"); value != nullptr)
+    if (const Value* value = objectData.getValue("FixedAttitude"); value != nullptr)
     {
         if (auto rotationModel = CreateFixedAttitudeRotationModel(*value); rotationModel != nullptr)
             return rotationModel;
@@ -1775,7 +1775,7 @@ CreateRotationModel(const AssociativeArray* planetData,
 
     // For backward compatibility we need to support rotation parameters
     // that appear in the main block of the object definition.
-    return CreateLegacyRotationModel(planetData, syncRotationPeriod);
+    return CreateLegacyRotationModel(objectData, syncRotationPeriod);
 }
 
 std::shared_ptr<const ephem::RotationModel>
@@ -1812,21 +1812,21 @@ CreateTopocentricFrame(const Selection& target,
 
 std::optional<FrameId>
 CreateOrbitFrame(const Universe& universe,
-                 const Value* frameValue,
+                 const Value& frameValue,
                  Selection& defaultCenter,
                  Body* defaultObserver,
                  FrameCache& frameCache)
 {
-    const AssociativeArray* frameData = frameValue->getHash();
-    if (frameData == nullptr)
+    const AssociativeArray* frameData = frameValue.getHash();
+    if (!frameData)
     {
         GetLogger()->error("Invalid syntax for frame definition.\n");
         return std::nullopt;
     }
 
     // Allow specifying Center directly in the OrbitFrame block
-    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
-    std::optional<FrameId> result = CreateComplexFrame(universe, frameData, defaultCenter, defaultObserver, frameCache);
+    defaultCenter = getFrameCenter(universe, *frameData, defaultCenter);
+    std::optional<FrameId> result = CreateComplexFrame(universe, *frameData, defaultCenter, defaultObserver, frameCache);
     if (result.has_value() && defaultCenter.empty())
     {
         GetLogger()->error("No center specified for OrbitFrame\n");
@@ -1838,11 +1838,11 @@ CreateOrbitFrame(const Universe& universe,
 
 std::optional<FrameId>
 CreateReferenceFrame(const Universe& universe,
-                     const Value* frameValue,
+                     const Value& frameValue,
                      Body* defaultObserver,
                      FrameCache& frameCache)
 {
-    const AssociativeArray* frameData = frameValue->getHash();
+    const AssociativeArray* frameData = frameValue.getHash();
     if (frameData == nullptr)
     {
         GetLogger()->error("Invalid syntax for frame definition.\n");
@@ -1850,5 +1850,5 @@ CreateReferenceFrame(const Universe& universe,
     }
 
     Selection center;
-    return CreateComplexFrame(universe, frameData, center, defaultObserver, frameCache);
+    return CreateComplexFrame(universe, *frameData, center, defaultObserver, frameCache);
 }

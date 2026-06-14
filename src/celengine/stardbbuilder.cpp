@@ -311,11 +311,11 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
 
 bool
 checkSpectralType(const StarDatabaseBuilder::StcHeader& header,
-                  const AssociativeArray* starData,
+                  const AssociativeArray& starData,
                   const Star* star,
                   boost::intrusive_ptr<StarDetails>& newDetails)
 {
-    const std::string* spectralType = starData->getString("SpectralType");
+    const std::string* spectralType = starData.getString("SpectralType");
     if (!header.isStar)
     {
         if (spectralType != nullptr)
@@ -342,7 +342,7 @@ checkSpectralType(const StarDatabaseBuilder::StcHeader& header,
 
 bool
 checkPolarCoordinates(const StarDatabaseBuilder::StcHeader& header,
-                      const AssociativeArray* starData,
+                      const AssociativeArray& starData,
                       const Star* star,
                       std::optional<Eigen::Vector3f>& position)
 {
@@ -353,9 +353,9 @@ checkPolarCoordinates(const StarDatabaseBuilder::StcHeader& header,
 
     unsigned int status = 0;
 
-    auto raValue = starData->getAngle<double>("RA", astro::DEG_PER_HRA, 1.0);
-    auto decValue = starData->getAngle<double>("Dec");
-    auto distanceValue = starData->getLength<double>("Distance", astro::KM_PER_LY<double>);
+    auto raValue = starData.getAngle<double>("RA", astro::DEG_PER_HRA, 1.0);
+    auto decValue = starData.getAngle<double>("Dec");
+    auto distanceValue = starData.getLength<double>("Distance", astro::KM_PER_LY<double>);
     status = (static_cast<unsigned int>(raValue.has_value()) * has_ra)
            | (static_cast<unsigned int>(decValue.has_value()) * has_dec)
            | (static_cast<unsigned int>(distanceValue.has_value()) * has_distance);
@@ -392,15 +392,15 @@ checkPolarCoordinates(const StarDatabaseBuilder::StcHeader& header,
 
 bool
 checkMagnitudes(const StarDatabaseBuilder::StcHeader& header,
-                const AssociativeArray* starData,
+                const AssociativeArray& starData,
                 const Star* star,
                 float distance,
                 std::optional<float>& absMagnitude,
                 std::optional<float>& extinction)
 {
     assert(header.disposition != DataDisposition::Modify || star != nullptr);
-    absMagnitude = starData->getNumber<float>("AbsMag");
-    auto appMagnitude = starData->getNumber<float>("AppMag");
+    absMagnitude = starData.getNumber<float>("AbsMag");
+    auto appMagnitude = starData.getNumber<float>("AppMag");
 
     if (!header.isStar)
     {
@@ -412,7 +412,7 @@ checkMagnitudes(const StarDatabaseBuilder::StcHeader& header,
         return true;
     }
 
-    extinction = starData->getNumber<float>("Extinction");
+    extinction = starData.getNumber<float>("Extinction");
     if (extinction.has_value() && distance < VALID_APPMAG_DISTANCE_THRESHOLD)
     {
         stcWarn(header, _("Extinction ignored for stars close to the origin"));
@@ -472,11 +472,11 @@ mergeStarDetails(boost::intrusive_ptr<StarDetails>& existingDetails,
 
 void
 applyMesh(const StarDatabaseBuilder::StcHeader& header,
-          const AssociativeArray* starData,
+          const AssociativeArray& starData,
           boost::intrusive_ptr<StarDetails>& details,
           engine::GeometryPaths& geometryPaths)
 {
-    const auto* mesh = starData->getString("Mesh");
+    const auto* mesh = starData.getString("Mesh");
     if (mesh == nullptr)
         return;
 
@@ -499,10 +499,10 @@ applyMesh(const StarDatabaseBuilder::StcHeader& header,
 
 void
 applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
-                               const AssociativeArray* starData,
+                               const AssociativeArray& starData,
                                boost::intrusive_ptr<StarDetails>& details)
 {
-    auto bolometricCorrection = starData->getNumber<float>("BoloCorrection");
+    auto bolometricCorrection = starData.getNumber<float>("BoloCorrection");
     if (bolometricCorrection.has_value())
     {
         if (!header.isStar)
@@ -511,7 +511,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
             StarDetails::setBolometricCorrection(details, *bolometricCorrection);
     }
 
-    if (auto temperature = starData->getNumber<float>("Temperature"); temperature.has_value())
+    if (auto temperature = starData.getNumber<float>("Temperature"); temperature.has_value())
     {
         if (!header.isStar)
         {
@@ -543,14 +543,14 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
 
 void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
-                   const AssociativeArray* starData,
+                   const AssociativeArray& starData,
                    boost::intrusive_ptr<StarDetails>& details,
                    engine::GeometryPaths& geometryPaths,
                    engine::TexturePaths& texturePaths)
 {
     applyMesh(header, starData, details, geometryPaths);
 
-    if (const auto* texture = starData->getString("Texture"); texture != nullptr)
+    if (const auto* texture = starData.getString("Texture"); texture != nullptr)
     {
         if (!header.isStar)
         {
@@ -576,7 +576,7 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
         StarDetails::setRotationModel(details, rotationModel);
     }
 
-    if (auto semiAxes = starData->getLengthVector<float>("SemiAxes"); semiAxes.has_value())
+    if (auto semiAxes = starData.getLengthVector<float>("SemiAxes"); semiAxes.has_value())
     {
         if (!header.isStar)
             stcWarn(header, _("SemiAxes is ignored on Barycenters"));
@@ -586,7 +586,7 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
             stcWarn(header, _("SemiAxes must be greater than zero"));
     }
 
-    if (auto radius = starData->getLength<float>("Radius"); radius.has_value())
+    if (auto radius = starData.getLength<float>("Radius"); radius.has_value())
     {
         if (!header.isStar)
             stcWarn(header, _("Radius is ignored on Barycenters"));
@@ -739,7 +739,7 @@ StarDatabaseBuilder::load(std::istream& in, //NOSONAR
         tokenizer.pushBack();
         const Value starDataValue = parser.readValue();
         const AssociativeArray* starData = starDataValue.getHash();
-        if (starData == nullptr)
+        if (!starData)
         {
             GetLogger()->error(_("Bad star definition at line {}.\n"), tokenizer.getLineNumber());
             return false;
@@ -749,7 +749,7 @@ StarDatabaseBuilder::load(std::istream& in, //NOSONAR
             header.catalogNumber = starDB->namesDB->findCatalogNumberByName(header.names.front(), false);
 
         Star* star = findWhileLoading(header.catalogNumber);
-        if (star == nullptr)
+        if (!star)
         {
             if (header.disposition == DataDisposition::Modify)
             {
@@ -764,9 +764,9 @@ StarDatabaseBuilder::load(std::istream& in, //NOSONAR
             }
         }
 
-        if (createOrUpdateStar(header, starData, star))
+        if (createOrUpdateStar(header, *starData, star))
         {
-            loadCategories(header, starData, domain);
+            loadCategories(header, *starData, domain);
 
             if (const auto* infoUrlValue = starData->getString("InfoURL"); infoUrlValue != nullptr)
             {
@@ -839,7 +839,7 @@ StarDatabaseBuilder::finish()
  */
 bool
 StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
-                                        const AssociativeArray* starData,
+                                        const AssociativeArray& starData,
                                         Star* star)
 {
     boost::intrusive_ptr<StarDetails> newDetails = nullptr;
@@ -898,7 +898,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     else if (barycenterNumber.has_value())
         barycenters.insert_or_assign(header.catalogNumber, *barycenterNumber);
 
-    if (orbit != nullptr)
+    if (orbit)
         StarDetails::setOrbit(star->details, orbit);
 
     applyCustomDetails(header, starData, star->details, *geometryPaths, *texturePaths);
@@ -907,7 +907,7 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
 
 bool
 StarDatabaseBuilder::checkStcPosition(const StarDatabaseBuilder::StcHeader& header,
-                                      const AssociativeArray* starData,
+                                      const AssociativeArray& starData,
                                       const Star* star,
                                       std::optional<Eigen::Vector3f>& position,
                                       std::optional<AstroCatalog::IndexNumber>& barycenterNumber,
@@ -919,7 +919,7 @@ StarDatabaseBuilder::checkStcPosition(const StarDatabaseBuilder::StcHeader& head
     if (!checkPolarCoordinates(header, starData, star, position))
         return false;
 
-    if (auto positionValue = starData->getLengthVector<float>("Position", astro::KM_PER_LY<double>);
+    if (auto positionValue = starData.getLengthVector<float>("Position", astro::KM_PER_LY<double>);
         positionValue.has_value())
     {
         if (position.has_value())
@@ -956,7 +956,7 @@ StarDatabaseBuilder::checkStcPosition(const StarDatabaseBuilder::StcHeader& head
 
 bool
 StarDatabaseBuilder::checkBarycenter(const StarDatabaseBuilder::StcHeader& header,
-                                     const AssociativeArray* starData,
+                                     const AssociativeArray& starData,
                                      std::optional<Eigen::Vector3f>& position,
                                      std::optional<AstroCatalog::IndexNumber>& barycenterNumber) const
 {
@@ -964,7 +964,7 @@ StarDatabaseBuilder::checkBarycenter(const StarDatabaseBuilder::StcHeader& heade
     if (position.has_value())
         barycenterNumber = AstroCatalog::InvalidIndex;
 
-    const Value* orbitBarycenterValue = starData->getValue("OrbitBarycenter");
+    const Value* orbitBarycenterValue = starData.getValue("OrbitBarycenter");
     if (orbitBarycenterValue == nullptr)
         return true;
 
@@ -1014,13 +1014,13 @@ StarDatabaseBuilder::checkBarycenter(const StarDatabaseBuilder::StcHeader& heade
 
 void
 StarDatabaseBuilder::loadCategories(const StcHeader& header,
-                                    const AssociativeArray* starData,
+                                    const AssociativeArray& starData,
                                     const std::string& domain)
 {
     if (header.disposition == DataDisposition::Replace)
         categories.erase(header.catalogNumber);
 
-    const Value* categoryValue = starData->getValue("Category");
+    const Value* categoryValue = starData.getValue("Category");
     if (categoryValue == nullptr)
         return;
 
