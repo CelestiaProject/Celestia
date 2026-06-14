@@ -642,15 +642,6 @@ CreateLocation(const AssociativeArray* locationData,
     return location;
 }
 
-template<typename Dst, typename Flag>
-inline void SetOrUnset(Dst &dst, Flag flag, bool cond)
-{
-    if (cond)
-        dst |= flag;
-    else
-        dst &= ~flag;
-}
-
 std::optional<std::filesystem::path>
 GetFilename(const AssociativeArray& hash,
             std::string_view key,
@@ -699,14 +690,14 @@ FillinSurface(const AssociativeArray* surfaceData,
     bool blendTexture = surfaceData->getBoolean("BlendTexture").value_or(false);
     bool emissive = surfaceData->getBoolean("Emissive").value_or(false);
 
-    SetOrUnset(surface->appearanceFlags, Surface::BlendTexture, blendTexture);
-    SetOrUnset(surface->appearanceFlags, Surface::Emissive, emissive);
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBaseTexture, baseTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyBumpMap, (bumpTexture.has_value() || normalTexture.has_value()));
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyNightMap, nightTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::SeparateSpecularMap, specularTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::ApplyOverlay, overlayTexture.has_value());
-    SetOrUnset(surface->appearanceFlags, Surface::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::BlendTexture, blendTexture);
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::Emissive, emissive);
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::ApplyBaseTexture, baseTexture.has_value());
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::ApplyBumpMap, (bumpTexture.has_value() || normalTexture.has_value()));
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::ApplyNightMap, nightTexture.has_value());
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::SeparateSpecularMap, specularTexture.has_value());
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::ApplyOverlay, overlayTexture.has_value());
+    util::set_or_unset(surface->appearanceFlags, Surface::Flags::SpecularReflection, surface->specularColor != Color(0.0f, 0.0f, 0.0f));
 
     if (baseTexture.has_value())
         surface->baseTexture = texturePaths.getHandle(*baseTexture, path, baseFlags);

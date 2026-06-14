@@ -12,6 +12,7 @@
 #include <cstdint>
 
 #include <celutil/color.h>
+#include <celutil/flag.h>
 #include <celutil/texhandle.h>
 
 struct Surface
@@ -21,7 +22,9 @@ struct Surface
     {}
 
     // Appearance flags
-    enum {
+    enum class Flags : std::uint32_t
+    {
+        None                 = 0,
         BlendTexture         = 0x1,
         ApplyBaseTexture     = 0x2,
         ApplyBumpMap         = 0x4,
@@ -33,7 +36,7 @@ struct Surface
         ApplyOverlay         = 0x200,
     };
 
-    std::uint32_t appearanceFlags{ 0 };
+    Flags appearanceFlags{ Flags::None };
     Color color;
     Color specularColor;
     float specularPower{ 0.0f };
@@ -42,6 +45,7 @@ struct Surface
     celestia::util::TextureHandle nightTexture{ celestia::util::TextureHandle::Invalid };   // artificial lights to show on night side
     celestia::util::TextureHandle specularTexture{ celestia::util::TextureHandle::Invalid };// specular mask
     celestia::util::TextureHandle overlayTexture{ celestia::util::TextureHandle::Invalid }; // overlay texture, applied last
-    float bumpHeight{ 0.0f };       // scale of bump map relief
     float lunarLambert{ 0.0f };     // mix between Lambertian and Lommel-Seeliger (lunar-like) photometric functions
 };
+
+ENUM_CLASS_BITWISE_OPS(Surface::Flags);
