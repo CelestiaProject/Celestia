@@ -31,12 +31,14 @@
 namespace celestia::engine
 {
 class GeometryManager;
+class UrlManager;
 }
 
 class Universe
 {
 public:
-    explicit Universe(std::shared_ptr<celestia::engine::GeometryManager>);
+    Universe(const std::shared_ptr<celestia::engine::GeometryManager>&,
+             std::unique_ptr<celestia::engine::UrlManager>&&);
     ~Universe();
 
     StarDatabase* getStarCatalog() const;
@@ -91,6 +93,9 @@ public:
     bool isMarked(const Selection&, int priority) const;
     const celestia::MarkerList& getMarkers() const;
 
+    celestia::engine::UrlManager* getUrlManager() const noexcept { return urlManager.get(); }
+    std::string_view getInfoURL(const Selection&) const;
+
 private:
     void getCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
@@ -132,6 +137,7 @@ private:
     std::unique_ptr<AsterismList> asterisms;
     std::unique_ptr<ConstellationBoundaries> boundaries;
     std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
+    std::unique_ptr<celestia::engine::UrlManager> urlManager;
 
     celestia::MarkerList markers{ };
     std::vector<const Star*> closeStars{ };

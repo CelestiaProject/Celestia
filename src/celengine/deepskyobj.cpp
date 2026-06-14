@@ -23,6 +23,7 @@
 #include <celutil/infourl.h>
 #include <celutil/logger.h>
 #include "meshmanager.h"
+#include "urlmanager.h"
 
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
@@ -31,60 +32,58 @@ namespace util = celestia::util;
 
 using celestia::util::GetLogger;
 
-Eigen::Vector3d DeepSkyObject::getPosition() const
+Eigen::Vector3d
+DeepSkyObject::getPosition() const
 {
     return position;
 }
 
-void DeepSkyObject::setPosition(const Eigen::Vector3d& p)
+void
+DeepSkyObject::setPosition(const Eigen::Vector3d& p)
 {
     position = p;
 }
 
-Eigen::Quaternionf DeepSkyObject::getOrientation() const
+Eigen::Quaternionf
+DeepSkyObject::getOrientation() const
 {
     return orientation;
 }
 
-void DeepSkyObject::setOrientation(const Eigen::Quaternionf& q)
+void
+DeepSkyObject::setOrientation(const Eigen::Quaternionf& q)
 {
     orientation = q;
 }
 
-void DeepSkyObject::setRadius(float r)
+void
+DeepSkyObject::setRadius(float r)
 {
     radius = r;
 }
 
-float DeepSkyObject::getAbsoluteMagnitude() const
+float
+DeepSkyObject::getAbsoluteMagnitude() const
 {
     return absMag;
 }
 
-void DeepSkyObject::setAbsoluteMagnitude(float _absMag)
+void
+DeepSkyObject::setAbsoluteMagnitude(float _absMag)
 {
     absMag = _absMag;
 }
 
-std::string DeepSkyObject::getDescription() const
+std::string
+DeepSkyObject::getDescription() const
 {
-    return "";
+    return {};
 }
 
-const std::string& DeepSkyObject::getInfoURL() const
-{
-    return infoURL;
-}
-
-void DeepSkyObject::setInfoURL(std::string&& s)
-{
-    infoURL = std::move(s);
-}
-
-
-bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
-                         double& distanceToPicker,
-                         double& cosAngleToBoundCenter) const
+bool
+DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
+                    double& distanceToPicker,
+                    double& cosAngleToBoundCenter) const
 {
     return isVisible() && math::testIntersection(ray,
                                                  math::Sphered(position, static_cast<double>(radius)),
@@ -92,11 +91,12 @@ bool DeepSkyObject::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                                  cosAngleToBoundCenter);
 }
 
-
-bool DeepSkyObject::load(const util::AssociativeArray* params,
-                         const std::filesystem::path& resPath,
-                         engine::GeometryPaths&,
-                         std::string_view name)
+bool
+DeepSkyObject::load(const util::AssociativeArray* params,
+                    const std::filesystem::path& resPath,
+                    engine::GeometryPaths& geometryPaths,
+                    std::string_view name,
+                    engine::UrlManager& urlManager)
 {
     // Get position
     if (auto pos = params->getLengthVector<double>("Position", astro::KM_PER_LY<double>); pos.has_value())
@@ -125,20 +125,22 @@ bool DeepSkyObject::load(const util::AssociativeArray* params,
     if (auto absMagValue = params->getNumber<float>("AbsMag"); absMagValue.has_value())
         setAbsoluteMagnitude(*absMagValue);
 
-    // TODO: infourl class
-    if (const auto *infoUrlValue = params->getString("InfoURL"); infoUrlValue != nullptr)
-    {
-        if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resPath); !infoUrl.empty())
-            setInfoURL(std::move(infoUrl));
-        else
-            GetLogger()->error(_("Invalid InfoURL used in {} definition.\n"), name);
-    }
-
     if (auto visibleValue = params->getBoolean("Visible"); visibleValue.has_value())
         setVisible(*visibleValue);
 
     if (auto clickableValue = params->getBoolean("Clickable"); clickableValue.has_value())
         setClickable(*clickableValue);
+
+    if (!loadDetails(params, resPath, geometryPaths))
+        return false;
+
+    if (const auto *infoUrlValue = params->getString("InfoURL"); infoUrlValue)
+    {
+        if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resPath); !infoUrl.empty())
+            urlManager.setURL(this, std::move(infoUrl));
+        else
+            GetLogger()->error(_("Invalid InfoURL used in {} definition.\n"), name);
+    }
 
     return true;
 }

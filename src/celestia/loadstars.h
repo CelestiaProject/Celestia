@@ -21,11 +21,13 @@ namespace engine
 {
 class GeometryPaths;
 class TexturePaths;
+class UrlManager;
 }
 
 std::unique_ptr<StarDatabase> loadStars(const CelestiaConfig& config,
                                         ProgressNotifier* progressNotifier,
                                         engine::GeometryPaths& geometryPaths,
-                                        engine::TexturePaths& texturePaths);
+                                        engine::TexturePaths& texturePaths,
+                                        engine::UrlManager& urlManager);
 
 } // namespace celestia

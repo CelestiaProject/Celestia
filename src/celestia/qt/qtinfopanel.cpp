@@ -174,15 +174,15 @@ InfoPanel::pageFooter(QTextStream& stream)
 }
 
 
-void InfoPanel::buildSolarSystemBodyPage(const Body* body,
+void InfoPanel::buildSolarSystemBodyPage(Body* body,
                                          double t,
                                          QTextStream& stream)
 {
     stream << QString("<h1>%1</h1>").arg(QString::fromStdString(body->getName(true)));
 
-    if (!body->getInfoURL().empty())
+    if (auto bodyInfoUrl = appCore->getSimulation()->getUniverse()->getInfoURL(body); !bodyInfoUrl.empty())
     {
-        QString infoURL = QString::fromStdString(body->getInfoURL());
+        QString infoURL = QString::fromUtf8(bodyInfoUrl.data(), static_cast<int>(bodyInfoUrl.size()));
         stream << QString(_("Web info: %1")).arg(anchor(infoURL, infoURL)) << "<br>\n";
     }
 

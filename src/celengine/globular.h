@@ -40,7 +40,7 @@ class AssociativeArray;
 }
 }
 
-class Globular : public DeepSkyObject
+class Globular final : public DeepSkyObject
 {
 public:
    // min/max c-values of globular cluster data
@@ -64,16 +64,17 @@ public:
     bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
               double& distanceToPicker,
               double& cosAngleToBoundCenter) const override;
-    bool load(const celestia::util::AssociativeArray*,
-              const std::filesystem::path&,
-              celestia::engine::GeometryPaths&,
-              std::string_view) override;
 
     RenderFlags getRenderMask() const override;
     RenderLabels getLabelMask() const override;
     DeepSkyObjectType getObjType() const override;
 
     int getFormId() const;
+
+protected:
+    bool loadDetails(const celestia::util::AssociativeArray*,
+                     const std::filesystem::path&,
+                     celestia::engine::GeometryPaths&) override;
 
 private:
     // Reference values ( = data base averages) of core radius, King concentration

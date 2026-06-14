@@ -152,6 +152,8 @@ set(CELENGINE_SOURCES
   univcoord.h
   universe.cpp
   universe.h
+  urlmanager.cpp
+  urlmanager.h
   viewporteffect.h
   viewporteffect.cpp
   virtualtex.cpp

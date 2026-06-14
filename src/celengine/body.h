@@ -253,8 +253,6 @@ public:
 
     BodyClassification getClassification() const;
     void setClassification(BodyClassification);
-    const std::string& getInfoURL() const;
-    void setInfoURL(std::string&&);
 
     PlanetarySystem* getSatellites() const;
     PlanetarySystem* getOrCreateSatellites();
@@ -381,8 +379,6 @@ private:
     Surface surface{ Color(1.0f, 1.0f, 1.0f) };
 
     BodyClassification classification{ BodyClassification::Unknown };
-
-    std::string infoURL;
 
     // Track enabled features to allow fast rejection during lookup
     BodyFeatures features{ BodyFeatures::None };

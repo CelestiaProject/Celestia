@@ -35,6 +35,7 @@ namespace celestia
 namespace engine
 {
 class GeometryPaths;
+class UrlManager;
 }
 namespace util
 {
@@ -85,9 +86,6 @@ public:
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
 
-    const std::string& getInfoURL() const;
-    void setInfoURL(std::string&&);
-
     bool isVisible() const { return visible; }
     void setVisible(bool _visible) { visible = _visible; }
     bool isClickable() const { return clickable; }
@@ -98,10 +96,11 @@ public:
     virtual bool pick(const Eigen::ParametrizedLine<double, 3>& ray,
                       double& distanceToPicker,
                       double& cosAngleToBoundCenter) const;
-    virtual bool load(const celestia::util::AssociativeArray*,
-                      const std::filesystem::path& resPath,
-                      celestia::engine::GeometryPaths& geometryPaths,
-                      std::string_view name);
+    bool load(const celestia::util::AssociativeArray*,
+              const std::filesystem::path& resPath,
+              celestia::engine::GeometryPaths& geometryPaths,
+              std::string_view name,
+              celestia::engine::UrlManager& urlManager);
 
     virtual RenderFlags getRenderMask() const { return RenderFlags::ShowNothing; }
     virtual RenderLabels getLabelMask() const { return RenderLabels::NoLabels; }
@@ -109,13 +108,17 @@ public:
     AstroCatalog::IndexNumber getIndex() const { return indexNumber; }
     void setIndex(AstroCatalog::IndexNumber idx) { indexNumber = idx; }
 
+protected:
+    virtual bool loadDetails(const celestia::util::AssociativeArray*,
+                             const std::filesystem::path&,
+                             celestia::engine::GeometryPaths&) = 0;
+
 private:
     Eigen::Vector3d position{ Eigen::Vector3d::Zero() };
     Eigen::Quaternionf orientation{ Eigen::Quaternionf::Identity() };
     float        radius{ 1 };
     float        absMag{ DSO_DEFAULT_ABS_MAGNITUDE } ;
     AstroCatalog::IndexNumber indexNumber{ AstroCatalog::InvalidIndex };
-    std::string infoURL;
 
     bool visible { true };
     bool clickable { true };

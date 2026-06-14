@@ -43,6 +43,7 @@
 #include "octreebuilder.h"
 #include "stardb.h"
 #include "stellarclass.h"
+#include "urlmanager.h"
 
 using namespace std::string_view_literals;
 
@@ -544,7 +545,6 @@ void
 applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
                    const AssociativeArray* starData,
                    boost::intrusive_ptr<StarDetails>& details,
-                   const std::filesystem::path& resourcePath,
                    engine::GeometryPaths& geometryPaths,
                    engine::TexturePaths& texturePaths)
 {
@@ -597,22 +597,16 @@ applyCustomDetails(const StarDatabaseBuilder::StcHeader& header,
     }
 
     applyTemperatureBoloCorrection(header, starData, details);
-
-    if (const auto* infoUrlValue = starData->getString("InfoURL"); infoUrlValue != nullptr)
-    {
-        if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resourcePath); !infoUrl.empty())
-            StarDetails::setInfoURL(details, std::move(infoUrl));
-        else
-            stcWarn(header, _("Invalid InfoURL"));
-    }
 }
 
 } // end unnamed namespace
 
 StarDatabaseBuilder::StarDatabaseBuilder(engine::GeometryPaths& _geometryPaths,
-                                         engine::TexturePaths& _texturePaths) :
+                                         engine::TexturePaths& _texturePaths,
+                                         engine::UrlManager& _urlManager) :
     geometryPaths(&_geometryPaths),
-    texturePaths(&_texturePaths)
+    texturePaths(&_texturePaths),
+    urlManager(&_urlManager)
 {
 }
 
@@ -721,7 +715,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
  *  Modify <number>   : error
  */
 bool
-StarDatabaseBuilder::load(std::istream& in,
+StarDatabaseBuilder::load(std::istream& in, //NOSONAR
                           const std::filesystem::path& resourcePath)
 {
     util::Tokenizer tokenizer(in);
@@ -770,9 +764,17 @@ StarDatabaseBuilder::load(std::istream& in,
             }
         }
 
-        if (createOrUpdateStar(header, starData, star, resourcePath))
+        if (createOrUpdateStar(header, starData, star))
         {
             loadCategories(header, starData, domain);
+
+            if (const auto* infoUrlValue = starData->getString("InfoURL"); infoUrlValue != nullptr)
+            {
+                if (std::string infoUrl = util::BuildInfoURL(*infoUrlValue, resourcePath); !infoUrl.empty())
+                    infoUrls.insert_or_assign(header.catalogNumber, std::move(infoUrl));
+                else
+                    stcWarn(header, _("Invalid InfoURL"));
+            }
 
             if (!header.names.empty())
             {
@@ -805,7 +807,7 @@ StarDatabaseBuilder::finish()
     // the barycenters have been resolved, and these are required when building
     // the octree.  This will only rarely cause a problem, but it still needs
     // to be addressed.
-    for (const auto [starIdx, barycenterIdx] : barycenters)
+    for (const auto& [starIdx, barycenterIdx] : barycenters)
     {
         Star* star = starDB->find(starIdx);
         Star* barycenter = starDB->find(barycenterIdx);
@@ -824,6 +826,12 @@ StarDatabaseBuilder::finish()
         UserCategory::addObject(star, category);
     }
 
+    for (auto& [catalogNumber, infoUrl] : infoUrls)
+    {
+        Star* star = starDB->find(catalogNumber);
+        urlManager->setURL(star, std::move(infoUrl));
+    }
+
     return std::move(starDB);
 }
 
@@ -832,8 +840,7 @@ StarDatabaseBuilder::finish()
 bool
 StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
                                         const AssociativeArray* starData,
-                                        Star* star,
-                                        const std::filesystem::path& resourcePath)
+                                        Star* star)
 {
     boost::intrusive_ptr<StarDetails> newDetails = nullptr;
     if (!checkSpectralType(header, starData, star, newDetails))
@@ -889,12 +896,12 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     if (barycenterNumber == AstroCatalog::InvalidIndex)
         barycenters.erase(header.catalogNumber);
     else if (barycenterNumber.has_value())
-        barycenters[header.catalogNumber] = *barycenterNumber;
+        barycenters.insert_or_assign(header.catalogNumber, *barycenterNumber);
 
     if (orbit != nullptr)
         StarDetails::setOrbit(star->details, orbit);
 
-    applyCustomDetails(header, starData, star->details, resourcePath, *geometryPaths, *texturePaths);
+    applyCustomDetails(header, starData, star->details, *geometryPaths, *texturePaths);
     return true;
 }
 

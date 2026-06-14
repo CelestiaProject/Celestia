@@ -271,7 +271,7 @@ public:
     void registerValue(const char* name, float n);
 
     void setTable(const char* field, lua_Number value);
-    void setTable(const char* field, const char* value);
+    void setTable(const char* field, std::string_view value);
 
     void newFrame(const ObserverFrame& f);
     void newVector(const Eigen::Vector3d& v);

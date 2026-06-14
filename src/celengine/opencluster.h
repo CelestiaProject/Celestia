@@ -16,7 +16,7 @@
 #include "deepskyobj.h"
 #include "renderflags.h"
 
-class OpenCluster : public DeepSkyObject
+class OpenCluster final : public DeepSkyObject
 {
 public:
     OpenCluster() = default;
@@ -40,4 +40,13 @@ public:
         Globular      = 1,
         NotDefined    = 2
     };
+
+protected:
+    bool loadDetails(const celestia::util::AssociativeArray*,
+                     const std::filesystem::path&,
+                     celestia::engine::GeometryPaths&) override
+    {
+        // nothing to load
+        return true;
+    }
 };

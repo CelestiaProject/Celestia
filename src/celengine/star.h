@@ -76,7 +76,6 @@ public:
     bool getVisibility() const;
     const std::shared_ptr<const celestia::ephem::RotationModel>& getRotationModel() const;
     Eigen::Vector3f getEllipsoidSemiAxes() const;
-    const std::string& getInfoURL() const;
     bool isBarycenter() const;
 
     static void setRadius(boost::intrusive_ptr<StarDetails>&, float);
@@ -89,7 +88,6 @@ public:
     static void setVisibility(boost::intrusive_ptr<StarDetails>&, bool);
     static void setRotationModel(boost::intrusive_ptr<StarDetails>&, const std::shared_ptr<const celestia::ephem::RotationModel>&);
     static void setEllipsoidSemiAxes(boost::intrusive_ptr<StarDetails>&, const Eigen::Vector3f&);
-    static void setInfoURL(boost::intrusive_ptr<StarDetails>&, std::string&& _infoURL);
     static void addOrbitingStar(boost::intrusive_ptr<StarDetails>&, Star*);
 
     bool shared() const;
@@ -148,8 +146,6 @@ private:
     std::shared_ptr<const celestia::ephem::RotationModel> rotationModel;
 
     Eigen::Vector3f semiAxes{ Eigen::Vector3f::Ones() };
-
-    std::string infoURL;
 
     std::unique_ptr<std::vector<Star*>> orbitingStars{ nullptr };
     bool isShared{ true };
@@ -299,7 +295,6 @@ public:
     bool getVisibility() const;
     const celestia::ephem::RotationModel* getRotationModel() const;
     Eigen::Vector3f getEllipsoidSemiAxes() const;
-    const std::string& getInfoURL() const;
     bool hasCorona() const;
     bool isBarycenter() const;
 

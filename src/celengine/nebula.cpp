@@ -89,10 +89,9 @@ Nebula::getObjType() const
 }
 
 bool
-Nebula::load(const util::AssociativeArray* params,
-             const std::filesystem::path& resPath,
-             engine::GeometryPaths& geometryPaths,
-             std::string_view name)
+Nebula::loadDetails(const util::AssociativeArray* params,
+                    const std::filesystem::path& resPath,
+                    engine::GeometryPaths& geometryPaths)
 {
     if (const std::string* typeName = params->getString("Type"); typeName != nullptr)
         setType(*typeName);
@@ -110,7 +109,7 @@ Nebula::load(const util::AssociativeArray* params,
         setGeometry(geometryHandle);
     }
 
-    return DeepSkyObject::load(params, resPath, geometryPaths, name);
+    return true;
 }
 
 RenderFlags

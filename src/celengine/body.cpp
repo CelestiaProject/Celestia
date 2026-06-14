@@ -950,18 +950,6 @@ Body::getOrbitClassification() const
     return BodyClassification::Invisible;
 }
 
-const std::string&
-Body::getInfoURL() const
-{
-    return infoURL;
-}
-
-void
-Body::setInfoURL(std::string&& _infoURL)
-{
-    infoURL = std::move(_infoURL);
-}
-
 /*! Sets whether or not the object is visible.
  */
 void

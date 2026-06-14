@@ -1495,10 +1495,10 @@ void CelxLua::setTable(const char* field, lua_Number value)
     lua_settable(m_lua, -3);
 }
 
-void CelxLua::setTable(const char* field, const char* value)
+void CelxLua::setTable(const char* field, std::string_view value)
 {
     lua_pushstring(m_lua, field);
-    lua_pushstring(m_lua, value);
+    lua_pushlstring(m_lua, value.data(), value.size());
     lua_settable(m_lua, -3);
 }
 

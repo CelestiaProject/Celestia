@@ -32,6 +32,7 @@
 #include "meshmanager.h"
 #include "render.h"
 #include "timelinephase.h"
+#include "urlmanager.h"
 
 namespace engine = celestia::engine;
 namespace math = celestia::math;
@@ -563,8 +564,10 @@ getLocationsCompletion(std::vector<celestia::engine::Completion>& completion,
 
 } // end unnamed namespace
 
-Universe::Universe(std::shared_ptr<engine::GeometryManager> _geometryManager) :
-    geometryManager(_geometryManager)
+Universe::Universe(const std::shared_ptr<engine::GeometryManager>& _geometryManager,
+                   std::unique_ptr<engine::UrlManager>&& _urlManager) :
+    geometryManager(_geometryManager),
+    urlManager(std::move(_urlManager))
 {
 }
 
@@ -1195,4 +1198,10 @@ Universe::getNearStars(const UniversalCoord& position,
     Eigen::Vector3f pos = position.toLy().cast<float>();
     NearStarFinder finder(maxDistance, nearStars);
     starCatalog->findCloseStars(finder, pos, maxDistance);
+}
+
+std::string_view
+Universe::getInfoURL(const Selection& selection) const
+{
+    return urlManager->getURL(selection);
 }

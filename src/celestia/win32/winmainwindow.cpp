@@ -1453,46 +1453,26 @@ void
 MainWindow::showWWWInfo() const
 {
     Selection sel = appCore->getSimulation()->getSelection();
-    std::string url;
-    switch (sel.getType())
+    std::string url(appCore->getSimulation()->getUniverse()->getInfoURL(sel));
+    if (Star* star = sel.star(); star && url.empty())
     {
-    case SelectionType::Body:
-        url = sel.body()->getInfoURL();
-        break;
+        // TODO: get rid of fixed URLs
+        constexpr std::string_view simbadUrl = "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident="sv;
 
-    case SelectionType::Star:
-        url = sel.star()->getInfoURL();
-        if (url.empty())
+        AstroCatalog::IndexNumber number = sel.star()->getIndex();
+        if (number <= StarDatabase::MAX_HIPPARCOS_NUMBER)
         {
-            // TODO: get rid of fixed URLs
-            constexpr std::string_view simbadUrl = "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident="sv;
-
-            AstroCatalog::IndexNumber number = sel.star()->getIndex();
-            if (number <= StarDatabase::MAX_HIPPARCOS_NUMBER)
-            {
-                url = fmt::format("{}HIP+{}", simbadUrl, number);
-            }
-            else if (number <= Star::MaxTychoCatalogNumber)
-            {
-                AstroCatalog::IndexNumber tyc3 = number / UINT32_C(1000000000);
-                number -= tyc3 * UINT32_C(1000000000);
-                AstroCatalog::IndexNumber tyc2 = number / UINT32_C(10000);
-                number -= tyc2 * UINT32_C(10000);
-                AstroCatalog::IndexNumber tyc1 = number;
-                url = fmt::format("{}TYC+{}-{}-{}", simbadUrl, tyc1, tyc2, tyc3);
-            }
+            url = fmt::format("{}HIP+{}", simbadUrl, number);
         }
-        break;
-
-    case SelectionType::DeepSky:
-        url = sel.deepsky()->getInfoURL();
-        break;
-
-    case SelectionType::Location:
-        break;
-
-    default:
-        break;
+        else if (number <= Star::MaxTychoCatalogNumber)
+        {
+            AstroCatalog::IndexNumber tyc3 = number / UINT32_C(1000000000);
+            number -= tyc3 * UINT32_C(1000000000);
+            AstroCatalog::IndexNumber tyc2 = number / UINT32_C(10000);
+            number -= tyc2 * UINT32_C(10000);
+            AstroCatalog::IndexNumber tyc1 = number;
+            url = fmt::format("{}TYC+{}-{}-{}", simbadUrl, tyc1, tyc2, tyc3);
+        }
     }
 
     if (url.empty())

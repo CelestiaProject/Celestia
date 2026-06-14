@@ -96,15 +96,11 @@ bool Globular::pick(const Eigen::ParametrizedLine<double, 3>& ray,
                                   cosAngleToBoundCenter);
 }
 
-bool Globular::load(const util::AssociativeArray* params,
-                    const std::filesystem::path& resPath,
-                    engine::GeometryPaths& geometryPaths,
-                    std::string_view name)
+bool
+Globular::loadDetails(const util::AssociativeArray* params,
+                      const std::filesystem::path&,
+                      engine::GeometryPaths&)
 {
-    // Load the basic DSO parameters first
-    if (!DeepSkyObject::load(params, resPath, geometryPaths, name))
-        return false;
-
     if (auto detailVal = params->getNumber<float>("Detail"); detailVal.has_value())
         detail = *detailVal;
 

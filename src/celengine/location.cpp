@@ -89,12 +89,6 @@ Location::setImportance(float _importance)
     importance = _importance;
 }
 
-const std::string&
-Location::getInfoURL() const
-{
-    return infoURL;
-}
-
 Location::FeatureType
 Location::getFeatureType() const
 {

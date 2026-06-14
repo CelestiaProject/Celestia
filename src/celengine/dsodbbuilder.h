@@ -27,12 +27,13 @@ class NameDatabase;
 namespace celestia::engine
 {
 class GeometryPaths;
+class UrlManager;
 }
 
 class DSODatabaseBuilder
 {
 public:
-    explicit DSODatabaseBuilder(celestia::engine::GeometryPaths&);
+    DSODatabaseBuilder(celestia::engine::GeometryPaths&, celestia::engine::UrlManager&);
     ~DSODatabaseBuilder();
 
     bool load(std::istream&,
@@ -44,4 +45,5 @@ private:
     std::unique_ptr<NameDatabase> namesDB{ std::make_unique<NameDatabase>() };
     AstroCatalog::IndexNumber nextAutoCatalogNumber{ 0 };
     celestia::engine::GeometryPaths* geometryPaths;
+    celestia::engine::UrlManager* urlManager;
 };
