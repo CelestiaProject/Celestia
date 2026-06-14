@@ -2708,10 +2708,10 @@ CreateUranianSatelliteOrbit(int n)
                                                    uran_zeta_phi[n]);
 }
 
-/*! Orbit of Triton, from Seidelmann, _Explanatory Supplement to the
- *  Astronomical Almanac_ (1992), p.373-374. The position of Triton
- *  is calculated in Neptunocentric coordinates referred to the
- *  Earth equator/equinox of J2000.0.
+/*! Orbit of Triton, from Emelyanov and Samorodov (2015), MNRAS 454, p.2205-2215
+ *  "Analytical theory of motion and new ephemeris of Triton from observations"
+ *  Positions are calculated in Neptunocentric coordinates referred to the Earth
+ *  equator/equinox of J2000.0.
  */
 class TritonOrbit : public CachingOrbit
 {
@@ -2720,60 +2720,114 @@ public:
 
     Eigen::Vector3d computePosition(double jd) const override
     {
-        constexpr double epoch = 2433282.5;
-        double t = jd - epoch;
+        // Parameters of the Sun's relative motion around Neptune (INPOP10 ephemeris)
+        constexpr double OmegaSun = 200.788181;
+        constexpr double u0Sun = 258.727508;
+        constexpr double duSun = 0.00598084154;
 
-        // Compute the position of Triton in its orbital plane
-        constexpr double a = 354800;                // Semi-major axis (488.49")
-        constexpr double n = math::degToRad(61.2588532);  // mean motion
-        constexpr double L0 = math::degToRad(200.913);
-        double L  = L0 + n * t;
+        // Parameters of Triton's motion (^k = 0; with all observations)
+        constexpr double a = 354696.76;
+        constexpr double I0 = 157.268439;
+        constexpr double u0 = 31.791760;
+        constexpr double du = 61.25871809;
+        constexpr double Omega0 = 73.395781;
+        constexpr double dOmega = 0.001452458;
+        constexpr double alpha0 = math::degToRad(299.090);
+        constexpr double delta0 = math::degToRad(43.019);
 
-        double E = L;   // Triton's orbit is circular, so E = mean anomaly
-        double sinE;
-        double cosE;
-        math::sincos(E, sinE, cosE);
-        Eigen::Vector3d p(a * cosE, a * sinE, 0.0);
+        constexpr double t0 = 2378520.5;
+        constexpr double ts = 2451545.0;
 
-        // Transform to the invariable plane:
-        //   gamma is the inclination of the orbital plane on the invariable plane
-        //   theta is the angle from the intersection of the invariable plane
-        //      with the Earth equatorial plane of 1950.0 to the ascending node
-        //      of the orbit on the invariable plane.
-        constexpr double gamma = math::degToRad(158.996);
-        double theta = math::degToRad(151.401 + 0.57806 * t / 365.25);
-        Eigen::Quaterniond toInvariable = math::XRotation(-gamma) * math::ZRotation(-theta);
+        double t = jd - t0;
 
-        // Compute the RA and declination of the pole of the fixed reference plane
-        // (epoch is J2000.0)
-        double T = (jd - astro::J2000) / 36525;
-        double N = math::degToRad(359.28 + 54.308 * T);
-        double refplane_RA  = 298.72 + 2.58 * std::sin(N) - 0.04 * std::sin(2 * N);
-        double refplane_Dec =  42.63 - 1.90 * std::cos(N) - 0.01 * std::cos(2 * N);
+        // Compute the argument of latitude of the Sun's orbit
+        double uSun = u0Sun + duSun * (jd - ts);
+
+        double Omega = Omega0 + dOmega * t;
+
+        // Compute the long-period perturbations from the Sun
+        double deltaI = 0.0;
+        double deltau = 0.0;
+        double deltaOmega = 0.0;
+        for (int i = 0; i < 7; i++)
+        {
+            double perturbArg = math::degToRad(k1[i] * uSun + k2[i] * (OmegaSun - Omega));
+            deltaI += KI[i] * std::cos(perturbArg);
+            deltau += Ku[i] * std::sin(perturbArg);
+            deltaOmega += KOmega[i] * std::sin(perturbArg);
+        }
+
+        // Compute the orbital elements of Triton at epoch
+        double I = math::degToRad(I0 + deltaI);
+        double u = math::degToRad(u0 + du * t + deltau);
+        Omega = math::degToRad(Omega + deltaOmega);
+
+        // Compute the position on the orbital coordinate system:
+        //   X points towards the node of the x-y plane on Earth's equator.
+        //   Z is parallel to the angular momentum vector of Triton's orbit.
+        double sinI, cosI, sinu, cosu, sinOmega, cosOmega;
+        math::sincos(I, sinI, cosI);
+        math::sincos(u, sinu, cosu);
+        math::sincos(Omega, sinOmega, cosOmega);
+        double x = a * (cosu * cosOmega - sinu * sinOmega * cosI);
+        double y = a * (cosu * sinOmega + sinu * cosOmega * cosI);
+        double z = a * sinu * sinI;
 
         // Rotate to the Earth's equatorial plane
-        double Nr = math::degToRad(refplane_RA - 90.0);
-        double Jr = math::degToRad(90.0 - refplane_Dec);
-        Eigen::Quaterniond toEarthEq = math::XRotation(Jr) * math::ZRotation(Nr);
-
-        Eigen::Quaterniond q = toEarthEq * toInvariable;
-        //Quatd q = toInvariable * toEarthEq;
-
-        p = q.toRotationMatrix() * p;
+        double sinAlpha, cosAlpha, sinDelta, cosDelta;
+        math::sincos(alpha0, sinAlpha, cosAlpha);
+        math::sincos(delta0, sinDelta, cosDelta);
+        double xg = -sinAlpha * x - cosAlpha * sinDelta * y + cosAlpha * cosDelta * z;
+        double yg = cosAlpha * x - sinAlpha * sinDelta * y + sinAlpha * cosDelta * z;
+        double zg = cosDelta * y + sinDelta * z;
 
         // Convert to Celestia's coordinate system
-        return Eigen::Vector3d(p.x(), p.z(), -p.y());
+        return Eigen::Vector3d(xg, zg, -yg);
     }
 
     double getPeriod() const override
     {
-        return 5.877;
+        return 5.87685421025;
     }
 
     double getBoundingRadius() const override
     {
-        return 354800 * BoundingRadiusSlack;
+        return 354700 * BoundingRadiusSlack;
     }
+
+private:
+    static constexpr std::array<double, 7> KI
+    {
+        0.0,
+        0.00096486,
+        0.00664662,
+        0.00004687,
+        0.00095975,
+        -0.00037627,
+        -0.00000225
+    };
+    static constexpr std::array<double, 7> Ku
+    {
+        -0.00012327,
+        -0.00279453,
+        -0.04335625,
+        -0.00017215,
+        -0.00233686,
+        0.00170605,
+        0.00000730
+    };
+    static constexpr std::array<double, 7> KOmega
+    {
+        0.00063339,
+        -0.00178908,
+        -0.01560110,
+        -0.00009186,
+        -0.00218071,
+        0.00096231,
+        0.00000536
+    };
+    static constexpr std::array<double, 7> k1{2, 2, 0, -2, 2, 0, -2};
+    static constexpr std::array<double, 7> k2{0, 1, 1, 1, 2, 2, 2};
 };
 
 /*! Ephemeris for Helene, Telesto, and Calypso, from
