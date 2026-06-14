@@ -281,16 +281,19 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
     if (static_cast<int>(fbos.size()) != count)
         fbos.resize(count);
 
-    for (int i = 0; i < count; i++)
+    // Walk backwards through the chain: this lets us propagate float-source
+    // requirements towards index 0 in a single pass (if any later effect
+    // needs a float source, all earlier FBOs must also be float so
+    // linear-light precision is preserved end-to-end — a half-float
+    // tonemap fed by an unorm8 intermediate would still band).
+    bool useFloat = false;
+    for (int i = count - 1; i >= 0; i--)
     {
+        useFloat = useFloat || effects[i]->needsFloatSource();
+
         // Only the first FBO needs MSAA to match the output framebuffer.
         // Subsequent FBOs receive already-resolved blits so samples=1 suffices.
         int samples = (i == 0) ? samplesToRequest : 1;
-
-        // Use a float color buffer only when the consuming effect requires it
-        // (e.g. the sRGB tonemap needs linear-light precision). Half-float
-        // texture formats are core in GLES 3.0+ and desktop GL 3.0+.
-        bool useFloat = effects[i]->needsFloatSource();
 
         auto& fbo = fbos[i];
 
