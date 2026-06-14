@@ -12,10 +12,8 @@
 #include <cstdint>
 #include <filesystem>
 #include <iosfwd>
-#include <map>
 #include <memory>
-
-#include <Eigen/Core>
+#include <unordered_map>
 
 class FrameCache;
 class FrameTree;
@@ -36,7 +34,6 @@ public:
     ~SolarSystem();
 
     Star* getStar() const;
-    Eigen::Vector3f getCenter() const;
     PlanetarySystem* getPlanets() const;
     FrameTree* getFrameTree() const;
 
@@ -46,7 +43,7 @@ private:
     std::unique_ptr<FrameTree> frameTree;
 };
 
-using SolarSystemCatalog = std::map<std::uint32_t, std::unique_ptr<SolarSystem>>;
+using SolarSystemCatalog = std::unordered_map<std::uint32_t, std::unique_ptr<SolarSystem>>;
 
 bool LoadSolarSystemObjects(std::istream& in,
                             Universe& universe,
