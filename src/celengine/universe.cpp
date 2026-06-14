@@ -683,12 +683,10 @@ SolarSystem*
 Universe::getOrCreateSolarSystem(Star* star) const
 {
     auto starNum = star->getIndex();
-    auto iter = solarSystemCatalog->lower_bound(starNum);
-    if (iter != solarSystemCatalog->end() && iter->first == starNum)
-        return iter->second.get();
-
-    iter = solarSystemCatalog->emplace_hint(iter, starNum, std::make_unique<SolarSystem>(star));
-    return iter->second.get();
+    auto [it, inserted] = solarSystemCatalog->try_emplace(starNum);
+    if (inserted)
+        it->second = std::make_unique<SolarSystem>(star);
+    return it->second.get();
 }
 
 const celestia::MarkerList&
