@@ -1480,6 +1480,7 @@ Body* CreateBody(const std::string& name,
         // TODO: make this warn
         GetLogger()->verbose("Deprecated parameter Albedo used in {} definition.\nUse GeomAlbedo & BondAlbedo instead.\n", name);
         body->setGeomAlbedo(*albedo);
+        body->setBondAlbedo(std::min(*albedo, 1.0f));
     }
 
     if (auto albedo = planetData->getNumber<float>("GeomAlbedo"); albedo.has_value())
@@ -1487,11 +1488,11 @@ Body* CreateBody(const std::string& name,
         if (*albedo > 0.0)
         {
             body->setGeomAlbedo(*albedo);
-            // Set the BondAlbedo and Reflectivity values if it is <1, otherwise as 1.
+            // Set the BondAlbedo and SphAlbedo values if it is <1, otherwise as 1.
             if (*albedo > 1.0f)
                 albedo = 1.0f;
             body->setBondAlbedo(*albedo);
-            body->setReflectivity(*albedo);
+            body->setSphAlbedo(*albedo);
         }
         else
         {
@@ -1499,12 +1500,18 @@ Body* CreateBody(const std::string& name,
         }
     }
 
-    if (auto reflectivity = planetData->getNumber<float>("Reflectivity"); reflectivity.has_value())
+    if (auto albedo = planetData->getNumber<float>("SphAlbedo"); albedo.has_value())
     {
-        if (*reflectivity >= 0.0f && *reflectivity <= 1.0f)
-            body->setReflectivity(*reflectivity);
+        if (*albedo >= 0.0f && *albedo <= 1.0f)
+        {
+            body->setSphAlbedo(*albedo);
+            // Take spherical albedo (AKA visual Bond albedo) as bolometric
+            body->setBondAlbedo(*albedo);
+        }
         else
-            GetLogger()->error(_("Incorrect Reflectivity value: {}\n"), *reflectivity);
+        {
+            GetLogger()->error(_("Incorrect SphAlbedo value: {}\n"), *albedo);
+        }
     }
 
     if (auto albedo = planetData->getNumber<float>("BondAlbedo"); albedo.has_value())
