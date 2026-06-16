@@ -113,8 +113,8 @@ msgstr "错误的 GeomAlbedo 值：{}\n"
 
 #: ../src/celengine/solarsys.cpp:991
 #, c++-format
-msgid "Incorrect Reflectivity value: {}\n"
-msgstr "错误的 Reflectivity 值：{}\n"
+msgid "Incorrect SphAlbedo value: {}\n"
+msgstr "错误的 SphAlbedo 值：{}\n"
 
 #: ../src/celengine/solarsys.cpp:999
 #, c++-format

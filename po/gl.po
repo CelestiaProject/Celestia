@@ -110,8 +110,8 @@ msgstr "Valor do albedo xeométrico (GeomAlbedo) incorrecto: {}\n"
 
 #: ../src/celengine/solarsys.cpp:991
 #, c++-format
-msgid "Incorrect Reflectivity value: {}\n"
-msgstr "Valor da reflectividade (Reflectivity) incorrecto: {}\n"
+msgid "Incorrect SphAlbedo value: {}\n"
+msgstr "Valor da reflectividade (SphAlbedo) incorrecto: {}\n"
 
 #: ../src/celengine/solarsys.cpp:999
 #, c++-format

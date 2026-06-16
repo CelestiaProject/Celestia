@@ -110,7 +110,7 @@ msgstr "Yanlış GeomAlbedo değeri: {}\n"
 
 #: ../src/celengine/solarsys.cpp:991
 #, c++-format
-msgid "Incorrect Reflectivity value: {}\n"
+msgid "Incorrect SphAlbedo value: {}\n"
 msgstr "Yanlış Yansıma değeri: {}\n"
 
 #: ../src/celengine/solarsys.cpp:999

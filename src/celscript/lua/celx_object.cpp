@@ -648,7 +648,7 @@ static int object_getinfo(lua_State* l)
         celx.setTable("albedo", (lua_Number)body->getGeomAlbedo());
         celx.setTable("geomAlbedo", (lua_Number)body->getGeomAlbedo());
         celx.setTable("bondAlbedo", (lua_Number)body->getBondAlbedo());
-        celx.setTable("reflectivity", (lua_Number)body->getReflectivity());
+        celx.setTable("sphAlbedo", (lua_Number)body->getSphAlbedo());
         celx.setTable("infoURL", body->getInfoURL().c_str());
         celx.setTable("radius", (lua_Number)body->getRadius());
 

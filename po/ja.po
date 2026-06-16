@@ -107,7 +107,7 @@ msgstr ""
 
 #: ../src/celengine/solarsys.cpp:991
 #, c++-format
-msgid "Incorrect Reflectivity value: {}\n"
+msgid "Incorrect SphAlbedo value: {}\n"
 msgstr ""
 
 #: ../src/celengine/solarsys.cpp:999

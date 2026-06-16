@@ -111,8 +111,8 @@ msgstr "არასწორი GeomAlbedo მნიშვნელობა: {
 
 #: ../src/celengine/solarsys.cpp:991
 #, c++-format
-msgid "Incorrect Reflectivity value: {}\n"
-msgstr "არასწორი Reflectivity მნიშვნელობა: {}\n"
+msgid "Incorrect SphAlbedo value: {}\n"
+msgstr "არასწორი SphAlbedo მნიშვნელობა: {}\n"
 
 #: ../src/celengine/solarsys.cpp:999
 #, c++-format
