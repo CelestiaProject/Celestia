@@ -149,6 +149,8 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::DXT1_sRGBA:
     case PixelFormat::DXT3_sRGBA:
     case PixelFormat::DXT5_sRGBA:
+    case PixelFormat::BC7:
+    case PixelFormat::BC7_sRGBA:
         return static_cast<GLenum>(format);
     case PixelFormat::sRGB:
         if (!needsRGBAExpansion(format, needsMipmap))

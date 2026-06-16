@@ -2062,19 +2062,27 @@ void CelestiaCore::draw(View* view)
     else
         sim->render(*renderer, *view->observer);
 
-    // Viewport need to be reset to start from (x,y) instead of point zero
-    if (process && (x != 0 || y != 0))
-        renderer->setRenderRegion(x, y, viewWidth, viewHeight);
-
     if (process)
     {
         bool ok = true;
         for (int i = 0; i < nEffects; i++)
         {
+            FramebufferObject* dst;
+            if (i == nEffects - 1)
+            {
+                // The last effect renders to the screen FBO, needs to be reset
+                // to start from (x,y) instead of point zero
+                dst = &screenFbo.value();
+                if (x != 0 || y != 0)
+                    renderer->setRenderRegion(x, y, viewWidth, viewHeight);
+            }
+            else
+            {
+                dst = view->getFBO(i + 1);
+            }
+
             FramebufferObject* src = view->getFBO(i);
-            // Last effect renders to the screen FBO; intermediate effects render to the next FBO.
-            if (FramebufferObject* dst = (i + 1 < nEffects) ? view->getFBO(i + 1) : &screenFbo.value();
-                !viewportEffects[i]->prerender(renderer, src, dst) ||
+            if (!viewportEffects[i]->prerender(renderer, src, dst) ||
                 !viewportEffects[i]->render(renderer, src, viewWidth, viewHeight))
             {
                 GetLogger()->error("Unable to render viewport effect.\n");
