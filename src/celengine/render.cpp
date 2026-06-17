@@ -767,6 +767,13 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
                       pos.y() * m_modelMatrix(2, 1) +
                       pos.z() * m_modelMatrix(2, 2);
         win.z() = -depth;
+
+        // Discard annotations behind the camera (negative win.z);
+        // they are never rendered and would corrupt the near plane
+        // in buildDepthPartitions.
+        if (win.z() <= 0.0f)
+            return;
+
         // use round to remove precision error (+/- 0.0000x)
         // which causes label jittering
         float x = round(win.x());
@@ -5497,14 +5504,15 @@ Renderer::buildDepthPartitions()
     }
 
     // Adjust the nearest interval to include the closest marker (if it's
-    // closer to the observer than anything else
+    // closer to the observer than anything else).
     if (!depthSortedAnnotations.empty())
     {
-        // Factor of 0.999 makes sure ensures that the near plane does not fall
+        // Factor of 0.999 ensures that the near plane does not fall
         // exactly at the marker's z coordinate (in which case the marker
         // would be susceptible to getting clipped.)
-        if (-depthSortedAnnotations[0].position.z() > zNearest)
-            zNearest = -depthSortedAnnotations[0].position.z() * 0.999f;
+        float closestZ = depthSortedAnnotations.back().position.z();
+        if (-closestZ > zNearest)
+            zNearest = -closestZ * 0.999f;
     }
 
 #if DEBUG_COALESCE
