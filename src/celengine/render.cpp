@@ -1694,10 +1694,12 @@ void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
     if (starStyle != StarStyle::PointStars)
         m_gaussianDiscTex->bind();
 
+    Eigen::Vector3f frontPos = calculateQuadCenter(getCameraOrientationf(), position, radius);
+
     if (pointSize > gl::maxPointSize)
-        m_legacyLargeStarRenderer->addStar(position, {color, alpha}, pointSize);
+        m_legacyLargeStarRenderer->addStar(frontPos, {color, alpha}, pointSize);
     else
-        pointStarVertexBuffer->addStar(position, {color, alpha}, pointSize);
+        pointStarVertexBuffer->addStar(frontPos, {color, alpha}, pointSize);
 
     // If the object is brighter than magnitude 1, add a halo around it to
     // make it appear more brilliant.  This is a hack to compensate for the
@@ -1707,12 +1709,11 @@ void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
     // with halos.
     if (useHalos && glareAlpha > 0.0f)
     {
-        Eigen::Vector3f center = calculateQuadCenter(getCameraOrientationf(), position, radius);
         m_gaussianGlareTex->bind();
         if (glareSize > gl::maxPointSize)
-            m_legacyLargeGlareRenderer->addStar(center, {color, glareAlpha}, glareSize);
+            m_legacyLargeGlareRenderer->addStar(frontPos, {color, glareAlpha}, glareSize);
         else
-            glareVertexBuffer->addStar(center, {color, glareAlpha}, glareSize);
+            glareVertexBuffer->addStar(frontPos, {color, glareAlpha}, glareSize);
     }
 }
 
@@ -1763,6 +1764,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     setPipelineState(ps);
 
     const Vector3f &spritePos = position;
+    Vector3f frontPos = calculateQuadCenter(getCameraOrientationf(), spritePos, radius);
 
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
@@ -1790,7 +1792,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     // Suppress the cone-cap sprite once the body is resolved as a
     // mesh; the linked glow below handles the bloom around the disc.
     if (discSizeInPixels <= 1.0f)
-        psfPointBuffer->addStar(spritePos, linearStarColor, peakRadCol);
+        psfPointBuffer->addStar(frontPos, linearStarColor, peakRadCol);
 
     // Peak radiance whose bloom radius (per the shader's PSF formula)
     // equals the body's angular disc.
@@ -1816,7 +1818,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         if (glowPeak <= linkedGlowPeak && !emissive)
             return;
 
-        Vector3f glowPos = calculateQuadCenter(getCameraOrientationf(), spritePos, radius);
+        Vector3f glowPos = frontPos;
         // Size tracks whichever peak is larger: glowPeak in the far/overflow
         // regime, linkedGlowPeak once the disc resolves so the sprite keeps
         // pace with the growing disc instead of capping at starMaxIrradiance.
@@ -5186,61 +5188,72 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         // Test the object's bounding sphere against the view frustum
         if (frustum.testSphere(center, cullRadius) != math::FrustumAspect::Outside)
         {
-            float d = center.norm();
-            float nearZ = d - radius;
-            float maxSpan = std::hypot(static_cast<float>(viewportWidth), static_cast<float>(viewportHeight));
-            float nearZcoeff = std::cos(math::degToRad(fov / 2.0f)) * (static_cast<float>(viewportHeight) / maxSpan);
-            nearZ = -nearZ * nearZcoeff;
-
-            // Floor the near plane: tight 2-ULP for convex bodies, looser
-            // radius/2000 for non-convex ones whose bounding sphere is
-            // conservative and may approach the camera even when the
-            // geometry doesn't.
-            float bodyMinNearZ;
-            if (convex)
+            if (ri.discSizeInPixels <= 1.0f)
             {
-                float ulp = std::nextafter(radius, radius * 2.0f) - radius;
-                bodyMinNearZ = std::max(MinNearPlaneDistance, ulp * 2.0f);
+                // Sub-pixel objects are rendered as points in front of
+                // the body. Set farZ = nearZ so depth partitioning assigns
+                // them to the interval that contains the render position.
+                ri.nearZ = center.z() + radius;
+                ri.farZ  = ri.nearZ;
             }
             else
             {
-                bodyMinNearZ = std::max(MinNearPlaneDistance, radius / 2000.0f);
-            }
-            ri.nearZ = std::min(nearZ, -bodyMinNearZ);
+                float d = center.norm();
+                float nearZ = d - radius;
+                float maxSpan = std::hypot(static_cast<float>(viewportWidth), static_cast<float>(viewportHeight));
+                float nearZcoeff = std::cos(math::degToRad(fov / 2.0f)) * (static_cast<float>(viewportHeight) / maxSpan);
+                nearZ = -nearZ * nearZcoeff;
 
-            if (!convex)
-            {
-                ri.farZ = center.z() - radius;
-                if (ri.farZ / ri.nearZ > MaxFarNearRatio * 0.5f)
-                    ri.nearZ = ri.farZ / (MaxFarNearRatio * 0.5f);
-            }
-            else
-            {
-                // Account for ellipsoidal objects
-                float eradius = radius;
-                if (ri.renderableType == RenderListEntry::RenderableBody)
+                // Floor the near plane: tight 2-ULP for convex bodies, looser
+                // radius/2000 for non-convex ones whose bounding sphere is
+                // conservative and may approach the camera even when the
+                // geometry doesn't.
+                float bodyMinNearZ;
+                if (convex)
                 {
-                    float minSemiAxis = ri.body->getSemiAxes().minCoeff();
-                    eradius *= minSemiAxis / radius;
-                }
-
-                // With an atmosphere, the shell wraps the camera and extends
-                // far past the planet horizon; use the back of the cloud-
-                // extended bounding sphere. Without one, the horizon tangent
-                // is tight and continuous in d.
-                if (cloudHeight > 0.0f)
-                {
-                    float cloudLayerRadius = eradius + cloudHeight;
-                    ri.farZ = center.z() - cloudLayerRadius
-                            - std::sqrt(math::square(cloudLayerRadius)
-                                        - math::square(eradius));
+                    float ulp = std::nextafter(radius, radius * 2.0f) - radius;
+                    bodyMinNearZ = std::max(MinNearPlaneDistance, ulp * 2.0f);
                 }
                 else
                 {
-                    float horizon = d > eradius
-                                      ? std::sqrt(math::square(d) - math::square(eradius)) * 1.1f
-                                      : MinNearPlaneDistance;
-                    ri.farZ = -horizon;
+                    bodyMinNearZ = std::max(MinNearPlaneDistance, radius / 2000.0f);
+                }
+                ri.nearZ = std::min(nearZ, -bodyMinNearZ);
+
+                if (!convex)
+                {
+                    ri.farZ = center.z() - radius;
+                    if (ri.farZ / ri.nearZ > MaxFarNearRatio * 0.5f)
+                        ri.nearZ = ri.farZ / (MaxFarNearRatio * 0.5f);
+                }
+                else
+                {
+                    // Account for ellipsoidal objects
+                    float eradius = radius;
+                    if (ri.renderableType == RenderListEntry::RenderableBody)
+                    {
+                        float minSemiAxis = ri.body->getSemiAxes().minCoeff();
+                        eradius *= minSemiAxis / radius;
+                    }
+
+                    // With an atmosphere, the shell wraps the camera and extends
+                    // far past the planet horizon; use the back of the cloud-
+                    // extended bounding sphere. Without one, the horizon tangent
+                    // is tight and continuous in d.
+                    if (cloudHeight > 0.0f)
+                    {
+                        float cloudLayerRadius = eradius + cloudHeight;
+                        ri.farZ = center.z() - cloudLayerRadius
+                                             - std::sqrt(math::square(cloudLayerRadius)
+                                             - math::square(eradius));
+                    }
+                    else
+                    {
+                        float horizon = d > eradius
+                                          ? std::sqrt(math::square(d) - math::square(eradius)) * 1.1f
+                                          : MinNearPlaneDistance;
+                        ri.farZ = -horizon;
+                    }
                 }
             }
 
@@ -5450,7 +5463,7 @@ Renderer::buildDepthPartitions()
     for (i = nEntries - 1; i >= 0; i--)
     {
         // Only consider renderables that will occupy more than one pixel.
-        if (renderList[i].discSizeInPixels > 1)
+        if (renderList[i].discSizeInPixels > 1.0f)
         {
             if (nIntervals == 0 ||
                 renderList[i].farZ >= depthPartitions[nIntervals - 1].nearZ)
