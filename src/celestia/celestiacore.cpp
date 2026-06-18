@@ -2055,7 +2055,7 @@ void CelestiaCore::draw(View* view)
     auto viewWidth = static_cast<int>(view->width * static_cast<float>(metrics.width));
     auto viewHeight = static_cast<int>(view->height * static_cast<float>(metrics.height));
     // If we need to process, we draw to the FBO which starts at point zero
-    renderer->setRenderRegion(process ? 0 : x, process ? 0 : y, viewWidth, viewHeight, !view->isRootView());
+    renderer->setRenderRegion(process ? 0 : x, process ? 0 : y, viewWidth, viewHeight, !view->isRootView() && !process);
 
     if (view->isRootView())
         sim->render(*renderer);
