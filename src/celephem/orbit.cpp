@@ -127,7 +127,12 @@ std::unique_ptr<Orbit>
 CreateKeplerOrbit(const astro::KeplerElements& elements, double epoch)
 {
     if (elements.eccentricity < 1.0)
-        return std::make_unique<EllipticalOrbit>(elements, epoch);
+    {
+        if (elements.nodalPeriod == 0.0 && elements.apsidalPeriod == 0.0)
+            return std::make_unique<EllipticalOrbit>(elements, epoch);
+
+        return std::make_unique<PrecessingOrbit>(elements, epoch);
+    }
 
     return std::make_unique<HyperbolicOrbit>(elements, epoch);
 }
@@ -269,15 +274,18 @@ Eigen::Vector3d Orbit::velocityAtTime(double tdb) const
 }
 
 
-EllipticalOrbit::EllipticalOrbit(const astro::KeplerElements& _elements, double _epoch) :
+const Orbit* Orbit::getOrbitForSampling(double /*t*/, bool /*isFadingEnabled*/) const
+{
+    return this;
+}
+
+
+EllipticalOrbitBase::EllipticalOrbitBase(const astro::KeplerElements& _elements, double _epoch) :
     semiMajorAxis(_elements.semimajorAxis),
     eccentricity(_elements.eccentricity),
     meanAnomalyAtEpoch(_elements.meanAnomaly),
     period(_elements.period),
-    epoch(_epoch),
-    orbitPlaneRotation((math::ZRotation(_elements.longAscendingNode) *
-                        math::XRotation(_elements.inclination) *
-                        math::ZRotation(_elements.argPericenter)).toRotationMatrix())
+    epoch(_epoch)
 {
     assert(eccentricity >= 0.0 && eccentricity < 1.0);
     assert(semiMajorAxis >= 0.0);
@@ -286,7 +294,7 @@ EllipticalOrbit::EllipticalOrbit(const astro::KeplerElements& _elements, double 
 }
 
 
-double EllipticalOrbit::eccentricAnomaly(double M) const
+double EllipticalOrbitBase::eccentricAnomaly(double M) const
 {
     if (eccentricity == 0.0)
     {
@@ -311,6 +319,26 @@ double EllipticalOrbit::eccentricAnomaly(double M) const
     double E = M + 0.85 * eccentricity * math::sign(std::sin(M));
     return math::solve_iteration_fixed(SolveKeplerLaguerreConway(eccentricity, M), E, 8).first;
 }
+
+
+double EllipticalOrbitBase::getPeriod() const
+{
+    return period;
+}
+
+
+double EllipticalOrbitBase::getBoundingRadius() const
+{
+    // TODO: watch out for unbounded parabolic and hyperbolic orbits
+    return semiMajorAxis * (1.0 + eccentricity);
+}
+
+
+EllipticalOrbit::EllipticalOrbit(const astro::KeplerElements& _elements, double _epoch) :
+    EllipticalOrbitBase(_elements, _epoch),
+    orbitPlaneRotation((math::ZRotation(_elements.longAscendingNode) *
+                        math::XRotation(_elements.inclination) *
+                        math::ZRotation(_elements.argPericenter)).toRotationMatrix()) {}
 
 
 // Compute the position at the specified eccentric
@@ -370,16 +398,129 @@ Eigen::Vector3d EllipticalOrbit::velocityAtTime(double t) const
 }
 
 
-double EllipticalOrbit::getPeriod() const
+void EllipticalOrbit::setOrientation(const Eigen::Matrix3d& _orbitPlaneRotation)
 {
-    return period;
+    orbitPlaneRotation = _orbitPlaneRotation;
 }
 
 
-double EllipticalOrbit::getBoundingRadius() const
+PrecessingOrbit::PrecessingOrbit(const astro::KeplerElements& _elements, double _epoch) :
+    EllipticalOrbitBase(_elements, _epoch),
+    longAscendingNodeAtEpoch(_elements.longAscendingNode),
+    argPericenterAtEpoch(_elements.argPericenter),
+    nodalPeriod(_elements.nodalPeriod),
+    apsidalPeriod(_elements.apsidalPeriod),
+    inclinationRotation(math::XRotation(_elements.inclination)) {}
+
+
+// Compute the position at the specified eccentric
+// anomaly E.
+Eigen::Vector3d PrecessingOrbit::positionAtE(double E, double longAscendingNode, double argPericenter) const
 {
-    // TODO: watch out for unbounded parabolic and hyperbolic orbits
-    return semiMajorAxis * (1.0 + eccentricity);
+    double x = semiMajorAxis * (std::cos(E) - eccentricity);
+    double y = semiMinorAxis * std::sin(E);
+
+    Eigen::Matrix3d orbitPlaneRotation = (math::ZRotation(longAscendingNode) *
+                                          inclinationRotation *
+                                          math::ZRotation(argPericenter)).toRotationMatrix();
+    Eigen::Vector3d p = orbitPlaneRotation * Eigen::Vector3d(x, y, 0);
+
+    // Convert to Celestia's internal coordinate system
+    return Eigen::Vector3d(p.x(), p.z(), -p.y());
+}
+
+
+// Compute the velocity at the specified eccentric
+// anomaly E.
+Eigen::Vector3d PrecessingOrbit::velocityAtE(double E, double longAscendingNode, double argPericenter, double meanMotion) const
+{
+    double sinE;
+    double cosE;
+    math::sincos(E, sinE, cosE);
+
+    double edot = meanMotion / (1.0 - eccentricity * cosE);
+
+    double x = -semiMajorAxis * sinE * edot;
+    double y =  semiMinorAxis * cosE * edot;
+
+    Eigen::Matrix3d orbitPlaneRotation = (math::ZRotation(longAscendingNode) *
+                                          inclinationRotation *
+                                          math::ZRotation(argPericenter)).toRotationMatrix();
+    Eigen::Vector3d v = orbitPlaneRotation* Eigen::Vector3d(x, y, 0);
+
+    // Convert to Celestia's coordinate system
+    return Eigen::Vector3d(v.x(), v.z(), -v.y());
+}
+
+
+// Return the offset from the center
+Eigen::Vector3d PrecessingOrbit::positionAtTime(double t) const
+{
+    t = t - epoch;
+
+    // Period is assumed to be sidereal
+    double meanMotion = 2.0 * celestia::numbers::pi / period;
+    double nodalPrecessionRate = nodalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / -nodalPeriod : 0.0;
+    double apsidalPrecessionRate = apsidalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / apsidalPeriod : 0.0;
+
+    double longAscendingNode = longAscendingNodeAtEpoch + t * nodalPrecessionRate;
+    double argPericenter = argPericenterAtEpoch + t * apsidalPrecessionRate;
+    double meanAnomaly = meanAnomalyAtEpoch + t * (meanMotion - apsidalPrecessionRate - nodalPrecessionRate);
+    double E = eccentricAnomaly(meanAnomaly);
+
+    return positionAtE(E, longAscendingNode, argPericenter);
+}
+
+
+Eigen::Vector3d PrecessingOrbit::velocityAtTime(double t) const
+{
+    t = t - epoch;
+
+    // Period is assumed to be sidereal
+    double meanMotion = 2.0 * celestia::numbers::pi / period;
+    double nodalPrecessionRate = nodalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / -nodalPeriod : 0.0;
+    double apsidalPrecessionRate = apsidalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / apsidalPeriod : 0.0;
+
+    double longAscendingNode = longAscendingNodeAtEpoch + t * nodalPrecessionRate;
+    double argPericenter = argPericenterAtEpoch + t * apsidalPrecessionRate;
+    double meanAnomaly = meanAnomalyAtEpoch + t * (meanMotion - apsidalPrecessionRate - nodalPrecessionRate);
+    double E = eccentricAnomaly(meanAnomaly);
+
+    return velocityAtE(E, longAscendingNode, argPericenter, meanMotion);
+}
+
+
+// For precessing orbits, get the osculating orbit when fading is disabled
+const Orbit* PrecessingOrbit::getOrbitForSampling(double t, bool isFadingEnabled) const
+{
+    if (!isFadingEnabled)
+    {
+        t = t - epoch;
+        double meanMotion = 2.0 * celestia::numbers::pi / period;
+        double nodalPrecessionRate = nodalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / -nodalPeriod : 0.0;
+        double apsidalPrecessionRate = apsidalPeriod != 0.0 ? 2.0 * celestia::numbers::pi / apsidalPeriod : 0.0;
+
+        double longAscendingNode = longAscendingNodeAtEpoch + t * nodalPrecessionRate;
+        double argPericenter = argPericenterAtEpoch + t * apsidalPrecessionRate;
+        double meanAnomaly = meanAnomalyAtEpoch + t * (meanMotion - apsidalPrecessionRate - nodalPrecessionRate);
+
+        astro::KeplerElements elements;
+        elements.semimajorAxis = semiMajorAxis;
+        elements.eccentricity = eccentricity;
+        elements.meanAnomaly = meanAnomaly;
+        elements.period = period;
+
+        Eigen::Matrix3d orbitPlaneRotation = (math::ZRotation(longAscendingNode) *
+                                              inclinationRotation *
+                                              math::ZRotation(argPericenter)).toRotationMatrix();
+
+        auto* orbit = new EllipticalOrbit(elements, t);
+        orbit->setOrientation(orbitPlaneRotation);
+
+        return orbit;
+    }
+
+    return this;
 }
 
 
