@@ -112,7 +112,7 @@ msgstr "Неправилна стойност на геометричното а
 #: ../src/celengine/solarsys.cpp:991
 #, c++-format
 msgid "Incorrect SphAlbedo value: {}\n"
-msgstr "Неправилна стойност на отражателната способност: {}\n"
+msgstr "Неправилна стойност на сферичното албедо: {}\n"
 
 #: ../src/celengine/solarsys.cpp:999
 #, c++-format
