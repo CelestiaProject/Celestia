@@ -18,6 +18,7 @@
 
 #include <celcompat/numbers.h>
 #include <celengine/body.h>
+#include <celengine/glsupport.h>
 #include <celengine/lightenv.h>
 #include <celengine/render.h>
 #include <celengine/renderinfo.h>
@@ -44,6 +45,7 @@ struct RingVertex
 ShaderProperties
 createShaderProperties(const LightingState& ls,
                        const Texture* ringsTex,
+                       bool useProfiles,
                        bool renderShadow)
 {
     // Set up the shader properties for ring rendering
@@ -60,6 +62,9 @@ createShaderProperties(const LightingState& ls,
 
     if (ringsTex != nullptr)
         shadprop.texUsage = TexUsage::DiffuseTexture;
+
+    if (useProfiles)
+        shadprop.texUsage |= TexUsage::RingColorTexture;
 
     return shadprop;
 }
@@ -158,8 +163,14 @@ RingRenderer::renderRings(const RingSystem& rings,
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
     Texture* ringsTex = renderer.getTextureManager()->find(rings.texture);
+    Texture* colorTex = renderer.getTextureManager()->find(rings.colorTexture);
+    // BJ Jónsson profile mode requires a profile texture, a color texture,
+    // and an unlit-side tint.
+    bool useProfiles = ringsTex != nullptr
+                       && colorTex != nullptr
+                       && rings.unlitColor.has_value();
 
-    ShaderProperties shadprop = createShaderProperties(ls, ringsTex, renderShadow);
+    ShaderProperties shadprop = createShaderProperties(ls, ringsTex, useProfiles, renderShadow);
 
     // Get a shader for the current rendering configuration
     auto* prog = renderer.getShaderManager().getShader(shadprop);
@@ -171,15 +182,32 @@ RingRenderer::renderRings(const RingSystem& rings,
 
     prog->eyePosition = ls.eyePos_obj;
     prog->ambientColor = ri.ambientColor.toVector3();
-    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
+    // In BJ-profile mode the ColorTexture supplies the ring tint, so don't
+    // double-tint by baking ri.color into light.diffuse.
+    Color lightDiffuseTint = useProfiles ? Color::White : ri.color;
+    prog->setLightParameters(ls, lightDiffuseTint, ri.specularColor, Color::Black);
 
     prog->ringRadius = inner;
     prog->ringWidth = outer - inner;
+    if (useProfiles)
+        prog->ringUnlitColor = rings.unlitColor->toVector3();
 
     setUpShadowParameters(prog, ls, planetOblateness);
 
+    unsigned int texUnit = 0;
     if (ringsTex != nullptr)
+    {
+        glActiveTexture(GL_TEXTURE0 + texUnit);
         ringsTex->bind();
+        texUnit++;
+    }
+    if (useProfiles)
+    {
+        glActiveTexture(GL_TEXTURE0 + texUnit);
+        colorTex->bind();
+        texUnit++;
+    }
+    glActiveTexture(GL_TEXTURE0);
 
     // Determine level of detail
     std::uint32_t nSections = BaseSectionCount;
