@@ -83,6 +83,11 @@ void renderGeometryShadow_GLSL(RenderGeometry* geometry,
     GLint oldFboId;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFboId);
     shadowFbo->bind();
+    // Disable scissor test while rendering to shadow FBO to prevent
+    // multi-view scissor rectangles from clipping the shadow map.
+    GLboolean scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
+    if (scissorEnabled)
+        glDisable(GL_SCISSOR_TEST);
     glViewport(0, 0, shadowFbo->width(), shadowFbo->height());
 
     // Write only to the depth buffer
@@ -114,6 +119,8 @@ void renderGeometryShadow_GLSL(RenderGeometry* geometry,
     // Re-enable the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glCullFace(GL_BACK);
+    if (scissorEnabled)
+        glEnable(GL_SCISSOR_TEST);
     shadowFbo->unbind(oldFboId);
 }
 
