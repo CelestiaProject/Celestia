@@ -96,14 +96,15 @@ needsRGBAExpansion(PixelFormat format, [[maybe_unused]] bool needsMipmap)
     // generation; expand to 4-component when mipmaps are needed.
     // sLuminance has no core single-channel sRGB format; use the GL_SR8 fast
     // path + swizzle when EXT_texture_sRGB_R8 is available, otherwise expand.
+    // GL_SR8 is texture-filterable but NOT color-renderable, so glGenerateMipmap
+    // fails on it; fall back to expansion (sRGBA8) whenever mipmaps are needed.
     // sLumAlpha always needs expansion (no per-channel sRGB-decode format).
-    bool sLuminanceNeedsExpansion = !gl::EXT_texture_sRGB_R8;
     if (!needsMipmap)
-        return (format == PixelFormat::sLuminance && sLuminanceNeedsExpansion)
+        return (format == PixelFormat::sLuminance && !gl::EXT_texture_sRGB_R8)
             || format == PixelFormat::sLumAlpha;
     return format == PixelFormat::sRGB
         || format == PixelFormat::sRGB8
-        || (format == PixelFormat::sLuminance && sLuminanceNeedsExpansion)
+        || format == PixelFormat::sLuminance
         || format == PixelFormat::sLumAlpha;
 #else
     // Desktop: only sLumAlpha needs expansion; see expansion site below.
@@ -160,10 +161,12 @@ getInternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::sLumAlpha:
         return static_cast<GLenum>(PixelFormat::sRGBA8);
     // sLuminance fast path: GL_SR8 + swizzle when EXT_texture_sRGB_R8 is
-    // present, otherwise CPU-expand to sRGBA8 (handled by needsRGBAExpansion).
+    // present and mipmaps aren't needed (GL_SR8 isn't color-renderable, so
+    // glGenerateMipmap fails); otherwise CPU-expand to sRGBA8.
     case PixelFormat::sLuminance:
-        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(PixelFormat::sR8)
-                                       : static_cast<GLenum>(PixelFormat::sRGBA8);
+        return needsRGBAExpansion(format, needsMipmap)
+                   ? static_cast<GLenum>(PixelFormat::sRGBA8)
+                   : static_cast<GLenum>(PixelFormat::sR8);
     default:
         return GL_NONE;
     }
@@ -223,11 +226,12 @@ getExternalFormat(PixelFormat format, bool needsMipmap)
     case PixelFormat::sRGBA8:
     case PixelFormat::sLumAlpha:
         return static_cast<GLenum>(PixelFormat::RGBA);
-    // sLuminance with GL_SR8 fast path uploads as GL_RED; without the
-    // extension it's CPU-expanded and uploaded as RGBA.
+    // sLuminance with the GL_SR8 fast path uploads as GL_RED; when expanded
+    // (no extension, or mipmaps needed) it's uploaded as RGBA.
     case PixelFormat::sLuminance:
-        return gl::EXT_texture_sRGB_R8 ? static_cast<GLenum>(GL_RED)
-                                       : static_cast<GLenum>(PixelFormat::RGBA);
+        return needsRGBAExpansion(format, needsMipmap)
+                   ? static_cast<GLenum>(PixelFormat::RGBA)
+                   : static_cast<GLenum>(GL_RED);
     default:
         return getInternalFormat(format, needsMipmap);
     }
