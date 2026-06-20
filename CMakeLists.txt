@@ -261,11 +261,7 @@ endif()
 
 link_libraries(Eigen3::Eigen)
 
-find_package(fmt 8.1.0 CONFIG QUIET)
-if(NOT fmt_FOUND)
-  message(STATUS "Using fmt submodule")
-  add_subdirectory("${CMAKE_SOURCE_DIR}/thirdparty/fmt")
-endif()
+find_package(fmt 8.1.0 CONFIG QUIET REQUIRED)
 link_libraries(fmt::fmt)
 
 find_package(PNG REQUIRED)
