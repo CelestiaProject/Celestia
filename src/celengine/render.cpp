@@ -2323,12 +2323,14 @@ void Renderer::renderObject(const Vector3f& pos,
     // support.)
     float radius = obj.radius;
     Vector3f scaleFactors;
+    float ringsScaleFactor;
     float geometryScale;
     Matrix4f invMV;
     if (geometry == nullptr || geometry->isNormalized())
     {
         geometryScale = obj.radius;
         scaleFactors = obj.radius * obj.semiAxes;
+        ringsScaleFactor = obj.radius * obj.semiAxes.maxCoeff();
         ri.pointScale = 2.0f * obj.radius / pixelSize;
         // Compute the inverse model/view matrix
         Affine3f invModelView = Scaling(obj.semiAxes).inverse() *
@@ -2341,6 +2343,7 @@ void Renderer::renderObject(const Vector3f& pos,
     {
         geometryScale = obj.geometryScale;
         scaleFactors = Vector3f::Constant(geometryScale);
+        ringsScaleFactor = geometryScale;
         ri.pointScale = 2.0f * geometryScale / pixelSize;
         // Compute the inverse model/view matrix
         Affine3f invModelView = obj.orientation *
@@ -2352,6 +2355,16 @@ void Renderer::renderObject(const Vector3f& pos,
     Affine3f transform = Translation3f(pos) * obj.orientation.conjugate();
     Matrix4f planetMV  = (*m.modelview) * (transform * Scaling(scaleFactors)).matrix();
     Matrices planetMVP = { m.projection, &planetMV };
+
+    Matrices ringsMVP;
+    Matrix4f ringsMV;
+    // Outside rings are rendered separately at the end of a depth partition
+    bool showRings = obj.rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings) && distance <= obj.rings->innerRadius;
+    if (showRings)
+    {
+        ringsMV  = (*m.modelview) * (transform * Scaling(ringsScaleFactor)).matrix();
+        ringsMVP = { m.projection, &ringsMV };
+    }
 
     Matrix3f planetRotation = obj.orientation.toRotationMatrix();
 
@@ -2488,6 +2501,17 @@ void Renderer::renderObject(const Vector3f& pos,
                                       planetMVP, this);
         }
         glActiveTexture(GL_TEXTURE0);
+    }
+
+    if (showRings)
+    {
+        // calculate ring segment size in pixels, actual size is segmentSizeInPixels * tan(segmentAngle)
+        float segmentSizeInPixels = 2.0f * obj.rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
+        m_ringRenderer->renderRings(*obj.rings, ri, ls,
+                                    radius, 1.0f - obj.semiAxes.y(),
+                                    util::is_set(renderFlags, RenderFlags::ShowRingShadows) && lit,
+                                    segmentSizeInPixels,
+                                    ringsMVP, true);
     }
 
     if (atmosphere != nullptr)
@@ -3080,7 +3104,8 @@ void Renderer::renderRingSystem(Body& body,
                                 radius, 1.0f - semiAxes.y(),
                                 renderShadow,
                                 segmentSizeInPixels,
-                                ringsMVP);
+                                ringsMVP,
+                                false);
 }
 
 
@@ -3367,8 +3392,11 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
     if (const RingSystem* rings = bodyFeaturesManager->getRings(&body);
         rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings))
     {
+        // When the observer is inside the rings (distance <= innerRadius) the
+        // rings are drawn inline by renderObject. Only add a separate
+        // transparent render-list entry for the outside case.
         float ringDiscSize = (rings->outerRadius / rle.distance) / pixelSize;
-        if (ringDiscSize > 1)
+        if (ringDiscSize > 1 && rle.distance > rings->innerRadius)
         {
             rle.renderableType = RenderListEntry::RenderableRingSystem;
             rle.body = &body;
@@ -5168,7 +5196,17 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         case RenderListEntry::RenderableBody:
             radius = ri.body->getBoundingRadius();
 
-            if (!ri.body->isEllipsoid())
+            if (const RingSystem* rings = bodyFeaturesManager->getRings(ri.body);
+                rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings) &&
+                ri.distance <= rings->innerRadius)
+            {
+                // Inside the rings: they are drawn inline with the body (no
+                // separate ring entry), so the body entry must encompass the
+                // ring extent for culling and depth partitioning.
+                radius = rings->outerRadius;
+                convex = false;
+            }
+            else if (!ri.body->isEllipsoid())
                 convex = false;
 
             cullRadius = radius;

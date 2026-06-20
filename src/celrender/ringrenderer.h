@@ -38,7 +38,8 @@ public:
                      float planetOblateness,
                      bool renderShadow,
                      float segmentSizeInPixels,
-                     const Matrices &m);
+                     const Matrices &m,
+                     bool inside);
 
 private:
     void initializeLOD(unsigned int, std::uint32_t);

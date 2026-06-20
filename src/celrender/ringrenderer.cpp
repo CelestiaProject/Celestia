@@ -153,7 +153,8 @@ RingRenderer::renderRings(const RingSystem& rings,
                           float planetOblateness,
                           bool renderShadow,
                           float segmentSizeInPixels,
-                          const Matrices &m)
+                          const Matrices &m,
+                          bool inside)
 {
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
@@ -196,7 +197,7 @@ RingRenderer::renderRings(const RingSystem& rings,
     ps.blending = true;
     ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     ps.depthTest = true;
-    ps.depthMask = true;
+    ps.depthMask = inside;
     renderer.setPipelineState(ps);
 
     renderLOD(level, nSections);
