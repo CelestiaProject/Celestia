@@ -61,12 +61,8 @@ constexpr auto DEFAULT_TEXTURE_RESOLUTION = static_cast<int>(engine::TextureReso
 std::pair<float, float>
 mousePosition(const QMouseEvent& m, qreal scale)
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    return { static_cast<float>(m.x() * scale), static_cast<float>(m.y() * scale) };
-#else
     auto position = m.position();
     return { static_cast<float>(position.x() * scale), static_cast<float>(position.y() * scale) };
-#endif
 }
 
 } // end unnamed namespace

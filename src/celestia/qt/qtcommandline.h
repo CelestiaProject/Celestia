@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2023, Celestia Development Team
 //
-// Drag handler for Qt5+ front-end.
+// Drag handler for Qt6+ front-end.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

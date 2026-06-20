@@ -111,7 +111,6 @@ jobs:
             -DENABLE_TOOLS=ON     `
             -DENABLE_TESTS=ON     `
             -DENABLE_SDL=OFF      `
-            -DENABLE_QT5=OFF      `
             -DENABLE_WIN=ON       `
             -DENABLE_QT6=ON       `
             -DENABLE_FFMPEG=ON    `
@@ -187,14 +186,12 @@ jobs:
           gles: ON
           minaudio: ON
           icu: ON
-          qt5: ON
           qt6: OFF
         - os: ubuntu-24.04
           avif: ON
           gles: ON
           minaudio: ON
           icu: ON
-          qt5: OFF
           qt6: ON
           analysis_artifacts: 1
         - os: ubuntu-24.04-arm
@@ -202,7 +199,6 @@ jobs:
           gles: ON
           minaudio: ON
           icu: ON
-          qt5: OFF
           qt6: ON
 
     runs-on: ${{matrix.config.os}}
@@ -228,9 +224,6 @@ jobs:
                                 gettext \
                                 gperf \
                                 ninja-build
-        if [ "${{matrix.config.qt5}}" = "ON" ]; then
-            sudo apt-get install -y qtbase5-dev qtbase5-dev-tools
-        fi
         if [ "${{matrix.config.qt6}}" = "ON" ]; then
             sudo apt-get install -y qt6-base-dev qt6-base-dev-tools
         fi
@@ -252,7 +245,6 @@ jobs:
               -DENABLE_TOOLS=OFF                             \
               -DENABLE_TESTS=ON                              \
               -DENABLE_SDL=ON                                \
-              -DENABLE_QT5=${{matrix.config.qt5}}            \
               -DENABLE_QT6=${{matrix.config.qt6}}            \
               -DENABLE_FFMPEG=ON                             \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}       \
@@ -297,8 +289,6 @@ jobs:
         path: pr-details.txt
 
   build-macos:
-    # Because of include path conflicts when both Qt5 and Qt6 are installed,
-    # we run these as separate builds
     name: "macos-latest"
     runs-on: macos-latest
     steps:
@@ -335,7 +325,6 @@ jobs:
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=ON              \
               -DENABLE_SDL=ON                \
-              -DENABLE_QT5=OFF               \
               -DENABLE_QT6=ON                \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_LIBAVIF=ON            \
@@ -401,7 +390,6 @@ jobs:
               -DENABLE_TOOLS=OFF        \
               -DENABLE_TESTS=ON         \
               -DENABLE_SDL=ON           \
-              -DENABLE_QT5=OFF          \
               -DENABLE_FFMPEG=OFF       \
               -DENABLE_LIBAVIF=OFF      \
               -DENABLE_MINIAUDIO=ON     \

@@ -3,11 +3,20 @@ if(NOT ENABLE_QT6)
   return()
 endif()
 
-include(../cmodview/CmodviewCommon.cmake)
+set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS ON)
+set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
 
 find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets CONFIG REQUIRED)
 
-GetCmodviewSources()
+set(CMODVIEW_SOURCES
+  cmodview.cpp
+  mainwindow.cpp
+  mainwindow.h
+  materialwidget.cpp
+  materialwidget.h
+  modelviewwidget.cpp
+  modelviewwidget.h
+)
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)

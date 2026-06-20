@@ -146,7 +146,6 @@ else()
   )
 endif()
 
-add_subdirectory(qt5)
-add_subdirectory(qt6)
+add_subdirectory(qt)
 add_subdirectory(sdl)
 add_subdirectory(win32)

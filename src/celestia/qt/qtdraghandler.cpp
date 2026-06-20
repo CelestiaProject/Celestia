@@ -10,23 +10,10 @@
 namespace celestia::qt
 {
 
-namespace
-{
-auto
-mouseEventPos(const QMouseEvent &m)
-{
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    return m.globalPos();
-#else
-    return m.globalPosition();
-#endif
-}
-} // end unnamed namespace
-
 void
 DragHandler::begin(const QMouseEvent &m, qreal s, int b)
 {
-    saveCursorPos = mouseEventPos(m);
+    saveCursorPos = m.globalPosition();
     scale         = s;
     buttons       = b;
 }
@@ -36,12 +23,12 @@ DragHandler::move(const QMouseEvent &m, qreal s)
 {
     if (scale != s)
         begin(m, s, buttons);
-    auto relativeMovement = mouseEventPos(m) - saveCursorPos;
+    auto relativeMovement = m.globalPosition() - saveCursorPos;
     appCore->mouseMove(
         static_cast<float>(relativeMovement.x() * scale),
         static_cast<float>(relativeMovement.y() * scale),
         effectiveButtons());
-    saveCursorPos = mouseEventPos(m);
+    saveCursorPos = m.globalPosition();
 }
 
 void
@@ -74,11 +61,7 @@ DragHandler::effectiveButtons() const
 void
 WarpingDragHandler::restoreCursorPosition() const
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCursor::setPos(saveCursorPos);
-#else
     QCursor::setPos(saveCursorPos.toPoint());
-#endif
 }
 
 void
@@ -86,7 +69,7 @@ WarpingDragHandler::move(const QMouseEvent &m, qreal s)
 {
     if (scale != s)
         begin(m, s, buttons);
-    auto relativeMovement = mouseEventPos(m) - saveCursorPos;
+    auto relativeMovement = m.globalPosition() - saveCursorPos;
     appCore->mouseMove(
         static_cast<float>(relativeMovement.x() * scale),
         static_cast<float>(relativeMovement.y() * scale),

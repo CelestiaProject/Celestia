@@ -78,11 +78,7 @@ int main(int argc, char *argv[])
 
     if (QTranslator qtTranslator;
         qtTranslator.load("qt_" + QLocale::system().name(),
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                          QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
-#else
                           QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
-#endif
     {
         app.installTranslator(&qtTranslator);
     }

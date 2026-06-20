@@ -13,10 +13,9 @@ Build-Depends: debhelper (>= 10~),
                libjpeg62-turbo-dev | libjpeg-dev,
                libluajit-5.1-dev,
                libpng-dev (>= 1.6) | libpng16-dev,
-               libqt5opengl5-dev,
                libtheora-dev,
-               qtbase5-dev,
-               qtbase5-dev-tools
+               qt6-base-dev,
+               qt6-base-dev-tools
 Standards-Version: 4.0.0
 Homepage: https://github.com/CelestiaProject/Celestia
 
@@ -36,7 +35,7 @@ Description: common files for Celestia, a real-time visual space simulation
 
 Package: celestia
 Architecture: all
-Depends: celestia-qt5 | ${misc:Depends}
+Depends: celestia-qt6 | ${misc:Depends}
 Description: real-time visual space simulation
  Celestia is a free 3D astronomy program. Based on the Hipparcos
  Catalogue, it allows users to display objects ranging in scale from
@@ -46,7 +45,7 @@ Description: real-time visual space simulation
  .
  This is a dummy package that selects at least one frontend for Celestia.
 
-Package: celestia-qt5
+Package: celestia-qt6
 Section: science
 Architecture: any
 Depends: libcelestia1.7 (= ${binary:Version}),
@@ -56,14 +55,14 @@ Depends: libcelestia1.7 (= ${binary:Version}),
 Conflicts: celestia (<< 1.4.1)
 Replaces: celestia (<< 1.4.1)
 Suggests: stellarium
-Description: real-time visual space simulation (Qt5 frontend)
+Description: real-time visual space simulation (Qt6 frontend)
  Celestia is a free 3D astronomy program. Based on the Hipparcos
  Catalogue, it allows users to display objects ranging in scale from
  artificial satellites to entire galaxies in three dimensions using
  OpenGL. Unlike most planetarium software, the user is free to travel
  about the Universe.
  .
- This package contains the Qt5 frontend for Celestia.
+ This package contains the Qt6 frontend for Celestia.
 
 Package: libcelestia1.7
 Architecture: any
