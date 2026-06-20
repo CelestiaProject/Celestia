@@ -9,6 +9,9 @@
 
 #include "qtdateutil.h"
 
+#include <QTime>
+#include <QTimeZone>
+
 #include <celastro/date.h>
 
 namespace astro = celestia::astro;
@@ -34,7 +37,7 @@ TDBToQDate(double tdb)
 
     return QDateTime(QDate(date.year, date.month, date.day),
                      QTime(date.hour, date.minute, sec, msec),
-                     Qt::UTC);
+                     QTimeZone::utc());
 }
 
 QString

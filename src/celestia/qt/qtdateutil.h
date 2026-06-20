@@ -10,6 +10,7 @@
 #pragma once
 
 #include <QDate>
+#include <QDateTime>
 #include <QString>
 
 namespace celestia::qt
