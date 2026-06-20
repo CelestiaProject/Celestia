@@ -1717,6 +1717,8 @@ static int celestia_getstarstyle(lua_State* l)
         lua_pushstring(l, "point"); break;
     case StarStyle::ScaledDiscStars:
         lua_pushstring(l, "disc"); break;
+    case StarStyle::PointSpreadFunction:
+        lua_pushstring(l, "psf"); break;
     default:
         lua_pushstring(l, "invalid starstyle");
     };
@@ -1742,6 +1744,8 @@ static int celestia_setstarstyle(lua_State* l)
         renderer->setStarStyle(StarStyle::PointStars);
     else if (starStyle == "disc"sv)
         renderer->setStarStyle(StarStyle::ScaledDiscStars);
+    else if (starStyle == "psf"sv)
+        renderer->setStarStyle(StarStyle::PointSpreadFunction);
     else
        Celx_DoError(l, "Invalid starstyle");
 

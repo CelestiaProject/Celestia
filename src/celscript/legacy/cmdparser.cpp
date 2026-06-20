@@ -250,6 +250,8 @@ ParseResult parseSetCommand(const AssociativeArray& paramList, const ScriptMaps&
             value = static_cast<double>(StarStyle::PointStars);
         else if (compareIgnoringCase(*valstr, "scaleddiscs") == 0)
             value = static_cast<double>(StarStyle::ScaledDiscStars);
+        else if (compareIgnoringCase(*valstr, "psf") == 0)
+            value = static_cast<double>(StarStyle::PointSpreadFunction);
     }
 
     return std::make_unique<CommandSet>(*name, value);
