@@ -13,9 +13,13 @@
 #include <filesystem>
 #include <iosfwd>
 #include <memory>
+#include <tuple>
 #include <unordered_map>
 
+#include <Eigen/Core>
+
 #include <celutil/associativearray.h>
+#include <celutil/blockarray.h>
 #include "astroobj.h"
 #include "parseobject.h"
 
@@ -64,6 +68,8 @@ public:
 
     bool parseSsc(std::istream& in, const std::filesystem::path& resDir);
 
+    void finish() const;
+
 private:
     enum class BodyType
     {
@@ -88,8 +94,7 @@ private:
                                const std::filesystem::path& path,
                                DataDisposition disposition);
 
-    std::unique_ptr<Location> createLocation(const celestia::util::AssociativeArray& locationData,
-                                             const Body* body) const;
+    std::unique_ptr<Location> createLocation(const celestia::util::AssociativeArray& locationData);
 
     bool createTimeline(Body* body,
                         PlanetarySystem* system,
@@ -131,4 +136,6 @@ private:
     celestia::engine::TexturePaths* m_texturePaths;
     celestia::engine::UrlManager* m_urlManager;
     FrameCache m_frameCache;
+
+    BlockArray<std::tuple<Location*, Eigen::Vector3d>> m_locationPositions;
 };

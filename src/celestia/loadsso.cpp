@@ -78,6 +78,9 @@ loadSSO(const CelestiaConfig& config,
 
     // Next, read all the solar system files in the extras directories
     loader.loadExtras(config.paths.extrasDirs);
+
+    // Final processing now all files (and Modify operations) have been processed
+    builder.finish();
 }
 
 } // namespace celestia

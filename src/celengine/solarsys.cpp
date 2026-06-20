@@ -1071,8 +1071,7 @@ SolarSystemsBuilder::parseSsc(std::istream& in, //NOSONAR
         {
             if (parent.body())
             {
-                std::unique_ptr<Location> location = createLocation(*objectData, parent.body());
-                if (location != nullptr)
+                if (std::unique_ptr<Location> location = createLocation(*objectData); location)
                 {
                     UserCategory::loadCategories(location.get(), *objectData, disposition, directory.string());
                     location->setName(primaryName);
@@ -1801,14 +1800,12 @@ SolarSystemsBuilder::createTimelinePhase(Body* body, //NOSONAR
 }
 
 std::unique_ptr<Location>
-SolarSystemsBuilder::createLocation(const AssociativeArray& locationData,
-                                    const Body* body) const
+SolarSystemsBuilder::createLocation(const AssociativeArray& locationData)
 {
     auto location = std::make_unique<Location>();
 
     auto longlat = locationData.getSphericalTuple("LongLat").value_or(Eigen::Vector3d::Zero());
-    Eigen::Vector3f position = body->geodeticToCartesian(longlat).cast<float>();
-    location->setPosition(position);
+    m_locationPositions.emplace_back(location.get(), longlat);
 
     auto size = locationData.getLength<float>("Size").value_or(1.0f);
     location->setSize(size);
@@ -1856,6 +1853,16 @@ SolarSystemsBuilder::getFrameTree(const Selection& selection)
 
     // Frame center is not a star or body.
     return nullptr;
+}
+
+void
+SolarSystemsBuilder::finish() const
+{
+    // Set location positions here, after all modify operations have been processed
+    for (const auto& [location, longLat] : m_locationPositions)
+    {
+        location->setPosition(location->getParentBody()->geodeticToCartesian(longLat).cast<float>());
+    }
 }
 
 SolarSystem::SolarSystem(Star* _star) :
