@@ -1057,6 +1057,9 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         case StarStyle::ScaledDiscStars:
             flash(_("Star style: scaled discs"));
             break;
+        case StarStyle::PointSpreadFunction:
+            flash(_("Star style: point spread function"));
+            break;
         default:
             break;
         }
