@@ -117,7 +117,7 @@ support for C++ filesystem library, e.g. GCC 8 or Clang 7.
 
 Then you need to have the following devel components installed before Celestia
 will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
-libpng. Optional packages are gettext, Qt5, Qt6, sdl2, ffmpeg, libavif, glu.
+libpng. Optional packages are gettext, Qt6, sdl2, ffmpeg, libavif, glu.
 
 Earlier compilers may not have support for the C++17 float charconv functions.
 On these systems, you will also need to install the fast_float library.
@@ -125,11 +125,11 @@ On these systems, you will also need to install the fast_float library.
 For example on modern Debian-derived system you need to install the following
 packages: libboost-dev, libepoxy-dev, libjpeg-dev, libpng-dev, libgl1-mesa-dev,
 libeigen3-dev, libfmt-dev, libfreetype6-dev. Then you may want to install
-libglu1-mesa-dev, required by some tools; qtbase5-dev, qtbase5-dev-tools and
-libqt5opengl5-dev if you want to build with Qt5 interface; or libsdl2-dev to
-build SDL interface. libavcodec-dev, libavformat-dev, libavutil-dev and
-libswscale-dev are required to build with video capture support. libavif-dev
-is required to build to AVIF texture support.
+libglu1-mesa-dev, required by some tools; qt6-base-dev qt6-base-dev-tools if
+you want to build with Qt6 interface; or libsdl2-dev to build SDL interface.
+libavcodec-dev, libavformat-dev, libavutil-dev and libswscale-dev are required
+to build with video capture support. libavif-dev is required to build with
+AVIF texture support.
 
 OK, assuming you've collected all the necessary libraries, here's
 what you need to do to build and run Celestia:
@@ -142,15 +142,11 @@ make
 sudo make install
 ```
 
-[*] `INTERFACE` must be replaced with one of "`QT5`", "`QT6`" or "`SDL`"
+[*] `INTERFACE` must be replaced with one of "`QT6`" or "`SDL`"
 
-Four interfaces are available for Celestia on Unix-like systems:
-- SDL: minimal interface, barebone Celestia core with no toolbar or menu...
-       Disabled by default.
-- QT5: A full interface with minimal dependencies, adds a menu, a configuration
-       dialog some other utilities, bookmarks... A preferred option. Enabled by
-       default, No need to pass -DENABLE_QT5=ON.
-- QT6: As above, but compiled with Qt6.
+Two interfaces are available for Celestia on Unix-like systems:
+- QT6: The preferred interface with full features.
+- SDL: Minimal interface with a basic user interface.
 
 Starting with version 1.3.1, Lua is the new scripting engine for Celestia,
 the old homegrown scripting engine is still available. By default Lua support
@@ -274,15 +270,15 @@ pacman -S mingw-w64-x86_64-toolchain
 pacman -S base-devel
 pacman -S git
 pacman -S mingw-w64-x86_64-cmake
-pacman -S mingw-w64-x86_64-qt5
 pacman -S mingw-w64-x86_64-libepoxy mingw-w64-x86_64-lua
 pacman -S mingw-w64-x86_64-mesa
+pacman -S mingw-w64-x86_64-fmt mingw-w64-x86_64-eigen3 mingw-w64-x86_64-luajit
 ```
 
 Install optional packages:
 
 ```
-pacman -S mingw-w64-x86_64-fmt mingw-w64-x86_64-eigen3 mingw-w64-x86_64-luajit
+pacman -S mingw-w64-x86_64-qt6
 pacman -S mingw-w64-x86_64-sdl2
 ```
 
@@ -330,7 +326,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fast_float fmt gettext gperf libepoxy libpng lua qt5 jpeg eigen freetype boost
+brew install pkg-config cmake fast_float fmt gettext gperf libepoxy libpng lua qt@6 jpeg eigen freetype boost
 ```
 
 Install optional packages:
@@ -374,7 +370,6 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_CELX          | bool | ON        | Enable Lua scripting support
 | ENABLE_SPICE         | bool | OFF       | Enable NAIF kernels support
 | ENABLE_NLS           | bool | ON        | Enable interface translation
-| ENABLE_QT5           | bool | OFF       | Build Qt5 frontend
 | ENABLE_QT6           | bool | OFF       | Build Qt6 frontend
 | ENABLE_SDL           | bool | OFF       | Build SDL frontend
 | ENABLE_WIN           | bool | \*\*\*OFF | Build Windows native frontend
@@ -402,10 +397,8 @@ On Windows systems two additonal options are supported:
 - `CMAKE_TOOLCHAIN_FILE` - location of vcpkg.cmake if vcpkg is used.
 
 Please note that not all options are compatible:
-- `ENABLE_GLES` is not compatible with `ENABLE_QT5` or `ENABLE_QT6` if your Qt
-  installation doesn't support OpenGL ES.
-- `ENABLE_QT5` and `ENABLE_QT6` are not compatible on Apple systems due to
-  include path conflicts.
+- `ENABLE_GLES` is not compatible with `ENABLE_QT6` if your Qt installation
+  doesn't support OpenGL ES.
 
 ## Installing the content
 
@@ -437,7 +430,6 @@ Here's the table which provides executable file names accordingly to interface:
 
  Interface  | Executable name
 |-----------|----------------|
-| Qt5       | celestia-qt5
 | Qt6       | celestia-qt6
 | SDL       | celestia-sdl
 | WIN       | celestia-win

@@ -39,11 +39,7 @@
 #include <QModelIndexList>
 #include <QPushButton>
 #include <QRadioButton>
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <QRegExp>
-#else
 #include <QRegularExpression>
-#endif
 #include <QString>
 #include <QTreeView>
 #include <QVariant>
@@ -80,11 +76,7 @@ public:
 
     DeepSkyObjectType objectType{ DeepSkyObjectType::Galaxy };
     bool typeFilterEnabled{false};
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QRegExp typeFilter;
-#else
     QRegularExpression typeFilter;
-#endif
 };
 
 bool
@@ -96,11 +88,7 @@ DSOFilterPredicate::operator()(const DeepSkyObject* dso) const
     if (!typeFilterEnabled)
         return true;
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    return typeFilter.exactMatch(dso->getType());
-#else
     return typeFilter.match(dso->getType()).hasMatch();
-#endif
 }
 
 class DSOPredicate
@@ -620,9 +608,7 @@ DeepSkyBrowser::slotRefreshTable()
     filterPred.typeFilterEnabled = false;
     if (auto filterText = objectTypeFilterBox->text(); !filterText.isEmpty())
     {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        QRegExp re(filterText, Qt::CaseInsensitive, QRegExp::Wildcard);
-#elif QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
+#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
         auto re = QRegularExpression::fromWildcard(filterText, Qt::CaseInsensitive, QRegularExpression::DefaultWildcardConversion);
 #else
         auto re = QRegularExpression::fromWildcard(filterText, Qt::CaseInsensitive, QRegularExpression::NonPathWildcardConversion);

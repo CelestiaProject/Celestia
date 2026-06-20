@@ -23,11 +23,7 @@
 #include <QMouseEvent>
 #include <QObject>
 #include <QOpenGLWidget>
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <QPoint>
-#else
 #include <QPointF>
-#endif
 #include <QSet>
 #include <QString>
 #include <QWheelEvent>
@@ -251,13 +247,8 @@ private:
     double m_modelBoundingRadius;
     Eigen::Vector3d m_cameraPosition;
     Eigen::Quaterniond m_cameraOrientation;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QPoint m_lastMousePosition;
-    QPoint m_mouseDownPosition;
-#else
     QPointF m_lastMousePosition;
     QPointF m_mouseDownPosition;
-#endif
     RenderStyle m_renderStyle;
 
     std::unique_ptr<MaterialLibrary> m_materialLibrary;

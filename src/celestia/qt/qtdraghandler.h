@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2023, Celestia Development Team
 //
-// Drag handler for Qt5+ front-end.
+// Drag handler for Qt6+ front-end.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,11 +14,7 @@
 #include <memory>
 
 #include <QtGlobal>
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <QPoint>
-#else
 #include <QPointF>
-#endif
 
 class QMouseEvent;
 class QWidget;
@@ -51,14 +47,8 @@ public:
     void clearButton(int);
 
 protected:
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    using PointType = QPoint;
-#else
-    using PointType = QPointF;
-#endif
-
     CelestiaCore *appCore;
-    PointType     saveCursorPos{};
+    QPointF     saveCursorPos{};
     qreal         scale{};
     int           buttons{ 0 };
 

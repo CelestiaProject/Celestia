@@ -3,7 +3,60 @@ if(NOT ENABLE_QT6)
   return()
 endif()
 
-include(../qt/CelestiaQtCommon.cmake)
+set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS ON)
+set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
+
+set(CELQT6_SOURCES
+  qtappwin.cpp
+  qtappwin.h
+  qtbookmark.cpp
+  qtbookmark.h
+  qtcelestiaactions.cpp
+  qtcelestiaactions.h
+  qtcelestialbrowser.cpp
+  qtcelestialbrowser.h
+  qtcolorswatchwidget.cpp
+  qtcolorswatchwidget.h
+  qtcommandline.cpp
+  qtcommandline.h
+  qtdateutil.cpp
+  qtdateutil.h
+  qtdeepskybrowser.cpp
+  qtdeepskybrowser.h
+  qtdraghandler.cpp
+  qtdraghandler.h
+  qteventfinder.cpp
+  qteventfinder.h
+  qtgettext.h
+  qtglwidget.cpp
+  qtglwidget.h
+  qtgotoobjectdialog.cpp
+  qtgotoobjectdialog.h
+  qtinfopanel.cpp
+  qtinfopanel.h
+  qtmain.cpp
+  qtmarkerutil.cpp
+  qtmarkerutil.h
+  qtpathutil.h
+  qtpreferencesdialog.cpp
+  qtpreferencesdialog.h
+  qtselectionpopup.cpp
+  qtselectionpopup.h
+  qtsettimedialog.cpp
+  qtsettimedialog.h
+  qtsolarsystembrowser.cpp
+  qtsolarsystembrowser.h
+  qttimetoolbar.cpp
+  qttimetoolbar.h
+  qttourguide.cpp
+  qttourguide.h
+  xbel.cpp
+  xbel.h
+)
+
+if(WIN32)
+  list(APPEND CELQT6_SOURCES celestia.rc)
+endif()
 
 # Instruct CMake to run moc automatically when needed
 set(CMAKE_AUTOMOC ON)
@@ -12,8 +65,6 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets CONFIG REQUIRED)
 qt6_add_resources(CELQT6_RC_SRC "../qt/icons.qrc")
-
-GetQtSources(CELQT6_SOURCES)
 
 add_executable(celestia-qt6 WIN32 ${CELQT6_SOURCES} ${CELQT6_RC_SRC})
 add_dependencies(celestia-qt6 celestia)

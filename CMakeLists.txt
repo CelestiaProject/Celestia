@@ -59,7 +59,6 @@ set(DISPLAY_NAME "Celestia")
 option(ENABLE_CELX        "Enable celx scripting, requires Lua library? (Default: on)" ON)
 option(ENABLE_SPICE       "Use spice library? (Default: off)" OFF)
 option(ENABLE_NLS         "Enable interface translation? (Default: on)" ON)
-option(ENABLE_QT5         "Build Qt frontend? (Default: off)" OFF)
 option(ENABLE_QT6         "Build Qt6 frontend (Default: off)" OFF)
 option(ENABLE_SDL         "Build SDL frontend? (Default: off)" OFF)
 option(ENABLE_WIN         "Build Windows native frontend? (Default: off)" OFF)
@@ -86,11 +85,6 @@ endif()
 
 # Qt requires -fPIC, so build all code with it
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-if(APPLE AND ENABLE_QT5 AND ENABLE_QT6)
-  # If someone figures out how to resolve the include path conflicts, this can be removed
-  message(FATAL_ERROR "Simultaneous builds of Qt5 and Qt6 are not supported on Apple systems")
-endif()
 
 if(ENABLE_GLES)
   add_definitions(-DGL_ES)

@@ -37,11 +37,7 @@
 #include <QModelIndex>
 #include <QPushButton>
 #include <QRadioButton>
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <QRegExp>
-#else
 #include <QRegularExpression>
-#endif
 #include <QString>
 #include <QTreeView>
 #include <QVariant>
@@ -76,11 +72,7 @@ namespace
 struct StarFilter
 {
     engine::StarBrowser::Filter filter{ engine::StarBrowser::Filter::All };
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QRegExp regexp;
-#else
     QRegularExpression regexp;
-#endif
 };
 
 } // end unnamed namespace
@@ -352,11 +344,7 @@ CelestialBrowser::StarTableModel::populate(const UniversalCoord& _observerPos,
     {
         starBrowser.setSpectralTypeFilter([regexp=filter.regexp](const char* sptype)
                                           {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                                              return regexp.exactMatch(sptype);
-#else
                                               return regexp.match(sptype).hasMatch();
-#endif
                                           });
     }
 
@@ -554,9 +542,7 @@ CelestialBrowser::slotRefreshTable()
     if (barycentersFilterBox->checkState() != Qt::Checked) { filter.filter |= engine::StarBrowser::Filter::Visible; }
     if (auto spFilter = spectralTypeFilterBox->text(); !spFilter.isEmpty())
     {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        filter.regexp = QRegExp(spFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
-#elif QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
+#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
         filter.regexp = QRegularExpression::fromWildcard(spFilter, Qt::CaseInsensitive, QRegularExpression::DefaultWildcardConversion);
 #else
         filter.regexp = QRegularExpression::fromWildcard(spFilter, Qt::CaseInsensitive, QRegularExpression::NonPathWildcardConversion);

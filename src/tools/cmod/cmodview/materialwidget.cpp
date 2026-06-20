@@ -97,11 +97,7 @@ listTextures(QDir& dir)
     filters << "*.png" << "*.jpg" << "*.dds" << "*.dxt5nm";
     QStringList textureFileNames = dir.entryList(filters, QDir::Files);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QSet<QString>(textureFileNames.begin(), textureFileNames.end());
-#else
-    return QSet<QString>::fromList(textureFileNames);
-#endif
 }
 
 } // end unnamed namespace

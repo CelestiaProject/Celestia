@@ -10,7 +10,7 @@ env:
 
 jobs:
   sonarscanner:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: github.event.workflow_run.conclusion == 'success'
     steps:
     - name: 'Install dependencies'
@@ -26,14 +26,13 @@ jobs:
                                 libjpeg-dev \
                                 libpng-dev \
                                 libglu1-mesa-dev \
-                                qtbase5-dev \
-                                qtbase5-dev-tools \
-                                libqt5opengl5-dev \
                                 libfreetype6-dev \
                                 libsdl2-dev \
                                 libluajit-5.1-dev \
                                 libicu-dev \
                                 ninja-build \
+                                qt6-base-dev \
+                                qt6-base-dev-tools \
                                 gperf \
                                 cmake
 
@@ -90,7 +89,7 @@ jobs:
               -DENABLE_TOOLS=OFF             \
               -DENABLE_TESTS=OFF             \
               -DENABLE_SDL=ON                \
-              -DENABLE_QT5=ON                \
+              -DENABLE_QT6=ON                \
               -DENABLE_FFMPEG=ON             \
               -DENABLE_MINIAUDIO=ON          \
               -DUSE_ICU=ON                   \
