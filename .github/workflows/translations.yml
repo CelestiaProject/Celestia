@@ -8,6 +8,9 @@ on:
     branches: [ master ]
     paths: [ po/**, .github/workflows/translations.yml ]
 
+permissions:
+  contents: read
+
 jobs:
   gettext:
     strategy:
@@ -15,6 +18,7 @@ jobs:
       matrix:
         platform: [ ubuntu-latest ]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - name: 'Install dependencies'
       run: |
