@@ -614,8 +614,11 @@ GetFilename(const AssociativeArray& hash,
             const char* errorMessage)
 {
     const std::string* value = hash.getString(key);
-    if (value == nullptr)
+    if (!value)
         return std::nullopt;
+
+    if (value->empty())
+        return *value;
 
     auto result = util::U8FileName(*value);
     if (!result.has_value())
@@ -624,75 +627,13 @@ GetFilename(const AssociativeArray& hash,
     return result;
 }
 
-void
-FillinSurface(const AssociativeArray& surfaceData,
-              Surface& surface,
-              const std::filesystem::path& path,
-              engine::TexturePaths& texturePaths)
+Selection
+GetParentObject(const PlanetarySystem* system)
 {
-    if (auto color = surfaceData.getColor("Color"); color.has_value())
-        surface.color = *color;
-    if (auto specularColor = surfaceData.getColor("SpecularColor"); specularColor.has_value())
-        surface.specularColor = *specularColor;
-    if (auto specularPower = surfaceData.getNumber<float>("SpecularPower"); specularPower.has_value())
-        surface.specularPower = *specularPower;
-    if (auto lunarLambert = surfaceData.getNumber<float>("LunarLambert"); lunarLambert.has_value())
-        surface.lunarLambert = *lunarLambert;
+    if (Body* primary = system->getPrimaryBody(); primary)
+        return primary;
 
-    auto baseTexture = GetFilename(surfaceData, "Texture"sv, "Invalid filename in Texture\n");
-    auto bumpTexture = GetFilename(surfaceData, "BumpMap"sv, "Invalid filename in BumpMap\n");
-    auto nightTexture = GetFilename(surfaceData, "NightTexture"sv, "Invalid filename in NightTexture\n");
-    auto specularTexture = GetFilename(surfaceData, "SpecularTexture"sv, "Invalid filename in SpecularTexture\n");
-    auto normalTexture = GetFilename(surfaceData, "NormalMap"sv, "Invalid filename in NormalMap\n");
-    auto overlayTexture = GetFilename(surfaceData, "OverlayTexture"sv, "Invalid filename in OverlayTexture\n");
-
-    constexpr auto baseFlags = engine::TextureFlags::WrapTexture;
-    constexpr auto bumpFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
-    constexpr auto nightFlags = engine::TextureFlags::WrapTexture;
-    constexpr auto specularFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
-
-    auto bumpHeight = surfaceData.getNumber<float>("BumpHeight").value_or(2.5f);
-
-    bool blendTexture = surfaceData.getBoolean("BlendTexture").value_or(false);
-    bool emissive = surfaceData.getBoolean("Emissive").value_or(false);
-
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::BlendTexture, blendTexture);
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::Emissive, emissive);
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyBaseTexture, baseTexture.has_value());
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyBumpMap, (bumpTexture.has_value() || normalTexture.has_value()));
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyNightMap, nightTexture.has_value());
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::SeparateSpecularMap, specularTexture.has_value());
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyOverlay, overlayTexture.has_value());
-    util::set_or_unset(surface.appearanceFlags, Surface::Flags::SpecularReflection, surface.specularColor != Color(0.0f, 0.0f, 0.0f));
-
-    if (baseTexture.has_value())
-        surface.baseTexture = texturePaths.getHandle(*baseTexture, path, baseFlags);
-    if (nightTexture.has_value())
-        surface.nightTexture = texturePaths.getHandle(*nightTexture, path, nightFlags);
-    if (specularTexture.has_value())
-        surface.specularTexture = texturePaths.getHandle(*specularTexture, path, specularFlags);
-
-    // If both are present, NormalMap overrides BumpMap
-    if (normalTexture.has_value())
-        surface.bumpTexture = texturePaths.getHandle(*normalTexture, path, bumpFlags);
-    else if (bumpTexture.has_value())
-        surface.bumpTexture = texturePaths.getHandle(*bumpTexture, path, bumpFlags, bumpHeight);
-
-    if (overlayTexture.has_value())
-        surface.overlayTexture = texturePaths.getHandle(*overlayTexture, path, baseFlags);
-}
-
-
-Selection GetParentObject(PlanetarySystem* system)
-{
-    Selection parent;
-    Body* primary = system->getPrimaryBody();
-    if (primary != nullptr)
-        parent = Selection(primary);
-    else
-        parent = Selection(system->getStar());
-
-    return parent;
+    return system->getStar();
 }
 
 std::shared_ptr<const ephem::Orbit>
@@ -806,14 +747,18 @@ void ReadAtmosphere(Body* body,
         cloudTexture.has_value())
     {
         constexpr auto cloudFlags = engine::TextureFlags::WrapTexture;
-        atmosphere->cloudTexture = texturePaths.getHandle(*cloudTexture, path, cloudFlags);
+        atmosphere->cloudTexture = cloudTexture->empty()
+            ? util::TextureHandle::Invalid
+            : texturePaths.getHandle(*cloudTexture, path, cloudFlags);
     }
 
     if (auto cloudNormalMap = GetFilename(atmosData, "CloudNormalMap"sv, "Invalid filename in CloudNormalMap\n");
         cloudNormalMap.has_value())
     {
         constexpr auto cloudNormalFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
-        atmosphere->cloudNormalMap = texturePaths.getHandle(*cloudNormalMap, path, cloudNormalFlags);
+        atmosphere->cloudNormalMap = cloudNormalMap->empty()
+            ? util::TextureHandle::Invalid
+            : texturePaths.getHandle(*cloudNormalMap, path, cloudNormalFlags);
     }
 
     if (auto cloudShadowDepth = atmosData.getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())
@@ -867,7 +812,9 @@ void ReadRings(Body* body,
     if (auto textureName = GetFilename(ringsData, "Texture"sv, "Invalid filename in rings Texture\n");
         textureName.has_value())
     {
-        rings->texture = texturePaths.getHandle(*textureName, path);
+        rings->texture = textureName->empty()
+            ? util::TextureHandle::Invalid
+            : texturePaths.getHandle(*textureName, path);
     }
 
     if (newRings != nullptr)
@@ -1059,11 +1006,13 @@ SolarSystemsBuilder::parseSsc(std::istream& in, //NOSONAR
         }
         else if (itemType == "AltSurface")
         {
-            auto surface = std::make_unique<Surface>();
-            surface->color = Color(1.0f, 1.0f, 1.0f);
-            FillinSurface(*objectData, *surface, directory, *m_texturePaths);
-            if (parent.body() != nullptr)
-                GetBodyFeaturesManager()->addAlternateSurface(parent.body(), primaryName, std::move(surface));
+            if (Body* body = parent.body(); body)
+            {
+                auto surface = std::make_unique<Surface>();
+                surface->color = Color(1.0f, 1.0f, 1.0f);
+                fillInSurface(*objectData, *surface, directory);
+                GetBodyFeaturesManager()->addAlternateSurface(body, primaryName, std::move(surface));
+            }
             else
                 sscError(tokenizer, _("bad alternate surface"));
         }
@@ -1295,7 +1244,7 @@ SolarSystemsBuilder::createBody(const std::string& name, //NOSONAR
     else
         surface.color = Color(1.0f, 1.0f, 1.0f);
 
-    FillinSurface(planetData, surface, path, *m_texturePaths);
+    fillInSurface(planetData, surface, path);
     body->setSurface(surface);
 
     ReadMesh(planetData, *body, path, *m_geometryPaths);
@@ -1395,9 +1344,96 @@ SolarSystemsBuilder::createReferencePoint(const std::string& name,
     return body;
 }
 
+void
+SolarSystemsBuilder::fillInSurface(const AssociativeArray& surfaceData,
+                                   Surface& surface,
+                                   const std::filesystem::path& path)
+{
+    if (auto color = surfaceData.getColor("Color"); color.has_value())
+        surface.color = *color;
+
+    if (auto specularColor = surfaceData.getColor("SpecularColor"); specularColor.has_value())
+        surface.specularColor = *specularColor;
+    if (auto specularPower = surfaceData.getNumber<float>("SpecularPower"); specularPower.has_value())
+        surface.specularPower = *specularPower;
+    util::set_or_unset(surface.appearanceFlags, Surface::Flags::SpecularReflection, surface.specularColor != Color{});
+
+    if (auto lunarLambert = surfaceData.getNumber<float>("LunarLambert"); lunarLambert.has_value())
+        surface.lunarLambert = *lunarLambert;
+
+    if (auto blendTexture = surfaceData.getBoolean("BlendTexture"); blendTexture.has_value())
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::BlendTexture, *blendTexture);
+
+    if (auto emissive = surfaceData.getBoolean("Emissive"); emissive.has_value())
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::Emissive, *emissive);
+
+    constexpr auto baseFlags = engine::TextureFlags::WrapTexture;
+    constexpr auto bumpFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
+    constexpr auto nightFlags = engine::TextureFlags::WrapTexture;
+    constexpr auto specularFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
+
+    if (auto baseTexture = GetFilename(surfaceData, "Texture"sv, "Invalid filename in Texture\n");
+       baseTexture.has_value())
+    {
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyBaseTexture, !baseTexture->empty());
+        surface.baseTexture = baseTexture->empty()
+            ? util::TextureHandle::Invalid
+            : m_texturePaths->getHandle(*baseTexture, path, baseFlags);
+    }
+    if (auto nightTexture = GetFilename(surfaceData, "NightTexture"sv, "Invalid filename in NightTexture\n");
+        nightTexture.has_value())
+    {
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyNightMap, !nightTexture->empty());
+        surface.nightTexture = nightTexture->empty()
+            ? util::TextureHandle::Invalid
+            : m_texturePaths->getHandle(*nightTexture, path, nightFlags);
+    }
+    if (auto specularTexture = GetFilename(surfaceData, "SpecularTexture"sv, "Invalid filename in SpecularTexture\n");
+        specularTexture.has_value())
+    {
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::SeparateSpecularMap, !specularTexture->empty());
+        surface.specularTexture = specularTexture->empty()
+            ? util::TextureHandle::Invalid
+            : m_texturePaths->getHandle(*specularTexture, path, specularFlags);
+    }
+
+    // If both are present, NormalMap overrides BumpMap
+    if (auto normalTexture = GetFilename(surfaceData, "NormalMap"sv, "Invalid filename in NormalMap\n");
+        normalTexture.has_value())
+    {
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyBumpMap, !normalTexture->empty());
+        surface.bumpTexture = normalTexture->empty()
+            ? util::TextureHandle::Invalid
+            : m_texturePaths->getHandle(*normalTexture, path, bumpFlags);
+    }
+    else if (auto bumpTexture = GetFilename(surfaceData, "BumpMap"sv, "Invalid filename in BumpMap\n");
+             bumpTexture.has_value())
+    {
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyBumpMap, !bumpTexture->empty());
+        if (bumpTexture->empty())
+        {
+            surface.bumpTexture = util::TextureHandle::Invalid;
+        }
+        else
+        {
+            auto bumpHeight = surfaceData.getNumber<float>("BumpHeight").value_or(2.5f);
+            surface.bumpTexture = m_texturePaths->getHandle(*bumpTexture, path, bumpFlags, bumpHeight);
+        }
+    }
+
+    if (auto overlayTexture = GetFilename(surfaceData, "OverlayTexture"sv, "Invalid filename in OverlayTexture\n");
+        overlayTexture.has_value())
+    {
+        util::set_or_unset(surface.appearanceFlags, Surface::Flags::ApplyOverlay, !overlayTexture->empty());
+        surface.overlayTexture = overlayTexture->empty()
+            ? util::TextureHandle::Invalid
+            : m_texturePaths->getHandle(*overlayTexture, path, baseFlags);
+    }
+}
+
 bool
 SolarSystemsBuilder::createTimeline(Body* body,
-                                    PlanetarySystem* system,
+                                    const PlanetarySystem* system,
                                     const AssociativeArray& planetData,
                                     const std::filesystem::path& path,
                                     DataDisposition disposition,
