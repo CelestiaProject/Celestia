@@ -45,13 +45,14 @@ jobs:
         ref: ${{ github.event.workflow_run.head_branch }}
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
+        allow-unsafe-pr-checkout: true # build is not executed in this workflow
 
     - name: 'Checkout base branch'
       if: github.event.workflow_run.event == 'pull_request'
       run: |
         git remote add upstream ${{ github.event.repository.clone_url }}
-        git fetch upstream ${{ steps.pr_details.outputs.PR_BASE }}
-        git checkout -B ${{ steps.pr_details.outputs.PR_BASE }} upstream/${{ steps.pr_details.outputs.PR_BASE }}
+        git fetch upstream ${{ github.event.workflow_run.pull_requests[0].base.ref }}
+        git checkout -B ${{ github.event.workflow_run.pull_requests[0].base.ref }} upstream/${{ github.event.workflow_run.pull_requests[0].base.ref }}
         git checkout ${{ github.event.workflow_run.head_branch }}
         yes no | git clean -fxd
         git reset --hard HEAD
@@ -66,7 +67,7 @@ jobs:
 
     - name: Analyze push
       if: github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.event.repository.full_name
-      uses: SonarSource/sonarqube-scan-action@v6
+      uses: SonarSource/sonarqube-scan-action@v8
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -77,7 +78,7 @@ jobs:
 
     - name: Analyze pull request
       if: github.event.workflow_run.event == 'pull_request'
-      uses: SonarSource/sonarqube-scan-action@v6
+      uses: SonarSource/sonarqube-scan-action@v8
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
