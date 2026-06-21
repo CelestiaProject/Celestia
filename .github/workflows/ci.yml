@@ -8,6 +8,10 @@ on:
     branches: [ master ]
     paths: [ src/**, test/**, cmake/**, .github/workflows/ci.yml, CMakeLists.txt ]
 
+permissions:
+  contents: read
+  packages: write
+
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true

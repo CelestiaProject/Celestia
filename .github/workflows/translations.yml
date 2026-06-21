@@ -8,6 +8,9 @@ on:
     branches: [ master ]
     paths: [ po/**, .github/workflows/translations.yml ]
 
+permissions:
+  contents: read
+
 jobs:
   gettext:
     strategy:
