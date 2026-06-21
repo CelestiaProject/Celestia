@@ -145,8 +145,9 @@ TexturePaths::getPathSetIndex(const std::filesystem::path& filename,
     auto [rootIt, rootInserted] = rootPaths.try_emplace(filename, PathSetIndex::Invalid);
     if (!rootInserted || checkPath(filename, {}, rootIt->second))
         it->second = rootIt->second;
+    else
+        GetLogger()->error("Failed to resolve texture file set {}\n", filename);
 
-    GetLogger()->error("Failed to resolve texture file set {}\n", filename);
     return it->second;
 }
 
