@@ -29,6 +29,7 @@ class Location;
 class PlanetarySystem;
 class Selection;
 class Star;
+struct Surface;
 class Timeline;
 class TimelinePhase;
 class Universe;
@@ -87,46 +88,50 @@ private:
                      DataDisposition,
                      BodyType);
 
-    Body* createReferencePoint(const std::string& name,
-                               PlanetarySystem* system,
-                               Body* existingBody,
-                               const celestia::util::AssociativeArray& refPointData,
-                               const std::filesystem::path& path,
-                               DataDisposition disposition);
+    Body* createReferencePoint(const std::string&,
+                               PlanetarySystem*,
+                               Body*,
+                               const celestia::util::AssociativeArray&,
+                               const std::filesystem::path&,
+                               DataDisposition);
 
-    std::unique_ptr<Location> createLocation(const celestia::util::AssociativeArray& locationData);
+    std::unique_ptr<Location> createLocation(const celestia::util::AssociativeArray&);
 
-    bool createTimeline(Body* body,
-                        PlanetarySystem* system,
-                        const celestia::util::AssociativeArray& planetData,
-                        const std::filesystem::path& path,
-                        DataDisposition disposition,
-                        BodyType bodyType);
+    void fillInSurface(const celestia::util::AssociativeArray&,
+                       Surface&,
+                       const std::filesystem::path&);
 
-    std::unique_ptr<Timeline> createTimelineFromArray(Body* body,
-                                                      Selection parent,
-                                                      const celestia::util::ValueArray& timelineArray,
-                                                      const std::filesystem::path& path,
-                                                      FrameId defaultOrbitFrame,
-                                                      FrameId defaultBodyFrame);
+    bool createTimeline(Body*,
+                        const PlanetarySystem*,
+                        const celestia::util::AssociativeArray&,
+                        const std::filesystem::path&,
+                        DataDisposition,
+                        BodyType);
 
-    bool createLegacyTimeline(Body* body,
-                              Selection parentObject,
-                              const celestia::util::AssociativeArray& planetData,
-                              const std::filesystem::path& path,
-                              DataDisposition disposition,
-                              FrameId defaultOrbitFrame,
-                              FrameId defaultBodyFrame);
+    std::unique_ptr<Timeline> createTimelineFromArray(Body*,
+                                                      Selection,
+                                                      const celestia::util::ValueArray&,
+                                                      const std::filesystem::path&,
+                                                      FrameId,
+                                                      FrameId);
 
-    std::unique_ptr<TimelinePhase> createTimelinePhase(Body* body,
-                                                       Selection parent,
-                                                       const celestia::util::AssociativeArray& phaseData,
-                                                       const std::filesystem::path& path,
-                                                       FrameId defaultOrbitFrame,
-                                                       FrameId defaultBodyFrame,
-                                                       bool isFirstPhase,
-                                                       bool isLastPhase,
-                                                       double previousPhaseEnd);
+    bool createLegacyTimeline(Body*,
+                              Selection,
+                              const celestia::util::AssociativeArray&,
+                              const std::filesystem::path&,
+                              DataDisposition,
+                              FrameId,
+                              FrameId);
+
+    std::unique_ptr<TimelinePhase> createTimelinePhase(Body*,
+                                                       Selection,
+                                                       const celestia::util::AssociativeArray&,
+                                                       const std::filesystem::path&,
+                                                       FrameId,
+                                                       FrameId,
+                                                       bool,
+                                                       bool,
+                                                       double);
 
     SolarSystem* getOrCreateSolarSystem(Star*);
     FrameTree* getFrameTree(const Selection&);
