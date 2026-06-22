@@ -170,7 +170,7 @@ TEST_CASE("ResourceSystem runs submitted tasks")
     REQUIRE(waitFor([&]{ return ran.load() == 3; }));
 }
 
-TEST_CASE("ResourceSystem honours priority then FIFO ordering")
+TEST_CASE("ResourceSystem runs tasks in submission order (FIFO)")
 {
     ResourceSystem sys(1); // single worker => deterministic ordering
     std::promise<void> gate;
@@ -186,13 +186,13 @@ TEST_CASE("ResourceSystem honours priority then FIFO ordering")
     };
 
     // Blocker keeps the worker busy until we release `gate` so all the
-    // priority-tagged tasks are queued before any can run.
-    sys.submit([gateFut]{ gateFut.wait(); }, 1000);
+    // tasks are queued before any can run.
+    sys.submit([gateFut]{ gateFut.wait(); });
 
-    sys.submit(record(1),  1);
-    sys.submit(record(5),  5);
-    sys.submit(record(3),  3);
-    sys.submit(record(50), 5); // same priority as id=5, submitted later
+    sys.submit(record(1));
+    sys.submit(record(5));
+    sys.submit(record(3));
+    sys.submit(record(50));
 
     gate.set_value();
 
@@ -202,8 +202,8 @@ TEST_CASE("ResourceSystem honours priority then FIFO ordering")
     }));
 
     std::lock_guard<std::mutex> lock(orderMu);
-    // Priority 5 (FIFO: 5 before 50), then 3, then 1.
-    CHECK(order == std::vector<int>{5, 50, 3, 1});
+    // Tasks run strictly in the order they were submitted.
+    CHECK(order == std::vector<int>{1, 5, 3, 50});
 }
 
 TEST_CASE("ResourceSystem joins workers cleanly on destruction")

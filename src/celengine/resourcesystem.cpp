@@ -51,14 +51,14 @@ ResourceSystem::shutdown() noexcept
 }
 
 void
-ResourceSystem::submit(DecodeTask task, int priority)
+ResourceSystem::submit(DecodeTask task)
 {
     if (!task)
         return;
 
     {
         std::scoped_lock lock(m_workMutex);
-        m_work.push(WorkItem{ priority, ++m_workSeq, std::move(task) });
+        m_work.push(std::move(task));
     }
     m_workCv.notify_one();
 }
@@ -177,22 +177,19 @@ ResourceSystem::workerLoop()
 {
     for (;;)
     {
-        WorkItem item;
+        DecodeTask item;
         {
             std::unique_lock lock(m_workMutex);
             m_workCv.wait(lock, [this]() noexcept { return m_stop || !m_work.empty(); });
             if (m_stop && m_work.empty())
                 return;
 
-            // top() is const&; task is mutable so it can be moved out before pop().
-            item.priority = m_work.top().priority;
-            item.sequence = m_work.top().sequence;
-            item.task     = std::move(m_work.top().task);
+            item = std::move(m_work.front());
             m_work.pop();
         }
 
         // Run outside the lock so other workers can pull in parallel.
-        item.task();
+        item();
     }
 }
 

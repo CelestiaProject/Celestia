@@ -490,7 +490,7 @@ class Renderer
                       const Observer& observer,
                       float nearPlaneDistance,
                       float farPlaneDistance,
-                      RenderProperties& obj,
+                      const RenderProperties& obj,
                       const LightingState&,
                       const Matrices&);
 

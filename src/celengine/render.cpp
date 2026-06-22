@@ -2277,7 +2277,7 @@ void Renderer::renderObject(const Vector3f& pos,
                             const Observer& observer,
                             float nearPlaneDistance,
                             float farPlaneDistance,
-                            RenderProperties& obj,
+                            const RenderProperties& obj,
                             const LightingState& ls,
                             const Matrices &m)
 {

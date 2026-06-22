@@ -66,8 +66,8 @@ public:
 
     // Submit a CPU-bound task to the worker pool. It runs on a worker thread
     // and is responsible for posting its result back to the owning cache.
-    // Higher priority runs first; ties keep submission order (FIFO).
-    void submit(DecodeTask task, int priority = 0);
+    // Tasks run in submission order (FIFO).
+    void submit(DecodeTask task);
 
     // Per-frame lifecycle. Call beginFrame() once per frame before any cache
     // find(); call drainCaches() and purgeIfDue() after the frame's work.
@@ -97,22 +97,6 @@ public:
     unsigned workerCount() const noexcept { return static_cast<unsigned>(m_workers.size()); }
 
 private:
-    struct WorkItem
-    {
-        int           priority;
-        std::uint64_t sequence;
-        mutable DecodeTask task;
-
-        // std::priority_queue is a max-heap on operator<. We want higher
-        // priority first, then lower sequence (FIFO) within a priority.
-        bool operator<(const WorkItem& other) const noexcept
-        {
-            if (priority != other.priority)
-                return priority < other.priority;
-            return sequence > other.sequence;
-        }
-    };
-
     void workerLoop();
 
     // Apply deferred register/unregister and compact tombstones after an
@@ -122,8 +106,7 @@ private:
     // Worker thread pool + work queue.
     mutable std::mutex            m_workMutex;
     std::condition_variable       m_workCv;
-    std::priority_queue<WorkItem> m_work;
-    std::uint64_t                 m_workSeq{ 0 };
+    std::queue<DecodeTask>        m_work;
     std::vector<std::thread>      m_workers;
     bool                          m_stop{ false };
 
