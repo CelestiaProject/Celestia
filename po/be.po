@@ -929,7 +929,7 @@ msgstr "Кляса: %s\n"
 #: ../src/celestia/hud.cpp:453
 #, c++-format
 msgid "Luminosity: {}× Sun\n"
-msgstr "Сьвяілтвасьць: {} сонечных\n"
+msgstr "Сьвятлівасьць: {} сонечных\n"
 
 #: ../src/celestia/hud.cpp:460
 #, c++-format
