@@ -1782,7 +1782,7 @@ msgstr "Обекти от дълбокото небе"
 #: ../src/celestia/qt/qteventfinder.cpp:379
 #: ../src/celestia/qt/qteventfinder.cpp:389
 msgid "Event Finder"
-msgstr "Търсач на събития"
+msgstr "Търсачка на събития"
 
 #: ../src/celestia/qt/qtappwin.cpp:471
 msgid "Full screen"
