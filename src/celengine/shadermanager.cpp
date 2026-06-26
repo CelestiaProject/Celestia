@@ -702,11 +702,8 @@ ScatteringPhaseFunctions(const ShaderProperties& /*unused*/)
 
     // Evaluate the Mie and Rayleigh phase functions; both are functions of the cosine
     // of the angle between the view vector and light vector
-    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
-
-    // Ignore Rayleigh phase function and treat Rayleigh scattering as isotropic
-    // source += "    float phRayleigh = (1.0 + cosTheta * cosTheta);\n";
-    source += "    float phRayleigh = 1.0;\n";
+    source += "    float phMie = (1.0 - mieK * mieK) / ((1.0 + mieK * cosTheta) * (1.0 + mieK * cosTheta));\n";
+    source += "    float phRayleigh = 0.75 * (1.0 + cosTheta * cosTheta);\n";
 
     return source;
 }
@@ -2218,7 +2215,7 @@ buildParticleVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     {
         source += "    {\n";
         fmt::format_to(std::back_inserter(source), "         float cosTheta = dot({}, eyeDir);\n", LightProperty(i, "direction"));
-        source += "         float phMie = (1.0 - mieK * mieK) / ((1.0 - mieK * cosTheta) * (1.0 - mieK * cosTheta));\n";
+        source += "         float phMie = (1.0 - mieK * mieK) / ((1.0 + mieK * cosTheta) * (1.0 + mieK * cosTheta));\n";
         source += "         brightness += phMie;\n";
         source += "    }\n";
     }
