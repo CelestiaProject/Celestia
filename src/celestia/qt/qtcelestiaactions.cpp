@@ -450,10 +450,18 @@ CelestiaActions::slotAdjustLimitingMagnitude()
         }
 
         Renderer* renderer = appCore->getRenderer();
-        float change = (float) act->data().toDouble();
+        float change = act->data().toFloat();
 
         QString notification;
-        if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
+        if (renderer->getStarStyle() == StarStyle::PointSpreadFunction)
+        {
+            float exposure = change > 0.0f ? renderer->getStarExposure() * 1.1f
+                                           : renderer->getStarExposure() / 1.1f;
+            renderer->setStarExposure(exposure);
+
+            notification = QString(_("Star exposure: %L1")).arg(renderer->getStarExposure(), 0, 'f', 3);
+        }
+        else if (util::is_set(renderer->getRenderFlags(), RenderFlags::ShowAutoMag))
         {
             float newLimitingMag = qBound(6.0f, renderer->getFaintestAM45deg() + change, 12.0f);
             renderer->setFaintestAM45deg(newLimitingMag);
