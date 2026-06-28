@@ -15,6 +15,7 @@
 
 #include <SpiceUsr.h>
 
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 
 using celestia::util::GetLogger;
@@ -97,7 +98,7 @@ bool LoadSpiceKernel(const std::filesystem::path& filepath)
     if (!getResidentKernelsSet()->insert(filepath).second)
         return true;
 
-    furnsh_c(filepath.string().c_str());
+    furnsh_c(celestia::util::PathToString(filepath).c_str());
 
     // If there was an error loading the kernel, dump the error message.
     if (failed_c())

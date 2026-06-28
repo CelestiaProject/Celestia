@@ -1323,16 +1323,16 @@ ModelWriter::TextWriter::writeMaterial(const Material& material) //NOSONAR
             switch (static_cast<TextureSemantic>(i))
             {
             case TextureSemantic::DiffuseMap:
-                fmt::print(*out, "texture0 \"{}\"\n", texSource.string());
+                fmt::print(*out, "texture0 \"{}\"\n", celestia::util::PathToString(texSource));
                 break;
             case TextureSemantic::NormalMap:
-                fmt::print(*out, "normalmap \"{}\"\n", texSource.string());
+                fmt::print(*out, "normalmap \"{}\"\n", celestia::util::PathToString(texSource));
                 break;
             case TextureSemantic::SpecularMap:
-                fmt::print(*out, "specularmap \"{}\"\n", texSource.string());
+                fmt::print(*out, "specularmap \"{}\"\n", celestia::util::PathToString(texSource));
                 break;
             case TextureSemantic::EmissiveMap:
-                fmt::print(*out, "emissivemap \"{}\"\n", texSource.string());
+                fmt::print(*out, "emissivemap \"{}\"\n", celestia::util::PathToString(texSource));
                 break;
             default:
                 return false;

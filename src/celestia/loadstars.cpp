@@ -18,6 +18,7 @@
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
 #include <celutil/gettext.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 
 namespace celestia
@@ -86,7 +87,7 @@ loadStars(const CelestiaConfig &config,
     if (auto &path = config.paths.starDatabaseFile; !path.empty())
     {
         if (progressNotifier)
-            progressNotifier->update(path.string());
+            progressNotifier->update(util::PathToString(path));
 
         if (std::ifstream starFile(path, std::ios::binary); starFile.good())
         {

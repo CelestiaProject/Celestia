@@ -98,6 +98,16 @@ U8FileName(std::string_view source, bool allowWildcardExtension)
     return std::filesystem::u8path(source);
 }
 
+std::string
+PathToString(const std::filesystem::path &path)
+{
+#ifdef _WIN32
+    return WideToUTF8(path.native());
+#else
+    return path.native();
+#endif
+}
+
 std::filesystem::path LocaleFilename(const std::filesystem::path &p)
 {
     const char *orig = N_("LANGUAGE");

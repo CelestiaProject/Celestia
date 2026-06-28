@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 
 #define MINIAUDIO_IMPLEMENTATION
@@ -158,7 +159,7 @@ bool MiniAudioSession::play(double startTime)
     case MiniAudioSessionPrivate::State::EngineStarted:
         // load sound file from disk into our own ma_sound, but bound to
         // the shared engine
-        result = ma_sound_init_from_file(&p->backend->engine, path().string().c_str(), MA_SOUND_FLAG_ASYNC, nullptr, nullptr, &p->sound);
+        result = ma_sound_init_from_file(&p->backend->engine, celestia::util::PathToString(path()).c_str(), MA_SOUND_FLAG_ASYNC, nullptr, nullptr, &p->sound);
         if (result != MA_SUCCESS)
         {
             GetLogger()->error("Failed to load sound file {}", path());

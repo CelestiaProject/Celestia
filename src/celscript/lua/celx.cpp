@@ -27,6 +27,7 @@
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
 #include <celutil/associativearray.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/stringutils.h>
@@ -656,19 +657,21 @@ int LuaState::loadScript(istream& in, const std::filesystem::path& streamname)
     info.bufSize = sizeof(buf);
     info.in = &in;
 
+    const std::string streamNameUTF8 = celestia::util::PathToString(streamname);
+
     if (streamname != "string")
     {
         lua_pushstring(state, "celestia-scriptpath");
-        lua_pushstring(state, streamname.string().c_str());
+        lua_pushstring(state, streamNameUTF8.c_str());
         lua_settable(state, LUA_REGISTRYINDEX);
     }
 
 #if LUA_VERSION_NUM >= 502
     int status = lua_load(state, readStreamChunk, &info,
-                          streamname.string().c_str(), nullptr);
+                          streamNameUTF8.c_str(), nullptr);
 #else
     int status = lua_load(state, readStreamChunk, &info,
-                          streamname.string().c_str());
+                          streamNameUTF8.c_str());
 #endif
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';

@@ -18,6 +18,7 @@ extern "C"
 
 #include <celengine/render.h>
 #include <celimage/pixelformat.h>
+#include <celutil/fsutils.h>
 
 using namespace std;
 using namespace celestia;
@@ -89,9 +90,7 @@ bool FFMPEGCapturePrivate::init(const std::filesystem::path& filename)
 #endif
 
     // always use matroska (*.mkv) as a container
-    // don't change filename.string().c_str() -> filename.c_str()!
-    // on windows c_str() return wchar_t*
-    avformat_alloc_output_context2(&oc, nullptr, "matroska", filename.string().c_str());
+    avformat_alloc_output_context2(&oc, nullptr, "matroska", util::PathToString(filename).c_str());
 
     return oc != nullptr;
 }
@@ -294,13 +293,11 @@ bool FFMPEGCapturePrivate::addStream(int width, int height, float fps)
 bool FFMPEGCapturePrivate::start()
 {
     // open the output file, if needed
-    if ((oc->oformat->flags & AVFMT_NOFILE) == 0)
+    if ((oc->oformat->flags & AVFMT_NOFILE) == 0
+        && avio_open(&oc->pb, util::PathToString(filename).c_str(), AVIO_FLAG_WRITE) < 0)
     {
-        if (avio_open(&oc->pb, filename.string().c_str(), AVIO_FLAG_WRITE) < 0)
-        {
-            cout << "Failed to open video file\n";
-            return false;
-        }
+        cout << "Failed to open video file\n";
+        return false;
     }
 
     // Write the stream header, if any.
@@ -310,7 +307,7 @@ bool FFMPEGCapturePrivate::start()
         return false;
     }
 
-    av_dump_format(oc, 0, filename.string().c_str(), 1);
+    av_dump_format(oc, 0, util::PathToString(filename).c_str(), 1);
 
     if ((pkt = av_packet_alloc()) == nullptr)
     {

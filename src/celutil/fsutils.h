@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <filesystem>
 #include <optional>
+#include <string>
 #include <string_view>
 
 #include <celutil/array_view.h>
@@ -34,6 +35,7 @@ struct PathHasher
 
 std::optional<std::filesystem::path> U8FileName(std::string_view source,
                                    bool allowWildcardExtension = true);
+std::string PathToString(const std::filesystem::path& path);
 std::filesystem::path LocaleFilename(const std::filesystem::path& filename);
 std::filesystem::path PathExp(std::filesystem::path&& filename);
 std::filesystem::path ResolveWildcard(const std::filesystem::path& wildcard,

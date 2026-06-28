@@ -12,6 +12,7 @@
 #include <string>
 #include <string_view>
 
+#include "fsutils.h"
 #include "stringutils.h"
 
 using namespace std::string_view_literals;
@@ -51,8 +52,8 @@ constexpr std::string_view ContentWarpMeshExt = ".map"sv;
 ContentType DetermineFileType(const std::filesystem::path& filename, bool isExtension)
 {
     const std::string ext = isExtension
-        ? filename.string()
-        : filename.extension().string();
+        ? celestia::util::PathToString(filename)
+        : celestia::util::PathToString(filename.extension());
 
     if (compareIgnoringCase(JPEGExt, ext) == 0 ||
         compareIgnoringCase(JPGExt, ext) == 0 ||

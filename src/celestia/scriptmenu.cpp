@@ -17,6 +17,7 @@
 #include <string_view>
 
 #include <celutil/filetype.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 
@@ -49,7 +50,7 @@ void process(const std::filesystem::path& p, std::vector<ScriptMenuItem>& menuIt
         return;
 
     ScriptMenuItem& item = menuItems.emplace_back();
-    item.title = p.filename().string();
+    item.title = celestia::util::PathToString(p.filename());
     item.filename = p;
 
     // Read the first line, handling various newline conventions
