@@ -29,9 +29,7 @@
 #include "renderdialog.h"
 #include "timedialog.h"
 
-#ifdef _WIN32
-#include <celutil/winutil.h>
-#endif
+#include <celutil/fsutils.h>
 
 namespace celestia::sdl
 {
@@ -74,11 +72,7 @@ Gui::create(SDL_Window* window, SDL_GLContext context, CelestiaCore* appCore, co
     io.IniFilename = nullptr;
 
     std::filesystem::path iniPath = environment.getImguiSettingsPath();
-#ifdef _WIN32
-    std::string iniFilename = util::WideToUTF8(iniPath.native());
-#else
-    std::string iniFilename = iniPath.string();
-#endif
+    std::string iniFilename = util::PathToString(iniPath);
 
     if (!iniFilename.empty())
         ImGui::LoadIniSettingsFromDisk(iniFilename.c_str());

@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/container_hash/hash.hpp>
+
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
@@ -25,6 +27,7 @@
 #include <celimage/image.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
 #include <ft2build.h>
@@ -710,7 +713,7 @@ LoadFontFace(FT_Library ft, const std::filesystem::path &path, int index, int si
 {
     FT_Face face;
 
-    if (FT_New_Face(ft, path.string().c_str(), index, &face) != 0)
+    if (FT_New_Face(ft, celestia::util::PathToString(path).c_str(), index, &face) != 0)
     {
         GetLogger()->error("Could not open font {}\n", path);
         return nullptr;
@@ -740,7 +743,7 @@ std::filesystem::path
 ParseFontName(const std::filesystem::path &filename, int &index, int &size)
 {
     // Format with font path/collection index(if any)/font size(if any)
-    auto fn = filename.string();
+    auto fn = celestia::util::PathToString(filename);
     if (auto ps = fn.rfind(','); ps != std::string::npos)
     {
         if (from_chars(&fn[ps + 1], &fn[fn.size()], size).ec == std::errc())
@@ -748,9 +751,9 @@ ParseFontName(const std::filesystem::path &filename, int &index, int &size)
             if (auto pi = fn.rfind(',', ps - 1); pi != std::string::npos)
             {
                 if (from_chars(&fn[pi + 1], &fn[pi], index).ec == std::errc())
-                    return fn.substr(0, pi);
+                    return std::filesystem::u8path(fn.substr(0, pi));
             }
-            return fn.substr(0, ps);
+            return std::filesystem::u8path(fn.substr(0, ps));
         }
     }
     return filename;
@@ -772,7 +775,11 @@ template<> struct std::hash<FontCacheKey>
 {
     std::size_t operator()(const FontCacheKey &k) const
     {
-        return std::hash<std::string>()(k.filename.string()) ^ std::hash<int>()(k.index) ^ std::hash<int>()(k.size);
+        std::size_t seed = 0;
+        boost::hash_combine(seed, std::filesystem::hash_value(k.filename));
+        boost::hash_combine(seed, k.index);
+        boost::hash_combine(seed, k.size);
+        return seed;
     }
 };
 

@@ -14,6 +14,7 @@
 #include <Eigen/Core>
 #include <lua.hpp>
 
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include "orbit.h"
 #include "scriptobject.h"
@@ -222,7 +223,7 @@ CreateScriptedOrbit(const std::string* moduleName,
     SetLuaVariables(luaState, parameters);
     // set the addon path
     {
-        std::string pathStr = path.string();
+        std::string pathStr = celestia::util::PathToString(path);
         lua_pushstring(luaState, "AddonPath");
         lua_pushstring(luaState, pathStr.c_str());
         lua_settable(luaState, -3);

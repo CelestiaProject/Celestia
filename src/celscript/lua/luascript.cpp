@@ -18,6 +18,7 @@
 #include <celestia/configfile.h>
 #include <celestia/celestiacore.h>
 #include <celestia/progressnotifier.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "celx_internal.h"
@@ -148,7 +149,7 @@ class LuaPathFinder
     {
         string out;
         for (const auto& dir : dirs)
-            out += (dir / "?.lua;").string();
+            out += util::PathToString(dir / "?.lua;");
         return out;
     }
 
@@ -217,7 +218,7 @@ bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, P
             appCore->fatalError(fmt::format(fmt::runtime(_("Error opening LuaHook {}")), config->paths.luaHook));
 
         if (progressNotifier != nullptr)
-            progressNotifier->update(config->paths.luaHook.string());
+            progressNotifier->update(util::PathToString(config->paths.luaHook));
 
         status = luaHook->loadScript(scriptfile, config->paths.luaHook);
     }

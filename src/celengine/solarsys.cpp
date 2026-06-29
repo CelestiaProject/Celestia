@@ -842,7 +842,7 @@ SolarSystemsBuilder::parseSsc(std::istream& in, //NOSONAR
     util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    std::string s = directory.string();
+    std::string s = util::PathToString(directory);
     const char* d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
@@ -990,7 +990,7 @@ SolarSystemsBuilder::parseSsc(std::istream& in, //NOSONAR
 
                 if (body)
                 {
-                    UserCategory::loadCategories(body, *objectData, disposition, directory.string());
+                    UserCategory::loadCategories(body, *objectData, disposition, util::PathToString(directory));
                     if (disposition == DataDisposition::Add)
                         for (const auto& name : names)
                             body->addAlias(name);
@@ -1022,7 +1022,7 @@ SolarSystemsBuilder::parseSsc(std::istream& in, //NOSONAR
             {
                 if (std::unique_ptr<Location> location = createLocation(*objectData); location)
                 {
-                    UserCategory::loadCategories(location.get(), *objectData, disposition, directory.string());
+                    UserCategory::loadCategories(location.get(), *objectData, disposition, util::PathToString(directory));
                     location->setName(primaryName);
                     GetBodyFeaturesManager()->addLocation(parent.body(), std::move(location));
                 }

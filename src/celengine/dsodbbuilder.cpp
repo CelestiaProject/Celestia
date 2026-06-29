@@ -22,6 +22,7 @@
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
 #include <celutil/associativearray.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/gettext.h>
 #include <celutil/parser.h>
@@ -214,7 +215,7 @@ DSODatabaseBuilder::load(std::istream& in,
     util::Parser    parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    std::string s = resourcePath.string();
+    std::string s = util::PathToString(resourcePath);
     const char *d = s.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #endif
@@ -260,7 +261,7 @@ DSODatabaseBuilder::load(std::istream& in,
             continue;
         }
 
-        UserCategory::loadCategories(obj.get(), *objParams, DataDisposition::Add, resourcePath.string());
+        UserCategory::loadCategories(obj.get(), *objParams, DataDisposition::Add, util::PathToString(resourcePath));
 
         if (nextAutoCatalogNumber == AstroCatalog::InvalidIndex)
         {

@@ -28,6 +28,7 @@ extern "C"
 #include <libswscale/swscale.h>
 }
 
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include "glsupport.h"
 #include "rectangle.h"
@@ -216,22 +217,22 @@ VideoOverlay::Impl::~Impl()
 
 bool VideoOverlay::Impl::open(const std::filesystem::path& path)
 {
-    if (avformat_open_input(&ff.fmtCtx, path.string().c_str(), nullptr, nullptr) < 0)
+    if (avformat_open_input(&ff.fmtCtx, celestia::util::PathToString(path).c_str(), nullptr, nullptr) < 0)
     {
-        GetLogger()->error("VideoOverlay: failed to open '{}'\n", path.string());
+        GetLogger()->error("VideoOverlay: failed to open '{}'\n", path);
         return false;
     }
 
     if (avformat_find_stream_info(ff.fmtCtx, nullptr) < 0)
     {
-        GetLogger()->error("VideoOverlay: no stream info in '{}'\n", path.string());
+        GetLogger()->error("VideoOverlay: no stream info in '{}'\n", path);
         return false;
     }
 
     ff.videoStream = av_find_best_stream(ff.fmtCtx, AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
     if (ff.videoStream < 0)
     {
-        GetLogger()->error("VideoOverlay: no video stream in '{}'\n", path.string());
+        GetLogger()->error("VideoOverlay: no video stream in '{}'\n", path);
         return false;
     }
 

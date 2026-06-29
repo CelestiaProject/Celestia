@@ -42,7 +42,7 @@ CatalogLoader::process(const std::filesystem::path &filePath, const std::filesys
 
     util::GetLogger()->info(_("Loading {} catalog: {}\n"), typeDesc(), filePath);
     if (m_notifier)
-        m_notifier->update(filePath.filename().string());
+        m_notifier->update(util::PathToString(filePath.filename()));
 
     if (std::ifstream catalogFile(filePath);
         !catalogFile.good() || !load(catalogFile, parentPath))

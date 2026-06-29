@@ -20,6 +20,7 @@
 #include <fmt/format.h>
 
 #include <celutil/filetype.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/parser.h>
 #include <celutil/tokenizer.h>
@@ -338,7 +339,7 @@ void VirtualTexture::populateTileTree()
 
             int u = -1;
             int v = -1;
-            if (auto filename = d.path().filename().string();
+            if (auto filename = celestia::util::PathToString(d.path().filename());
                 filename.size() < tilePrefix.size()
                 || std::string_view{filename.data(), tilePrefix.size()} != tilePrefix
                 || std::sscanf(filename.c_str() + tilePrefix.size(), "%d_%d.", &u, &v) != 2

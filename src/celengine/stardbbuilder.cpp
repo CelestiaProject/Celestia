@@ -722,7 +722,7 @@ StarDatabaseBuilder::load(std::istream& in, //NOSONAR
     util::Parser parser(&tokenizer);
 
 #ifdef ENABLE_NLS
-    std::string domain = resourcePath.string();
+    std::string domain = util::PathToString(resourcePath);
     const char *d = domain.c_str();
     bindtextdomain(d, d); // domain name is the same as resource path
 #else
@@ -859,9 +859,13 @@ StarDatabaseBuilder::createOrUpdateStar(const StcHeader& header,
     {
         distance = position->norm();
     }
+    else if (star == nullptr)
+    {
+        stcError(header, _("Star has no position and no existing record to update."));
+        return false;
+    }
     else
     {
-        assert(star != nullptr);
         distance = star->getPosition().norm();
     }
 
