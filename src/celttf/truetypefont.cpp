@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/container_hash/hash.hpp>
+
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
@@ -773,7 +775,11 @@ template<> struct std::hash<FontCacheKey>
 {
     std::size_t operator()(const FontCacheKey &k) const
     {
-        return std::hash<std::string>()(celestia::util::PathToString(k.filename)) ^ std::hash<int>()(k.index) ^ std::hash<int>()(k.size);
+        std::size_t seed = 0;
+        boost::hash_combine(seed, std::filesystem::hash_value(k.filename));
+        boost::hash_combine(seed, k.index);
+        boost::hash_combine(seed, k.size);
+        return seed;
     }
 };
 
