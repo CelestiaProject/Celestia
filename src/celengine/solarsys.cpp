@@ -730,6 +730,8 @@ void ReadAtmosphere(Body* body,
     if (auto mieScaleHeight = atmosData.getLength<float>("MieScaleHeight"))
         atmosphere->mieScaleHeight = *mieScaleHeight;
     if (auto miePhaseAsymmetry = atmosData.getNumber<float>("MieAsymmetry"); miePhaseAsymmetry.has_value())
+        atmosphere->miePhaseAsymmetry = -*miePhaseAsymmetry; // invert sign to address established usage
+    if (auto miePhaseAsymmetry = atmosData.getNumber<float>("MieHGAnisotropy"); miePhaseAsymmetry.has_value())
         atmosphere->miePhaseAsymmetry = *miePhaseAsymmetry;
     if (auto rayleighCoeff = atmosData.getVector3<float>("Rayleigh"); rayleighCoeff.has_value())
         atmosphere->rayleighCoeff = *rayleighCoeff;
