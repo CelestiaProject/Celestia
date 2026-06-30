@@ -492,6 +492,8 @@ CalcMipLevelCount(int w, int h)
     return std::max(ilog2(w), ilog2(h)) + 1;
 }
 
+} // end unnamed namespace
+
 std::unique_ptr<Texture>
 CreateTextureFromImage(const Image& img,
                        Texture::AddressMode addressMode,
@@ -518,6 +520,9 @@ CreateTextureFromImage(const Image& img,
 
     return tex;
 }
+
+namespace
+{
 
 void
 LoadPrecomputedTileMipMaps(const Image& img, Image& tile,

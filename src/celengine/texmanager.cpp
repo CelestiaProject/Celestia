@@ -16,11 +16,15 @@
 #include <string_view>
 #include <system_error>
 #include <tuple>
+#include <utility>
 
 #include <boost/container_hash/hash.hpp>
 
 #include <celutil/logger.h>
+#include "asyncresourcecache.h"
+#include "resourcesystem.h"
 #include "texture.h"
+#include "texturetraits.h"
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
@@ -50,34 +54,6 @@ constexpr std::array extensions =
     "dxt5nm"sv,
     "ctx"sv,
 };
-
-std::unique_ptr<Texture>
-LoadTexture(const TextureInfo& info)
-{
-    Texture::AddressMode addressMode = Texture::EdgeClamp;
-    Texture::MipMapMode  mipMode     = Texture::DefaultMipMaps;
-    Texture::Colorspace  colorspace  = Texture::DefaultColorspace;
-
-    if (util::is_set(info.flags, TextureFlags::WrapTexture))
-        addressMode = Texture::Wrap;
-    else if (util::is_set(info.flags, TextureFlags::BorderClamp))
-        addressMode = Texture::BorderClamp;
-
-    if (util::is_set(info.flags, TextureFlags::NoMipMaps))
-        mipMode = Texture::NoMipMaps;
-
-    if (util::is_set(info.flags, TextureFlags::LinearColorspace))
-        colorspace = Texture::LinearColorspace;
-
-    if (info.bumpHeight == 0.0f)
-    {
-        GetLogger()->debug("Loading texture: {}\n", info.path);
-        return LoadTextureFromFile(info.path, addressMode, mipMode, colorspace);
-    }
-
-    GetLogger()->debug("Loading bump map: {}\n", info.path);
-    return LoadHeightMapFromFile(info.path, info.bumpHeight, addressMode);
-}
 
 } // end unnamed namespace
 
@@ -115,6 +91,8 @@ TexturePaths::getHandle(const std::filesystem::path& filename,
 {
     if (filename.empty())
         return util::TextureHandle::Invalid;
+
+    std::scoped_lock lock(m_mutex);
 
     PathSetIndex pathSetIndex = getPathSetIndex(filename, directory);
     if (pathSetIndex == PathSetIndex::Invalid)
@@ -220,8 +198,10 @@ TexturePaths::getInfo(util::TextureHandle handle,
                       TextureResolution resolution,
                       TextureInfo& info) const
 {
+    std::scoped_lock lock(m_mutex);
+
     auto handleIdx = static_cast<std::size_t>(handle);
-    if (handleIdx > m_info.size())
+    if (handleIdx >= m_info.size())
         return false;
 
     const auto& item = m_info[handleIdx];
@@ -244,6 +224,8 @@ TexturePaths::samePath(util::TextureHandle handle,
                        TextureResolution resolution1,
                        TextureResolution resolution2) const
 {
+    std::scoped_lock lock(m_mutex);
+
     auto handleIdx = static_cast<std::size_t>(handle);
     if (handleIdx >= m_info.size())
         return true;
@@ -257,70 +239,42 @@ TexturePaths::samePath(util::TextureHandle handle,
            pathSet[static_cast<std::size_t>(resolution2)];
 }
 
+// shadow textures will only load the medres texture
+constexpr auto ShadowResolution = TextureResolution::medres;
+
 TextureManager::TextureManager(std::shared_ptr<const TexturePaths> paths,
-                               TextureResolution resolution) :
+                               TextureResolution resolution,
+                               ResourceSystem& system) :
     m_paths(paths),
-    m_resolution(resolution)
+    m_resolution(resolution),
+    m_cache(std::make_unique<AsyncResourceCache<TextureTraits>>(
+        system, TextureTraits(paths, &m_resolution, resolution, &system))),
+    m_shadowCache(std::make_unique<AsyncResourceCache<TextureTraits>>(
+        system, TextureTraits(paths, nullptr, ShadowResolution, &system)))
 {
 }
+
+TextureManager::~TextureManager() = default;
 
 Texture*
 TextureManager::find(util::TextureHandle handle)
 {
-    if (handle == util::TextureHandle::Invalid)
-        return nullptr;
-
-    auto [it, inserted] = m_textures.try_emplace(handle);
-    if (!inserted)
-        return it->second.get();
-
-    GetLogger()->info("Loading texture handle {}\n", static_cast<std::uint32_t>(handle));
-
-    TextureInfo info;
-    if (!m_paths->getInfo(handle, m_resolution, info))
-        return nullptr;
-
-    it->second = LoadTexture(info);
-    return it->second.get();
+    return m_cache->find(handle);
 }
 
 Texture*
 TextureManager::findShadow(util::TextureHandle handle)
 {
-    // shadow textures will only load the medres texture
-    constexpr auto ShadowResolution = TextureResolution::medres;
-
-    if (handle == util::TextureHandle::Invalid)
-        return nullptr;
-
-    auto [it, inserted] = m_shadowTextures.try_emplace(handle);
-    if (!inserted)
-        return it->second.get();
-
+    // If the shadow resolution matches the active one (already at lores/medres,
+    // or the handle resolves to the same file at both), route through the main
+    // cache to avoid loading the same texture into GPU memory twice.
     if (m_resolution <= ShadowResolution ||
         m_paths->samePath(handle, m_resolution, ShadowResolution))
     {
-        auto [mainIt, mainInserted] = m_textures.try_emplace(handle);
-        if (!mainInserted)
-        {
-            it->second = mainIt->second;
-            return it->second.get();
-        }
-
-        TextureInfo info;
-        if (!m_paths->getInfo(handle, m_resolution, info))
-            return nullptr;
-
-        it->second = mainIt->second = LoadTexture(info);
-        return it->second.get();
+        return m_cache->find(handle);
     }
 
-    TextureInfo info;
-    if (!m_paths->getInfo(handle, ShadowResolution, info))
-        return nullptr;
-
-    it->second = LoadTexture(info);
-    return it->second.get();
+    return m_shadowCache->find(handle);
 }
 
 void
@@ -329,8 +283,11 @@ TextureManager::resolution(TextureResolution resolution)
     if (resolution == m_resolution)
         return;
 
-    m_textures.clear();
-    m_shadowTextures.clear();
+    // Both caches pick up the new resolution on their next decode (the main
+    // cache follows m_resolution via TextureTraits' pointer), so just drop
+    // what they cached for the old setting.
+    m_cache->clear();
+    m_shadowCache->clear();
     m_resolution = resolution;
 }
 

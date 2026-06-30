@@ -2,6 +2,7 @@ set(CELENGINE_SOURCES
   asterism.cpp
   asterism.h
   astroobj.h
+  asyncresourcecache.h
   atmosphere.cpp
   atmosphere.h
   axisarrow.cpp
@@ -44,6 +45,7 @@ set(CELENGINE_SOURCES
   galaxyform.h
   geometry.cpp
   geometry.h
+  geometrytraits.h
   glmarker.cpp
   globular.cpp
   globular.h
@@ -106,6 +108,8 @@ set(CELENGINE_SOURCES
   renderglsl.h
   renderinfo.h
   renderlistentry.h
+  resourcesystem.cpp
+  resourcesystem.h
   rotationmanager.cpp
   rotationmanager.h
   selection.cpp
@@ -143,6 +147,8 @@ set(CELENGINE_SOURCES
   textlayout.h
   texture.cpp
   texture.h
+  texturetraits.cpp
+  texturetraits.h
   timeline.cpp
   timeline.h
   timelinephase.cpp

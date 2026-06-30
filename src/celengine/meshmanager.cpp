@@ -32,7 +32,10 @@
 #include <celutil/logger.h>
 #include <celutil/parser.h>
 #include <celutil/tokenizer.h>
+#include "asyncresourcecache.h"
+#include "geometrytraits.h"
 #include "modelgeometry.h"
+#include "resourcesystem.h"
 #include "spheremesh.h"
 
 using celestia::util::GetLogger;
@@ -571,31 +574,22 @@ GeometryPaths::getInfo(GeometryHandle handle, GeometryInfo& info) const
     return true;
 }
 
-GeometryManager::GeometryManager(std::shared_ptr<const GeometryPaths> geometryPaths,
-                                 std::shared_ptr<TexturePaths> texturePaths) :
-    m_geometryPaths(geometryPaths),
-    m_texturePaths(texturePaths)
+GeometryTraits::GeometryTraits(std::shared_ptr<const GeometryPaths> geometryPaths,
+                               std::shared_ptr<TexturePaths> texturePaths) :
+    m_geometryPaths(std::move(geometryPaths)),
+    m_texturePaths(std::move(texturePaths))
 {
-    m_geometry.insert_or_assign(GeometryHandle::Empty, std::make_unique<EmptyGeometry>());
 }
 
-const Geometry*
-GeometryManager::find(GeometryHandle handle)
+bool
+GeometryTraits::getInfo(Handle handle, Info& out) const
 {
-    if (handle == GeometryHandle::Invalid)
-        return nullptr;
+    return m_geometryPaths->getInfo(handle, out);
+}
 
-    auto [it, inserted] = m_geometry.try_emplace(handle);
-    if (!inserted)
-        return it->second.get();
-
-    // Empty geometry is already in the map - created in constructor
-    assert(handle != GeometryHandle::Empty);
-
-    GeometryInfo info;
-    if (!m_geometryPaths->getInfo(handle, info))
-        return nullptr;
-
+std::optional<GeometryTraits::CpuData>
+GeometryTraits::decode(const Info& info) const
+{
     std::unique_ptr<cmod::Model> model;
     switch (DetermineFileType(info.path))
     {
@@ -613,45 +607,89 @@ GeometryManager::find(GeometryHandle handle)
 
     default:
         GetLogger()->error(_("Unknown model format '{}'\n"), info.path);
-        return nullptr;
+        return std::nullopt;
     }
 
     if (model == nullptr)
     {
         GetLogger()->error(_("Error loading model '{}'\n"), info.path);
-        return nullptr;
+        return std::nullopt;
     }
 
-    // Condition the model for optimal rendering
-    // Many models tend to have a lot of duplicate materials; eliminate
-    // them, since unnecessarily setting material parameters can adversely
-    // impact rendering performance. Ideally uniquification of materials
-    // would be performed just once when the model was created, but
-    // that's not the case.
+    // Condition the model for optimal rendering. Many models tend to have
+    // a lot of duplicate materials; eliminate them, since unnecessarily
+    // setting material parameters can adversely impact rendering
+    // performance. Ideally uniquification of materials would be performed
+    // just once when the model was created, but that's not the case.
     std::uint32_t originalMaterialCount = model->getMaterialCount();
     model->uniquifyMaterials();
 
-    // Sort the submeshes roughly by opacity.  This will eliminate a
-    // good number of the errors caused when translucent triangles are
+    // Sort the submeshes roughly by opacity. This eliminates a good
+    // number of the errors caused when translucent triangles are
     // rendered before geometry that they cover.
     model->sortMeshes();
 
     model->determineOpacity();
 
-    // Display some statics for the model
     GetLogger()->verbose(_("   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"),
                          model->getVertexCount(),
                          model->getPrimitiveCount(),
                          originalMaterialCount,
                          model->getMaterialCount());
 
-    it->second = std::make_unique<ModelGeometry>(std::move(model));
-    return it->second.get();
+    return std::optional<CpuData>(std::move(model));
 }
 
-RenderGeometryManager::RenderGeometryManager(std::shared_ptr<GeometryManager> geometryManager) :
-    m_geometryManager(geometryManager)
+std::unique_ptr<Geometry>
+GeometryTraits::upload(CpuData&& model) const
 {
+    if (model == nullptr)
+        return nullptr;
+    // No GL here: ModelGeometry is the CPU wrapper that a later
+    // RenderGeometryManager::find() turns into VBOs/VAOs.
+    return std::make_unique<ModelGeometry>(std::move(model));
+}
+
+Geometry*
+GeometryTraits::placeholder() const noexcept
+{
+    // No placeholder: callers already skip null geometry.
+    return nullptr;
+}
+
+GeometryManager::GeometryManager(std::shared_ptr<const GeometryPaths> geometryPaths,
+                                 std::shared_ptr<TexturePaths> texturePaths,
+                                 ResourceSystem& system) :
+    m_geometryPaths(geometryPaths),
+    m_texturePaths(texturePaths),
+    m_cache(std::make_unique<AsyncResourceCache<GeometryTraits>>(
+        system, GeometryTraits(geometryPaths, texturePaths)))
+{
+}
+
+GeometryManager::~GeometryManager() = default;
+
+const Geometry*
+GeometryManager::find(GeometryHandle handle)
+{
+    if (handle == GeometryHandle::Invalid)
+        return nullptr;
+    if (handle == GeometryHandle::Empty)
+        return m_emptyGeometry.get();
+    return m_cache->find(handle);
+}
+
+RenderGeometryManager::RenderGeometryManager(std::shared_ptr<GeometryManager> geometryManager,
+                                             ResourceSystem& system) :
+    m_geometryManager(geometryManager),
+    m_system(&system)
+{
+    m_system->registerCache(this);
+}
+
+RenderGeometryManager::~RenderGeometryManager()
+{
+    m_system->unregisterCache(this);
 }
 
 RenderGeometry*
@@ -660,16 +698,38 @@ RenderGeometryManager::find(GeometryHandle handle)
     if (handle == GeometryHandle::Invalid)
         return nullptr;
 
-    auto [it, inserted] = m_geometry.try_emplace(handle);
-    if (!inserted)
-        return it->second.get();
+    const std::uint64_t frame = m_system->currentFrame();
 
+    if (auto it = m_geometry.find(handle); it != m_geometry.end())
+    {
+        it->second.lastUsedFrame = frame;
+        return it->second.geometry.get();
+    }
+
+    // Still decoding on a worker: don't memoize the nullptr, the decode may
+    // finish next frame.
     const Geometry* geometry = m_geometryManager->find(handle);
     if (!geometry)
         return nullptr;
 
-    it->second = geometry->createRenderGeometry();
-    return it->second.get();
+    Entry entry;
+    entry.geometry = geometry->createRenderGeometry();
+    entry.lastUsedFrame = frame;
+    auto [it, inserted] = m_geometry.try_emplace(handle, std::move(entry));
+    return it->second.geometry.get();
+}
+
+void
+RenderGeometryManager::purgeStale(std::uint64_t graceFrames)
+{
+    const std::uint64_t now = m_system->currentFrame();
+    for (auto it = m_geometry.begin(); it != m_geometry.end(); )
+    {
+        if ((now - it->second.lastUsedFrame) > graceFrames)
+            it = m_geometry.erase(it);
+        else
+            ++it;
+    }
 }
 
 } // end namespace celestia::engine

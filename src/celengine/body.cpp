@@ -1395,16 +1395,24 @@ BodyFeaturesManager::computeLocations(const Body* body, engine::GeometryManager&
     if (bodyLocations.locationsComputed)
         return;
 
-    bodyLocations.locationsComputed = true;
-
     // No work to do if there's no mesh, or if the mesh cannot be loaded
     auto geometry = body->getGeometry();
     if (geometry == engine::GeometryHandle::Invalid)
+    {
+        bodyLocations.locationsComputed = true;
         return;
+    }
 
     const Geometry* g = geometryManager.find(geometry);
     if (g == nullptr)
+    {
+        // Still decoding on a worker: leave locationsComputed false and retry
+        // next frame. If the model is permanently unavailable we just retry
+        // forever, which is harmless.
         return;
+    }
+
+    bodyLocations.locationsComputed = true;
 
     // TODO: Implement separate radius and bounding radius so that this hack is
     // not necessary.

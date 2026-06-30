@@ -27,6 +27,7 @@
 #include "spheremesh.h"
 #include "lodspheremesh.h"
 #include "geometry.h"
+#include "resourcesystem.h"
 #include "texmanager.h"
 #include "renderinfo.h"
 #include "renderglsl.h"
@@ -405,10 +406,12 @@ bool Renderer::init(int winWidth, int winHeight,
                     const DetailOptions& _detailOptions,
                     engine::TextureResolution resolution,
                     std::shared_ptr<engine::GeometryManager> geometryManager,
-                    std::shared_ptr<const engine::TexturePaths> texturePaths)
+                    std::shared_ptr<const engine::TexturePaths> texturePaths,
+                    std::shared_ptr<engine::ResourceSystem> resourceSystem)
 {
-    m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager);
-    m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution);
+    m_resourceSystem = std::move(resourceSystem);
+    m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager, *m_resourceSystem);
+    m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution, *m_resourceSystem);
     detailOptions = _detailOptions;
 
     m_atmosphereRenderer->initGL();
@@ -1381,6 +1384,11 @@ void Renderer::render(const Observer& observer,
     realTime = observer.getRealTime();
 
     frameCount++;
+    // Advance the frame, upload finished decodes (within budget), and
+    // periodically evict stale cache entries.
+    m_resourceSystem->beginFrame();
+    m_resourceSystem->drainCaches();
+    m_resourceSystem->purgeIfDue();
     settingsChanged = false;
 
     // Compute the size of a pixel
@@ -2269,7 +2277,7 @@ void Renderer::renderObject(const Vector3f& pos,
                             const Observer& observer,
                             float nearPlaneDistance,
                             float farPlaneDistance,
-                            RenderProperties& obj,
+                            const RenderProperties& obj,
                             const LightingState& ls,
                             const Matrices &m)
 {

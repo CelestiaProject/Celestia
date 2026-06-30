@@ -44,6 +44,7 @@ class CurvePlot;
 class CurvePlotVertexBuffer;
 class PointStarVertexBuffer;
 namespace celestia::render { class PsfStarVertexBuffer; class StarPipelineOwner; }
+namespace celestia::engine { class ResourceSystem; }
 class Observer;
 struct Surface;
 class Texture;
@@ -142,7 +143,8 @@ class Renderer
 
     bool init(int, int, const DetailOptions&, celestia::engine::TextureResolution,
               std::shared_ptr<celestia::engine::GeometryManager>,
-              std::shared_ptr<const celestia::engine::TexturePaths>);
+              std::shared_ptr<const celestia::engine::TexturePaths>,
+              std::shared_ptr<celestia::engine::ResourceSystem>);
     void shutdown() {};
     void resize(int, int);
     float getAspectRatio() const;
@@ -488,7 +490,7 @@ class Renderer
                       const Observer& observer,
                       float nearPlaneDistance,
                       float farPlaneDistance,
-                      RenderProperties& obj,
+                      const RenderProperties& obj,
                       const LightingState&,
                       const Matrices&);
 
@@ -793,6 +795,7 @@ class Renderer
     std::unique_ptr<celestia::render::RingRenderer> m_ringRenderer;
     std::unique_ptr<celestia::render::SkyGridRenderer> m_skyGridRenderer;
 
+    std::shared_ptr<celestia::engine::ResourceSystem> m_resourceSystem;
     std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
     std::unique_ptr<celestia::engine::TextureManager> m_textureManager;
 
