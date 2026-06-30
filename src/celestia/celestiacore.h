@@ -194,6 +194,7 @@ public:
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer(celestia::engine::TextureResolution,
                       std::optional<bool> sRGBRendering = std::nullopt,
+                      std::optional<bool> reverseZ = std::nullopt,
                       bool useMesaPackInvert = true);
     void start(double t);
     void start();

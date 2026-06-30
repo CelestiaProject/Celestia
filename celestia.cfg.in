@@ -527,4 +527,11 @@ StarTextures
 #------------------------------------------------------------------------
 # SRGBRendering true
 
+#------------------------------------------------------------------------
+# ReverseZ replaces depth-buffer partitioning with reverse-Z + an infinite
+# far plane. Requires ARB_clip_control / EXT_clip_control (or GL 4.5+);
+# falls back to standard partitioning if unavailable.
+# The default value is false.
+#------------------------------------------------------------------------
+# ReverseZ true
 }

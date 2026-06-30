@@ -442,8 +442,25 @@ bool Renderer::init(int winWidth, int winHeight,
         detailOptions.useMesaPackInvert = false;
 #endif
 
-    // LEQUAL rather than LESS required for multipass rendering
-    glDepthFunc(GL_LEQUAL);
+    // Reverse-Z needs clip-control for ZERO_TO_ONE NDC; without it, fall back
+    // to standard partitioning rather than the precision-poor [-1, +1] variant.
+    if (gl::reverseZ && !(gl::ARB_clip_control || gl::EXT_clip_control))
+    {
+        gl::reverseZ = false;
+        GetLogger()->warn("ReverseZ requested but clip-control is unavailable; falling back to standard depth.\n");
+    }
+
+    if (gl::reverseZ)
+    {
+        glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+        glDepthFunc(GL_GEQUAL);
+        glClearDepthf(0.0f);
+    }
+    else
+    {
+        glDepthFunc(GL_LEQUAL);
+        glClearDepthf(1.0f);
+    }
 
     resize(winWidth, winHeight);
 
@@ -457,6 +474,12 @@ void Renderer::resize(int width, int height)
     viewportHeight = height;
     projectionMode->setSize(static_cast<float>(viewportWidth), static_cast<float>(viewportHeight));
     m_orthoProjMatrix = math::Ortho2D(0.0f, static_cast<float>(viewportWidth), 0.0f, static_cast<float>(viewportHeight));
+    if (gl::reverseZ)
+    {
+        // Remap Ortho2D z output from [-1, +1] to [0, +1] reverse-Z.
+        m_orthoProjMatrix(2, 2) = -0.5f;
+        m_orthoProjMatrix(2, 3) =  0.5f;
+    }
 }
 
 void Renderer::setFieldOfView(float _fov)
@@ -2589,14 +2612,13 @@ void Renderer::renderObject(const Vector3f& pos,
 
             cloudTex->bind();
 
-            // Cloud layers can be trouble for the depth buffer, since they tend
-            // to be very close to the surface of a planet relative to the radius
-            // of the planet. We'll help out by offsetting the cloud layer toward
-            // the viewer.
+            // Pull clouds toward the viewer to avoid z-fighting with the surface
+            // (sign flipped under reverse-Z where closer = larger depth).
             if (distance > radius * 1.1f)
             {
                 glEnable(GL_POLYGON_OFFSET_FILL);
-                glPolygonOffset(-1.0f, -1.0f);
+                float offset = gl::reverseZ ? 1.0f : -1.0f;
+                glPolygonOffset(offset, offset);
             }
 
             if (lit)
@@ -5623,6 +5645,31 @@ Renderer::buildDepthPartitions()
     // We want to avoid overpartitioning the depth buffer. In this stage, we
     // coalesce partitions that have small spans in the depth buffer.
     // TODO: Implement this step!
+
+    // Collapse partitions: reverse-Z gives uniform precision, so the per-
+    // interval depth-range squeeze is pure waste.
+    if (gl::reverseZ && nIntervals > 1)
+    {
+        float collapsedNearZ = depthPartitions[0].nearZ;
+        float collapsedFarZ  = depthPartitions[0].farZ;
+        for (int j = 1; j < nIntervals; j++)
+        {
+            collapsedNearZ = std::max(collapsedNearZ, depthPartitions[j].nearZ);
+            collapsedFarZ  = std::min(collapsedFarZ,  depthPartitions[j].farZ);
+        }
+        // Floor at -MinNearPlaneDistance: fp32 noise around 0 in the closest
+        // partition can flip nearZ positive, which makes the reverse-Z near
+        // negative and surface depths jitter near vs far frame to frame.
+        collapsedNearZ = std::min(collapsedNearZ, -MinNearPlaneDistance);
+        depthPartitions.clear();
+        DepthBufferPartition collapsed;
+        collapsed.index = 0;
+        collapsed.nearZ = collapsedNearZ;
+        collapsed.farZ  = collapsedFarZ;
+        depthPartitions.push_back(collapsed);
+        nIntervals = 1;
+    }
+
     return nIntervals;
 }
 
