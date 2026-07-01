@@ -47,6 +47,13 @@ constexpr int MAX_DEPTH = 20;
 // exceeds this many pixels.
 constexpr float CHUNK_PIXEL_ERROR = 0.5f;
 
+// Grazing-angle floor for the silhouette foreshortening correction. Near the limb
+// a chunk is compressed tangentially into a thin screen sliver, so its outline
+// curvature-per-pixel is far higher than the radial sagitta metric alone reports;
+// dividing the error by the grazing cosine refines those chunks harder. The floor
+// caps the boost at 1/CHUNK_GRAZING_FLOOR so exact-limb chunks stay bounded.
+constexpr float CHUNK_GRAZING_FLOOR = 0.2f;
+
 // Soft cap on cached chunk meshes; colder ones are evicted after each frame.
 constexpr std::size_t MAX_CACHED_CHUNKS = 4096;
 
@@ -433,20 +440,29 @@ LODSphereMesh::shouldSplit(int depth, std::uint32_t i, std::uint32_t j,
     Vector3f c01 = spherePoint(s0, t1) * lodGeometryScale;
 
     Vector3f center = (c00 + c10 + c11 + c01) * 0.25f;
-    float chunkRadius = std::sqrt(std::max(std::max((c00 - center).squaredNorm(),
-                                                    (c10 - center).squaredNorm()),
-                                           std::max((c11 - center).squaredNorm(),
-                                                    (c01 - center).squaredNorm())));
+    float chunkRadius = std::sqrt(std::max({ (c00 - center).squaredNorm(),
+                                             (c10 - center).squaredNorm(),
+                                             (c11 - center).squaredNorm(),
+                                             (c01 - center).squaredNorm() }));
 
-    float edge = std::max(std::max((c10 - c00).norm(), (c01 - c00).norm()),
-                          std::max((c11 - c10).norm(), (c11 - c01).norm()));
+    float edge = std::sqrt(std::max({ (c10 - c00).squaredNorm(), (c01 - c00).squaredNorm(),
+                                      (c11 - c10).squaredNorm(), (c11 - c01).squaredNorm() }));
 
     // Per-quad sagitta: a chord c deviates from its arc by ~c^2/8.
     float quadChord = edge / static_cast<float>(CHUNK_RES);
     float geoError = quadChord * quadChord * 0.125f;
 
     float dist = std::max((eyePos - center).norm() - chunkRadius, 1.0e-6f);
-    float screenError = geoError / (dist * lodPixelSize);
+
+    // Foreshortening correction: at grazing angles the chunk projects to a thin
+    // sliver, packing more outline curvature into each pixel than the radial
+    // sagitta measures. Boost the error by 1/cos(view, normal) so limb chunks
+    // (the hard lit/sky edge) refine while head-on chunks stay coarse.
+    Vector3f n = center.normalized();
+    Vector3f v = (eyePos - center).normalized();
+    float grazing = std::max(std::abs(n.dot(v)), CHUNK_GRAZING_FLOOR);
+
+    float screenError = geoError / (grazing * dist * lodPixelSize);
     return screenError > CHUNK_PIXEL_ERROR;
 }
 
