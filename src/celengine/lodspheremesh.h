@@ -1,6 +1,6 @@
 // lodspheremesh.h
 //
-// Copyright (C) 2001-present, Celestia Development Team
+// Copyright (C) 2026-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 #include <celrender/gl/buffer.h>
 
 // Set to 1 to draw the sphere tessellation as a wireframe.
-#define LODSPHERE_WIREFRAME 0
+#define LODSPHERE_WIREFRAME 0 // NOSONAR
 
 class Texture;
 class CelestiaGLProgram;
@@ -161,6 +161,15 @@ private:
     // Edge-stitch mask: a bit is set when the neighbour across that edge is coarser.
     unsigned int computeEdgeMask(int depth, std::uint32_t i, std::uint32_t j) const;
     TexTile resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j);
+
+    // render() phases (kept separate to bound each function's complexity):
+    // frustum/horizon-cull the balanced leaves into a texID-sorted draw list,
+    // concatenate their meshes into the batch buffers, bind the batch, and draw.
+    void cullLeaves(const celestia::math::Frustum& frustum, const Eigen::Vector3f& eyePos,
+                    bool enableHorizonCull);
+    void buildBatch(unsigned int attributes);
+    void uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* program);
+    void drawBatch(unsigned int attributes);
 
     static constexpr int NUM_STITCH_TEMPLATES = 16;
 

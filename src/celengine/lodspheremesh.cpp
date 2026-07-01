@@ -1,6 +1,6 @@
 // lodspheremesh.cpp
 //
-// Copyright (C) 2000-2009, theCelestia Development Team
+// Copyright (C) 2026-present, the Celestia Development Team
 // Original version by Chris Laurel <claurel@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -27,6 +27,8 @@
 #include <celmath/frustum.h>
 #include <celutil/array_view.h>
 
+#define PTR(p) (reinterpret_cast<void*>(p)) // NOSONAR
+
 namespace gl = celestia::gl;
 namespace math = celestia::math;
 
@@ -44,8 +46,10 @@ constexpr int CHUNK_RES = 16;
 constexpr int MAX_DEPTH = 20;
 
 // Split a node while its projected mesh-to-sphere deviation (per-quad sagitta)
-// exceeds this many pixels.
-constexpr float CHUNK_PIXEL_ERROR = 0.5f;
+// exceeds this many pixels. The grazing correction below sharpens the silhouette
+// independently, so this front-face budget can stay loose without the limb
+// degrading (effective limb threshold is CHUNK_GRAZING_FLOOR * this).
+constexpr float CHUNK_PIXEL_ERROR = 1.0f;
 
 // Grazing-angle floor for the silhouette foreshortening correction. Near the limb
 // a chunk is compressed tangentially into a thin screen sliver, so its outline
@@ -92,11 +96,6 @@ tangentAt(double sf)
                     static_cast<float>(-std::cos(thetaA)));
 }
 
-inline void*
-bufferOffset(std::size_t n)
-{
-    return reinterpret_cast<void*>(n);
-}
 
 // Floor of log2 for a positive (power-of-two) value.
 inline int
@@ -232,80 +231,92 @@ LODSphereMesh::ensureBuffers()
 }
 
 
-// Build the 16 shared index templates, one per edge-stitch mask. A stitched edge
-// snaps its odd boundary vertices to the even neighbour and drops the resulting
-// zero-area triangles, matching a coarser neighbour watertight (no T-junctions).
+// Triangle index template for one edge-stitch mask: a CHUNK_RES grid where each
+// stitched edge snaps its odd boundary vertices to the even neighbour, dropping
+// the resulting zero-area triangles so the seam matches a coarser neighbour
+// watertight (no T-junctions).
+static void
+buildStitchTriangles(int mask, std::vector<unsigned int>& out)
+{
+    constexpr int N = CHUNK_RES;
+    constexpr auto stride = static_cast<unsigned int>(N + 1);
+    auto vid = [](int a, int b) {
+        return static_cast<unsigned int>(a * static_cast<int>(stride) + b);
+    };
+    auto snap = [mask](int a, int b) {
+        if (a == 0 && (mask & EDGE_LEFT)   != 0 && (b & 1) != 0) --b;
+        if (a == N && (mask & EDGE_RIGHT)  != 0 && (b & 1) != 0) --b;
+        if (b == 0 && (mask & EDGE_BOTTOM) != 0 && (a & 1) != 0) --a;
+        if (b == N && (mask & EDGE_TOP)    != 0 && (a & 1) != 0) --a;
+        return std::pair<int, int>(a, b);
+    };
+
+    out.clear();
+    out.reserve(static_cast<std::size_t>(N) * N * 6);
+    for (int ii = 0; ii < N; ++ii)
+    {
+        for (int jj = 0; jj < N; ++jj)
+        {
+            auto [a00, b00] = snap(ii,     jj);
+            auto [a10, b10] = snap(ii + 1, jj);
+            auto [a01, b01] = snap(ii,     jj + 1);
+            auto [a11, b11] = snap(ii + 1, jj + 1);
+            unsigned int v00 = vid(a00, b00);
+            unsigned int v10 = vid(a10, b10);
+            unsigned int v01 = vid(a01, b01);
+            unsigned int v11 = vid(a11, b11);
+            // Winding is reversed vs the cube-sphere blueprint: here
+            // d/dsf x d/dtf points inward, so a CCW quad in (sf,tf) would face
+            // inward and be back-face culled.
+            if (v00 != v10 && v10 != v11 && v00 != v11)
+            {
+                out.push_back(v00); out.push_back(v11); out.push_back(v10);
+            }
+            if (v00 != v11 && v11 != v01 && v00 != v01)
+            {
+                out.push_back(v00); out.push_back(v01); out.push_back(v11);
+            }
+        }
+    }
+}
+
+
+#if LODSPHERE_WIREFRAME
+// Wireframe line template from a triangle template's edges, deduped (undirected).
+static void
+buildStitchLines(const std::vector<unsigned int>& tris, std::vector<unsigned int>& out)
+{
+    std::set<std::pair<unsigned int, unsigned int>> edges;
+    for (std::size_t t = 0; t + 2 < tris.size(); t += 3)
+    {
+        unsigned int a = tris[t], b = tris[t + 1], c = tris[t + 2];
+        edges.emplace(std::min(a, b), std::max(a, b));
+        edges.emplace(std::min(b, c), std::max(b, c));
+        edges.emplace(std::min(c, a), std::max(c, a));
+    }
+    out.clear();
+    out.reserve(edges.size() * 2);
+    for (const auto& e : edges)
+    {
+        out.push_back(e.first);
+        out.push_back(e.second);
+    }
+}
+#endif
+
+
+// Build the 16 shared index templates, one per edge-stitch mask.
 void
 LODSphereMesh::ensureStitchTemplates()
 {
     if (stitchTemplatesBuilt)
         return;
 
-    constexpr int N = CHUNK_RES;
-    const auto stride = static_cast<unsigned int>(N + 1);
-    auto vid = [stride](int a, int b) {
-        return static_cast<unsigned int>(a * static_cast<int>(stride) + b);
-    };
-
-    std::vector<unsigned int> indices;
     for (int mask = 0; mask < NUM_STITCH_TEMPLATES; ++mask)
     {
-        auto snap = [mask, N](int a, int b) {
-            if (a == 0 && (mask & EDGE_LEFT)   != 0 && (b & 1) != 0) --b;
-            if (a == N && (mask & EDGE_RIGHT)  != 0 && (b & 1) != 0) --b;
-            if (b == 0 && (mask & EDGE_BOTTOM) != 0 && (a & 1) != 0) --a;
-            if (b == N && (mask & EDGE_TOP)    != 0 && (a & 1) != 0) --a;
-            return std::pair<int, int>(a, b);
-        };
-
-        indices.clear();
-        indices.reserve(static_cast<std::size_t>(N) * N * 6);
-        for (int ii = 0; ii < N; ++ii)
-        {
-            for (int jj = 0; jj < N; ++jj)
-            {
-                auto [a00, b00] = snap(ii,     jj);
-                auto [a10, b10] = snap(ii + 1, jj);
-                auto [a01, b01] = snap(ii,     jj + 1);
-                auto [a11, b11] = snap(ii + 1, jj + 1);
-                unsigned int v00 = vid(a00, b00);
-                unsigned int v10 = vid(a10, b10);
-                unsigned int v01 = vid(a01, b01);
-                unsigned int v11 = vid(a11, b11);
-                // Winding is reversed vs the cube-sphere blueprint: here
-                // d/dsf x d/dtf points inward, so a CCW quad in (sf,tf) would face
-                // inward and be back-face culled.
-                if (v00 != v10 && v10 != v11 && v00 != v11)
-                {
-                    indices.push_back(v00); indices.push_back(v11); indices.push_back(v10);
-                }
-                if (v00 != v11 && v11 != v01 && v00 != v01)
-                {
-                    indices.push_back(v00); indices.push_back(v01); indices.push_back(v11);
-                }
-            }
-        }
-
-        stitchTemplate[mask] = indices;
-
+        buildStitchTriangles(mask, stitchTemplate[mask]);
 #if LODSPHERE_WIREFRAME
-        // Wireframe template from the triangle edges, deduped (undirected).
-        std::set<std::pair<unsigned int, unsigned int>> edges;
-        for (std::size_t t = 0; t + 2 < indices.size(); t += 3)
-        {
-            unsigned int a = indices[t], b = indices[t + 1], c = indices[t + 2];
-            edges.emplace(std::min(a, b), std::max(a, b));
-            edges.emplace(std::min(b, c), std::max(b, c));
-            edges.emplace(std::min(c, a), std::max(c, a));
-        }
-        std::vector<unsigned int> lineIndices;
-        lineIndices.reserve(edges.size() * 2);
-        for (const auto& e : edges)
-        {
-            lineIndices.push_back(e.first);
-            lineIndices.push_back(e.second);
-        }
-        stitchLineTemplate[mask] = std::move(lineIndices);
+        buildStitchLines(stitchTemplate[mask], stitchLineTemplate[mask]);
 #endif
     }
 
@@ -701,9 +712,35 @@ LODSphereMesh::render(unsigned int attributes,
 
     glBindVertexArray(vao);
 
-    // Pass 2: cull leaves outside the frustum or behind the horizon, then gather
-    // survivors with their per-texture tile bindings. Culling happens here (not in
-    // pass 1) so balance and stitch still seal seams against off-screen neighbours.
+    // Pass 2: cull to a texID-sorted draw list, concatenate the survivors into the
+    // batch buffers, then bind and draw. Culling happens here (not in pass 1) so
+    // balance and stitch still seal seams against off-screen neighbours.
+    cullLeaves(frustum, eyePos, enableHorizonCull);
+    buildBatch(attributes);
+    if (!batchIndices.empty())
+    {
+        uploadAndBindBatch(attributes, program);
+        drawBatch(attributes);
+    }
+
+    for (int i = 0; i < nTexturesUsed; ++i)
+        tex[i]->endUsage();
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    evictColdChunks();
+}
+
+
+// Cull the balanced leaves against the frustum and horizon, resolving each
+// survivor's per-texture tile bindings, then sort by texID so leaves sharing
+// bindings (common via coarser-ancestor fallback) can batch into one draw.
+void
+LODSphereMesh::cullLeaves(const math::Frustum& frustum, const Eigen::Vector3f& eyePos,
+                          bool enableHorizonCull)
+{
     frameDraws.clear();
     for (const ChunkKey& key : frameLeaves)
     {
@@ -725,8 +762,6 @@ LODSphereMesh::render(unsigned int attributes,
         frameDraws.push_back(leaf);
     }
 
-    // Sort by per-texture texID so leaves resolving to the same bindings (common via
-    // coarser-ancestor fallback) draw in one call.
     std::sort(frameDraws.begin(), frameDraws.end(),
               [n = nTexturesUsed](const DrawLeaf& a, const DrawLeaf& b)
     {
@@ -737,9 +772,15 @@ LODSphereMesh::render(unsigned int attributes,
         }
         return false;
     });
+}
 
-    // Build the batch in sorted order, one DrawGroup per maximal run of identical
-    // bindings. Atlas UVs are baked, so the index range plus texIDs describe a draw.
+
+// Concatenate the sorted draw list into the batch buffers, opening a new DrawGroup
+// at each change of texID bindings. Atlas UVs are baked, so an index range plus
+// texIDs fully describe a draw.
+void
+LODSphereMesh::buildBatch(unsigned int attributes)
+{
     batchVertices.clear();
     batchIndices.clear();
     frameGroups.clear();
@@ -774,85 +815,82 @@ LODSphereMesh::render(unsigned int attributes,
         appendChunk(*chunk, leaf.mask, leaf.tiles, nTexturesUsed);
         frameGroups.back().count += batchIndices.size() - before;
     }
+}
 
-    if (!batchIndices.empty())
+
+// Upload the batch buffers and point the active vertex attributes at them.
+void
+LODSphereMesh::uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* program)
+{
+    batchVBO.setData(celestia::util::array_view<void>(
+                         batchVertices.data(),
+                         batchVertices.size() * sizeof(float)),
+                     gl::Buffer::BufferUsage::StreamDraw);
+
+    const auto stride = static_cast<GLsizei>(batchVertexSize * sizeof(float));
+
+    glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
+                          3, GL_FLOAT, GL_FALSE, stride, PTR(0));
+    if ((attributes & Normals) != 0)
     {
-        batchVBO.setData(celestia::util::array_view<void>(
-                             batchVertices.data(),
-                             batchVertices.size() * sizeof(float)),
-                         gl::Buffer::BufferUsage::StreamDraw);
-
-        const auto stride = static_cast<GLsizei>(batchVertexSize * sizeof(float));
-
-        glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
-                              3, GL_FLOAT, GL_FALSE, stride, bufferOffset(0));
-        if ((attributes & Normals) != 0)
-        {
-            glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-            glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
-                                  3, GL_FLOAT, GL_FALSE, stride, bufferOffset(0));
-        }
-        if ((attributes & Tangents) != 0)
-        {
-            glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-            glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
-                                  3, GL_FLOAT, GL_FALSE, stride, bufferOffset(3 * sizeof(float)));
-        }
-        for (int tc = 0; tc < nTexturesUsed; ++tc)
-        {
-            // Atlas UVs are baked, so the shader's texcoord transform is identity.
-            program->texCoordTransforms[tc].base = Vector2f(0.0f, 0.0f);
-            program->texCoordTransforms[tc].delta = Vector2f(1.0f, 1.0f);
-            glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + tc);
-            glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex + tc,
-                                  2, GL_FLOAT, GL_FALSE, stride,
-                                  bufferOffset((prefixFloats + 2 * tc) * sizeof(float)));
-        }
-
-        batchIBO.setData(celestia::util::array_view<void>(
-                             batchIndices.data(),
-                             batchIndices.size() * sizeof(unsigned int)),
-                         gl::Buffer::BufferUsage::StreamDraw);
-
-#if LODSPHERE_WIREFRAME
-        const GLenum primitive = GL_LINES;
-#else
-        const GLenum primitive = GL_TRIANGLES;
-#endif
-        for (const DrawGroup& g : frameGroups)
-        {
-            for (int tc = 0; tc < nTexturesUsed; ++tc)
-            {
-                if (nTexturesUsed > 1)
-                    glActiveTexture(GL_TEXTURE0 + tc);
-                glBindTexture(GL_TEXTURE_2D, g.texID[tc]);
-            }
-            if (nTexturesUsed > 1)
-                glActiveTexture(GL_TEXTURE0);
-
-            glDrawElements(primitive, static_cast<GLsizei>(g.count),
-                           GL_UNSIGNED_INT,
-                           bufferOffset(g.first * sizeof(unsigned int)));
-        }
-
-        glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
-        if ((attributes & Normals) != 0)
-            glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
-        if ((attributes & Tangents) != 0)
-            glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
-        for (int tc = 0; tc < nTexturesUsed; ++tc)
-            glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + tc);
+        glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::NormalAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, stride, PTR(0));
+    }
+    if ((attributes & Tangents) != 0)
+    {
+        glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+        glVertexAttribPointer(CelestiaGLProgram::TangentAttributeIndex,
+                              3, GL_FLOAT, GL_FALSE, stride, PTR(3 * sizeof(float)));
+    }
+    for (int tc = 0; tc < nTexturesUsed; ++tc)
+    {
+        // Atlas UVs are baked, so the shader's texcoord transform is identity.
+        program->texCoordTransforms[tc].base = Vector2f(0.0f, 0.0f);
+        program->texCoordTransforms[tc].delta = Vector2f(1.0f, 1.0f);
+        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + tc);
+        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex + tc,
+                              2, GL_FLOAT, GL_FALSE, stride,
+                              PTR((prefixFloats + 2 * tc) * sizeof(float)));
     }
 
-    for (int i = 0; i < nTexturesUsed; ++i)
-        tex[i]->endUsage();
+    batchIBO.setData(celestia::util::array_view<void>(
+                         batchIndices.data(),
+                         batchIndices.size() * sizeof(unsigned int)),
+                     gl::Buffer::BufferUsage::StreamDraw);
+}
 
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    evictColdChunks();
+// Draw one glDrawElements per DrawGroup, binding its textures first, then release
+// the vertex attributes.
+void
+LODSphereMesh::drawBatch(unsigned int attributes)
+{
+    const GLenum primitive = LODSPHERE_WIREFRAME ? GL_LINES : GL_TRIANGLES;
+    for (const DrawGroup& g : frameGroups)
+    {
+        for (int tc = 0; tc < nTexturesUsed; ++tc)
+        {
+            if (nTexturesUsed > 1)
+                glActiveTexture(GL_TEXTURE0 + tc);
+            glBindTexture(GL_TEXTURE_2D, g.texID[tc]);
+        }
+        if (nTexturesUsed > 1)
+            glActiveTexture(GL_TEXTURE0);
+
+        glDrawElements(primitive, static_cast<GLsizei>(g.count),
+                       GL_UNSIGNED_INT,
+                       PTR(g.first * sizeof(unsigned int)));
+    }
+
+    glDisableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
+    if ((attributes & Normals) != 0)
+        glDisableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
+    if ((attributes & Tangents) != 0)
+        glDisableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
+    for (int tc = 0; tc < nTexturesUsed; ++tc)
+        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + tc);
 }
 
 
