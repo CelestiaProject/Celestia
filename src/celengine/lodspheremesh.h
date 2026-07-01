@@ -98,13 +98,18 @@ private:
     };
 
     // A CPU-side chunk mesh. Triangle indices live in shared stitch templates (all
-    // chunks share grid topology); only vertices differ. Each vertex is position
-    // [+ tangent], then (when textured) the (sf, tf) map fraction in [0,1] from
-    // which the batch atlas UV is baked. Kept on the CPU so visible chunks can be
-    // concatenated into one batch buffer; lastUsed drives cache eviction.
+    // chunks share grid topology); only vertices differ. Each source vertex is
+    // position [+ tangent], then (when textured) the (sf, tf) map fraction in [0,1]
+    // from which the batch atlas UV is baked. baked caches the batch-layout vertices
+    // (atlas UVs resolved) for the current tile binding so frames that reuse a chunk
+    // skip re-baking. lastUsed drives cache eviction.
     struct ChunkMesh
     {
         std::vector<float> vertices;
+        std::vector<float> baked;
+        std::array<unsigned int, MAX_SPHERE_MESH_TEXTURES> bakedTexID{};
+        int bakedVertexSize{ 0 };
+        int bakedTiles{ -1 }; // -1 => baked is stale
         std::uint64_t lastUsed{ 0 };
     };
 
@@ -140,9 +145,15 @@ private:
     void ensureBuffers();
     void ensureStitchTemplates();
     ChunkMesh* getOrCreateChunk(const ChunkKey& key, unsigned int attributes);
-    // Append a chunk's vertices (baking each texture's atlas UV) and its edgeMask
-    // stitch template (offset to the chunk's base vertex) to the batch buffers.
-    void appendChunk(const ChunkMesh& chunk, unsigned int edgeMask,
+    // Ensure chunk.baked holds the batch-layout vertices for the current tile
+    // binding, re-baking only when the binding or vertex layout changed.
+    bool bakeChunk(ChunkMesh& chunk,
+                   const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
+                   int nTiles);
+    // Append a chunk's vertices (baking each texture's atlas UV, cached per binding)
+    // and its edgeMask stitch template (offset to the chunk's base vertex) to the
+    // batch buffers.
+    void appendChunk(ChunkMesh& chunk, unsigned int edgeMask,
                      const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
                      int nTiles);
     void evictColdChunks();

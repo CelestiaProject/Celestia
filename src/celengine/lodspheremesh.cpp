@@ -384,43 +384,79 @@ LODSphereMesh::getOrCreateChunk(const ChunkKey& key, unsigned int attributes)
 // index biased to its first batch vertex) to the batch buffers. Atlas UVs are
 // baked from the source map fraction and tile base/delta so the shader's texcoord
 // transform stays identity and chunks sharing a texID batch together.
+// Ensure chunk.baked holds the batch-layout vertices (atlas UVs resolved) for the
+// current tile binding. Returns true when it had to (re)bake. The baked block is a
+// pure function of the chunk geometry and its resolved tiles, neither of which
+// depends on the camera, so once baked it is reused across frames until the tile
+// binding (texID) or vertex layout changes.
+bool
+LODSphereMesh::bakeChunk(ChunkMesh& chunk,
+                         const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
+                         int nTiles)
+{
+    bool fresh = chunk.bakedTiles == nTiles
+                 && chunk.bakedVertexSize == batchVertexSize;
+    for (int t = 0; fresh && t < nTiles; ++t)
+        fresh = chunk.bakedTexID[t] == tiles[t].texID;
+    if (fresh)
+        return false;
+
+    std::size_t nVerts = chunk.vertices.size() / static_cast<std::size_t>(srcVertexSize);
+    bool srcHasUV = srcVertexSize > prefixFloats;
+    int mapOff = prefixFloats; // map fraction (sf, tf) in the source vertex
+
+    chunk.baked.resize(nVerts * static_cast<std::size_t>(batchVertexSize));
+    float* dst = chunk.baked.data();
+    for (std::size_t v = 0; v < nVerts; ++v)
+    {
+        const float* src = chunk.vertices.data() + v * static_cast<std::size_t>(srcVertexSize);
+
+        for (int k = 0; k < prefixFloats; ++k)
+            *dst++ = src[k];
+
+        float sf = srcHasUV ? src[mapOff] : 0.0f;
+        float tf = srcHasUV ? src[mapOff + 1] : 0.0f;
+        for (int t = 0; t < nTiles; ++t)
+        {
+            *dst++ = tiles[t].baseU + tiles[t].deltaU * sf;
+            *dst++ = tiles[t].baseV + tiles[t].deltaV * tf;
+        }
+    }
+
+    chunk.bakedTiles = nTiles;
+    chunk.bakedVertexSize = batchVertexSize;
+    for (int t = 0; t < nTiles; ++t)
+        chunk.bakedTexID[t] = tiles[t].texID;
+    return true;
+}
+
+
 void
-LODSphereMesh::appendChunk(const ChunkMesh& chunk, unsigned int edgeMask,
+LODSphereMesh::appendChunk(ChunkMesh& chunk, unsigned int edgeMask,
                            const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
                            int nTiles)
 {
     auto baseVertex = static_cast<unsigned int>(batchVertices.size()
                                                 / static_cast<std::size_t>(batchVertexSize));
 
-    std::size_t nVerts = chunk.vertices.size()
-                               / static_cast<std::size_t>(srcVertexSize);
-    bool srcHasUV = srcVertexSize > prefixFloats;
-    int mapOff = prefixFloats; // map fraction (sf, tf) in the source vertex
-
-    for (std::size_t v = 0; v < nVerts; ++v)
-    {
-        const float* src = chunk.vertices.data() + v * static_cast<std::size_t>(srcVertexSize);
-
-        for (int k = 0; k < prefixFloats; ++k)
-            batchVertices.push_back(src[k]);
-
-        float sf = srcHasUV ? src[mapOff] : 0.0f;
-        float tf = srcHasUV ? src[mapOff + 1] : 0.0f;
-        for (int t = 0; t < nTiles; ++t)
-        {
-            batchVertices.push_back(tiles[t].baseU + tiles[t].deltaU * sf);
-            batchVertices.push_back(tiles[t].baseV + tiles[t].deltaV * tf);
-        }
-    }
+    // Bake once per binding, then bulk-copy the cached block into the batch. This
+    // batch is rebuilt every frame for every visible chunk, so keeping the per-vertex
+    // UV math out of the steady state was a profile win.
+    bakeChunk(chunk, tiles, nTiles);
+    std::size_t dstBase = batchVertices.size();
+    batchVertices.resize(dstBase + chunk.baked.size());
+    std::copy_n(chunk.baked.data(), chunk.baked.size(), batchVertices.data() + dstBase);
 
 #if LODSPHERE_WIREFRAME
     const std::vector<unsigned int>& tmpl = stitchLineTemplate[edgeMask];
 #else
     const std::vector<unsigned int>& tmpl = stitchTemplate[edgeMask];
 #endif
-    batchIndices.reserve(batchIndices.size() + tmpl.size());
+    std::size_t idxBase = batchIndices.size();
+    batchIndices.resize(idxBase + tmpl.size());
+    unsigned int* idst = batchIndices.data() + idxBase;
     for (unsigned int idx : tmpl)
-        batchIndices.push_back(idx + baseVertex);
+        *idst++ = idx + baseVertex;
 }
 
 
@@ -782,6 +818,17 @@ LODSphereMesh::buildBatch(unsigned int attributes)
     batchVertices.clear();
     batchIndices.clear();
     frameGroups.clear();
+
+    // Every chunk contributes the same full vertex grid; reserve the exact total
+    // (and an upper bound for indices) so the per-chunk resizes never reallocate.
+    constexpr std::size_t vertsPerChunk = static_cast<std::size_t>(CHUNK_RES + 1)
+                                          * (CHUNK_RES + 1);
+    constexpr std::size_t maxIdxPerChunk = static_cast<std::size_t>(CHUNK_RES)
+                                           * CHUNK_RES * 6;
+    batchVertices.reserve(frameDraws.size() * vertsPerChunk
+                          * static_cast<std::size_t>(batchVertexSize));
+    batchIndices.reserve(frameDraws.size() * maxIdxPerChunk);
+
     for (const DrawLeaf& leaf : frameDraws)
     {
         ChunkMesh* chunk = getOrCreateChunk(leaf.key, attributes);
