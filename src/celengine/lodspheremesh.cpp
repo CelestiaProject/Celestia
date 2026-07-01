@@ -238,24 +238,22 @@ LODSphereMesh::ensureBuffers()
 static void
 buildStitchTriangles(int mask, std::vector<unsigned int>& out)
 {
-    constexpr int N = CHUNK_RES;
-    constexpr auto stride = static_cast<unsigned int>(N + 1);
     auto vid = [](int a, int b) {
-        return static_cast<unsigned int>(a * static_cast<int>(stride) + b);
+        return static_cast<unsigned int>(a * (CHUNK_RES + 1) + b);
     };
     auto snap = [mask](int a, int b) {
         if (a == 0 && (mask & EDGE_LEFT)   != 0 && (b & 1) != 0) --b;
-        if (a == N && (mask & EDGE_RIGHT)  != 0 && (b & 1) != 0) --b;
+        if (a == CHUNK_RES && (mask & EDGE_RIGHT)  != 0 && (b & 1) != 0) --b;
         if (b == 0 && (mask & EDGE_BOTTOM) != 0 && (a & 1) != 0) --a;
-        if (b == N && (mask & EDGE_TOP)    != 0 && (a & 1) != 0) --a;
+        if (b == CHUNK_RES && (mask & EDGE_TOP)    != 0 && (a & 1) != 0) --a;
         return std::pair<int, int>(a, b);
     };
 
     out.clear();
-    out.reserve(static_cast<std::size_t>(N) * N * 6);
-    for (int ii = 0; ii < N; ++ii)
+    out.reserve(static_cast<std::size_t>(CHUNK_RES) * CHUNK_RES * 6);
+    for (int ii = 0; ii < CHUNK_RES; ++ii)
     {
-        for (int jj = 0; jj < N; ++jj)
+        for (int jj = 0; jj < CHUNK_RES; ++jj)
         {
             auto [a00, b00] = snap(ii,     jj);
             auto [a10, b10] = snap(ii + 1, jj);
@@ -334,8 +332,8 @@ LODSphereMesh::getOrCreateChunk(const ChunkKey& key, unsigned int attributes)
     if (it != chunkCache.end())
         return &it->second;
 
-    const bool wantTangents = (attributes & Tangents) != 0;
-    const bool wantTex = nTexturesUsed > 0;
+    bool wantTangents = (attributes & Tangents) != 0;
+    bool wantTex = nTexturesUsed > 0;
 
     double cols = static_cast<double>(1u << (key.depth + 1));
     double rows = static_cast<double>(1u << key.depth);
@@ -394,10 +392,10 @@ LODSphereMesh::appendChunk(const ChunkMesh& chunk, unsigned int edgeMask,
     auto baseVertex = static_cast<unsigned int>(batchVertices.size()
                                                 / static_cast<std::size_t>(batchVertexSize));
 
-    const std::size_t nVerts = chunk.vertices.size()
+    std::size_t nVerts = chunk.vertices.size()
                                / static_cast<std::size_t>(srcVertexSize);
-    const bool srcHasUV = srcVertexSize > prefixFloats;
-    const int mapOff = prefixFloats; // map fraction (sf, tf) in the source vertex
+    bool srcHasUV = srcVertexSize > prefixFloats;
+    int mapOff = prefixFloats; // map fraction (sf, tf) in the source vertex
 
     for (std::size_t v = 0; v < nVerts; ++v)
     {
@@ -827,7 +825,7 @@ LODSphereMesh::uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* pr
                          batchVertices.size() * sizeof(float)),
                      gl::Buffer::BufferUsage::StreamDraw);
 
-    const auto stride = static_cast<GLsizei>(batchVertexSize * sizeof(float));
+    auto stride = static_cast<GLsizei>(batchVertexSize * sizeof(float));
 
     glEnableVertexAttribArray(CelestiaGLProgram::VertexCoordAttributeIndex);
     glVertexAttribPointer(CelestiaGLProgram::VertexCoordAttributeIndex,
@@ -867,7 +865,7 @@ LODSphereMesh::uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* pr
 void
 LODSphereMesh::drawBatch(unsigned int attributes)
 {
-    const GLenum primitive = LODSPHERE_WIREFRAME ? GL_LINES : GL_TRIANGLES;
+    GLenum primitive = LODSPHERE_WIREFRAME ? GL_LINES : GL_TRIANGLES;
     for (const DrawGroup& g : frameGroups)
     {
         for (int tc = 0; tc < nTexturesUsed; ++tc)
