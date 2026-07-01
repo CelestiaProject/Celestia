@@ -392,8 +392,13 @@ AtmosphereRenderer::render(
 
     m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
                                    frustum,
-                                   ri.pixWidth,
-                                   nullptr);
+                                   ls.eyePos_obj,
+                                   ri.pixelSize,
+                                   nullptr,
+                                   0,
+                                   prog,
+                                   false,
+                                   atmScale);
 
     glFrontFace(GL_CCW);
 }
