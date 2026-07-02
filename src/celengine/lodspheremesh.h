@@ -46,6 +46,12 @@ public:
     LODSphereMesh() = default;
     ~LODSphereMesh();
 
+    // When terrain (displacement) is enabled the sphere is subdivided adaptively so
+    // fine relief near the eye gets more geometry than the flat limb. With no terrain
+    // the surface is smooth, so a single uniform LOD (like the pre-chunked renderer)
+    // is both crack-free and cheaper: it skips the quadtree, 2:1 balance and stitch.
+    void setTerrainEnabled(bool enabled) { terrainEnabled = enabled; }
+
     LODSphereMesh(const LODSphereMesh&) = delete;
     LODSphereMesh& operator=(const LODSphereMesh&) = delete;
     LODSphereMesh(LODSphereMesh&&) = delete;
@@ -204,6 +210,15 @@ private:
     // Pass 1/1b: rebuild the current view's balanced leaf set (collectLeaves +
     // balanceLeaves) into frameLeaves. Runs every frame; there is no cross-frame cache.
     void rebuildLeaves(const Eigen::Vector3f& eyePos);
+    // Flat (no-terrain) alternative to rebuildLeaves: emit a single uniform LOD level,
+    // frustum/horizon-pruned during descent, with no balance or stitch (masks stay 0).
+    int uniformDepth(const Eigen::Vector3f& eyePos) const;
+    void collectUniform(int depth, std::uint32_t i, std::uint32_t j, int target,
+                        const celestia::math::Frustum& frustum,
+                        const Eigen::Vector3f& eyePos, bool enableHorizonCull);
+    void buildUniformLeaves(const Eigen::Vector3f& eyePos,
+                            const celestia::math::Frustum& frustum,
+                            bool enableHorizonCull);
     TexTile resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j);
 
     // render() phases (kept separate to bound each function's complexity):
@@ -228,6 +243,8 @@ private:
     float lodGeometryScale{ 1.0f };
     // Minimum depth so no leaf straddles several texture tiles.
     int minTileDepth{ 0 };
+    // Adaptive chunked LOD (for terrain) vs a single uniform LOD level (smooth sphere).
+    bool terrainEnabled{ false };
 
     std::array<Texture*, MAX_SPHERE_MESH_TEXTURES> textures{};
 

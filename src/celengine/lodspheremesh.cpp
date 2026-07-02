@@ -61,6 +61,12 @@ constexpr float CHUNK_GRAZING_FLOOR = 0.2f;
 // Soft cap on cached chunk meshes; colder ones are evicted after each frame.
 constexpr std::size_t MAX_CACHED_CHUNKS = 4096;
 
+// Flat (no-terrain) cap on the uniform LOD depth. A smooth sphere needs no fine
+// geometry, only enough to keep the silhouette smooth; at 2^(d+1)*CHUNK_RES
+// longitude steps, depth 5 gives ~1024 steps, matching the pre-chunked renderer's
+// close-surface tessellation. Higher would just add cost the texture already hides.
+constexpr int UNIFORM_MAX_DEPTH = 5;
+
 // Edge identifiers for the stitch mask. A grid vertex (a,b) has a as the
 // longitude index and b the latitude index.
 constexpr unsigned int EDGE_LEFT   = 0x1; // s == 0          (min longitude)
@@ -667,6 +673,76 @@ LODSphereMesh::rebuildLeaves(const Eigen::Vector3f& eyePos)
 }
 
 
+// Deepest uniform level the flat path needs: follow the cell under the sub-eye
+// point (looking straight down, so the foreshortening boost is ~1) down until
+// screen-space error stops the refinement. Every visible cell is then emitted at
+// this one level, which upper-bounds the near-field error without adaptive splits.
+int
+LODSphereMesh::uniformDepth(const Eigen::Vector3f& eyePos) const
+{
+    Vector3f p = eyePos.normalized();
+    double sf = std::atan2(static_cast<double>(p.z()), static_cast<double>(p.x())) / twoPi;
+    if (sf < 0.0)
+        sf += 1.0;
+    double tf = 0.5 + std::asin(std::clamp(static_cast<double>(p.y()), -1.0, 1.0))
+                          / celestia::numbers::pi;
+
+    int depth = 0;
+    while (depth < UNIFORM_MAX_DEPTH)
+    {
+        std::uint32_t cols = 1u << (depth + 1);
+        std::uint32_t rows = 1u << depth;
+        auto i = std::min(static_cast<std::uint32_t>(sf * cols), cols - 1);
+        auto j = std::min(static_cast<std::uint32_t>(tf * rows), rows - 1);
+        if (depth < minTileDepth || shouldSplit(depth, i, j, eyePos))
+            ++depth;
+        else
+            break;
+    }
+    return std::max(depth, minTileDepth);
+}
+
+
+// Descend to a single target level, pruning whole subtrees against the frustum and
+// horizon (a coarse cell's bounds enclose all its descendants), and emit each
+// surviving target-level cell as an unstitched leaf.
+void
+LODSphereMesh::collectUniform(int depth, std::uint32_t i, std::uint32_t j, int target,
+                              const math::Frustum& frustum, const Eigen::Vector3f& eyePos,
+                              bool enableHorizonCull)
+{
+    ChunkBounds bounds = chunkBounds(depth, i, j);
+    bounds.center *= lodGeometryScale;
+    bounds.radius *= lodGeometryScale;
+    if (frustum.testSphere(bounds.center, bounds.radius) == math::FrustumAspect::Outside)
+        return;
+    if (enableHorizonCull && chunkBelowHorizon(bounds, eyePos))
+        return;
+
+    if (depth >= target)
+    {
+        frameLeaves.push_back(FrameLeaf{ depth, i, j, 0 });
+        return;
+    }
+
+    for (std::uint32_t c = 0; c < 4; ++c)
+        collectUniform(depth + 1, i * 2 + (c & 1u), j * 2 + ((c >> 1) & 1u),
+                       target, frustum, eyePos, enableHorizonCull);
+}
+
+
+// Flat path: fill frameLeaves with one uniform LOD level (no quadtree/balance/stitch).
+void
+LODSphereMesh::buildUniformLeaves(const Eigen::Vector3f& eyePos,
+                                  const math::Frustum& frustum, bool enableHorizonCull)
+{
+    frameLeaves.clear();
+    int target = uniformDepth(eyePos);
+    for (std::uint32_t r = 0; r < 2; ++r)
+        collectUniform(0, r, 0, target, frustum, eyePos, enableHorizonCull);
+}
+
+
 // Resolve which resident GL tile covers a leaf and the affine mapping of its source
 // map fraction (sf, tf) onto that tile, reproducing the legacy renderSection
 // transform: texU = (1 + tileU) * tile.du + tile.u - uSplit * tile.du * sf, where
@@ -752,8 +828,12 @@ LODSphereMesh::render(unsigned int attributes,
 
     // Pass 1/1b: rebuild this view's balanced leaf set (with edge masks). Culling
     // runs separately (pass 2) so balance and stitch seal seams against off-screen
-    // neighbours before frustum/horizon culling drops them.
-    rebuildLeaves(eyePos);
+    // neighbours before frustum/horizon culling drops them. Without terrain the
+    // surface is smooth, so a uniform LOD is crack-free and skips that machinery.
+    if (terrainEnabled)
+        rebuildLeaves(eyePos);
+    else
+        buildUniformLeaves(eyePos, frustum, enableHorizonCull);
 
     for (int i = 0; i < nTexturesUsed; ++i)
         tex[i]->beginUsage();
