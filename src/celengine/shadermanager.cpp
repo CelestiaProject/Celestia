@@ -1045,8 +1045,10 @@ float calculateShadow()
     source += fmt::format("    for (float y = {:f}; y <= {:f}; y += 1.0)\n", firstSample, lastSample);
     source += fmt::format("        for (float x = {:f}; x <= {:f}; x += 1.0)\n", firstSample, lastSample);
     // Modern GLSL hardware compare: returns single float (PCF result when
-    // GL_LINEAR filter + GL_COMPARE_REF_TO_TEXTURE).
-    source += "            s += texture(shadowMapTex0, shadowTexCoord0.xyz + vec3(x * texelSize, y * texelSize, bias));\n";
+    // GL_LINEAR filter + GL_COMPARE_REF_TO_TEXTURE). The bias is subtracted
+    // from the reference depth so a fragment stays lit when it is within
+    // bias of the stored depth, matching the acne-avoidance direction.
+    source += "            s += texture(shadowMapTex0, shadowTexCoord0.xyz + vec3(x * texelSize, y * texelSize, -bias));\n";
     source += fmt::format("    return s * {:f};\n", sampleWeight);
     source += "}\n";
     return source;
