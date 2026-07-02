@@ -14,7 +14,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 #include <Eigen/Core>
@@ -142,6 +141,27 @@ private:
         std::array<unsigned int, MAX_SPHERE_MESH_TEXTURES> texID;
     };
 
+    // A node of the per-frame active quadtree. Children are pool indices (-1 when
+    // absent) rather than pointers so the backing vector can grow without
+    // invalidating links. Only leaf nodes are drawn; internal nodes exist solely
+    // to route the batched neighbour-context walk down the tree, replacing the
+    // per-cell hash lookups the balance/stitch passes would otherwise do.
+    struct QuadNode
+    {
+        std::array<int, 4> child{ { -1, -1, -1, -1 } };
+        int depth{ 0 };
+        bool leaf{ false };
+    };
+
+    // A balanced leaf plus its precomputed edge-stitch mask, rebuilt each frame.
+    struct FrameLeaf
+    {
+        int depth;
+        std::uint32_t i;
+        std::uint32_t j;
+        unsigned int mask;
+    };
+
     void ensureBuffers();
     void ensureStitchTemplates();
     ChunkMesh* getOrCreateChunk(const ChunkKey& key, unsigned int attributes);
@@ -159,18 +179,31 @@ private:
     void evictColdChunks();
     bool shouldSplit(int depth, std::uint32_t i, std::uint32_t j,
                      const Eigen::Vector3f& eyePos) const;
-    // Pass 1: descend the quadtree by screen-space error, recording active leaves
-    // (a draw list plus a membership set for neighbour queries).
-    void collectLeaves(int depth, std::uint32_t i, std::uint32_t j,
-                       const Eigen::Vector3f& eyePos);
-    // Depth of the leaf covering a cell, or -1 if that region is split finer.
-    int coveringDepth(int depth, std::uint32_t i, std::uint32_t j) const;
-    // Pass 1b: restricted-quadtree 2:1 balance. needsBalanceSplit flags a leaf with
-    // a neighbour 2+ levels finer; balanceLeaves force-splits to a fixpoint.
-    bool needsBalanceSplit(int depth, std::uint32_t i, std::uint32_t j) const;
+    // Pass 1: descend the quadtree by screen-space error, building the active-node
+    // tree and returning the index of the node for this cell.
+    int collectLeaves(int depth, std::uint32_t i, std::uint32_t j,
+                      const Eigen::Vector3f& eyePos);
+    // Append a new default node to quadPool and return its index.
+    int allocNode();
+    // Turn a leaf into an internal node with four fresh leaf children.
+    void splitLeaf(int node);
+    // Batched neighbour-context walk helpers. Descending the built tree while
+    // carrying each node's four same-level neighbour node indices lets the balance
+    // and stitch passes read adjacency in O(1) per node, replacing the per-cell
+    // root descents the earlier version performed. extNeighbor resolves a child's
+    // neighbour across a parent-boundary edge; childNeighbors fills all four.
+    int extNeighbor(int p, int childSlot) const;
+    void childNeighbors(int node, int c, const int nb[4], int cnb[4]) const;
+    // Pass 1b: restricted-quadtree 2:1 balance. collectImbalanced flags leaves with
+    // a neighbour 2+ levels finer; balanceLeaves force-splits them to a fixpoint.
+    void collectImbalanced(int node, const int nb[4], std::vector<int>& out) const;
     void balanceLeaves();
-    // Edge-stitch mask: a bit is set when the neighbour across that edge is coarser.
-    unsigned int computeEdgeMask(int depth, std::uint32_t i, std::uint32_t j) const;
+    // Pass 2 helper: emit every leaf under node (rooted at cell i,j) with its
+    // edge-stitch mask, derived from the four neighbour node indices carried down.
+    void buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const int nb[4]);
+    // Pass 1/1b: rebuild the current view's balanced leaf set (collectLeaves +
+    // balanceLeaves) into frameLeaves. Runs every frame; there is no cross-frame cache.
+    void rebuildLeaves(const Eigen::Vector3f& eyePos);
     TexTile resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j);
 
     // render() phases (kept separate to bound each function's complexity):
@@ -217,10 +250,14 @@ private:
     std::unordered_map<ChunkKey, ChunkMesh, ChunkKeyHash> chunkCache{};
     std::uint64_t frameCounter{ 0 };
 
-    // Active leaves for the current frame: a draw list and a packed-key set for
-    // neighbour-depth lookups when computing stitch masks.
-    std::vector<ChunkKey> frameLeaves{};
-    std::unordered_set<std::uint64_t> frameLeafSet{};
+    // Active leaves for the current frame, produced by the pass-1 tree walk and
+    // consumed (after balancing) by cull/stitch. The quadtree is the source of
+    // truth for membership: the batched balance and stitch passes carry each
+    // node's neighbour indices down the walk instead of hashing packed cell keys.
+    std::vector<QuadNode> quadPool{};
+    std::array<int, 2> quadRoots{ { -1, -1 } };
+    std::vector<FrameLeaf> frameLeaves{}; // balanced leaves + edge masks, rebuilt each frame
+    std::vector<int> splitList{}; // nodes to split, reused per balance pass
 
     // Pass-2 scratch (members so capacity is reused).
     std::vector<DrawLeaf> frameDraws{};

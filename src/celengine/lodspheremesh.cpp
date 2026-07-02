@@ -107,54 +107,6 @@ floorLog2(std::uint32_t v)
     return l;
 }
 
-// Pack a quadtree cell into a 64-bit leaf-set key; depth, i, j fields do not
-// overlap (depth <= MAX_DEPTH, i,j < 2^(depth+1)).
-inline std::uint64_t
-packCell(int depth, std::uint32_t i, std::uint32_t j)
-{
-    return (static_cast<std::uint64_t>(depth) << 54)
-         | (static_cast<std::uint64_t>(i)     << 27)
-         |  static_cast<std::uint64_t>(j);
-}
-
-inline void
-unpackCell(std::uint64_t p, int& depth, std::uint32_t& i, std::uint32_t& j)
-{
-    depth = static_cast<int>((p >> 54) & 0x3fu);
-    i     = static_cast<std::uint32_t>((p >> 27) & 0x7ffffffu);
-    j     = static_cast<std::uint32_t>(p & 0x7ffffffu);
-}
-
-// A cell's neighbour across one edge. Longitude (left/right) edges wrap; pole
-// (bottom/top) edges have no neighbour (each pole is a single point).
-struct NeighborCell
-{
-    bool valid;
-    std::uint32_t i;
-    std::uint32_t j;
-    unsigned int edge; // which of the neighbour's edges is the shared one
-};
-
-NeighborCell
-neighborOf(int depth, std::uint32_t i, std::uint32_t j, unsigned int edge)
-{
-    std::uint32_t cols = 1u << (depth + 1);
-    std::uint32_t rows = 1u << depth;
-    switch (edge)
-    {
-    case EDGE_LEFT:
-        return { true, (i == 0 ? cols - 1 : i - 1), j, EDGE_RIGHT };
-    case EDGE_RIGHT:
-        return { true, (i + 1 == cols ? 0u : i + 1), j, EDGE_LEFT };
-    case EDGE_BOTTOM:
-        return j == 0 ? NeighborCell{ false, 0u, 0u, 0u }
-                      : NeighborCell{ true, i, j - 1, EDGE_TOP };
-    default: // EDGE_TOP
-        return j + 1 == rows ? NeighborCell{ false, 0u, 0u, 0u }
-                             : NeighborCell{ true, i, j + 1, EDGE_BOTTOM };
-    }
-}
-
 // Bounding sphere over the four corners and the bulged patch apex, for the
 // frustum and horizon tests.
 struct ChunkBounds
@@ -512,140 +464,206 @@ LODSphereMesh::shouldSplit(int depth, std::uint32_t i, std::uint32_t j,
 }
 
 
-// Pass 1: descend the quadtree by screen-space error, recording each leaf. Culling
-// is deferred to draw time so the balance and stitch passes see the full leaf set.
-void
+// Append a new default node and return its index. The returned index stays valid
+// across later allocations (the pool may reallocate, but callers hold indices).
+int
+LODSphereMesh::allocNode()
+{
+    quadPool.emplace_back();
+    return static_cast<int>(quadPool.size()) - 1;
+}
+
+
+// Pass 1: descend the quadtree by screen-space error, building the active-node tree
+// and returning this cell's node index. Culling is deferred to draw time so the
+// balance and stitch passes see the full leaf set.
+int
 LODSphereMesh::collectLeaves(int depth, std::uint32_t i, std::uint32_t j,
                              const Eigen::Vector3f& eyePos)
 {
+    int node = allocNode();
+    quadPool[node].depth = depth;
     bool wantSplit = depth < MAX_DEPTH
                      && (depth < minTileDepth || shouldSplit(depth, i, j, eyePos));
     if (wantSplit)
     {
         for (std::uint32_t c = 0; c < 4; ++c)
-            collectLeaves(depth + 1, i * 2 + (c & 1u), j * 2 + ((c >> 1) & 1u), eyePos);
+        {
+            int cn = collectLeaves(depth + 1, i * 2 + (c & 1u),
+                                   j * 2 + ((c >> 1) & 1u), eyePos);
+            quadPool[node].child[c] = cn;
+        }
+        return node;
+    }
+
+    quadPool[node].leaf = true;
+    return node;
+}
+
+
+// Turn a leaf into an internal node with four fresh leaf children one level deeper.
+// allocNode may reallocate quadPool, so `node` is re-indexed after every alloc.
+void
+LODSphereMesh::splitLeaf(int node)
+{
+    int childDepth = quadPool[node].depth + 1;
+    for (int c = 0; c < 4; ++c)
+    {
+        int cn = allocNode();
+        quadPool[cn].leaf = true;
+        quadPool[cn].depth = childDepth;
+        quadPool[node].child[c] = cn;
+    }
+    quadPool[node].leaf = false;
+}
+
+
+// A child's neighbour across a parent-boundary edge. If the parent's neighbour is a
+// leaf it covers the child (coarser); otherwise it is split to the child's level and
+// the neighbour is its child mirrored across the shared edge (childSlot = c ^ axis).
+int
+LODSphereMesh::extNeighbor(int p, int childSlot) const
+{
+    if (p < 0)
+        return -1;
+    if (quadPool[p].leaf)
+        return p;
+    return quadPool[p].child[childSlot];
+}
+
+
+// Fill cnb[4] (LEFT,RIGHT,BOTTOM,TOP) with child c's four neighbour node indices,
+// given the parent node and its neighbours nb[4]. Across each parent-interior edge
+// the neighbour is a sibling (node.child[c ^ axis]); across each parent-boundary edge
+// it comes from the parent's neighbour on that side. c ^ 1 / c ^ 2 mirror the child
+// across the longitude / latitude axis, selecting the matching neighbour child.
+void
+LODSphereMesh::childNeighbors(int node, int c, const int nb[4], int cnb[4]) const
+{
+    int ibit = c & 1;
+    int jbit = (c >> 1) & 1;
+    int sibI = quadPool[node].child[c ^ 1];
+    int sibJ = quadPool[node].child[c ^ 2];
+    int extI = extNeighbor(ibit == 0 ? nb[0] : nb[1], c ^ 1);
+    int extJ = extNeighbor(jbit == 0 ? nb[2] : nb[3], c ^ 2);
+    if (ibit == 0) { cnb[0] = extI; cnb[1] = sibI; } // left child:  LEFT is external
+    else           { cnb[0] = sibI; cnb[1] = extI; } // right child: RIGHT is external
+    if (jbit == 0) { cnb[2] = extJ; cnb[3] = sibJ; } // bottom child: BOTTOM external
+    else           { cnb[2] = sibJ; cnb[3] = extJ; } // top child:    TOP external
+}
+
+
+// Pass 1b core: a leaf needs a 2:1-balance split when a neighbour is split two+
+// levels finer, exposing a leaf at depth+2 along the shared edge that the one-level
+// stitch templates cannot match. With same-level neighbours carried down the walk
+// this is a leaf whose neighbour is internal (same depth, split to depth+1) and has
+// an internal edge-facing child (depth+2). Descends carrying neighbour context.
+void
+LODSphereMesh::collectImbalanced(int node, const int nb[4], std::vector<int>& out) const
+{
+    if (quadPool[node].leaf)
+    {
+        // The neighbour's two children touching the shared edge, per edge index.
+        static const int facing[4][2] = { { 1, 3 }, { 0, 2 }, { 2, 3 }, { 0, 1 } };
+        for (int e = 0; e < 4; ++e)
+        {
+            int p = nb[e];
+            if (p < 0 || quadPool[p].leaf)
+                continue; // pole edge, or neighbour no finer than this leaf
+            if (!quadPool[quadPool[p].child[facing[e][0]]].leaf ||
+                !quadPool[quadPool[p].child[facing[e][1]]].leaf)
+            {
+                out.push_back(node);
+                return;
+            }
+        }
         return;
     }
-
-    frameLeaves.push_back(ChunkKey{ depth, i, j, srcVertexSize });
-    frameLeafSet.insert(packCell(depth, i, j));
-}
-
-
-// Covering depth of a cell: walk up its ancestors to the active leaf containing it
-// (leaves partition the map, so at most one matches). Returns -1 when the region
-// is split finer than the queried cell.
-int
-LODSphereMesh::coveringDepth(int depth, std::uint32_t i, std::uint32_t j) const
-{
-    for (int dd = depth; dd >= 0; --dd)
+    for (int c = 0; c < 4; ++c)
     {
-        auto shift = static_cast<std::uint32_t>(depth - dd);
-        if (frameLeafSet.count(packCell(dd, i >> shift, j >> shift)) != 0)
-            return dd;
+        int cnb[4];
+        childNeighbors(node, c, nb, cnb);
+        collectImbalanced(quadPool[node].child[c], cnb, out);
     }
-    return -1;
 }
 
 
-// 2:1-balance helper: does this leaf have a neighbour split two+ levels finer? Such
-// a neighbour exposes a leaf at depth >= depth+2 along the shared edge, which the
-// one-level stitch templates cannot match. Detected by testing whether either of
-// the neighbour's two edge-adjacent depth+1 children is itself split.
-bool
-LODSphereMesh::needsBalanceSplit(int depth, std::uint32_t i, std::uint32_t j) const
+// Pass 2 helper: emit each leaf with its stitch mask. A bit is set when the leaf's
+// neighbour across that edge is a coarser leaf (shallower depth), so the edge drops
+// to match. Pole edges (nb == -1) have no neighbour. Descends carrying neighbour
+// context, deriving each child's neighbours in O(1) instead of re-descending.
+void
+LODSphereMesh::buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const int nb[4])
 {
-    for (unsigned int edge : edgeFromIndex)
+    if (quadPool[node].leaf)
     {
-        NeighborCell n = neighborOf(depth, i, j, edge);
-        if (!n.valid)
-            continue;
-
-        // The two depth+1 children of the neighbour touching the shared edge.
-        std::uint32_t c0i, c0j, c1i, c1j;
-        switch (n.edge)
+        int depth = quadPool[node].depth;
+        unsigned int mask = 0;
+        for (int e = 0; e < 4; ++e)
         {
-        case EDGE_LEFT:
-            c0i = 2 * n.i;     c0j = 2 * n.j;     c1i = 2 * n.i;     c1j = 2 * n.j + 1;
-            break;
-        case EDGE_RIGHT:
-            c0i = 2 * n.i + 1; c0j = 2 * n.j;     c1i = 2 * n.i + 1; c1j = 2 * n.j + 1;
-            break;
-        case EDGE_BOTTOM:
-            c0i = 2 * n.i;     c0j = 2 * n.j;     c1i = 2 * n.i + 1; c1j = 2 * n.j;
-            break;
-        default: // EDGE_TOP
-            c0i = 2 * n.i;     c0j = 2 * n.j + 1; c1i = 2 * n.i + 1; c1j = 2 * n.j + 1;
-            break;
+            int p = nb[e];
+            if (p >= 0 && quadPool[p].leaf && quadPool[p].depth < depth)
+                mask |= edgeFromIndex[e];
         }
-
-        if (coveringDepth(depth + 1, c0i, c0j) < 0 ||
-            coveringDepth(depth + 1, c1i, c1j) < 0)
-            return true;
+        frameLeaves.push_back(FrameLeaf{ depth, i, j, mask });
+        return;
     }
-    return false;
+    for (std::uint32_t c = 0; c < 4; ++c)
+    {
+        int cnb[4];
+        childNeighbors(node, static_cast<int>(c), nb, cnb);
+        buildLeafMasks(quadPool[node].child[c],
+                       i * 2 + (c & 1u), j * 2 + ((c >> 1) & 1u), cnb);
+    }
 }
 
 
 // Pass 1b: force-split leaves until no neighbour differs by more than one level
-// (2:1 balance), so the one-level stitch templates seal every edge. Iterates to a
-// fixpoint since each split can unbalance a coarser neighbour, then rebuilds the
-// draw list.
+// (2:1 balance), so the one-level stitch templates seal every edge. Each pass is a
+// single neighbour-context walk collecting imbalanced leaves, then splitting them
+// (deferred so the walk reads a stable tree); iterated to a fixpoint because a split
+// can unbalance a coarser neighbour. A final walk emits the leaves with edge masks.
+// The batched walk carries each node's four same-level neighbour node indices down,
+// deriving children's neighbours in O(1), so balance and stitch read adjacency
+// without the per-cell root descents the earlier version performed. Root neighbours:
+// the two longitude roots wrap onto each other; poles have none.
 void
 LODSphereMesh::balanceLeaves()
 {
+    const int rootNb[2][4] = { { quadRoots[1], quadRoots[1], -1, -1 },
+                               { quadRoots[0], quadRoots[0], -1, -1 } };
     bool changed = true;
     while (changed)
     {
         changed = false;
-        std::vector<std::uint64_t> current(frameLeafSet.begin(), frameLeafSet.end());
-        for (std::uint64_t cell : current)
+        splitList.clear();
+        for (int r = 0; r < 2; ++r)
+            collectImbalanced(quadRoots[r], rootNb[r], splitList);
+        for (int n : splitList)
         {
-            int depth;
-            std::uint32_t i, j;
-            unpackCell(cell, depth, i, j);
-            if (depth >= MAX_DEPTH)
+            if (!quadPool[n].leaf || quadPool[n].depth >= MAX_DEPTH)
                 continue;
-            if (frameLeafSet.count(cell) == 0)
-                continue;
-            if (!needsBalanceSplit(depth, i, j))
-                continue;
-            frameLeafSet.erase(cell);
-            for (std::uint32_t c = 0; c < 4; ++c)
-                frameLeafSet.insert(packCell(depth + 1,
-                                             i * 2 + (c & 1u), j * 2 + ((c >> 1) & 1u)));
+            splitLeaf(n);
             changed = true;
         }
     }
 
     frameLeaves.clear();
-    frameLeaves.reserve(frameLeafSet.size());
-    for (std::uint64_t cell : frameLeafSet)
-    {
-        int depth;
-        std::uint32_t i, j;
-        unpackCell(cell, depth, i, j);
-        frameLeaves.push_back(ChunkKey{ depth, i, j, srcVertexSize });
-    }
+    for (int r = 0; r < 2; ++r)
+        buildLeafMasks(quadRoots[r], static_cast<std::uint32_t>(r), 0, rootNb[r]);
 }
 
 
-// Pass 2 helper: set an edge's stitch bit when its neighbour is covered by a
-// coarser leaf, dropping that edge to match. Pole edges have no neighbour.
-unsigned int
-LODSphereMesh::computeEdgeMask(int depth, std::uint32_t i, std::uint32_t j) const
+// Pass 1/1b: rebuild this view's balanced leaf set (with edge masks) from scratch.
+// The tree is discarded and rebuilt every frame; the earlier per-view cache was
+// dropped because the camera is almost always moving, so it rarely hit.
+void
+LODSphereMesh::rebuildLeaves(const Eigen::Vector3f& eyePos)
 {
-    unsigned int mask = 0;
-    for (unsigned int edge : edgeFromIndex)
-    {
-        NeighborCell n = neighborOf(depth, i, j, edge);
-        if (!n.valid)
-            continue;
-        int cd = coveringDepth(depth, n.i, n.j);
-        if (cd >= 0 && cd < depth)
-            mask |= edge;
-    }
-    return mask;
+    quadPool.clear();
+    for (std::uint32_t r = 0; r < 2; ++r)
+        quadRoots[r] = collectLeaves(0, r, 0, eyePos);
+    balanceLeaves(); // fills frameLeaves with balanced leaves + edge masks
 }
 
 
@@ -732,14 +750,10 @@ LODSphereMesh::render(unsigned int attributes,
 
     ++frameCounter;
 
-    // Pass 1: build this frame's leaf set so each leaf sees its neighbours' depths.
-    frameLeaves.clear();
-    frameLeafSet.clear();
-    for (std::uint32_t i = 0; i < 2; ++i)
-        collectLeaves(0, i, 0, eyePos);
-
-    // Pass 1b: enforce 2:1 balance so the one-level stitch templates can seal.
-    balanceLeaves();
+    // Pass 1/1b: rebuild this view's balanced leaf set (with edge masks). Culling
+    // runs separately (pass 2) so balance and stitch seal seams against off-screen
+    // neighbours before frustum/horizon culling drops them.
+    rebuildLeaves(eyePos);
 
     for (int i = 0; i < nTexturesUsed; ++i)
         tex[i]->beginUsage();
@@ -776,8 +790,9 @@ LODSphereMesh::cullLeaves(const math::Frustum& frustum, const Eigen::Vector3f& e
                           bool enableHorizonCull)
 {
     frameDraws.clear();
-    for (const ChunkKey& key : frameLeaves)
+    for (const FrameLeaf& fl : frameLeaves)
     {
+        ChunkKey key{ fl.depth, fl.i, fl.j, srcVertexSize };
         ChunkBounds bounds = chunkBounds(key.depth, key.i, key.j);
         // chunkBounds is on the unit sphere; scale it into the planet-scale world
         // space of the frustum and eyePos.
@@ -790,7 +805,7 @@ LODSphereMesh::cullLeaves(const math::Frustum& frustum, const Eigen::Vector3f& e
 
         DrawLeaf leaf;
         leaf.key = key;
-        leaf.mask = computeEdgeMask(key.depth, key.i, key.j);
+        leaf.mask = fl.mask;
         for (int i = 0; i < nTexturesUsed; ++i)
             leaf.tiles[i] = resolveTile(textures[i], key.depth, key.i, key.j);
         frameDraws.push_back(leaf);
