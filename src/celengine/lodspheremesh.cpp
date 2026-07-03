@@ -497,8 +497,8 @@ LODSphereMesh::collectLeaves(int depth, std::uint32_t i, std::uint32_t j,
 {
     int node = allocNode();
     quadPool[node].depth = depth;
-    if (bool wantSplit = depth < MAX_DEPTH
-                         && (depth < minTileDepth || shouldSplit(depth, i, j, eyePos)))
+    if (depth < MAX_DEPTH
+        && (depth < minTileDepth || shouldSplit(depth, i, j, eyePos)))
     {
         for (std::uint32_t c = 0; c < 4; ++c)
         {
