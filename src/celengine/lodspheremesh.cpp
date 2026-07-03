@@ -74,7 +74,7 @@ constexpr unsigned int EDGE_RIGHT  = 0x2; // s == CHUNK_RES  (max longitude)
 constexpr unsigned int EDGE_BOTTOM = 0x4; // t == 0          (toward one pole)
 constexpr unsigned int EDGE_TOP    = 0x8; // t == CHUNK_RES  (toward the other)
 
-constexpr unsigned int edgeFromIndex[4] = { EDGE_LEFT, EDGE_RIGHT, EDGE_BOTTOM, EDGE_TOP };
+constexpr std::array<unsigned int, 4> edgeFromIndex = { { EDGE_LEFT, EDGE_RIGHT, EDGE_BOTTOM, EDGE_TOP } };
 
 constexpr double twoPi = 2.0 * celestia::numbers::pi;
 
@@ -131,10 +131,10 @@ chunkBounds(int depth, std::uint32_t i, std::uint32_t j)
     double t0 = static_cast<double>(j) / rows;
     double t1 = static_cast<double>(j + 1) / rows;
 
-    Vector3f corners[4] = {
+    std::array<Vector3f, 4> corners = { {
         spherePoint(s0, t0), spherePoint(s1, t0),
         spherePoint(s1, t1), spherePoint(s0, t1),
-    };
+    } };
     Vector3f apex = spherePoint(0.5 * (s0 + s1), 0.5 * (t0 + t1));
 
     ChunkBounds b;
@@ -182,8 +182,8 @@ LODSphereMesh::ensureBuffers()
     glGenVertexArrays(1, &vao);
     assert(glGetError() == GL_NO_ERROR);
 
-    batchVBO = gl::Buffer(gl::Buffer::TargetHint::Array);
-    batchIBO = gl::Buffer(gl::Buffer::TargetHint::ElementArray);
+    batch.vbo = gl::Buffer(gl::Buffer::TargetHint::Array);
+    batch.ibo = gl::Buffer(gl::Buffer::TargetHint::ElementArray);
 
     buffersInitialized = true;
 }
@@ -286,8 +286,7 @@ LODSphereMesh::ensureStitchTemplates()
 LODSphereMesh::ChunkMesh*
 LODSphereMesh::getOrCreateChunk(const ChunkKey& key, unsigned int attributes)
 {
-    auto it = chunkCache.find(key);
-    if (it != chunkCache.end())
+    if (auto it = chunkCache.find(key); it != chunkCache.end())
         return &it->second;
 
     bool wantTangents = (attributes & Tangents) != 0;
@@ -350,12 +349,21 @@ LODSphereMesh::getOrCreateChunk(const ChunkKey& key, unsigned int attributes)
 bool
 LODSphereMesh::bakeChunk(ChunkMesh& chunk,
                          const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
-                         int nTiles)
+                         int nTiles) const
 {
     bool fresh = chunk.bakedTiles == nTiles
                  && chunk.bakedVertexSize == batchVertexSize;
-    for (int t = 0; fresh && t < nTiles; ++t)
-        fresh = chunk.bakedTexID[t] == tiles[t].texID;
+    if (fresh)
+    {
+        for (int t = 0; t < nTiles; ++t)
+        {
+            if (chunk.bakedTexID[t] != tiles[t].texID)
+            {
+                fresh = false;
+                break;
+            }
+        }
+    }
     if (fresh)
         return false;
 
@@ -394,25 +402,25 @@ LODSphereMesh::appendChunk(ChunkMesh& chunk, unsigned int edgeMask,
                            const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
                            int nTiles)
 {
-    auto baseVertex = static_cast<unsigned int>(batchVertices.size()
+    auto baseVertex = static_cast<unsigned int>(batch.vertices.size()
                                                 / static_cast<std::size_t>(batchVertexSize));
 
     // Bake once per binding, then bulk-copy the cached block into the batch. This
     // batch is rebuilt every frame for every visible chunk, so keeping the per-vertex
     // UV math out of the steady state was a profile win.
     bakeChunk(chunk, tiles, nTiles);
-    std::size_t dstBase = batchVertices.size();
-    batchVertices.resize(dstBase + chunk.baked.size());
-    std::copy_n(chunk.baked.data(), chunk.baked.size(), batchVertices.data() + dstBase);
+    std::size_t dstBase = batch.vertices.size();
+    batch.vertices.resize(dstBase + chunk.baked.size());
+    std::copy_n(chunk.baked.data(), chunk.baked.size(), batch.vertices.data() + dstBase);
 
 #if LODSPHERE_WIREFRAME
     const std::vector<unsigned int>& tmpl = stitchLineTemplate[edgeMask];
 #else
     const std::vector<unsigned int>& tmpl = stitchTemplate[edgeMask];
 #endif
-    std::size_t idxBase = batchIndices.size();
-    batchIndices.resize(idxBase + tmpl.size());
-    unsigned int* idst = batchIndices.data() + idxBase;
+    std::size_t idxBase = batch.indices.size();
+    batch.indices.resize(idxBase + tmpl.size());
+    unsigned int* idst = batch.indices.data() + idxBase;
     for (unsigned int idx : tmpl)
         *idst++ = idx + baseVertex;
 }
@@ -489,9 +497,8 @@ LODSphereMesh::collectLeaves(int depth, std::uint32_t i, std::uint32_t j,
 {
     int node = allocNode();
     quadPool[node].depth = depth;
-    bool wantSplit = depth < MAX_DEPTH
-                     && (depth < minTileDepth || shouldSplit(depth, i, j, eyePos));
-    if (wantSplit)
+    if (bool wantSplit = depth < MAX_DEPTH
+                         && (depth < minTileDepth || shouldSplit(depth, i, j, eyePos)))
     {
         for (std::uint32_t c = 0; c < 4; ++c)
         {
@@ -544,7 +551,8 @@ LODSphereMesh::extNeighbor(int p, int childSlot) const
 // it comes from the parent's neighbour on that side. c ^ 1 / c ^ 2 mirror the child
 // across the longitude / latitude axis, selecting the matching neighbour child.
 void
-LODSphereMesh::childNeighbors(int node, int c, const int nb[4], int cnb[4]) const
+LODSphereMesh::childNeighbors(int node, int c, const std::array<int, 4>& nb,
+                              std::array<int, 4>& cnb) const
 {
     int ibit = c & 1;
     int jbit = (c >> 1) & 1;
@@ -565,12 +573,12 @@ LODSphereMesh::childNeighbors(int node, int c, const int nb[4], int cnb[4]) cons
 // this is a leaf whose neighbour is internal (same depth, split to depth+1) and has
 // an internal edge-facing child (depth+2). Descends carrying neighbour context.
 void
-LODSphereMesh::collectImbalanced(int node, const int nb[4], std::vector<int>& out) const
+LODSphereMesh::collectImbalanced(int node, const std::array<int, 4>& nb, std::vector<int>& out) const
 {
     if (quadPool[node].leaf)
     {
         // The neighbour's two children touching the shared edge, per edge index.
-        static const int facing[4][2] = { { 1, 3 }, { 0, 2 }, { 2, 3 }, { 0, 1 } };
+        static const std::array<std::array<int, 2>, 4> facing = { { { { 1, 3 } }, { { 0, 2 } }, { { 2, 3 } }, { { 0, 1 } } } };
         for (int e = 0; e < 4; ++e)
         {
             int p = nb[e];
@@ -587,7 +595,7 @@ LODSphereMesh::collectImbalanced(int node, const int nb[4], std::vector<int>& ou
     }
     for (int c = 0; c < 4; ++c)
     {
-        int cnb[4];
+        std::array<int, 4> cnb;
         childNeighbors(node, c, nb, cnb);
         collectImbalanced(quadPool[node].child[c], cnb, out);
     }
@@ -599,7 +607,7 @@ LODSphereMesh::collectImbalanced(int node, const int nb[4], std::vector<int>& ou
 // to match. Pole edges (nb == -1) have no neighbour. Descends carrying neighbour
 // context, deriving each child's neighbours in O(1) instead of re-descending.
 void
-LODSphereMesh::buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const int nb[4])
+LODSphereMesh::buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const std::array<int, 4>& nb)
 {
     if (quadPool[node].leaf)
     {
@@ -616,7 +624,7 @@ LODSphereMesh::buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const 
     }
     for (std::uint32_t c = 0; c < 4; ++c)
     {
-        int cnb[4];
+        std::array<int, 4> cnb;
         childNeighbors(node, static_cast<int>(c), nb, cnb);
         buildLeafMasks(quadPool[node].child[c],
                        i * 2 + (c & 1u), j * 2 + ((c >> 1) & 1u), cnb);
@@ -636,8 +644,8 @@ LODSphereMesh::buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const 
 void
 LODSphereMesh::balanceLeaves()
 {
-    const int rootNb[2][4] = { { quadRoots[1], quadRoots[1], -1, -1 },
-                               { quadRoots[0], quadRoots[0], -1, -1 } };
+    const std::array<std::array<int, 4>, 2> rootNb = { { { { quadRoots[1], quadRoots[1], -1, -1 } },
+                                                        { { quadRoots[0], quadRoots[0], -1, -1 } } } };
     bool changed = true;
     while (changed)
     {
@@ -748,7 +756,7 @@ LODSphereMesh::buildUniformLeaves(const Eigen::Vector3f& eyePos,
 // transform: texU = (1 + tileU) * tile.du + tile.u - uSplit * tile.du * sf, where
 // the integer tile index cancels against the sf term to land in [u, u + du].
 LODSphereMesh::TexTile
-LODSphereMesh::resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j)
+LODSphereMesh::resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j) const
 {
     TexTile out;
     if (tex == nullptr)
@@ -845,7 +853,7 @@ LODSphereMesh::render(unsigned int attributes,
     // balance and stitch still seal seams against off-screen neighbours.
     cullLeaves(frustum, eyePos, enableHorizonCull);
     buildBatch(attributes);
-    if (!batchIndices.empty())
+    if (!batch.indices.empty())
     {
         uploadAndBindBatch(attributes, program);
         drawBatch(attributes);
@@ -869,7 +877,7 @@ void
 LODSphereMesh::cullLeaves(const math::Frustum& frustum, const Eigen::Vector3f& eyePos,
                           bool enableHorizonCull)
 {
-    frameDraws.clear();
+    batch.draws.clear();
     for (const FrameLeaf& fl : frameLeaves)
     {
         ChunkKey key{ fl.depth, fl.i, fl.j, srcVertexSize };
@@ -888,10 +896,10 @@ LODSphereMesh::cullLeaves(const math::Frustum& frustum, const Eigen::Vector3f& e
         leaf.mask = fl.mask;
         for (int i = 0; i < nTexturesUsed; ++i)
             leaf.tiles[i] = resolveTile(textures[i], key.depth, key.i, key.j);
-        frameDraws.push_back(leaf);
+        batch.draws.push_back(leaf);
     }
 
-    std::sort(frameDraws.begin(), frameDraws.end(),
+    std::sort(batch.draws.begin(), batch.draws.end(),
               [n = nTexturesUsed](const DrawLeaf& a, const DrawLeaf& b)
     {
         for (int i = 0; i < n; ++i)
@@ -910,9 +918,9 @@ LODSphereMesh::cullLeaves(const math::Frustum& frustum, const Eigen::Vector3f& e
 void
 LODSphereMesh::buildBatch(unsigned int attributes)
 {
-    batchVertices.clear();
-    batchIndices.clear();
-    frameGroups.clear();
+    batch.vertices.clear();
+    batch.indices.clear();
+    batch.groups.clear();
 
     // Every chunk contributes the same full vertex grid; reserve the exact total
     // (and an upper bound for indices) so the per-chunk resizes never reallocate.
@@ -920,21 +928,21 @@ LODSphereMesh::buildBatch(unsigned int attributes)
                                           * (CHUNK_RES + 1);
     constexpr std::size_t maxIdxPerChunk = static_cast<std::size_t>(CHUNK_RES)
                                            * CHUNK_RES * 6;
-    batchVertices.reserve(frameDraws.size() * vertsPerChunk
+    batch.vertices.reserve(batch.draws.size() * vertsPerChunk
                           * static_cast<std::size_t>(batchVertexSize));
-    batchIndices.reserve(frameDraws.size() * maxIdxPerChunk);
+    batch.indices.reserve(batch.draws.size() * maxIdxPerChunk);
 
-    for (const DrawLeaf& leaf : frameDraws)
+    for (const DrawLeaf& leaf : batch.draws)
     {
         ChunkMesh* chunk = getOrCreateChunk(leaf.key, attributes);
         chunk->lastUsed = frameCounter;
 
-        bool newGroup = frameGroups.empty();
+        bool newGroup = batch.groups.empty();
         if (!newGroup)
         {
             for (int i = 0; i < nTexturesUsed; ++i)
             {
-                if (frameGroups.back().texID[i] != leaf.tiles[i].texID)
+                if (batch.groups.back().texID[i] != leaf.tiles[i].texID)
                 {
                     newGroup = true;
                     break;
@@ -944,16 +952,16 @@ LODSphereMesh::buildBatch(unsigned int attributes)
         if (newGroup)
         {
             DrawGroup g;
-            g.first = batchIndices.size();
+            g.first = batch.indices.size();
             g.count = 0;
             for (int i = 0; i < nTexturesUsed; ++i)
                 g.texID[i] = leaf.tiles[i].texID;
-            frameGroups.push_back(g);
+            batch.groups.push_back(g);
         }
 
-        std::size_t before = batchIndices.size();
+        std::size_t before = batch.indices.size();
         appendChunk(*chunk, leaf.mask, leaf.tiles, nTexturesUsed);
-        frameGroups.back().count += batchIndices.size() - before;
+        batch.groups.back().count += batch.indices.size() - before;
     }
 }
 
@@ -962,9 +970,9 @@ LODSphereMesh::buildBatch(unsigned int attributes)
 void
 LODSphereMesh::uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* program)
 {
-    batchVBO.setData(celestia::util::array_view<void>(
-                         batchVertices.data(),
-                         batchVertices.size() * sizeof(float)),
+    batch.vbo.setData(celestia::util::array_view<void>(
+                         batch.vertices.data(),
+                         batch.vertices.size() * sizeof(float)),
                      gl::Buffer::BufferUsage::StreamDraw);
 
     auto stride = static_cast<GLsizei>(batchVertexSize * sizeof(float));
@@ -995,9 +1003,9 @@ LODSphereMesh::uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* pr
                               PTR((prefixFloats + 2 * tc) * sizeof(float)));
     }
 
-    batchIBO.setData(celestia::util::array_view<void>(
-                         batchIndices.data(),
-                         batchIndices.size() * sizeof(unsigned int)),
+    batch.ibo.setData(celestia::util::array_view<void>(
+                         batch.indices.data(),
+                         batch.indices.size() * sizeof(unsigned int)),
                      gl::Buffer::BufferUsage::StreamDraw);
 }
 
@@ -1005,10 +1013,10 @@ LODSphereMesh::uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* pr
 // Draw one glDrawElements per DrawGroup, binding its textures first, then release
 // the vertex attributes.
 void
-LODSphereMesh::drawBatch(unsigned int attributes)
+LODSphereMesh::drawBatch(unsigned int attributes) const
 {
     GLenum primitive = LODSPHERE_WIREFRAME ? GL_LINES : GL_TRIANGLES;
-    for (const DrawGroup& g : frameGroups)
+    for (const DrawGroup& g : batch.groups)
     {
         for (int tc = 0; tc < nTexturesUsed; ++tc)
         {
@@ -1044,8 +1052,8 @@ LODSphereMesh::evictColdChunks()
 
     std::vector<std::pair<std::uint64_t, ChunkKey>> byAge;
     byAge.reserve(chunkCache.size());
-    for (const auto& entry : chunkCache)
-        byAge.emplace_back(entry.second.lastUsed, entry.first);
+    for (const auto& [key, mesh] : chunkCache)
+        byAge.emplace_back(mesh.lastUsed, key);
 
     std::size_t excess = chunkCache.size() - MAX_CACHED_CHUNKS;
     std::partial_sort(byAge.begin(), byAge.begin() + excess, byAge.end(),

@@ -1914,11 +1914,16 @@ static void renderSphereUnlit(const RenderInfo& ri,
 }
 
 
+struct CloudLayerParams
+{
+    Texture *texture;
+    float texOffset;
+    float scale;
+};
+
 static void renderCloudsUnlit(const RenderInfo& ri,
                               const math::Frustum& frustum,
-                              Texture *cloudTex,
-                              float cloudTexOffset,
-                              float cloudScale,
+                              CloudLayerParams cloud,
                               const Matrices &m,
                               Renderer *r,
                               LODSphereMesh *lodSphere)
@@ -1933,7 +1938,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
         return;
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);
-    prog->textureOffset = cloudTexOffset;
+    prog->textureOffset = cloud.texOffset;
 
     Renderer::PipelineState ps;
     ps.blending = true;
@@ -1942,7 +1947,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     r->setPipelineState(ps);
 
     lodSphere->render(LODSphereMesh::Normals, frustum, ri.eyePos_obj, ri.pixelSize,
-                      &cloudTex, 1, prog, true, cloudScale);
+                      &cloud.texture, 1, prog, true, cloud.scale);
 }
 
 void
@@ -2619,7 +2624,7 @@ void Renderer::renderObject(const Vector3f& pos,
             }
             else
             {
-                renderCloudsUnlit(ri,viewFrustum, cloudTex, cloudTexOffset, cloudScale, mvp, this, m_lodSphere.get());
+                renderCloudsUnlit(ri, viewFrustum, {cloudTex, cloudTexOffset, cloudScale}, mvp, this, m_lodSphere.get());
             }
 
             glDisable(GL_POLYGON_OFFSET_FILL);

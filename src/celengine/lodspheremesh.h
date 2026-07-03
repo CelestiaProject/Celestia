@@ -175,7 +175,7 @@ private:
     // binding, re-baking only when the binding or vertex layout changed.
     bool bakeChunk(ChunkMesh& chunk,
                    const std::array<TexTile, MAX_SPHERE_MESH_TEXTURES>& tiles,
-                   int nTiles);
+                   int nTiles) const;
     // Append a chunk's vertices (baking each texture's atlas UV, cached per binding)
     // and its edgeMask stitch template (offset to the chunk's base vertex) to the
     // batch buffers.
@@ -199,14 +199,15 @@ private:
     // root descents the earlier version performed. extNeighbor resolves a child's
     // neighbour across a parent-boundary edge; childNeighbors fills all four.
     int extNeighbor(int p, int childSlot) const;
-    void childNeighbors(int node, int c, const int nb[4], int cnb[4]) const;
+    void childNeighbors(int node, int c, const std::array<int, 4>& nb,
+                        std::array<int, 4>& cnb) const;
     // Pass 1b: restricted-quadtree 2:1 balance. collectImbalanced flags leaves with
     // a neighbour 2+ levels finer; balanceLeaves force-splits them to a fixpoint.
-    void collectImbalanced(int node, const int nb[4], std::vector<int>& out) const;
+    void collectImbalanced(int node, const std::array<int, 4>& nb, std::vector<int>& out) const;
     void balanceLeaves();
     // Pass 2 helper: emit every leaf under node (rooted at cell i,j) with its
     // edge-stitch mask, derived from the four neighbour node indices carried down.
-    void buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const int nb[4]);
+    void buildLeafMasks(int node, std::uint32_t i, std::uint32_t j, const std::array<int, 4>& nb);
     // Pass 1/1b: rebuild the current view's balanced leaf set (collectLeaves +
     // balanceLeaves) into frameLeaves. Runs every frame; there is no cross-frame cache.
     void rebuildLeaves(const Eigen::Vector3f& eyePos);
@@ -219,7 +220,7 @@ private:
     void buildUniformLeaves(const Eigen::Vector3f& eyePos,
                             const celestia::math::Frustum& frustum,
                             bool enableHorizonCull);
-    TexTile resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j);
+    TexTile resolveTile(Texture* tex, int depth, std::uint32_t i, std::uint32_t j) const;
 
     // render() phases (kept separate to bound each function's complexity):
     // frustum/horizon-cull the balanced leaves into a texID-sorted draw list,
@@ -228,7 +229,7 @@ private:
                     bool enableHorizonCull);
     void buildBatch(unsigned int attributes);
     void uploadAndBindBatch(unsigned int attributes, CelestiaGLProgram* program);
-    void drawBatch(unsigned int attributes);
+    void drawBatch(unsigned int attributes) const;
 
     static constexpr int NUM_STITCH_TEMPLATES = 16;
 
@@ -256,13 +257,20 @@ private:
     std::array<std::vector<unsigned int>, NUM_STITCH_TEMPLATES> stitchLineTemplate{};
 #endif
 
-    // Single batched draw: visible chunks' vertices are concatenated into batchVBO
-    // and their stitch indices into batchIBO, drawn with one glDrawElements per
-    // binding group. Staging vectors are members so their capacity is reused.
-    celestia::gl::Buffer batchVBO{};
-    celestia::gl::Buffer batchIBO{};
-    std::vector<float> batchVertices{};
-    std::vector<unsigned int> batchIndices{};
+    // Single batched draw: visible chunks' vertices are concatenated into vbo and
+    // their stitch indices into ibo, drawn with one glDrawElements per binding group.
+    // draws is the texID-sorted visible leaf list; groups are its runs sharing a
+    // binding. Grouped so the staging vectors' reused capacity travels together.
+    struct Batch
+    {
+        celestia::gl::Buffer vbo{};
+        celestia::gl::Buffer ibo{};
+        std::vector<float> vertices{};
+        std::vector<unsigned int> indices{};
+        std::vector<DrawLeaf> draws{};
+        std::vector<DrawGroup> groups{};
+    };
+    Batch batch{};
 
     std::unordered_map<ChunkKey, ChunkMesh, ChunkKeyHash> chunkCache{};
     std::uint64_t frameCounter{ 0 };
@@ -275,8 +283,4 @@ private:
     std::array<int, 2> quadRoots{ { -1, -1 } };
     std::vector<FrameLeaf> frameLeaves{}; // balanced leaves + edge masks, rebuilt each frame
     std::vector<int> splitList{}; // nodes to split, reused per balance pass
-
-    // Pass-2 scratch (members so capacity is reused).
-    std::vector<DrawLeaf> frameDraws{};
-    std::vector<DrawGroup> frameGroups{};
 };
