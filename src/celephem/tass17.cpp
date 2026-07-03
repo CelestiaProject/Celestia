@@ -3040,8 +3040,6 @@ EDERED(std::array<double, 6> elem, double tam, double am)
         cf = std::cos(fle);
         sf = std::sin(fle);
         double dlf = -rk * sf + rh * cf;
-        double rsam1 = -rk * cf - rh * sf;
-        double asr = 1.0 / (1 + rsam1);
         double phi = std::sqrt(1 - rk * rk - rh * rh);
         double psi = 1.0 / (1 + phi);
         double x1 = dga * (cf - rk - psi * rh * dlf);
