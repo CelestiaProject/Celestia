@@ -4652,6 +4652,19 @@ float Renderer::getStarExposure() const
 }
 
 
+void Renderer::setExposure(float e)
+{
+    exposure = std::clamp(e, 1.0e-3f, 1.0e6f);
+    markSettingsChanged();
+}
+
+
+float Renderer::getExposure() const
+{
+    return exposure;
+}
+
+
 void Renderer::loadTextures(Body* body)
 {
     const Surface& surface = body->getSurface();

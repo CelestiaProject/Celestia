@@ -533,4 +533,14 @@ StarTextures
 #------------------------------------------------------------------------
 # SRGBRendering true
 
+#------------------------------------------------------------------------
+# Exposure controls the exponential tone-mapping operator
+# (1 - exp(-Exposure * L)) applied to the linear HDR scene during the
+# sRGB output post-process.  It softly rolls off highlights above 1.0
+# instead of hard-clipping them.  Only takes effect when SRGBRendering
+# is enabled.
+# The default value is 1.0.
+#------------------------------------------------------------------------
+# Exposure 1.0
+
 }

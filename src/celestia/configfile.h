@@ -93,7 +93,12 @@ struct CelestiaConfig
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
-        bool sRGBRendering{ false };
+        struct OutputRendering
+        {
+            bool sRGB{ false };
+            float exposure{ 1.0f };
+        };
+        OutputRendering output{ };
         struct AtmosphereRendering
         {
             unsigned int segmentCount{ 3 };

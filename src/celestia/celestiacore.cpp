@@ -2773,7 +2773,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
-    gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.sRGBRendering);
+    gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.output.sRGB);
 
     if (gl::sRGBRendering)
     {

@@ -304,6 +304,8 @@ class Renderer
     float getStarDimClipFactor() const;
     void  setStarExposure(float e);
     float getStarExposure() const;
+    void  setExposure(float e);
+    float getExposure() const;
     void setResolution(celestia::engine::TextureResolution resolution);
     celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
@@ -692,6 +694,7 @@ class Renderer
     float starMaxIrradiance{ 100.0f };
     float starDimClipFactor{ 10.0f };
     float starExposure{ 10.0f };
+    float exposure{ 1.0f };
 
     Color ambientColor;
     std::string displayedSurface;

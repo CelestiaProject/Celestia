@@ -707,6 +707,7 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     appCore->getRenderer()->setStarOptimization(appCore->getConfig()->renderDetails.stars.optimization);
     appCore->getRenderer()->setStarMaxIrradiance(appCore->getConfig()->renderDetails.stars.maxIrradiance);
     appCore->getRenderer()->setStarExposure(appCore->getConfig()->renderDetails.stars.exposure);
+    appCore->getRenderer()->setExposure(appCore->getConfig()->renderDetails.output.exposure);
 
     auto cursorHandler = std::make_unique<WinCursorHandler>(hDefaultCursor);
     appCore->setCursorHandler(cursorHandler.get());

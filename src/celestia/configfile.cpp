@@ -211,7 +211,9 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     renderDetails.SolarSystemMaxDistance = std::clamp(renderDetails.SolarSystemMaxDistance, 1.0f, 10.0f);
     applyNumber(renderDetails.ShadowMapSize, hash, "ShadowMapSize"sv);
     applyStringArray(renderDetails.ignoreGLExtensions, hash, "IgnoreGLExtensions"sv);
-    applyBoolean(renderDetails.sRGBRendering, hash, "SRGBRendering"sv);
+    applyBoolean(renderDetails.output.sRGB, hash, "SRGBRendering"sv);
+    applyNumber(renderDetails.output.exposure, hash, "Exposure"sv);
+    renderDetails.output.exposure = std::clamp(renderDetails.output.exposure, 1.0e-3f, 1.0e6f);
     applyNumber(renderDetails.stars.pointRadius, hash, "StarPointRadius"sv);
     renderDetails.stars.pointRadius = std::clamp(renderDetails.stars.pointRadius, 1.0f, 10.0f);
     applyNumber(renderDetails.stars.optimization, hash, "StarOptimization"sv);

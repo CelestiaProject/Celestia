@@ -72,6 +72,7 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
 
     prog->use();
     prog->samplerParam("tex") = 0;
+    prog->floatParam("exposure") = renderer->getExposure();
     glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
     renderer->setPipelineState(ps);
     vo.draw();
