@@ -54,7 +54,7 @@ public:
     void finish() override;
 
     void addStar(const Eigen::Vector3f &center, const Color &color, float scalar,
-                 float alpha = 1.0f);
+                 float limbRadius = 0.0f, float alpha = 1.0f);
 
 protected:
     explicit LargeStarRenderer(Renderer &renderer, StaticShader shaderId, capacity_t capacity);
@@ -72,7 +72,8 @@ private:
     {
         Eigen::Vector3f              center;
         float                        scalar;  // peak radiance or pixel size
-        float                        alpha;   // PSF glow fade
+        float                        limbRadius; // resolved-body limb (px), 0 if none
+        float                        alpha;   // PSF glow fade, full float precision
         std::array<unsigned char, 4> color;   // legacy shader also reads .a
         std::array<signed char, 2>   corner;  // ±127 -> ±1.0 (signed byte normalized)
         std::array<unsigned char, 2> uv;      // 0/255 -> 0/1 (unsigned byte normalized)

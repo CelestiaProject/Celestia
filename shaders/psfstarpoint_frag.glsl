@@ -25,9 +25,8 @@ void main(void)
     vec2  d  = (gl_PointCoord.xy - vec2(0.5)) * v_pointSize;
     float px = length(d) / pointScale;
 
-    // Linear cone of radius `pointRadius`, height min(peakRadiance, 1).
     float falloff = clamp(1.0 - px / pointRadius, 0.0, 1.0);
-    float height  = min(v_peakRadiance, 1.0);
+    float height  = v_peakRadiance;
     vec3  radiance = v_color * (falloff * height);
 
     fragColor = vec4(radiance, 1.0);

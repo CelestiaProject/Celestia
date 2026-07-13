@@ -20,6 +20,8 @@ in float v_alpha;
 in float v_peakRadiance;
 in float v_psfRadius;
 in float v_p04;
+in float v_limbRadius;   // resolved-body limb radius in unscaled px, 0 if none
+in float v_fadeExp;      // interior-fade crush exponent (per sprite)
 
 void main(void)
 {
@@ -37,12 +39,25 @@ void main(void)
     float val = pow(base * psfB, 2.5);
     val = min(val, v_peakRadiance);
 
-    // Clamp each channel of v_color * val to 1 BEFORE applying the
-    // fade alpha (v_alpha) so the bleached-white centre of a
-    // coloured star stays white through the fade, instead of
-    // reverting to its underlying tint once alpha drops the
-    // per-channel value back below saturation.  See
-    // psfstarglow_frag.glsl for the full rationale.
-    vec3 clampedColor = min(vec3(1.0), v_color.rgb * val);
-    fragColor = vec4(clampedColor * v_alpha, 1.0);
+    // See psfstarglow_frag.glsl: outside the geometric limb the halo fades
+    // linearly with v_alpha.  Inside the limb reshape the interior into a
+    // plateau (kPsfCoreSharpness) so it reads as a flat-topped face, then crush
+    // it and floor at the limb brightness (valLimb * v_alpha).  The per-sprite
+    // exponent v_fadeExp = 1 + log2(peak/valLimb) makes the disc core meet the
+    // limb floor at v_alpha == 0.5 while preserving the full plateau at
+    // v_alpha == 1.  0 limb (point sources) => plain linear fade.
+    const float kPsfCoreSharpness = 8.0;
+    float brightness = val * v_alpha;
+    if (v_limbRadius > 0.0 && px < v_limbRadius && v_peakRadiance > 1.0)
+    {
+        float baseL   = v_p04 / v_limbRadius - psfA;
+        float valLimb = min(pow(max(baseL, 0.0) * psfB, 2.5), v_peakRadiance);
+        float t = 1.0 - px / v_limbRadius;
+        t = pow(t, 1.0 / kPsfCoreSharpness);
+        float valPlateau = mix(valLimb, v_peakRadiance, t);
+        brightness = max(valPlateau * pow(v_alpha, v_fadeExp),
+                         valLimb * v_alpha);
+    }
+
+    fragColor = vec4(v_color.rgb * brightness, 1.0);
 }

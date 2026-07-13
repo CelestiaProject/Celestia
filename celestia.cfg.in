@@ -530,17 +530,20 @@ StarTextures
 # On OpenGL ES, the GL_EXT_sRGB extension is required; if it is not
 # available the setting is ignored.
 # The default value is false.
-#------------------------------------------------------------------------
-# SRGBRendering true
-
-#------------------------------------------------------------------------
+#
 # Exposure controls the exponential tone-mapping operator
 # (1 - exp(-Exposure * L)) applied to the linear HDR scene during the
 # sRGB output post-process.  It softly rolls off highlights above 1.0
 # instead of hard-clipping them.  Only takes effect when SRGBRendering
 # is enabled.
 # The default value is 1.0.
+#
+# ToneMapping toggles the exponential tone-map in the sRGB post-process.
+# When false, HDR highlights hard-clip to white instead of rolling off.
+# Only takes effect when SRGBRendering is enabled. The default is false.
 #------------------------------------------------------------------------
-# Exposure 1.0
+# SRGBRendering true
+# Exposure      1.0
+# ToneMapping   true
 
 }

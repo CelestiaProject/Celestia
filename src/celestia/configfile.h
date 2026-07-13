@@ -97,6 +97,7 @@ struct CelestiaConfig
         {
             bool sRGB{ false };
             float exposure{ 1.0f };
+            bool toneMapping{ false };
         };
         OutputRendering output{ };
         struct AtmosphereRendering

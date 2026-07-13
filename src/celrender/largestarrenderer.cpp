@@ -196,12 +196,22 @@ LargeStarRenderer::setupVertexArrayObject()
         false,
         sizeof(StarVertex),
         offsetof(StarVertex, alpha));
+
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::LimbRadiusAttributeIndex,
+        1,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(StarVertex),
+        offsetof(StarVertex, limbRadius));
 }
 
 void
 LargeStarRenderer::addStar(const Eigen::Vector3f &center,
                            const Color           &color,
                            float                  scalar,
+                           float                  limbRadius,
                            float                  alpha)
 {
     if (m_nStars < m_capacity)
@@ -212,12 +222,13 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
         StarVertex *out = &m_vertices[static_cast<std::size_t>(m_nStars) * kVerticesPerStar];
         for (std::size_t i = 0; i < kVerticesPerStar; ++i)
         {
-            out[i].center = center;
-            out[i].scalar = scalar;
-            out[i].alpha  = alpha;
-            out[i].color  = packedColor;
-            out[i].corner = { kQuadCorners[i].x, kQuadCorners[i].y };
-            out[i].uv     = { kQuadCorners[i].u, kQuadCorners[i].v };
+            out[i].center     = center;
+            out[i].scalar     = scalar;
+            out[i].limbRadius = limbRadius;
+            out[i].alpha      = alpha;
+            out[i].color      = packedColor;
+            out[i].corner     = { kQuadCorners[i].x, kQuadCorners[i].y };
+            out[i].uv         = { kQuadCorners[i].u, kQuadCorners[i].v };
         }
         m_nStars++;
     }

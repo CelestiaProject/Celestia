@@ -248,6 +248,7 @@ public:
         ScaleFactorAttributeIndex   = 11,
         LineSideAttributeIndex      = 12,
         AlphaAttributeIndex         = 13,
+        LimbRadiusAttributeIndex    = 14,
     };
 
     CelestiaGLProgramLight lights[MaxShaderLights];

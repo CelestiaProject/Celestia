@@ -1775,9 +1775,6 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     ps.depthTest = true;
     setPipelineState(ps);
 
-    const Vector3f &spritePos = position;
-    Vector3f frontPos = calculateQuadCenter(getCameraOrientationf(), spritePos, radius);
-
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
     float peakRadScale   = exposureFactor * 3.0f
@@ -1800,6 +1797,8 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     float greenScale = 1.0f;
     Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);
     float peakRadCol = peakRad * greenScale;
+
+    Eigen::Vector3f frontPos = calculateQuadCenter(getCameraOrientationf(), position, radius);
 
     // Suppress the cone-cap sprite once the body is resolved as a
     // mesh; the linked glow below handles the bloom around the disc.
@@ -1859,11 +1858,11 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         {
             // Oversize glow (typical for Sol at ~1 AU): hand it to the
             // batched billboard renderer.
-            m_psfGlowLargeRenderer->addStar(glowPos, linearStarColor, glowPeakToUse, alpha);
+            m_psfGlowLargeRenderer->addStar(glowPos, linearStarColor, glowPeakToUse, angR, alpha);
         }
         else
         {
-            psfGlowBuffer->addStar(glowPos, linearStarColor, glowPeakToUse, alpha);
+            psfGlowBuffer->addStar(glowPos, linearStarColor, glowPeakToUse, angR, alpha);
         }
     }
 }
@@ -4662,6 +4661,19 @@ void Renderer::setExposure(float e)
 float Renderer::getExposure() const
 {
     return exposure;
+}
+
+
+void Renderer::setToneMapping(bool enabled)
+{
+    toneMapping = enabled;
+    markSettingsChanged();
+}
+
+
+bool Renderer::getToneMapping() const
+{
+    return toneMapping;
 }
 
 
