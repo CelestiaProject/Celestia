@@ -8,6 +8,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <config.h>
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -378,8 +380,8 @@ Mesh::optimize()
         return;
 
     meshopt_optimizeVertexCache(g.indices.data(), g.indices.data(), g.indices.size(), nVertices);
-    meshopt_optimizeOverdraw(g.indices.data(), g.indices.data(), g.indices.size(), reinterpret_cast<float*>(vertices.data()), nVertices, vertexDesc.strideBytes, 1.05f);
-    meshopt_optimizeVertexFetch(vertices.data(), g.indices.data(), g.indices.size(), vertices.data(), nVertices, vertexDesc.strideBytes);
+    meshopt_optimizeOverdraw(g.indices.data(), g.indices.data(), g.indices.size(), reinterpret_cast<float*>(vertices.data()), nVertices, vertexDesc.strideBytes(), 1.05f);
+    meshopt_optimizeVertexFetch(vertices.data(), g.indices.data(), g.indices.size(), vertices.data(), nVertices, vertexDesc.strideBytes());
 #endif
 }
 
