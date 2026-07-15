@@ -166,6 +166,8 @@ LargeStarRenderer::setupVertexArrayObject()
         sizeof(StarVertex),
         offsetof(StarVertex, uv));
 
+    // Color stays 4-component: this layout is shared with
+    // LegacyLargeStarRenderer, whose shader reads in_Color.a.
     m_vo->addVertexBuffer(
         *m_bo,
         CelestiaGLProgram::ColorAttributeIndex,
@@ -183,12 +185,24 @@ LargeStarRenderer::setupVertexArrayObject()
         false,
         sizeof(StarVertex),
         offsetof(StarVertex, scalar));
+
+    // continuous distance-derived glow fade; float for a smooth transition
+    // (unused by the legacy shader)
+    m_vo->addVertexBuffer(
+        *m_bo,
+        CelestiaGLProgram::TextureCoord1AttributeIndex,
+        1,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(StarVertex),
+        offsetof(StarVertex, alpha));
 }
 
 void
 LargeStarRenderer::addStar(const Eigen::Vector3f &center,
                            const Color           &color,
-                           float                  scalar)
+                           float                  scalar,
+                           float                  alpha)
 {
     if (m_nStars < m_capacity)
     {
@@ -200,6 +214,7 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
         {
             out[i].center = center;
             out[i].scalar = scalar;
+            out[i].alpha  = alpha;
             out[i].color  = packedColor;
             out[i].corner = { kQuadCorners[i].x, kQuadCorners[i].y };
             out[i].uv     = { kQuadCorners[i].u, kQuadCorners[i].v };

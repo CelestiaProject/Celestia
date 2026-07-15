@@ -12,7 +12,7 @@
 // Point Spread Function (PSF) star renderer - point (cone) pass.
 
 layout(location = 0) in vec4 in_Position;
-layout(location = 8) in vec4 in_Color;        // green-normalised, linear-space, 8-bit per channel
+layout(location = 8) in vec3 in_Color;        // green-normalised, linear-space, 8-bit per channel
 layout(location = 9) in float in_Intensity;   // peakRadiance = exposure * 3 * irradiance / (pi * pointRadius^2)
 
 uniform float pointRadius; // pt, user setting (1..10)
@@ -24,7 +24,7 @@ out float v_pointSize;
 
 void main(void)
 {
-    v_color = in_Color.rgb;
+    v_color = in_Color;
     v_peakRadiance = in_Intensity;
 
     float size = 2.0 * pointRadius * pointScale;

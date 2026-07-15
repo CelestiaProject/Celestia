@@ -15,7 +15,8 @@ uniform float psfA;
 uniform float psfB;
 
 in vec2  v_uv;
-in vec4  v_color;
+in vec3  v_color;
+in float v_alpha;
 in float v_peakRadiance;
 in float v_psfRadius;
 in float v_p04;
@@ -37,11 +38,11 @@ void main(void)
     val = min(val, v_peakRadiance);
 
     // Clamp each channel of v_color * val to 1 BEFORE applying the
-    // fade alpha (v_color.a) so the bleached-white centre of a
+    // fade alpha (v_alpha) so the bleached-white centre of a
     // coloured star stays white through the fade, instead of
     // reverting to its underlying tint once alpha drops the
     // per-channel value back below saturation.  See
     // psfstarglow_frag.glsl for the full rationale.
     vec3 clampedColor = min(vec3(1.0), v_color.rgb * val);
-    fragColor = vec4(clampedColor * v_color.a, 1.0);
+    fragColor = vec4(clampedColor * v_alpha, 1.0);
 }

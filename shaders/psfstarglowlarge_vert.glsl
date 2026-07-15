@@ -16,7 +16,8 @@
 layout(location = 0) in vec2  in_Position;    // quad corner in [-1, 1]
 layout(location = 1) in vec3  in_Normal;      // star world position
 layout(location = 2) in vec2  in_TexCoord0;   // quad UV in [0, 1]
-layout(location = 8) in vec4  in_Color;       // linear RGB
+layout(location = 3) in float in_Alpha;       // glow fade
+layout(location = 8) in vec3  in_Color;       // linear RGB
 layout(location = 9) in float in_Intensity;   // peak radiance
 
 uniform float psfA;             // optimization / pointRadius
@@ -27,7 +28,8 @@ uniform float psfPointScale;    // DPI scale
 uniform vec2  psfViewportRcp;   // (1/width, 1/height)
 
 out vec2  v_uv;
-out vec4  v_color;
+out vec3  v_color;
+out float v_alpha;
 out float v_peakRadiance;
 out float v_psfRadius;
 out float v_p04;
@@ -36,6 +38,7 @@ void main(void)
 {
     v_uv           = in_TexCoord0;
     v_color        = in_Color;
+    v_alpha        = in_Alpha;
     v_peakRadiance = in_Intensity;
 
     float p04   = pow(in_Intensity, 0.4);
@@ -44,7 +47,7 @@ void main(void)
     // Match psfstarglow_vert.glsl: tighten the rasterised radius to
     // where the post-alpha brightest channel falls below one
     // framebuffer code (psfMinVisRad linear).
-    float tVal  = psfMinVisRad / max(in_Color.a, 1.0e-3);
+    float tVal  = psfMinVisRad / max(in_Alpha, 1.0e-3);
     float rEff  = p04 / (psfA + pow(tVal, 0.4) / psfB);
     rEff        = min(rEff, rFull);
 

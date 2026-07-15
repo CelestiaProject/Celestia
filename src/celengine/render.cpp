@@ -1833,11 +1833,12 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         float glowPeakToUse = std::max(glowPeak, linkedGlowPeak);
 
         // Fade alpha 1 → 0 between d_match and the body surface so the
-        // sprite vanishes smoothly as the disc takes over.
+        // sprite vanishes smoothly as the disc takes over.  This is a
+        // continuous distance-derived value, so pass it as a float to keep
+        // the transition smooth.
         float alpha = computePsfGlowAlpha(distance, radius, linkedGlowPeak, glowPeak);
         if (alpha <= 0.0f)
             return;
-        Color glowColor(linearStarColor, alpha);
 
         // Fast oversize check: avoid computing pow unless we actually
         // need sizePhys.  sizePhys > maxPointSize is equivalent to
@@ -1850,11 +1851,11 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         {
             // Oversize glow (typical for Sol at ~1 AU): hand it to the
             // batched billboard renderer.
-            m_psfGlowLargeRenderer->addStar(glowPos, glowColor, glowPeakToUse);
+            m_psfGlowLargeRenderer->addStar(glowPos, linearStarColor, glowPeakToUse, alpha);
         }
         else
         {
-            psfGlowBuffer->addStar(glowPos, glowColor, glowPeakToUse);
+            psfGlowBuffer->addStar(glowPos, linearStarColor, glowPeakToUse, alpha);
         }
     }
 }
