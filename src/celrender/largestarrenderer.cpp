@@ -190,7 +190,7 @@ LargeStarRenderer::setupVertexArrayObject()
     // (unused by the legacy shader)
     m_vo->addVertexBuffer(
         *m_bo,
-        CelestiaGLProgram::TextureCoord1AttributeIndex,
+        CelestiaGLProgram::AlphaAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
         false,

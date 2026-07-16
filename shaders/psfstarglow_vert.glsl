@@ -12,9 +12,9 @@
 // Point Spread Function (PSF) star renderer - glow (eye-PSF) pass.
 
 layout(location = 0) in vec4 in_Position;
-layout(location = 3) in float in_Alpha;      // glow fade
 layout(location = 8) in vec3 in_Color;
 layout(location = 9) in float in_Intensity;
+layout(location = 13) in float in_Alpha;      // glow fade
 
 uniform float pointRadius;
 uniform float psfA;        // = optimization / pointRadius

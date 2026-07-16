@@ -244,6 +244,7 @@ public:
         NextVCoordAttributeIndex    = 10,
         ScaleFactorAttributeIndex   = 11,
         LineSideAttributeIndex      = 12,
+        AlphaAttributeIndex         = 13,
     };
 
     CelestiaGLProgramLight lights[MaxShaderLights];

@@ -16,9 +16,9 @@
 layout(location = 0) in vec2  in_Position;    // quad corner in [-1, 1]
 layout(location = 1) in vec3  in_Normal;      // star world position
 layout(location = 2) in vec2  in_TexCoord0;   // quad UV in [0, 1]
-layout(location = 3) in float in_Alpha;       // glow fade
 layout(location = 8) in vec3  in_Color;       // linear RGB
 layout(location = 9) in float in_Intensity;   // peak radiance
+layout(location = 13) in float in_Alpha;       // glow fade
 
 uniform float psfA;             // optimization / pointRadius
 uniform float psfB;             // 1 / (pi/pointRadius - a)

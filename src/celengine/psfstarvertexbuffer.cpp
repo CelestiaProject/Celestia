@@ -157,7 +157,7 @@ PsfStarVertexBuffer::setupVertexArrayObject()
     // continuous distance-derived glow fade; float for a smooth transition
     m_vo->addVertexBuffer(
         *m_bo,
-        CelestiaGLProgram::TextureCoord1AttributeIndex,
+        CelestiaGLProgram::AlphaAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
         false,
