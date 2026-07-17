@@ -1806,7 +1806,11 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     // equals the body's angular disc.
     float a    = starOptimization / r;
     float invB = celestia::numbers::pi_v<float> / r - a;
-    float angR = discSizeInPixels / pointScale;
+    // Exact projected limb radius; discSizeInPixels undershoots up close.
+    float limbDiscPixels = discSizeInPixels;
+    if (distance > radius)
+        limbDiscPixels = radius / (std::sqrt(distance * distance - radius * radius) * pixelSize);
+    float angR = limbDiscPixels / pointScale;
     float linkedGlowPeak = std::pow(angR * (a + invB), 2.5f);
 
     // Gate on the irradiance-based peak so the linked term only
