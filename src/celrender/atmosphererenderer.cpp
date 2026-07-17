@@ -22,6 +22,7 @@
 #include <celengine/render.h>
 #include <celengine/renderinfo.h>
 #include <celengine/shadermanager.h>
+#include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celutil/indexlist.h>
@@ -390,8 +391,10 @@ AtmosphereRenderer::render(
     ps.depthTest = true;
     m_renderer.setPipelineState(ps);
 
+    math::Frustum shellFrustum = frustum;
+    shellFrustum.transform(math::scale(1.0f / atmScale));
     m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
-                                   frustum,
+                                   shellFrustum,
                                    ri.pixWidth,
                                    nullptr);
 

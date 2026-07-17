@@ -748,6 +748,7 @@ AtmosphericEffects(const ShaderProperties& props)
     //source += "    atmSamplePoint = atmEnter * 0.9 + atmLeave * 0.1;\n";
     source += "    h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
     source += "    density += exp(-h * mieH);\n";
+    source += "    density *= 0.5;\n";
 #endif
 
     bool hasAbsorption = true;
