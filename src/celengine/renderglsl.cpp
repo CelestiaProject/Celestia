@@ -357,7 +357,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
     lodSphere->render(attributes,
-                      frustum, ri.pixWidth,
+                      frustum, ri.eyePos_obj, ri.pixelSize,
                       textures.data(), static_cast<int>(textures.size()), prog);
 }
 
@@ -632,9 +632,15 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
+    // The caller scales the modelview by this same factor (1 + cloudHeight/radius),
+    // so the cull bounds must be scaled to match the planet-scale frustum/eye.
+    float cloudScale = (atmosphere != nullptr)
+                       ? 1.0f + atmosphere->cloudHeight / radius
+                       : 1.0f;
     lodSphere->render(attributes,
-                      frustum, ri.pixWidth,
-                      textures.data(), static_cast<int>(textures.size()), prog);
+                      frustum, ri.eyePos_obj, ri.pixelSize,
+                      textures.data(), static_cast<int>(textures.size()), prog,
+                      true, cloudScale);
 
     prog->textureOffset = 0.0f;
 }

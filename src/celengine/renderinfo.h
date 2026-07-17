@@ -36,6 +36,9 @@ struct RenderInfo
     Color ambientColor{ 0.0f, 0.0f, 0.0f };
     float lunarLambert{ 0.0f };
     float pixWidth{ 1.0f };
+    // Angular size of one pixel in radians (does not saturate when close to a
+    // surface, unlike pixWidth), used to drive chunked-LOD subdivision.
+    float pixelSize{ 1.0f };
     float pointScale{ 1.0f };
     bool isStar{ false };
 };
