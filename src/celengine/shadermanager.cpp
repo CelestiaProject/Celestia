@@ -710,6 +710,35 @@ ScatteringPhaseFunctions(const ShaderProperties& /*unused*/)
 
 
 std::string
+ChapmanOpticalDepth()
+{
+    return R"glsl(float chapmanToSpace(vec3 origin, vec3 direction)
+{
+    float r = length(origin);
+    float mu = clamp(dot(origin, direction) / r, -1.0, 1.0);
+    float X = r * mieH;
+    float density = exp(min((atmosphereRadius.z - r) * mieH, 0.0));
+    float grazing = sqrt(1.5707963267948966 * X);
+    if (mu >= 0.0)
+        return (density / mieH) * grazing / ((grazing - 1.0) * mu + 1.0);
+    float sinZenith = sqrt(max(1.0e-8, 1.0 - mu * mu));
+    float tangentDensity = exp(min((atmosphereRadius.z - r * sinZenith) * mieH, 40.0));
+    float upward = (density / mieH) * grazing / ((grazing - 1.0) * (-mu) + 1.0);
+    return max(0.0, (2.0 * tangentDensity / mieH) * sqrt(1.5707963267948966 * X * sinZenith) - upward);
+}
+
+float chapmanOpticalDepth(vec3 origin, vec3 direction, float pathLength)
+{
+    vec3 endpoint = origin + direction * pathLength;
+    if (dot(endpoint, endpoint) < dot(origin, origin))
+        return max(0.0, chapmanToSpace(endpoint, -direction) - chapmanToSpace(origin, -direction));
+    return max(0.0, chapmanToSpace(origin, direction) - chapmanToSpace(endpoint, direction));
+}
+)glsl";
+}
+
+
+std::string
 AtmosphericEffects(const ShaderProperties& props)
 {
     std::string source;
@@ -722,44 +751,26 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    vec3 atmEnter = eyePosition + min(0.0, (-rq + d)) * eyeDir;\n";
     source += "    vec3 atmLeave = nposition;\n";
 
-    source += "    vec3 atmSamplePoint = (atmEnter + atmLeave) * 0.5;\n";
-    //source += "    vec3 atmSamplePoint = atmEnter * 0.2 + atmLeave * 0.8;\n";
+    source += "    float distAtm = length(atmEnter - atmLeave);\n";
+    source += "    float odAtm = chapmanOpticalDepth(atmEnter, -eyeDir, distAtm);\n";
 
-    // Compute the distance through the atmosphere from the sample point to the sun
+    // Compute the optical depth from the midpoint of the view segment to the sun.
     source += "    vec3 atmSamplePointSun = mix(atmEnter, atmLeave, 0.5);\n";
     source += "    rq = dot(atmSamplePointSun, " + LightProperty(0, "direction") + ");\n";
     source += "    qq = dot(atmSamplePointSun, atmSamplePointSun) - atmosphereRadius.y;\n";
     source += "    d = sqrt(max(rq * rq - qq, 0.0));\n";
     source += "    float distSun = -rq + d;\n";
-    source += "    float distAtm = length(atmEnter - atmLeave);\n";
-
-    // Compute the density of the atmosphere at the sample point; it falls off exponentially
-    // with the height above the planet's surface.
-#if 0
-    source += "    float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
-    source += "    float density = exp(-h * mieH);\n";
-#else
-    source += "    float density = 0.0;\n";
-    source += "    atmSamplePoint = mix(atmEnter, atmLeave, 0.667);\n";
-    //source += "    atmSamplePoint = atmEnter * 0.1 + atmLeave * 0.9;\n";
-    source += "    float h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
-    source += "    density += exp(-h * mieH);\n";
-    source += "    atmSamplePoint = mix(atmEnter, atmLeave, 0.333);\n";
-    //source += "    atmSamplePoint = atmEnter * 0.9 + atmLeave * 0.1;\n";
-    source += "    h = max(0.0, length(atmSamplePoint) - atmosphereRadius.z);\n";
-    source += "    density += exp(-h * mieH);\n";
-    source += "    density *= 0.5;\n";
-#endif
+    source += "    float odSun = chapmanOpticalDepth(atmSamplePointSun, " + LightProperty(0, "direction") + ", distSun);\n";
 
     bool hasAbsorption = true;
 
     std::string scatter;
     if (hasAbsorption)
     {
-        source += "    vec3 sunColor = " + LightProperty(0, "color") + " * exp(-extinctionCoeff * density * distSun);\n";
-        source += "    vec3 ex = exp(-extinctionCoeff * density * distAtm);\n";
+        source += "    vec3 sunColor = " + LightProperty(0, "color") + " * exp(-extinctionCoeff * odSun);\n";
+        source += "    vec3 ex = exp(-extinctionCoeff * odAtm);\n";
 
-        scatter = "(1.0 - exp(-scatterCoeffSum * density * distAtm))";
+        scatter = "(1.0 - exp(-scatterCoeffSum * odAtm))";
     }
 #if 0
     else
@@ -877,6 +888,7 @@ ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
     source += DeclareUniform("scatterCoeffSum", Shader_Vector3);
     source += DeclareUniform("invScatterCoeffSum", Shader_Vector3);
     source += DeclareUniform("extinctionCoeff", Shader_Vector3);
+    source += ChapmanOpticalDepth();
 
     return source;
 }
