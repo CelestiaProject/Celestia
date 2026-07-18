@@ -289,11 +289,8 @@ public:
     Vec3ShaderParameter rayleighCoeff;
     FloatShaderParameter rayleighScaleHeight;
 
-    // Precomputed sum and inverse sum of Rayleigh and Mie scattering coefficients
-    Vec3ShaderParameter scatterCoeffSum;
-    Vec3ShaderParameter invScatterCoeffSum;
     // Precomputed sum of absorption and scattering coefficients--identical to
-    // scatterCoeffSum when there is no absorption.
+    // the scattering coefficient sum when there is no absorption.
     Vec3ShaderParameter extinctionCoeff;
 
     // Radius of sphere for atmosphere--should be significantly larger than
