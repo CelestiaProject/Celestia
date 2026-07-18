@@ -2384,6 +2384,8 @@ void Renderer::renderObject(const Vector3f& pos,
     ri.eyeDir_obj = -(planetRotation * pos).normalized();
     ri.eyePos_obj = -(planetRotation * (pos.cwiseQuotient(scaleFactors)));
 
+    bool insidePlanet = obj.geometry == engine::GeometryHandle::Invalid && (planetRotation * pos).cwiseQuotient(scaleFactors).squaredNorm() < 1.0f;
+
     ri.orientation = getCameraOrientationf() * obj.orientation.conjugate();
 
     ri.pixWidth = discSizeInPixels;
@@ -2478,6 +2480,7 @@ void Renderer::renderObject(const Vector3f& pos,
                                  scaleFactors,
                                  renderFlags,
                                  obj.orientation,
+                                 insidePlanet,
                                  viewFrustum,
                                  planetMVP,
                                  this,
@@ -2546,7 +2549,8 @@ void Renderer::renderObject(const Vector3f& pos,
             fade = 1.0f;
         }
 
-        if (fade > 0 && util::is_set(renderFlags, RenderFlags::ShowAtmospheres) && atmosphere->height > 0.0f)
+        if (fade > 0 && util::is_set(renderFlags, RenderFlags::ShowAtmospheres) && atmosphere->height > 0.0f &&
+            !insidePlanet)
         {
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // TODO: convert old style atmopshere parameters
@@ -2579,7 +2583,7 @@ void Renderer::renderObject(const Vector3f& pos,
         }
 
         // If there's a cloud layer, we'll render it now.
-        if (cloudTex != nullptr)
+        if (cloudTex != nullptr && !insidePlanet)
         {
             float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
             Matrix4f cmv = math::scale(planetMV, cloudScale);

@@ -134,6 +134,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                           const Eigen::Vector3f& semiAxes,
                           RenderFlags renderFlags,
                           const Eigen::Quaternionf& planetOrientation,
+                          bool insidePlanet,
                           const math::Frustum& frustum,
                           const Matrices &m,
                           Renderer* renderer,
@@ -146,6 +147,30 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::TextureCoordTransform;
     shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
+
+    // Inside the planet, draw the surface as an opaque black shell; low detail avoids patch-culling holes.
+    if (insidePlanet)
+    {
+        shadprop.nLights = 0;
+        CelestiaGLProgram* prog = renderer->getShaderManager().getShader(shadprop);
+        if (prog == nullptr)
+            return;
+
+        prog->use();
+        prog->setMVPMatrices(*m.projection, *m.modelview);
+        prog->ambientColor = Eigen::Vector3f::Zero();
+        prog->opacity = 1.0f;
+
+        Renderer::PipelineState ps;
+        ps.depthMask = true;
+        ps.depthTest = true;
+        renderer->setPipelineState(ps);
+
+        glDisable(GL_CULL_FACE);
+        lodSphere->render(LODSphereMesh::Normals, frustum, 1.0f, nullptr, 0, prog);
+        glEnable(GL_CULL_FACE);
+        return;
+    }
 
     // Set up the textures used by this object
     if (ri.baseTex != nullptr)
