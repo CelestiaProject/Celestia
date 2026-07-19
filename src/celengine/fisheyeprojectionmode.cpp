@@ -8,6 +8,7 @@
 // of the License, or (at your option) any later version.
 
 #include "fisheyeprojectionmode.h"
+#include <celengine/glsupport.h>
 #include <celmath/frustum.h>
 #include <celmath/geomutil.h>
 #include <celengine/shadermanager.h>
@@ -25,6 +26,17 @@ FisheyeProjectionMode::FisheyeProjectionMode(float width, float height, int scre
 Eigen::Matrix4f FisheyeProjectionMode::getProjectionMatrix(float nearZ, float farZ, float /*zoom*/) const
 {
     float aspectRatio = width / height;
+    if (gl::reverseZ)
+    {
+        // Reverse-Z, output z in [0, +1]. Only row 2 differs from standard
+        // Ortho — patch it in place.
+        Eigen::Matrix4f m = math::Ortho(-aspectRatio, aspectRatio,
+                                        -1.0f, 1.0f, nearZ, farZ);
+        float d = farZ - nearZ;
+        m(2, 2) = 1.0f / d;
+        m(2, 3) = farZ / d;
+        return m;
+    }
     return math::Ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, nearZ, farZ);
 }
 
@@ -80,6 +92,11 @@ float FisheyeProjectionMode::getNormalizedDeviceZ(float nearZ, float farZ, float
     // just apply a linear transformation since fisheye uses
     // orthographic projection already.
     float d0 = farZ - nearZ;
+    if (gl::reverseZ)
+    {
+        // Mirrors the near/far swap in getProjectionMatrix.
+        return (z - nearZ) / d0 * 2.0f - 1.0f;
+    }
     return 1.0f - (z - nearZ) / d0 * 2.0f;
 }
 

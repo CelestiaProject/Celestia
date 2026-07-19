@@ -217,6 +217,30 @@ Perspective(T fovy, T aspect, T nearZ, T farZ)
     return m;
 }
 
+/*! Reverse-Z infinite-far perspective for [0, +1] NDC; requires glClipControl(ZERO_TO_ONE). */
+template<class T> Eigen::Matrix<T, 4, 4>
+PerspectiveReverseZInfiniteZeroToOne(T fovy, T aspect, T nearZ)
+{
+    using std::cos, std::sin;
+
+    if (aspect == static_cast<T>(0))
+        return Eigen::Matrix<T, 4, 4>::Identity();
+
+    T angle = degToRad(fovy / static_cast<T>(2));
+    T sine = sin(angle);
+    if (sine == static_cast<T>(0))
+        return Eigen::Matrix<T, 4, 4>::Identity();
+    T ctg = cos(angle) / sine;
+
+    Eigen::Matrix<T, 4, 4> m = Eigen::Matrix<T, 4, 4>::Zero();
+    m(0, 0) = ctg / aspect;
+    m(1, 1) = ctg;
+    m(2, 2) = static_cast<T>(0);
+    m(2, 3) = nearZ;
+    m(3, 2) = static_cast<T>(-1);
+    return m;
+}
+
 /*! Return an orthographic projection matrix
  */
 template<class T> Eigen::Matrix<T, 4, 4>

@@ -14,7 +14,9 @@ CELAPI bool OES_geometry_shader               = false; //NOSONAR
 #else
 CELAPI bool ARB_invalidate_subdata             = false; //NOSONAR
 #endif
+CELAPI bool ARB_clip_control                  = false; //NOSONAR
 CELAPI bool ARB_texture_compression_bptc      = false; //NOSONAR
+CELAPI bool EXT_clip_control                  = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc      = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc_srgb = false; //NOSONAR
 CELAPI bool EXT_texture_filter_anisotropic    = false; //NOSONAR
@@ -25,6 +27,7 @@ CELAPI GLint maxTextureSize                   = 0; //NOSONAR
 CELAPI GLfloat maxLineWidth                   = 0.0f; //NOSONAR
 CELAPI GLint maxTextureAnisotropy             = 0; //NOSONAR
 CELAPI bool sRGBRendering                     = false; //NOSONAR
+CELAPI bool reverseZ                          = false; //NOSONAR
 
 namespace
 {
@@ -102,6 +105,13 @@ bool init(util::array_view<std::string> ignore) noexcept
     EXT_texture_filter_anisotropic = check_extension(ignore, "GL_EXT_texture_filter_anisotropic") || check_extension(ignore, "GL_ARB_texture_filter_anisotropic");
     EXT_texture_sRGB_R8            = check_extension(ignore, "GL_EXT_texture_sRGB_R8");
     MESA_pack_invert               = check_extension(ignore, "GL_MESA_pack_invert");
+#ifdef GL_ES
+    EXT_clip_control               = check_extension(ignore, "GL_EXT_clip_control");
+#else
+    ARB_clip_control               = check_extension(ignore, "GL_ARB_clip_control")
+                                     || checkVersion(celestia::gl::GL_4_5);
+    EXT_clip_control               = check_extension(ignore, "GL_EXT_clip_control");
+#endif
 
     std::array<GLint, 2> pointSizeRange = { 0, 0 };
     std::array<GLfloat, 2> lineWidthRange = { 0.0f, 0.0f };
