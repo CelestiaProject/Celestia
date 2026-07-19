@@ -50,7 +50,7 @@ struct Atmosphere
 // to render. The radius of the sphere is the height at which the
 // density of the atmosphere falls to the extinction threshold, i.e.
 // -H * ln(extinctionThreshold)
-constexpr inline float AtmosphereExtinctionThreshold = 0.0025f;
+constexpr inline float AtmosphereExtinctionThreshold = 0.00001f;
 
 #ifdef HAVE_CONSTEXPR_CMATH
 constexpr inline float LogAtmosphereExtinctionThreshold = std::log(AtmosphereExtinctionThreshold);
