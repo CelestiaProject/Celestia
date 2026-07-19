@@ -726,18 +726,10 @@ ChapmanOpticalDepth()
     return max(0.0, (2.0 * tangentDensity / mieH) * sqrt(1.5707963267948966 * X * sinZenith) - upward);
 }
 
-float chapmanOpticalDepth(vec3 origin, vec3 direction, float pathLength)
+float chapmanFromAtmosphereBoundary(float mu, float grazing)
 {
-    float originRadiusSq = dot(origin, origin);
-    float originProjection = dot(origin, direction);
-    float endpointRadiusSq = max(1.0e-12, originRadiusSq + pathLength * (2.0 * originProjection + pathLength));
-    float originRadius = sqrt(originRadiusSq);
-    float endpointRadius = sqrt(endpointRadiusSq);
-    float originMu = originProjection / originRadius;
-    float endpointMu = (originProjection + pathLength) / endpointRadius;
-    if (endpointRadiusSq < originRadiusSq)
-        return max(0.0, chapmanToSpace(endpointRadius, -endpointMu) - chapmanToSpace(originRadius, -originMu));
-    return max(0.0, chapmanToSpace(originRadius, originMu) - chapmanToSpace(endpointRadius, endpointMu));
+    return (atmosphereExtinctionThreshold / mieH) * grazing /
+           ((grazing - 1.0) * clamp(mu, 0.0, 1.0) + 1.0);
 }
 )glsl";
 }
@@ -766,9 +758,31 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    float planetRadiusSq = atmosphereRadius.z * atmosphereRadius.z;\n";
     source += "    float shadowAngularWidth = min(0.2, sqrt(2.0 / (atmosphereRadius.z * mieH)));\n";
     source += "    float shadowWidth = (atmosphereRadius.x + atmosphereRadius.z) * 0.5 * shadowAngularWidth;\n";
+    source += "    float atmosphereBoundaryGrazing = sqrt(1.5707963267948966 * atmosphereRadius.x * mieH);\n";
+    source += "    float viewStartRadiusSq = dot(segmentStart, segmentStart);\n";
+    source += "    float viewStartProjection = dot(segmentStart, viewDirection);\n";
+    source += "    float cachedViewColumn = 0.0;\n";
+    source += "    bool cachedViewInward = false;\n";
+    source += "    bool viewColumnValid = false;\n";
     source += "    for (int i = 0; i < 6; ++i)\n";
     source += "    {\n";
-    source += "        float segmentDepth = chapmanOpticalDepth(segmentStart, viewDirection, stepLength);\n";
+    source += "        float viewEndProjection = viewStartProjection + stepLength;\n";
+    source += "        float viewEndRadiusSq = max(1.0e-12, viewStartRadiusSq + stepLength * (2.0 * viewStartProjection + stepLength));\n";
+    source += "        float viewStartRadius = sqrt(viewStartRadiusSq);\n";
+    source += "        float viewEndRadius = sqrt(viewEndRadiusSq);\n";
+    source += "        float viewStartMu = viewStartProjection / viewStartRadius;\n";
+    source += "        float viewEndMu = viewEndProjection / viewEndRadius;\n";
+    source += "        bool viewInward = viewEndRadiusSq < viewStartRadiusSq;\n";
+    source += "        float viewStartColumn;\n";
+    source += "        if (viewColumnValid && viewInward == cachedViewInward)\n";
+    source += "            viewStartColumn = cachedViewColumn;\n";
+    source += "        else\n";
+    source += "            viewStartColumn = chapmanToSpace(viewStartRadius, viewInward ? -viewStartMu : viewStartMu);\n";
+    source += "        float viewEndColumn = chapmanToSpace(viewEndRadius, viewInward ? -viewEndMu : viewEndMu);\n";
+    source += "        float segmentDepth = max(0.0, viewInward ? viewEndColumn - viewStartColumn : viewStartColumn - viewEndColumn);\n";
+    source += "        cachedViewColumn = viewEndColumn;\n";
+    source += "        cachedViewInward = viewInward;\n";
+    source += "        viewColumnValid = true;\n";
     source += "        vec3 atmSamplePointSun = segmentStart + atmStep * 0.5;\n";
     source += "        rq = dot(atmSamplePointSun, " + LightProperty(0, "direction") + ");\n";
     source += "        float sampleRadiusSq = dot(atmSamplePointSun, atmSamplePointSun);\n";
@@ -778,8 +792,10 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "        {\n";
     source += "            qq = sampleRadiusSq - atmosphereRadius.y;\n";
     source += "            d = sqrt(max(rq * rq - qq, 0.0));\n";
-    source += "            float distSun = -rq + d;\n";
-    source += "            float odSun = chapmanOpticalDepth(atmSamplePointSun, " + LightProperty(0, "direction") + ", distSun);\n";
+    source += "            float sampleRadius = sqrt(sampleRadiusSq);\n";
+    source += "            float sampleMu = rq / sampleRadius;\n";
+    source += "            float boundaryMu = d / atmosphereRadius.x;\n";
+    source += "            float odSun = max(0.0, chapmanToSpace(sampleRadius, sampleMu) - chapmanFromAtmosphereBoundary(boundaryMu, atmosphereBoundaryGrazing));\n";
     source += "            vec3 segmentTau = extinctionCoeff * segmentDepth;\n";
     source += "            vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) / max(extinctionCoeff, vec3(1.0e-18));\n";
     source += "            vec3 thinIntegral = segmentDepth * (vec3(1.0) - segmentTau * 0.5 + segmentTau * segmentTau * (1.0 / 6.0));\n";
@@ -790,6 +806,8 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "        }\n";
     source += "        odAtm += segmentDepth;\n";
     source += "        segmentStart += atmStep;\n";
+    source += "        viewStartRadiusSq = viewEndRadiusSq;\n";
+    source += "        viewStartProjection = viewEndProjection;\n";
     source += "    }\n";
     source += "    vec3 ex = exp(-extinctionCoeff * odAtm);\n";
     source += "    vec3 integratedLight = " + LightProperty(0, "color") + " * scatteredLight;\n";
@@ -830,6 +848,8 @@ ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
     source += DeclareUniform("rayleighCoeff", Shader_Vector3);
     source += DeclareUniform("rayleighH", Shader_Float);
     source += DeclareUniform("extinctionCoeff", Shader_Vector3);
+    source += fmt::format("const float atmosphereExtinctionThreshold = {:.9g};\n",
+                          AtmosphereExtinctionThreshold);
     source += ChapmanOpticalDepth();
 
     return source;
