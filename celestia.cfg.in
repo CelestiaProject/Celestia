@@ -372,14 +372,11 @@ StarTextures
 #
 #   AtmosphereSegmentCount defines how many segments to use when
 #   integrating atmospheric scattering. The valid range is 1 to 16,
-#   and the default value is 3.
+#   and the default value is 6.
 #
 #   AtmosphereExtinctionThreshold defines the relative density at the
 #   outer edge of an atmosphere. It must be between 0 and 1. The default
-#   value is 0.05.
-#
-#   RingSystemSections defines the number of segments in which ring
-#   systems are rendered. The default value is 100.
+#   value is 0.000125.
 #
 #   ShadowTextureSize defines the size* of shadow texture to be used.
 #   The default value is 256. Maximum useful value is 2048.
@@ -396,7 +393,6 @@ StarTextures
   OrbitPathSamplePoints  100
   AtmosphereSegmentCount 6
   AtmosphereExtinctionThreshold 0.000125
-  RingSystemSections     100
 
   ShadowTextureSize      256
   EclipseTextureSize     128
