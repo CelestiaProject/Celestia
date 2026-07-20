@@ -204,7 +204,7 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
         renderDetails.atmosphere.extinctionThreshold >= 1.0f)
     {
         GetLogger()->error("AtmosphereExtinctionThreshold must be between 0 and 1.\n");
-        renderDetails.atmosphere.extinctionThreshold = 0.05f;
+        renderDetails.atmosphere.extinctionThreshold = 0.000125f;
     }
     applyNumber(renderDetails.aaSamples, hash, "AntialiasingSamples"sv);
     applyNumber(renderDetails.SolarSystemMaxDistance, hash, "SolarSystemMaxDistance"sv);
