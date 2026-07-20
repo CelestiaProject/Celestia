@@ -124,8 +124,8 @@ class Renderer
     struct DetailOptions
     {
         unsigned int orbitPathSamplePoints{ 100 };
-        unsigned int atmosphereSegmentCount{ 3 };
-        float atmosphereExtinctionThreshold{ 0.05f };
+        unsigned int atmosphereSegmentCount{ 6 };
+        float atmosphereExtinctionThreshold{ 0.000125f };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         double orbitWindowEnd{ 0.5 };
