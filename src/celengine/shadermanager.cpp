@@ -78,6 +78,7 @@ constexpr unsigned int ShadowBitsPerLight = 8;
 enum ShaderVariableType
 {
     Shader_Float,
+    Shader_Integer,
     Shader_Vector2,
     Shader_Vector3,
     Shader_Vector4,
@@ -241,6 +242,8 @@ ShaderTypeString(ShaderVariableType type)
     {
     case Shader_Float:
         return "float";
+    case Shader_Integer:
+        return "int";
     case Shader_Vector2:
         return "vec2";
     case Shader_Vector3:
@@ -750,8 +753,9 @@ AtmosphericEffects(const ShaderProperties& props)
 
     source += "    float distAtm = length(atmEnter - atmLeave);\n";
     source += "    vec3 viewDirection = -eyeDir;\n";
-    source += "    vec3 atmStep = (atmLeave - atmEnter) * (1.0 / 6.0);\n";
-    source += "    float stepLength = distAtm * (1.0 / 6.0);\n";
+    source += "    float inverseSegmentCount = 1.0 / float(atmosphereSegmentCount);\n";
+    source += "    vec3 atmStep = (atmLeave - atmEnter) * inverseSegmentCount;\n";
+    source += "    float stepLength = distAtm * inverseSegmentCount;\n";
     source += "    vec3 segmentStart = atmEnter;\n";
     source += "    float odAtm = 0.0;\n";
     source += "    vec3 scatteredLight = vec3(0.0);\n";
@@ -764,7 +768,7 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    float cachedViewColumn = 0.0;\n";
     source += "    bool cachedViewInward = false;\n";
     source += "    bool viewColumnValid = false;\n";
-    source += "    for (int i = 0; i < 6; ++i)\n";
+    source += "    for (int i = 0; i < atmosphereSegmentCount; ++i)\n";
     source += "    {\n";
     source += "        float viewEndProjection = viewStartProjection + stepLength;\n";
     source += "        float viewEndRadiusSq = max(1.0e-12, viewStartRadiusSq + stepLength * (2.0 * viewStartProjection + stepLength));\n";
@@ -842,6 +846,7 @@ ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
     std::string source;
 
     source += DeclareUniform("atmosphereRadius", Shader_Vector3);
+    source += DeclareUniform("atmosphereSegmentCount", Shader_Integer);
     source += DeclareUniform("mieCoeff", Shader_Float);
     source += DeclareUniform("mieH", Shader_Float);
     source += DeclareUniform("mieK", Shader_Float);
@@ -2856,6 +2861,7 @@ CelestiaGLProgram::initParameters()
         rayleighCoeff        = vec3Param("rayleighCoeff");
         rayleighScaleHeight  = floatParam("rayleighH");
         atmosphereRadius     = vec3Param("atmosphereRadius");
+        atmosphereSegmentCount = intParam("atmosphereSegmentCount");
         extinctionCoeff      = vec3Param("extinctionCoeff");
     }
 
@@ -3053,7 +3059,8 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
 void
 CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
                                            float atmPlanetRadius,
-                                           float objRadius)
+                                           float objRadius,
+                                           unsigned int segmentCount)
 {
     // Compute the radius of the sky sphere to render; the density of the atmosphere
     // falls off exponentially with height above the planet's surface, so the actual
@@ -3067,6 +3074,7 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
 
     float r = skySphereRadius / objRadius;
     atmosphereRadius = Eigen::Vector3f(r, r * r, atmPlanetRadius / objRadius);
+    atmosphereSegmentCount = static_cast<int>(segmentCount);
 
     mieCoeff = tMieCoeff;
     mieScaleHeight = objRadius / atmosphere.mieScaleHeight;

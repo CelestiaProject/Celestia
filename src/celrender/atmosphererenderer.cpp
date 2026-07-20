@@ -373,7 +373,8 @@ AtmosphereRenderer::render(
     float atmScale = atmosphereRadius / radius;
 
     prog->eyePosition = ls.eyePos_obj / atmScale;
-    prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius);
+    prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius,
+                                  m_renderer.getAtmosphereSegmentCount());
 
 #if 0
     // Currently eclipse shadows are ignored when rendering atmospheres

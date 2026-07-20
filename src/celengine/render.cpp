@@ -4756,6 +4756,12 @@ void Renderer::setSolarSystemMaxDistance(float t)
     SolarSystemMaxDistance = std::clamp(t, 1.0f, 10.0f);
 }
 
+unsigned int
+Renderer::getAtmosphereSegmentCount() const noexcept
+{
+    return detailOptions.atmosphereSegmentCount;
+}
+
 
 void Renderer::getViewport(int* x, int* y, int* w, int* h) const
 {

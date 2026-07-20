@@ -338,7 +338,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
         if (shadprop.hasScattering())
         {
-            prog->setAtmosphereParameters(*atmosphere, radius, radius);
+            prog->setAtmosphereParameters(*atmosphere, radius, radius,
+                                          renderer->getAtmosphereSegmentCount());
         }
     }
 
@@ -604,7 +605,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
         if (shadprop.hasScattering())
         {
-            prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius);
+            prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius,
+                                          renderer->getAtmosphereSegmentCount());
         }
     }
 

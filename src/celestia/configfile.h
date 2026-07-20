@@ -89,6 +89,7 @@ struct CelestiaConfig
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };
+        unsigned int atmosphereSegmentCount{ 3 };
         unsigned int aaSamples{ 1 };
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };

@@ -2792,6 +2792,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
 
     Renderer::DetailOptions detailOptions;
     detailOptions.orbitPathSamplePoints = config->renderDetails.orbitPathSamplePoints;
+    detailOptions.atmosphereSegmentCount = config->renderDetails.atmosphereSegmentCount;
     detailOptions.shadowTextureSize = config->renderDetails.shadowTextureSize;
     detailOptions.eclipseTextureSize = config->renderDetails.eclipseTextureSize;
     detailOptions.orbitWindowEnd = config->renderDetails.orbitWindowEnd;

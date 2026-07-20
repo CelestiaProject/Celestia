@@ -124,6 +124,7 @@ class Renderer
     struct DetailOptions
     {
         unsigned int orbitPathSamplePoints{ 100 };
+        unsigned int atmosphereSegmentCount{ 3 };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         double orbitWindowEnd{ 0.5 };
@@ -216,6 +217,7 @@ class Renderer
     void setStarColorTable(ColorTableType);
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
+    unsigned int getAtmosphereSegmentCount() const noexcept;
 
     bool captureFrame(int, int, int, int, celestia::engine::PixelFormat format, unsigned char*) const;
 

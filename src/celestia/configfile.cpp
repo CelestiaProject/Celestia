@@ -196,6 +196,8 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.shadowTextureSize, hash, "ShadowTextureSize"sv);
     applyNumber(renderDetails.eclipseTextureSize, hash, "EclipseTextureSize"sv);
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);
+    applyNumber(renderDetails.atmosphereSegmentCount, hash, "AtmosphereSegmentCount"sv);
+    renderDetails.atmosphereSegmentCount = std::clamp(renderDetails.atmosphereSegmentCount, 1u, 16u);
     applyNumber(renderDetails.aaSamples, hash, "AntialiasingSamples"sv);
     applyNumber(renderDetails.SolarSystemMaxDistance, hash, "SolarSystemMaxDistance"sv);
     renderDetails.SolarSystemMaxDistance = std::clamp(renderDetails.SolarSystemMaxDistance, 1.0f, 10.0f);
