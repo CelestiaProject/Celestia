@@ -374,6 +374,10 @@ StarTextures
 #   integrating atmospheric scattering. The valid range is 1 to 16,
 #   and the default value is 3.
 #
+#   AtmosphereExtinctionThreshold defines the relative density at the
+#   outer edge of an atmosphere. It must be between 0 and 1. The default
+#   value is 0.05.
+#
 #   RingSystemSections defines the number of segments in which ring
 #   systems are rendered. The default value is 100.
 #
@@ -391,6 +395,7 @@ StarTextures
 #------------------------------------------------------------------------
   OrbitPathSamplePoints  100
   AtmosphereSegmentCount 3
+  AtmosphereExtinctionThreshold 0.05
   RingSystemSections     100
 
   ShadowTextureSize      256

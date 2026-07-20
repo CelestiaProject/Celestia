@@ -10,6 +10,7 @@
 #include "configfile.h"
 
 #include <config.h>
+#include <cmath>
 #include <fstream>
 #include <type_traits>
 
@@ -196,8 +197,15 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.shadowTextureSize, hash, "ShadowTextureSize"sv);
     applyNumber(renderDetails.eclipseTextureSize, hash, "EclipseTextureSize"sv);
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);
-    applyNumber(renderDetails.atmosphereSegmentCount, hash, "AtmosphereSegmentCount"sv);
-    renderDetails.atmosphereSegmentCount = std::clamp(renderDetails.atmosphereSegmentCount, 1u, 16u);
+    applyNumber(renderDetails.atmosphere.segmentCount, hash, "AtmosphereSegmentCount"sv);
+    renderDetails.atmosphere.segmentCount = std::clamp(renderDetails.atmosphere.segmentCount, 1u, 16u);
+    applyNumber(renderDetails.atmosphere.extinctionThreshold, hash, "AtmosphereExtinctionThreshold"sv);
+    if (renderDetails.atmosphere.extinctionThreshold <= 0.0f ||
+        renderDetails.atmosphere.extinctionThreshold >= 1.0f)
+    {
+        GetLogger()->error("AtmosphereExtinctionThreshold must be between 0 and 1.\n");
+        renderDetails.atmosphere.extinctionThreshold = 0.05f;
+    }
     applyNumber(renderDetails.aaSamples, hash, "AntialiasingSamples"sv);
     applyNumber(renderDetails.SolarSystemMaxDistance, hash, "SolarSystemMaxDistance"sv);
     renderDetails.SolarSystemMaxDistance = std::clamp(renderDetails.SolarSystemMaxDistance, 1.0f, 10.0f);

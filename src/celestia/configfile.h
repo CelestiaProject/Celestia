@@ -89,12 +89,17 @@ struct CelestiaConfig
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };
-        unsigned int atmosphereSegmentCount{ 3 };
         unsigned int aaSamples{ 1 };
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
         bool sRGBRendering{ false };
+        struct AtmosphereRendering
+        {
+            unsigned int segmentCount{ 3 };
+            float extinctionThreshold{ 0.05f };
+        };
+        AtmosphereRendering atmosphere{ };
         struct StarRendering
         {
             float pointRadius{ 1.5f };

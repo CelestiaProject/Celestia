@@ -847,14 +847,13 @@ ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
 
     source += DeclareUniform("atmosphereRadius", Shader_Vector3);
     source += DeclareUniform("atmosphereSegmentCount", Shader_Integer);
+    source += DeclareUniform("atmosphereExtinctionThreshold", Shader_Float);
     source += DeclareUniform("mieCoeff", Shader_Float);
     source += DeclareUniform("mieH", Shader_Float);
     source += DeclareUniform("mieK", Shader_Float);
     source += DeclareUniform("rayleighCoeff", Shader_Vector3);
     source += DeclareUniform("rayleighH", Shader_Float);
     source += DeclareUniform("extinctionCoeff", Shader_Vector3);
-    source += fmt::format("const float atmosphereExtinctionThreshold = {:.9g};\n",
-                          AtmosphereExtinctionThreshold);
     source += ChapmanOpticalDepth();
 
     return source;
@@ -2862,6 +2861,7 @@ CelestiaGLProgram::initParameters()
         rayleighScaleHeight  = floatParam("rayleighH");
         atmosphereRadius     = vec3Param("atmosphereRadius");
         atmosphereSegmentCount = intParam("atmosphereSegmentCount");
+        atmosphereExtinctionThreshold = floatParam("atmosphereExtinctionThreshold");
         extinctionCoeff      = vec3Param("extinctionCoeff");
     }
 
@@ -3056,18 +3056,15 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
 // They are from standard units to the normalized system used by the shaders.
 // atmPlanetRadius - the radius in km of the planet with the atmosphere
 // objRadius - the radius in km of the object we're rendering
+// skySphereRadius - the finite outer radius of the atmosphere in km
 void
 CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
                                            float atmPlanetRadius,
                                            float objRadius,
-                                           unsigned int segmentCount)
+                                           float skySphereRadius,
+                                           unsigned int segmentCount,
+                                           float extinctionThreshold)
 {
-    // Compute the radius of the sky sphere to render; the density of the atmosphere
-    // falls off exponentially with height above the planet's surface, so the actual
-    // radius is infinite. That's a bit impractical, so well just render the portion
-    // out to the point where the density is some fraction of the surface density.
-    float skySphereRadius = atmPlanetRadius + -atmosphere.mieScaleHeight * LogAtmosphereExtinctionThreshold;
-
     float tMieCoeff                  = atmosphere.mieCoeff * objRadius;
     Eigen::Vector3f tRayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
     Eigen::Vector3f tAbsorptionCoeff = atmosphere.absorptionCoeff * objRadius;
@@ -3075,6 +3072,7 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
     float r = skySphereRadius / objRadius;
     atmosphereRadius = Eigen::Vector3f(r, r * r, atmPlanetRadius / objRadius);
     atmosphereSegmentCount = static_cast<int>(segmentCount);
+    atmosphereExtinctionThreshold = extinctionThreshold;
 
     mieCoeff = tMieCoeff;
     mieScaleHeight = objRadius / atmosphere.mieScaleHeight;

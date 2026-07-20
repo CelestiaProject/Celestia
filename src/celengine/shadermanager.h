@@ -227,7 +227,9 @@ public:
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius,
-                                 unsigned int segmentCount);
+                                 float skySphereRadius,
+                                 unsigned int segmentCount,
+                                 float extinctionThreshold);
     void setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
 
     enum
@@ -301,6 +303,7 @@ public:
     //    z = 1/radius
     Vec3ShaderParameter atmosphereRadius;
     IntegerShaderParameter atmosphereSegmentCount;
+    FloatShaderParameter atmosphereExtinctionThreshold;
 
     // Scale factor for point sprites
     FloatShaderParameter pointScale;

@@ -3,7 +3,6 @@ set(CELENGINE_SOURCES
   asterism.h
   astroobj.h
   asyncresourcecache.h
-  atmosphere.cpp
   atmosphere.h
   axisarrow.cpp
   axisarrow.h

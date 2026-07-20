@@ -84,6 +84,7 @@
 #include <algorithm>
 #include <cstring>
 #include <cassert>
+#include <cmath>
 #include <sstream>
 #include <iomanip>
 #include <numeric>
@@ -413,6 +414,9 @@ bool Renderer::init(int winWidth, int winHeight,
     m_geometryManager = std::make_unique<RenderGeometryManager>(geometryManager, *m_resourceSystem);
     m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution, *m_resourceSystem);
     detailOptions = _detailOptions;
+    atmosphereSegmentCount = detailOptions.atmosphereSegmentCount;
+    atmosphereExtinctionThreshold = detailOptions.atmosphereExtinctionThreshold;
+    atmosphereExtinctionFactor = -std::log(atmosphereExtinctionThreshold);
 
     m_atmosphereRenderer->initGL();
     if (!m_cometRenderer->initGL())
@@ -2430,7 +2434,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (obj.atmosphere != nullptr)
         {
             float atmosphereHeight = max(obj.atmosphere->cloudHeight,
-                                         obj.atmosphere->mieScaleHeight * -LogAtmosphereExtinctionThreshold);
+                                         getAtmosphereShellHeight(obj.atmosphere->mieScaleHeight));
             if (atmosphereHeight > 0.0f)
             {
                 // If there's an atmosphere, we need to move the far plane
@@ -4759,9 +4763,20 @@ void Renderer::setSolarSystemMaxDistance(float t)
 unsigned int
 Renderer::getAtmosphereSegmentCount() const noexcept
 {
-    return detailOptions.atmosphereSegmentCount;
+    return atmosphereSegmentCount;
 }
 
+float
+Renderer::getAtmosphereExtinctionThreshold() const noexcept
+{
+    return atmosphereExtinctionThreshold;
+}
+
+float
+Renderer::getAtmosphereShellHeight(float scaleHeight) const noexcept
+{
+    return scaleHeight * atmosphereExtinctionFactor;
+}
 
 void Renderer::getViewport(int* x, int* y, int* w, int* h) const
 {
@@ -5231,7 +5246,7 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
             {
                 cullRadius += atmosphere->height;
                 cloudHeight = max(atmosphere->cloudHeight,
-                                  atmosphere->mieScaleHeight * -LogAtmosphereExtinctionThreshold);
+                                  getAtmosphereShellHeight(atmosphere->mieScaleHeight));
             }
             break;
 

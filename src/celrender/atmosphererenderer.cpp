@@ -369,12 +369,15 @@ AtmosphereRenderer::render(
     prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
     prog->ambientColor = Eigen::Vector3f::Zero();
 
-    float atmosphereRadius = radius + -atmosphere.mieScaleHeight * LogAtmosphereExtinctionThreshold;
+    float extinctionThreshold = m_renderer.getAtmosphereExtinctionThreshold();
+    float atmosphereRadius = radius +
+                             m_renderer.getAtmosphereShellHeight(atmosphere.mieScaleHeight);
     float atmScale = atmosphereRadius / radius;
 
     prog->eyePosition = ls.eyePos_obj / atmScale;
-    prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius,
-                                  m_renderer.getAtmosphereSegmentCount());
+    prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius, atmosphereRadius,
+                                  m_renderer.getAtmosphereSegmentCount(),
+                                  extinctionThreshold);
 
 #if 0
     // Currently eclipse shadows are ignored when rendering atmospheres

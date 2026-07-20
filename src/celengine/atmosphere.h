@@ -10,12 +10,6 @@
 
 #pragma once
 
-#include <config.h>
-
-#ifdef HAVE_CONSTEXPR_CMATH
-#include <cmath>
-#endif
-
 #include <Eigen/Core>
 
 #include <celutil/color.h>
@@ -43,17 +37,3 @@ struct Atmosphere
 
     float cloudShadowDepth{ 0.0f };
 };
-
-// Atmosphere density is modeled with a exp(-y/H) falloff, where
-// H is the scale height of the atmosphere. Thus atmospheres have
-// infinite extent, but we still need to choose some finite sphere
-// to render. The radius of the sphere is the height at which the
-// density of the atmosphere falls to the extinction threshold, i.e.
-// -H * ln(extinctionThreshold)
-constexpr inline float AtmosphereExtinctionThreshold = 0.05f;
-
-#ifdef HAVE_CONSTEXPR_CMATH
-constexpr inline float LogAtmosphereExtinctionThreshold = std::log(AtmosphereExtinctionThreshold);
-#else
-extern const float LogAtmosphereExtinctionThreshold;
-#endif

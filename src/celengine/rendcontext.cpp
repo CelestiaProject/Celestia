@@ -444,8 +444,12 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     if (atmosphere != nullptr && shaderProps.hasScattering())
     {
-        prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius,
-                                      renderer->getAtmosphereSegmentCount());
+        float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
+        float atmosphereRadius = objRadius +
+                                 renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
+        prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius, atmosphereRadius,
+                                      renderer->getAtmosphereSegmentCount(),
+                                      extinctionThreshold);
         disableDepthWriteOnBlend = false;
     }
 
