@@ -24,7 +24,8 @@ void main(void)
 {
     vec4 color = texture(tex, texCoord);
     // Exponential tone mapping to roll off HDR highlights, unless disabled.
-    vec3 tonemapped = vec3(1.0) - exp(-exposure * color.rgb);
-    vec3 mapped = mix(color.rgb, tonemapped, toneMapping);
+    vec3 mapped = color.rgb;
+    if (toneMapping != 0.0)
+        mapped = vec3(1.0) - exp(-exposure * color.rgb);
     fragColor = vec4(linearToSRGB(mapped), color.a);
 }

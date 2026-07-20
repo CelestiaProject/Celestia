@@ -233,6 +233,8 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         else
             ui.sRGBRenderingCombo->setCurrentIndex(settings.value("sRGBRendering").toBool() ? 1 : 2);
     }
+    ui.toneMappingCheck->setChecked(renderer->getToneMapping());
+    ui.exposureSpinBox->setValue(renderer->getExposure());
 
     switch (renderer->getResolution())
     {
@@ -768,6 +770,18 @@ PreferencesDialog::on_sRGBRenderingCombo_currentIndexChanged(int index)
         settings.remove("sRGBRendering");
     else
         settings.setValue("sRGBRendering", index == 1);
+}
+
+void
+PreferencesDialog::on_toneMappingCheck_toggled(bool checked) const
+{
+    appCore->getRenderer()->setToneMapping(checked);
+}
+
+void
+PreferencesDialog::on_exposureSpinBox_valueChanged(double value) const
+{
+    appCore->getRenderer()->setExposure(static_cast<float>(value));
 }
 
 // Texture resolution
