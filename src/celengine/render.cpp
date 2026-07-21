@@ -1805,22 +1805,33 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     if (discSizeInPixels <= 1.0f)
         psfPointBuffer->addStar(frontPos, linearStarColor, peakRadCol);
 
-    // Peak radiance whose bloom radius (per the shader's PSF formula)
-    // equals the body's angular disc.
-    float a    = starOptimization / r;
-    float invB = celestia::numbers::pi_v<float> / r - a;
-    // Exact projected limb radius; discSizeInPixels undershoots up close.
-    float limbDiscPixels = discSizeInPixels;
-    if (distance > radius)
-        limbDiscPixels = radius / (std::sqrt(distance * distance - radius * radius) * pixelSize);
-    float angR = limbDiscPixels / pointScale;
-    float linkedGlowPeak = std::pow(angR * (a + invB), 2.5f);
-
     // Gate on the irradiance-based peak so the linked term only
     // enhances an already-firing glow, never starts one (keeps
     // reflective bodies with large angular radius from blooming).
     if (peakRadCol > 1.0f && starOptimization > 0.0f)
     {
+        // Peak radiance whose bloom radius (per the shader's PSF formula)
+        // equals the body's angular disc.
+        float a    = starOptimization / r;
+        float invB = celestia::numbers::pi_v<float> / r - a;
+        // Exact projected limb radius; discSizeInPixels undershoots up close.
+        float limbDiscPixels = discSizeInPixels;
+        float fadeLimbDiscPixels = limbDiscPixels;
+        if (distance > radius)
+        {
+            float limbAngularRadius = radius / std::sqrt(distance * distance - radius * radius);
+            limbDiscPixels = limbAngularRadius / pixelSize;
+
+            // The distance-fade derivation assumes that a growing projected limb
+            // means the observer moved closer. Camera zoom also grows the limb, so
+            // evaluate the fade at the projection's unit zoom instead.
+            fadeLimbDiscPixels = limbAngularRadius / projectionMode->getPixelSize(1.0f);
+        }
+        float angR = limbDiscPixels / pointScale;
+        float linkedGlowPeak = std::pow(angR * (a + invB), 2.5f);
+        float fadeAngR = fadeLimbDiscPixels / pointScale;
+        float fadeLinkedGlowPeak = std::pow(fadeAngR * (a + invB), 2.5f);
+
         float glowPeak = peakRadCol;
         if (starMaxIrradiance > 0.0f)
         {
@@ -1843,7 +1854,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         // sprite vanishes smoothly as the disc takes over.  This is a
         // continuous distance-derived value, so pass it as a float to keep
         // the transition smooth.
-        float alpha = computePsfGlowAlpha(distance, radius, linkedGlowPeak, glowPeak);
+        float alpha = computePsfGlowAlpha(distance, radius, fadeLinkedGlowPeak, glowPeak);
         if (alpha <= 0.0f)
             return;
 
