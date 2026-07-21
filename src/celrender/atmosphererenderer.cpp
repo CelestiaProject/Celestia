@@ -347,37 +347,41 @@ AtmosphereRenderer::render(
     const math::Frustum      &frustum,
     const Matrices           &m)
 {
-    // Currently, we just skip rendering an atmosphere when there are no
-    // light sources, even though the atmosphere would still the light
-    // of planets and stars behind it.
-    if (ls.nLights == 0)
-        return;
-
     ShaderProperties shadprop;
     shadprop.nLights = static_cast<ushort>(ls.nLights);
 
     shadprop.texUsage |= TexUsage::Scattering;
     shadprop.lightModel = LightingModel::AtmosphereModel;
 
-    // Get a shader for the current rendering configuration
-    CelestiaGLProgram* prog = m_renderer.getShaderManager().getShader(shadprop);
-    if (prog == nullptr)
+    ShaderProperties transmissionProps = shadprop;
+    transmissionProps.nLights = 0;
+    transmissionProps.effects = LightingEffects::AtmosphereTransmission;
+
+    CelestiaGLProgram* transmissionProg =
+        m_renderer.getShaderManager().getShader(transmissionProps);
+    CelestiaGLProgram* scatteringProg = ls.nLights == 0
+        ? nullptr
+        : m_renderer.getShaderManager().getShader(shadprop);
+    if (transmissionProg == nullptr ||
+        (ls.nLights > 0 && scatteringProg == nullptr))
         return;
-
-    prog->use();
-
-    prog->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
-    prog->ambientColor = Eigen::Vector3f::Zero();
 
     float extinctionThreshold = m_renderer.getAtmosphereExtinctionThreshold();
     float atmosphereRadius = radius +
                              m_renderer.getAtmosphereShellHeight(atmosphere.mieScaleHeight);
     float atmScale = atmosphereRadius / radius;
 
-    prog->eyePosition = ls.eyePos_obj / atmScale;
-    prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius, atmosphereRadius,
-                                  m_renderer.getAtmosphereSegmentCount(),
-                                  extinctionThreshold);
+    auto setupAtmosphereProgram = [&](CelestiaGLProgram* prog)
+    {
+        prog->use();
+        prog->eyePosition = ls.eyePos_obj / atmScale;
+        prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius, atmosphereRadius,
+                                      m_renderer.getAtmosphereSegmentCount(),
+                                      extinctionThreshold);
+        prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
+    };
+
+    setupAtmosphereProgram(transmissionProg);
 
 #if 0
     // Currently eclipse shadows are ignored when rendering atmospheres
@@ -385,13 +389,11 @@ AtmosphereRenderer::render(
         prog->setEclipseShadowParameters(ls, radius, planetOrientation);
 #endif
 
-    prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
-
     glFrontFace(GL_CW);
 
     Renderer::PipelineState ps;
     ps.blending = true;
-    ps.blendFunc = {GL_ONE, GL_SRC_ALPHA};
+    ps.blendFunc = {GL_ZERO, GL_SRC_COLOR};
     ps.depthTest = true;
     m_renderer.setPipelineState(ps);
 
@@ -401,6 +403,21 @@ AtmosphereRenderer::render(
                                    shellFrustum,
                                    ri.pixWidth,
                                    nullptr);
+
+    if (scatteringProg != nullptr)
+    {
+        scatteringProg->use();
+        scatteringProg->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
+        scatteringProg->ambientColor = Eigen::Vector3f::Zero();
+        setupAtmosphereProgram(scatteringProg);
+
+        ps.blendFunc = {GL_ONE, GL_ONE};
+        m_renderer.setPipelineState(ps);
+        m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
+                                       shellFrustum,
+                                       ri.pixWidth,
+                                       nullptr);
+    }
 
     glFrontFace(GL_CCW);
 }
