@@ -47,6 +47,7 @@ enum Version
 #ifndef GL_ES
 extern CELAPI bool ARB_invalidate_subdata; //NOSONAR
 #endif
+extern CELAPI bool dualSourceBlending; //NOSONAR
 extern CELAPI bool ARB_texture_compression_bptc; //NOSONAR
 extern CELAPI bool EXT_texture_compression_s3tc; //NOSONAR
 extern CELAPI bool EXT_texture_compression_s3tc_srgb; //NOSONAR

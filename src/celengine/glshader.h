@@ -142,6 +142,7 @@ public:
     void attach(GLVertexShader&&);
 
     void bindAttribute(GLuint index, const GLchar* name) const;
+    void bindFragmentOutput(GLuint colorNumber, GLuint index, const GLchar* name) const;
 
     GLProgram link(GLShaderStatus&);
 

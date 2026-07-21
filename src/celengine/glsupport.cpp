@@ -14,6 +14,7 @@ CELAPI bool OES_geometry_shader               = false; //NOSONAR
 #else
 CELAPI bool ARB_invalidate_subdata             = false; //NOSONAR
 #endif
+CELAPI bool dualSourceBlending                 = false; //NOSONAR
 CELAPI bool ARB_texture_compression_bptc      = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc      = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc_srgb = false; //NOSONAR
@@ -82,6 +83,13 @@ bool init(util::array_view<std::string> ignore) noexcept
 #ifdef GL_ES
     OES_texture_border_clamp           = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
     OES_geometry_shader                = check_extension(ignore, "GL_OES_geometry_shader") || check_extension(ignore, "GL_EXT_geometry_shader");
+    dualSourceBlending                 = check_extension(ignore, "GL_EXT_blend_func_extended");
+    if (dualSourceBlending)
+    {
+        GLint maxDualSourceDrawBuffers = 0;
+        glGetIntegerv(GL_MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT, &maxDualSourceDrawBuffers);
+        dualSourceBlending = maxDualSourceDrawBuffers > 0;
+    }
     // BPTC on GLES is exposed via GL_EXT_texture_compression_bptc; the
     // compressed-format tokens (0x8E8C / 0x8E8D) are identical to the desktop
     // GL_ARB_texture_compression_bptc extension, so the same flag drives both
@@ -90,6 +98,7 @@ bool init(util::array_view<std::string> ignore) noexcept
 #else
     ARB_invalidate_subdata         = check_extension(ignore, "GL_ARB_invalidate_subdata");
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
+    dualSourceBlending             = true;
 #endif
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
 #ifdef GL_ES

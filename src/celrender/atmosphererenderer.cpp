@@ -353,16 +353,30 @@ AtmosphereRenderer::render(
     shadprop.texUsage |= TexUsage::Scattering;
     shadprop.lightModel = LightingModel::AtmosphereModel;
 
+    bool useDualSource = false;
+    GLenum scatteringBlendDestination = GL_ONE;
+    useDualSource = ls.nLights > 0 && gl::dualSourceBlending;
+    if (useDualSource)
+#ifdef GL_ES
+        scatteringBlendDestination = GL_SRC1_COLOR_EXT;
+#else
+        scatteringBlendDestination = GL_SRC1_COLOR;
+#endif
+
     ShaderProperties transmissionProps = shadprop;
     transmissionProps.nLights = 0;
     transmissionProps.effects = LightingEffects::AtmosphereTransmission;
 
-    CelestiaGLProgram* transmissionProg =
-        m_renderer.getShaderManager().getShader(transmissionProps);
+    if (useDualSource)
+        shadprop.effects = LightingEffects::AtmosphereDualSource;
+
+    CelestiaGLProgram* transmissionProg = useDualSource
+        ? nullptr
+        : m_renderer.getShaderManager().getShader(transmissionProps);
     CelestiaGLProgram* scatteringProg = ls.nLights == 0
         ? nullptr
         : m_renderer.getShaderManager().getShader(shadprop);
-    if (transmissionProg == nullptr ||
+    if ((!useDualSource && transmissionProg == nullptr) ||
         (ls.nLights > 0 && scatteringProg == nullptr))
         return;
 
@@ -381,8 +395,6 @@ AtmosphereRenderer::render(
         prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
     };
 
-    setupAtmosphereProgram(transmissionProg);
-
 #if 0
     // Currently eclipse shadows are ignored when rendering atmospheres
     if (shadprop.shadowCounts != 0)
@@ -393,16 +405,21 @@ AtmosphereRenderer::render(
 
     Renderer::PipelineState ps;
     ps.blending = true;
-    ps.blendFunc = {GL_ZERO, GL_SRC_COLOR};
     ps.depthTest = true;
-    m_renderer.setPipelineState(ps);
 
     math::Frustum shellFrustum = frustum;
     shellFrustum.transform(math::scale(1.0f / atmScale));
-    m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
-                                   shellFrustum,
-                                   ri.pixWidth,
-                                   nullptr);
+
+    if (transmissionProg != nullptr)
+    {
+        setupAtmosphereProgram(transmissionProg);
+        ps.blendFunc = {GL_ZERO, GL_SRC_COLOR};
+        m_renderer.setPipelineState(ps);
+        m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
+                                       shellFrustum,
+                                       ri.pixWidth,
+                                       nullptr);
+    }
 
     if (scatteringProg != nullptr)
     {
@@ -411,7 +428,7 @@ AtmosphereRenderer::render(
         scatteringProg->ambientColor = Eigen::Vector3f::Zero();
         setupAtmosphereProgram(scatteringProg);
 
-        ps.blendFunc = {GL_ONE, GL_ONE};
+        ps.blendFunc = {GL_ONE, scatteringBlendDestination};
         m_renderer.setPipelineState(ps);
         m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
                                        shellFrustum,

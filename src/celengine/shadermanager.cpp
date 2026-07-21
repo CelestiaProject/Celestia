@@ -2017,10 +2017,18 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
 {
     bool transmissionOnly =
         props.effects == LightingEffects::AtmosphereTransmission;
+    bool dualSource =
+        props.effects == LightingEffects::AtmosphereDualSource;
 
     std::string source(VersionHeader);
+#ifdef GL_ES
+    if (dualSource)
+        source += "#extension GL_EXT_blend_func_extended : require\n";
+#endif
     source += CommonHeader;
     source += FragmentHeader;
+    if (dualSource)
+        source += DeclareOutput("atmosphereTransmission", Shader_Vector4);
 
     source += DeclareLights(props);
     source += DeclareUniform("eyePosition", Shader_Vector3);
@@ -2062,6 +2070,8 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
             source += "    color += (phRayleigh * rayleighCoeff + phMie * mieCoeff) * " + ScatteredColor(i) + ";\n";
         }
         source += "    fragColor = vec4(color, 0.0);\n";
+        if (dualSource)
+            source += "    atmosphereTransmission = vec4(scatterEx, 1.0);\n";
     }
     source += "}\n";
 
@@ -2370,6 +2380,11 @@ buildProgram(const ShaderProperties& props, bool fisheyeEnabled)
         {
             builder.attach(std::move(vs));
             builder.attach(std::move(fs));
+            if (props.effects == LightingEffects::AtmosphereDualSource)
+            {
+                builder.bindFragmentOutput(0, 0, "fragColor");
+                builder.bindFragmentOutput(0, 1, "atmosphereTransmission");
+            }
             program = builder.link(status);
         }
     }

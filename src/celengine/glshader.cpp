@@ -391,6 +391,17 @@ GLProgramBuilder::bindAttribute(GLuint index, const GLchar* name) const
         glBindAttribLocation(id, index, name);
 }
 
+void
+GLProgramBuilder::bindFragmentOutput(GLuint colorNumber, GLuint index, const GLchar* name) const
+{
+    if (isValid())
+#ifdef GL_ES
+        glBindFragDataLocationIndexedEXT(id, colorNumber, index, name);
+#else
+        glBindFragDataLocationIndexed(id, colorNumber, index, name);
+#endif
+}
+
 GLProgram
 GLProgramBuilder::link(GLShaderStatus& status)
 {

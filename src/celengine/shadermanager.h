@@ -100,6 +100,7 @@ enum class LightingEffects : std::uint16_t
     VolumetricEmission        = 0x0004,
     CloudLighting             = 0x0008,
     AtmosphereTransmission    = 0x0010,
+    AtmosphereDualSource      = 0x0020,
 };
 
 enum class FisheyeOverrideMode : int
