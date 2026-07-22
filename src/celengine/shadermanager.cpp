@@ -526,6 +526,17 @@ AddDirectionalLightContrib(unsigned int i, const ShaderProperties& props)
         // unaffected by light direction except when considering shadows.
         source += "NL = 1.0;\n";
     }
+    else if (props.effects == LightingEffects::CloudLighting)
+    {
+        // GPU Gems, Chapter 16.2, "Simple Scattering Approximations":
+        // https://developer.nvidia.com/gpugems/gpugems/part-iii-materials/chapter-16-real-time-approximations-subsurface-scattering
+        std::string sunCos = IndexedParameter("cloudSunCos", i);
+        std::string twilight = IndexedParameter("cloudTwilight", i);
+        source += "float " + sunCos + " = dot(N, " + LightProperty(i, "direction") + ");\n";
+        source += "float " + twilight + " = max(0.0, (" + sunCos
+                  + " + cloudHorizon) / (1.0 + cloudHorizon));\n";
+        source += "NL = " + twilight + ";\n";
+    }
     else
     {
         source += "NL = max(0.0, dot(N, " + LightProperty(i, "direction") + "));\n";
@@ -1424,6 +1435,9 @@ buildFragmentShader(const ShaderProperties& props)
     if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
         source += DeclareUniform("lunarLambert", Shader_Float);
 
+    if (props.effects == LightingEffects::CloudLighting)
+        source += DeclareUniform("cloudHorizon", Shader_Float);
+
     if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += DeclareInput("normal", Shader_Vector3);
 
@@ -1630,6 +1644,8 @@ buildFragmentShader(const ShaderProperties& props)
             {
                 source += "l = max(0.0, dot(" + LightDir_tan(i) + ", n)) * clamp(" + LightDir_tan(i) + ".z * 8.0, 0.0, 1.0);\n";
             }
+            if (props.effects == LightingEffects::CloudLighting)
+                source += "l = max(l, " + IndexedParameter("cloudTwilight", i) + ");\n";
 
             if (util::is_set(props.texUsage, TexUsage::NightTexture))
                 source += "totalLight += l * " + LightProperty(i, "brightness") + ";\n";
@@ -2846,6 +2862,9 @@ CelestiaGLProgram::initParameters()
         cloudHeight         = floatParam("cloudHeight");
         shadowTextureOffset = floatParam("cloudShadowTexOffset");
     }
+
+    if (props.effects == LightingEffects::CloudLighting)
+        cloudHorizon = floatParam("cloudHorizon");
 
     if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
     {

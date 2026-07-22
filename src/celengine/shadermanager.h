@@ -98,6 +98,7 @@ enum class LightingEffects : std::uint16_t
     VolumetricScattering      = 0x0001,
     VolumetricAbsorption      = 0x0002,
     VolumetricEmission        = 0x0004,
+    CloudLighting             = 0x0008,
 };
 
 enum class FisheyeOverrideMode : int
@@ -274,6 +275,7 @@ public:
     // Height of cloud layer above planet, in units of object radius
     FloatShaderParameter cloudHeight;
     FloatShaderParameter shadowTextureOffset;
+    FloatShaderParameter cloudHorizon;
 
     std::array<CelestiaGLProgramTextureTransform, 4> texCoordTransforms;
 

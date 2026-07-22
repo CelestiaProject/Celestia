@@ -580,6 +580,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::TextureCoordTransform;
     shadprop.nLights = ls.nLights;
+    shadprop.effects = LightingEffects::CloudLighting;
 
     // Set up the textures used by this object
     if (cloudTex != nullptr)
@@ -631,6 +632,10 @@ void renderClouds_GLSL(const RenderInfo& ri,
     if (atmosphere != nullptr)
     {
         float cloudRadius = radius + atmosphere->cloudHeight;
+        float cloudPlanetRadius = radius / cloudRadius;
+        prog->cloudHorizon = cloudPlanetRadius >= 1.0f
+            ? 0.0f
+            : std::sqrt(1.0f - cloudPlanetRadius * cloudPlanetRadius);
 
         if (shadprop.hasScattering())
         {
