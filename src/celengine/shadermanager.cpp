@@ -779,13 +779,14 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    float cachedViewColumn = 0.0;\n";
     source += "    bool cachedViewInward = false;\n";
     source += "    bool viewColumnValid = false;\n";
+    source += "    float viewStartRadius = sqrt(viewStartRadiusSq);\n";
+    source += "    float viewStartMu = viewStartProjection / viewStartRadius;\n";
+    source += "    vec3 invExtinction = 1.0 / max(extinctionCoeff, vec3(1.0e-18));\n";
     source += "    for (int i = 0; i < atmosphereSegmentCount; ++i)\n";
     source += "    {\n";
     source += "        float viewEndProjection = viewStartProjection + stepLength;\n";
     source += "        float viewEndRadiusSq = max(1.0e-12, viewStartRadiusSq + stepLength * (2.0 * viewStartProjection + stepLength));\n";
-    source += "        float viewStartRadius = sqrt(viewStartRadiusSq);\n";
     source += "        float viewEndRadius = sqrt(viewEndRadiusSq);\n";
-    source += "        float viewStartMu = viewStartProjection / viewStartRadius;\n";
     source += "        float viewEndMu = viewEndProjection / viewEndRadius;\n";
     source += "        bool viewInward = viewEndRadiusSq < viewStartRadiusSq;\n";
     source += "        float viewStartColumn;\n";
@@ -812,7 +813,7 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "            float boundaryMu = d / atmosphereRadius.x;\n";
     source += "            float odSun = max(0.0, chapmanToSpace(sampleRadius, sampleMu) - chapmanFromAtmosphereBoundary(boundaryMu, atmosphereBoundaryGrazing));\n";
     source += "            vec3 segmentTau = extinctionCoeff * segmentDepth;\n";
-    source += "            vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) / max(extinctionCoeff, vec3(1.0e-18));\n";
+    source += "            vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) * invExtinction;\n";
     source += "            vec3 thinIntegral = segmentDepth * (vec3(1.0) - segmentTau * 0.5 + segmentTau * segmentTau * (1.0 / 6.0));\n";
     source += "            vec3 thinMask = vec3(1.0) - step(vec3(1.0e-3), segmentTau);\n";
     source += "            segmentIntegral = mix(segmentIntegral, thinIntegral, thinMask);\n";
@@ -823,6 +824,8 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "        segmentStart += atmStep;\n";
     source += "        viewStartRadiusSq = viewEndRadiusSq;\n";
     source += "        viewStartProjection = viewEndProjection;\n";
+    source += "        viewStartRadius = viewEndRadius;\n";
+    source += "        viewStartMu = viewEndMu;\n";
     source += "    }\n";
     source += "    vec3 ex = exp(-extinctionCoeff * odAtm);\n";
     source += "    vec3 integratedLight = " + LightProperty(0, "color") + " * scatteredLight;\n";
