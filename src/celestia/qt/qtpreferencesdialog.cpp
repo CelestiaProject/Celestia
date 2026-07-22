@@ -218,8 +218,6 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     ui.featureSizeSlider->setValue(minimumFeatureSize);
     ui.featureSizeSpinBox->setValue(minimumFeatureSize);
 
-    ui.renderPathBox->addItem(_("OpenGL 2.1"), 0);
-
     ui.antialiasLinesCheck->setChecked(util::is_set(renderFlags, ::RenderFlags::ShowSmoothLines));
 
     {
@@ -749,11 +747,6 @@ PreferencesDialog::on_featureSizeSpinBox_valueChanged(int value)
     ui.featureSizeSlider->blockSignals(true);
     ui.featureSizeSlider->setValue(value);
     ui.featureSizeSlider->blockSignals(false);
-}
-
-void
-PreferencesDialog::on_renderPathBox_currentIndexChanged(int /*index*/) const
-{
 }
 
 void

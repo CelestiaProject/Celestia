@@ -992,13 +992,6 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_13">
             <item>
-             <widget class="QComboBox" name="renderPathBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QCheckBox" name="antialiasLinesCheck">
               <property name="text">
                <string>Antialiased lines</string>

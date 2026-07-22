@@ -105,7 +105,6 @@ private slots:
     void on_featureSizeSlider_valueChanged(int value);
     void on_featureSizeSpinBox_valueChanged(int value);
 
-    void on_renderPathBox_currentIndexChanged(int index) const;
     void on_antialiasLinesCheck_stateChanged(int state);
     void on_sRGBRenderingCombo_currentIndexChanged(int index);
     void on_toneMappingCheck_toggled(bool checked) const;
