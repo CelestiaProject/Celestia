@@ -2634,11 +2634,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     if (!config->viewportEffect.empty() && config->viewportEffect != "none")
     {
         std::unique_ptr<ViewportEffect> effect;
-        if (config->viewportEffect == "passthrough")
-        {
-            effect = std::make_unique<PassthroughViewportEffect>();
-        }
-        else if (config->viewportEffect == "warpmesh")
+        if (config->viewportEffect == "warpmesh")
         {
             if (config->paths.warpMeshFile.empty())
             {
@@ -2782,7 +2778,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
         // as the final rendering step, keeping the pipeline consistent across
         // all GL variants without relying on GL_FRAMEBUFFER_SRGB or
         // platform-specific sRGB surface negotiation.
-        viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>(StaticShader::sRGB, true));
+        viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>(true));
     }
 
     renderer->setRenderFlags(RenderFlags::ShowStars |

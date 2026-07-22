@@ -32,7 +32,8 @@ out float v_psfRadius;  // PSF cutoff radius in px (>0)
 out float v_p04;        // pow(peakRadiance, 0.4); needed because v_psfRadius
                         // is now the shrunken visibility radius, not p04/a.
 out float v_limbRadius; // resolved-body limb radius in unscaled px, 0 if none
-out float v_fadeExp;    // interior-fade crush exponent (per sprite)
+out float v_valLimb;    // PSF value at the limb radius (per-sprite constant)
+out float v_alphaFade;  // pow(v_alpha, fadeExp), interior-fade crush (per sprite)
 
 void main(void)
 {
@@ -64,15 +65,19 @@ void main(void)
 
     // Interior-fade exponent, evaluated once per sprite so the crushed disc
     // core meets the limb floor at v_alpha == 0.5: N = 1 + log2(peak/valLimb).
+    // Precompute valLimb and pow(alpha, fadeExp) here instead of per fragment.
     float fadeExp = 10.0;
+    float valLimb = 0.0;
     if (in_LimbRadius > 0.0)
     {
-        float baseL   = p04 / in_LimbRadius - psfA;
-        float valLimb = min(pow(max(baseL, 0.0) * psfB, 2.5), in_Intensity);
+        float baseL = p04 / in_LimbRadius - psfA;
+        float s     = max(baseL, 0.0) * psfB;
+        valLimb     = min(s * s * sqrt(s), in_Intensity);   // s^2.5
         if (valLimb > 0.0)
             fadeExp = 1.0 + log2(in_Intensity / valLimb);
     }
-    v_fadeExp = fadeExp;
+    v_valLimb   = valLimb;
+    v_alphaFade = pow(v_alpha, fadeExp);
 
     gl_PointSize = 2.0 * rEff * pointScale;
     set_vp(in_Position);

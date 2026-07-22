@@ -2,6 +2,9 @@ in vec2 texCoord;
 
 uniform sampler2D tex;
 
+// Exposure for tone mapping.
+uniform float exposure;
+
 // Apply the sRGB electro-optical transfer function (IEC 61966-2-1).
 // Input is assumed to be linear light; output is gamma-encoded for display.
 vec3 linearToSRGB(vec3 c)
@@ -17,7 +20,7 @@ vec3 linearToSRGB(vec3 c)
 void main(void)
 {
     vec4 color = texture(tex, texCoord);
-    // Tone mapping is handled by the separate srgbtonemap shader.
-    fragColor = vec4(linearToSRGB(color.rgb), color.a);
+    // Exponential tone mapping to roll off HDR highlights.
+    vec3 mapped = vec3(1.0) - exp(-exposure * color.rgb);
+    fragColor = vec4(linearToSRGB(mapped), color.a);
 }
-

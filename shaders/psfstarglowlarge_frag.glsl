@@ -21,7 +21,8 @@ in float v_peakRadiance;
 in float v_psfRadius;
 in float v_p04;
 in float v_limbRadius;   // resolved-body limb radius in unscaled px, 0 if none
-in float v_fadeExp;      // interior-fade crush exponent (per sprite)
+in float v_valLimb;      // PSF value at the limb radius (per-sprite constant)
+in float v_alphaFade;    // pow(v_alpha, fadeExp), interior-fade crush (per sprite)
 
 void main(void)
 {
@@ -36,27 +37,19 @@ void main(void)
     // anymore because r is the visibility-clipped radius rather than
     // p04/psfA.
     float base = v_p04 / px - psfA;
-    float val = pow(base * psfB, 2.5);
+    float s    = base * psfB;
+    float val  = s * s * sqrt(s);   // s^2.5, cheaper than pow()
     val = min(val, v_peakRadiance);
 
-    // See psfstarglow_frag.glsl: outside the geometric limb the halo fades
-    // linearly with v_alpha.  Inside the limb reshape the interior into a
-    // plateau (kPsfCoreSharpness) so it reads as a flat-topped face, then crush
-    // it and floor at the limb brightness (valLimb * v_alpha).  The per-sprite
-    // exponent v_fadeExp = 1 + log2(peak/valLimb) makes the disc core meet the
-    // limb floor at v_alpha == 0.5 while preserving the full plateau at
-    // v_alpha == 1.  0 limb (point sources) => plain linear fade.
-    const float kPsfCoreSharpness = 8.0;
+    // Inside the geometric limb, crush the plateau (v_alphaFade) and floor at the
+    // limb brightness (v_valLimb); both are per-sprite constants from the vertex shader.
     float brightness = val * v_alpha;
     if (v_limbRadius > 0.0 && px < v_limbRadius && v_peakRadiance > 1.0)
     {
-        float baseL   = v_p04 / v_limbRadius - psfA;
-        float valLimb = min(pow(max(baseL, 0.0) * psfB, 2.5), v_peakRadiance);
         float t = 1.0 - px / v_limbRadius;
-        t = pow(t, 1.0 / kPsfCoreSharpness);
-        float valPlateau = mix(valLimb, v_peakRadiance, t);
-        brightness = max(valPlateau * pow(v_alpha, v_fadeExp),
-                         valLimb * v_alpha);
+        t = sqrt(sqrt(sqrt(t)));   // t^(1/8), kPsfCoreSharpness == 8
+        float valPlateau = mix(v_valLimb, v_peakRadiance, t);
+        brightness = max(valPlateau * v_alphaFade, v_valLimb * v_alpha);
     }
 
     fragColor = vec4(v_color.rgb * brightness, 1.0);

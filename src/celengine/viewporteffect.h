@@ -48,15 +48,13 @@ public:
 class PassthroughViewportEffect : public ViewportEffect
 {
 public:
-    explicit PassthroughViewportEffect(StaticShader shaderName = StaticShader::Passthrough,
-                                       bool needsFloatSource = false);
+    explicit PassthroughViewportEffect(bool needsFloatSource = false);
     ~PassthroughViewportEffect() override = default;
 
     bool needsFloatSource() const override { return m_needsFloatSource; }
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
 private:
-    StaticShader m_shaderName;
     bool m_needsFloatSource;
 
     celestia::gl::VertexObject vo;

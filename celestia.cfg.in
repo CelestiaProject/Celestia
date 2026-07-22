@@ -497,7 +497,7 @@ StarTextures
 # are projected and what distortion method is used.
 # Available options for ProjectionMode are `perspective` (default) and
 # `fisheye`. Available `ViewportEffect`s (distortion methods) are `none`
-# (default), `passthrough`, and `warpmesh`.
+# (default) and `warpmesh`.
 # For `warpmesh` viewport effect, you need to specify a warp mesh file
 # under the parameter name `WarpMeshFile`, The file should be placed
 # inside the `warp` folder.
