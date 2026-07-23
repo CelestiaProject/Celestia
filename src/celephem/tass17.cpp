@@ -5,6 +5,8 @@
 // Implementation of the TASS 1.7 theory for the orbits of the
 // Saturnian moons. Translated to C++ from FORTRAN source available at:
 // https://ftp.imcce.fr/pub/ephem/satel/tass17/
+// On July 16, 2026, Alain Vienne granted permission to release the
+// translated code under the GPL2+ license.
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
