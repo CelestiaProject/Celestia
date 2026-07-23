@@ -643,7 +643,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
             float atmosphereRadius = radius +
                                      renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
             prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius, atmosphereRadius,
-                                          renderer->getAtmosphereSegmentCount(),
+                                          1,
                                           extinctionThreshold);
         }
     }
