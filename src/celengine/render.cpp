@@ -415,6 +415,7 @@ bool Renderer::init(int winWidth, int winHeight,
     m_textureManager = std::make_unique<TextureManager>(texturePaths, resolution, *m_resourceSystem);
     detailOptions = _detailOptions;
     atmosphereSegmentCount = detailOptions.atmosphereSegmentCount;
+    cloudSegmentCount = detailOptions.cloudSegmentCount;
     atmosphereExtinctionThreshold = detailOptions.atmosphereExtinctionThreshold;
     atmosphereExtinctionFactor = -std::log(atmosphereExtinctionThreshold);
 
@@ -4808,6 +4809,12 @@ unsigned int
 Renderer::getAtmosphereSegmentCount() const noexcept
 {
     return atmosphereSegmentCount;
+}
+
+unsigned int
+Renderer::getCloudSegmentCount() const noexcept
+{
+    return cloudSegmentCount;
 }
 
 float
