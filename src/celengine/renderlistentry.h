@@ -36,7 +36,7 @@ struct RenderListEntry
 
     Eigen::Vector3f position;
     Eigen::Vector3f sun;
-    float distance;
+    double distance;
     float radius;
     float centerZ;
     float nearZ;
