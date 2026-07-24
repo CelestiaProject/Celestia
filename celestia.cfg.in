@@ -371,8 +371,9 @@ StarTextures
 #   rendering orbit paths. The default value is 100.
 #
 #   AtmosphereSegmentCount defines how many segments to use when
-#   integrating atmospheric scattering. The valid range is 1 to 16,
-#   and the default value is 6.
+#   integrating atmospheric scattering. CloudSegmentCount defines
+#   segments to use for clouds. The valid range is 1 to 16, and
+#   the default values are 6 and 2, respectively.
 #
 #   AtmosphereExtinctionThreshold defines the relative density at the
 #   outer edge of an atmosphere. It must be between 0 and 1. The default
@@ -392,6 +393,7 @@ StarTextures
 #------------------------------------------------------------------------
   OrbitPathSamplePoints  100
   AtmosphereSegmentCount 6
+  CloudSegmentCount  2
   AtmosphereExtinctionThreshold 0.000125
 
   ShadowTextureSize      256
