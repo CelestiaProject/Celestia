@@ -199,6 +199,8 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);
     applyNumber(renderDetails.atmosphere.segmentCount, hash, "AtmosphereSegmentCount"sv);
     renderDetails.atmosphere.segmentCount = std::clamp(renderDetails.atmosphere.segmentCount, 1u, 16u);
+    applyNumber(renderDetails.atmosphere.cloudSegmentCount, hash, "CloudSegmentCount"sv);
+    renderDetails.atmosphere.cloudSegmentCount = std::clamp(renderDetails.atmosphere.cloudSegmentCount, 1u, 16u);
     applyNumber(renderDetails.atmosphere.extinctionThreshold, hash, "AtmosphereExtinctionThreshold"sv);
     if (renderDetails.atmosphere.extinctionThreshold <= 0.0f ||
         renderDetails.atmosphere.extinctionThreshold >= 1.0f)
