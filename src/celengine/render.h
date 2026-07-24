@@ -495,7 +495,7 @@ class Renderer
     void removeInvisibleItems(const celestia::math::InfiniteFrustum &frustum);
 
     void renderObject(const Eigen::Vector3f& pos,
-                      float distance,
+                      double distance,
                       const Observer& observer,
                       float nearPlaneDistance,
                       float farPlaneDistance,
@@ -505,7 +505,7 @@ class Renderer
 
     void renderPlanet(Body& body,
                       const Eigen::Vector3f& pos,
-                      float distance,
+                      double distance,
                       float appMag,
                       const Observer& observer,
                       float, float,
