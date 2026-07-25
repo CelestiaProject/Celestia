@@ -125,6 +125,7 @@ class Renderer
     {
         unsigned int orbitPathSamplePoints{ 100 };
         unsigned int atmosphereSegmentCount{ 6 };
+        unsigned int cloudSegmentCount{ 2 };
         float atmosphereExtinctionThreshold{ 0.000125f };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
@@ -219,6 +220,7 @@ class Renderer
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
     unsigned int getAtmosphereSegmentCount() const noexcept;
+    unsigned int getCloudSegmentCount() const noexcept;
     float getAtmosphereExtinctionThreshold() const noexcept;
     float getAtmosphereShellHeight(float scaleHeight) const noexcept;
 
@@ -730,8 +732,9 @@ class Renderer
     const Eigen::Matrix4f *m_projectionPtr { &m_projMatrix };
 
     DetailOptions detailOptions;
-    unsigned int atmosphereSegmentCount{ 3 };
-    float atmosphereExtinctionThreshold{ 0.05f };
+    unsigned int atmosphereSegmentCount{ 6 };
+    unsigned int cloudSegmentCount{ 2 };
+    float atmosphereExtinctionThreshold{ 0.000125f };
     float atmosphereExtinctionFactor{ 0.0f };
 
     std::uint32_t frameCount{ 0 };

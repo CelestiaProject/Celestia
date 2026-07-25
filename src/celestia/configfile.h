@@ -102,8 +102,9 @@ struct CelestiaConfig
         OutputRendering output{ };
         struct AtmosphereRendering
         {
-            unsigned int segmentCount{ 3 };
-            float extinctionThreshold{ 0.05f };
+            unsigned int segmentCount{ 6 };
+            unsigned int cloudSegmentCount{ 2 };
+            float extinctionThreshold{ 0.000125f };
         };
         AtmosphereRendering atmosphere{ };
         struct StarRendering
