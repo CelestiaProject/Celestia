@@ -394,7 +394,7 @@ Url::encodeString(std::string_view str)
 }
 
 bool
-Url::parse(std::string_view urlStr)
+Url::parse(std::string_view urlStr) //NOSONAR
 {
     constexpr auto npos = std::string_view::npos;
 
@@ -408,8 +408,13 @@ Url::parse(std::string_view urlStr)
     // extract @path and @params from the URL
     auto pos = urlStr.find('?');
     auto pathStr = urlStr.substr(PROTOCOL.length(), pos - PROTOCOL.length());
-    while (pathStr.back() == '/')
+    while (!pathStr.empty() && pathStr.back() == '/')
         pathStr.remove_suffix(1);
+    if (pathStr.empty())
+    {
+        GetLogger()->error(_("URL must have at least mode and time!\n"));
+        return false;
+    }
     std::string_view paramsStr;
     if (pos != npos)
         paramsStr = urlStr.substr(pos + 1);

@@ -75,8 +75,8 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
     }
 
     auto baseSplitValue = static_cast<unsigned int>(*baseSplit);
-    auto maxTileSize = std::numeric_limits<int>::max() >> (baseSplitValue + 1);
-    if (*tileSize != std::floor(*tileSize) ||
+    if (auto maxTileSize = std::numeric_limits<int>::max() >> (baseSplitValue + 1);
+        *tileSize != std::floor(*tileSize) ||
         *tileSize < 64.0 ||
         *tileSize > maxTileSize ||
         !isPow2(static_cast<int>(*tileSize)))
@@ -319,7 +319,7 @@ VirtualTexture::requestTile(Tile* tile, unsigned int lod, unsigned int u, unsign
 
     tile->state = TileState::Loading;
 
-    unsigned int diskLod = lod >> baseSplit;
+    unsigned int diskLod = lod - baseSplit;
     auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
     filename += tileExt;
     auto path = tilePath / fmt::format("level{:d}", diskLod) / filename;
@@ -395,7 +395,7 @@ VirtualTexture::drainReady(std::size_t byteBudget)
             continue;
         }
 
-        unsigned int diskLod = ready.lod >> baseSplit;
+        unsigned int diskLod = ready.lod - baseSplit;
         MipMapMode mipMapMode = diskLod == 0 ? DefaultMipMaps : NoMipMaps;
         tile->tex = std::make_unique<ImageTexture>(*ready.image, EdgeClamp, mipMapMode);
         tile->state = TileState::Loaded;

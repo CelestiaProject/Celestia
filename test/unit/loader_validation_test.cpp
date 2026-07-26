@@ -1,3 +1,12 @@
+// loader_validation_test.cpp
+//
+// Copyright (C) 2026-present, the Celestia Development Team
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
 #include <array>
 #include <cstdint>
 #include <filesystem>
@@ -66,26 +75,37 @@ writeLE32(std::ostream& out, std::uint32_t value)
 }
 
 void
-writeRGBA8DDS(const std::filesystem::path& path, std::size_t payloadSize)
+writeDDS(const std::filesystem::path& path,
+         std::uint32_t width,
+         std::uint32_t height,
+         std::uint32_t mipLevels,
+         std::uint32_t fourCC,
+         std::size_t payloadSize)
 {
     std::ofstream out(path, std::ios::binary);
     out.write("DDS ", 4);
 
     std::array<std::uint32_t, 31> header{};
     header[0] = 124;
-    header[2] = 1;
-    header[3] = 1;
-    header[4] = 4;
+    header[2] = height;
+    header[3] = width;
+    header[6] = mipLevels;
     header[18] = 32;
-    header[21] = 32;
-    header[22] = 0x000000ff;
-    header[23] = 0x0000ff00;
-    header[24] = 0x00ff0000;
-    header[25] = 0xff000000;
+    header[20] = fourCC;
+    if (fourCC == 0)
+    {
+        header[4] = width * 4;
+        header[21] = 32;
+        header[22] = 0x000000ff;
+        header[23] = 0x0000ff00;
+        header[24] = 0x00ff0000;
+        header[25] = 0xff000000;
+    }
     for (std::uint32_t value : header)
         writeLE32(out, value);
 
-    constexpr std::array<char, 4> payload{ '\x01', '\x02', '\x03', '\x04' };
+    std::array<char, 32> payload{};
+    REQUIRE(payloadSize <= payload.size());
     out.write(payload.data(), static_cast<std::streamsize>(payloadSize));
 }
 
@@ -97,7 +117,7 @@ TEST_CASE("DDS loader rejects truncated pixel data")
 {
     TemporaryDirectory directory;
     auto path = directory.getPath("truncated.dds");
-    writeRGBA8DDS(path, 3);
+    writeDDS(path, 1, 1, 1, 0, 3);
     std::unique_ptr<celestia::engine::Image> image(
         celestia::engine::LoadDDSImage(path));
     CHECK(image == nullptr);
@@ -107,12 +127,22 @@ TEST_CASE("DDS loader accepts complete pixel data")
 {
     TemporaryDirectory directory;
     auto path = directory.getPath("complete.dds");
-    writeRGBA8DDS(path, 4);
+    writeDDS(path, 1, 1, 1, 0, 4);
     std::unique_ptr<celestia::engine::Image> image(
         celestia::engine::LoadDDSImage(path));
     REQUIRE(image != nullptr);
     CHECK(image->getWidth() == 1);
     CHECK(image->getHeight() == 1);
+}
+
+TEST_CASE("DDS loader rejects excessive mip levels")
+{
+    TemporaryDirectory directory;
+    auto path = directory.getPath("excessive-mips.dds");
+    writeDDS(path, 1, 1, 32, 0, 4);
+    std::unique_ptr<celestia::engine::Image> image(
+        celestia::engine::LoadDDSImage(path));
+    CHECK(image == nullptr);
 }
 
 TEST_CASE("Virtual texture loader rejects unsafe dimensions")

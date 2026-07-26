@@ -328,7 +328,7 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
         std::uint32_t numberOfPixels = ddsd.width * ddsd.height;
         for (std::uint32_t index = 0; index < numberOfPixels; ++index)
         {
-            std::memcpy(&ptr[3 * index], &ptr[4 * index], sizeof(char) * 3);
+            std::memmove(&ptr[3 * index], &ptr[4 * index], sizeof(char) * 3);
         }
     }
 
@@ -392,6 +392,16 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
+    std::uint32_t mipMapLevels = std::max(ddsd.mipMapLevels, UINT32_C(1));
+    std::uint32_t maxMipMapLevels = 1;
+    for (std::uint32_t size = std::max(ddsd.width, ddsd.height); size > 1; size >>= 1)
+        ++maxMipMapLevels;
+    if (mipMapLevels > maxMipMapLevels)
+    {
+        util::GetLogger()->error("DDS file {} has too many mip levels.\n", filename);
+        return nullptr;
+    }
+
     PixelFormat format;
     if (ddsd.format.fourCC == FourCC("DX10"))
     {
@@ -435,7 +445,7 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
     auto img = std::make_unique<Image>(format,
                                        static_cast<std::int32_t>(ddsd.width),
                                        static_cast<std::int32_t>(ddsd.height),
-                                       std::max(static_cast<std::int32_t>(ddsd.mipMapLevels), INT32_C(1)));
+                                       static_cast<std::int32_t>(mipMapLevels));
     std::int32_t dataSize = 0;
     for (std::int32_t mip = 0; mip < img->getMipLevelCount(); ++mip)
         dataSize += img->getMipLevelSize(mip);
