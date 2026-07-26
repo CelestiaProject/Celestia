@@ -56,6 +56,14 @@ public:
     BookmarkItem() = default;
 
     BookmarkItem(Type type, BookmarkItem* parent);
+    ~BookmarkItem();
+
+    // Owns its children via raw pointers, so it is not copyable or movable;
+    // use clone() for a deep copy.
+    BookmarkItem(const BookmarkItem&) = delete;
+    BookmarkItem& operator=(const BookmarkItem&) = delete;
+    BookmarkItem(BookmarkItem&&) = delete;
+    BookmarkItem& operator=(BookmarkItem&&) = delete;
 
     BookmarkItem::Type type() const;
     BookmarkItem* parent() const;

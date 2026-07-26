@@ -29,6 +29,7 @@
 #include <QStyle>
 #include <QTreeView>
 #include <QVariant>
+#include <QtAlgorithms>
 
 #include <celestia/url.h>
 #include <celutil/gettext.h>
@@ -70,6 +71,11 @@ BookmarkItem::BookmarkItem(Type type, BookmarkItem* parent) :
     m_parent(parent)
 {
 
+}
+
+BookmarkItem::~BookmarkItem()
+{
+    qDeleteAll(m_children);
 }
 
 BookmarkItem::Type
@@ -214,14 +220,10 @@ void
 BookmarkItem::removeChildren(int index, int count)
 {
     Q_ASSERT(index + count <= m_children.size());
-    for (int i = 1; i < count; i++)  // (if i = 0: critical error)
-    {
-        m_children[index + i]->setParent(nullptr);
-        //m_children[index + i]->setPosition(0);
-    }
-
-    // TODO: delete the child
-    m_children.erase(m_children.begin() + index, m_children.begin() + index + count);
+    auto first = m_children.begin() + index;
+    auto last = first + count;
+    qDeleteAll(first, last);
+    m_children.erase(first, last);
 }
 
 BookmarkItem*
@@ -451,11 +453,14 @@ BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
 
     QByteArray encodedData = data->data("application/celestia.text.list");
     QDataStream stream(&encodedData, QIODevice::ReadOnly);
-    BookmarkItem item;
+    const BookmarkItem* item = nullptr;
 
     // Read the pointer (ugh) from the encoded mime data. Bail out now
     // if the data was incomplete for some reason.
     if (stream.readRawData(reinterpret_cast<char*>(&item), sizeof(item)) != sizeof(item))
+        return false;
+
+    if (item == nullptr)
         return false;
 
     BookmarkItem* parentFolder = nullptr;
@@ -476,7 +481,7 @@ BookmarkTreeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, in
     // is inserted in the new position, then the old item is removed. Bad things
     // happen when the item appears in two separate places, so we'll insert a copy
     // of the old data into the new position.
-    BookmarkItem* clone = item.clone(parentFolder);
+    BookmarkItem* clone = item->clone(parentFolder);
 
     beginInsertRows(parent, row, row);
     parentFolder->insert(clone, row);
@@ -520,7 +525,8 @@ BookmarkTreeModel::mimeData(const QModelIndexList& indexes) const
 
     const BookmarkItem* item = getItem(indexes.at(0));
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
-    stream.writeRawData(reinterpret_cast<const char*>(&item), sizeof(*item));
+    // QDataStream::writeRawData requires a const char*; std::byte is not accepted.
+    stream.writeRawData(reinterpret_cast<const char*>(&item), sizeof(item)); //NOSONAR
     mimeData->setData("application/celestia.text.list", encodedData);
 
     return mimeData;

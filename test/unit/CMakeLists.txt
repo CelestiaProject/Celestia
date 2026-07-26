@@ -5,12 +5,15 @@ set(UNIT_TEST_SOURCES
   constellation_test.cpp
   greek_test.cpp
   kepler_test.cpp
+  legacy_cmdparser_test.cpp
+  loader_validation_test.cpp
   logger_test.cpp
   ranges_test.cpp
   resourcesystem_test.cpp
   stellarclass_test.cpp
   strnatcmp_test.cpp
-  tokenizer_test.cpp)
+  tokenizer_test.cpp
+  url_test.cpp)
 
 if(USE_ICU)
   list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)

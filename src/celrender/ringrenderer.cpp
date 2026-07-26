@@ -54,7 +54,7 @@ createShaderProperties(const LightingState& ls,
     if (renderShadow)
     {
         // Set one shadow (the planet's) per light
-        for (unsigned int li = 0; li < ls.nLights; li++)
+        for (unsigned int li = 0; li < shadprop.nLights; li++)
             shadprop.setEclipseShadowCountForLight(li, 1);
     }
 
@@ -69,19 +69,18 @@ setUpShadowParameters(CelestiaGLProgram* prog,
                       const LightingState& ls,
                       float planetOblateness)
 {
-    for (unsigned int li = 0; li < ls.nLights; li++)
+    unsigned int lightCount = std::min(ls.nLights, MaxShaderLights);
+    for (unsigned int li = 0; li < lightCount; li++)
     {
         const DirectionalLight& light = ls.lights[li];
 
         // Compute the projection vectors based on the sun direction.
-        // I'm being a little careless here--if the sun direction lies
-        // along the y-axis, this will fail.  It's unlikely that a
-        // planet would ever orbit underneath its sun (an orbital
-        // inclination of 90 degrees), but this should be made
-        // more robust anyway.
         Eigen::Vector3f axis = Eigen::Vector3f::UnitY().cross(light.direction_obj);
         float cosAngle = Eigen::Vector3f::UnitY().dot(light.direction_obj);
-        axis.normalize();
+        if (axis.isZero())
+            axis = Eigen::Vector3f::UnitX();
+        else
+            axis.normalize();
 
         float tScale = 1.0f;
         if (planetOblateness != 0.0f)

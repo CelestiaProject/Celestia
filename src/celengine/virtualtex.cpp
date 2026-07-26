@@ -11,8 +11,10 @@
 #include "virtualtex.h"
 
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <fstream>
+#include <limits>
 #include <optional>
 #include <system_error>
 #include <utility>
@@ -34,6 +36,8 @@ namespace
 {
 
 constexpr int MaxResolutionLevels = 13;
+constexpr unsigned int MaxBaseSplit =
+    std::numeric_limits<int>::digits - MaxResolutionLevels - 1;
 
 constexpr bool
 isPow2(int x)
@@ -54,7 +58,10 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
     }
 
     std::optional<double> baseSplit = texParams->getNumber<double>("BaseSplit");
-    if (!baseSplit.has_value() || *baseSplit < 0.0 || *baseSplit != floor(*baseSplit))
+    if (!baseSplit.has_value() ||
+        *baseSplit < 0.0 ||
+        *baseSplit > MaxBaseSplit ||
+        *baseSplit != std::floor(*baseSplit))
     {
         GetLogger()->error("BaseSplit in virtual texture missing or has bad value\n");
         return nullptr;
@@ -67,9 +74,12 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
         return nullptr;
     }
 
-    if (*tileSize != floor(*tileSize) ||
+    auto baseSplitValue = static_cast<unsigned int>(*baseSplit);
+    if (auto maxTileSize = std::numeric_limits<int>::max() >> (baseSplitValue + 1);
+        *tileSize != std::floor(*tileSize) ||
         *tileSize < 64.0 ||
-        !isPow2((int) *tileSize))
+        *tileSize > maxTileSize ||
+        !isPow2(static_cast<int>(*tileSize)))
     {
         GetLogger()->error("Virtual texture tile size must be a power of two >= 64\n");
         return nullptr;
@@ -94,8 +104,8 @@ CreateVirtualTexture(const util::AssociativeArray* texParams,
     if (directory.is_relative())
         directory = path / directory;
     return std::make_unique<VirtualTexture>(directory,
-                                            (unsigned int) *baseSplit,
-                                            (unsigned int) *tileSize,
+                                            baseSplitValue,
+                                            static_cast<unsigned int>(*tileSize),
                                             tilePrefix,
                                             tileType,
                                             colorspace);
@@ -309,7 +319,7 @@ VirtualTexture::requestTile(Tile* tile, unsigned int lod, unsigned int u, unsign
 
     tile->state = TileState::Loading;
 
-    unsigned int diskLod = lod >> baseSplit;
+    unsigned int diskLod = lod - baseSplit;
     auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
     filename += tileExt;
     auto path = tilePath / fmt::format("level{:d}", diskLod) / filename;
@@ -385,7 +395,7 @@ VirtualTexture::drainReady(std::size_t byteBudget)
             continue;
         }
 
-        unsigned int diskLod = ready.lod >> baseSplit;
+        unsigned int diskLod = ready.lod - baseSplit;
         MipMapMode mipMapMode = diskLod == 0 ? DefaultMipMaps : NoMipMaps;
         tile->tex = std::make_unique<ImageTexture>(*ready.image, EdgeClamp, mipMapMode);
         tile->state = TileState::Loaded;
