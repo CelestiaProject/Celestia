@@ -262,10 +262,8 @@ DecompressDXTc(std::uint32_t width, std::uint32_t height, PixelFormat format, bo
     {
         for (std::uint32_t x = 0; x < width; x += 4)
         {
-            if (!in.good())
+            if (!in.read(reinterpret_cast<char*>(block.data()), blocksize)) /* Flawfinder: ignore */
                 return nullptr;
-
-            in.read(reinterpret_cast<char*>(block.data()), blocksize); /* Flawfinder: ignore */
             switch (format)
             {
             case PixelFormat::DXT1:
@@ -438,8 +436,10 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
                                        static_cast<std::int32_t>(ddsd.width),
                                        static_cast<std::int32_t>(ddsd.height),
                                        std::max(static_cast<std::int32_t>(ddsd.mipMapLevels), INT32_C(1)));
-    in.read(reinterpret_cast<char*>(img->getPixels()), img->getSize()); /* Flawfinder: ignore */
-    if (!in.eof() && !in.good())
+    std::int32_t dataSize = 0;
+    for (std::int32_t mip = 0; mip < img->getMipLevelCount(); ++mip)
+        dataSize += img->getMipLevelSize(mip);
+    if (!in.read(reinterpret_cast<char*>(img->getPixels()), dataSize)) /* Flawfinder: ignore */
     {
         util::GetLogger()->error("Failed reading data from DDS texture file {}.\n", filename);
         return nullptr;

@@ -16,6 +16,7 @@
 #endif
 #include <array>
 #include <cctype>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -460,10 +461,15 @@ ParseResult parseTimeCommand(const AssociativeArray& paramList, const ScriptMaps
         if (utc == nullptr)
             return makeError("Missing either time or utc parameter to time");
 
-        astro::Date date(0.0);
-        std::sscanf(utc->c_str(), "%d-%d-%dT%d:%d:%lf",
-                    &date.year, &date.month, &date.day,
-                    &date.hour, &date.minute, &date.seconds);
+        astro::Date date;
+        int parsedLength = 0;
+        std::sscanf(utc->c_str(), "%*d-%*d-%*dT%*d:%*d:%*lf%n", &parsedLength);
+        if (parsedLength != static_cast<int>(utc->size()) ||
+            !astro::parseDate(*utc, date) ||
+            !std::isfinite(date.seconds))
+        {
+            return makeError("Invalid utc parameter to time");
+        }
         jd = static_cast<double>(date);
     }
 
@@ -541,9 +547,25 @@ ParseResult parseSetOrientationCommand(const AssociativeArray& paramList, const 
 {
     if (auto angle = paramList.getNumber<double>("angle"); angle.has_value())
     {
-        auto axis = paramList.getVector3<double>("axis").value_or(Eigen::Vector3d::Zero());
-        auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf(static_cast<float>(math::degToRad(*angle)),
-                                                                axis.cast<float>().normalized()));
+        auto axis = paramList.getVector3<double>("axis");
+        if (!std::isfinite(*angle) ||
+            !axis.has_value() ||
+            !axis->allFinite() ||
+            axis->squaredNorm() == 0.0)
+        {
+            return makeError("Invalid angle or axis parameter to setorientation");
+        }
+
+        float angleRadians = static_cast<float>(math::degToRad(*angle));
+        Eigen::Vector3f axisValue = axis->cast<float>();
+        if (!std::isfinite(angleRadians) ||
+            !axisValue.allFinite() ||
+            axisValue.squaredNorm() == 0.0f)
+        {
+            return makeError("Invalid angle or axis parameter to setorientation");
+        }
+
+        auto orientation = Eigen::Quaternionf(Eigen::AngleAxisf(angleRadians, axisValue.normalized()));
         return std::make_unique<CommandSetOrientation>(orientation);
     }
 
@@ -552,6 +574,9 @@ ParseResult parseSetOrientationCommand(const AssociativeArray& paramList, const 
     auto oy = paramList.getNumber<double>("oy").value_or(0.0);
     auto oz = paramList.getNumber<double>("oz").value_or(0.0);
     Eigen::Quaternionf orientation(ow, ox, oy, oz);
+    if (!orientation.coeffs().allFinite() || orientation.squaredNorm() == 0.0f)
+        return makeError("Invalid quaternion parameters to setorientation");
+
     return std::make_unique<CommandSetOrientation>(orientation);
 }
 
