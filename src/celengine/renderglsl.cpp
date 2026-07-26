@@ -579,7 +579,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::TextureCoordTransform;
-    shadprop.nLights = ls.nLights;
+    shadprop.nLights = std::min(ls.nLights, MaxShaderLights);
     shadprop.effects = LightingEffects::CloudLighting;
 
     // Set up the textures used by this object
@@ -606,7 +606,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
     }
 
     // Set the shadow information.
-    for (unsigned int li = 0; li < ls.nLights; li++)
+    for (unsigned int li = 0; li < shadprop.nLights; li++)
     {
         if (ls.shadows[li] && !ls.shadows[li]->empty())
         {

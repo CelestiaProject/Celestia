@@ -4721,8 +4721,13 @@ void Renderer::loadTextures(Body* body)
     if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps))
     {
         const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(body);
-        if (atmosphere != nullptr && atmosphere->cloudTexture != util::TextureHandle::Invalid)
-            m_textureManager->find(atmosphere->cloudTexture);
+        if (atmosphere != nullptr)
+        {
+            if (atmosphere->cloudTexture != util::TextureHandle::Invalid)
+                m_textureManager->find(atmosphere->cloudTexture);
+            if (atmosphere->cloudNormalMap != util::TextureHandle::Invalid)
+                m_textureManager->find(atmosphere->cloudNormalMap);
+        }
     }
 
     if (auto rings = bodyFeaturesManager->getRings(body);
