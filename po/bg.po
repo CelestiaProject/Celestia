@@ -2,11 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # 375gnu <375gnu@gmail.com>, 2023
 # Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,14 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2026-06-22 10:39-0700\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, "
-"2026\n"
-"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/"
-"bg/)\n"
-"Language: bg\n"
+"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026\n"
+"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/celastro/date.cpp:487
@@ -67,8 +65,7 @@ msgstr "Грешка при зареждане на модела „{}“\n"
 #, c++-format
 msgid ""
 "   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
-msgstr ""
-"Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
+msgstr "Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
 
 #: ../src/celengine/modelgeometry.cpp:170
 #, c++-format
@@ -474,9 +471,8 @@ msgid "Star style: scaled discs"
 msgstr "Стил на звездите: мащабирани дискове"
 
 #: ../src/celestia/celestiacore.cpp:1061
-#, fuzzy
 msgid "Star style: point spread function"
-msgstr "Стил на звездите: точки"
+msgstr "Стил на звездите: размити точки"
 
 #: ../src/celestia/celestiacore.cpp:1072
 msgid "Comet tails enabled"
@@ -677,7 +673,7 @@ msgstr "Неуспешно стартиране на възпроизвежда�
 
 #: ../src/celestia/celestiacore.cpp:2801
 msgid "DEFAULT_MAIN_FONT"
-msgstr ""
+msgstr "DEFAULT_MAIN_FONT"
 
 #: ../src/celestia/celestiacore.cpp:2805
 msgid "Error loading font; text will not be visible.\n"
@@ -685,11 +681,11 @@ msgstr "Грешка при зареждане на шрифта, текстът
 
 #: ../src/celestia/celestiacore.cpp:2807
 msgid "DEFAULT_TITLE_FONT"
-msgstr ""
+msgstr "DEFAULT_TITLE_FONT"
 
 #: ../src/celestia/celestiacore.cpp:2833
 msgid "DEFAULT_LABEL_FONT"
-msgstr ""
+msgstr "DEFAULT_LABEL_FONT"
 
 #: ../src/celestia/celestiacore.cpp:3131
 msgid "Invalid URL"
@@ -1110,19 +1106,22 @@ msgstr "Записване"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:49
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "обектите от дълбокото небе"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:50
 msgctxt "catalog"
 msgid "solar system"
 msgstr "Слънчевата система"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:51
 msgctxt "catalog"
 msgid "star"
@@ -1696,7 +1695,7 @@ msgstr "Изгладени линии"
 #. ectx: property (text), widget (QLabel, sRGBRenderingLabel)
 #: ../src/celestia/qt/preferences.ui:1013
 msgid "sRGB rendering:"
-msgstr ""
+msgstr "Визуализиране с sRGB:"
 
 #. ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/preferences.ui:1058
@@ -1722,43 +1721,45 @@ msgstr "Мащабирани дискове"
 #. ectx: property (text), widget (QRadioButton, psfStarsButton)
 #: ../src/celestia/qt/preferences.ui:1085
 msgid "Point spread function"
-msgstr ""
+msgstr "Размити точки"
 
 #. ectx: property (title), widget (QGroupBox, psfOptionsGroup)
 #: ../src/celestia/qt/preferences.ui:1092
 msgid "Point spread function options"
-msgstr ""
+msgstr "Опции на размитите точки"
 
 #. ectx: property (text), widget (QLabel, psfRadiusLabel)
 #: ../src/celestia/qt/preferences.ui:1100
 msgid "Point radius (pt):"
-msgstr ""
+msgstr "Радиус на точките (тт):"
 
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfRadiusSpinBox)
 #: ../src/celestia/qt/preferences.ui:1107
 msgid ""
-"Radius of the unresolved star disc in points. Larger values make every star "
-"appear bigger while conserving the flux.\n"
+"Radius of the unresolved star disc in points. Larger values make every star appear bigger while conserving the flux.\n"
 "Valid range: 1.0 to 10.0."
 msgstr ""
+"Радиус на неразделимия звезден диск в точки. По-големите стойности правят всяка звезда да изглежда по-голяма и запазват светлинния поток.\n"
+"Валиден диапазон: от 1,0 до 10,0."
 
 #. ectx: property (text), widget (QLabel, psfOptimizationLabel)
 #: ../src/celestia/qt/preferences.ui:1134
 msgid "Bloom compactness:"
-msgstr ""
+msgstr "Плътност на сиянието:"
 
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfOptimizationSpinBox)
 #: ../src/celestia/qt/preferences.ui:1141
 msgid ""
-"Controls how tightly the eye-PSF bloom is confined around each bright star. "
-"Higher values keep the glow compact; lower values let it spread further.\n"
+"Controls how tightly the eye-PSF bloom is confined around each bright star. Higher values keep the glow compact; lower values let it spread further.\n"
 "Valid range: 0.05 to 1.0."
 msgstr ""
+"Контролира колко сбито е сиянието около всяка ярка звезда. По-високите стойности поддържат блясъка компактен, по-ниските стойности му позволяват да се разпространи по-надалеч.\n"
+"Валиден диапазон: от 0,05 до 1,0."
 
 #. ectx: property (text), widget (QLabel, psfMaxIrradianceLabel)
 #: ../src/celestia/qt/preferences.ui:1168
 msgid "Max irradiance:"
-msgstr ""
+msgstr "Максимална облъченост:"
 
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfMaxIrradianceSpinBox)
 #: ../src/celestia/qt/preferences.ui:1175
@@ -1766,29 +1767,34 @@ msgid ""
 "Soft-clip on per-star irradiance. 0 = disabled.\n"
 "Valid range: 1.0 to 1.0e6."
 msgstr ""
+"Меко отрязване на облъчеността за всяка отделна звезда. 0 = изключено.\n"
+"Валиден диапазон: от 1,0 до 1,0e6."
 
 #. ectx: property (text), widget (QLabel, psfDimClipFactorLabel)
 #: ../src/celestia/qt/preferences.ui:1202
 msgid "Dim star clipping:"
-msgstr ""
+msgstr "Отрязване на бледите звезди:"
 
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfDimClipFactorSpinBox)
 #: ../src/celestia/qt/preferences.ui:1209
 msgid ""
-"Hyperbolic soft-clip on dim stars; higher values cull more dim stars for "
-"performance.\n"
+"Hyperbolic soft-clip on dim stars; higher values cull more dim stars for performance.\n"
 "Valid range: 1.0 to 100.0."
 msgstr ""
+"Хиперболично меко отрязване на бледите звезди, по-високите стойности премахват повече бледи звезди за по-добра производителност.\n"
+"Валиден диапазон: от 1,0 до 100,0."
 
 #. ectx: property (text), widget (QLabel, psfExposureLabel)
 #: ../src/celestia/qt/preferences.ui:1236
 msgid "Exposure:"
-msgstr ""
+msgstr "Експозиция:"
 
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfExposureSpinBox)
 #: ../src/celestia/qt/preferences.ui:1243
 msgid "Per-star brightness multiplier. Valid range: 0.001 to 1.0e6."
 msgstr ""
+"Множител на яркостта за отделните звезди. Валиден диапазон: от 0,001 до "
+"1,0e6."
 
 #. ectx: property (text), widget (QCheckBox, autoMagnitudeCheck)
 #: ../src/celestia/qt/preferences.ui:1286
@@ -1830,8 +1836,8 @@ msgstr "Грешка при получаване на пътя за името �
 
 #: ../src/celestia/qt/qtappwin.cpp:270
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "„Celestia“ не успя да стартира, защото папката с данни липсва, вероятната "
 "причина е неправилна инсталация."
@@ -1842,13 +1848,10 @@ msgstr "Достъп до скриптовата система"
 
 #: ../src/celestia/qt/qtappwin.cpp:297
 msgid ""
-"This script requests permission to read/write files and execute external "
-"programs. Allowing this can be dangerous.\n"
+"This script requests permission to read/write files and execute external programs. Allowing this can be dangerous.\n"
 "Do you trust the script and want to allow this?"
 msgstr ""
-"Този скрипт се нуждае от разрешение за четене и записване на файлове, както "
-"и за изпълнение на външни програми. Това може да доведе до потенциален риск "
-"за сигурността.\n"
+"Този скрипт се нуждае от разрешение за четене и записване на файлове, както и за изпълнение на външни програми. Това може да доведе до потенциален риск за сигурността.\n"
 "Сигурни ли сте, че искате да продължите?"
 
 #: ../src/celestia/qt/qtappwin.cpp:365
@@ -1869,7 +1872,8 @@ msgstr "Слънчева система"
 msgid "Deep Sky Objects"
 msgstr "Обекти от дълбокото небе"
 
-#: ../src/celestia/qt/qtappwin.cpp:407 ../src/celestia/qt/qteventfinder.cpp:378
+#: ../src/celestia/qt/qtappwin.cpp:407
+#: ../src/celestia/qt/qteventfinder.cpp:378
 #: ../src/celestia/qt/qteventfinder.cpp:388
 msgid "Event Finder"
 msgstr "Търсачка на събития"
@@ -1975,31 +1979,33 @@ msgstr "Нова отметка"
 #: ../src/celestia/qt/qtappwin.cpp:1191
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2025 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2025 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация <b>%1</"
-"b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt: "
-"%5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: %6</"
-"p><p>Авторско право (C) 2001-2025, Екипът на „Celestia“.<br>„Celestia“ е "
-"безплатен софтуер. Може да се разпространява и/или променя под условията на "
-"„GNU General Public License“, който е публикуван от „Фондацията за свободен "
-"софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша преценка).</"
-"p><p>Сайт: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Форум: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация "
+"<b>%1</b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt:"
+" %5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: "
+"%6</p><p>Авторско право (C) 2001-2025, Екипът на „Celestia“.<br>„Celestia“ е"
+" безплатен софтуер. Може да се разпространява и/или променя под условията на"
+" „GNU General Public License“, който е публикуван от „Фондацията за свободен"
+" софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша "
+"преценка).</p><p>Сайт: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“:"
+" <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1227
 msgid "Unknown compiler"
@@ -2512,7 +2518,7 @@ msgstr "Мащабирани дискове"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:268
 msgid "Point Spread Function"
-msgstr ""
+msgstr "Размити точки"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:280
 msgid "Light Time Delay"
@@ -2823,14 +2829,12 @@ msgid "Behind %1"
 msgstr "Зад %1"
 
 #: ../src/celestia/qt/qtglwidget.cpp:114
-#, fuzzy
 msgid "Celestia was unable to initialize OpenGL ES 3.0."
-msgstr "„Celestia“ не успя да стартира OpenGLES 2.0."
+msgstr "„Celestia“ не успя да стартира OpenGL ES 3.0."
 
 #: ../src/celestia/qt/qtglwidget.cpp:121
-#, fuzzy
 msgid "Celestia was unable to initialize OpenGL 3.3."
-msgstr "„Celestia“ не успя да стартира OpenGL 2.1."
+msgstr "„Celestia“ не успя да стартира OpenGL 3.3."
 
 #: ../src/celestia/qt/qtinfopanel.cpp:154
 msgid "Error: no object selected!\n"
@@ -3065,7 +3069,7 @@ msgstr "Диск"
 #: ../src/celestia/qt/qtmarkerutil.cpp:38
 #: ../src/celestia/qt/qtselectionpopup.cpp:266
 msgid "Crosshair"
-msgstr ""
+msgstr "Мерник"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:221
 msgid "OpenGL 2.1"
@@ -3073,15 +3077,15 @@ msgstr "OpenGL 2.1"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:227
 msgid "Use config default"
-msgstr ""
+msgstr "По подразбиране"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:228
 msgid "Enabled"
-msgstr ""
+msgstr "Включено"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:229
 msgid "Disabled"
-msgstr ""
+msgstr "Изключено"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:294
 #: ../src/celestia/win32/res/celestia.rc:225
@@ -3444,12 +3448,14 @@ msgid "No guide destinations were found."
 msgstr "Няма намерени дестинации на екскурзовода."
 
 #. ectx: property (text), widget (QLabel, label)
-#: ../src/celestia/qt/tourguide.ui:49 ../src/celestia/win32/res/celestia.rc:606
+#: ../src/celestia/qt/tourguide.ui:49
+#: ../src/celestia/win32/res/celestia.rc:606
 msgid "Select your destination:"
 msgstr "Избери дестинация:"
 
 #. ectx: property (text), widget (QPushButton, gotoButton)
-#: ../src/celestia/qt/tourguide.ui:76 ../src/celestia/win32/res/celestia.rc:433
+#: ../src/celestia/qt/tourguide.ui:76
+#: ../src/celestia/win32/res/celestia.rc:433
 #: ../src/celestia/win32/res/celestia.rc:604
 msgid "Go To"
 msgstr "Отиди до"
@@ -3640,7 +3646,7 @@ msgstr "Мащабирани дискове"
 
 #: ../src/celestia/win32/res/celestia.rc:221
 msgid "Point &Spread Function"
-msgstr ""
+msgstr "Размити точки"
 
 #: ../src/celestia/win32/res/celestia.rc:223
 msgid "Star &Color"
@@ -4177,7 +4183,8 @@ msgstr "Изображението не може да бъде запазено.
 msgid "Celestia Script (*.celx, *.cel)"
 msgstr "Скрипт на „Celestia“ (*.celx, *.cel)"
 
-#. Gettext complains about using \r in translated messages, so add it in afterwards
+#. Gettext complains about using \r in translated messages, so add it in
+#. afterwards
 #: ../src/celestia/win32/winhelpdlgs.cpp:158
 #, c++-format
 msgid ""
@@ -4281,7 +4288,7 @@ msgstr "Неуспешно регистриране на целта като OLE
 #: ../src/celestia/win32/winmainwindow.cpp:305
 msgid "Could not get appropriate pixel format for OpenGL rendering."
 msgstr ""
-"Подходящият формат на пикселите за възпроизвеждане с OpenGL не може да бъде "
+"Подходящият формат на пикселите за визуализиране с OpenGL не може да бъде "
 "избран."
 
 #: ../src/celestia/win32/winmainwindow.cpp:320
@@ -4298,9 +4305,8 @@ msgid "Loading URL"
 msgstr "Зареждане на връзката"
 
 #: ../src/celestia/win32/winmainwindow.cpp:1227
-#, fuzzy
 msgid "Your system doesn't support OpenGL 3.3!"
-msgstr "Вашата система не поддържа OpenGL 2.1!"
+msgstr "Вашата система не поддържа OpenGL 3.3!"
 
 #: ../src/celestia/win32/winmainwindow.cpp:1243
 msgid "Releasing device context failed."
@@ -4626,9 +4632,3 @@ msgstr "Неподдържан ред на байтовете {}, очакван
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Неподдържан брой числа {}, очакван {}.\n"
-
-#~ msgid "Mandatory extension GL_ARB_framebuffer_object is missing!\n"
-#~ msgstr "Задължителното разширение „GL_ARB_framebuffer_object“ липсва!\n"
-
-#~ msgid "Rotation is ignored on Barycenters"
-#~ msgstr "Въртенето не се използва за центъра на масата"
