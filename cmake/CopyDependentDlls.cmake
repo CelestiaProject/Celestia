@@ -3,6 +3,11 @@
 #
 # Initial version by Andrew Tribick
 
+# Normalize file(GET_RUNTIME_DEPENDENCIES) paths
+if(POLICY CMP0207)
+  cmake_policy(SET CMP0207 NEW)
+endif()
+
 function(process_file src dest)
   get_filename_component(src_name "${src}" NAME)
   message(STATUS "Copying ${src_name} to ${dest}")
