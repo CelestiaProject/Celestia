@@ -338,11 +338,12 @@ StarBrowserProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: browser != NULL check should be in a lot more places
             if (HIWORD(wParam) == EN_KILLFOCUS && browser != NULL)
             {
-                UINT nNewStars = GetDlgItemInt(hDlg, IDC_MAXSTARS_EDIT, nullptr, FALSE);
+                BOOL success = FALSE;
+                UINT nNewStars = GetDlgItemInt(hDlg, IDC_MAXSTARS_EDIT, &success, FALSE);
 
                 // Check if new value is different from old. Don't want to
                 // cause a refresh to occur if not necessary.
-                if (nNewStars != browser->starBrowser.size())
+                if (success && nNewStars != browser->starBrowser.size())
                 {
                     LRESULT minRange = SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETRANGEMIN, 0, 0);
                     LRESULT maxRange = SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETRANGEMAX, 0, 0);
@@ -432,17 +433,18 @@ StarBrowserProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_HSCROLL:
+        if (lParam == reinterpret_cast<LPARAM>(GetDlgItem(hDlg, IDC_MAXSTARS_SLIDER)))
         {
             WORD sbValue = LOWORD(wParam);
             auto sliderPos = sbValue == SB_THUMBTRACK
                 ? static_cast<UINT>(HIWORD(wParam))
-                : static_cast<UINT>(SendMessage(GetDlgItem(hDlg, IDC_MAXSTARS_SLIDER), TBM_GETPOS, 0, 0));
+                : static_cast<UINT>(SendDlgItemMessage(hDlg, IDC_MAXSTARS_SLIDER, TBM_GETPOS, 0, 0));
 
             SetDlgItemInt(hDlg, IDC_MAXSTARS_EDIT, sliderPos, FALSE);
 
             if (sbValue != SB_THUMBTRACK)
             {
-                browser->starBrowser.setSize(HIWORD(wParam));
+                browser->starBrowser.setSize(sliderPos);
                 RefreshItems(hDlg, browser);
             }
         }
