@@ -308,6 +308,12 @@ class Renderer
     float getStarExposure() const;
     void  setExposure(float e);
     float getExposure() const;
+    void  setAutoExposure(bool enabled);
+    bool  getAutoExposure() const;
+    // Meter this frame's HDR luminance and adapt exposure on the GPU (called by the tonemap effect).
+    void  meterAutoExposure(unsigned int hdrTexture);
+    // 1x1 texture holding the current adapted exposure factor (or 1.0 when disabled).
+    unsigned int adaptedExposureTexture();
     void  setToneMapping(bool enabled);
     bool  getToneMapping() const;
     void setResolution(celestia::engine::TextureResolution resolution);
@@ -448,6 +454,7 @@ class Renderer
 
  private:
     void setFieldOfView(float);
+    void initAutoExposureResources();
     void renderPointStars(const StarDatabase& starDB,
                           float faintestVisible,
                           const Observer& observer);
@@ -700,6 +707,15 @@ class Renderer
     float starExposure{ 10.0f };
     float exposure{ 1.0f };
     bool  toneMapping{ false };
+
+    // Auto-exposure (eye adaptation) metered on the GPU from the HDR frame luminance.
+    bool   autoExposure{ true };
+    double m_autoExposureTime{ -1.0 };   // realTime of last adaptation step
+    int    m_adaptIndex{ 0 };            // ping-pong index of the current adaptation texture
+    std::array<std::unique_ptr<FramebufferObject>, 2> m_adaptFbos;
+    unsigned int m_unityAdaptTexture{ 0 }; // 1x1 texture holding 1.0 for the disabled path
+    std::unique_ptr<celestia::gl::VertexObject> m_adaptVO;
+    std::unique_ptr<celestia::gl::Buffer>       m_adaptBO;
 
     Color ambientColor;
     std::string displayedSurface;

@@ -4693,6 +4693,153 @@ bool Renderer::getToneMapping() const
 }
 
 
+void Renderer::setAutoExposure(bool enabled)
+{
+    autoExposure = enabled;
+    markSettingsChanged();
+}
+
+
+bool Renderer::getAutoExposure() const
+{
+    return autoExposure;
+}
+
+
+void
+Renderer::initAutoExposureResources()
+{
+    if (m_unityAdaptTexture != 0)
+        return;
+
+    // 1x1 unity texture returned when auto-exposure is disabled.
+    const float one[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glGenTextures(1, &m_unityAdaptTexture);
+    glBindTexture(GL_TEXTURE_2D, m_unityAdaptTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, 1, 1, 0, GL_RGBA, GL_FLOAT, one);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Ping-pong 1x1 float FBOs holding the adapted exposure factor; clear to 0.
+    GLint oldFbo = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFbo);
+    for (auto& fbo : m_adaptFbos)
+    {
+        fbo = std::make_unique<FramebufferObject>(1u, 1u, FramebufferObject::Attachment::Color, 1, true);
+        fbo->bind();
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, oldFbo);
+
+    // Full-screen triangle covering the 1x1 render target.
+    static constexpr std::array<float, 6> tri = {
+        -1.0f, -1.0f,
+         3.0f, -1.0f,
+        -1.0f,  3.0f,
+    };
+    m_adaptVO = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Triangles);
+    m_adaptBO = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array, tri, gl::Buffer::BufferUsage::StaticDraw);
+    m_adaptVO->setCount(3);
+    m_adaptVO->addVertexBuffer(*m_adaptBO,
+                               CelestiaGLProgram::VertexCoordAttributeIndex,
+                               2,
+                               gl::VertexObject::DataType::Float,
+                               false,
+                               2 * sizeof(float),
+                               0);
+}
+
+
+unsigned int
+Renderer::adaptedExposureTexture()
+{
+    initAutoExposureResources();
+    if (autoExposure && gl::sRGBRendering)
+        return m_adaptFbos[m_adaptIndex]->colorTexture();
+    return m_unityAdaptTexture;
+}
+
+
+void
+Renderer::meterAutoExposure(unsigned int hdrTexture)
+{
+    if (!(autoExposure && gl::sRGBRendering))
+        return;
+
+    initAutoExposureResources();
+
+    constexpr float keyValue    = 0.045f; // target average scene luminance
+    constexpr float minExposure = 0.05f;
+    constexpr float maxExposure = 1.0f;   // only darken over-bright frames, never boost
+    constexpr float adaptTau    = 1.0f;   // eye-adaptation time constant (s)
+
+    double dt = (m_autoExposureTime < 0.0) ? 0.0 : realTime - m_autoExposureTime;
+    m_autoExposureTime = realTime;
+
+    // Build the HDR mip chain; the top 1x1 level is the whole-frame average.
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, hdrTexture);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+
+    GLint w = 0, h = 0;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+    float topLod = 0.0f;
+    for (int maxDim = std::max(w, h); maxDim > 1; maxDim >>= 1)
+        topLod += 1.0f;
+
+    auto* prog = shaderManager->getShader(StaticShader::EyeAdapt);
+    if (prog == nullptr)
+        return;
+
+    int src = m_adaptIndex;
+    int dst = 1 - m_adaptIndex;
+
+    GLint oldFbo = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFbo);
+    std::array<GLint, 4> oldViewport{ 0, 0, 0, 0 };
+    glGetIntegerv(GL_VIEWPORT, oldViewport.data());
+
+    m_adaptFbos[dst]->bind();
+    glViewport(0, 0, 1, 1);
+
+    prog->use();
+    prog->samplerParam("hdrTex")      = 0;
+    prog->samplerParam("prevAdapt")   = 1;
+    prog->floatParam("topLod")        = topLod;
+    prog->floatParam("dt")            = static_cast<float>(dt);
+    prog->floatParam("keyValue")      = keyValue;
+    prog->floatParam("minExposure")   = minExposure;
+    prog->floatParam("maxExposure")   = maxExposure;
+    prog->floatParam("adaptTau")      = adaptTau;
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_adaptFbos[src]->colorTexture());
+    glActiveTexture(GL_TEXTURE0); // hdrTexture stays bound here
+
+    PipelineState ps;
+    setPipelineState(ps);
+    m_adaptVO->draw();
+
+    // Restore HDR texture sampling and texture-unit state.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, oldFbo);
+    glViewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
+
+    m_adaptIndex = dst;
+}
+
+
 void Renderer::loadTextures(Body* body)
 {
     const Surface& surface = body->getSurface();

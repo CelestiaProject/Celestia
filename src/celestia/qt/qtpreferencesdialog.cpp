@@ -231,8 +231,21 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         else
             ui.sRGBRenderingCombo->setCurrentIndex(settings.value("sRGBRendering").toBool() ? 1 : 2);
     }
-    ui.toneMappingCheck->setChecked(renderer->getToneMapping());
+    {
+        QSignalBlocker blocker(ui.toneMappingCombo);
+        ui.toneMappingCombo->addItem(_("Off"));
+        ui.toneMappingCombo->addItem(_("Manual exposure"));
+        ui.toneMappingCombo->addItem(_("Auto exposure"));
+        ui.toneMappingCombo->setCurrentIndex(
+            renderer->getToneMapping() ? (renderer->getAutoExposure() ? 2 : 1) : 0);
+    }
     ui.exposureSpinBox->setValue(renderer->getExposure());
+    // Exposure only applies in Manual tone mapping mode.
+    {
+        bool manual = ui.toneMappingCombo->currentIndex() == 1;
+        ui.exposureLabel->setVisible(manual);
+        ui.exposureSpinBox->setVisible(manual);
+    }
 
     switch (renderer->getResolution())
     {
@@ -766,9 +779,14 @@ PreferencesDialog::on_sRGBRenderingCombo_currentIndexChanged(int index)
 }
 
 void
-PreferencesDialog::on_toneMappingCheck_toggled(bool checked) const
+PreferencesDialog::on_toneMappingCombo_currentIndexChanged(int index) const
 {
-    appCore->getRenderer()->setToneMapping(checked);
+    Renderer* renderer = appCore->getRenderer();
+    renderer->setToneMapping(index != 0);
+    renderer->setAutoExposure(index == 2);
+    // Exposure only applies in Manual tone mapping mode.
+    ui.exposureLabel->setVisible(index == 1);
+    ui.exposureSpinBox->setVisible(index == 1);
 }
 
 void

@@ -1013,14 +1013,22 @@
              </layout>
             </item>
             <item>
-             <widget class="QCheckBox" name="toneMappingCheck">
-              <property name="toolTip">
-               <string>Softly roll off HDR highlights instead of clipping them to white. Only affects sRGB rendering.</string>
-              </property>
-              <property name="text">
-               <string>Tone mapping</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout">
+              <item>
+               <widget class="QLabel" name="toneMappingLabel">
+                <property name="text">
+                 <string>Tone mapping:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="toneMappingCombo">
+                <property name="toolTip">
+                 <string>Softly roll off HDR highlights instead of clipping them to white. Only affects sRGB rendering. Manual uses the exposure below; Auto adapts exposure to the scene.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_exposure">
@@ -1034,7 +1042,7 @@
               <item>
                <widget class="QDoubleSpinBox" name="exposureSpinBox">
                 <property name="toolTip">
-                 <string>Exposure of the HDR tone mapper. Only affects sRGB rendering when tone mapping is enabled.</string>
+                 <string>Exposure of the HDR tone mapper. Only used in Manual tone mapping mode.</string>
                 </property>
                 <property name="decimals">
                  <number>3</number>

@@ -182,9 +182,12 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setExposure(
         static_cast<float>(settings.value("Exposure",
                                           appCore->getConfig()->renderDetails.output.exposure).toDouble()));
-    appRenderer->setToneMapping(
-        settings.value("ToneMapping",
-                       appCore->getConfig()->renderDetails.output.toneMapping).toBool());
+    int defaultToneMapMode = appCore->getConfig()->renderDetails.output.toneMapping
+                                 ? (appCore->getConfig()->renderDetails.output.autoExposure ? 2 : 1)
+                                 : 0;
+    int toneMapMode = settings.value("ToneMapMode", defaultToneMapMode).toInt();
+    appRenderer->setToneMapping(toneMapMode != 0);
+    appRenderer->setAutoExposure(toneMapMode == 2);
 }
 
 void
