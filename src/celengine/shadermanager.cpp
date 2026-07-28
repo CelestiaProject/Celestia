@@ -63,7 +63,6 @@ constexpr std::array StaticShaderBaseNames
     "psfstarglowlarge"sv,
     "psfstarpoint"sv,
     "srgb"sv,
-    "srgbtonemap"sv,
     "selpointer"sv,
     "star"sv,
     "text"sv,
@@ -2403,10 +2402,13 @@ buildProgram(const ShaderProperties& props, bool fisheyeEnabled)
 }
 
 std::shared_ptr<CelestiaGLProgram>
-buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled)
+buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
+             StaticShaderOptions options = StaticShaderOptions::None)
 {
+    std::string_view toneMapDefine =
+        util::is_set(options, StaticShaderOptions::ToneMap) ? "#define TONE_MAP\n"sv : ""sv;
     std::string vsSrc = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
-    std::string fsSrc = fmt::format("{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, fs);
+    std::string fsSrc = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, fs);
 
     DumpVSSource(vsSrc);
     DumpFSSource(fsSrc);
@@ -2672,6 +2674,20 @@ std::hash<ShaderProperties>::operator()(const ShaderProperties& props) const
     return seed;
 }
 
+bool operator==(const StaticShaderProperties& lhs, const StaticShaderProperties& rhs)
+{
+    return lhs.shader == rhs.shader && lhs.options == rhs.options;
+}
+
+std::size_t
+std::hash<StaticShaderProperties>::operator()(const StaticShaderProperties& props) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, props.shader);
+    boost::hash_combine(seed, props.options);
+    return seed;
+}
+
 ShaderManager::ShaderManager()
 {
 #if defined(_DEBUG) || defined(DEBUG) || 1
@@ -2704,17 +2720,24 @@ ShaderManager::getShader(const ShaderProperties& props)
 CelestiaGLProgram*
 ShaderManager::getShader(StaticShader staticShader, const GeomShaderParams* gsParams)
 {
-    auto& shader = m_staticShaders[static_cast<std::size_t>(staticShader)];
-    if (!shader)
-        shader = loadShader(staticShader, gsParams);
+    return getShader(staticShader, StaticShaderOptions::None, gsParams);
+}
 
-    return shader.get();
+CelestiaGLProgram*
+ShaderManager::getShader(StaticShader staticShader, StaticShaderOptions options, const GeomShaderParams* gsParams)
+{
+    StaticShaderProperties props{ staticShader, options };
+    auto [it, inserted] = m_staticShaders.try_emplace(props);
+    if (inserted)
+        it->second = loadShader(props, gsParams);
+
+    return it->second.get();
 }
 
 std::shared_ptr<CelestiaGLProgram>
-ShaderManager::loadShader(StaticShader staticShader, const GeomShaderParams* gsParams)
+ShaderManager::loadShader(StaticShaderProperties props, const GeomShaderParams* gsParams)
 {
-    auto name = StaticShaderBaseNames[static_cast<std::size_t>(staticShader)];
+    auto name = StaticShaderBaseNames[static_cast<std::size_t>(props.shader)];
     auto vs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_vert.glsl", name)));
     if (vs.empty())
         return getErrorProgram();
@@ -2734,7 +2757,7 @@ ShaderManager::loadShader(StaticShader staticShader, const GeomShaderParams* gsP
     }
     else
     {
-        result = buildProgram(vs, fs, m_fisheyeEnabled);
+        result = buildProgram(vs, fs, m_fisheyeEnabled, props.options);
     }
 
     return result ? result : getErrorProgram();

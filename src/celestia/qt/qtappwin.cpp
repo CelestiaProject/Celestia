@@ -604,8 +604,9 @@ CelestiaAppWindow::writeSettings()
     settings.setValue("StarMaxIrradiance", renderer->getStarMaxIrradiance());
     settings.setValue("StarDimClipFactor", renderer->getStarDimClipFactor());
     settings.setValue("StarExposure", renderer->getStarExposure());
-    settings.setValue("Exposure", renderer->getExposure());
-    settings.setValue("ToneMapping", renderer->getToneMapping());
+    settings.setValue("ToneMappingExposure", renderer->getToneMappingExposure());
+    settings.setValue("ToneMappingMode",
+                      static_cast<int>(renderer->getToneMappingMode()));
     settings.setValue("TextureResolution", static_cast<unsigned int>(renderer->getResolution()));
     settings.setValue("StarsColor", static_cast<int>(renderer->getStarColorTable()));
 

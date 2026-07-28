@@ -13,6 +13,7 @@
 
 #include "qtpreferencesdialog.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 
@@ -231,8 +232,20 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
         else
             ui.sRGBRenderingCombo->setCurrentIndex(settings.value("sRGBRendering").toBool() ? 1 : 2);
     }
-    ui.toneMappingCheck->setChecked(renderer->getToneMapping());
-    ui.exposureSpinBox->setValue(renderer->getExposure());
+    {
+        QSignalBlocker blocker(ui.toneMappingCombo);
+        ui.toneMappingCombo->addItem(_("Off"));
+        ui.toneMappingCombo->addItem(_("Manual exposure"));
+        ui.toneMappingCombo->setCurrentIndex(
+            static_cast<int>(renderer->getToneMappingMode()));
+    }
+    ui.toneMappingExposureSpinBox->setValue(renderer->getToneMappingExposure());
+    // Exposure only applies in Manual tone mapping mode.
+    {
+        bool manual = ui.toneMappingCombo->currentIndex() == 1;
+        ui.toneMappingExposureLabel->setVisible(manual);
+        ui.toneMappingExposureSpinBox->setVisible(manual);
+    }
 
     switch (renderer->getResolution())
     {
@@ -766,15 +779,19 @@ PreferencesDialog::on_sRGBRenderingCombo_currentIndexChanged(int index)
 }
 
 void
-PreferencesDialog::on_toneMappingCheck_toggled(bool checked) const
+PreferencesDialog::on_toneMappingCombo_currentIndexChanged(int index) const
 {
-    appCore->getRenderer()->setToneMapping(checked);
+    Renderer* renderer = appCore->getRenderer();
+    renderer->setToneMappingMode(static_cast<ToneMappingMode>(std::clamp(index, 0, 1)));
+    // Exposure only applies in Manual tone mapping mode.
+    ui.toneMappingExposureLabel->setVisible(index == 1);
+    ui.toneMappingExposureSpinBox->setVisible(index == 1);
 }
 
 void
-PreferencesDialog::on_exposureSpinBox_valueChanged(double value) const
+PreferencesDialog::on_toneMappingExposureSpinBox_valueChanged(double value) const
 {
-    appCore->getRenderer()->setExposure(static_cast<float>(value));
+    appCore->getRenderer()->setToneMappingExposure(static_cast<float>(value));
 }
 
 // Texture resolution

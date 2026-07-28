@@ -40,13 +40,36 @@ enum class StaticShader
     PsfStarGlowLarge,
     PsfStarPoint,
     sRGB,
-    sRGBToneMap,
     SelPointer,
     Star,
     Text,
     Tidal,
     WarpMesh,
     _Count,
+};
+
+// Compile-time options that select variants of a static shader via #define injection.
+enum class StaticShaderOptions : std::uint8_t
+{
+    None    = 0,
+    ToneMap = 0x01,
+};
+
+ENUM_CLASS_BITWISE_OPS(StaticShaderOptions);
+
+struct StaticShaderProperties
+{
+    StaticShader        shader;
+    StaticShaderOptions options;
+};
+
+bool
+operator==(const StaticShaderProperties& lhs, const StaticShaderProperties& rhs);
+
+template<>
+struct std::hash<StaticShaderProperties>
+{
+    std::size_t operator()(const StaticShaderProperties&) const;
 };
 
 enum class TexUsage : std::uint32_t
@@ -367,15 +390,16 @@ public:
 
     CelestiaGLProgram* getShader(const ShaderProperties&);
     CelestiaGLProgram* getShader(StaticShader, const GeomShaderParams* = nullptr);
+    CelestiaGLProgram* getShader(StaticShader, StaticShaderOptions, const GeomShaderParams* = nullptr);
 
     void setFisheyeEnabled(bool enabled);
 
 private:
-    std::shared_ptr<CelestiaGLProgram> loadShader(StaticShader, const GeomShaderParams*);
+    std::shared_ptr<CelestiaGLProgram> loadShader(StaticShaderProperties, const GeomShaderParams*);
     std::shared_ptr<CelestiaGLProgram> getErrorProgram();
 
     std::unordered_map<ShaderProperties, std::shared_ptr<CelestiaGLProgram>> m_dynamicShaders;
-    std::array<std::shared_ptr<CelestiaGLProgram>, static_cast<std::size_t>(StaticShader::_Count)> m_staticShaders;
+    std::unordered_map<StaticShaderProperties, std::shared_ptr<CelestiaGLProgram>> m_staticShaders;
 
     std::shared_ptr<CelestiaGLProgram> m_errorProgram;
     bool m_fisheyeEnabled { false };

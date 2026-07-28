@@ -4667,29 +4667,29 @@ float Renderer::getStarExposure() const
 }
 
 
-void Renderer::setExposure(float e)
+void Renderer::setToneMappingExposure(float e)
 {
-    exposure = std::clamp(e, 1.0e-3f, 1.0e6f);
+    toneMappingExposure = std::clamp(e, 1.0e-3f, 1.0e6f);
     markSettingsChanged();
 }
 
 
-float Renderer::getExposure() const
+float Renderer::getToneMappingExposure() const
 {
-    return exposure;
+    return toneMappingExposure;
 }
 
 
-void Renderer::setToneMapping(bool enabled)
+void Renderer::setToneMappingMode(ToneMappingMode mode)
 {
-    toneMapping = enabled;
+    toneMappingMode = mode;
     markSettingsChanged();
 }
 
 
-bool Renderer::getToneMapping() const
+ToneMappingMode Renderer::getToneMappingMode() const
 {
-    return toneMapping;
+    return toneMappingMode;
 }
 
 

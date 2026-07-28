@@ -17,6 +17,7 @@
 
 #include "qtglwidget.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <utility>
 
@@ -179,12 +180,13 @@ CelestiaGlWidget::initializeGL()
     appRenderer->setStarExposure(
         (float) settings.value("StarExposure",
                                appCore->getConfig()->renderDetails.stars.exposure).toDouble());
-    appRenderer->setExposure(
-        static_cast<float>(settings.value("Exposure",
-                                          appCore->getConfig()->renderDetails.output.exposure).toDouble()));
-    appRenderer->setToneMapping(
-        settings.value("ToneMapping",
-                       appCore->getConfig()->renderDetails.output.toneMapping).toBool());
+    appRenderer->setToneMappingExposure(
+        static_cast<float>(settings.value("ToneMappingExposure",
+                                          appCore->getConfig()->renderDetails.output.toneMappingExposure).toDouble()));
+    int defaultToneMapMode = static_cast<int>(appCore->getConfig()->renderDetails.output.toneMapping);
+    int toneMapMode = settings.value("ToneMappingMode", defaultToneMapMode).toInt();
+    toneMapMode = std::clamp(toneMapMode, 0, 1);
+    appRenderer->setToneMappingMode(static_cast<ToneMappingMode>(toneMapMode));
 }
 
 void

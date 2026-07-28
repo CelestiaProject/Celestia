@@ -19,6 +19,7 @@
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/parser.h>
+#include <celutil/stringutils.h>
 #include <celutil/tokenizer.h>
 
 using namespace std::string_view_literals;
@@ -55,6 +56,20 @@ applyString(std::string& target, const AssociativeArray& hash, std::string_view 
     auto str = hash.getString(key);
     if (str != nullptr)
         target = *str;
+}
+
+void
+applyToneMappingMode(ToneMappingMode& target, const AssociativeArray& hash, std::string_view key)
+{
+    auto str = hash.getString(key);
+    if (str == nullptr)
+        return;
+    if (compareIgnoringCase(*str, "Off") == 0)
+        target = ToneMappingMode::None;
+    else if (compareIgnoringCase(*str, "Manual") == 0)
+        target = ToneMappingMode::Manual;
+    else
+        GetLogger()->error("Unknown {} value '{}'.\n", key, *str);
 }
 
 void
@@ -214,9 +229,9 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.ShadowMapSize, hash, "ShadowMapSize"sv);
     applyStringArray(renderDetails.ignoreGLExtensions, hash, "IgnoreGLExtensions"sv);
     applyBoolean(renderDetails.output.sRGB, hash, "SRGBRendering"sv);
-    applyNumber(renderDetails.output.exposure, hash, "Exposure"sv);
-    renderDetails.output.exposure = std::clamp(renderDetails.output.exposure, 1.0e-3f, 1.0e6f);
-    applyBoolean(renderDetails.output.toneMapping, hash, "ToneMapping"sv);
+    applyNumber(renderDetails.output.toneMappingExposure, hash, "ToneMappingExposure"sv);
+    renderDetails.output.toneMappingExposure = std::clamp(renderDetails.output.toneMappingExposure, 1.0e-3f, 1.0e6f);
+    applyToneMappingMode(renderDetails.output.toneMapping, hash, "ToneMappingMode"sv);
     applyNumber(renderDetails.stars.pointRadius, hash, "StarPointRadius"sv);
     renderDetails.stars.pointRadius = std::clamp(renderDetails.stars.pointRadius, 1.0f, 10.0f);
     applyNumber(renderDetails.stars.optimization, hash, "StarOptimization"sv);
