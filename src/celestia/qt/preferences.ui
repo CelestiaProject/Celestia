@@ -1013,28 +1013,36 @@
              </layout>
             </item>
             <item>
-             <widget class="QCheckBox" name="toneMappingCheck">
-              <property name="toolTip">
-               <string>Softly roll off HDR highlights instead of clipping them to white. Only affects sRGB rendering.</string>
-              </property>
-              <property name="text">
-               <string>Tone mapping</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_toneMapping">
+              <item>
+               <widget class="QLabel" name="toneMappingLabel">
+                <property name="text">
+                 <string>Tone mapping:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="toneMappingCombo">
+                <property name="toolTip">
+                 <string>Softly roll off HDR highlights instead of clipping them to white. Only affects sRGB rendering.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_exposure">
+             <layout class="QHBoxLayout" name="horizontalLayout_toneMappingExposure">
               <item>
-               <widget class="QLabel" name="exposureLabel">
+               <widget class="QLabel" name="toneMappingExposureLabel">
                 <property name="text">
                  <string>Exposure:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="exposureSpinBox">
+               <widget class="QDoubleSpinBox" name="toneMappingExposureSpinBox">
                 <property name="toolTip">
-                 <string>Exposure of the HDR tone mapper. Only affects sRGB rendering when tone mapping is enabled.</string>
+                 <string>Exposure of the HDR tone mapper. Only affects sRGB rendering in Manual tone mapping mode.</string>
                 </property>
                 <property name="decimals">
                  <number>3</number>

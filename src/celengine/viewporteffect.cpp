@@ -62,10 +62,10 @@ PassthroughViewportEffect::PassthroughViewportEffect(bool needsFloatSource) :
 
 bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, int width, int height)
 {
-    bool toneMap = renderer->getToneMapping();
-    StaticShader shaderName = toneMap ? StaticShader::sRGBToneMap : StaticShader::sRGB;
-
-    auto *prog = renderer->getShaderManager().getShader(shaderName);
+    bool toneMap = renderer->getToneMappingMode() != ToneMappingMode::None;
+    auto *prog = renderer->getShaderManager().getShader(
+        StaticShader::sRGB,
+        toneMap ? StaticShaderOptions::ToneMap : StaticShaderOptions::None);
     if (prog == nullptr)
         return false;
 
@@ -74,7 +74,7 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
     prog->use();
     prog->samplerParam("tex") = 0;
     if (toneMap)
-        prog->floatParam("exposure") = renderer->getExposure();
+        prog->floatParam("exposure") = renderer->getToneMappingExposure();
     glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
     renderer->setPipelineState(ps);
     vo.draw();

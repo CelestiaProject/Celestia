@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <celengine/star.h>
+#include <celengine/renderflags.h>
 #ifdef CELX
 #include <celutil/associativearray.h>
 #endif
@@ -96,8 +97,8 @@ struct CelestiaConfig
         struct OutputRendering
         {
             bool sRGB{ false };
-            float exposure{ 1.0f };
-            bool toneMapping{ false };
+            float toneMappingExposure{ 1.0f };
+            ToneMappingMode toneMapping{ ToneMappingMode::None };
         };
         OutputRendering output{ };
         struct AtmosphereRendering

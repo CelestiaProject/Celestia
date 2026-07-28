@@ -533,19 +533,22 @@ StarTextures
 # available the setting is ignored.
 # The default value is false.
 #
-# Exposure controls the exponential tone-mapping operator
-# (1 - exp(-Exposure * L)) applied to the linear HDR scene during the
-# sRGB output post-process.  It softly rolls off highlights above 1.0
-# instead of hard-clipping them.  Only takes effect when SRGBRendering
-# is enabled.
+# ToneMappingExposure controls the exponential tone-mapping operator
+# (1 - exp(-ToneMappingExposure * L)) applied to the linear HDR scene
+# during the sRGB output post-process.  It softly rolls off highlights
+# above 1.0 instead of hard-clipping them.  Only takes effect when
+# SRGBRendering is enabled and ToneMappingMode is 1 (Manual).
 # The default value is 1.0.
 #
-# ToneMapping toggles the exponential tone-map in the sRGB post-process.
-# When false, HDR highlights hard-clip to white instead of rolling off.
-# Only takes effect when SRGBRendering is enabled. The default is false.
+# ToneMappingMode selects the tone-mapping operator used in the sRGB
+# post-process.  Valid values are:
+#   Off     - HDR highlights hard-clip to white (no tone mapping).
+#   Manual  - Exponential tone-map using the fixed ToneMappingExposure
+#             value above.
+# Only takes effect when SRGBRendering is enabled. The default is Off.
 #------------------------------------------------------------------------
-# SRGBRendering true
-# Exposure      1.0
-# ToneMapping   true
+# SRGBRendering       true
+# ToneMappingExposure 1.0
+# ToneMappingMode     "Manual"
 
 }

@@ -33,6 +33,13 @@ enum class RenderLabels : std::uint32_t
 
 ENUM_CLASS_BITWISE_OPS(RenderLabels);
 
+// Tone mapping / exposure mode applied when rendering to an HDR (sRGB) framebuffer.
+enum class ToneMappingMode : std::uint8_t
+{
+    None   = 0, // No tone mapping; linear output
+    Manual = 1, // Fixed user-specified exposure
+};
+
 enum class RenderFlags : std::uint64_t
 {
     ShowNothing             = 0x0000000000000000,
