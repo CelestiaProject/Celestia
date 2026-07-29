@@ -51,7 +51,7 @@ struct TASSExtraParams
 constexpr double SatAscendingNode = 169.5291;
 constexpr double SatTilt = 28.0512;
 
-const double gk1 = std::pow(0.01720209895 * 365.25, 2) / 3498.790;
+constexpr double gk1 = math::square(0.01720209895 * 365.25) / 3498.790;
 
 using TASSTerm = std::array<int, 8>;
 
@@ -2910,13 +2910,15 @@ EllipticToRectangular(std::array<double, 6> elem, double tam, double am)
     double aam = am * 365.25;
     double amo = aam * (1 + elem[0]);
     double rmu = gk1 * (1 + tmas);
-    double dga = std::pow(rmu / std::pow(amo, 2), 1 / 3.0);
+    double dga = std::cbrt(rmu / math::square(amo));
     double rl = elem[1];
     double rk = elem[2];
     double rh = elem[3];
 
     // Solve Kepler's equation, a few iterations should be enough
-    double fle = rl - rk * std::sin(rl) + rh * std::cos(rl);
+    double srl, crl;
+    math::sincos(rl, srl, crl);
+    double fle = rl - rk * srl + rh * crl;
     double cf, sf;
     math::sincos(fle, sf, cf);
     double corf = (rl - fle + rk * sf - rh * cf) / (1 - rk * cf - rh * sf);
@@ -2934,8 +2936,8 @@ EllipticToRectangular(std::array<double, 6> elem, double tam, double am)
     double x1 = dga * (cf - rk - psi * rh * dlf);
     double y1 = dga * (sf - rh + psi * rk * dlf);
     double dwho = 2 * std::sqrt(1 - elem[5] * elem[5] - elem[4] * elem[4]);
-    double rtp = 1 - 2 * std::pow(elem[5], 2);
-    double rtq = 1 - 2 * std::pow(elem[4], 2);
+    double rtp = 1 - 2 * math::square(elem[5]);
+    double rtq = 1 - 2 * math::square(elem[4]);
     double rdg = 2 * elem[5] * elem[4];
     tx = x1 * rtp + y1 * rdg;
     ty = x1 * rdg + y1 * rtq;
