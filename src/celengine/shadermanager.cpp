@@ -3022,16 +3022,16 @@ CelestiaGLProgram::initSamplers()
         nSamplers++;
     }
 
-    if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
+    if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
     {
-        if (GLint slot = glGetUniformLocation(program.getID(), "ringTex"); slot != -1)
+        if (GLint slot = glGetUniformLocation(program.getID(), "cloudShadowTex"); slot != -1)
             glUniform1i(slot, nSamplers);
         nSamplers++;
     }
 
-    if (util::is_set(props.texUsage, TexUsage::CloudShadowTexture))
+    if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
     {
-        if (GLint slot = glGetUniformLocation(program.getID(), "cloudShadowTex"); slot != -1)
+        if (GLint slot = glGetUniformLocation(program.getID(), "ringTex"); slot != -1)
             glUniform1i(slot, nSamplers);
         nSamplers++;
     }
