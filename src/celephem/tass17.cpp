@@ -2928,7 +2928,6 @@ EllipticToRectangular(std::array<double, 6> elem, double tam, double am)
         fle += corf;
     }
     math::sincos(fle, sf, cf);
-
     double dlf = -rk * sf + rh * cf;
     double phi = std::sqrt(1 - rk * rk - rh * rh);
     double psi = 1.0 / (1 + phi);
