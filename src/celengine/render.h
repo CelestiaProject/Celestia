@@ -518,7 +518,8 @@ class Renderer
                           float distance,
                           const Observer& observer,
                           float nearPlaneDistance,
-                          const Matrices&);
+                          const Matrices&,
+                          celestia::render::RingRenderHalf);
 
     void renderStar(const Star& star,
                     const Eigen::Vector3f& pos,

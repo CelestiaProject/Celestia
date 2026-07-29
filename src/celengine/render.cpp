@@ -127,6 +127,11 @@ static constexpr float MaxFarNearRatio      = 2000000.0f;
 
 static constexpr float MinRelativeOccluderRadius = 0.005f;
 
+// Apparent thickness in pixels below which a planet's atmosphere is treated as
+// invisible. The atmosphere fades in over the following pixel, and the ring
+// system is only split around the atmosphere once it reaches this thickness.
+static constexpr float MinAtmosphereThicknessInPixels = 2.0f;
+
 // Size at which the orbit cache will be flushed of old orbit paths
 static constexpr unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
@@ -151,6 +156,19 @@ inline float inchesToMm(float in)
 inline float sizeFade(float screenSize, float minScreenSize, float opaqueScale)
 {
     return min(1.0f, (screenSize - minScreenSize) / (minScreenSize * (opaqueScale - 1)));
+}
+
+// A planet's atmosphere obscures its ring system when the atmosphere is
+// visible and large enough on screen relative to the observer's altitude.
+// In that case the rings must be split around the atmosphere render pass so
+// the near half is drawn behind it.
+inline bool
+atmosphereObscuresRings(const Atmosphere* atmosphere, float altitude, float pixelSize)
+{
+    return atmosphere != nullptr &&
+           atmosphere->height > 0.0f &&
+           altitude > 0.0f &&
+           atmosphere->height / (altitude * pixelSize) > MinAtmosphereThicknessInPixels;
 }
 
 inline void glVertexAttrib(GLuint index, const Color &color)
@@ -1347,13 +1365,25 @@ void Renderer::renderItem(const RenderListEntry& rle,
         break;
 
     case RenderListEntry::RenderableRingSystem:
+    {
+        const Atmosphere* atmosphere =
+            GetBodyFeaturesManager()->getAtmosphere(rle.body);
+        float altitude =
+            static_cast<float>(rle.distance - rle.body->getRadius());
+        bool splitAroundAtmosphere =
+            util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+            atmosphereObscuresRings(atmosphere, altitude, pixelSize);
         renderRingSystem(*rle.body,
                          rle.position,
                          static_cast<float>(rle.distance),
                          observer,
                          nearPlaneDistance,
-                         m);
+                         m,
+                         splitAroundAtmosphere
+                             ? celestia::render::RingRenderHalf::Near
+                             : celestia::render::RingRenderHalf::Both);
         break;
+    }
 
     case RenderListEntry::RenderableCometTail:
         renderCometTail(*rle.body,
@@ -2386,8 +2416,22 @@ void Renderer::renderObject(const Vector3f& pos,
 
     Matrices ringsMVP;
     Matrix4f ringsMV;
-    // Outside rings are rendered separately at the end of a depth partition
-    bool showRings = obj.rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings) && distance <= obj.rings->innerRadius;
+    // When an atmosphere is visible, split the rings around its render pass:
+    // the far half is drawn inline before the atmosphere and the near half is
+    // drawn later by the transparent ring-system entry.
+    bool splitRingsAroundAtmosphere =
+        obj.rings != nullptr &&
+        util::is_set(renderFlags, RenderFlags::ShowPlanetRings) &&
+        util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+        distance > obj.rings->innerRadius &&
+        atmosphereObscuresRings(obj.atmosphere,
+                                static_cast<float>(distance - obj.radius),
+                                pixelSize);
+    bool showRings =
+        obj.rings != nullptr &&
+        util::is_set(renderFlags, RenderFlags::ShowPlanetRings) &&
+        (distance <= obj.rings->innerRadius ||
+         splitRingsAroundAtmosphere);
     if (showRings)
     {
         ringsMV  = (*m.modelview) * (transform * Scaling(ringsScaleFactor)).matrix();
@@ -2546,7 +2590,10 @@ void Renderer::renderObject(const Vector3f& pos,
                                     radius, 1.0f - obj.semiAxes.y(),
                                     util::is_set(renderFlags, RenderFlags::ShowRingShadows) && lit,
                                     segmentSizeInPixels,
-                                    ringsMVP, true);
+                                    ringsMVP, distance <= obj.rings->innerRadius,
+                                    splitRingsAroundAtmosphere
+                                        ? celestia::render::RingRenderHalf::Far
+                                        : celestia::render::RingRenderHalf::Both);
     }
 
     if (atmosphere != nullptr)
@@ -2561,7 +2608,7 @@ void Renderer::renderObject(const Vector3f& pos,
         {
             thicknessInPixels = static_cast<float>(atmosphere->height /
                 ((distance - radius) * pixelSize));
-            fade = std::clamp(thicknessInPixels - 2.0f, 0.0f, 1.0f);
+            fade = std::clamp(thicknessInPixels - MinAtmosphereThicknessInPixels, 0.0f, 1.0f);
         }
         else
         {
@@ -3046,7 +3093,8 @@ void Renderer::renderRingSystem(Body& body,
                                 float distance,
                                 const Observer& observer,
                                 float nearPlaneDistance,
-                                const Matrices &m)
+                                const Matrices &m,
+                                celestia::render::RingRenderHalf renderHalf)
 {
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
@@ -3139,7 +3187,8 @@ void Renderer::renderRingSystem(Body& body,
                                 renderShadow,
                                 segmentSizeInPixels,
                                 ringsMVP,
-                                false);
+                                false,
+                                renderHalf);
 }
 
 
