@@ -1474,6 +1474,8 @@ void Renderer::render(const Observer& observer,
     // renderList.
     renderList.clear();
     orbitPathList.clear();
+    planetLightingCache.clear();
+    ringLightingCache.clear();
     lightSourceList.clear();
     secondaryIlluminators.clear();
     nearStars.clear();
@@ -2726,7 +2728,16 @@ void Renderer::renderPlanetAtmosphere(Body& body,
     RenderProperties rp;
     LightingState ls;
     Quaterniond q;
-    setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, ls, q);
+    // The surface pass runs first and caches this planet's lighting; reuse it.
+    auto it = planetLightingCache.find(&body);
+    if (it == planetLightingCache.end())
+    {
+        assert(false);
+        return;
+    }
+    rp = it->second.rp;
+    ls = it->second.lights;
+    q = it->second.q;
 
     RenderInfo ri;
     ri.sunDir_eye = Vector3f::UnitY();
@@ -3208,6 +3219,19 @@ void Renderer::renderPlanet(Body& body,
         Quaterniond q;
         setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, lights, q);
 
+        // Cache this lighting so the atmosphere entry can reuse it this frame.
+        // Copy the eclipse shadows and re-point at the copies, since
+        // lights.shadows aliases the shared eclipseShadows scratch.
+        PlanetLightingCacheEntry& cache = planetLightingCache[&body];
+        cache.rp = rp;
+        cache.q = q;
+        cache.lights = lights;
+        for (unsigned int li = 0; li < lights.nLights; ++li)
+        {
+            cache.eclipseShadows[li] = eclipseShadows[li];
+            cache.lights.shadows[li] = &cache.eclipseShadows[li];
+        }
+
         renderObject(pos, distance, observer,
                      nearPlaneDistance, farPlaneDistance,
                      rp, lights, m);
@@ -3303,16 +3327,25 @@ void Renderer::renderRingSystem(Body& body,
         ringsScaleFactor = geometryScale;
     }
 
+    // Reuse the ring lighting across the near and far half draws this frame.
     LightingState lights;
-    setupObjectLighting(lightSourceList,
-                        secondaryIlluminators,
-                        bodyOrientation,
-                        scaleFactors,
-                        pos,
-                        isNormalized,
-                        lights);
-    assert(lights.nLights <= MaxLights);
-    lights.ambientColor = ambientColor.toVector3();
+    if (auto it = ringLightingCache.find(&body); it != ringLightingCache.end())
+    {
+        lights = it->second;
+    }
+    else
+    {
+        setupObjectLighting(lightSourceList,
+                            secondaryIlluminators,
+                            bodyOrientation,
+                            scaleFactors,
+                            pos,
+                            isNormalized,
+                            lights);
+        assert(lights.nLights <= MaxLights);
+        lights.ambientColor = ambientColor.toVector3();
+        ringLightingCache[&body] = lights;
+    }
 
     // Build the rings model-view matrix.
     Affine3f transform = Translation3f(pos) * bodyOrientation.conjugate();

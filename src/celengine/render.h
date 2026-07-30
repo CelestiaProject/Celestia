@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 #include <Eigen/Core>
@@ -756,6 +757,21 @@ class Renderer
     std::vector<Annotation> objectAnnotations;
     std::vector<OrbitPathListEntry> orbitPathList;
     LightingState::EclipseShadowVector eclipseShadows[MaxLights];
+
+    // Per-frame cache of each planet's computed lighting so the atmosphere and
+    // ring entries reuse it instead of redoing the eclipse/ring-shadow setup.
+    // The entry owns its eclipse-shadow vectors because LightingState::shadows
+    // otherwise points into the shared eclipseShadows scratch above.
+    struct PlanetLightingCacheEntry
+    {
+        RenderProperties rp;
+        LightingState lights;
+        Eigen::Quaterniond q;
+        std::array<LightingState::EclipseShadowVector, MaxLights> eclipseShadows;
+    };
+    std::unordered_map<const Body*, PlanetLightingCacheEntry> planetLightingCache;
+    std::unordered_map<const Body*, LightingState> ringLightingCache;
+
     std::vector<const Star*> nearStars;
 
     std::vector<LightSource> lightSourceList;
