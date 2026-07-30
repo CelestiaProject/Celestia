@@ -5739,9 +5739,12 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
     std::sort(renderList.begin(), renderList.end(),
               [](const RenderListEntry& a, const RenderListEntry& b)
               {
-                  // Reversed because -z points into the screen. renderOrder
-                  // breaks ties so a larger value sorts farther, drawn earlier.
-                  return a.centerZ - a.radius - a.renderOrder > b.centerZ - b.radius - b.renderOrder;
+                  // Operation is reversed because -z axis points into the screen
+                  float ka = a.centerZ - a.radius;
+                  float kb = b.centerZ - b.radius;
+                  if (ka != kb)
+                      return ka > kb;
+                  return a.renderOrder < b.renderOrder;
               });
 }
 
