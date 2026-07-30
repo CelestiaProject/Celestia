@@ -1911,39 +1911,21 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "\nvoid main(void)\n{\n";
 
-    // Capture the texture gradients up front, before the ring split branch
-    // below can diverge control flow. Sampling with these gradients keeps the
-    // mip selection identical on both sides of the split so the near and far
-    // halves meet without a seam.
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-    {
-        source += "vec2 ringTexDx = dFdx(diffTexCoord.st);\n";
-        source += "vec2 ringTexDy = dFdy(diffTexCoord.st);\n";
-    }
-
-    // When splitting the ring around the atmosphere, classify each fragment by
-    // whether the view ray reaches the atmosphere shell before the fragment:
-    // if so the fragment is behind the atmosphere and belongs to the far half,
-    // otherwise the near half. This follows the curved atmosphere limb exactly,
-    // unlike a flat split through the planet center. ringHalf > 0 keeps the near
-    // half, < 0 the far half, 0 the whole ring. The dropped half is made
-    // transparent (alpha 0) rather than discarded: an explicit discard makes the
-    // driver mask the dropped lane, corrupting the screen-space texture
-    // derivatives of the kept neighbour and leaving a faint mip seam along the
-    // split. Keeping every lane alive matches the derivatives of an unsplit draw.
+    // When splitting the ring around the atmosphere, drop the half that belongs
+    // to the other side. A fragment is behind the atmosphere when the eye->
+    // fragment ray crosses the shell, i.e. a ray-sphere root lies in (0, 1).
+    // The eye and ring are always outside the shell here (the split only runs
+    // outside the rings, which dwarf the atmosphere), so the test needs no sqrt
+    // or divide: b < 0 and a + b > 0 place the near root in (0, 1), b*b >= a*c
+    // makes the roots real. The drop uses alpha 0, not discard, so every lane
+    // stays alive and texture derivatives match an unsplit draw (no mip seam).
     source += "bool dropFragment = false;\n";
     source += "if (ringHalf != 0.0)\n{\n";
     source += "    vec3 ringDir = position - eyePosition;\n";
     source += "    float a = dot(ringDir, ringDir);\n";
     source += "    float b = dot(eyePosition, ringDir);\n";
     source += "    float c = dot(eyePosition, eyePosition) - ringAtmosphereRadius * ringAtmosphereRadius;\n";
-    source += "    float disc = b * b - a * c;\n";
-    source += "    bool behind = false;\n";
-    source += "    if (disc >= 0.0)\n";
-    source += "    {\n";
-    source += "        float t = (-b - sqrt(disc)) / a;\n";
-    source += "        behind = t > 0.0 && t < 1.0;\n";
-    source += "    }\n";
+    source += "    bool behind = b < 0.0 && a + b > 0.0 && b * b >= a * c;\n";
     source += "    dropFragment = (ringHalf > 0.0 && behind) || (ringHalf < 0.0 && !behind);\n";
     source += "}\n";
     source += "vec4 diff = vec4(ambientColor, 1.0);\n";
@@ -1953,7 +1935,7 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     source += DeclareLocal("color", Shader_Vector4);
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "color = textureGrad(diffTex, diffTexCoord.st, ringTexDx, ringTexDy);\n";
+        source += "color = texture(diffTex, diffTexCoord.st);\n";
     else
         source += "color = vec4(1.0);\n";
     source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
