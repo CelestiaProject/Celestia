@@ -154,7 +154,8 @@ RingRenderer::renderRings(const RingSystem& rings,
                           float segmentSizeInPixels,
                           const Matrices &m,
                           bool inside,
-                          RingRenderHalf renderHalf)
+                          RingRenderHalf renderHalf,
+                          float atmosphereRadius)
 {
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
@@ -190,6 +191,7 @@ RingRenderer::renderRings(const RingSystem& rings,
         break;
     }
     prog->ringHalf = ringHalf;
+    prog->ringAtmosphereRadius = atmosphereRadius;
 
     setUpShadowParameters(prog, ls, planetOblateness);
 

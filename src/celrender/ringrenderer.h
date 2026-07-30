@@ -47,7 +47,8 @@ public:
                      float segmentSizeInPixels,
                      const Matrices &m,
                      bool inside,
-                     RingRenderHalf renderHalf);
+                     RingRenderHalf renderHalf,
+                     float atmosphereRadius);
 
 private:
     void initializeLOD(unsigned int, std::uint32_t);

@@ -2586,6 +2586,11 @@ void Renderer::renderObject(const Vector3f& pos,
     {
         // calculate ring segment size in pixels, actual size is segmentSizeInPixels * tan(segmentAngle)
         float segmentSizeInPixels = 2.0f * obj.rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
+        // Atmosphere shell radius in planet-radius units, used to split the ring
+        // fragments in front of / behind the atmosphere limb.
+        float atmosphereRadius = splitRingsAroundAtmosphere
+            ? (radius + obj.atmosphere->height) / radius
+            : 0.0f;
         m_ringRenderer->renderRings(*obj.rings, ri, ls,
                                     radius, 1.0f - obj.semiAxes.y(),
                                     util::is_set(renderFlags, RenderFlags::ShowRingShadows) && lit,
@@ -2593,7 +2598,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                     ringsMVP, distance <= obj.rings->innerRadius,
                                     splitRingsAroundAtmosphere
                                         ? celestia::render::RingRenderHalf::Far
-                                        : celestia::render::RingRenderHalf::Both);
+                                        : celestia::render::RingRenderHalf::Both,
+                                    atmosphereRadius);
     }
 
     if (atmosphere != nullptr)
@@ -3182,13 +3188,21 @@ void Renderer::renderRingSystem(Body& body,
 
     float segmentSizeInPixels = 2.0f * rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
 
+    // Atmosphere shell radius in planet-radius units, matching the far half
+    // drawn inline by renderObject so the split boundary is identical.
+    const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(&body);
+    float atmosphereRadius = (atmosphere != nullptr && atmosphere->height > 0.0f)
+        ? (radius + atmosphere->height) / radius
+        : 0.0f;
+
     m_ringRenderer->renderRings(*rings, ri, lights,
                                 radius, 1.0f - semiAxes.y(),
                                 renderShadow,
                                 segmentSizeInPixels,
                                 ringsMVP,
                                 false,
-                                renderHalf);
+                                renderHalf,
+                                atmosphereRadius);
 }
 
 

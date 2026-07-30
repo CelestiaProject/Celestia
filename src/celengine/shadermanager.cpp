@@ -1880,6 +1880,7 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     source += DeclareUniform("ambientColor", Shader_Vector3);
     source += DeclareUniform("ringHalf", Shader_Float);
+    source += DeclareUniform("ringAtmosphereRadius", Shader_Float);
 
     source += DeclareLights(props);
 
@@ -1910,11 +1911,37 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "\nvoid main(void)\n{\n";
 
-    // ringHalf selects the near (+1), far (-1) or whole (0) ring. Keep only
-    // the requested half; the boundary fragment goes to the far half.
-    source += "float ringSide = dot(position, eyePosition);\n";
-    source += "if ((ringHalf > 0.0 && ringSide <= 0.0) || "
-              "(ringHalf < 0.0 && ringSide > 0.0)) discard;\n";
+    // Capture the texture gradients up front, before the ring split branch
+    // below can diverge control flow. Sampling with these gradients keeps the
+    // mip selection identical on both sides of the split so the near and far
+    // halves meet without a seam.
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
+    {
+        source += "vec2 ringTexDx = dFdx(diffTexCoord.st);\n";
+        source += "vec2 ringTexDy = dFdy(diffTexCoord.st);\n";
+    }
+
+    // When splitting the ring around the atmosphere, classify each fragment by
+    // whether the view ray reaches the atmosphere shell before the fragment:
+    // if so the fragment is behind the atmosphere and belongs to the far half,
+    // otherwise the near half. This follows the curved atmosphere limb exactly,
+    // unlike a flat split through the planet center. ringHalf > 0 keeps the near
+    // half, < 0 the far half, 0 the whole ring.
+    source += "bool dropFragment = false;\n";
+    source += "if (ringHalf != 0.0)\n{\n";
+    source += "    vec3 ringDir = position - eyePosition;\n";
+    source += "    float a = dot(ringDir, ringDir);\n";
+    source += "    float b = dot(eyePosition, ringDir);\n";
+    source += "    float c = dot(eyePosition, eyePosition) - ringAtmosphereRadius * ringAtmosphereRadius;\n";
+    source += "    float disc = b * b - a * c;\n";
+    source += "    bool behind = false;\n";
+    source += "    if (disc >= 0.0)\n";
+    source += "    {\n";
+    source += "        float t = (-b - sqrt(disc)) / a;\n";
+    source += "        behind = t > 0.0 && t < 1.0;\n";
+    source += "    }\n";
+    source += "    dropFragment = (ringHalf > 0.0 && behind) || (ringHalf < 0.0 && !behind);\n";
+    source += "}\n";
     source += "vec4 diff = vec4(ambientColor, 1.0);\n";
 
     // Get the normalized direction from the eye to the vertex
@@ -1922,7 +1949,7 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     source += DeclareLocal("color", Shader_Vector4);
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "color = texture(diffTex, diffTexCoord.st);\n";
+        source += "color = textureGrad(diffTex, diffTexCoord.st, ringTexDx, ringTexDy);\n";
     else
         source += "color = vec4(1.0);\n";
     source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
@@ -1971,6 +1998,7 @@ buildRingsFragmentShader(const ShaderProperties& props)
         }
     }
 
+    source += "if (dropFragment) discard;\n";
     source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
 
     source += "}\n";
@@ -2931,6 +2959,7 @@ CelestiaGLProgram::initParameters()
         ringWidth            = floatParam("ringWidth");
         ringRadius           = floatParam("ringRadius");
         ringHalf             = floatParam("ringHalf");
+        ringAtmosphereRadius = floatParam("ringAtmosphereRadius");
     }
 
     textureOffset = floatParam("texCoordOffset");
