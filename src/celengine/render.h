@@ -540,6 +540,14 @@ class Renderer
                              LightingState& lights,
                              Eigen::Quaterniond& q);
 
+    void renderPlanetAtmosphere(Body& body,
+                                const Eigen::Vector3f& pos,
+                                double distance,
+                                const Observer& observer,
+                                float nearPlaneDistance,
+                                float farPlaneDistance,
+                                const Matrices& m);
+
     void renderRingSystem(Body& body,
                           const Eigen::Vector3f& pos,
                           float distance,
