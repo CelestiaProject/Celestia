@@ -2885,26 +2885,20 @@ bool Renderer::testEclipse(const Body& receiver,
 }
 
 
-void Renderer::renderPlanet(Body& body,
-                            const Vector3f& pos,
-                            double distance,
-                            float appMag,
-                            const Observer& observer,
-                            float nearPlaneDistance,
-                            float farPlaneDistance,
-                            const Matrices &m)
+// Computes the render properties, orientation and lighting state (including
+// eclipse and ring shadows) for a planet. Shared by the surface and the
+// separately sorted atmosphere render passes so their lighting matches.
+void Renderer::setupPlanetLighting(Body& body,
+                                   const Vector3f& pos,
+                                   double now,
+                                   float nearPlaneDistance,
+                                   float altitude,
+                                   RenderProperties& rp,
+                                   LightingState& lights,
+                                   Quaterniond& q)
 {
-    double now = observer.getTime();
-    float altitude = static_cast<float>(distance - body.getRadius());
-    float discSizeInPixels = body.getRadius() /
-        (max(nearPlaneDistance, altitude) * pixelSize);
+    auto bodyFeaturesManager = GetBodyFeaturesManager();
 
-    float maxDiscSize = (starStyle == StarStyle::ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
-    if (discSizeInPixels >= maxDiscSize && body.hasVisibleGeometry())
-    {
-        auto bodyFeaturesManager = GetBodyFeaturesManager();
-
-        RenderProperties rp;
         if (displayedSurface.empty())
         {
             rp.surface = &body.getSurface();
@@ -2922,7 +2916,7 @@ void Renderer::renderPlanet(Body& body,
         rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
         rp.geometryScale = body.getGeometryScale();
 
-        Quaterniond q = body.getRotationModel(now)->spin(now) *
+        q = body.getRotationModel(now)->spin(now) *
                         body.getEclipticToEquatorial(now);
 
         rp.orientation = body.getGeometryOrientation() * q.cast<float>();
@@ -2945,7 +2939,6 @@ void Renderer::renderPlanet(Body& body,
             scaleFactors = Vector3f::Constant(rp.geometryScale);
         }
 
-        LightingState lights;
         setupObjectLighting(lightSourceList,
                             secondaryIlluminators,
                             rp.orientation,
@@ -3084,6 +3077,33 @@ void Renderer::renderPlanet(Body& body,
             // adjustment is needed here.
             lights.ringShadows[li].texLod = lod;
         }
+
+}
+
+
+void Renderer::renderPlanet(Body& body,
+                            const Vector3f& pos,
+                            double distance,
+                            float appMag,
+                            const Observer& observer,
+                            float nearPlaneDistance,
+                            float farPlaneDistance,
+                            const Matrices &m)
+{
+    double now = observer.getTime();
+    float altitude = static_cast<float>(distance - body.getRadius());
+    float discSizeInPixels = body.getRadius() /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
+    float maxDiscSize = (starStyle == StarStyle::ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    if (discSizeInPixels >= maxDiscSize && body.hasVisibleGeometry())
+    {
+        auto bodyFeaturesManager = GetBodyFeaturesManager();
+
+        RenderProperties rp;
+        LightingState lights;
+        Quaterniond q;
+        setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, lights, q);
 
         renderObject(pos, distance, observer,
                      nearPlaneDistance, farPlaneDistance,

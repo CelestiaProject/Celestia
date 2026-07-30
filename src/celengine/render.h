@@ -531,6 +531,15 @@ class Renderer
                       float, float,
                       const Matrices&);
 
+    void setupPlanetLighting(Body& body,
+                             const Eigen::Vector3f& pos,
+                             double now,
+                             float nearPlaneDistance,
+                             float altitude,
+                             RenderProperties& rp,
+                             LightingState& lights,
+                             Eigen::Quaterniond& q);
+
     void renderRingSystem(Body& body,
                           const Eigen::Vector3f& pos,
                           float distance,
