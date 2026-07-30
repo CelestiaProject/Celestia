@@ -1926,7 +1926,11 @@ buildRingsFragmentShader(const ShaderProperties& props)
     // if so the fragment is behind the atmosphere and belongs to the far half,
     // otherwise the near half. This follows the curved atmosphere limb exactly,
     // unlike a flat split through the planet center. ringHalf > 0 keeps the near
-    // half, < 0 the far half, 0 the whole ring.
+    // half, < 0 the far half, 0 the whole ring. The dropped half is made
+    // transparent (alpha 0) rather than discarded: an explicit discard makes the
+    // driver mask the dropped lane, corrupting the screen-space texture
+    // derivatives of the kept neighbour and leaving a faint mip seam along the
+    // split. Keeping every lane alive matches the derivatives of an unsplit draw.
     source += "bool dropFragment = false;\n";
     source += "if (ringHalf != 0.0)\n{\n";
     source += "    vec3 ringDir = position - eyePosition;\n";
@@ -1998,7 +2002,7 @@ buildRingsFragmentShader(const ShaderProperties& props)
         }
     }
 
-    source += "if (dropFragment) discard;\n";
+    source += "if (dropFragment) opticalDepth = 0.0;\n";
     source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
 
     source += "}\n";
