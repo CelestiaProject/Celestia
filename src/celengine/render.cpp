@@ -2728,16 +2728,19 @@ void Renderer::renderPlanetAtmosphere(Body& body,
     RenderProperties rp;
     LightingState ls;
     Quaterniond q;
-    // The surface pass runs first and caches this planet's lighting; reuse it.
-    auto it = planetLightingCache.find(&body);
-    if (it == planetLightingCache.end())
+    // Reuse the surface pass's lighting if it ran this frame; otherwise compute
+    // it (the body disc may have been too small for renderPlanet to draw, e.g.
+    // under the ScaledDiscStars star style).
+    if (auto it = planetLightingCache.find(&body); it != planetLightingCache.end())
     {
-        assert(false);
-        return;
+        rp = it->second.rp;
+        ls = it->second.lights;
+        q = it->second.q;
     }
-    rp = it->second.rp;
-    ls = it->second.lights;
-    q = it->second.q;
+    else
+    {
+        setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, ls, q);
+    }
 
     RenderInfo ri;
     ri.sunDir_eye = Vector3f::UnitY();
@@ -3219,17 +3222,22 @@ void Renderer::renderPlanet(Body& body,
         Quaterniond q;
         setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, lights, q);
 
-        // Cache this lighting so the atmosphere entry can reuse it this frame.
-        // Copy the eclipse shadows and re-point at the copies, since
-        // lights.shadows aliases the shared eclipseShadows scratch.
-        PlanetLightingCacheEntry& cache = planetLightingCache[&body];
-        cache.rp = rp;
-        cache.q = q;
-        cache.lights = lights;
-        for (unsigned int li = 0; li < lights.nLights; ++li)
+        // Cache this lighting so the atmosphere entry can reuse it this frame;
+        // only atmospheric bodies have such an entry. Copy the eclipse shadows
+        // and re-point at the copies, since lights.shadows aliases the shared
+        // eclipseShadows scratch.
+        if (rp.atmosphere != nullptr &&
+            (rp.atmosphere->height > 0.0f || rp.atmosphere->cloudTexture != util::TextureHandle::Invalid))
         {
-            cache.eclipseShadows[li] = eclipseShadows[li];
-            cache.lights.shadows[li] = &cache.eclipseShadows[li];
+            PlanetLightingCacheEntry& cache = planetLightingCache[&body];
+            cache.rp = rp;
+            cache.q = q;
+            cache.lights = lights;
+            for (unsigned int li = 0; li < lights.nLights; ++li)
+            {
+                cache.eclipseShadows[li] = eclipseShadows[li];
+                cache.lights.shadows[li] = &cache.eclipseShadows[li];
+            }
         }
 
         renderObject(pos, distance, observer,
@@ -3327,9 +3335,11 @@ void Renderer::renderRingSystem(Body& body,
         ringsScaleFactor = geometryScale;
     }
 
-    // Reuse the ring lighting across the near and far half draws this frame.
+    // Reuse the ring lighting across the near and far half draws. Only the split
+    // draws in two halves, so the whole-ring (Both) case skips the cache.
     LightingState lights;
-    if (auto it = ringLightingCache.find(&body); it != ringLightingCache.end())
+    bool split = renderHalf != celestia::render::RingRenderHalf::Both;
+    if (auto it = ringLightingCache.find(&body); split && it != ringLightingCache.end())
     {
         lights = it->second;
     }
@@ -3344,7 +3354,8 @@ void Renderer::renderRingSystem(Body& body,
                             lights);
         assert(lights.nLights <= MaxLights);
         lights.ambientColor = ambientColor.toVector3();
-        ringLightingCache[&body] = lights;
+        if (split)
+            ringLightingCache[&body] = lights;
     }
 
     // Build the rings model-view matrix.
@@ -3689,7 +3700,10 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
                                 static_cast<float>(rle.distance - body.getRadius()),
                                 pixelSize);
 
-    if (atmosphere != nullptr && atmosphere->height > 0.0f && rle.discSizeInPixels > 1)
+    bool hasAtmosphereOrClouds = atmosphere != nullptr &&
+        (atmosphere->height > 0.0f || atmosphere->cloudTexture != util::TextureHandle::Invalid);
+
+    if (hasAtmosphereOrClouds && rle.discSizeInPixels > 1)
     {
         float atmosphereRadius = body.getRadius() + atmosphere->height;
 
