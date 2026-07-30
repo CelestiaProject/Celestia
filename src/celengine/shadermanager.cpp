@@ -1919,16 +1919,16 @@ buildRingsFragmentShader(const ShaderProperties& props)
     // or divide: b < 0 and a + b > 0 place the near root in (0, 1), b*b >= a*c
     // makes the roots real. The drop uses alpha 0, not discard, so every lane
     // stays alive and texture derivatives match an unsplit draw (no mip seam).
-    source += "bool dropFragment = false;\n";
-    source += "if (ringHalf != 0.0)\n{\n";
-    source += "    vec3 ringDir = position - eyePosition;\n";
-    source += "    float a = dot(ringDir, ringDir);\n";
-    source += "    float b = dot(eyePosition, ringDir);\n";
-    source += "    float c = dot(eyePosition, eyePosition) - ringAtmosphereRadius * ringAtmosphereRadius;\n";
-    source += "    bool behind = b < 0.0 && a + b > 0.0 && b * b >= a * c;\n";
-    source += "    dropFragment = (ringHalf > 0.0 && behind) || (ringHalf < 0.0 && !behind);\n";
-    source += "}\n";
-    source += "vec4 diff = vec4(ambientColor, 1.0);\n";
+    source += "bool dropFragment = false;\n"
+              "if (ringHalf != 0.0)\n{\n"
+              "    vec3 ringDir = position - eyePosition;\n"
+              "    float a = dot(ringDir, ringDir);\n"
+              "    float b = dot(eyePosition, ringDir);\n"
+              "    float c = dot(eyePosition, eyePosition) - ringAtmosphereRadius * ringAtmosphereRadius;\n"
+              "    bool behind = b < 0.0 && a + b > 0.0 && b * b >= a * c;\n"
+              "    dropFragment = (ringHalf > 0.0 && behind) || (ringHalf < 0.0 && !behind);\n"
+              "}\n"
+              "vec4 diff = vec4(ambientColor, 1.0);\n";
 
     // Get the normalized direction from the eye to the vertex
     source += "vec3 eyeDir = normalize(eyePosition - position);\n";

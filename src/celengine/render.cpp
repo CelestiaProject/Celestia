@@ -2585,7 +2585,7 @@ void Renderer::renderObject(const Vector3f& pos,
 
 
 // Draws a planet's atmosphere and cloud layer.
-void Renderer::renderAtmosphere(const Atmosphere* atmosphere,
+void Renderer::renderAtmosphere(const Atmosphere* atmosphere, // NOSONAR(cpp:S107)
                                 const RenderInfo& ri,
                                 const LightingState& ls,
                                 const RenderProperties& obj,
@@ -3005,7 +3005,7 @@ bool Renderer::testEclipse(const Body& receiver,
 // Builds the render properties, orientation and lighting (eclipse and ring
 // shadows) for a planet. Shared by the surface and atmosphere passes so their
 // lighting matches.
-void Renderer::setupPlanetLighting(Body& body,
+void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
                                    const Vector3f& pos,
                                    double now,
                                    float nearPlaneDistance,
@@ -3652,7 +3652,7 @@ static bool isBodyVisible(const Body* body, BodyClassification bodyVisibilityMas
     }
 }
 
-void Renderer::addRenderListEntries(RenderListEntry& rle,
+void Renderer::addRenderListEntries(RenderListEntry& rle, // NOSONAR(cpp:S3776)
                                     Body& body,
                                     bool isLabeled)
 {
@@ -3700,10 +3700,9 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
                                 static_cast<float>(rle.distance - body.getRadius()),
                                 pixelSize);
 
-    bool hasAtmosphereOrClouds = atmosphere != nullptr &&
-        (atmosphere->height > 0.0f || atmosphere->cloudTexture != util::TextureHandle::Invalid);
-
-    if (hasAtmosphereOrClouds && rle.discSizeInPixels > 1)
+    if (atmosphere != nullptr &&
+        (atmosphere->height > 0.0f || atmosphere->cloudTexture != util::TextureHandle::Invalid) &&
+        rle.discSizeInPixels > 1)
     {
         float atmosphereRadius = body.getRadius() + atmosphere->height;
 
@@ -5740,9 +5739,7 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
               [](const RenderListEntry& a, const RenderListEntry& b)
               {
                   // Operation is reversed because -z axis points into the screen
-                  float ka = a.centerZ - a.radius;
-                  float kb = b.centerZ - b.radius;
-                  if (ka != kb)
+                  if (float ka = a.centerZ - a.radius, kb = b.centerZ - b.radius; ka != kb)
                       return ka > kb;
                   return a.renderOrder < b.renderOrder;
               });

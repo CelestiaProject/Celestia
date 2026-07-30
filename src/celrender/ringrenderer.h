@@ -25,7 +25,7 @@ struct RingSystem;
 namespace celestia::render
 {
 
-enum class RingRenderHalf
+enum class RingRenderHalf : int
 {
     Both,
     Near,
