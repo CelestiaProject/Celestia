@@ -47,6 +47,7 @@ namespace celestia::render { class PsfStarVertexBuffer; class StarPipelineOwner;
 namespace celestia::engine { class ResourceSystem; }
 class Observer;
 struct Surface;
+struct RenderInfo;
 class Texture;
 class TextureFont;
 class FramebufferObject;
@@ -504,6 +505,23 @@ class Renderer
                       const RenderProperties& obj,
                       const LightingState&,
                       const Matrices&);
+
+    void renderAtmosphere(const Atmosphere* atmosphere,
+                          const RenderInfo& ri,
+                          const LightingState& ls,
+                          const RenderProperties& obj,
+                          const Eigen::Vector3f& pos,
+                          double distance,
+                          float radius,
+                          const Eigen::Vector3f& scaleFactors,
+                          bool insidePlanet,
+                          bool lit,
+                          Texture* cloudTex,
+                          Texture* cloudNormalMap,
+                          float cloudTexOffset,
+                          const celestia::math::Frustum& viewFrustum,
+                          const Eigen::Matrix4f& planetMV,
+                          const Matrices& m);
 
     void renderPlanet(Body& body,
                       const Eigen::Vector3f& pos,

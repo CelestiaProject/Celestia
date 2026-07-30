@@ -2604,103 +2604,130 @@ void Renderer::renderObject(const Vector3f& pos,
 
     if (atmosphere != nullptr)
     {
-        // Compute the apparent thickness in pixels of the atmosphere.
-        // If it's only one pixel thick, it can look quite unsightly
-        // due to aliasing.  To avoid popping, we gradually fade in the
-        // atmosphere as it grows from two to three pixels thick.
-        float fade;
-        float thicknessInPixels = 0.0f;
-        if (distance - radius > 0.0f)
+        renderAtmosphere(atmosphere, ri, ls, obj, pos, distance, radius,
+                         scaleFactors, insidePlanet, lit,
+                         cloudTex, cloudNormalMap, cloudTexOffset,
+                         viewFrustum, planetMV, m);
+    }
+}
+
+
+// Renders an atmosphere and its cloud layer (if any) for a planet.
+void Renderer::renderAtmosphere(const Atmosphere* atmosphere,
+                                const RenderInfo& ri,
+                                const LightingState& ls,
+                                const RenderProperties& obj,
+                                const Vector3f& pos,
+                                double distance,
+                                float radius,
+                                const Vector3f& scaleFactors,
+                                bool insidePlanet,
+                                bool lit,
+                                Texture* cloudTex,
+                                Texture* cloudNormalMap,
+                                float cloudTexOffset,
+                                const math::Frustum& viewFrustum,
+                                const Matrix4f& planetMV,
+                                const Matrices& m)
+{
+    Matrices planetMVP = { m.projection, &planetMV };
+
+    // Compute the apparent thickness in pixels of the atmosphere.
+    // If it's only one pixel thick, it can look quite unsightly
+    // due to aliasing.  To avoid popping, we gradually fade in the
+    // atmosphere as it grows from two to three pixels thick.
+    float fade;
+    float thicknessInPixels = 0.0f;
+    if (distance - radius > 0.0f)
+    {
+        thicknessInPixels = static_cast<float>(atmosphere->height /
+            ((distance - radius) * pixelSize));
+        fade = std::clamp(thicknessInPixels - MinAtmosphereThicknessInPixels, 0.0f, 1.0f);
+    }
+    else
+    {
+        fade = 1.0f;
+    }
+
+    if (fade > 0 && util::is_set(renderFlags, RenderFlags::ShowAtmospheres) && atmosphere->height > 0.0f &&
+        !insidePlanet)
+    {
+        // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+        // TODO: convert old style atmopshere parameters
+        if (atmosphere->mieScaleHeight > 0.0f)
         {
-            thicknessInPixels = static_cast<float>(atmosphere->height /
-                ((distance - radius) * pixelSize));
-            fade = std::clamp(thicknessInPixels - MinAtmosphereThicknessInPixels, 0.0f, 1.0f);
+            m_atmosphereRenderer->render(
+                ri,
+                *atmosphere,
+                ls,
+                obj.orientation,
+                radius,
+                viewFrustum,
+                planetMVP);
         }
         else
         {
-            fade = 1.0f;
+            Eigen::Matrix4f modelView = math::rotate(getCameraOrientationf());
+            Matrices mvp = { m.projection, &modelView };
+            m_atmosphereRenderer->renderLegacy(
+                *atmosphere,
+                ls,
+                pos,
+                obj.orientation,
+                scaleFactors,
+                ri.sunDir_eye,
+                thicknessInPixels,
+                lit,
+                mvp);
         }
+    }
 
-        if (fade > 0 && util::is_set(renderFlags, RenderFlags::ShowAtmospheres) && atmosphere->height > 0.0f &&
-            !insidePlanet)
+    // If there's a cloud layer, we'll render it now.
+    if (cloudTex != nullptr && !insidePlanet)
+    {
+        float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
+        Matrix4f cmv = math::scale(planetMV, cloudScale);
+        Matrices mvp = { m.projection, &cmv };
+
+        // If we're beneath the cloud level, render the interior of
+        // the cloud sphere.
+        if (distance - radius < atmosphere->cloudHeight)
+            glFrontFace(GL_CW);
+
+        cloudTex->bind();
+
+        // Cloud layers can be trouble for the depth buffer, since they tend
+        // to be very close to the surface of a planet relative to the radius
+        // of the planet. We'll help out by offsetting the cloud layer toward
+        // the viewer.
+        if (distance > radius * 1.1f)
         {
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            // TODO: convert old style atmopshere parameters
-            if (atmosphere->mieScaleHeight > 0.0f)
-            {
-                m_atmosphereRenderer->render(
-                    ri,
-                    *atmosphere,
-                    ls,
-                    obj.orientation,
-                    radius,
-                    viewFrustum,
-                    planetMVP);
-            }
-            else
-            {
-                Eigen::Matrix4f modelView = math::rotate(getCameraOrientationf());
-                Matrices mvp = { m.projection, &modelView };
-                m_atmosphereRenderer->renderLegacy(
-                    *atmosphere,
-                    ls,
-                    pos,
-                    obj.orientation,
-                    scaleFactors,
-                    ri.sunDir_eye,
-                    thicknessInPixels,
-                    lit,
-                    mvp);
-            }
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(-1.0f, -1.0f);
         }
 
-        // If there's a cloud layer, we'll render it now.
-        if (cloudTex != nullptr && !insidePlanet)
+        if (lit)
         {
-            float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
-            Matrix4f cmv = math::scale(planetMV, cloudScale);
-            Matrices mvp = { m.projection, &cmv };
-
-            // If we're beneath the cloud level, render the interior of
-            // the cloud sphere.
-            if (distance - radius < atmosphere->cloudHeight)
-                glFrontFace(GL_CW);
-
-            cloudTex->bind();
-
-            // Cloud layers can be trouble for the depth buffer, since they tend
-            // to be very close to the surface of a planet relative to the radius
-            // of the planet. We'll help out by offsetting the cloud layer toward
-            // the viewer.
-            if (distance > radius * 1.1f)
-            {
-                glEnable(GL_POLYGON_OFFSET_FILL);
-                glPolygonOffset(-1.0f, -1.0f);
-            }
-
-            if (lit)
-            {
-                renderClouds_GLSL(ri, ls,
-                                  atmosphere,
-                                  cloudTex,
-                                  cloudNormalMap,
-                                  cloudTexOffset,
-                                  scaleFactors,
-                                  renderFlags,
-                                  obj.orientation,
-                                  viewFrustum,
-                                  mvp,
-                                  this,
-                                  m_lodSphere.get());
-            }
-            else
-            {
-                renderCloudsUnlit(ri,viewFrustum, cloudTex, cloudTexOffset, mvp, this, m_lodSphere.get());
-            }
-
-            glDisable(GL_POLYGON_OFFSET_FILL);
-            glFrontFace(GL_CCW);
+            renderClouds_GLSL(ri, ls,
+                              atmosphere,
+                              cloudTex,
+                              cloudNormalMap,
+                              cloudTexOffset,
+                              scaleFactors,
+                              renderFlags,
+                              obj.orientation,
+                              viewFrustum,
+                              mvp,
+                              this,
+                              m_lodSphere.get());
         }
+        else
+        {
+            renderCloudsUnlit(ri, viewFrustum, cloudTex, cloudTexOffset, mvp, this, m_lodSphere.get());
+        }
+
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glFrontFace(GL_CCW);
     }
 }
 
