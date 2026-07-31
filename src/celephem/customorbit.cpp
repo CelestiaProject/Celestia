@@ -27,6 +27,7 @@
 #include <celutil/logger.h>
 #include "jpleph.h"
 #include "orbit.h"
+#include "tass17.h"
 #include "vsop87.h"
 
 using namespace std::string_view_literals;
@@ -3235,14 +3236,14 @@ enum class CustomOrbitType
     Europa,
     Ganymede,
     Callisto,
-    Mimas,
-    Enceladus,
-    Tethys,
-    Dione,
-    Rhea,
-    Titan,
-    Hyperion,
-    Iapetus,
+    TASS17Mimas,
+    TASS17Enceladus,
+    TASS17Tethys,
+    TASS17Dione,
+    TASS17Rhea,
+    TASS17Titan,
+    TASS17Hyperion,
+    TASS17Iapetus,
     Phoebe,
     Miranda,
     Ariel,
@@ -3674,14 +3675,14 @@ constexpr std::array<CustomOrbitFactory, OrbitTypeCount> factories
     &CreateEuropaOrbit,
     &CreateGanymedeOrbit,
     &CreateCallistoOrbit,
-    &CreateMimasOrbit,
-    &CreateEnceladusOrbit,
-    &CreateTethysOrbit,
-    &CreateDioneOrbit,
-    &CreateRheaOrbit,
-    &CreateTitanOrbit,
-    &CreateHyperionOrbit,
-    &CreateIapetusOrbit,
+    &CreateTASS17MimasOrbit,
+    &CreateTASS17EnceladusOrbit,
+    &CreateTASS17TethysOrbit,
+    &CreateTASS17DioneOrbit,
+    &CreateTASS17RheaOrbit,
+    &CreateTASS17TitanOrbit,
+    &CreateTASS17HyperionOrbit,
+    &CreateTASS17IapetusOrbit,
     &CreatePhoebeOrbit,
     &CreateMirandaOrbit,
     &CreateArielOrbit,

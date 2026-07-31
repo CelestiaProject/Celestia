@@ -19,6 +19,8 @@ set(CELEPHEM_SOURCES
   samporbit.h
   samporient.cpp
   samporient.h
+  tass17.cpp
+  tass17.h
   vsop87.cpp
   vsop87.h
 )
