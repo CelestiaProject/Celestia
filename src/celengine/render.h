@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 #include <Eigen/Core>
@@ -47,6 +48,7 @@ namespace celestia::render { class PsfStarVertexBuffer; class StarPipelineOwner;
 namespace celestia::engine { class ResourceSystem; }
 class Observer;
 struct Surface;
+struct RenderInfo;
 class Texture;
 class TextureFont;
 class FramebufferObject;
@@ -505,6 +507,23 @@ class Renderer
                       const LightingState&,
                       const Matrices&);
 
+    void renderAtmosphere(const Atmosphere* atmosphere,
+                          const RenderInfo& ri,
+                          const LightingState& ls,
+                          const RenderProperties& obj,
+                          const Eigen::Vector3f& pos,
+                          double distance,
+                          float radius,
+                          const Eigen::Vector3f& scaleFactors,
+                          bool insidePlanet,
+                          bool lit,
+                          Texture* cloudTex,
+                          Texture* cloudNormalMap,
+                          float cloudTexOffset,
+                          const celestia::math::Frustum& viewFrustum,
+                          const Eigen::Matrix4f& planetMV,
+                          const Matrices& m);
+
     void renderPlanet(Body& body,
                       const Eigen::Vector3f& pos,
                       double distance,
@@ -513,12 +532,30 @@ class Renderer
                       float, float,
                       const Matrices&);
 
+    void setupPlanetLighting(Body& body,
+                             const Eigen::Vector3f& pos,
+                             double now,
+                             float nearPlaneDistance,
+                             float altitude,
+                             RenderProperties& rp,
+                             LightingState& lights,
+                             Eigen::Quaterniond& q);
+
+    void renderPlanetAtmosphere(Body& body,
+                                const Eigen::Vector3f& pos,
+                                double distance,
+                                const Observer& observer,
+                                float nearPlaneDistance,
+                                float farPlaneDistance,
+                                const Matrices& m);
+
     void renderRingSystem(Body& body,
                           const Eigen::Vector3f& pos,
                           float distance,
                           const Observer& observer,
                           float nearPlaneDistance,
-                          const Matrices&);
+                          const Matrices&,
+                          celestia::render::RingRenderHalf);
 
     void renderStar(const Star& star,
                     const Eigen::Vector3f& pos,
@@ -720,6 +757,21 @@ class Renderer
     std::vector<Annotation> objectAnnotations;
     std::vector<OrbitPathListEntry> orbitPathList;
     LightingState::EclipseShadowVector eclipseShadows[MaxLights];
+
+    // Per-frame cache of each planet's computed lighting so the atmosphere and
+    // ring entries reuse it instead of redoing the eclipse/ring-shadow setup.
+    // The entry owns its eclipse-shadow vectors because LightingState::shadows
+    // otherwise points into the shared eclipseShadows scratch above.
+    struct PlanetLightingCacheEntry
+    {
+        RenderProperties rp;
+        LightingState lights;
+        Eigen::Quaterniond q;
+        std::array<LightingState::EclipseShadowVector, MaxLights> eclipseShadows;
+    };
+    std::unordered_map<const Body*, PlanetLightingCacheEntry> planetLightingCache;
+    std::unordered_map<const Body*, LightingState> ringLightingCache;
+
     std::vector<const Star*> nearStars;
 
     std::vector<LightSource> lightSourceList;

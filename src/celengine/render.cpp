@@ -127,6 +127,11 @@ static constexpr float MaxFarNearRatio      = 2000000.0f;
 
 static constexpr float MinRelativeOccluderRadius = 0.005f;
 
+// Apparent thickness in pixels below which a planet's atmosphere is treated as
+// invisible. The atmosphere fades in over the following pixel, and the ring
+// system is only split around the atmosphere once it reaches this thickness.
+static constexpr float MinAtmosphereThicknessInPixels = 2.0f;
+
 // Size at which the orbit cache will be flushed of old orbit paths
 static constexpr unsigned int OrbitCacheCullThreshold = 200;
 // Age in frames at which unused orbit paths may be eliminated from the cache
@@ -151,6 +156,19 @@ inline float inchesToMm(float in)
 inline float sizeFade(float screenSize, float minScreenSize, float opaqueScale)
 {
     return min(1.0f, (screenSize - minScreenSize) / (minScreenSize * (opaqueScale - 1)));
+}
+
+// A planet's atmosphere obscures its ring system when the atmosphere is
+// visible and large enough on screen relative to the observer's altitude.
+// In that case the rings must be split around the atmosphere render pass so
+// the near half is drawn behind it.
+inline bool
+atmosphereObscuresRings(const Atmosphere* atmosphere, float altitude, float pixelSize)
+{
+    return atmosphere != nullptr &&
+           atmosphere->height > 0.0f &&
+           altitude > 0.0f &&
+           atmosphere->height / (altitude * pixelSize) > MinAtmosphereThicknessInPixels;
 }
 
 inline void glVertexAttrib(GLuint index, const Color &color)
@@ -1347,12 +1365,31 @@ void Renderer::renderItem(const RenderListEntry& rle,
         break;
 
     case RenderListEntry::RenderableRingSystem:
+    case RenderListEntry::RenderableRingSystemNear:
+    case RenderListEntry::RenderableRingSystemFar:
+    {
+        celestia::render::RingRenderHalf half = celestia::render::RingRenderHalf::Both;
+        if (rle.renderableType == RenderListEntry::RenderableRingSystemNear)
+            half = celestia::render::RingRenderHalf::Near;
+        else if (rle.renderableType == RenderListEntry::RenderableRingSystemFar)
+            half = celestia::render::RingRenderHalf::Far;
         renderRingSystem(*rle.body,
                          rle.position,
                          static_cast<float>(rle.distance),
                          observer,
                          nearPlaneDistance,
-                         m);
+                         m,
+                         half);
+        break;
+    }
+
+    case RenderListEntry::RenderableAtmosphere:
+        renderPlanetAtmosphere(*rle.body,
+                               rle.position,
+                               rle.distance,
+                               observer,
+                               nearPlaneDistance, farPlaneDistance,
+                               m);
         break;
 
     case RenderListEntry::RenderableCometTail:
@@ -1437,6 +1474,8 @@ void Renderer::render(const Observer& observer,
     // renderList.
     renderList.clear();
     orbitPathList.clear();
+    planetLightingCache.clear();
+    ringLightingCache.clear();
     lightSourceList.clear();
     secondaryIlluminators.clear();
     nearStars.clear();
@@ -2386,8 +2425,12 @@ void Renderer::renderObject(const Vector3f& pos,
 
     Matrices ringsMVP;
     Matrix4f ringsMV;
-    // Outside rings are rendered separately at the end of a depth partition
-    bool showRings = obj.rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings) && distance <= obj.rings->innerRadius;
+    // Draw rings inline only from inside; otherwise they are transparent
+    // entries (split around the atmosphere when it hides them).
+    bool showRings =
+        obj.rings != nullptr &&
+        util::is_set(renderFlags, RenderFlags::ShowPlanetRings) &&
+        distance <= obj.rings->innerRadius;
     if (showRings)
     {
         ringsMV  = (*m.modelview) * (transform * Scaling(ringsScaleFactor)).matrix();
@@ -2471,23 +2514,11 @@ void Renderer::renderObject(const Vector3f& pos,
     viewFrustum.transform(invMV);
 
     // Get cloud layer parameters
-    Texture* cloudTex       = nullptr;
-    Texture* cloudNormalMap = nullptr;
     float cloudTexOffset    = 0.0f;
     const Atmosphere* atmosphere = obj.atmosphere;
 
-    if (atmosphere != nullptr)
-    {
-        if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps))
-        {
-            if (atmosphere->cloudTexture != util::TextureHandle::Invalid)
-                cloudTex = m_textureManager->find(atmosphere->cloudTexture);
-            if (atmosphere->cloudNormalMap != util::TextureHandle::Invalid)
-                cloudNormalMap = m_textureManager->find(atmosphere->cloudNormalMap);
-        }
-        if (atmosphere->cloudSpeed != 0.0f)
-            cloudTexOffset = (float) (-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
-    }
+    if (atmosphere != nullptr && atmosphere->cloudSpeed != 0.0f)
+        cloudTexOffset = static_cast<float>(-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
 
     if (obj.geometry == engine::GeometryHandle::Invalid)
     {
@@ -2546,109 +2577,275 @@ void Renderer::renderObject(const Vector3f& pos,
                                     radius, 1.0f - obj.semiAxes.y(),
                                     util::is_set(renderFlags, RenderFlags::ShowRingShadows) && lit,
                                     segmentSizeInPixels,
-                                    ringsMVP, true);
+                                    ringsMVP, distance <= obj.rings->innerRadius,
+                                    celestia::render::RingRenderHalf::Both,
+                                    0.0f);
+    }
+}
+
+
+// Draws a planet's atmosphere and cloud layer.
+void Renderer::renderAtmosphere(const Atmosphere* atmosphere, // NOSONAR(cpp:S107)
+                                const RenderInfo& ri,
+                                const LightingState& ls,
+                                const RenderProperties& obj,
+                                const Vector3f& pos,
+                                double distance,
+                                float radius,
+                                const Vector3f& scaleFactors,
+                                bool insidePlanet,
+                                bool lit,
+                                Texture* cloudTex,
+                                Texture* cloudNormalMap,
+                                float cloudTexOffset,
+                                const math::Frustum& viewFrustum,
+                                const Matrix4f& planetMV,
+                                const Matrices& m)
+{
+    Matrices planetMVP = { m.projection, &planetMV };
+
+    // Compute the apparent thickness in pixels of the atmosphere.
+    // If it's only one pixel thick, it can look quite unsightly
+    // due to aliasing.  To avoid popping, we gradually fade in the
+    // atmosphere as it grows from two to three pixels thick.
+    float fade;
+    float thicknessInPixels = 0.0f;
+    if (distance - radius > 0.0f)
+    {
+        thicknessInPixels = static_cast<float>(atmosphere->height /
+            ((distance - radius) * pixelSize));
+        fade = std::clamp(thicknessInPixels - MinAtmosphereThicknessInPixels, 0.0f, 1.0f);
+    }
+    else
+    {
+        fade = 1.0f;
     }
 
-    if (atmosphere != nullptr)
+    if (fade > 0 && util::is_set(renderFlags, RenderFlags::ShowAtmospheres) && atmosphere->height > 0.0f &&
+        !insidePlanet)
     {
-        // Compute the apparent thickness in pixels of the atmosphere.
-        // If it's only one pixel thick, it can look quite unsightly
-        // due to aliasing.  To avoid popping, we gradually fade in the
-        // atmosphere as it grows from two to three pixels thick.
-        float fade;
-        float thicknessInPixels = 0.0f;
-        if (distance - radius > 0.0f)
+        // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+        // TODO: convert old style atmopshere parameters
+        if (atmosphere->mieScaleHeight > 0.0f)
         {
-            thicknessInPixels = static_cast<float>(atmosphere->height /
-                ((distance - radius) * pixelSize));
-            fade = std::clamp(thicknessInPixels - 2.0f, 0.0f, 1.0f);
+            m_atmosphereRenderer->render(
+                ri,
+                *atmosphere,
+                ls,
+                obj.orientation,
+                radius,
+                viewFrustum,
+                planetMVP);
         }
         else
         {
-            fade = 1.0f;
-        }
-
-        if (fade > 0 && util::is_set(renderFlags, RenderFlags::ShowAtmospheres) && atmosphere->height > 0.0f &&
-            !insidePlanet)
-        {
-            // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-            // TODO: convert old style atmopshere parameters
-            if (atmosphere->mieScaleHeight > 0.0f)
-            {
-                m_atmosphereRenderer->render(
-                    ri,
-                    *atmosphere,
-                    ls,
-                    obj.orientation,
-                    radius,
-                    viewFrustum,
-                    planetMVP);
-            }
-            else
-            {
-                Eigen::Matrix4f modelView = math::rotate(getCameraOrientationf());
-                Matrices mvp = { m.projection, &modelView };
-                m_atmosphereRenderer->renderLegacy(
-                    *atmosphere,
-                    ls,
-                    pos,
-                    obj.orientation,
-                    scaleFactors,
-                    ri.sunDir_eye,
-                    thicknessInPixels,
-                    lit,
-                    mvp);
-            }
-        }
-
-        // If there's a cloud layer, we'll render it now.
-        if (cloudTex != nullptr && !insidePlanet)
-        {
-            float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
-            Matrix4f cmv = math::scale(planetMV, cloudScale);
-            Matrices mvp = { m.projection, &cmv };
-
-            // If we're beneath the cloud level, render the interior of
-            // the cloud sphere.
-            if (distance - radius < atmosphere->cloudHeight)
-                glFrontFace(GL_CW);
-
-            cloudTex->bind();
-
-            // Cloud layers can be trouble for the depth buffer, since they tend
-            // to be very close to the surface of a planet relative to the radius
-            // of the planet. We'll help out by offsetting the cloud layer toward
-            // the viewer.
-            if (distance > radius * 1.1f)
-            {
-                glEnable(GL_POLYGON_OFFSET_FILL);
-                glPolygonOffset(-1.0f, -1.0f);
-            }
-
-            if (lit)
-            {
-                renderClouds_GLSL(ri, ls,
-                                  atmosphere,
-                                  cloudTex,
-                                  cloudNormalMap,
-                                  cloudTexOffset,
-                                  scaleFactors,
-                                  renderFlags,
-                                  obj.orientation,
-                                  viewFrustum,
-                                  mvp,
-                                  this,
-                                  m_lodSphere.get());
-            }
-            else
-            {
-                renderCloudsUnlit(ri,viewFrustum, cloudTex, cloudTexOffset, mvp, this, m_lodSphere.get());
-            }
-
-            glDisable(GL_POLYGON_OFFSET_FILL);
-            glFrontFace(GL_CCW);
+            Eigen::Matrix4f modelView = math::rotate(getCameraOrientationf());
+            Matrices mvp = { m.projection, &modelView };
+            m_atmosphereRenderer->renderLegacy(
+                *atmosphere,
+                ls,
+                pos,
+                obj.orientation,
+                scaleFactors,
+                ri.sunDir_eye,
+                thicknessInPixels,
+                lit,
+                mvp);
         }
     }
+
+    // If there's a cloud layer, we'll render it now.
+    if (cloudTex != nullptr && !insidePlanet)
+    {
+        float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
+        Matrix4f cmv = math::scale(planetMV, cloudScale);
+        Matrices mvp = { m.projection, &cmv };
+
+        // If we're beneath the cloud level, render the interior of
+        // the cloud sphere.
+        if (distance - radius < atmosphere->cloudHeight)
+            glFrontFace(GL_CW);
+
+        cloudTex->bind();
+
+        // Cloud layers can be trouble for the depth buffer, since they tend
+        // to be very close to the surface of a planet relative to the radius
+        // of the planet. We'll help out by offsetting the cloud layer toward
+        // the viewer.
+        if (distance > radius * 1.1f)
+        {
+            glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(-1.0f, -1.0f);
+        }
+
+        if (lit)
+        {
+            renderClouds_GLSL(ri, ls,
+                              atmosphere,
+                              cloudTex,
+                              cloudNormalMap,
+                              cloudTexOffset,
+                              scaleFactors,
+                              renderFlags,
+                              obj.orientation,
+                              viewFrustum,
+                              mvp,
+                              this,
+                              m_lodSphere.get());
+        }
+        else
+        {
+            renderCloudsUnlit(ri, viewFrustum, cloudTex, cloudTexOffset, mvp, this, m_lodSphere.get());
+        }
+
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glFrontFace(GL_CCW);
+    }
+}
+
+
+// Renders a planet's atmosphere and clouds as a sortable transparent pass.
+// Rebuilds the per-object state from renderObject and takes lighting from
+// setupPlanetLighting, so cloud eclipse and ring shadows match the surface.
+void Renderer::renderPlanetAtmosphere(Body& body,
+                                      const Vector3f& pos,
+                                      double distance,
+                                      const Observer& observer,
+                                      float nearPlaneDistance,
+                                      float farPlaneDistance,
+                                      const Matrices& m)
+{
+    const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
+    const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(&body);
+    if (atmosphere == nullptr)
+        return;
+
+    double now = observer.getTime();
+    float radius = body.getRadius();
+    float altitude = static_cast<float>(distance - radius);
+    float discSizeInPixels = radius / (max(nearPlaneDistance, altitude) * pixelSize);
+
+    RenderProperties rp;
+    LightingState ls;
+    Quaterniond q;
+    // Reuse the surface pass's lighting if it ran this frame; otherwise compute
+    // it (the body disc may have been too small for renderPlanet to draw, e.g.
+    // under the ScaledDiscStars star style).
+    if (auto it = planetLightingCache.find(&body); it != planetLightingCache.end())
+    {
+        rp = it->second.rp;
+        ls = it->second.lights;
+        q = it->second.q;
+    }
+    else
+    {
+        setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, ls, q);
+    }
+
+    RenderInfo ri;
+    ri.sunDir_eye = Vector3f::UnitY();
+    ri.sunDir_obj = Vector3f::UnitY();
+    ri.sunColor = Color::Black;
+    if (ls.nLights > 0)
+    {
+        ri.sunDir_eye = ls.lights[0].direction_eye;
+        ri.sunDir_obj = ls.lights[0].direction_obj;
+        ri.sunColor   = ls.lights[0].color;
+    }
+
+    const RenderGeometry* geometry = nullptr;
+    if (rp.geometry != engine::GeometryHandle::Invalid)
+        geometry = m_geometryManager->find(rp.geometry);
+
+    if (rp.surface->baseTexture != util::TextureHandle::Invalid)
+        ri.baseTex = m_textureManager->find(rp.surface->baseTexture);
+
+    Vector3f scaleFactors;
+    Matrix4f invMV;
+    if (geometry == nullptr || geometry->isNormalized())
+    {
+        scaleFactors = radius * rp.semiAxes;
+        Affine3f invModelView = Scaling(rp.semiAxes).inverse() *
+                                rp.orientation *
+                                Translation3f(-pos / radius) *
+                                getCameraOrientationf().conjugate();
+        invMV = invModelView.matrix();
+    }
+    else
+    {
+        scaleFactors = Vector3f::Constant(rp.geometryScale);
+        Affine3f invModelView = rp.orientation *
+                                Translation3f(-pos / radius) *
+                                getCameraOrientationf().conjugate();
+        invMV = invModelView.matrix();
+    }
+
+    Affine3f transform = Translation3f(pos) * rp.orientation.conjugate();
+    Matrix4f planetMV  = (*m.modelview) * (transform * Scaling(scaleFactors)).matrix();
+
+    Matrix3f planetRotation = rp.orientation.toRotationMatrix();
+    ri.eyeDir_obj = -(planetRotation * pos).normalized();
+    ri.eyePos_obj = -(planetRotation * (pos.cwiseQuotient(scaleFactors)));
+
+    bool insidePlanet =
+        rp.geometry == engine::GeometryHandle::Invalid &&
+        (scaleFactors.x() == scaleFactors.y() && scaleFactors.x() == scaleFactors.z()
+             ? distance < static_cast<double>(scaleFactors.x())
+             : (planetRotation * pos).cwiseQuotient(scaleFactors).squaredNorm() < 1.0f);
+
+    ri.orientation = getCameraOrientationf() * rp.orientation.conjugate();
+    ri.pixWidth = discSizeInPixels;
+
+    if (ri.baseTex == nullptr ||
+        util::is_set(rp.surface->appearanceFlags, Surface::Flags::BlendTexture))
+    {
+        ri.color = rp.surface->color.linearize(gl::sRGBRendering);
+    }
+    ri.ambientColor = ambientColor;
+    ri.specularColor = rp.surface->specularColor.linearize(gl::sRGBRendering);
+    ri.specularPower = rp.surface->specularPower;
+    ri.lunarLambert = rp.surface->lunarLambert;
+
+    bool lit = !util::is_set(rp.surface->appearanceFlags, Surface::Flags::Emissive);
+
+    // Match renderObject's far plane so the atmosphere and clouds aren't clipped.
+    float frustumFarPlane = farPlaneDistance;
+    if (rp.geometry == engine::GeometryHandle::Invalid)
+    {
+        float d = pos.norm();
+        float eradius = scaleFactors.minCoeff();
+        if (d > eradius)
+            frustumFarPlane = std::sqrt(math::square(d) - math::square(eradius)) * 1.1f;
+
+        float atmosphereHeight = max(atmosphere->cloudHeight,
+                                     getAtmosphereShellHeight(atmosphere->mieScaleHeight));
+        if (atmosphereHeight > 0.0f)
+        {
+            float atmosphereRadius = eradius + atmosphereHeight;
+            frustumFarPlane += std::sqrt(math::square(atmosphereRadius) - math::square(eradius));
+        }
+    }
+
+    auto viewFrustum = projectionMode->getFrustum(nearPlaneDistance / radius, frustumFarPlane / radius, observer.getZoom());
+    viewFrustum.transform(invMV);
+
+    Texture* cloudTex       = nullptr;
+    Texture* cloudNormalMap = nullptr;
+    float cloudTexOffset    = 0.0f;
+    if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps))
+    {
+        if (atmosphere->cloudTexture != util::TextureHandle::Invalid)
+            cloudTex = m_textureManager->find(atmosphere->cloudTexture);
+        if (atmosphere->cloudNormalMap != util::TextureHandle::Invalid)
+            cloudNormalMap = m_textureManager->find(atmosphere->cloudNormalMap);
+    }
+    if (atmosphere->cloudSpeed != 0.0f)
+        cloudTexOffset = static_cast<float>(-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
+
+    renderAtmosphere(atmosphere, ri, ls, rp, pos, distance, radius,
+                     scaleFactors, insidePlanet, lit,
+                     cloudTex, cloudNormalMap, cloudTexOffset,
+                     viewFrustum, planetMV, m);
 }
 
 
@@ -2805,26 +3002,20 @@ bool Renderer::testEclipse(const Body& receiver,
 }
 
 
-void Renderer::renderPlanet(Body& body,
-                            const Vector3f& pos,
-                            double distance,
-                            float appMag,
-                            const Observer& observer,
-                            float nearPlaneDistance,
-                            float farPlaneDistance,
-                            const Matrices &m)
+// Builds the render properties, orientation and lighting (eclipse and ring
+// shadows) for a planet. Shared by the surface and atmosphere passes so their
+// lighting matches.
+void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
+                                   const Vector3f& pos,
+                                   double now,
+                                   float nearPlaneDistance,
+                                   float altitude,
+                                   RenderProperties& rp,
+                                   LightingState& lights,
+                                   Quaterniond& q)
 {
-    double now = observer.getTime();
-    float altitude = static_cast<float>(distance - body.getRadius());
-    float discSizeInPixels = body.getRadius() /
-        (max(nearPlaneDistance, altitude) * pixelSize);
+    auto bodyFeaturesManager = GetBodyFeaturesManager();
 
-    float maxDiscSize = (starStyle == StarStyle::ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
-    if (discSizeInPixels >= maxDiscSize && body.hasVisibleGeometry())
-    {
-        auto bodyFeaturesManager = GetBodyFeaturesManager();
-
-        RenderProperties rp;
         if (displayedSurface.empty())
         {
             rp.surface = &body.getSurface();
@@ -2842,7 +3033,7 @@ void Renderer::renderPlanet(Body& body,
         rp.semiAxes = body.getSemiAxes() * (1.0f / rp.radius);
         rp.geometryScale = body.getGeometryScale();
 
-        Quaterniond q = body.getRotationModel(now)->spin(now) *
+        q = body.getRotationModel(now)->spin(now) *
                         body.getEclipticToEquatorial(now);
 
         rp.orientation = body.getGeometryOrientation() * q.cast<float>();
@@ -2865,7 +3056,6 @@ void Renderer::renderPlanet(Body& body,
             scaleFactors = Vector3f::Constant(rp.geometryScale);
         }
 
-        LightingState lights;
         setupObjectLighting(lightSourceList,
                             secondaryIlluminators,
                             rp.orientation,
@@ -3005,6 +3195,51 @@ void Renderer::renderPlanet(Body& body,
             lights.ringShadows[li].texLod = lod;
         }
 
+}
+
+
+void Renderer::renderPlanet(Body& body,
+                            const Vector3f& pos,
+                            double distance,
+                            float appMag,
+                            const Observer& observer,
+                            float nearPlaneDistance,
+                            float farPlaneDistance,
+                            const Matrices &m)
+{
+    double now = observer.getTime();
+    float altitude = static_cast<float>(distance - body.getRadius());
+    float discSizeInPixels = body.getRadius() /
+        (max(nearPlaneDistance, altitude) * pixelSize);
+
+    float maxDiscSize = (starStyle == StarStyle::ScaledDiscStars) ? MaxScaledDiscStarSize : 1.0f;
+    if (discSizeInPixels >= maxDiscSize && body.hasVisibleGeometry())
+    {
+        auto bodyFeaturesManager = GetBodyFeaturesManager();
+
+        RenderProperties rp;
+        LightingState lights;
+        Quaterniond q;
+        setupPlanetLighting(body, pos, now, nearPlaneDistance, altitude, rp, lights, q);
+
+        // Cache this lighting so the atmosphere entry can reuse it this frame;
+        // only atmospheric bodies have such an entry. Copy the eclipse shadows
+        // and re-point at the copies, since lights.shadows aliases the shared
+        // eclipseShadows scratch.
+        if (rp.atmosphere != nullptr &&
+            (rp.atmosphere->height > 0.0f || rp.atmosphere->cloudTexture != util::TextureHandle::Invalid))
+        {
+            PlanetLightingCacheEntry& cache = planetLightingCache[&body];
+            cache.rp = rp;
+            cache.q = q;
+            cache.lights = lights;
+            for (unsigned int li = 0; li < lights.nLights; ++li)
+            {
+                cache.eclipseShadows[li] = eclipseShadows[li];
+                cache.lights.shadows[li] = &cache.eclipseShadows[li];
+            }
+        }
+
         renderObject(pos, distance, observer,
                      nearPlaneDistance, farPlaneDistance,
                      rp, lights, m);
@@ -3046,7 +3281,8 @@ void Renderer::renderRingSystem(Body& body,
                                 float distance,
                                 const Observer& observer,
                                 float nearPlaneDistance,
-                                const Matrices &m)
+                                const Matrices &m,
+                                celestia::render::RingRenderHalf renderHalf)
 {
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
@@ -3099,16 +3335,28 @@ void Renderer::renderRingSystem(Body& body,
         ringsScaleFactor = geometryScale;
     }
 
+    // Reuse the ring lighting across the near and far half draws. Only the split
+    // draws in two halves, so the whole-ring (Both) case skips the cache.
     LightingState lights;
-    setupObjectLighting(lightSourceList,
-                        secondaryIlluminators,
-                        bodyOrientation,
-                        scaleFactors,
-                        pos,
-                        isNormalized,
-                        lights);
-    assert(lights.nLights <= MaxLights);
-    lights.ambientColor = ambientColor.toVector3();
+    bool split = renderHalf != celestia::render::RingRenderHalf::Both;
+    if (auto it = ringLightingCache.find(&body); split && it != ringLightingCache.end())
+    {
+        lights = it->second;
+    }
+    else
+    {
+        setupObjectLighting(lightSourceList,
+                            secondaryIlluminators,
+                            bodyOrientation,
+                            scaleFactors,
+                            pos,
+                            isNormalized,
+                            lights);
+        assert(lights.nLights <= MaxLights);
+        lights.ambientColor = ambientColor.toVector3();
+        if (split)
+            ringLightingCache[&body] = lights;
+    }
 
     // Build the rings model-view matrix.
     Affine3f transform = Translation3f(pos) * bodyOrientation.conjugate();
@@ -3134,12 +3382,21 @@ void Renderer::renderRingSystem(Body& body,
 
     float segmentSizeInPixels = 2.0f * rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
 
+    // Atmosphere shell radius in planet-radius units, matching the far half
+    // drawn inline by renderObject so the split boundary is identical.
+    const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(&body);
+    float atmosphereRadius = (atmosphere != nullptr && atmosphere->height > 0.0f)
+        ? (radius + atmosphere->height) / radius
+        : 0.0f;
+
     m_ringRenderer->renderRings(*rings, ri, lights,
                                 radius, 1.0f - semiAxes.y(),
                                 renderShadow,
                                 segmentSizeInPixels,
                                 ringsMVP,
-                                false);
+                                false,
+                                renderHalf,
+                                atmosphereRadius);
 }
 
 
@@ -3395,7 +3652,7 @@ static bool isBodyVisible(const Body* body, BodyClassification bodyVisibilityMas
     }
 }
 
-void Renderer::addRenderListEntries(RenderListEntry& rle,
+void Renderer::addRenderListEntries(RenderListEntry& rle, // NOSONAR(cpp:S3776)
                                     Body& body,
                                     bool isLabeled)
 {
@@ -3423,20 +3680,72 @@ void Renderer::addRenderListEntries(RenderListEntry& rle,
         renderList.push_back(rle);
     }
 
-    if (const RingSystem* rings = bodyFeaturesManager->getRings(&body);
-        rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings))
+    // Rings, atmosphere and clouds are transparent entries sorted with other
+    // geometry. When the atmosphere hides the rings, the disc splits into far
+    // and near halves so the order is far ring, atmosphere, near ring.
+    const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(&body);
+    const RingSystem* rings = bodyFeaturesManager->getRings(&body);
+    bool showRings = rings != nullptr && util::is_set(renderFlags, RenderFlags::ShowPlanetRings);
+    float ringDiscSize = showRings
+        ? static_cast<float>((rings->outerRadius / rle.distance) / pixelSize)
+        : 0.0f;
+
+    // Inside the rings they are drawn inline, so only add entries from outside.
+    bool outsideRings = showRings && ringDiscSize > 1 && rle.distance > rings->innerRadius;
+
+    bool splitAroundAtmosphere =
+        outsideRings &&
+        util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+        atmosphereObscuresRings(atmosphere,
+                                static_cast<float>(rle.distance - body.getRadius()),
+                                pixelSize);
+
+    if (atmosphere != nullptr &&
+        (atmosphere->height > 0.0f || atmosphere->cloudTexture != util::TextureHandle::Invalid) &&
+        rle.discSizeInPixels > 1)
     {
-        // When the observer is inside the rings (distance <= innerRadius) the
-        // rings are drawn inline by renderObject. Only add a separate
-        // transparent render-list entry for the outside case.
-        float ringDiscSize = static_cast<float>((rings->outerRadius / rle.distance) / pixelSize);
-        if (ringDiscSize > 1 && rle.distance > rings->innerRadius)
+        float atmosphereRadius = body.getRadius() + atmosphere->height;
+
+        rle.renderableType = RenderListEntry::RenderableAtmosphere;
+        rle.body = &body;
+        rle.isOpaque = false;
+        rle.radius = atmosphereRadius;
+        rle.renderOrder = 0;
+        rle.discSizeInPixels = static_cast<float>((atmosphereRadius / rle.distance) / pixelSize);
+
+        // Rank behind the near half, sharing the ring radius as the sort key.
+        if (splitAroundAtmosphere)
+        {
+            rle.radius = rings->outerRadius;
+            rle.renderOrder = 1;
+        }
+
+        renderList.push_back(rle);
+        rle.renderOrder = 0;
+    }
+
+    if (outsideRings)
+    {
+        rle.body = &body;
+        rle.isOpaque = false;
+        rle.radius = rings->outerRadius;
+        rle.discSizeInPixels = ringDiscSize;
+
+        if (splitAroundAtmosphere)
+        {
+            // Far half behind the atmosphere, near half in front.
+            rle.renderableType = RenderListEntry::RenderableRingSystemFar;
+            rle.renderOrder = 2;
+            renderList.push_back(rle);
+
+            rle.renderableType = RenderListEntry::RenderableRingSystemNear;
+            rle.renderOrder = 0;
+            renderList.push_back(rle);
+        }
+        else
         {
             rle.renderableType = RenderListEntry::RenderableRingSystem;
-            rle.body = &body;
-            rle.isOpaque = false;
-            rle.radius = rings->outerRadius;
-            rle.discSizeInPixels = ringDiscSize;
+            rle.renderOrder = 0;
             renderList.push_back(rle);
         }
     }
@@ -5286,6 +5595,9 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         case RenderListEntry::RenderableCometTail:
         case RenderListEntry::RenderableReferenceMark:
         case RenderListEntry::RenderableRingSystem:
+        case RenderListEntry::RenderableRingSystemNear:
+        case RenderListEntry::RenderableRingSystemFar:
+        case RenderListEntry::RenderableAtmosphere:
             radius = ri.radius;
             cullRadius = radius;
             convex = false;
@@ -5427,7 +5739,9 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
               [](const RenderListEntry& a, const RenderListEntry& b)
               {
                   // Operation is reversed because -z axis points into the screen
-                  return a.centerZ - a.radius > b.centerZ - b.radius;
+                  if (float ka = a.centerZ - a.radius, kb = b.centerZ - b.radius; ka != kb)
+                      return ka > kb;
+                  return a.renderOrder < b.renderOrder;
               });
 }
 

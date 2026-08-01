@@ -286,6 +286,8 @@ public:
 
     FloatShaderParameter ringWidth;
     FloatShaderParameter ringRadius;
+    FloatShaderParameter ringHalf;
+    FloatShaderParameter ringAtmosphereRadius;
     Vec4ShaderParameter ringPlane;
     Vec3ShaderParameter ringCenter;
 

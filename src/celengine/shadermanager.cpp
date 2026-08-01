@@ -1879,6 +1879,8 @@ buildRingsFragmentShader(const ShaderProperties& props)
     source += FragmentHeader;
 
     source += DeclareUniform("ambientColor", Shader_Vector3);
+    source += DeclareUniform("ringHalf", Shader_Float);
+    source += DeclareUniform("ringAtmosphereRadius", Shader_Float);
 
     source += DeclareLights(props);
 
@@ -1909,7 +1911,24 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     source += "\nvoid main(void)\n{\n";
 
-    source += "vec4 diff = vec4(ambientColor, 1.0);\n";
+    // When splitting the ring around the atmosphere, drop the half that belongs
+    // to the other side. A fragment is behind the atmosphere when the eye->
+    // fragment ray crosses the shell, i.e. a ray-sphere root lies in (0, 1).
+    // The eye and ring are always outside the shell here (the split only runs
+    // outside the rings, which dwarf the atmosphere), so the test needs no sqrt
+    // or divide: b < 0 and a + b > 0 place the near root in (0, 1), b*b >= a*c
+    // makes the roots real. The drop uses alpha 0, not discard, so every lane
+    // stays alive and texture derivatives match an unsplit draw (no mip seam).
+    source += "bool dropFragment = false;\n"
+              "if (ringHalf != 0.0)\n{\n"
+              "    vec3 ringDir = position - eyePosition;\n"
+              "    float a = dot(ringDir, ringDir);\n"
+              "    float b = dot(eyePosition, ringDir);\n"
+              "    float c = dot(eyePosition, eyePosition) - ringAtmosphereRadius * ringAtmosphereRadius;\n"
+              "    bool behind = b < 0.0 && a + b > 0.0 && b * b >= a * c;\n"
+              "    dropFragment = (ringHalf > 0.0 && behind) || (ringHalf < 0.0 && !behind);\n"
+              "}\n"
+              "vec4 diff = vec4(ambientColor, 1.0);\n";
 
     // Get the normalized direction from the eye to the vertex
     source += "vec3 eyeDir = normalize(eyePosition - position);\n";
@@ -1965,6 +1984,7 @@ buildRingsFragmentShader(const ShaderProperties& props)
         }
     }
 
+    source += "if (dropFragment) opticalDepth = 0.0;\n";
     source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
 
     source += "}\n";
@@ -2924,6 +2944,8 @@ CelestiaGLProgram::initParameters()
     {
         ringWidth            = floatParam("ringWidth");
         ringRadius           = floatParam("ringRadius");
+        ringHalf             = floatParam("ringHalf");
+        ringAtmosphereRadius = floatParam("ringAtmosphereRadius");
     }
 
     textureOffset = floatParam("texCoordOffset");

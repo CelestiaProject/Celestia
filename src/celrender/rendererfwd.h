@@ -15,6 +15,7 @@ class NebulaRenderer;
 class OpenClusterRenderer;
 class PsfGlowLargeRenderer;
 class ReferenceMarkRenderer;
+enum class RingRenderHalf : int;
 class RingRenderer;
 class SkyGridRenderer;
 }

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <Eigen/Core>
 
 class Star;
@@ -23,6 +25,9 @@ struct RenderListEntry
         RenderableStar,
         RenderableBody,
         RenderableRingSystem,
+        RenderableRingSystemNear,
+        RenderableRingSystemFar,
+        RenderableAtmosphere,
         RenderableCometTail,
         RenderableReferenceMark,
     };
@@ -45,4 +50,8 @@ struct RenderListEntry
     float appMag;
     RenderableType renderableType;
     bool isOpaque;
+
+    // Tie-break rank for co-centered transparent entries. A larger value sorts
+    // farther and is drawn earlier: far ring, atmosphere, near ring.
+    std::uint8_t renderOrder{ 0 };
 };
