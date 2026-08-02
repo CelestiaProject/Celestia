@@ -415,7 +415,7 @@ AtmosphereRenderer::render(
         setupAtmosphereProgram(transmissionProg);
         ps.blendFunc = {GL_ZERO, GL_SRC_COLOR};
         m_renderer.setPipelineState(ps);
-        m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
+        m_renderer.m_lodSphere->render(0,
                                        shellFrustum,
                                        ri.pixWidth,
                                        nullptr);
@@ -430,7 +430,7 @@ AtmosphereRenderer::render(
 
         ps.blendFunc = {GL_ONE, scatteringBlendDestination};
         m_renderer.setPipelineState(ps);
-        m_renderer.m_lodSphere->render(LODSphereMesh::Normals,
+        m_renderer.m_lodSphere->render(0,
                                        shellFrustum,
                                        ri.pixWidth,
                                        nullptr);
