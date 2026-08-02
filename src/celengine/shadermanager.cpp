@@ -2012,15 +2012,15 @@ buildAtmosphereVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
 
     source += DeclareLights(props);
     source += DeclareUniform("eyePosition", Shader_Vector3);
-    source += DeclareOutput("position", Shader_Vector3);
-    source += DeclareOutput("normal", Shader_Vector3);
+    // centroid avoids MSAA extrapolating position past the triangle at the shell
+    // silhouette, which over-brightens edge samples into dashes along the limb.
+    source += "centroid " + DeclareOutput("position", Shader_Vector3);
 
     source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     // Begin main() function
     source += "\nvoid main(void)\n{\n";
     source += "    position = in_Position.xyz;\n";
-    source += "    normal = in_Normal;\n";
     source += VertexPosition(props);
     source += "}\n";
 
@@ -2056,8 +2056,8 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += DeclareUniform("eyePosition", Shader_Vector3);
     source += ScatteringConstantDeclarations(props);
 
-    source += DeclareInput("position", Shader_Vector3);
-    source += DeclareInput("normal", Shader_Vector3);
+    // Must match the centroid output in buildAtmosphereVertexShader.
+    source += "centroid " + DeclareInput("position", Shader_Vector3);
 
     if (!transmissionOnly)
     {
@@ -2068,9 +2068,7 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "\nvoid main(void)\n{\n";
 
     source += "vec3 nposition = normalize(position);\n";
-    source += "vec3 N = normalize(normal);\n";
     source += "vec3 eyeDir = normalize(eyePosition - nposition);\n";
-    source += "float NV = dot(N, eyeDir);\n";
 
     source += DeclareLocal("scatterEx", Shader_Vector3);
     if (transmissionOnly)
@@ -2080,7 +2078,6 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
     }
     else
     {
-        source += DeclareLocal("NL", Shader_Float);
         source += AtmosphericEffects(props);
 
         // Sum the contributions from each light source, currently only the primary one.
