@@ -97,7 +97,8 @@ bool FFMPEGCapturePrivate::init(const std::filesystem::path& filename)
 
 bool FFMPEGCapturePrivate::isSupportedPixelFormat(enum AVPixelFormat format) const
 {
-    const enum AVPixelFormat *p = vc->pix_fmts;
+#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 19, 100)) // ffmpeg < 7.1
+    const AVPixelFormat* p = vc->pix_fmts;
     if (p == nullptr)
         return false;
 
@@ -108,6 +109,20 @@ bool FFMPEGCapturePrivate::isSupportedPixelFormat(enum AVPixelFormat format) con
     }
 
     return false;
+#else
+    const void* p;
+    int ret = avcodec_get_supported_config(enc, vc, AV_CODEC_CONFIG_PIX_FORMAT, 0, &p, nullptr);
+    if (ret < 0)
+        return false;
+
+    for (auto f = static_cast<const AVPixelFormat*>(p); *f != AV_PIX_FMT_NONE; ++f)
+    {
+        if (*f == format)
+            return true;
+    }
+
+    return false;
+#endif
 }
 
 #if AVCODEC_DEBUG
@@ -267,7 +282,15 @@ bool FFMPEGCapturePrivate::addStream(int width, int height, float fps)
     }
     else
     {
+#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 19, 100)) // ffmpeg < 7.1
         enc->pix_fmt = avcodec_find_best_pix_fmt_of_list(vc->pix_fmts, format, 0, nullptr);
+#else
+        const void* p;
+        int ret = avcodec_get_supported_config(enc, vc, AV_CODEC_CONFIG_PIX_FORMAT, 0, &p, nullptr);
+        enc->pix_fmt = ret >= 0
+            ? avcodec_find_best_pix_fmt_of_list(static_cast<const AVPixelFormat*>(p), format, 0, nullptr)
+            : AV_PIX_FMT_NONE;
+#endif
         if (enc->pix_fmt == AV_PIX_FMT_NONE)
             avcodec_default_get_format(enc, &(enc->pix_fmt));
     }
@@ -448,7 +471,7 @@ bool FFMPEGCapturePrivate::writeVideoFrame(bool finalize)
         frame->pts = nextPts++;
     }
 
-#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 133, 100))
+#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 133, 100)) // ffmpeg < 4.4
     av_init_packet(pkt);
 #endif
 
