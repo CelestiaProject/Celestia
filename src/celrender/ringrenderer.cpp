@@ -44,6 +44,7 @@ struct RingVertex
 ShaderProperties
 createShaderProperties(const LightingState& ls,
                        const Texture* ringsTex,
+                       const Texture* phaseTex,
                        bool renderShadow)
 {
     // Set up the shader properties for ring rendering
@@ -59,7 +60,9 @@ createShaderProperties(const LightingState& ls,
     }
 
     if (ringsTex != nullptr)
-        shadprop.texUsage = TexUsage::DiffuseTexture;
+        shadprop.texUsage |= TexUsage::DiffuseTexture;
+    if (phaseTex != nullptr)
+        shadprop.texUsage |= TexUsage::RingPhaseTexture;
 
     return shadprop;
 }
@@ -160,8 +163,9 @@ RingRenderer::renderRings(const RingSystem& rings,
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
     Texture* ringsTex = renderer.getTextureManager()->find(rings.texture);
+    Texture* phaseTex = renderer.getTextureManager()->find(rings.phaseTexture);
 
-    ShaderProperties shadprop = createShaderProperties(ls, ringsTex, renderShadow);
+    ShaderProperties shadprop = createShaderProperties(ls, ringsTex, phaseTex, renderShadow);
 
     // Get a shader for the current rendering configuration
     auto* prog = renderer.getShaderManager().getShader(shadprop);
@@ -192,11 +196,22 @@ RingRenderer::renderRings(const RingSystem& rings,
     }
     prog->ringHalf = ringHalf;
     prog->ringAtmosphereRadius = atmosphereRadius;
+    prog->ringColor = rings.color.linearize(gl::sRGBRendering).toVector3();
 
     setUpShadowParameters(prog, ls, planetOblateness);
 
+    unsigned int textureUnit = 0;
     if (ringsTex != nullptr)
+    {
+        glActiveTexture(GL_TEXTURE0 + textureUnit++);
         ringsTex->bind();
+    }
+    if (phaseTex != nullptr)
+    {
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
+        phaseTex->bind();
+    }
+    glActiveTexture(GL_TEXTURE0);
 
     // Determine level of detail
     std::uint32_t nSections = BaseSectionCount;
@@ -211,7 +226,10 @@ RingRenderer::renderRings(const RingSystem& rings,
 
     Renderer::PipelineState ps;
     ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    if (phaseTex != nullptr)
+        ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
+    else
+        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
     ps.depthTest = true;
     ps.depthMask = inside;
     renderer.setPipelineState(ps);

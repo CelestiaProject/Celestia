@@ -824,6 +824,17 @@ void ReadRings(Body* body,
             : texturePaths.getHandle(*textureName, path);
     }
 
+    if (auto textureName = GetFilename(ringsData, "PhaseFunctionTexture"sv,
+                                       "Invalid filename in rings PhaseFunctionTexture\n");
+        textureName.has_value())
+    {
+        constexpr auto phaseTextureFlags = engine::TextureFlags::LinearColorspace
+                                         | engine::TextureFlags::NoMipMaps;
+        rings->phaseTexture = textureName->empty()
+            ? util::TextureHandle::Invalid
+            : texturePaths.getHandle(*textureName, path, phaseTextureFlags);
+    }
+
     if (newRings != nullptr)
         bodyFeaturesManager->setRings(body, std::move(newRings));
 }
