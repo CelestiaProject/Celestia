@@ -398,6 +398,26 @@ DeclareLights(const ShaderProperties& props)
             source += DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
             source += DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
+        if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+            source += DeclareUniform(fmt::format("light{}_angularRadius", i), Shader_Float);
+    }
+
+    return source;
+}
+
+std::string
+DeclareEclipseShadowUniforms(const ShaderProperties& props)
+{
+    std::string source;
+    for (unsigned int i = 0; i < props.nLights; ++i)
+    {
+        for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); ++j)
+        {
+            source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+            source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+            source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+            source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
+        }
     }
 
     return source;
@@ -1540,18 +1560,7 @@ buildFragmentShader(const ShaderProperties& props)
 
     // Declare shadow parameters
     if (props.hasEclipseShadows())
-    {
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
-            {
-                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
-                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
-            }
-        }
-    }
+        source += DeclareEclipseShadowUniforms(props);
 
     if (props.hasRingShadows())
     {
@@ -1895,15 +1904,15 @@ buildRingsVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
         source += DeclareOutput("shadowDepths", Shader_Vector4);
     }
 
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += DeclareOutput("diffTexCoord", Shader_Vector2);
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture | TexUsage::RingPhaseTexture))
+        source += DeclareOutput("ringTexCoord", Shader_Vector2);
 
     source += VPFunction(props.fishEyeOverride != FisheyeOverrideMode::Disabled && fisheyeEnabled);
 
     source += "\nvoid main(void)\n{\n";
 
-    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "diffTexCoord = " + TexCoord2D(0, false) + ";\n";
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture | TexUsage::RingPhaseTexture))
+        source += "ringTexCoord = " + TexCoord2D(0, false) + ";\n";
 
     source += "position = in_Position.xyz * (ringRadius + ringWidth * in_TexCoord0.s);\n";
     if (props.hasEclipseShadows())
@@ -1927,6 +1936,86 @@ buildRingsVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     return GLVertexShader{};
 }
 
+std::string
+RingShadowDeclarations(const ShaderProperties& props)
+{
+    if (!props.hasEclipseShadows())
+        return {};
+
+    return DeclareInput("shadowDepths", Shader_Vector4)
+         + DeclareEclipseShadowUniforms(props);
+}
+
+void
+AddRingLightSource(std::string& source, const ShaderProperties& props, unsigned int lightIndex)
+{
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+    {
+        source += "lightCosine = max(abs(" + LightProperty(lightIndex, "direction") + ".y), 1.0e-4);\n";
+        source += "cosPhaseAngle = clamp(dot(" + LightProperty(lightIndex, "direction") +
+                  ", eyeDir), -1.0, 1.0);\n";
+        // The LUT stores log2(omega * P) over radius and scattering angle.
+        // Its fourth-root angle coordinate resolves the narrow diffraction
+        // lobe without embedding a planet-specific minimum angle.
+        source += "scatteringAngle = max(acos(-cosPhaseAngle), " +
+                  LightProperty(lightIndex, "angularRadius") + ");\n";
+        source += "phaseCoord = 1.0 - pow(clamp(scatteringAngle / 3.141592653589793,"
+                  " 0.0, 1.0), 0.25);\n";
+        source += "scatteringSource = exp2(mix(vec3(-24.0), vec3(16.0),"
+                  " texture(ringPhaseTex, vec2(ringTexCoord.s, phaseCoord)).rgb));\n";
+        source += "scatteringSource *= ringColor;\n";
+
+        // Classical single scattering for a plane-parallel particulate
+        // layer: Salo & Karjalainen (2003), Icarus 164, Eq. 33.
+        source += "if (" + LightProperty(lightIndex, "direction") + ".y * eyeDir.y > 0.0)\n{\n";
+        source += "    intensity = lightCosine / (4.0 * (viewCosine + lightCosine))"
+                  " * (1.0 - exp(-opticalDepth"
+                  " * (1.0 / viewCosine + 1.0 / lightCosine)));\n";
+        source += "}\nelse\n{\n";
+        source += "    float cosineDifference = viewCosine - lightCosine;\n";
+        source += "    if (abs(cosineDifference) > 1.0e-4)\n";
+        source += "        intensity = lightCosine / (4.0 * cosineDifference)"
+                  " * (exp(-opticalDepth / viewCosine) - exp(-opticalDepth / lightCosine));\n";
+        source += "    else\n";
+        source += "        intensity = opticalDepth / (4.0 * lightCosine)"
+                  " * exp(-opticalDepth / lightCosine);\n";
+        source += "}\n";
+    }
+    else
+    {
+        source += "litSide = 1.0 - step(0.0, " + LightProperty(lightIndex, "direction") +
+                  ".y * eyeDir.y);\n";
+        source += "intensity = (dot(" + LightProperty(lightIndex, "direction") +
+                  ", eyeDir) + 1.0) * 0.5;\n";
+        source += "intensity = mix(intensity, intensity * (1.0 - opticalDepth), litSide);\n";
+    }
+
+    if (props.getEclipseShadowCountForLight(lightIndex) > 0)
+    {
+        source += "shadow = 1.0;\n";
+        source += Shadow(lightIndex, 0);
+        source += "shadow = min(1.0, shadow + step(0.0, " + ShadowDepth(lightIndex) + "));\n";
+        if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+        {
+            source += "litColor += (shadow * intensity) * " +
+                      LightProperty(lightIndex, "diffuse") + " * scatteringSource;\n";
+        }
+        else
+        {
+            source += "diff.rgb += (shadow * intensity) * " +
+                      LightProperty(lightIndex, "diffuse") + ";\n";
+        }
+    }
+    else if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+    {
+        source += "litColor += intensity * " + LightProperty(lightIndex, "diffuse") +
+                  " * scatteringSource;\n";
+    }
+    else
+    {
+        source += "diff.rgb += intensity * " + LightProperty(lightIndex, "diffuse") + ";\n";
+    }
+}
 
 GLFragmentShader
 buildRingsFragmentShader(const ShaderProperties& props)
@@ -1938,33 +2027,23 @@ buildRingsFragmentShader(const ShaderProperties& props)
     source += DeclareUniform("ambientColor", Shader_Vector3);
     source += DeclareUniform("ringHalf", Shader_Float);
     source += DeclareUniform("ringAtmosphereRadius", Shader_Float);
+    source += DeclareUniform("ringColor", Shader_Vector3);
 
     source += DeclareLights(props);
 
     source += DeclareUniform("eyePosition", Shader_Vector3);
     source += DeclareInput("position", Shader_Vector3);
 
+    if (util::is_set(props.texUsage, TexUsage::DiffuseTexture | TexUsage::RingPhaseTexture))
+        source += DeclareInput("ringTexCoord", Shader_Vector2);
+
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-    {
-        source += DeclareInput("diffTexCoord", Shader_Vector2);
         source += DeclareUniform("diffTex", Shader_Sampler2D);
-    }
 
-    if (props.hasEclipseShadows())
-    {
-        source += DeclareInput("shadowDepths", Shader_Vector4);
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+        source += DeclareUniform("ringPhaseTex", Shader_Sampler2D);
 
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
-            {
-                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
-                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
-            }
-        }
-    }
+    source += RingShadowDeclarations(props);
 
     source += "\nvoid main(void)\n{\n";
 
@@ -1984,18 +2063,38 @@ buildRingsFragmentShader(const ShaderProperties& props)
               "    float c = dot(eyePosition, eyePosition) - ringAtmosphereRadius * ringAtmosphereRadius;\n"
               "    bool behind = b < 0.0 && a + b > 0.0 && b * b >= a * c;\n"
               "    dropFragment = (ringHalf > 0.0 && behind) || (ringHalf < 0.0 && !behind);\n"
-              "}\n"
-              "vec4 diff = vec4(ambientColor, 1.0);\n";
+              "}\n";
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+        source += "vec3 litColor;\n";
+    else
+        source += "vec4 diff = vec4(ambientColor, 1.0);\n";
 
     // Get the normalized direction from the eye to the vertex
     source += "vec3 eyeDir = normalize(eyePosition - position);\n";
 
     source += DeclareLocal("color", Shader_Vector4);
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
-        source += "color = texture(diffTex, diffTexCoord.st);\n";
+        source += "color = texture(diffTex, ringTexCoord.st);\n";
     else
         source += "color = vec4(1.0);\n";
-    source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+    {
+        source += DeclareLocal("particleAlbedo", Shader_Vector3,
+                               "clamp(color.rgb * ringColor, 0.0, 1.0)");
+        // Existing ring assets store normal opacity. Beer-Lambert inversion
+        // gives the normal optical depth required by the slab equations.
+        source += DeclareLocal("normalOpacity", Shader_Float, "clamp(color.a, 0.0, 1.0)");
+        source += DeclareLocal("opticalDepth", Shader_Float,
+                               "-log(max(1.0 - normalOpacity, 1.0e-6))");
+        source += DeclareLocal("viewCosine", Shader_Float, "max(abs(eyeDir.y), 1.0e-4)");
+        source += DeclareLocal("viewOpacity", Shader_Float,
+                               "1.0 - exp(-opticalDepth / viewCosine)");
+        source += "litColor = particleAlbedo * ambientColor * viewOpacity;\n";
+    }
+    else
+    {
+        source += DeclareLocal("opticalDepth", Shader_Float, "color.a");
+    }
     if (props.hasEclipseShadows())
     {
         // Temporaries required for shadows
@@ -2006,43 +2105,35 @@ buildRingsFragmentShader(const ShaderProperties& props)
 
     // Sum the contributions from each light source
     source += DeclareLocal("intensity", Shader_Float);
-    source += DeclareLocal("litSide", Shader_Float);
-
-    for (unsigned i = 0; i < props.nLights; i++)
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
     {
-        // litSide is 1 when viewer and light are on the same side of the rings, 0 otherwise
-        source += "litSide = 1.0 - step(0.0, " + LightProperty(i, "direction") + ".y * eyeDir.y);\n";
-        //source += assign("litSide", 1.0f - step(0.0f, sh_vec3("eyePosition")["y"]));
-
-        source += "intensity = (dot(" + LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
-        source += "intensity = mix(intensity, intensity * (1.0 - opticalDepth), litSide);\n";
-        if (props.getEclipseShadowCountForLight(i) > 0)
-        {
-            source += "shadow = 1.0;\n";
-            source += Shadow(i, 0);
-            source += "shadow = min(1.0, shadow + step(0.0, " + ShadowDepth(i) + "));\n";
-#if 0
-            source += "diff.rgb += (shadow * " + SeparateDiffuse(i) + ") * " +
-                FragLightProperty(i, "color") + ";\n";
-#endif
-            source += "diff.rgb += (shadow * intensity) * " + LightProperty(i, "diffuse") + ";\n";
-        }
-        else
-        {
-            source += "diff.rgb += intensity * " + LightProperty(i, "diffuse") + ";\n";
-#if 0
-            source += SeparateDiffuse(i) + " = (dot(" +
-                LightProperty(i, "direction") + ", eyeDir) + 1.0) * 0.5;\n";
-#endif
-#if 0
-            source += "diff.rgb += " + SeparateDiffuse(i) + " * " +
-                FragLightProperty(i, "color") + ";\n";
-#endif
-        }
+        source += DeclareLocal("lightCosine", Shader_Float);
+        source += DeclareLocal("cosPhaseAngle", Shader_Float);
+        source += DeclareLocal("scatteringSource", Shader_Vector3);
+        source += DeclareLocal("scatteringAngle", Shader_Float);
+        source += DeclareLocal("phaseCoord", Shader_Float);
+    }
+    else
+    {
+        source += DeclareLocal("litSide", Shader_Float);
     }
 
-    source += "if (dropFragment) opticalDepth = 0.0;\n";
-    source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
+    for (unsigned int i = 0; i < props.nLights; ++i)
+        AddRingLightSource(source, props, i);
+
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+    {
+        source += "if (dropFragment)\n{\n";
+        source += "    litColor = vec3(0.0);\n";
+        source += "    viewOpacity = 0.0;\n";
+        source += "}\n";
+        source += "fragColor = vec4(litColor, viewOpacity);\n";
+    }
+    else
+    {
+        source += "if (dropFragment) opticalDepth = 0.0;\n";
+        source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
+    }
 
     source += "}\n";
 
@@ -2117,18 +2208,7 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += "centroid " + DeclareInput("position", Shader_Vector3);
 
     if (props.hasEclipseShadows())
-    {
-        for (unsigned int i = 0; i < props.nLights; ++i)
-        {
-            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); ++j)
-            {
-                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
-                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
-            }
-        }
-    }
+        source += DeclareEclipseShadowUniforms(props);
 
     if (props.hasRingShadowForLight(0))
     {
@@ -2406,16 +2486,7 @@ buildParticleFragmentShader(const ShaderProperties& props)
     if (props.usesShadows())
     {
         source += DeclareInput("position", Shader_Vector3);
-        for (unsigned int i = 0; i < props.nLights; i++)
-        {
-            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); j++)
-            {
-                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
-                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
-                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
-            }
-        }
+        source += DeclareEclipseShadowUniforms(props);
     }
 
     source += DeclareInput("v_Color", Shader_Vector4);
@@ -2961,10 +3032,9 @@ CelestiaGLProgram::initCommonParameters()
 }
 
 void
-CelestiaGLProgram::initParameters()
+CelestiaGLProgram::initLightParameters()
 {
-    initCommonParameters();
-    for (unsigned int i = 0; i < props.nLights; i++)
+    for (unsigned int i = 0; i < props.nLights; ++i)
     {
         lights[i].direction  = vec3Param(LightProperty(i, "direction").c_str());
         lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse").c_str());
@@ -2972,6 +3042,8 @@ CelestiaGLProgram::initParameters()
         lights[i].halfVector = vec3Param(LightProperty(i, "halfVector").c_str());
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
             lights[i].brightness = floatParam(LightProperty(i, "brightness").c_str());
+        if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+            lights[i].angularRadius = floatParam(LightProperty(i, "angularRadius").c_str());
         if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
             lights[i].color = vec3Param(LightProperty(i, "color").c_str());
 
@@ -2989,6 +3061,13 @@ CelestiaGLProgram::initParameters()
                 floatParam(IndexedParameter("shadowMaxDepth", i, j).c_str());
         }
     }
+}
+
+void
+CelestiaGLProgram::initParameters()
+{
+    initCommonParameters();
+    initLightParameters();
 
     if (props.hasTextureCoordTransform())
     {
@@ -3026,6 +3105,7 @@ CelestiaGLProgram::initParameters()
         ringRadius           = floatParam("ringRadius");
         ringHalf             = floatParam("ringHalf");
         ringAtmosphereRadius = floatParam("ringAtmosphereRadius");
+        ringColor            = vec3Param("ringColor");
     }
 
     textureOffset = floatParam("texCoordOffset");
@@ -3085,6 +3165,13 @@ CelestiaGLProgram::initSamplers()
     if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
     {
         if (GLint slot = glGetUniformLocation(program.getID(), "diffTex"); slot != -1)
+            glUniform1i(slot, nSamplers);
+        nSamplers++;
+    }
+
+    if (util::is_set(props.texUsage, TexUsage::RingPhaseTexture))
+    {
+        if (GLint slot = glGetUniformLocation(program.getID(), "ringPhaseTex"); slot != -1)
             glUniform1i(slot, nSamplers);
         nSamplers++;
     }
@@ -3165,6 +3252,7 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         lights[i].direction = light.direction_obj;
         lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
         lights[i].brightness = lightColor.maxCoeff();
+        lights[i].angularRadius = std::asin(std::clamp(light.apparentSize, 0.0f, 1.0f));
         lights[i].specular = lightColor.cwiseProduct(specularColor);
 
         Eigen::Vector3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
