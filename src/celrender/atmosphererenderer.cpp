@@ -366,13 +366,11 @@ AtmosphereRenderer::render(
     if (shadprop.nLights > 0 &&
         ls.lights[0].castsShadows &&
         ls.shadowingRingSystem != nullptr &&
-        ls.shadowingRingSystem == ls.ringShadows[0].ringSystem)
+        ls.shadowingRingSystem == ls.ringShadows[0].ringSystem &&
+        m_renderer.getTextureManager()->findShadow(ls.shadowingRingSystem->texture) != nullptr)
     {
-        if (m_renderer.getTextureManager()->findShadow(ls.shadowingRingSystem->texture) != nullptr)
-        {
-            shadprop.texUsage |= TexUsage::RingShadowTexture;
-            shadprop.setRingShadowForLight(0, true);
-        }
+        shadprop.texUsage |= TexUsage::RingShadowTexture;
+        shadprop.setRingShadowForLight(0, true);
     }
 
     bool useDualSource = false;

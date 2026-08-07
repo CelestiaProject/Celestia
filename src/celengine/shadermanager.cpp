@@ -630,12 +630,16 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 
     if (props.hasRingShadowForLight(light))
     {
-        if (light == 0)
-            source += DeclareLocal("ringShadowTexCoordX", Shader_Float);
-        source += "ringShadowTexCoordX = " +  RingShadowTexCoord(light) + ";\n";
+        const std::string ringShadowTexCoord = IndexedParameter("ringShadowTexCoord", light);
 
-        source += "if (ringShadowTexCoordX >= 0.0 && ringShadowTexCoordX <= 1.0)\n{\n";
-        source += "shadow *= 1.0 - textureLod(ringTex, vec2(ringShadowTexCoordX, 0.0), " + IndexedParameter("ringShadowLOD", light) + ").a;\n";
+        source += DeclareLocal(ringShadowTexCoord,
+                               Shader_Float,
+                               RingShadowTexCoord(light));
+        source += "if ((dot(position * ringScale, ringPlane.xyz) + ringPlane.w) * dot(" +
+                  LightProperty(light, "direction") + ", ringPlane.xyz) <= 0.0 &&\n";
+        source += "    " + ringShadowTexCoord + " >= 0.0 && " + ringShadowTexCoord + " <= 1.0)\n{\n";
+        source += "shadow *= 1.0 - textureLod(ringTex, vec2(" + ringShadowTexCoord + ", 0.0), " +
+                  IndexedParameter("ringShadowLOD", light) + ").a;\n";
         source += "}\n";
     }
 
@@ -1276,7 +1280,8 @@ R"glsl(
     if (props.lightModel == LightingModel::UnlitModel && util::is_set(props.texUsage, TexUsage::VertexColors))
         source += DeclareOutput("diff", Shader_Vector4);
 
-    if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
+    if (props.isViewDependent() || props.hasScattering() ||
+        props.hasEclipseShadows() || props.hasRingShadows())
         source += DeclareOutput("position", Shader_Vector3);
 
     // Shadow parameters
@@ -1314,7 +1319,8 @@ R"glsl(
     if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += "normal = in_Normal;\n";
 
-    if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
+    if (props.isViewDependent() || props.hasScattering() ||
+        props.hasEclipseShadows() || props.hasRingShadows())
         source += "position = in_Position.xyz;\n";
 
     if (props.usesTangentSpaceLighting())
@@ -1381,27 +1387,24 @@ R"glsl(
         }
     }
 
-    // Shadow texture coordinates are generated in the shader
+    // Ring texture coordinates are smooth across the ring plane. The fragment
+    // shader separately rejects intersections that point away from the light.
     if (props.hasRingShadows())
     {
         source += "vec3 ringShadowPosition = in_Position.xyz * ringScale;\n";
-        source += "vec3 ringShadowProj;\n";
-        source += "float t = -(dot(ringShadowPosition, ringPlane.xyz) + ringPlane.w);\n";
+        source += "vec3 ringShadowProjection;\n";
+        source += "float ringPlaneDistance = -(dot(ringShadowPosition, ringPlane.xyz) + ringPlane.w);\n";
         source += "float ringShadowDistance;\n";
         for (unsigned int j = 0; j < props.nLights; j++)
         {
             if (props.hasRingShadowForLight(j))
             {
-                source += "ringShadowDistance = t / dot(" +
+                source += "ringShadowDistance = ringPlaneDistance / dot(" +
                   LightProperty(j, "direction") + ", ringPlane.xyz);\n";
-                source += "if (ringShadowDistance >= 0.0)\n{\n";
-                source += "ringShadowProj = ringShadowPosition + " +
+                source += "ringShadowProjection = ringShadowPosition + " +
                   LightProperty(j, "direction") + " * ringShadowDistance;\n";
                 source += RingShadowTexCoord(j) +
-                  " = (length(ringShadowProj - ringCenter) - ringRadius) * ringWidth;\n";
-                source += "}\nelse\n{\n";
-                source += RingShadowTexCoord(j) + " = -1.0;\n";
-                source += "}\n";
+                  " = (length(ringShadowProjection - ringCenter) - ringRadius) * ringWidth;\n";
             }
         }
     }
@@ -1513,7 +1516,8 @@ buildFragmentShader(const ShaderProperties& props)
     if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += DeclareInput("normal", Shader_Vector3);
 
-    if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
+    if (props.isViewDependent() || props.hasScattering() ||
+        props.hasEclipseShadows() || props.hasRingShadows())
         source += DeclareInput("position", Shader_Vector3);
 
     if (props.lightModel != LightingModel::UnlitModel)

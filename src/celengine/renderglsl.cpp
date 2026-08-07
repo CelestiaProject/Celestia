@@ -65,7 +65,7 @@ Eigen::Matrix4f directionalLightMatrix(const Eigen::Vector3f& lightDirection)
 
 Texture* setupRingShadowTexture(const LightingState& ls,
                                 ShaderProperties& properties,
-                                Renderer* renderer)
+                                const Renderer* renderer)
 {
     if (ls.shadowingRingSystem == nullptr)
         return nullptr;

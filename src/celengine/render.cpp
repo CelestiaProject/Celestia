@@ -171,6 +171,34 @@ atmosphereObscuresRings(const Atmosphere* atmosphere, float altitude, float pixe
            atmosphere->height / (altitude * pixelSize) > MinAtmosphereThicknessInPixels;
 }
 
+float
+getRingObscuringShellRadius(const Atmosphere* atmosphere,
+                            RenderFlags renderFlags,
+                            float bodyRadius)
+{
+    if (atmosphere == nullptr)
+        return 0.0f;
+
+    bool hasObscuringShell = false;
+    float obscuringHeight = 0.0f;
+    if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+        atmosphere->height > 0.0f)
+    {
+        obscuringHeight = atmosphere->height;
+        hasObscuringShell = true;
+    }
+    if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
+        atmosphere->cloudTexture != util::TextureHandle::Invalid)
+    {
+        obscuringHeight = std::max(obscuringHeight, atmosphere->cloudHeight);
+        hasObscuringShell = true;
+    }
+
+    return hasObscuringShell
+        ? (bodyRadius + obscuringHeight) / bodyRadius
+        : 0.0f;
+}
+
 inline void glVertexAttrib(GLuint index, const Color &color)
 {
 #ifdef GL_ES
@@ -3403,29 +3431,9 @@ void Renderer::renderRingSystem(Body& body,
 
     float segmentSizeInPixels = 2.0f * rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
 
-    // Obscuring shell radius in planet-radius units. Use the outermost
-    // rendered atmosphere or cloud layer so both remain between ring halves.
     const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(&body);
-    bool hasObscuringShell = false;
-    float obscuringHeight = 0.0f;
-    if (atmosphere != nullptr)
-    {
-        if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
-            atmosphere->height > 0.0f)
-        {
-            obscuringHeight = atmosphere->height;
-            hasObscuringShell = true;
-        }
-        if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
-            atmosphere->cloudTexture != util::TextureHandle::Invalid)
-        {
-            obscuringHeight = std::max(obscuringHeight, atmosphere->cloudHeight);
-            hasObscuringShell = true;
-        }
-    }
-    float atmosphereRadius = hasObscuringShell
-        ? (radius + obscuringHeight) / radius
-        : 0.0f;
+    float atmosphereRadius =
+        getRingObscuringShellRadius(atmosphere, renderFlags, radius);
 
     m_ringRenderer->renderRings(*rings, ri, lights,
                                 radius, 1.0f - semiAxes.y(),
