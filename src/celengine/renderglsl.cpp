@@ -63,6 +63,46 @@ Eigen::Matrix4f directionalLightMatrix(const Eigen::Vector3f& lightDirection)
     return m;
 }
 
+Texture* setupRingShadowTexture(const LightingState& ls,
+                                ShaderProperties& properties,
+                                const Renderer* renderer)
+{
+    if (ls.shadowingRingSystem == nullptr)
+        return nullptr;
+
+    Texture* ringsTexture =
+        renderer->getTextureManager()->findShadow(ls.shadowingRingSystem->texture);
+    if (ringsTexture == nullptr)
+        return nullptr;
+
+    properties.texUsage |= TexUsage::RingShadowTexture;
+    for (unsigned int lightIndex = 0; lightIndex < properties.nLights; ++lightIndex)
+    {
+        if (ls.lights[lightIndex].castsShadows &&
+            ls.shadowingRingSystem == ls.ringShadows[lightIndex].ringSystem)
+        {
+            properties.setRingShadowForLight(lightIndex, true);
+        }
+    }
+
+    return ringsTexture;
+}
+
+void setEclipseShadowProperties(const LightingState& ls,
+                                ShaderProperties& properties)
+{
+    for (unsigned int lightIndex = 0; lightIndex < properties.nLights; ++lightIndex)
+    {
+        if (ls.shadows[lightIndex] == nullptr || ls.shadows[lightIndex]->empty())
+            continue;
+
+        auto shadowCount = std::min(
+            MaxShaderEclipseShadows,
+            static_cast<unsigned int>(ls.shadows[lightIndex]->size()));
+        properties.setEclipseShadowCountForLight(lightIndex, shadowCount);
+    }
+}
+
 
 /*! Render a mesh object
  *  Parameters:
@@ -273,52 +313,14 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         }
     }
 
-    // Set the shadow information.
-    for (unsigned int li = 0; li < ls.nLights; li++)
+    setEclipseShadowProperties(ls, shadprop);
+
+    if (Texture* ringsTex = setupRingShadowTexture(ls, shadprop, renderer);
+        ringsTex != nullptr)
     {
-        if (ls.shadows[li] && !ls.shadows[li]->empty())
-        {
-            auto nShadows = std::min(MaxShaderEclipseShadows, static_cast<unsigned int>(ls.shadows[li]->size()));
-            shadprop.setEclipseShadowCountForLight(li, nShadows);
-        }
-    }
-
-    if (ls.shadowingRingSystem)
-    {
-        Texture* ringsTex = renderer->getTextureManager()->findShadow(ls.shadowingRingSystem->texture);
-        if (ringsTex != nullptr)
-        {
-            glActiveTexture(GL_TEXTURE0 + textures.size());
-            ringsTex->bind();
-
-#ifdef GL_ES
-            if (gl::OES_texture_border_clamp)
-#endif
-            {
-                // Tweak the texture--set clamp to border and a border color with
-                // a zero alpha.
-                float bc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-#ifndef GL_ES
-                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bc);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-#else
-                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR_OES, bc);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_OES);
-#endif
-            }
-            glActiveTexture(GL_TEXTURE0);
-
-            shadprop.texUsage |= TexUsage::RingShadowTexture;
-
-            for (unsigned int lightIndex = 0; lightIndex < ls.nLights; lightIndex++)
-            {
-                if (ls.lights[lightIndex].castsShadows &&
-                    ls.shadowingRingSystem == ls.ringShadows[lightIndex].ringSystem)
-                {
-                    shadprop.setRingShadowForLight(lightIndex, true);
-                }
-            }
-        }
+        glActiveTexture(GL_TEXTURE0 + textures.size());
+        ringsTex->bind();
+        glActiveTexture(GL_TEXTURE0);
     }
 
 
@@ -338,20 +340,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         prog->lunarLambert = ri.lunarLambert;
 
     if (util::is_set(shadprop.texUsage, TexUsage::RingShadowTexture))
-    {
-        float ringWidth = ls.shadowingRingSystem->outerRadius - ls.shadowingRingSystem->innerRadius;
-        prog->ringRadius = ls.shadowingRingSystem->innerRadius / radius;
-        prog->ringWidth = radius / ringWidth;
-        prog->ringPlane = Eigen::Hyperplane<float, 3>(ls.ringPlaneNormal, ls.ringCenter / radius).coeffs();
-        prog->ringCenter = ls.ringCenter / radius;
-        for (unsigned int lightIndex = 0; lightIndex < ls.nLights; ++lightIndex)
-        {
-            if (shadprop.hasRingShadowForLight(lightIndex))
-            {
-                prog->ringShadowLOD[lightIndex] = ls.ringShadows[lightIndex].texLod;
-            }
-        }
-    }
+        prog->setRingShadowParameters(ls, semiAxes);
 
     if (atmosphere != nullptr)
     {
@@ -574,6 +563,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        LODSphereMesh* lodSphere)
 {
     float radius = semiAxes.maxCoeff();
+    float cloudRadius = radius + (atmosphere != nullptr ? atmosphere->cloudHeight : 0.0f);
 
     boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
@@ -605,15 +595,12 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= TexUsage::Scattering;
     }
 
-    // Set the shadow information.
-    for (unsigned int li = 0; li < shadprop.nLights; li++)
+    setEclipseShadowProperties(ls, shadprop);
+
+    if (Texture* ringsTex = setupRingShadowTexture(ls, shadprop, renderer);
+        ringsTex != nullptr)
     {
-        if (ls.shadows[li] && !ls.shadows[li]->empty())
-        {
-            unsigned int nShadows = std::min(MaxShaderEclipseShadows,
-                                             static_cast<unsigned int>(ls.shadows[li]->size()));
-            shadprop.setEclipseShadowCountForLight(li, nShadows);
-        }
+        textures.push_back(ringsTex);
     }
 
     // Get a shader for the current rendering configuration
@@ -631,7 +618,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     if (atmosphere != nullptr)
     {
-        float cloudRadius = radius + atmosphere->cloudHeight;
         float cloudPlanetRadius = radius / cloudRadius;
         prog->cloudHorizon = cloudPlanetRadius >= 1.0f
             ? 0.0f
@@ -648,17 +634,17 @@ void renderClouds_GLSL(const RenderInfo& ri,
         }
     }
 
-#if 0
-    if (shadprop.texUsage & ShaderProperties::RingShadowTexture)
-    {
-        float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / cloudRadius;
-        prog->ringWidth = 1.0f / (ringWidth / cloudRadius);
-    }
-#endif
+    if (util::is_set(shadprop.texUsage, TexUsage::RingShadowTexture))
+        prog->setRingShadowParameters(ls, semiAxes * (cloudRadius / radius));
 
-    if (shadprop.usesShadows())
-        prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
+    if (shadprop.hasEclipseShadows())
+    {
+        float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
+        prog->setEclipseShadowParameters(
+            ls,
+            semiAxes * cloudScale,
+            planetOrientation);
+    }
 
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != nullptr)

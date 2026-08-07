@@ -22,6 +22,7 @@
 #include <celengine/render.h>
 #include <celengine/renderinfo.h>
 #include <celengine/shadermanager.h>
+#include <celengine/texture.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
@@ -342,16 +343,35 @@ AtmosphereRenderer::render(
     const RenderInfo         &ri,
     const Atmosphere         &atmosphere,
     const LightingState      &ls,
-    const Eigen::Quaternionf &/*planetOrientation*/,
-    float                     radius,
+    const Eigen::Quaternionf &planetOrientation,
+    const Eigen::Vector3f    &bodyScale,
     const math::Frustum      &frustum,
     const Matrices           &m)
 {
+    const float radius = bodyScale.maxCoeff();
+
     ShaderProperties shadprop;
-    shadprop.nLights = static_cast<ushort>(ls.nLights);
+    shadprop.nLights = static_cast<ushort>(std::min(ls.nLights, MaxShaderLights));
 
     shadprop.texUsage |= TexUsage::Scattering;
     shadprop.lightModel = LightingModel::AtmosphereModel;
+
+    ShaderProperties transmissionProps = shadprop;
+    transmissionProps.nLights = 0;
+    transmissionProps.effects = LightingEffects::AtmosphereTransmission;
+
+    if (shadprop.nLights > 0 && ls.shadows[0] != nullptr && !ls.shadows[0]->empty())
+        shadprop.setEclipseShadowCountForLight(0, std::min(MaxShaderEclipseShadows, static_cast<unsigned int>(ls.shadows[0]->size())));
+
+    if (shadprop.nLights > 0 &&
+        ls.lights[0].castsShadows &&
+        ls.shadowingRingSystem != nullptr &&
+        ls.shadowingRingSystem == ls.ringShadows[0].ringSystem &&
+        m_renderer.getTextureManager()->findShadow(ls.shadowingRingSystem->texture) != nullptr)
+    {
+        shadprop.texUsage |= TexUsage::RingShadowTexture;
+        shadprop.setRingShadowForLight(0, true);
+    }
 
     bool useDualSource = false;
     GLenum scatteringBlendDestination = GL_ONE;
@@ -362,10 +382,6 @@ AtmosphereRenderer::render(
 #else
         scatteringBlendDestination = GL_SRC1_COLOR;
 #endif
-
-    ShaderProperties transmissionProps = shadprop;
-    transmissionProps.nLights = 0;
-    transmissionProps.effects = LightingEffects::AtmosphereTransmission;
 
     if (useDualSource)
         shadprop.effects = LightingEffects::AtmosphereDualSource;
@@ -395,12 +411,6 @@ AtmosphereRenderer::render(
         prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
     };
 
-#if 0
-    // Currently eclipse shadows are ignored when rendering atmospheres
-    if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
-#endif
-
     glFrontFace(GL_CW);
 
     Renderer::PipelineState ps;
@@ -423,17 +433,33 @@ AtmosphereRenderer::render(
 
     if (scatteringProg != nullptr)
     {
+        Texture* ringShadowTex = nullptr;
+
         scatteringProg->use();
         scatteringProg->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
         scatteringProg->ambientColor = Eigen::Vector3f::Zero();
         setupAtmosphereProgram(scatteringProg);
+        if (shadprop.hasEclipseShadows())
+        {
+            scatteringProg->setEclipseShadowParameters(
+                ls,
+                bodyScale * atmScale,
+                planetOrientation);
+        }
+        if (shadprop.hasRingShadowForLight(0))
+        {
+            ringShadowTex =
+                m_renderer.getTextureManager()->findShadow(ls.shadowingRingSystem->texture);
+            scatteringProg->setRingShadowParameters(ls, bodyScale * atmScale);
+        }
 
         ps.blendFunc = {GL_ONE, scatteringBlendDestination};
         m_renderer.setPipelineState(ps);
         m_renderer.m_lodSphere->render(0,
                                        shellFrustum,
                                        ri.pixWidth,
-                                       nullptr);
+                                       scatteringProg,
+                                       ringShadowTex);
     }
 
     glFrontFace(GL_CCW);

@@ -171,6 +171,34 @@ atmosphereObscuresRings(const Atmosphere* atmosphere, float altitude, float pixe
            atmosphere->height / (altitude * pixelSize) > MinAtmosphereThicknessInPixels;
 }
 
+float
+getRingObscuringShellRadius(const Atmosphere* atmosphere,
+                            RenderFlags renderFlags,
+                            float bodyRadius)
+{
+    if (atmosphere == nullptr)
+        return 0.0f;
+
+    bool hasObscuringShell = false;
+    float obscuringHeight = 0.0f;
+    if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+        atmosphere->height > 0.0f)
+    {
+        obscuringHeight = atmosphere->height;
+        hasObscuringShell = true;
+    }
+    if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
+        atmosphere->cloudTexture != util::TextureHandle::Invalid)
+    {
+        obscuringHeight = std::max(obscuringHeight, atmosphere->cloudHeight);
+        hasObscuringShell = true;
+    }
+
+    return hasObscuringShell
+        ? (bodyRadius + obscuringHeight) / bodyRadius
+        : 0.0f;
+}
+
 inline void glVertexAttrib(GLuint index, const Color &color)
 {
 #ifdef GL_ES
@@ -2633,7 +2661,7 @@ void Renderer::renderAtmosphere(const Atmosphere* atmosphere, // NOSONAR(cpp:S10
                 *atmosphere,
                 ls,
                 obj.orientation,
-                radius,
+                scaleFactors,
                 viewFrustum,
                 planetMVP);
         }
@@ -2851,6 +2879,7 @@ void Renderer::renderPlanetAtmosphere(Body& body,
 
 bool Renderer::testEclipse(const Body& receiver,
                            const Body& caster,
+                           float receiverShadowRadius,
                            LightingState& lightingState,
                            unsigned int lightIndex,
                            double now)
@@ -2911,7 +2940,7 @@ bool Renderer::testEclipse(const Body& receiver,
         // If the distance is less than the sum of the caster's and receiver's
         // radii, then we have an eclipse. We also need to verify that the
         // receiver is behind the caster when seen from the light source.
-        float R = receiver.getRadius() + shadowRadius;
+        float R = receiverShadowRadius + shadowRadius;
 
         // The stored light position is receiver-relative; thus the caster-to-light
         // direction is casterPos - (receiverPos + lightPos)
@@ -2956,7 +2985,7 @@ bool Renderer::testEclipse(const Body& receiver,
             bool shadowed = false;
 
             // The shadow volume of the rings is an oblique circular cylinder
-            if (dist < rings->outerRadius + receiver.getRadius())
+            if (dist < rings->outerRadius + receiverShadowRadius)
             {
                 // Possible intersection, but it depends on the orientation of the
                 // rings.
@@ -2977,7 +3006,7 @@ bool Renderer::testEclipse(const Body& receiver,
                     // perpendicular to the ring plane and containing the light direction.
                     Vector3d shadowPlaneNormal = v.normalized().cross(shadowDirection);
                     Hyperplane<double, 3> shadowPlane(shadowPlaneNormal, posCaster - posReceiver);
-                    double minDistance = receiver.getRadius() +
+                    double minDistance = receiverShadowRadius +
                         rings->outerRadius * ringPlaneNormal.dot(shadowDirection);
                     if (abs(shadowPlane.signedDistance(Vector3d::Zero())) < minDistance)
                     {
@@ -3056,6 +3085,24 @@ void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
             scaleFactors = Vector3f::Constant(rp.geometryScale);
         }
 
+        float shadowReceiverRadius = std::max(rp.radius, scaleFactors.maxCoeff());
+        if (rp.atmosphere != nullptr)
+        {
+            float shellHeight = 0.0f;
+            if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
+            {
+                shellHeight = rp.atmosphere->mieScaleHeight > 0.0f
+                    ? getAtmosphereShellHeight(rp.atmosphere->mieScaleHeight)
+                    : rp.atmosphere->height;
+            }
+            if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
+                rp.atmosphere->cloudTexture != util::TextureHandle::Invalid)
+            {
+                shellHeight = std::max(shellHeight, rp.atmosphere->cloudHeight);
+            }
+            shadowReceiverRadius += std::max(0.0f, shellHeight);
+        }
+
         setupObjectLighting(lightSourceList,
                             secondaryIlluminators,
                             rp.orientation,
@@ -3108,7 +3155,8 @@ void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
                             continue;
 
                         for (unsigned int li = 0; li < lights.nLights; ++li) //NOSONAR
-                            testEclipse(body, *phase->body(), lights, li, now);
+                            testEclipse(body, *phase->body(), shadowReceiverRadius,
+                                        lights, li, now);
                     }
                 }
 
@@ -3118,7 +3166,8 @@ void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
 
                 // Check for eclipses from the parent object
                 for (unsigned int li = 0; li < lights.nLights; ++li)
-                    testEclipse(body, *testBody, lights, li, now);
+                    testEclipse(body, *testBody, shadowReceiverRadius,
+                                lights, li, now);
             }
         }
 
@@ -3382,12 +3431,9 @@ void Renderer::renderRingSystem(Body& body,
 
     float segmentSizeInPixels = 2.0f * rings->outerRadius / (max(nearPlaneDistance, altitude) * pixelSize);
 
-    // Atmosphere shell radius in planet-radius units, matching the far half
-    // drawn inline by renderObject so the split boundary is identical.
     const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(&body);
-    float atmosphereRadius = (atmosphere != nullptr && atmosphere->height > 0.0f)
-        ? (radius + atmosphere->height) / radius
-        : 0.0f;
+    float atmosphereRadius =
+        getRingObscuringShellRadius(atmosphere, renderFlags, radius);
 
     m_ringRenderer->renderRings(*rings, ri, lights,
                                 radius, 1.0f - semiAxes.y(),
@@ -3693,12 +3739,17 @@ void Renderer::addRenderListEntries(RenderListEntry& rle, // NOSONAR(cpp:S3776)
     // Inside the rings they are drawn inline, so only add entries from outside.
     bool outsideRings = showRings && ringDiscSize > 1 && rle.distance > rings->innerRadius;
 
+    bool showClouds =
+        atmosphere != nullptr &&
+        util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
+        atmosphere->cloudTexture != util::TextureHandle::Invalid;
     bool splitAroundAtmosphere =
         outsideRings &&
-        util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
-        atmosphereObscuresRings(atmosphere,
-                                static_cast<float>(rle.distance - body.getRadius()),
-                                pixelSize);
+        ((util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+          atmosphereObscuresRings(atmosphere,
+                                  static_cast<float>(rle.distance - body.getRadius()),
+                                  pixelSize)) ||
+         showClouds);
 
     if (atmosphere != nullptr &&
         (atmosphere->height > 0.0f || atmosphere->cloudTexture != util::TextureHandle::Invalid) &&

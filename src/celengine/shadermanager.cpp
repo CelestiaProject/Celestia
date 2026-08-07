@@ -33,6 +33,7 @@
 #include <celutil/flag.h>
 #include <celutil/logger.h>
 #include "atmosphere.h"
+#include "body.h"
 #include "glsupport.h"
 #include "lightenv.h"
 
@@ -629,19 +630,17 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 
     if (props.hasRingShadowForLight(light))
     {
-        if (light == 0)
-            source += DeclareLocal("ringShadowTexCoordX", Shader_Float);
-        source += "ringShadowTexCoordX = " +  RingShadowTexCoord(light) + ";\n";
+        const std::string ringShadowTexCoord = IndexedParameter("ringShadowTexCoord", light);
 
-#ifdef GL_ES
-        if (!gl::OES_texture_border_clamp)
-            source += "if (ringShadowTexCoordX >= 0.0 && ringShadowTexCoordX <= 1.0)\n{\n";
-#endif
-        source += "shadow *= 1.0 - textureLod(ringTex, vec2(ringShadowTexCoordX, 0.0), " + IndexedParameter("ringShadowLOD", light) + ").a;\n";
-#ifdef GL_ES
-        if (!gl::OES_texture_border_clamp)
-            source += "}\n";
-#endif
+        source += DeclareLocal(ringShadowTexCoord,
+                               Shader_Float,
+                               RingShadowTexCoord(light));
+        source += "if ((dot(position * ringScale, ringPlane.xyz) + ringPlane.w) * dot(" +
+                  LightProperty(light, "direction") + ", ringPlane.xyz) <= 0.0 &&\n";
+        source += "    " + ringShadowTexCoord + " >= 0.0 && " + ringShadowTexCoord + " <= 1.0)\n{\n";
+        source += "shadow *= 1.0 - textureLod(ringTex, vec2(" + ringShadowTexCoord + ", 0.0), " +
+                  IndexedParameter("ringShadowLOD", light) + ").a;\n";
+        source += "}\n";
     }
 
     if (props.hasCloudShadowForLight(light))
@@ -667,13 +666,18 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 // is also calculated accurately. However, the shadow falloff from from
 // the umbra to the edge of the penumbra is approximated as linear.
 std::string
-Shadow(unsigned int light, unsigned int shadow)
+Shadow(unsigned int light,
+       unsigned int shadow,
+       std::string_view position = "position"sv,
+       std::string_view visibility = "shadow"sv,
+       std::string_view center = "shadowCenter"sv,
+       std::string_view radius = "shadowR"sv)
 {
     std::string source;
 
-    source += "shadowCenter.s = dot(vec4(position, 1.0), " +
+    source += std::string(center) + ".s = dot(vec4(" + std::string(position) + ", 1.0), " +
         IndexedParameter("shadowTexGenS", light, shadow) + ") - 0.5;\n";
-    source += "shadowCenter.t = dot(vec4(position, 1.0), " +
+    source += std::string(center) + ".t = dot(vec4(" + std::string(position) + ", 1.0), " +
         IndexedParameter("shadowTexGenT", light, shadow) + ") - 0.5;\n";
 
     // The shadow shadow consists of a circular region of constant depth (maxDepth),
@@ -686,11 +690,12 @@ Shadow(unsigned int light, unsigned int shadow)
     // The code generated below will compute:
     // r = 2 * sqrt(dot(shadowCenter, shadowCenter));
     // shadowR = clamp((r - 1) * shadowFalloff, 0, shadowMaxDepth)
-    source += "shadowR = clamp((2.0 * sqrt(dot(shadowCenter, shadowCenter)) - 1.0) * " +
+    source += std::string(radius) + " = clamp((2.0 * sqrt(dot(" + std::string(center) + ", " +
+        std::string(center) + ")) - 1.0) * " +
         IndexedParameter("shadowFalloff", light, shadow) + ", 0.0, " +
         IndexedParameter("shadowMaxDepth", light, shadow) + ");\n";
 
-    source += "shadow *= 1.0 - shadowR;\n";
+    source += std::string(visibility) + " *= 1.0 - " + std::string(radius) + ";\n";
 
     return source;
 }
@@ -781,6 +786,18 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    float viewStartRadius = sqrt(viewStartRadiusSq);\n";
     source += "    float viewStartMu = viewStartProjection / viewStartRadius;\n";
     source += "    vec3 invExtinction = 1.0 / max(extinctionCoeff, vec3(1.0e-18));\n";
+    if (props.getEclipseShadowCountForLight(0) > 0)
+    {
+        source += "    float atmosphereShadow;\n";
+        source += "    vec2 atmosphereShadowCenter;\n";
+        source += "    float atmosphereShadowR;\n";
+    }
+    if (props.hasRingShadowForLight(0))
+    {
+        source += "    vec3 atmosphereRingShadowPosition;\n";
+        source += "    vec3 atmosphereRingShadowProjection;\n";
+        source += "    float atmosphereRingShadowTexCoord;\n";
+    }
     source += "    for (int i = 0; i < atmosphereSegmentCount; ++i)\n";
     source += "    {\n";
     source += "        float viewEndProjection = viewStartProjection + stepLength;\n";
@@ -803,6 +820,35 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "        float sampleRadiusSq = dot(atmSamplePointSun, atmSamplePointSun);\n";
     source += "        float horizonDistance = sqrt(max(0.0, sampleRadiusSq - planetRadiusSq));\n";
     source += "        float sunVisibility = smoothstep(-shadowWidth, shadowWidth, rq + horizonDistance);\n";
+    if (props.getEclipseShadowCountForLight(0) > 0)
+    {
+        source += "        atmosphereShadow = sunVisibility;\n";
+        for (unsigned int i = 0; i < props.getEclipseShadowCountForLight(0); ++i)
+        {
+            source += Shadow(0,
+                             i,
+                             "atmSamplePointSun"sv,
+                             "atmosphereShadow"sv,
+                             "atmosphereShadowCenter"sv,
+                             "atmosphereShadowR"sv);
+        }
+        source += "        sunVisibility = atmosphereShadow;\n";
+    }
+    if (props.hasRingShadowForLight(0))
+    {
+        source += "        atmosphereRingShadowPosition = atmSamplePointSun * ringScale;\n";
+        source += "        float atmosphereRingPlaneDistance = -(dot(atmosphereRingShadowPosition, ringPlane.xyz) + ringPlane.w);\n";
+        source += "        float atmosphereRingShadowDistance = atmosphereRingPlaneDistance / dot("
+                  + LightProperty(0, "direction") + ", ringPlane.xyz);\n";
+        source += "        if (atmosphereRingShadowDistance >= 0.0)\n";
+        source += "        {\n";
+        source += "            atmosphereRingShadowProjection = atmosphereRingShadowPosition + "
+                  + LightProperty(0, "direction") + " * atmosphereRingShadowDistance;\n";
+        source += "            atmosphereRingShadowTexCoord = (length(atmosphereRingShadowProjection - ringCenter) - ringRadius) * ringWidth;\n";
+        source += "            if (atmosphereRingShadowTexCoord >= 0.0 && atmosphereRingShadowTexCoord <= 1.0)\n";
+        source += "                sunVisibility *= 1.0 - textureLod(ringTex, vec2(atmosphereRingShadowTexCoord, 0.0), ringShadowLOD0).a;\n";
+        source += "        }\n";
+    }
     source += "        if (sunVisibility > 0.0)\n";
     source += "        {\n";
     source += "            qq = sampleRadiusSq - atmosphereRadius.y;\n";
@@ -1234,7 +1280,8 @@ R"glsl(
     if (props.lightModel == LightingModel::UnlitModel && util::is_set(props.texUsage, TexUsage::VertexColors))
         source += DeclareOutput("diff", Shader_Vector4);
 
-    if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
+    if (props.isViewDependent() || props.hasScattering() ||
+        props.hasEclipseShadows() || props.hasRingShadows())
         source += DeclareOutput("position", Shader_Vector3);
 
     // Shadow parameters
@@ -1244,6 +1291,7 @@ R"glsl(
         source += DeclareUniform("ringRadius", Shader_Float);
         source += DeclareUniform("ringPlane", Shader_Vector4);
         source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareUniform("ringScale", Shader_Vector3);
         source += DeclareOutput("ringShadowTexCoord", Shader_Vector4);
     }
 
@@ -1271,7 +1319,8 @@ R"glsl(
     if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += "normal = in_Normal;\n";
 
-    if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
+    if (props.isViewDependent() || props.hasScattering() ||
+        props.hasEclipseShadows() || props.hasRingShadows())
         source += "position = in_Position.xyz;\n";
 
     if (props.usesTangentSpaceLighting())
@@ -1338,22 +1387,24 @@ R"glsl(
         }
     }
 
-    // Shadow texture coordinates are generated in the shader
+    // Ring texture coordinates are smooth across the ring plane. The fragment
+    // shader separately rejects intersections that point away from the light.
     if (props.hasRingShadows())
     {
-        source += "vec3 ringShadowProj;\n";
-        source += "float t = -(dot(in_Position.xyz, ringPlane.xyz) + ringPlane.w);\n";
+        source += "vec3 ringShadowPosition = in_Position.xyz * ringScale;\n";
+        source += "vec3 ringShadowProjection;\n";
+        source += "float ringPlaneDistance = -(dot(ringShadowPosition, ringPlane.xyz) + ringPlane.w);\n";
+        source += "float ringShadowDistance;\n";
         for (unsigned int j = 0; j < props.nLights; j++)
         {
             if (props.hasRingShadowForLight(j))
             {
-                source += "ringShadowProj = in_Position.xyz + " +
-                  LightProperty(j, "direction") +
-                  " * max(0.0, t / dot(" +
-                  LightProperty(j, "direction") + ", ringPlane.xyz));\n";
-
+                source += "ringShadowDistance = ringPlaneDistance / dot(" +
+                  LightProperty(j, "direction") + ", ringPlane.xyz);\n";
+                source += "ringShadowProjection = ringShadowPosition + " +
+                  LightProperty(j, "direction") + " * ringShadowDistance;\n";
                 source += RingShadowTexCoord(j) +
-                  " = (length(ringShadowProj - ringCenter) - ringRadius) * ringWidth;\n";
+                  " = (length(ringShadowProjection - ringCenter) - ringRadius) * ringWidth;\n";
             }
         }
     }
@@ -1465,7 +1516,8 @@ buildFragmentShader(const ShaderProperties& props)
     if (props.lightModel != LightingModel::ParticleDiffuseModel)
         source += DeclareInput("normal", Shader_Vector3);
 
-    if (props.isViewDependent() || props.hasScattering() || props.hasEclipseShadows())
+    if (props.isViewDependent() || props.hasScattering() ||
+        props.hasEclipseShadows() || props.hasRingShadows())
         source += DeclareInput("position", Shader_Vector3);
 
     if (props.lightModel != LightingModel::UnlitModel)
@@ -1504,6 +1556,11 @@ buildFragmentShader(const ShaderProperties& props)
     if (props.hasRingShadows())
     {
         source += DeclareUniform("ringTex", Shader_Sampler2D);
+        source += DeclareUniform("ringPlane", Shader_Vector4);
+        source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareUniform("ringRadius", Shader_Float);
+        source += DeclareUniform("ringWidth", Shader_Float);
+        source += DeclareUniform("ringScale", Shader_Vector3);
         source += DeclareInput("ringShadowTexCoord", Shader_Vector4);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
@@ -2058,6 +2115,31 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
 
     // Must match the centroid output in buildAtmosphereVertexShader.
     source += "centroid " + DeclareInput("position", Shader_Vector3);
+
+    if (props.hasEclipseShadows())
+    {
+        for (unsigned int i = 0; i < props.nLights; ++i)
+        {
+            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); ++j)
+            {
+                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
+            }
+        }
+    }
+
+    if (props.hasRingShadowForLight(0))
+    {
+        source += DeclareUniform("ringTex", Shader_Sampler2D);
+        source += DeclareUniform("ringPlane", Shader_Vector4);
+        source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareUniform("ringRadius", Shader_Float);
+        source += DeclareUniform("ringWidth", Shader_Float);
+        source += DeclareUniform("ringScale", Shader_Vector3);
+        source += DeclareUniform("ringShadowLOD0", Shader_Float);
+    }
 
     if (!transmissionOnly)
     {
@@ -2936,6 +3018,7 @@ CelestiaGLProgram::initParameters()
         ringRadius           = floatParam("ringRadius");
         ringPlane            = vec4Param("ringPlane");
         ringCenter           = vec3Param("ringCenter");
+        ringScale            = vec3Param("ringScale");
     }
     else if (props.lightModel == LightingModel::RingIllumModel)
     {
@@ -3158,6 +3241,24 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 shadowParams.texGenT = m.row(1);
             }
         }
+    }
+}
+
+void
+CelestiaGLProgram::setRingShadowParameters(const LightingState& ls,
+                                           const Eigen::Vector3f& scale)
+{
+    const RingSystem& rings = *ls.shadowingRingSystem;
+    ringRadius = rings.innerRadius;
+    ringWidth = 1.0f / (rings.outerRadius - rings.innerRadius);
+    ringPlane = Eigen::Hyperplane<float, 3>(ls.ringPlaneNormal, ls.ringCenter).coeffs();
+    ringCenter = ls.ringCenter;
+    ringScale = scale;
+
+    for (unsigned int lightIndex = 0; lightIndex < props.nLights; ++lightIndex)
+    {
+        if (props.hasRingShadowForLight(lightIndex))
+            ringShadowLOD[lightIndex] = ls.ringShadows[lightIndex].texLod;
     }
 }
 

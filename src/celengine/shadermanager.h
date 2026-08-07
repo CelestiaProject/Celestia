@@ -250,6 +250,8 @@ public:
     void setEclipseShadowParameters(const LightingState& ls,
                                     const Eigen::Vector3f& scale,
                                     const Eigen::Quaternionf& orientation);
+    void setRingShadowParameters(const LightingState& ls,
+                                 const Eigen::Vector3f& scale);
     void setAtmosphereParameters(const Atmosphere& atmosphere,
                                  float atmPlanetRadius,
                                  float objRadius,
@@ -290,6 +292,7 @@ public:
     FloatShaderParameter ringAtmosphereRadius;
     Vec4ShaderParameter ringPlane;
     Vec3ShaderParameter ringCenter;
+    Vec3ShaderParameter ringScale;
 
     // Mix of Lambertian and "lunar" (Lommel-Seeliger) photometric models.
     // 0 = pure Lambertian, 1 = L-S

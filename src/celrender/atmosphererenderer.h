@@ -61,7 +61,7 @@ public:
         const Atmosphere         &atmosphere,
         const LightingState      &ls,
         const Eigen::Quaternionf &planetOrientation,
-        float                     radius,
+        const Eigen::Vector3f    &bodyScale,
         const math::Frustum      &frustum,
         const Matrices           &m);
 
