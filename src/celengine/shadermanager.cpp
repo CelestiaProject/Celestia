@@ -33,6 +33,7 @@
 #include <celutil/flag.h>
 #include <celutil/logger.h>
 #include "atmosphere.h"
+#include "body.h"
 #include "glsupport.h"
 #include "lightenv.h"
 
@@ -633,15 +634,9 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
             source += DeclareLocal("ringShadowTexCoordX", Shader_Float);
         source += "ringShadowTexCoordX = " +  RingShadowTexCoord(light) + ";\n";
 
-#ifdef GL_ES
-        if (!gl::OES_texture_border_clamp)
-            source += "if (ringShadowTexCoordX >= 0.0 && ringShadowTexCoordX <= 1.0)\n{\n";
-#endif
+        source += "if (ringShadowTexCoordX >= 0.0 && ringShadowTexCoordX <= 1.0)\n{\n";
         source += "shadow *= 1.0 - textureLod(ringTex, vec2(ringShadowTexCoordX, 0.0), " + IndexedParameter("ringShadowLOD", light) + ").a;\n";
-#ifdef GL_ES
-        if (!gl::OES_texture_border_clamp)
-            source += "}\n";
-#endif
+        source += "}\n";
     }
 
     if (props.hasCloudShadowForLight(light))
@@ -793,6 +788,12 @@ AtmosphericEffects(const ShaderProperties& props)
         source += "    vec2 atmosphereShadowCenter;\n";
         source += "    float atmosphereShadowR;\n";
     }
+    if (props.hasRingShadowForLight(0))
+    {
+        source += "    vec3 atmosphereRingShadowPosition;\n";
+        source += "    vec3 atmosphereRingShadowProjection;\n";
+        source += "    float atmosphereRingShadowTexCoord;\n";
+    }
     source += "    for (int i = 0; i < atmosphereSegmentCount; ++i)\n";
     source += "    {\n";
     source += "        float viewEndProjection = viewStartProjection + stepLength;\n";
@@ -828,6 +829,21 @@ AtmosphericEffects(const ShaderProperties& props)
                              "atmosphereShadowR"sv);
         }
         source += "        sunVisibility = atmosphereShadow;\n";
+    }
+    if (props.hasRingShadowForLight(0))
+    {
+        source += "        atmosphereRingShadowPosition = atmSamplePointSun * ringScale;\n";
+        source += "        float atmosphereRingPlaneDistance = -(dot(atmosphereRingShadowPosition, ringPlane.xyz) + ringPlane.w);\n";
+        source += "        float atmosphereRingShadowDistance = atmosphereRingPlaneDistance / dot("
+                  + LightProperty(0, "direction") + ", ringPlane.xyz);\n";
+        source += "        if (atmosphereRingShadowDistance >= 0.0)\n";
+        source += "        {\n";
+        source += "            atmosphereRingShadowProjection = atmosphereRingShadowPosition + "
+                  + LightProperty(0, "direction") + " * atmosphereRingShadowDistance;\n";
+        source += "            atmosphereRingShadowTexCoord = (length(atmosphereRingShadowProjection - ringCenter) - ringRadius) * ringWidth;\n";
+        source += "            if (atmosphereRingShadowTexCoord >= 0.0 && atmosphereRingShadowTexCoord <= 1.0)\n";
+        source += "                sunVisibility *= 1.0 - textureLod(ringTex, vec2(atmosphereRingShadowTexCoord, 0.0), ringShadowLOD0).a;\n";
+        source += "        }\n";
     }
     source += "        if (sunVisibility > 0.0)\n";
     source += "        {\n";
@@ -1270,6 +1286,7 @@ R"glsl(
         source += DeclareUniform("ringRadius", Shader_Float);
         source += DeclareUniform("ringPlane", Shader_Vector4);
         source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareUniform("ringScale", Shader_Vector3);
         source += DeclareOutput("ringShadowTexCoord", Shader_Vector4);
     }
 
@@ -1367,19 +1384,24 @@ R"glsl(
     // Shadow texture coordinates are generated in the shader
     if (props.hasRingShadows())
     {
+        source += "vec3 ringShadowPosition = in_Position.xyz * ringScale;\n";
         source += "vec3 ringShadowProj;\n";
-        source += "float t = -(dot(in_Position.xyz, ringPlane.xyz) + ringPlane.w);\n";
+        source += "float t = -(dot(ringShadowPosition, ringPlane.xyz) + ringPlane.w);\n";
+        source += "float ringShadowDistance;\n";
         for (unsigned int j = 0; j < props.nLights; j++)
         {
             if (props.hasRingShadowForLight(j))
             {
-                source += "ringShadowProj = in_Position.xyz + " +
-                  LightProperty(j, "direction") +
-                  " * max(0.0, t / dot(" +
-                  LightProperty(j, "direction") + ", ringPlane.xyz));\n";
-
+                source += "ringShadowDistance = t / dot(" +
+                  LightProperty(j, "direction") + ", ringPlane.xyz);\n";
+                source += "if (ringShadowDistance >= 0.0)\n{\n";
+                source += "ringShadowProj = ringShadowPosition + " +
+                  LightProperty(j, "direction") + " * ringShadowDistance;\n";
                 source += RingShadowTexCoord(j) +
                   " = (length(ringShadowProj - ringCenter) - ringRadius) * ringWidth;\n";
+                source += "}\nelse\n{\n";
+                source += RingShadowTexCoord(j) + " = -1.0;\n";
+                source += "}\n";
             }
         }
     }
@@ -1530,6 +1552,11 @@ buildFragmentShader(const ShaderProperties& props)
     if (props.hasRingShadows())
     {
         source += DeclareUniform("ringTex", Shader_Sampler2D);
+        source += DeclareUniform("ringPlane", Shader_Vector4);
+        source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareUniform("ringRadius", Shader_Float);
+        source += DeclareUniform("ringWidth", Shader_Float);
+        source += DeclareUniform("ringScale", Shader_Vector3);
         source += DeclareInput("ringShadowTexCoord", Shader_Vector4);
         for (unsigned int i = 0; i < props.nLights; i++)
         {
@@ -2097,6 +2124,17 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
                 source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
             }
         }
+    }
+
+    if (props.hasRingShadowForLight(0))
+    {
+        source += DeclareUniform("ringTex", Shader_Sampler2D);
+        source += DeclareUniform("ringPlane", Shader_Vector4);
+        source += DeclareUniform("ringCenter", Shader_Vector3);
+        source += DeclareUniform("ringRadius", Shader_Float);
+        source += DeclareUniform("ringWidth", Shader_Float);
+        source += DeclareUniform("ringScale", Shader_Vector3);
+        source += DeclareUniform("ringShadowLOD0", Shader_Float);
     }
 
     if (!transmissionOnly)
@@ -2976,6 +3014,7 @@ CelestiaGLProgram::initParameters()
         ringRadius           = floatParam("ringRadius");
         ringPlane            = vec4Param("ringPlane");
         ringCenter           = vec3Param("ringCenter");
+        ringScale            = vec3Param("ringScale");
     }
     else if (props.lightModel == LightingModel::RingIllumModel)
     {
@@ -3198,6 +3237,24 @@ CelestiaGLProgram::setEclipseShadowParameters(const LightingState& ls,
                 shadowParams.texGenT = m.row(1);
             }
         }
+    }
+}
+
+void
+CelestiaGLProgram::setRingShadowParameters(const LightingState& ls,
+                                           const Eigen::Vector3f& scale)
+{
+    const RingSystem& rings = *ls.shadowingRingSystem;
+    ringRadius = rings.innerRadius;
+    ringWidth = 1.0f / (rings.outerRadius - rings.innerRadius);
+    ringPlane = Eigen::Hyperplane<float, 3>(ls.ringPlaneNormal, ls.ringCenter).coeffs();
+    ringCenter = ls.ringCenter;
+    ringScale = scale;
+
+    for (unsigned int lightIndex = 0; lightIndex < props.nLights; ++lightIndex)
+    {
+        if (props.hasRingShadowForLight(lightIndex))
+            ringShadowLOD[lightIndex] = ls.ringShadows[lightIndex].texLod;
     }
 }
 

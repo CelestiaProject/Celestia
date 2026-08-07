@@ -464,22 +464,9 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 
     // Ring shadow parameters
     if (util::is_set(shaderProps.texUsage, TexUsage::RingShadowTexture))
-    {
-        const RingSystem* rings = lightingState.shadowingRingSystem;
-        float ringWidth = rings->outerRadius - rings->innerRadius;
-        prog->ringRadius = rings->innerRadius / objRadius;
-        prog->ringWidth = objRadius / ringWidth;
-        prog->ringPlane = Eigen::Hyperplane<float, 3>(lightingState.ringPlaneNormal, lightingState.ringCenter / objRadius).coeffs();
-        prog->ringCenter = lightingState.ringCenter / objRadius;
-
-        for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; ++lightIndex)
-        {
-            if (shaderProps.hasRingShadowForLight(lightIndex))
-            {
-                prog->ringShadowLOD[lightIndex] = lightingState.ringShadows[lightIndex].texLod;
-            }
-        }
-    }
+        prog->setRingShadowParameters(
+            lightingState,
+            Eigen::Vector3f::Constant(objRadius));
 
     cmod::BlendMode newBlendMode = cmod::BlendMode::InvalidBlend;
     if (m.opacity != 1.0f ||
