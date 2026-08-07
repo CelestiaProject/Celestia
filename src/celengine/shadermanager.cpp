@@ -667,13 +667,18 @@ BeginLightSourceShadows(const ShaderProperties& props, unsigned int light)
 // is also calculated accurately. However, the shadow falloff from from
 // the umbra to the edge of the penumbra is approximated as linear.
 std::string
-Shadow(unsigned int light, unsigned int shadow)
+Shadow(unsigned int light,
+       unsigned int shadow,
+       std::string_view position = "position"sv,
+       std::string_view visibility = "shadow"sv,
+       std::string_view center = "shadowCenter"sv,
+       std::string_view radius = "shadowR"sv)
 {
     std::string source;
 
-    source += "shadowCenter.s = dot(vec4(position, 1.0), " +
+    source += std::string(center) + ".s = dot(vec4(" + std::string(position) + ", 1.0), " +
         IndexedParameter("shadowTexGenS", light, shadow) + ") - 0.5;\n";
-    source += "shadowCenter.t = dot(vec4(position, 1.0), " +
+    source += std::string(center) + ".t = dot(vec4(" + std::string(position) + ", 1.0), " +
         IndexedParameter("shadowTexGenT", light, shadow) + ") - 0.5;\n";
 
     // The shadow shadow consists of a circular region of constant depth (maxDepth),
@@ -686,11 +691,12 @@ Shadow(unsigned int light, unsigned int shadow)
     // The code generated below will compute:
     // r = 2 * sqrt(dot(shadowCenter, shadowCenter));
     // shadowR = clamp((r - 1) * shadowFalloff, 0, shadowMaxDepth)
-    source += "shadowR = clamp((2.0 * sqrt(dot(shadowCenter, shadowCenter)) - 1.0) * " +
+    source += std::string(radius) + " = clamp((2.0 * sqrt(dot(" + std::string(center) + ", " +
+        std::string(center) + ")) - 1.0) * " +
         IndexedParameter("shadowFalloff", light, shadow) + ", 0.0, " +
         IndexedParameter("shadowMaxDepth", light, shadow) + ");\n";
 
-    source += "shadow *= 1.0 - shadowR;\n";
+    source += std::string(visibility) + " *= 1.0 - " + std::string(radius) + ";\n";
 
     return source;
 }
@@ -781,6 +787,12 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "    float viewStartRadius = sqrt(viewStartRadiusSq);\n";
     source += "    float viewStartMu = viewStartProjection / viewStartRadius;\n";
     source += "    vec3 invExtinction = 1.0 / max(extinctionCoeff, vec3(1.0e-18));\n";
+    if (props.getEclipseShadowCountForLight(0) > 0)
+    {
+        source += "    float atmosphereShadow;\n";
+        source += "    vec2 atmosphereShadowCenter;\n";
+        source += "    float atmosphereShadowR;\n";
+    }
     source += "    for (int i = 0; i < atmosphereSegmentCount; ++i)\n";
     source += "    {\n";
     source += "        float viewEndProjection = viewStartProjection + stepLength;\n";
@@ -803,6 +815,20 @@ AtmosphericEffects(const ShaderProperties& props)
     source += "        float sampleRadiusSq = dot(atmSamplePointSun, atmSamplePointSun);\n";
     source += "        float horizonDistance = sqrt(max(0.0, sampleRadiusSq - planetRadiusSq));\n";
     source += "        float sunVisibility = smoothstep(-shadowWidth, shadowWidth, rq + horizonDistance);\n";
+    if (props.getEclipseShadowCountForLight(0) > 0)
+    {
+        source += "        atmosphereShadow = sunVisibility;\n";
+        for (unsigned int i = 0; i < props.getEclipseShadowCountForLight(0); ++i)
+        {
+            source += Shadow(0,
+                             i,
+                             "atmSamplePointSun"sv,
+                             "atmosphereShadow"sv,
+                             "atmosphereShadowCenter"sv,
+                             "atmosphereShadowR"sv);
+        }
+        source += "        sunVisibility = atmosphereShadow;\n";
+    }
     source += "        if (sunVisibility > 0.0)\n";
     source += "        {\n";
     source += "            qq = sampleRadiusSq - atmosphereRadius.y;\n";
@@ -2058,6 +2084,20 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
 
     // Must match the centroid output in buildAtmosphereVertexShader.
     source += "centroid " + DeclareInput("position", Shader_Vector3);
+
+    if (props.hasEclipseShadows())
+    {
+        for (unsigned int i = 0; i < props.nLights; ++i)
+        {
+            for (unsigned int j = 0; j < props.getEclipseShadowCountForLight(i); ++j)
+            {
+                source += DeclareUniform(IndexedParameter("shadowTexGenS", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowTexGenT", i, j), Shader_Vector4);
+                source += DeclareUniform(IndexedParameter("shadowFalloff", i, j), Shader_Float);
+                source += DeclareUniform(IndexedParameter("shadowMaxDepth", i, j), Shader_Float);
+            }
+        }
+    }
 
     if (!transmissionOnly)
     {

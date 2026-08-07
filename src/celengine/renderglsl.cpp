@@ -658,7 +658,13 @@ void renderClouds_GLSL(const RenderInfo& ri,
 #endif
 
     if (shadprop.usesShadows())
-        prog->setEclipseShadowParameters(ls, semiAxes, planetOrientation);
+    {
+        float cloudScale = 1.0f + atmosphere->cloudHeight / radius;
+        prog->setEclipseShadowParameters(
+            ls,
+            semiAxes * cloudScale,
+            planetOrientation);
+    }
 
     unsigned int attributes = LODSphereMesh::Normals;
     if (cloudNormalMap != nullptr)

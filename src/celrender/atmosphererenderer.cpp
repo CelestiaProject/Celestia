@@ -342,16 +342,21 @@ AtmosphereRenderer::render(
     const RenderInfo         &ri,
     const Atmosphere         &atmosphere,
     const LightingState      &ls,
-    const Eigen::Quaternionf &/*planetOrientation*/,
-    float                     radius,
+    const Eigen::Quaternionf &planetOrientation,
+    const Eigen::Vector3f    &bodySemiAxes,
     const math::Frustum      &frustum,
     const Matrices           &m)
 {
+    const float radius = bodySemiAxes.maxCoeff();
+
     ShaderProperties shadprop;
-    shadprop.nLights = static_cast<ushort>(ls.nLights);
+    shadprop.nLights = static_cast<ushort>(std::min(ls.nLights, MaxShaderLights));
 
     shadprop.texUsage |= TexUsage::Scattering;
     shadprop.lightModel = LightingModel::AtmosphereModel;
+
+    if (shadprop.nLights > 0 && ls.shadows[0] != nullptr && !ls.shadows[0]->empty())
+        shadprop.setEclipseShadowCountForLight(0, std::min(MaxShaderEclipseShadows, static_cast<unsigned int>(ls.shadows[0]->size())));
 
     bool useDualSource = false;
     GLenum scatteringBlendDestination = GL_ONE;
@@ -366,6 +371,7 @@ AtmosphereRenderer::render(
     ShaderProperties transmissionProps = shadprop;
     transmissionProps.nLights = 0;
     transmissionProps.effects = LightingEffects::AtmosphereTransmission;
+    transmissionProps.shadowCounts = ShadowMask::None;
 
     if (useDualSource)
         shadprop.effects = LightingEffects::AtmosphereDualSource;
@@ -395,12 +401,6 @@ AtmosphereRenderer::render(
         prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
     };
 
-#if 0
-    // Currently eclipse shadows are ignored when rendering atmospheres
-    if (shadprop.shadowCounts != 0)
-        prog->setEclipseShadowParameters(ls, radius, planetOrientation);
-#endif
-
     glFrontFace(GL_CW);
 
     Renderer::PipelineState ps;
@@ -427,6 +427,13 @@ AtmosphereRenderer::render(
         scatteringProg->setLightParameters(ls, ri.color, ri.specularColor, Color::Black);
         scatteringProg->ambientColor = Eigen::Vector3f::Zero();
         setupAtmosphereProgram(scatteringProg);
+        if (shadprop.hasEclipseShadows())
+        {
+            scatteringProg->setEclipseShadowParameters(
+                ls,
+                bodySemiAxes * atmScale,
+                planetOrientation);
+        }
 
         ps.blendFunc = {GL_ONE, scatteringBlendDestination};
         m_renderer.setPipelineState(ps);

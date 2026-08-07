@@ -2633,7 +2633,7 @@ void Renderer::renderAtmosphere(const Atmosphere* atmosphere, // NOSONAR(cpp:S10
                 *atmosphere,
                 ls,
                 obj.orientation,
-                radius,
+                radius * obj.semiAxes,
                 viewFrustum,
                 planetMVP);
         }
