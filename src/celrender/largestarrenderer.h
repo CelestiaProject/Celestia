@@ -16,6 +16,7 @@
 #include <Eigen/Core>
 
 #include <celengine/starpipelineowner.h>
+#include "gl/buffer.h"
 
 class Color;
 class Renderer;
@@ -24,7 +25,6 @@ enum class StaticShader;
 
 namespace celestia::gl
 {
-class Buffer;
 class VertexObject;
 } // namespace celestia::gl
 
@@ -89,7 +89,7 @@ private:
     std::vector<StarVertex>           m_vertices;
 
     CelestiaGLProgram                *m_prog        { nullptr };
-    std::unique_ptr<gl::Buffer>       m_bo;
+    gl::Buffer::SharedPtr             m_bo;
     std::unique_ptr<gl::VertexObject> m_vo;
     bool                              m_initialized { false };
 };

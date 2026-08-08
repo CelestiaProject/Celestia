@@ -9,23 +9,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "binder.h"
 #include "buffer.h"
+
+#include "binder.h"
 
 namespace celestia::gl
 {
 
-Buffer::Buffer(Buffer::TargetHint targetHint) :
+Buffer::Buffer(GLuint id, Buffer::TargetHint targetHint) :
+    m_id(id),
     m_targetHint(targetHint)
 {
-    glGenBuffers(1, &m_id);
-}
-
-Buffer::Buffer(Buffer::TargetHint targetHint, util::array_view<void> data, Buffer::BufferUsage usage) :
-    Buffer(targetHint)
-{
-    Binder::get().bind(*this);
-    setData(data, usage);
 }
 
 Buffer::Buffer(Buffer &&other) noexcept :
@@ -111,6 +105,7 @@ Buffer::setData(util::array_view<void> data, Buffer::BufferUsage usage)
 Buffer&
 Buffer::setSubData(GLintptr offset, util::array_view<void> data)
 {
+    Binder::get().bind(*this);
     glBufferSubData(GLenum(m_targetHint), offset, data.size(), data.data());
     return *this;
 }
@@ -119,6 +114,29 @@ Buffer&
 Buffer::invalidateData()
 {
     return setData(util::array_view<void>(nullptr, m_bufferSize), m_usage);
+}
+
+Buffer::SharedPtr
+Buffer::create(TargetHint targetHint)
+{
+    GLuint id;
+    glGenBuffers(1, &id);
+    return Buffer::SharedPtr(new Buffer(id, targetHint), false);
+}
+
+Buffer::SharedPtr
+Buffer::create(TargetHint targetHint,
+               util::array_view<void> data,
+               BufferUsage usage)
+{
+    auto buffer = create(targetHint);
+    if (buffer)
+    {
+        Binder::get().bind(*buffer);
+        buffer->setData(data, usage);
+    }
+
+    return buffer;
 }
 
 } // namespace celestia::gl

@@ -68,7 +68,6 @@ struct Blob
 struct GlobularForm
 {
     std::vector<Blob> gblobs;
-    mutable gl::Buffer bo;
     mutable gl::VertexObject vo;
     mutable bool GLDataInitialized{ false };
 };
@@ -175,7 +174,7 @@ colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
 }
 
 void
-initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, util::array_view<Blob> points)
+initGlobularData(gl::VertexObject &vo, util::array_view<Blob> points)
 {
     struct GlobularVtx
     {
@@ -232,7 +231,7 @@ initGlobularData(gl::Buffer &bo, gl::VertexObject &vo, util::array_view<Blob> po
         globularVtx.push_back(vtx);
     }
 
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array, globularVtx);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, globularVtx);
     vo = gl::VertexObject(gl::VertexObject::Primitive::Points);
     vo.addVertexBuffer(
         bo,
@@ -618,7 +617,7 @@ GlobularRenderer::renderForm(CelestiaGLProgram *tidalProg, CelestiaGLProgram *gl
 
     if (!form->GLDataInitialized)
     {
-        initGlobularData(form->bo, vo, form->gblobs);
+        initGlobularData(vo, form->gblobs);
         form->GLDataInitialized = true;
     }
 

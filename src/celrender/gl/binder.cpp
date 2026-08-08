@@ -22,13 +22,13 @@ Binder::get()
 }
 
 Binder&
-Binder::bind(const BufferRef &bo)
+Binder::bind(const Buffer &bo)
 {
     return bindVBO(bo.targetHint(), bo.id());
 }
 
 Binder&
-Binder::unbind(const BufferRef &bo)
+Binder::unbind(const Buffer &bo)
 {
     switch (bo.targetHint())
     {

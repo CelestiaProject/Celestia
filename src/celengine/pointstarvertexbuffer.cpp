@@ -8,7 +8,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/color.h>
 #include "glsupport.h"
@@ -95,12 +94,12 @@ void PointStarVertexBuffer::setupVertexArrayObject()
     {
         m_initialized = true;
 
-        m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
+        m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
         m_vo1 = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Points);
         m_vo2 = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Points);
 
         m_vo1->addVertexBuffer(
-            *m_bo,
+            m_bo,
             CelestiaGLProgram::VertexCoordAttributeIndex,
             3,
             gl::VertexObject::DataType::Float,
@@ -109,7 +108,7 @@ void PointStarVertexBuffer::setupVertexArrayObject()
             offsetof(StarVertex, position));
 
         m_vo1->addVertexBuffer(
-            *m_bo,
+            m_bo,
             CelestiaGLProgram::ColorAttributeIndex,
             4,
             gl::VertexObject::DataType::UnsignedByte,
@@ -118,7 +117,7 @@ void PointStarVertexBuffer::setupVertexArrayObject()
             offsetof(StarVertex, color));
 
         m_vo1->addVertexBuffer(
-            *m_bo,
+            m_bo,
             CelestiaGLProgram::PointSizeAttributeIndex,
             1,
             gl::VertexObject::DataType::Float,
@@ -127,7 +126,7 @@ void PointStarVertexBuffer::setupVertexArrayObject()
             offsetof(StarVertex, size));
 
         m_vo2->addVertexBuffer(
-            *m_bo,
+            m_bo,
             CelestiaGLProgram::VertexCoordAttributeIndex,
             3,
             gl::VertexObject::DataType::Float,
@@ -136,7 +135,7 @@ void PointStarVertexBuffer::setupVertexArrayObject()
             offsetof(StarVertex, position));
 
         m_vo2->addVertexBuffer(
-            *m_bo,
+            m_bo,
             CelestiaGLProgram::ColorAttributeIndex,
             4,
             gl::VertexObject::DataType::UnsignedByte,

@@ -80,7 +80,7 @@ convert(cmod::VertexAttributeSemantic semantic)
 }
 
 void
-setVertexArrays(gl::VertexObject &vao, const gl::Buffer &vbo, const cmod::VertexDescription& desc)
+setVertexArrays(gl::VertexObject &vao, const gl::Buffer::SharedPtr &vbo, const cmod::VertexDescription& desc)
 {
     auto attributes = desc.attributes();
     for (const auto &attribute : attributes)
@@ -112,9 +112,9 @@ public:
 
 private:
     std::shared_ptr<const cmod::Model> m_model;
-    std::vector<gl::Buffer> m_vbos;
     std::vector<gl::VertexObject> m_vaos;
     std::size_t m_gpuBytes{ 0 };
+    unsigned int m_vboCount{ 0 };
 };
 
 ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> model) :
@@ -134,8 +134,8 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
         const cmod::VertexDescription& vertexDesc = mesh->getVertexDescription();
 
         const std::size_t vertexBytes = mesh->getVertexCount() * vertexDesc.strideBytes();
-        m_vbos.emplace_back(gl::Buffer::TargetHint::Array,
-                            util::array_view<void>(mesh->getVertexData(), vertexBytes));
+        auto vbo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                                      util::array_view<void>(mesh->getVertexData(), vertexBytes));
         m_gpuBytes += vertexBytes;
 
         indices.reserve(std::max(indices.capacity(), static_cast<std::size_t>(mesh->getIndexCount())));
@@ -146,12 +146,13 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
         }
 
         m_gpuBytes += indices.size() * sizeof(cmod::Index32);
-        gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
+        auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices);
         indices.clear();
 
         gl::VertexObject& vao = m_vaos.emplace_back(gl::VertexObject::Primitive::Triangles);
-        setVertexArrays(vao, m_vbos.back(), mesh->getVertexDescription());
-        vao.setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedInt);
+        setVertexArrays(vao, vbo, mesh->getVertexDescription());
+        vao.setIndexBuffer(indexBuffer, 0, gl::VertexObject::IndexType::UnsignedInt);
+        ++m_vboCount;
     }
 }
 
@@ -169,9 +170,9 @@ ModelRenderGeometry::render(RenderContext& rc, double /* t */)
     {
         const cmod::Mesh* mesh = m_model->getMesh(meshIndex);
 
-        if (meshIndex >= m_vbos.size())
+        if (meshIndex >= m_vboCount)
         {
-            GetLogger()->error(_("Mesh index {} is higher than VBO count {}!"), meshIndex, m_vbos.size());
+            GetLogger()->error(_("Mesh index {} is higher than VBO count {}!"), meshIndex, m_vboCount);
             return;
         }
 

@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cmath>
+#include <memory>
 
 #include <celengine/galaxy.h>
 #include <celengine/galaxyform.h>
@@ -57,13 +58,11 @@ colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
 
 struct GalaxyRenderer::RenderData
 {
-    RenderData(gl::Buffer &&bo, gl::VertexObject &&vo) :
-        bo(std::move(bo)),
+    explicit RenderData(gl::VertexObject &&vo) :
         vo(std::move(vo))
     {
     }
 
-    gl::Buffer       bo;
     gl::VertexObject vo;
 };
 
@@ -317,7 +316,7 @@ GalaxyRenderer::initializeGL2(const CelestiaGLProgram *prog)
                 indices.push_back(baseIndex + 3);
             }
 
-            gl::Buffer bo(gl::Buffer::TargetHint::Array, glVertices);
+            auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, glVertices);
 
             gl::VertexObject vo(gl::VertexObject::Primitive::Triangles);
 
@@ -337,13 +336,13 @@ GalaxyRenderer::initializeGL2(const CelestiaGLProgram *prog)
             vo.addVertexBuffer(
                 bo, CelestiaGLProgram::TextureCoord0AttributeIndex, 2, gl::VertexObject::DataType::UnsignedByte,
                 true, sizeof(GalaxyVtx), offsetof(GalaxyVtx, texCoord));
-            gl::Buffer io(gl::Buffer::TargetHint::ElementArray, indices);
-            vo.setIndexBuffer(std::move(io), 0, gl::VertexObject::IndexType::UnsignedInt);
-            m_renderData.emplace_back(std::move(bo), std::move(vo));
+            auto io = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices);
+            vo.setIndexBuffer(io, 0, gl::VertexObject::IndexType::UnsignedInt);
+            m_renderData.emplace_back(std::move(vo));
         }
         else
         {
-            m_renderData.emplace_back(gl::Buffer{}, gl::VertexObject{});
+            m_renderData.emplace_back(gl::VertexObject{});
         }
         glVertices.clear();
         indices.clear();
@@ -446,7 +445,7 @@ GalaxyRenderer::initializeGL3(const CelestiaGLProgram *prog)
                 glVertices.push_back(v);
             }
 
-            gl::Buffer bo(gl::Buffer::TargetHint::Array, glVertices);
+            auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, glVertices);
 
             gl::VertexObject vo(gl::VertexObject::Primitive::Points);
 
@@ -464,11 +463,11 @@ GalaxyRenderer::initializeGL3(const CelestiaGLProgram *prog)
                 bo, brightnessLoc, 1, gl::VertexObject::DataType::UnsignedByte,
                 true, sizeof(GalaxyVtx), offsetof(GalaxyVtx, brightness));
 
-            m_renderData.emplace_back(std::move(bo), std::move(vo));
+            m_renderData.emplace_back(std::move(vo));
         }
         else
         {
-            m_renderData.emplace_back(gl::Buffer{}, gl::VertexObject{});
+            m_renderData.emplace_back(gl::VertexObject{});
         }
         glVertices.clear();
     }

@@ -66,7 +66,8 @@ CometRenderer::initGL()
     m_brightnessLoc = m_prog->attribIndex("in_Brightness");
 
     m_vo = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
-    m_bo = gl::Buffer(gl::Buffer::TargetHint::Array);
+    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
+    m_ibo = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray);
 
     m_vo
         .addVertexBuffer(
@@ -93,7 +94,7 @@ CometRenderer::initGL()
             false,
             sizeof(CometTailVertex),
             offsetof(CometTailVertex, brightness))
-        .setIndexBuffer(gl::Buffer(gl::Buffer::TargetHint::ElementArray), 0, gl::VertexObject::IndexType::UnsignedShort);
+        .setIndexBuffer(m_ibo, 0, gl::VertexObject::IndexType::UnsignedShort);
 
     m_initialized = true;
     return true;
@@ -245,11 +246,11 @@ CometRenderer::render(const Body &body,
     m_prog->vec3Param("viewDir") = pos.normalized();
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
-    m_bo.invalidateData().setData(
+    m_bo->invalidateData().setData(
         util::array_view(m_vertices.get(), MaxVertices),
         gl::Buffer::BufferUsage::StreamDraw);
 
-    m_vo.getIndexBuffer().invalidateData().setData(
+    m_ibo->invalidateData().setData(
         util::array_view(m_indices.get(), MaxIndices),
         gl::Buffer::BufferUsage::StreamDraw);
 

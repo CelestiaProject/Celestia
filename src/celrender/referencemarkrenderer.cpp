@@ -143,15 +143,15 @@ ArrowRenderer::ArrowRenderer(const Renderer& renderer) :
     auto vertices = getArrowVertices();
     auto indices = getArrowIndices();
 
-    m_buffer.setData(vertices, gl::Buffer::BufferUsage::StaticDraw);
+    auto m_buffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, vertices);
 
     m_vo.addVertexBuffer(m_buffer,
                          CelestiaGLProgram::VertexCoordAttributeIndex,
                          3,
                          gl::VertexObject::DataType::Float);
-    gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
+    auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices);
     m_vo.setCount(static_cast<int>(indices.size()));
-    m_vo.setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
+    m_vo.setIndexBuffer(indexBuffer, 0, gl::VertexObject::IndexType::UnsignedShort);
 
     ShaderProperties shaderProperties;
     shaderProperties.texUsage = TexUsage::VertexColors;

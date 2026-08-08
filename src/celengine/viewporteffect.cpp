@@ -101,7 +101,7 @@ void PassthroughViewportEffect::initialize()
     };
 
     vo = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array, quadVertices, gl::Buffer::BufferUsage::StaticDraw);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, quadVertices, gl::Buffer::BufferUsage::StaticDraw);
 
     vo.setCount(6);
     vo.addVertexBuffer(
@@ -163,9 +163,7 @@ void WarpMeshViewportEffect::initialize()
     initialized = true;
 
     vo = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array);
-
-    mesh->setUpVertexObject(vo, bo);
+    mesh->setUpVertexObject(vo);
 }
 
 bool WarpMeshViewportEffect::distortXY(float &x, float &y)

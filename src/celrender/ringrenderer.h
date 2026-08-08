@@ -57,7 +57,6 @@ private:
     static constexpr unsigned int nLODs = 4;
 
     std::array<float, nLODs - 1> sectionScales;
-    std::array<gl::Buffer, nLODs> buffers;
     std::array<gl::VertexObject, nLODs> vertexObjects;
     Renderer& renderer;
 };

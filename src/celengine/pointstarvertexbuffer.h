@@ -13,6 +13,7 @@
 #include <memory>
 #include <Eigen/Core>
 
+#include <celrender/gl/buffer.h>
 #include "starpipelineowner.h"
 
 class Color;
@@ -22,7 +23,6 @@ class CelestiaGLProgram;
 
 namespace celestia::gl
 {
-class Buffer;
 class VertexObject;
 }
 
@@ -68,9 +68,9 @@ private:
     float                           m_pointScale            { 1.0f };
     CelestiaGLProgram              *m_prog                  { nullptr };
 
-    std::unique_ptr<celestia::gl::Buffer>        m_bo;
-    std::unique_ptr<celestia::gl::VertexObject>  m_vo1;
-    std::unique_ptr<celestia::gl::VertexObject>  m_vo2;
+    celestia::gl::Buffer::SharedPtr             m_bo;
+    std::unique_ptr<celestia::gl::VertexObject> m_vo1;
+    std::unique_ptr<celestia::gl::VertexObject> m_vo2;
     bool m_initialized{ false };
 
     void makeCurrent();

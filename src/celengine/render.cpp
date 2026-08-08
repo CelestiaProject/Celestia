@@ -74,7 +74,6 @@
 #include <celrender/referencemarkrenderer.h>
 #include <celrender/ringrenderer.h>
 #include <celrender/skygridrenderer.h>
-#include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
@@ -470,10 +469,9 @@ bool Renderer::init(int winWidth, int winHeight,
         return false;
 
     m_markerVO = std::make_unique<celestia::gl::VertexObject>(celestia::gl::VertexObject::Primitive::Triangles);
-    m_markerBO = std::make_unique<celestia::gl::Buffer>(celestia::gl::Buffer::TargetHint::Array);
 
     m_rectVO = std::make_unique<celestia::gl::VertexObject>(celestia::gl::VertexObject::Primitive::TriangleFan);
-    m_rectBO = std::make_unique<celestia::gl::Buffer>(celestia::gl::Buffer::TargetHint::Array);
+    m_rectBO = celestia::gl::Buffer::create(celestia::gl::Buffer::TargetHint::Array);
 
     m_lodSphere = std::make_unique<LODSphereMesh>();
 
@@ -5346,7 +5344,7 @@ static void draw_rectangle_solid(const Renderer &renderer,
                                  const Eigen::Matrix4f& p,
                                  const Eigen::Matrix4f& m,
                                  celestia::gl::VertexObject &vo,
-                                 celestia::gl::Buffer &bo,
+                                 const celestia::gl::Buffer::SharedPtr &bo,
                                  bool &initialized)
 {
     namespace gl = celestia::gl;
@@ -5383,7 +5381,7 @@ static void draw_rectangle_solid(const Renderer &renderer,
             r.colors[i].get(vertices[i].color);
     }
 
-    bo.bind().setData(vertices, gl::Buffer::BufferUsage::StreamDraw);
+    bo->bind().setData(vertices, gl::Buffer::BufferUsage::StreamDraw);
 
     if (!initialized)
     {
@@ -5432,7 +5430,7 @@ void Renderer::drawRectangle(const celestia::Rect &r,
     if(r.type == celestia::Rect::Type::BorderOnly)
         draw_rectangle_border(*this, r, fishEyeOverrideMode, p, m);
     else
-        draw_rectangle_solid(*this, r, fishEyeOverrideMode, p, m, *m_rectVO, *m_rectBO, m_rectInitialized);
+        draw_rectangle_solid(*this, r, fishEyeOverrideMode, p, m, *m_rectVO, m_rectBO, m_rectInitialized);
 }
 
 void Renderer::setRenderRegion(int x, int y, int width, int height, bool withScissor)

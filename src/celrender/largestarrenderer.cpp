@@ -15,7 +15,6 @@
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
-#include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/array_view.h>
 #include <celutil/color.h>
@@ -120,7 +119,7 @@ LargeStarRenderer::setupVertexArrayObject()
 
     m_initialized = true;
 
-    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
+    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
     m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Triangles);
 
     // Two triangles per quad: (0,1,2) and (0,2,3).
@@ -136,11 +135,11 @@ LargeStarRenderer::setupVertexArrayObject()
         out[4] = static_cast<GLushort>(base + 2);
         out[5] = static_cast<GLushort>(base + 3);
     }
-    gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
-    m_vo->setIndexBuffer(std::move(indexBuffer), 0, gl::VertexObject::IndexType::UnsignedShort);
+    auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices);
+    m_vo->setIndexBuffer(indexBuffer, 0, gl::VertexObject::IndexType::UnsignedShort);
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         2,
         gl::VertexObject::DataType::Byte,
@@ -149,7 +148,7 @@ LargeStarRenderer::setupVertexArrayObject()
         offsetof(StarVertex, corner));
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::NormalAttributeIndex,
         3,
         gl::VertexObject::DataType::Float,
@@ -158,7 +157,7 @@ LargeStarRenderer::setupVertexArrayObject()
         offsetof(StarVertex, center));
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::TextureCoord0AttributeIndex,
         2,
         gl::VertexObject::DataType::UnsignedByte,
@@ -169,7 +168,7 @@ LargeStarRenderer::setupVertexArrayObject()
     // Color stays 4-component: this layout is shared with
     // LegacyLargeStarRenderer, whose shader reads in_Color.a.
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::ColorAttributeIndex,
         4,
         gl::VertexObject::DataType::UnsignedByte,
@@ -178,7 +177,7 @@ LargeStarRenderer::setupVertexArrayObject()
         offsetof(StarVertex, color));
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::IntensityAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
@@ -189,7 +188,7 @@ LargeStarRenderer::setupVertexArrayObject()
     // continuous distance-derived glow fade; float for a smooth transition
     // (unused by the legacy shader)
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::AlphaAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
@@ -198,7 +197,7 @@ LargeStarRenderer::setupVertexArrayObject()
         offsetof(StarVertex, alpha));
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::LimbRadiusAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,

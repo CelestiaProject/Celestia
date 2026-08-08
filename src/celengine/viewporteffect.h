@@ -58,7 +58,6 @@ private:
     bool m_needsFloatSource;
 
     celestia::gl::VertexObject vo;
-    celestia::gl::Buffer bo;
 
     void initialize();
 
@@ -77,7 +76,6 @@ public:
 
 private:
     celestia::gl::VertexObject vo;
-    celestia::gl::Buffer bo;
 
     std::unique_ptr<WarpMesh> mesh;
 
