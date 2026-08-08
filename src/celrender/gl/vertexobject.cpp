@@ -20,15 +20,15 @@ namespace celestia::gl
 
 struct VertexObject::BufferDesc
 {
-    BufferDesc(GLsizeiptr    offset,
-               GLuint        bufferId,
-               std::uint16_t type,
-               std::int16_t  location,
-               std::uint8_t  elemSize,
-               std::uint8_t  stride,
-               bool          normalized) :
+    BufferDesc(GLsizeiptr               offset,
+               const Buffer::SharedPtr &buffer,
+               std::uint16_t            type,
+               std::int16_t             location,
+               std::uint8_t             elemSize,
+               std::uint8_t             stride,
+               bool                     normalized) :
+        buffer(buffer),
         offset(offset),
-        bufferId(bufferId),
         type(type),
         location(location),
         elemSize(elemSize),
@@ -37,13 +37,13 @@ struct VertexObject::BufferDesc
     {
     }
 
-    GLsizeiptr    offset;
-    GLuint        bufferId;
-    std::uint16_t type;       // all constants < 0xFFFF
-    std::int16_t  location;
-    std::uint8_t  elemSize;   // 1, 2, 3, 4
-    std::uint8_t  stride;     // WebGL allows only 255 bytes max
-    bool          normalized;
+    Buffer::SharedPtr buffer;
+    GLsizeiptr        offset;
+    std::uint16_t     type;       // all constants < 0xFFFF
+    std::int16_t      location;
+    std::uint8_t      elemSize;   // 1, 2, 3, 4
+    std::uint8_t      stride;     // WebGL allows only 255 bytes max
+    bool              normalized;
 };
 
 VertexObject::VertexObject() = default;
@@ -122,13 +122,19 @@ VertexObject::clear()
 }
 
 VertexObject&
-VertexObject::addVertexBuffer(const Buffer &buffer, int location, int elemSize, VertexObject::DataType type, bool normalized, int stride, std::ptrdiff_t offset)
+VertexObject::addVertexBuffer(const Buffer::SharedPtr &buffer,
+                              int location,
+                              int elemSize,
+                              VertexObject::DataType type,
+                              bool normalized,
+                              int stride,
+                              std::ptrdiff_t offset)
 {
-    if (buffer.targetHint() != Buffer::TargetHint::Array)
+    if (buffer->targetHint() != Buffer::TargetHint::Array)
         return *this;
 
     m_bufferDesc.emplace_back(offset,
-                              buffer.id(),
+                              buffer,
                               static_cast<std::uint16_t>(type),
                               static_cast<std::uint16_t>(location),
                               static_cast<std::uint8_t>(elemSize),
@@ -173,19 +179,13 @@ VertexObject::draw(VertexObject::Primitive primitive, GLsizei count, GLint first
     return *this;
 }
 
-Buffer&
-VertexObject::getIndexBuffer() noexcept
-{
-    return m_indexBuffer;
-}
-
 VertexObject&
-VertexObject::setIndexBuffer(Buffer &&buffer, std::ptrdiff_t /*offset*/, VertexObject::IndexType type)
+VertexObject::setIndexBuffer(const Buffer::SharedPtr &buffer, std::ptrdiff_t /*offset*/, VertexObject::IndexType type)
 {
-    if (buffer.targetHint() != Buffer::TargetHint::ElementArray)
+    if (buffer->targetHint() != Buffer::TargetHint::ElementArray)
         return *this;
 
-    m_indexBuffer = std::move(buffer);
+    m_indexBuffer = buffer;
     m_indexType = type;
 
     return *this;
@@ -198,14 +198,14 @@ VertexObject::enableAttribArrays() const
 
     for (const auto &p : m_bufferDesc)
     {
-        binder.bind(BufferRef(p.bufferId, Buffer::TargetHint::Array));
+        binder.bind(*p.buffer);
 
         glEnableVertexAttribArray(p.location);
         glVertexAttribPointer(p.location, p.elemSize, p.type, p.normalized ? GL_TRUE : GL_FALSE, p.stride, PTR(p.offset));
     }
 
     if (isIndexed())
-        binder.bind(m_indexBuffer);
+        binder.bind(*m_indexBuffer);
 }
 
 void
@@ -217,7 +217,6 @@ VertexObject::bind()
     {
         m_initialized = true;
         enableAttribArrays();
-        m_bufferDesc.clear();
     }
 }
 

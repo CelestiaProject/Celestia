@@ -155,8 +155,8 @@ struct TextureFontPrivate
 
     std::vector<FontVertex> m_fontVertices;
 
-    gl::VertexObject m_vao{ gl::VertexObject::Primitive::Triangles };
-    gl::Buffer       m_vbo{ gl::Buffer::TargetHint::Array };
+    gl::VertexObject      m_vao{ gl::VertexObject::Primitive::Triangles };
+    gl::Buffer::SharedPtr m_vbo{ gl::Buffer::create(gl::Buffer::TargetHint::Array) };
 
     bool m_shaderInUse{ false };
 
@@ -199,7 +199,7 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(re
         indexes.push_back(index + 2);
     }
 
-    m_vao.setIndexBuffer(gl::Buffer(gl::Buffer::TargetHint::ElementArray, indexes), 0, gl::VertexObject::IndexType::UnsignedShort);
+    m_vao.setIndexBuffer(gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indexes), 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 TextureFontPrivate::~TextureFontPrivate()
@@ -532,11 +532,9 @@ TextureFontPrivate::flush()
     if (m_fontVertices.size() < 4)
         return;
 
-    m_vbo.invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_vao.getIndexBuffer().bind();
+    m_vbo->invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
     m_vao.draw(static_cast<GLsizei>(m_fontVertices.size() / 4 * 6));
-    m_vbo.unbind();
-    m_vao.getIndexBuffer().unbind();
+    m_vbo->unbind();
 
     m_fontVertices.clear();
 }

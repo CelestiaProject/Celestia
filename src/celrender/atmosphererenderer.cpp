@@ -64,7 +64,7 @@ void AtmosphereRenderer::initGL()
     m_skyContour.reserve(MaxSkySlices + 1);
 
     m_vo = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
-    m_bo = gl::Buffer(gl::Buffer::TargetHint::Array);
+    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
 
     m_vo.addVertexBuffer(
         m_bo,
@@ -82,7 +82,8 @@ void AtmosphereRenderer::initGL()
         true,
         sizeof(SkyVertex),
         offsetof(SkyVertex, color));
-    m_vo.setIndexBuffer(gl::Buffer(gl::Buffer::TargetHint::ElementArray), 0, gl::VertexObject::IndexType::UnsignedShort);
+    m_ibo = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray);
+    m_vo.setIndexBuffer(m_ibo, 0, gl::VertexObject::IndexType::UnsignedShort);
 }
 
 void
@@ -327,8 +328,8 @@ AtmosphereRenderer::renderLegacy(
     ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
     m_renderer.setPipelineState(ps);
 
-    m_bo.invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_vo.getIndexBuffer().invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
+    m_bo->invalidateData().setData(m_skyVertices, gl::Buffer::BufferUsage::StreamDraw);
+    m_ibo->invalidateData().setData(m_skyIndices, gl::Buffer::BufferUsage::StreamDraw);
 
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);

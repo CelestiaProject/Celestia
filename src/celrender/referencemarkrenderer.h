@@ -33,7 +33,6 @@ public:
 
 private:
     CelestiaGLProgram* m_prog;
-    gl::Buffer m_buffer{ gl::Buffer::TargetHint::Array };
     gl::VertexObject m_vo{ gl::VertexObject::Primitive::Triangles };
     LineRenderer m_lineRenderer;
 };

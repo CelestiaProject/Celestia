@@ -247,8 +247,7 @@ RingRenderer::initializeLOD(unsigned int level, std::uint32_t nSections)
         ringCoord.push_back(vertex);
     }
 
-    auto& bo = buffers[level];
-    bo = gl::Buffer(gl::Buffer::TargetHint::Array, ringCoord);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, ringCoord);
     auto& vo = vertexObjects[level];
     vo = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
     vo.setCount(static_cast<int>((nSections + 1) * 2))
@@ -266,7 +265,7 @@ RingRenderer::initializeLOD(unsigned int level, std::uint32_t nSections)
                        false,
                        sizeof(RingVertex),
                        offsetof(RingVertex, pos));
-    bo.unbind();
+    bo->unbind();
 }
 
 void

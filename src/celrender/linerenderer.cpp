@@ -70,7 +70,7 @@ LineRenderer::draw_triangle_strip(int count, int offset)
     m_trVO.draw(gl::VertexObject::Primitive::TriangleStrip, count, offset);
 }
 
-//! Draw lines defained with segments.
+//! Draw lines defined with segments.
 void
 LineRenderer::draw_lines(int count, int offset)
 {
@@ -124,9 +124,9 @@ void
 LineRenderer::create_vbo_lines()
 {
     m_lnVO = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
-    m_lnBO = gl::Buffer(gl::Buffer::TargetHint::Array);
+    m_lnBO = gl::Buffer::create(gl::Buffer::TargetHint::Array);
 
-    m_lnBO.setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+    m_lnBO->setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
 
     m_lnVO.addVertexBuffer(
         m_lnBO,
@@ -158,7 +158,7 @@ LineRenderer::setup_vbo_lines()
     {
         if (m_storageType != StorageType::Static)
         {
-            m_lnBO.invalidateData().setData(m_vertices);
+            m_lnBO->invalidateData().setData(m_vertices);
         }
     }
     else
@@ -172,7 +172,7 @@ void
 LineRenderer::create_vbo_triangles()
 {
     m_trVO = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
-    m_trBO = gl::Buffer(gl::Buffer::TargetHint::Array);
+    m_trBO = gl::Buffer::create(gl::Buffer::TargetHint::Array);
 
     GLsizei                    stride;
     std::array<std::size_t, 5> offset;
@@ -188,7 +188,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineSegment, point1) + offsetof(Vertex, color)
         };
 
-        m_trBO.setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO->setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_segments.clear();
     }
     else
@@ -203,7 +203,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineVertex, point) + offsetof(Vertex, color)
         };
 
-        m_trBO.setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO->setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_verticesTr.clear();
     }
     m_trVO.addVertexBuffer(
@@ -259,15 +259,15 @@ LineRenderer::setup_vbo_triangles()
     {
         if (m_storageType != StorageType::Static)
         {
-            m_trBO.invalidateData();
+            m_trBO->invalidateData();
 
             if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
             {
-                m_trBO.setData(m_segments);
+                m_trBO->setData(m_segments);
             }
             else
             {
-                m_trBO.setData(m_verticesTr);
+                m_trBO->setData(m_verticesTr);
             }
         }
     }
@@ -461,19 +461,19 @@ LineRenderer::clear()
 void
 LineRenderer::orphan()
 {
-    if (m_lnBO.id() != 0)
-        m_lnBO.invalidateData();
-    if (m_trBO.id() != 0)
-        m_trBO.invalidateData();
+    if (m_lnBO)
+        m_lnBO->invalidateData();
+    if (m_trBO)
+        m_trBO->invalidateData();
 }
 
 void
 LineRenderer::finish()
 {
-    if (m_lnBO.id() != 0)
-        m_lnBO.unbind();
-    if (m_trBO.id() != 0)
-        m_trBO.unbind();
+    if (m_lnBO)
+        m_lnBO->unbind();
+    if (m_trBO)
+        m_trBO->unbind();
     m_inUse = false;
     m_prog = nullptr;
 }

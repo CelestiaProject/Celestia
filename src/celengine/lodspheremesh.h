@@ -83,7 +83,7 @@ public:
 
     struct CachedIndexBuffer
     {
-        celestia::gl::Buffer buffer;
+        celestia::gl::Buffer::SharedPtr buffer;
         int indexCount{ 0 };
     };
 

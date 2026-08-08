@@ -283,8 +283,8 @@ private:
     std::vector<Color>        m_colors;
     gl::VertexObject          m_lnVO;
     gl::VertexObject          m_trVO;
-    gl::Buffer                m_lnBO;
-    gl::Buffer                m_trBO;
+    gl::Buffer::SharedPtr     m_lnBO;
+    gl::Buffer::SharedPtr     m_trBO;
     const Renderer           &m_renderer;
     float                     m_width;
     PrimType                  m_primType;

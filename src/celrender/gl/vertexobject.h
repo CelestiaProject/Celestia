@@ -12,6 +12,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 #include <celengine/glsupport.h>
 
@@ -215,12 +216,7 @@ public:
      *
      * @see @ref DataType
      */
-    VertexObject& addVertexBuffer(const Buffer &buffer, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0);
-
-    /**
-     * @brief Gets the index buffer
-     */
-    Buffer& getIndexBuffer() noexcept;
+    VertexObject& addVertexBuffer(const Buffer::SharedPtr&, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0);
 
     /**
      * @brief Add index buffer and become its owner.
@@ -231,7 +227,7 @@ public:
      *
      * @see @ref IndexType
      */
-    VertexObject& setIndexBuffer(Buffer &&buffer, std::ptrdiff_t offset, IndexType type);
+    VertexObject& setIndexBuffer(const Buffer::SharedPtr&, std::ptrdiff_t offset, IndexType type);
 
 private:
     //! Reset object to initial state
@@ -251,7 +247,7 @@ private:
     std::vector<BufferDesc> m_bufferDesc;
 
     //! Index buffer
-    Buffer m_indexBuffer;
+    Buffer::SharedPtr m_indexBuffer;
 
     //! Index type
     IndexType m_indexType{ IndexType::UnsignedShort };
@@ -284,7 +280,7 @@ VertexObject::count() const
 inline bool
 VertexObject::isIndexed() const
 {
-    return m_indexBuffer.id() != 0;
+    return static_cast<bool>(m_indexBuffer);
 }
 
 inline GLuint

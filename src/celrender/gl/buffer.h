@@ -11,8 +11,14 @@
 
 #pragma once
 
+#include <atomic>
+#include <cstdint>
+
+#include <boost/smart_ptr/intrusive_ptr.hpp>
+
 #include <celengine/glsupport.h>
 #include <celutil/array_view.h>
+#include <celutil/classops.h>
 
 namespace celestia::gl
 {
@@ -22,9 +28,11 @@ namespace celestia::gl
  *
  * Wraps an OpenGL buffer object.
  */
-class Buffer
+class Buffer : private util::NoCopy
 {
 public:
+    using SharedPtr = boost::intrusive_ptr<Buffer>;
+
     /**
      * @brief Buffer usage.
      *
@@ -56,56 +64,17 @@ public:
         ElementArray = GL_ELEMENT_ARRAY_BUFFER,
     };
 
-    /**
-     * @brief Construct a new Buffer object.
-     *
-     * Create a C++ object but don't create OpenGL objects.
-     */
-    Buffer() = default;
-
-    /**
-     * @brief Construct a new Buffer object.
-     *
-     * Create C++ and OpenGL objects.
-     *
-     * @param targetHint Buffer target.
-     *
-     * @see @ref TargetHint
-     */
-    explicit Buffer(TargetHint targetHint);
-
-    /**
-     * @brief Construct a new Buffer object.
-     *
-     * Create C++ and OpenGL objects and upload data.
-     *
-     * @param targetHint Buffer target.
-     * @param data Data.
-     * @param usage Buffer usage.
-     *
-     * @see @ref TargetHint @ref BufferUsage
-     */
-    Buffer(TargetHint             targetHint,
-           util::array_view<void> data,
-           BufferUsage            usage = BufferUsage::StaticDraw);
-
-    //! Copying is prohibited.
-    Buffer(const Buffer &) = delete;
-
     //! Move constructor.
     Buffer(Buffer &&) noexcept;
 
     //! Destructor.
     ~Buffer();
 
-    //! Copying is prohibited.
-    Buffer& operator=(const Buffer&) = delete;
-
     //! Move operator.
     Buffer& operator=(Buffer&&) noexcept;
 
     //! Return an OpenGL identificator of an underlying buffer.
-    GLuint id() const;
+    GLuint id() const noexcept;
 
     //! Bind the buffer to use.
     Buffer& bind();
@@ -135,16 +104,58 @@ public:
     Buffer& invalidateData();
 
     //! Return target, @see @ref TargetHint.
-    TargetHint targetHint() const;
+    TargetHint targetHint() const noexcept;
 
     //! Bind the default buffer (0) to target. @see @ref TargetHint @ref bind()
     static void unbind(TargetHint target);
 
+    /**
+     * @brief Construct a new Buffer object.
+     *
+     * Create C++ and OpenGL objects.
+     *
+     * @param targetHint Buffer target.
+     *
+     * @see @ref TargetHint
+     */
+    static SharedPtr create(TargetHint targetHint);
+
+    /**
+     * @brief Construct a new Buffer object.
+     *
+     * Create C++ and OpenGL objects and upload data.
+     *
+     * @param targetHint Buffer target.
+     * @param data Data.
+     * @param usage Buffer usage.
+     *
+     * @see @ref TargetHint @ref BufferUsage
+     */
+    static SharedPtr create(TargetHint             targetHint,
+                            util::array_view<void> data,
+                            BufferUsage            usage = BufferUsage::StaticDraw);
+
 private:
+    Buffer(GLuint, TargetHint);
+
     //! Reset object to initial state
     void clear();
     //! Destroy underlying OpenGL resources
     void destroy() noexcept;
+
+    inline friend void
+    intrusive_ptr_add_ref(Buffer* p)
+    {
+        p->m_refCount.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    inline friend void
+    intrusive_ptr_release(Buffer* p)
+    {
+        if (p->m_refCount.fetch_sub(1, std::memory_order_acq_rel) == 1)
+            delete p; //NOSONAR
+    }
+
 
     //! Buffer size
     GLsizeiptr m_bufferSize{ 0 };
@@ -158,40 +169,19 @@ private:
 
     BufferUsage m_usage{ BufferUsage::StaticDraw };
 
-    friend class VertexObject;
+    std::atomic<std::uint32_t> m_refCount{ 1 };
 };
 
 inline GLuint
-Buffer::id() const
+Buffer::id() const noexcept
 {
     return m_id;
 }
 
 inline Buffer::TargetHint
-Buffer::targetHint() const
+Buffer::targetHint() const noexcept
 {
     return m_targetHint;
 }
-
-class BufferRef
-{
-public:
-    BufferRef(const Buffer& buffer) : //NOSONAR
-        m_id(buffer.id()), m_targetHint(buffer.targetHint())
-    {
-    }
-
-    BufferRef(GLuint id, Buffer::TargetHint targetHint) :
-        m_id(id), m_targetHint(targetHint)
-    {
-    }
-
-    GLuint id() const noexcept { return m_id; }
-    Buffer::TargetHint targetHint() const noexcept { return m_targetHint; }
-
-private:
-    GLuint m_id;
-    Buffer::TargetHint m_targetHint;
-};
 
 } // namespace celestia::gl

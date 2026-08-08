@@ -11,7 +11,6 @@
 
 #include <cmath>
 
-#include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
@@ -132,11 +131,11 @@ PsfStarVertexBuffer::setupVertexArrayObject()
 
     m_initialized = true;
 
-    m_bo = std::make_unique<gl::Buffer>(gl::Buffer::TargetHint::Array);
+    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
     m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Points);
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::VertexCoordAttributeIndex,
         3,
         gl::VertexObject::DataType::Float,
@@ -146,7 +145,7 @@ PsfStarVertexBuffer::setupVertexArrayObject()
 
     // peakRadiance bound to IntensityAttributeIndex (vec1 float)
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::IntensityAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
@@ -156,7 +155,7 @@ PsfStarVertexBuffer::setupVertexArrayObject()
 
     // continuous distance-derived glow fade; float for a smooth transition
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::AlphaAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
@@ -165,7 +164,7 @@ PsfStarVertexBuffer::setupVertexArrayObject()
         offsetof(StarVertex, alpha));
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::LimbRadiusAttributeIndex,
         1,
         gl::VertexObject::DataType::Float,
@@ -174,7 +173,7 @@ PsfStarVertexBuffer::setupVertexArrayObject()
         offsetof(StarVertex, limbRadius));
 
     m_vo->addVertexBuffer(
-        *m_bo,
+        m_bo,
         CelestiaGLProgram::ColorAttributeIndex,
         3,
         gl::VertexObject::DataType::UnsignedByte,

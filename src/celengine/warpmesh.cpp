@@ -134,8 +134,7 @@ setIndices(gl::VertexObject& vo,
         ++idx;
     }
 
-    gl::Buffer indexBuffer(gl::Buffer::TargetHint::ElementArray, indices);
-    vo.setIndexBuffer(std::move(indexBuffer), 0, IndexType);
+    vo.setIndexBuffer(gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices), 0, IndexType);
     vo.setCount(static_cast<GLsizei>(indices.size()));
 }
 
@@ -209,13 +208,13 @@ WarpMesh::WarpMesh(std::uint32_t nx, std::uint32_t ny,
 WarpMesh::~WarpMesh() = default;
 
 void
-WarpMesh::setUpVertexObject(gl::VertexObject& vo, gl::Buffer& buf) const
+WarpMesh::setUpVertexObject(gl::VertexObject& vo) const
 {
     static_assert(sizeof(WarpMesh::WarpVertex) == 5 * sizeof(float));
     static_assert(std::is_standard_layout_v<WarpMesh::WarpVertex>);
 
     const std::uint32_t vertexCount = m_nx * m_ny;
-    buf.setData(m_data, gl::Buffer::BufferUsage::StaticDraw);
+    auto buf = gl::Buffer::create(gl::Buffer::TargetHint::Array, m_data, gl::Buffer::BufferUsage::StaticDraw);
 
     vo.addVertexBuffer(
         buf,

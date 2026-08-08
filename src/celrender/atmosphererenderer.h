@@ -97,7 +97,8 @@ private:
     std::vector<SkyVertex>        m_skyVertices;
     std::vector<unsigned short>   m_skyIndices;
     std::vector<SkyContourPoint>  m_skyContour;
-    gl::Buffer                    m_bo;
+    gl::Buffer::SharedPtr         m_bo;
+    gl::Buffer::SharedPtr         m_ibo;
     gl::VertexObject              m_vo;
     bool                          m_initialized{ false };
 };

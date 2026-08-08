@@ -33,10 +33,9 @@ constexpr float pif = celestia::numbers::pi_v<float>;
 #include "markers.inc"
 
 void
-initialize(LineRenderer &lr, gl::VertexObject &vo, gl::Buffer &bo)
+initialize(LineRenderer &lr, gl::VertexObject &vo)
 {
-
-    bo.setData(FilledMarkersData, gl::Buffer::BufferUsage::StaticDraw);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, FilledMarkersData);
 
     vo.addVertexBuffer(
         bo,
@@ -44,7 +43,7 @@ initialize(LineRenderer &lr, gl::VertexObject &vo, gl::Buffer &bo)
         2,
         gl::VertexObject::DataType::Float);
 
-    bo.unbind();
+    bo->unbind();
 
     lr.setHints(LineRenderer::DISABLE_FISHEYE_TRANFORMATION);
 
@@ -52,7 +51,7 @@ initialize(LineRenderer &lr, gl::VertexObject &vo, gl::Buffer &bo)
         lr.addVertex(HollowMarkersData[i], HollowMarkersData[i+1]);
 }
 
-}
+} // end unnamed namespace
 
 void
 Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
@@ -64,7 +63,7 @@ Renderer::renderMarker(MarkerRepresentation::Symbol symbol,
 
     if (!m_markerDataInitialized)
     {
-        initialize(*m_hollowMarkerRenderer, *m_markerVO, *m_markerBO);
+        initialize(*m_hollowMarkerRenderer, *m_markerVO);
         m_markerDataInitialized = true;
     }
 
@@ -142,7 +141,7 @@ Renderer::renderSelectionPointer(const Observer& observer,
 
     if (!m_markerDataInitialized)
     {
-        initialize(*m_hollowMarkerRenderer, *m_markerVO, *m_markerBO);
+        initialize(*m_hollowMarkerRenderer, *m_markerVO);
         m_markerDataInitialized = true;
     }
 
@@ -179,7 +178,7 @@ Renderer::renderCrosshair(float selectionSizeInPixels,
 
     if (!m_markerDataInitialized)
     {
-        initialize(*m_hollowMarkerRenderer, *m_markerVO, *m_markerBO);
+        initialize(*m_hollowMarkerRenderer, *m_markerVO);
         m_markerDataInitialized = true;
     }
 

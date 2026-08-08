@@ -34,7 +34,7 @@ public:
     static std::unique_ptr<WarpMesh> load(const std::filesystem::path&);
 
     // Map data to triangle vertices used for drawing
-    void setUpVertexObject(celestia::gl::VertexObject& vo, celestia::gl::Buffer& buf) const;
+    void setUpVertexObject(celestia::gl::VertexObject& vo) const;
 
     // Convert a vertex coordinate to texture coordinate
     bool mapVertex(float x, float y, float& u, float& v) const;

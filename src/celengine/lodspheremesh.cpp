@@ -612,7 +612,7 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
     // Get or create the cached index buffer
     CachedIndexBuffer* cachedIB = getOrCreateIndexBuffer(nSlices);
 
-    cachedIB->buffer.bind();
+    cachedIB->buffer->bind();
     auto stride = static_cast<GLsizei>(vertexSize * sizeof(float));
     int texCoordOffset = ((ri.attributes & Tangents) != 0) ? 6 : 3;
 
@@ -736,10 +736,9 @@ LODSphereMesh::CachedIndexBuffer*
 LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
 {
     // Check if we already have this configuration cached
-    if (auto it = indexBufferCache.find(nSlices); it != indexBufferCache.end())
-    {
+    auto [it, inserted] = indexBufferCache.try_emplace(nSlices);
+    if (!inserted)
         return &it->second;
-    }
 
     // Create new index buffer
     // nRings is always nSlices / 2
@@ -769,11 +768,9 @@ LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
         }
     }
 
-    celestia::gl::Buffer buffer(celestia::gl::Buffer::TargetHint::ElementArray,
-                                celestia::util::array_view<void>(indices.data(), indices.size() * sizeof(unsigned short)),
-                                celestia::gl::Buffer::BufferUsage::StaticDraw);
-    CachedIndexBuffer cached{ std::move(buffer), static_cast<int>(indices.size()) };
-    const auto& [it, inserted] = indexBufferCache.try_emplace(nSlices, std::move(cached));
-    assert(inserted);
+    it->second.buffer = celestia::gl::Buffer::create(celestia::gl::Buffer::TargetHint::ElementArray,
+                                                     celestia::util::array_view<void>(indices.data(),
+                                                                                      indices.size() * sizeof(unsigned short)));
+    it->second.indexCount = static_cast<int>(indices.size());
     return &it->second;
 }
