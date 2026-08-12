@@ -728,6 +728,7 @@ class Renderer
     float brightnessScale{ 1.0f };
     float faintestMag{ 0.0f };
     float faintestPlanetMag{ 0.0f };
+    float starAtmosphereBrightness{ 1.0f };
     float saturationMagNight{ 1.0f };
     float saturationMag{ 1.0f };
     StarStyle starStyle{ StarStyle::FuzzyPointStars };

@@ -35,6 +35,14 @@ constexpr inline float BaseStarDiscSize      = 5.0f;
 constexpr inline float MaxScaledDiscStarSize = 8.0f;
 constexpr inline float GlareOpacity          = 0.65f;
 
+namespace celestia::engine::detail
+{
+
+float psfAtmosphereBrightness(float faintestMagnitude,
+                              float faintestMagnitudeWithoutAtmosphere);
+
+} // namespace celestia::engine::detail
+
 class PointStarRenderer : public ObjectRenderer<Star, float>
 {
 public:
