@@ -22,32 +22,6 @@ Buffer::Buffer(GLuint id, Buffer::TargetHint targetHint) :
 {
 }
 
-Buffer::Buffer(Buffer &&other) noexcept :
-    m_bufferSize(other.m_bufferSize),
-    m_id(other.m_id),
-    m_targetHint(other.m_targetHint),
-    m_usage(other.m_usage)
-{
-    other.clear();
-}
-
-Buffer& Buffer::operator=(Buffer &&other) noexcept
-{
-    if (this != &other)
-    {
-        destroy();
-
-        m_bufferSize = other.m_bufferSize;
-        m_id         = other.m_id;
-        m_targetHint = other.m_targetHint;
-        m_usage      = other.m_usage;
-
-        other.clear();
-    }
-
-    return *this;
-}
-
 Buffer::~Buffer()
 {
     destroy();

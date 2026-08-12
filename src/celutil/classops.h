@@ -18,4 +18,19 @@ protected:
     NoCopy& operator=(NoCopy&&) noexcept = default;
 };
 
+// Base class for non-movables (no move, no copy)
+// Use as a private base class
+class NoMove
+{
+protected:
+    NoMove() = default;
+    ~NoMove() = default;
+
+    NoMove(const NoMove&) = delete;
+    NoMove& operator=(const NoMove&) = delete;
+
+    NoMove(NoMove&&) = delete;
+    NoMove& operator=(NoMove&&) = delete;
+};
+
 }

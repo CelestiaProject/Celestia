@@ -28,7 +28,7 @@ namespace celestia::gl
  *
  * Wraps an OpenGL buffer object.
  */
-class Buffer : private util::NoCopy
+class Buffer : private util::NoMove
 {
 public:
     using SharedPtr = boost::intrusive_ptr<Buffer>;
@@ -64,14 +64,8 @@ public:
         ElementArray = GL_ELEMENT_ARRAY_BUFFER,
     };
 
-    //! Move constructor.
-    Buffer(Buffer &&) noexcept;
-
     //! Destructor.
     ~Buffer();
-
-    //! Move operator.
-    Buffer& operator=(Buffer&&) noexcept;
 
     //! Return an OpenGL identificator of an underlying buffer.
     GLuint id() const noexcept;
