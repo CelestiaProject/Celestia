@@ -27,6 +27,7 @@
 #include <celimage/image.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
+#include <celutil/array_view.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
@@ -44,6 +45,7 @@ using celestia::engine::Image;
 using celestia::engine::PixelFormat;
 using celestia::util::GetLogger;
 namespace gl = celestia::gl;
+namespace util = celestia::util;
 
 namespace
 {
@@ -96,16 +98,23 @@ LoadFontFace(FT_Library ft, const std::filesystem::path &path, int index, int si
 
 struct TextureFontPrivate
 {
-    struct FontVertex
+    static constexpr std::size_t MaxInstances = 128; // This gives BO size 4kB
+
+    static constexpr GLuint VertexLocation = 0;
+    static constexpr GLuint PositionLocation = 1;
+    static constexpr GLuint SizeLocation = 2;
+    static constexpr GLuint TexCoordLocation = 3;
+    static constexpr GLuint TexSizeLocation = 4;
+
+    struct FontInstance
     {
-        FontVertex(float _x, float _y, float _u, float _v) : x(_x), y(_y), u(_u), v(_v)
-        {
-        }
-        float x, y;
-        float u, v;
+        Eigen::Vector2f position;
+        Eigen::Vector2f size;
+        Eigen::Vector2f texCoord;
+        Eigen::Vector2f texSize;
     };
 
-    static_assert(std::is_standard_layout_v<FontVertex>);
+    static_assert(std::is_standard_layout_v<FontInstance>);
 
     TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
@@ -145,7 +154,11 @@ struct TextureFontPrivate
 
     std::vector<Glyph> m_glyphs; // character information
 
-    std::array<UnicodeBlock, 2> m_unicodeBlocks;
+    static constexpr std::array<UnicodeBlock, 2> s_unicodeBlocks
+    {
+        UnicodeBlock{ 0x0020, 0x007e }, // Basic Latin
+        UnicodeBlock{ 0x03b1, 0x03cf }, // Lowercase Greek
+    };
 
     int m_commonGlyphsCount{ 0 };
     int m_inserted{ 0 };
@@ -153,53 +166,66 @@ struct TextureFontPrivate
     Eigen::Matrix4f m_projection;
     Eigen::Matrix4f m_modelView;
 
-    std::vector<FontVertex> m_fontVertices;
+    // We only ever create TextureFontPrivate on the heap, so using an array here should be fine
+    std::array<FontInstance, MaxInstances> m_instances;
+    unsigned int m_instanceCount{ 0 };
 
-    gl::VertexObject      m_vao{ gl::VertexObject::Primitive::Triangles };
+    gl::VertexObject      m_vao{ gl::VertexObject::Primitive::TriangleStrip };
     gl::Buffer::SharedPtr m_vbo{ gl::Buffer::create(gl::Buffer::TargetHint::Array) };
 
     bool m_shaderInUse{ false };
-
-    static constexpr std::size_t MaxVertices = 256; // This gives BO size 4kB, MUST be multiply of 4
-    static constexpr std::size_t MaxIndices = MaxVertices / 4 * 6;
 };
 
 
 TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(renderer)
 {
-    m_unicodeBlocks[0] = { 0x0020, 0x007E }; // Basic Latin
-    m_unicodeBlocks[1] = { 0x03B1, 0x03CF }; // Lower case Greek
-
+    constexpr std::array<std::uint8_t, 8> vertexData{ 0, 0, 255, 0, 0, 255, 255, 255 };
+    auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, vertexData);
     m_vao.addVertexBuffer(
+        vertexBuffer,
+        VertexLocation,
+        2,
+        gl::VertexObject::DataType::UnsignedByte,
+        true);
+    m_vao.setCount(4);
+
+    m_vbo->setData(util::array_view<void>(nullptr, sizeof(FontInstance) * MaxInstances), gl::Buffer::BufferUsage::StreamDraw);
+
+    m_vao.addInstanceBuffer(
         m_vbo,
-        CelestiaGLProgram::VertexCoordAttributeIndex,
+        PositionLocation,
         2,
         gl::VertexObject::DataType::Float,
         false,
-        sizeof(FontVertex),
-        offsetof(FontVertex, x));
-    m_vao.addVertexBuffer(
+        sizeof(FontInstance),
+        offsetof(FontInstance, position));
+
+    m_vao.addInstanceBuffer(
         m_vbo,
-        CelestiaGLProgram::TextureCoord0AttributeIndex,
+        SizeLocation,
         2,
         gl::VertexObject::DataType::Float,
         false,
-        sizeof(FontVertex),
-        offsetof(FontVertex, u));
+        sizeof(FontInstance),
+        offsetof(FontInstance, size));
 
-    std::vector<std::uint16_t> indexes;
-    indexes.reserve(MaxIndices);
-    for (std::uint16_t index = 0; index < static_cast<std::uint16_t>(MaxIndices); index += 4)
-    {
-        indexes.push_back(index + 0);
-        indexes.push_back(index + 1);
-        indexes.push_back(index + 2);
-        indexes.push_back(index + 1);
-        indexes.push_back(index + 3);
-        indexes.push_back(index + 2);
-    }
+    m_vao.addInstanceBuffer(
+        m_vbo,
+        TexCoordLocation,
+        2,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(FontInstance),
+        offsetof(FontInstance, texCoord));
 
-    m_vao.setIndexBuffer(gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indexes), 0, gl::VertexObject::IndexType::UnsignedShort);
+    m_vao.addInstanceBuffer(
+        m_vbo,
+        TexSizeLocation,
+        2,
+        gl::VertexObject::DataType::Float,
+        false,
+        sizeof(FontInstance),
+        offsetof(FontInstance, texSize));
 }
 
 TextureFontPrivate::~TextureFontPrivate()
@@ -236,7 +262,7 @@ TextureFontPrivate::initCommonGlyphs()
 
     m_glyphs.reserve(256);
 
-    for (auto const &block : m_unicodeBlocks)
+    for (auto const &block : s_unicodeBlocks)
     {
         for (FT_ULong ch = block.first, e = block.last; ch <= e; ch++)
         {
@@ -374,7 +400,7 @@ TextureFontPrivate::getCommonGlyphsCount()
 {
     if (m_commonGlyphsCount == 0)
     {
-        for (auto const &block : m_unicodeBlocks)
+        for (auto const &block : s_unicodeBlocks)
             m_commonGlyphsCount += (block.last - block.first + 1);
     }
     return m_commonGlyphsCount;
@@ -385,10 +411,10 @@ TextureFontPrivate::toPos(FT_ULong ch) const
 {
     std::size_t pos = 0;
 
-    if (ch > m_unicodeBlocks.back().last)
+    if (ch > s_unicodeBlocks.back().last)
         return INVALID_POS;
 
-    for (const auto &r : m_unicodeBlocks)
+    for (const auto &r : s_unicodeBlocks)
     {
         if (ch < r.first)
             return INVALID_POS;
@@ -486,33 +512,25 @@ TextureFontPrivate::render(std::u16string_view line, float x, float y)
             continue;
         }
         auto &g = getGlyph(ch, u'?');
+        if (g.bw > 0 && g.bh > 0)
+        {
+            // Only render characters if they have bitmaps
+            auto& instance = m_instances[m_instanceCount];
 
-        // Calculate the vertex and texture coordinates
-        const float x1 = x + g.bl;
-        const float y1 = y + g.bt - g.bh;
-        const float w  = g.bw;
-        const float h  = g.bh;
-        const float x2 = x1 + w;
-        const float y2 = y1 + h;
+            // Make Sonar stop complaining about precision issues
+            instance.position = Eigen::Vector2f(x + g.bl, y + g.bt - g.bh); //NOSONAR
+            instance.size = Eigen::Vector2f(g.bw, g.bh);
+            instance.texCoord = Eigen::Vector2f(g.tx, g.ty);
+            instance.texSize = Eigen::Vector2f(instance.size.x() / m_texWidth, instance.size.y() / m_texHeight); //NOSONAR
+
+            ++m_instanceCount;
+            if (m_instanceCount == MaxInstances)
+                flush();
+        }
 
         // Advance the cursor to the start of the next character
         x += g.ax;
         y += g.ay;
-
-        // Skip glyphs that have no pixels
-        if (g.bw == 0 || g.bh == 0) continue;
-
-        const float tx1 = g.tx;
-        const float ty1 = g.ty;
-        const float tx2 = tx1 + w / m_texWidth;
-        const float ty2 = ty1 + h / m_texHeight;
-
-        m_fontVertices.emplace_back(x1, y1, tx1, ty2);
-        m_fontVertices.emplace_back(x2, y1, tx2, ty2);
-        m_fontVertices.emplace_back(x1, y2, tx1, ty1);
-        m_fontVertices.emplace_back(x2, y2, tx2, ty1);
-
-        if (m_fontVertices.size() == MaxVertices) flush();
     }
 
     return {x, y};
@@ -529,14 +547,14 @@ TextureFontPrivate::getProgram()
 void
 TextureFontPrivate::flush()
 {
-    if (m_fontVertices.size() < 4)
+    if (m_instanceCount == 0)
         return;
 
-    m_vbo->invalidateData().setData(m_fontVertices, gl::Buffer::BufferUsage::StreamDraw);
-    m_vao.draw(static_cast<GLsizei>(m_fontVertices.size() / 4 * 6));
+    m_vbo->setSubData(0, util::array_view(m_instances.data(), m_instanceCount));
+    m_vao.drawInstances(m_instanceCount);
     m_vbo->unbind();
 
-    m_fontVertices.clear();
+    m_instanceCount = 0;
 }
 
 TextureFont::TextureFont(const Renderer *renderer) :
