@@ -9,14 +9,25 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "binder.h"
-#include "buffer.h"
 #include "vertexobject.h"
 
-#define PTR(p) (reinterpret_cast<void*>(p))
+#include <celutil/flag.h>
+#include "binder.h"
+#include "buffer.h"
+
+#define PTR(p) (reinterpret_cast<const void*>(static_cast<std::intptr_t>(p)))
 
 namespace celestia::gl
 {
+
+enum class BufferFlags : std::uint8_t
+{
+    None = 0,
+    Normalized = 1,
+    Instance = 2,
+};
+
+ENUM_CLASS_BITWISE_OPS(BufferFlags)
 
 struct VertexObject::BufferDesc
 {
@@ -26,14 +37,14 @@ struct VertexObject::BufferDesc
                std::int16_t             location,
                std::uint8_t             elemSize,
                std::uint8_t             stride,
-               bool                     normalized) :
+               BufferFlags              flags) :
         buffer(buffer),
         offset(offset),
         type(type),
         location(location),
         elemSize(elemSize),
         stride(stride),
-        normalized(normalized)
+        flags(flags)
     {
     }
 
@@ -43,7 +54,7 @@ struct VertexObject::BufferDesc
     std::int16_t      location;
     std::uint8_t      elemSize;   // 1, 2, 3, 4
     std::uint8_t      stride;     // WebGL allows only 255 bytes max
-    bool              normalized;
+    BufferFlags       flags;
 };
 
 VertexObject::VertexObject() = default;
@@ -139,7 +150,34 @@ VertexObject::addVertexBuffer(const Buffer::SharedPtr &buffer,
                               static_cast<std::uint16_t>(location),
                               static_cast<std::uint8_t>(elemSize),
                               static_cast<std::uint8_t>(stride),
-                              normalized);
+                              normalized ? BufferFlags::Normalized : BufferFlags::None);
+
+    return *this;
+}
+
+VertexObject&
+VertexObject::addInstanceBuffer(const Buffer::SharedPtr &buffer,
+                                int location,
+                                int elemSize,
+                                VertexObject::DataType type,
+                                bool normalized,
+                                int stride,
+                                std::ptrdiff_t offset)
+{
+    if (buffer->targetHint() != Buffer::TargetHint::Array)
+        return *this;
+
+    auto flags = BufferFlags::Instance;
+    if (normalized)
+        flags |= BufferFlags::Normalized;
+
+    m_bufferDesc.emplace_back(offset,
+                              buffer,
+                              static_cast<std::uint16_t>(type),
+                              static_cast<std::uint16_t>(location),
+                              static_cast<std::uint8_t>(elemSize),
+                              static_cast<std::uint8_t>(stride),
+                              flags);
 
     return *this;
 }
@@ -151,7 +189,7 @@ VertexObject::draw()
 }
 
 VertexObject&
-VertexObject::draw(int count, int first)
+VertexObject::draw(GLsizei count, GLint first)
 {
     return draw(m_primitive, count, first);
 }
@@ -166,12 +204,47 @@ VertexObject::draw(VertexObject::Primitive primitive, GLsizei count, GLint first
 
     if (isIndexed())
     {
-        auto offset = static_cast<std::ptrdiff_t>(first * (m_indexType == IndexType::UnsignedShort ? sizeof(GLushort) : sizeof(GLuint)));
-        glDrawElements(GLenum(primitive), count, GLenum(m_indexType), PTR(offset));
+        auto offset = PTR(first * (m_indexType == IndexType::UnsignedShort ? sizeof(GLushort) : sizeof(GLuint)));
+        glDrawElements(GLenum(primitive), count, GLenum(m_indexType), offset);
     }
     else
     {
         glDrawArrays(GLenum(primitive), first, count);
+    }
+
+    unbind();
+
+    return *this;
+}
+
+VertexObject&
+VertexObject::drawInstances(GLsizei instanceCount)
+{
+    return drawInstances(instanceCount, m_primitive, m_count, 0);
+}
+
+VertexObject&
+VertexObject::drawInstances(GLsizei instanceCount, GLsizei count, GLint first)
+{
+    return drawInstances(instanceCount, m_primitive, count, first);
+}
+
+VertexObject&
+VertexObject::drawInstances(GLsizei instanceCount, VertexObject::Primitive primitive, GLsizei count, GLint first)
+{
+    if (count == 0)
+        return *this;
+
+    bind();
+
+    if (isIndexed())
+    {
+        auto offset = PTR(first * (m_indexType == IndexType::UnsignedShort ? sizeof(GLushort) : sizeof(GLuint)));
+        glDrawElementsInstanced(GLenum(primitive), count, GLenum(m_indexType), offset, instanceCount);
+    }
+    else
+    {
+        glDrawArraysInstanced(GLenum(primitive), first, count, instanceCount);
     }
 
     unbind();
@@ -201,7 +274,11 @@ VertexObject::enableAttribArrays() const
         binder.bind(*p.buffer);
 
         glEnableVertexAttribArray(p.location);
-        glVertexAttribPointer(p.location, p.elemSize, p.type, p.normalized ? GL_TRUE : GL_FALSE, p.stride, PTR(p.offset));
+
+        GLboolean normalized = util::is_set(p.flags, BufferFlags::Normalized) ? GL_TRUE : GL_FALSE;
+        glVertexAttribPointer(p.location, p.elemSize, p.type, normalized, p.stride, PTR(p.offset));
+        if (util::is_set(p.flags, BufferFlags::Instance))
+            glVertexAttribDivisor(p.location, 1);
     }
 
     if (isIndexed())

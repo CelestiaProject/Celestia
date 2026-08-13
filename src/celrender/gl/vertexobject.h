@@ -153,6 +153,47 @@ public:
     VertexObject& draw(Primitive primitive, GLsizei count, GLint first = 0);
 
     /**
+     * @brief Render VertexObject with the given instance count
+     *
+     * Render VertexObject using a primitive set by constructor or setPrimitive.
+     *
+     * @param instanceCount Number of instances to draw.
+     * @return Reference to self.
+     *
+     * @see @ref Primitive @ref VertexObject(Primitive)
+     */
+    VertexObject& drawInstances(GLsizei instanceCount);
+
+    /**
+     * @brief Render VertexObject with the given instance count.
+     *
+     * Render VertexObject using a default primitive.
+     *
+     * @param instanceCount Number of instances to draw.
+     * @param count Number of vertices to draw.
+     * @param first First vertex to draw.
+     * @return Reference to self.
+     *
+     * @see @ref Primitive @ref VertexObject(Primitive)
+     */
+    VertexObject& drawInstances(GLsizei instanceCount, GLsizei count, GLint first = 0);
+
+    /**
+     * @brief Render VertexObject with the given instance count.
+     *
+     * Render VertexObject using a primitive provided.
+     *
+     * @param instanceCount Number of instances to draw.
+     * @param primitive Primitive.
+     * @param count Number of vertices to draw.
+     * @param first First vertex to draw.
+     * @return Reference to self.
+     *
+     * @see @ref Primitive @ref VertexObject(Primitive)
+     */
+    VertexObject& drawInstances(GLsizei instanceCount, Primitive primitive, GLsizei count, GLint first = 0);
+
+    /**
      * @brief Set the primitive.
      *
      * Set the default primitive type to be used by draw().
@@ -216,7 +257,40 @@ public:
      *
      * @see @ref DataType
      */
-    VertexObject& addVertexBuffer(const Buffer::SharedPtr&, int location, int elemSize, DataType type, bool normalized = false, int stride = 0, std::ptrdiff_t offset = 0);
+    VertexObject& addVertexBuffer(const Buffer::SharedPtr&,
+                                  int location,
+                                  int elemSize,
+                                  DataType type,
+                                  bool normalized = false,
+                                  int stride = 0,
+                                  std::ptrdiff_t offset = 0);
+
+    /**
+     * @brief Define an array of generic instance attribute data.
+     *
+     * Define an array of generic vertex attribute data. See documentation for the glVertexAttribPointer
+     * and glVertexAttribDivisor OpenGL methods for more information.
+     *
+     * @param buffer Buffer with vertex data.
+     * @param location Index of the generic vertex attribute.
+     * @param elemSize Number of components per generic vertex attribute. Must be 1, 2, 3, or 4.
+     * @param type Data type of each component.
+     * @param normalized Whether fixed-point data values should be normalized (true) or
+     * converted directly as fixed-point values (false).
+     * @param stride Offset in bytes between consecutive generic vertex attributes. If stride is 0,
+     * the generic vertex attributes are understood to be tightly packed in the array.
+     * @param offset Offset of the first component of the first generic vertex attribute in the array.
+     * @return Reference to self.
+     *
+     * @see @ref DataType
+     */
+    VertexObject& addInstanceBuffer(const Buffer::SharedPtr&,
+                                    int location,
+                                    int elemSize,
+                                    DataType type,
+                                    bool normalized = false,
+                                    int stride = 0,
+                                    std::ptrdiff_t offset = 0);
 
     /**
      * @brief Add index buffer and become its owner.
