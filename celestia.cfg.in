@@ -373,11 +373,17 @@ StarTextures
 #   AtmosphereSegmentCount defines how many segments to use when
 #   integrating atmospheric scattering. CloudSegmentCount defines
 #   segments to use for clouds. The valid range is 1 to 16, and
-#   the default values are 6 and 2, respectively.
+#   the default values are 3 and 2, respectively.
 #
 #   AtmosphereExtinctionThreshold defines the relative density at the
 #   outer edge of an atmosphere. It must be between 0 and 1. The default
 #   value is 0.000125.
+#
+#   SeparateRayleighMieScaleHeights uses valid RayleighScaleHeight and
+#   MieScaleHeight values independently. When disabled and both are valid, both
+#   scattering components use the larger scale height and the Mie coefficient
+#   is adjusted to preserve its vertical optical depth. Atmospheres that only
+#   define MieScaleHeight keep the legacy behavior. The default is false.
 #
 #   ShadowTextureSize defines the size* of shadow texture to be used.
 #   The default value is 256. Maximum useful value is 2048.
@@ -396,9 +402,10 @@ StarTextures
 #   what the graphics driver supports.
 #------------------------------------------------------------------------
   OrbitPathSamplePoints  100
-  AtmosphereSegmentCount 6
+  AtmosphereSegmentCount 3
   CloudSegmentCount  2
   AtmosphereExtinctionThreshold 0.000125
+  SeparateRayleighMieScaleHeights false
 
   ShadowTextureSize      256
   EclipseTextureSize     128

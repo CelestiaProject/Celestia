@@ -127,9 +127,10 @@ class Renderer
     struct DetailOptions
     {
         unsigned int orbitPathSamplePoints{ 100 };
-        unsigned int atmosphereSegmentCount{ 6 };
+        unsigned int atmosphereSegmentCount{ 3 };
         unsigned int cloudSegmentCount{ 2 };
         float atmosphereExtinctionThreshold{ 0.000125f };
+        bool separateRayleighMieScaleHeights{ false };
         unsigned int shadowTextureSize{ 256 };
         unsigned int eclipseTextureSize{ 128 };
         double orbitWindowEnd{ 0.5 };
@@ -222,10 +223,16 @@ class Renderer
     void setStarColorTable(ColorTableType);
     void setSolarSystemMaxDistance(float);
     void setShadowMapSize(unsigned);
+    void setAtmosphereSegmentCount(unsigned int) noexcept;
     unsigned int getAtmosphereSegmentCount() const noexcept;
+    void setCloudSegmentCount(unsigned int) noexcept;
     unsigned int getCloudSegmentCount() const noexcept;
     float getAtmosphereExtinctionThreshold() const noexcept;
     float getAtmosphereShellHeight(float scaleHeight) const noexcept;
+    float getAtmosphereShellHeight(const Atmosphere&) const noexcept;
+    void setSeparateRayleighMieScaleHeights(bool) noexcept;
+    bool getSeparateRayleighMieScaleHeights() const noexcept;
+    bool getSeparateRayleighMieScaleHeights(const Atmosphere&) const noexcept;
 
     bool captureFrame(int, int, int, int, celestia::engine::PixelFormat format, unsigned char*) const;
 
@@ -787,10 +794,11 @@ class Renderer
     const Eigen::Matrix4f *m_projectionPtr { &m_projMatrix };
 
     DetailOptions detailOptions;
-    unsigned int atmosphereSegmentCount{ 6 };
+    unsigned int atmosphereSegmentCount{ 3 };
     unsigned int cloudSegmentCount{ 2 };
     float atmosphereExtinctionThreshold{ 0.000125f };
     float atmosphereExtinctionFactor{ 0.0f };
+    bool separateRayleighMieScaleHeights{ false };
 
     std::uint32_t frameCount{ 0 };
 

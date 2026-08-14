@@ -223,6 +223,7 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
         GetLogger()->error("AtmosphereExtinctionThreshold must be between 0 and 1.\n");
         renderDetails.atmosphere.extinctionThreshold = 0.000125f;
     }
+    applyBoolean(renderDetails.atmosphere.separateRayleighMieScaleHeights, hash, "SeparateRayleighMieScaleHeights"sv);
     applyNumber(renderDetails.aaSamples, hash, "AntialiasingSamples"sv);
     applyNumber(renderDetails.textures.anisotropy, hash, "TextureAnisotropy"sv);
     renderDetails.textures.anisotropy = std::max(renderDetails.textures.anisotropy, 1);

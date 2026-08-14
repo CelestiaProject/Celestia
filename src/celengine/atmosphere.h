@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cmath>
+
 #include <Eigen/Core>
 
 #include <celutil/color.h>
@@ -36,4 +39,21 @@ struct Atmosphere
     Eigen::Vector3f absorptionCoeff{ Eigen::Vector3f::Zero() };
 
     float cloudShadowDepth{ 0.0f };
+
+    bool hasValidScaleHeights() const noexcept
+    {
+        return mieScaleHeight > 0.0f && std::isfinite(mieScaleHeight) &&
+               rayleighScaleHeight > 0.0f && std::isfinite(rayleighScaleHeight);
+    }
+
+    float getLegacyScaleHeight() const noexcept
+    {
+        return hasValidScaleHeights() ? std::max(mieScaleHeight, rayleighScaleHeight) : mieScaleHeight;
+    }
+
+    float getLegacyMieCoeff() const noexcept
+    {
+        float legacyScaleHeight = getLegacyScaleHeight();
+        return hasValidScaleHeights() ? mieCoeff * mieScaleHeight / legacyScaleHeight : mieCoeff;
+    }
 };

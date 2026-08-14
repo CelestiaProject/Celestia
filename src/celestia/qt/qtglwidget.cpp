@@ -165,6 +165,10 @@ CelestiaGlWidget::initializeGL()
 
     appRenderer->setSolarSystemMaxDistance(appCore->getConfig()->renderDetails.SolarSystemMaxDistance);
     appRenderer->setShadowMapSize(appCore->getConfig()->renderDetails.ShadowMapSize);
+    auto& atmosphereConfig = appCore->getConfig()->renderDetails.atmosphere;
+    appRenderer->setSeparateRayleighMieScaleHeights(settings.value("SeparateRayleighMieScaleHeights", atmosphereConfig.separateRayleighMieScaleHeights).toBool());
+    appRenderer->setAtmosphereSegmentCount(settings.value("AtmosphereSegmentCount", atmosphereConfig.segmentCount).toUInt());
+    appRenderer->setCloudSegmentCount(settings.value("CloudSegmentCount", atmosphereConfig.cloudSegmentCount).toUInt());
     appRenderer->setStarPointRadius(
         (float) settings.value("StarPointRadius",
                                appCore->getConfig()->renderDetails.stars.pointRadius).toDouble());

@@ -399,7 +399,7 @@ AtmosphereRenderer::render(
 
     float extinctionThreshold = m_renderer.getAtmosphereExtinctionThreshold();
     float atmosphereRadius = radius +
-                             m_renderer.getAtmosphereShellHeight(atmosphere.mieScaleHeight);
+                             m_renderer.getAtmosphereShellHeight(atmosphere);
     float atmScale = atmosphereRadius / radius;
 
     auto setupAtmosphereProgram = [&](CelestiaGLProgram* prog)
@@ -408,7 +408,8 @@ AtmosphereRenderer::render(
         prog->eyePosition = ls.eyePos_obj / atmScale;
         prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius, atmosphereRadius,
                                       m_renderer.getAtmosphereSegmentCount(),
-                                      extinctionThreshold);
+                                      extinctionThreshold,
+                                      m_renderer.getSeparateRayleighMieScaleHeights(atmosphere));
         prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
     };
 

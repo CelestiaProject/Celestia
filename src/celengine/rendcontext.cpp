@@ -446,10 +446,11 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     {
         float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
         float atmosphereRadius = objRadius +
-                                 renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
+                                 renderer->getAtmosphereShellHeight(*atmosphere);
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius, atmosphereRadius,
                                       renderer->getAtmosphereSegmentCount(),
-                                      extinctionThreshold);
+                                      extinctionThreshold,
+                                      renderer->getSeparateRayleighMieScaleHeights(*atmosphere));
         disableDepthWriteOnBlend = false;
     }
 

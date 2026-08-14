@@ -463,6 +463,7 @@ bool Renderer::init(int winWidth, int winHeight,
     cloudSegmentCount = detailOptions.cloudSegmentCount;
     atmosphereExtinctionThreshold = detailOptions.atmosphereExtinctionThreshold;
     atmosphereExtinctionFactor = -std::log(atmosphereExtinctionThreshold);
+    separateRayleighMieScaleHeights = detailOptions.separateRayleighMieScaleHeights;
 
     m_atmosphereRenderer->initGL();
     if (!m_cometRenderer->initGL())
@@ -2527,7 +2528,7 @@ void Renderer::renderObject(const Vector3f& pos,
         if (obj.atmosphere != nullptr)
         {
             float atmosphereHeight = max(obj.atmosphere->cloudHeight,
-                                         getAtmosphereShellHeight(obj.atmosphere->mieScaleHeight));
+                                         getAtmosphereShellHeight(*obj.atmosphere));
             if (atmosphereHeight > 0.0f)
             {
                 // If there's an atmosphere, we need to move the far plane
@@ -2851,7 +2852,7 @@ void Renderer::renderPlanetAtmosphere(Body& body,
             frustumFarPlane = std::sqrt(math::square(d) - math::square(eradius)) * 1.1f;
 
         float atmosphereHeight = max(atmosphere->cloudHeight,
-                                     getAtmosphereShellHeight(atmosphere->mieScaleHeight));
+                                     getAtmosphereShellHeight(*atmosphere));
         if (atmosphereHeight > 0.0f)
         {
             float atmosphereRadius = eradius + atmosphereHeight;
@@ -3097,7 +3098,7 @@ void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
             if (util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
             {
                 shellHeight = rp.atmosphere->mieScaleHeight > 0.0f
-                    ? getAtmosphereShellHeight(rp.atmosphere->mieScaleHeight)
+                    ? getAtmosphereShellHeight(*rp.atmosphere)
                     : rp.atmosphere->height;
             }
             if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
@@ -3760,7 +3761,12 @@ void Renderer::addRenderListEntries(RenderListEntry& rle, // NOSONAR(cpp:S3776)
         (atmosphere->height > 0.0f || atmosphere->cloudTexture != util::TextureHandle::Invalid) &&
         rle.discSizeInPixels > 1)
     {
-        float atmosphereRadius = body.getRadius() + atmosphere->height;
+        float atmosphereHeight = atmosphere->mieScaleHeight > 0.0f
+            ? getAtmosphereShellHeight(*atmosphere)
+            : atmosphere->height;
+        if (showClouds)
+            atmosphereHeight = std::max(atmosphereHeight, atmosphere->cloudHeight);
+        float atmosphereRadius = body.getRadius() + atmosphereHeight;
 
         rle.renderableType = RenderListEntry::RenderableAtmosphere;
         rle.body = &body;
@@ -5176,10 +5182,22 @@ void Renderer::setSolarSystemMaxDistance(float t)
     SolarSystemMaxDistance = std::clamp(t, 1.0f, 10.0f);
 }
 
+void
+Renderer::setAtmosphereSegmentCount(unsigned int count) noexcept
+{
+    atmosphereSegmentCount = std::clamp(count, 1u, 16u);
+}
+
 unsigned int
 Renderer::getAtmosphereSegmentCount() const noexcept
 {
     return atmosphereSegmentCount;
+}
+
+void
+Renderer::setCloudSegmentCount(unsigned int count) noexcept
+{
+    cloudSegmentCount = std::clamp(count, 1u, 16u);
 }
 
 unsigned int
@@ -5198,6 +5216,30 @@ float
 Renderer::getAtmosphereShellHeight(float scaleHeight) const noexcept
 {
     return scaleHeight * atmosphereExtinctionFactor;
+}
+
+float
+Renderer::getAtmosphereShellHeight(const Atmosphere& atmosphere) const noexcept
+{
+    return getAtmosphereShellHeight(atmosphere.getLegacyScaleHeight());
+}
+
+void
+Renderer::setSeparateRayleighMieScaleHeights(bool enabled) noexcept
+{
+    separateRayleighMieScaleHeights = enabled;
+}
+
+bool
+Renderer::getSeparateRayleighMieScaleHeights() const noexcept
+{
+    return separateRayleighMieScaleHeights;
+}
+
+bool
+Renderer::getSeparateRayleighMieScaleHeights(const Atmosphere& atmosphere) const noexcept
+{
+    return separateRayleighMieScaleHeights && atmosphere.hasValidScaleHeights();
 }
 
 void Renderer::getViewport(int* x, int* y, int* w, int* h) const
@@ -5680,9 +5722,9 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
             cullRadius = radius;
             if (const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(ri.body); atmosphere != nullptr)
             {
-                cullRadius += atmosphere->height;
                 cloudHeight = max(atmosphere->cloudHeight,
-                                  getAtmosphereShellHeight(atmosphere->mieScaleHeight));
+                                  getAtmosphereShellHeight(*atmosphere));
+                cullRadius += max(atmosphere->height, cloudHeight);
             }
             cullRadius = std::max(cullRadius, ringOuterRadius);
             break;

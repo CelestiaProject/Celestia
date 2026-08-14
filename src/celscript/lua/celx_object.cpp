@@ -1592,14 +1592,12 @@ static int object_setatmosphere(lua_State* l)
                 return 0;
             atmosphere->miePhaseAsymmetry = value;
         }
-#if 0
         else if (strcmp(key, "rayleighscaleheight") == 0)
         {
             if (!gettablevaluefloat(l, "rayleighscaleheight", &value))
                 return 0;
             atmosphere->rayleighScaleHeight = value;
         }
-#endif
         else if (strcmp(key, "rayleigh") == 0) {
             if (!gettablevaluevector3(l, "rayleigh", &array))
                 return 0;

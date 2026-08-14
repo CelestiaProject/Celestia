@@ -354,10 +354,11 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         {
             float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
             float atmosphereRadius = radius +
-                                     renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
+                                     renderer->getAtmosphereShellHeight(*atmosphere);
             prog->setAtmosphereParameters(*atmosphere, radius, radius, atmosphereRadius,
                                           renderer->getAtmosphereSegmentCount(),
-                                          extinctionThreshold);
+                                          extinctionThreshold,
+                                          renderer->getSeparateRayleighMieScaleHeights(*atmosphere));
         }
     }
 
@@ -627,10 +628,11 @@ void renderClouds_GLSL(const RenderInfo& ri,
         {
             float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
             float atmosphereRadius = radius +
-                                     renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
+                                     renderer->getAtmosphereShellHeight(*atmosphere);
             prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius, atmosphereRadius,
                                           renderer->getCloudSegmentCount(),
-                                          extinctionThreshold);
+                                          extinctionThreshold,
+                                          renderer->getSeparateRayleighMieScaleHeights(*atmosphere));
         }
     }
 

@@ -696,6 +696,41 @@ ReadMesh(const AssociativeArray& planetData,
     body.setGeometryScale(geometryScale);
 }
 
+void ReadClouds(Atmosphere& atmosphere,
+                const AssociativeArray& atmosData,
+                const std::filesystem::path& path,
+                engine::TexturePaths& texturePaths)
+{
+    if (auto cloudHeight = atmosData.getLength<float>("CloudHeight"); cloudHeight.has_value())
+        atmosphere.cloudHeight = *cloudHeight;
+    if (auto cloudSpeed = atmosData.getNumber<float>("CloudSpeed"); cloudSpeed.has_value())
+        atmosphere.cloudSpeed = math::degToRad(*cloudSpeed);
+
+    if (auto cloudTexture = GetFilename(atmosData, "CloudMap"sv, "Invalid filename in CloudMap\n");
+        cloudTexture.has_value())
+    {
+        constexpr auto cloudFlags = engine::TextureFlags::WrapTexture;
+        atmosphere.cloudTexture = cloudTexture->empty()
+            ? util::TextureHandle::Invalid
+            : texturePaths.getHandle(*cloudTexture, path, cloudFlags);
+    }
+
+    if (auto cloudNormalMap = GetFilename(atmosData, "CloudNormalMap"sv, "Invalid filename in CloudNormalMap\n");
+        cloudNormalMap.has_value())
+    {
+        constexpr auto cloudNormalFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
+        atmosphere.cloudNormalMap = cloudNormalMap->empty()
+            ? util::TextureHandle::Invalid
+            : texturePaths.getHandle(*cloudNormalMap, path, cloudNormalFlags);
+    }
+
+    if (auto cloudShadowDepth = atmosData.getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())
+    {
+        cloudShadowDepth = std::clamp(*cloudShadowDepth, 0.0f, 1.0f);
+        atmosphere.cloudShadowDepth = *cloudShadowDepth;
+    }
+}
+
 void ReadAtmosphere(Body* body,
                     const AssociativeArray& atmosData,
                     const std::filesystem::path& path,
@@ -740,39 +775,12 @@ void ReadAtmosphere(Body* body,
     }
     if (auto rayleighCoeff = atmosData.getVector3<float>("Rayleigh"); rayleighCoeff.has_value())
         atmosphere->rayleighCoeff = *rayleighCoeff;
-    //atmosData->getNumber("RayleighScaleHeight", atmosphere->rayleighScaleHeight);
+    if (auto rayleighScaleHeight = atmosData.getLength<float>("RayleighScaleHeight"))
+        atmosphere->rayleighScaleHeight = *rayleighScaleHeight;
     if (auto absorptionCoeff = atmosData.getVector3<float>("Absorption"); absorptionCoeff.has_value())
         atmosphere->absorptionCoeff = *absorptionCoeff;
 
-    // Get the cloud map settings
-    if (auto cloudHeight = atmosData.getLength<float>("CloudHeight"); cloudHeight.has_value())
-        atmosphere->cloudHeight = *cloudHeight;
-    if (auto cloudSpeed = atmosData.getNumber<float>("CloudSpeed"); cloudSpeed.has_value())
-        atmosphere->cloudSpeed = math::degToRad(*cloudSpeed);
-
-    if (auto cloudTexture = GetFilename(atmosData, "CloudMap"sv, "Invalid filename in CloudMap\n");
-        cloudTexture.has_value())
-    {
-        constexpr auto cloudFlags = engine::TextureFlags::WrapTexture;
-        atmosphere->cloudTexture = cloudTexture->empty()
-            ? util::TextureHandle::Invalid
-            : texturePaths.getHandle(*cloudTexture, path, cloudFlags);
-    }
-
-    if (auto cloudNormalMap = GetFilename(atmosData, "CloudNormalMap"sv, "Invalid filename in CloudNormalMap\n");
-        cloudNormalMap.has_value())
-    {
-        constexpr auto cloudNormalFlags = engine::TextureFlags::WrapTexture | engine::TextureFlags::LinearColorspace;
-        atmosphere->cloudNormalMap = cloudNormalMap->empty()
-            ? util::TextureHandle::Invalid
-            : texturePaths.getHandle(*cloudNormalMap, path, cloudNormalFlags);
-    }
-
-    if (auto cloudShadowDepth = atmosData.getNumber<float>("CloudShadowDepth"); cloudShadowDepth.has_value())
-    {
-        cloudShadowDepth = std::clamp(*cloudShadowDepth, 0.0f, 1.0f);
-        atmosphere->cloudShadowDepth = *cloudShadowDepth;
-    }
+    ReadClouds(*atmosphere, atmosData, path, texturePaths);
 
     if (newAtmosphere != nullptr)
         bodyFeaturesManager->setAtmosphere(body, std::move(newAtmosphere));

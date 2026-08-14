@@ -256,7 +256,8 @@ public:
                                  float objRadius,
                                  float skySphereRadius,
                                  unsigned int segmentCount,
-                                 float extinctionThreshold);
+                                 float extinctionThreshold,
+                                 bool separateRayleighMieScaleHeights);
     void setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
 
     enum
