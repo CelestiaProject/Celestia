@@ -75,8 +75,6 @@ private:
         float                        limbRadius; // resolved-body limb (px), 0 if none
         float                        alpha;   // PSF glow fade, full float precision
         std::array<unsigned char, 4> color;   // legacy shader also reads .a
-        std::array<signed char, 2>   corner;  // ±127 -> ±1.0 (signed byte normalized)
-        std::array<unsigned char, 2> uv;      // 0/255 -> 0/1 (unsigned byte normalized)
     };
 
     void makeCurrent();
