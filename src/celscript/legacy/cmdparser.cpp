@@ -463,7 +463,7 @@ ParseResult parseTimeCommand(const AssociativeArray& paramList, const ScriptMaps
 
         astro::Date date;
         int parsedLength = 0;
-        std::sscanf(utc->c_str(), "%*d-%*d-%*dT%*d:%*d:%*lf%n", &parsedLength);
+        std::sscanf(utc->c_str(), "%*d-%*d-%*dT%*d:%*d:%*f%n", &parsedLength);
         if (parsedLength != static_cast<int>(utc->size()) ||
             !astro::parseDate(*utc, date) ||
             !std::isfinite(date.seconds))
