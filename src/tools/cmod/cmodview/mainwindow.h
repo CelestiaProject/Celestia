@@ -20,9 +20,10 @@
 #include <QObject>
 #include <QString>
 
+#include <celmodel/material.h>
+
 namespace cmod
 {
-struct Material;
 class Model;
 }
 
