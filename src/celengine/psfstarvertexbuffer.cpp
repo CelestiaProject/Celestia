@@ -9,6 +9,7 @@
 
 #include "psfstarvertexbuffer.h"
 
+#include <cassert>
 #include <cmath>
 
 #include <celrender/gl/vertexobject.h>
@@ -65,7 +66,7 @@ PsfStarVertexBuffer::PsfStarVertexBuffer(const Renderer &renderer,
                                          capacity_t capacity) :
     m_renderer(renderer),
     m_capacity(capacity),
-    m_vertices(capacity)
+    m_vertices(std::make_unique<StarVertex[]>(capacity))
 {
 }
 
@@ -86,9 +87,7 @@ PsfStarVertexBuffer::render()
 
     makeCurrent();
 
-    m_bo->invalidateData().setData(
-        util::array_view(m_vertices.data(), m_nStars),
-        gl::Buffer::BufferUsage::StreamDraw);
+    m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
 
     m_vo->draw(m_nStars);
     m_nStars = 0;
@@ -131,7 +130,9 @@ PsfStarVertexBuffer::setupVertexArrayObject()
 
     m_initialized = true;
 
-    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
+    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                              static_cast<GLsizeiptr>(sizeof(StarVertex) * m_capacity),
+                              gl::Buffer::BufferUsage::StreamDraw);
     m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::Points);
 
     m_vo->addVertexBuffer(
@@ -212,15 +213,13 @@ PsfStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
                              float limbRadius,
                              float alpha)
 {
-    if (m_nStars < m_capacity)
-    {
-        m_vertices[m_nStars].position = pos;
-        m_vertices[m_nStars].peakRadiance = peakRadiance;
-        m_vertices[m_nStars].limbRadius = limbRadius;
-        m_vertices[m_nStars].alpha = alpha;
-        color.get(m_vertices[m_nStars].color.data());
-        m_nStars++;
-    }
+    assert(m_nStars < m_capacity);
+    m_vertices[m_nStars].position = pos;
+    m_vertices[m_nStars].peakRadiance = peakRadiance;
+    m_vertices[m_nStars].limbRadius = limbRadius;
+    m_vertices[m_nStars].alpha = alpha;
+    color.get(m_vertices[m_nStars].color.data());
+    ++m_nStars;
 
     if (m_nStars == m_capacity)
     {

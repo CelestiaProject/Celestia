@@ -11,11 +11,11 @@
 
 #include <array>
 #include <memory>
-#include <vector>
 
 #include <Eigen/Core>
 
 #include <celengine/starpipelineowner.h>
+#include <celutil/classops.h>
 #include "gl/buffer.h"
 
 class Color;
@@ -36,7 +36,7 @@ namespace celestia::render
 // Each star expands to a 4-vertex indexed quad, drawing the whole
 // frame's oversized stars in a single call.  Subclasses supply the
 // shader id and per-frame GL/shader configuration via onMakeCurrent().
-class LargeStarRenderer : public StarPipelineFlushable
+class LargeStarRenderer : public StarPipelineFlushable, private util::NoMove
 {
 public:
     using capacity_t = unsigned int;
@@ -44,10 +44,6 @@ public:
     ~LargeStarRenderer() override;
 
     LargeStarRenderer() = delete;
-    LargeStarRenderer(const LargeStarRenderer&) = delete;
-    LargeStarRenderer(LargeStarRenderer&&) = delete;
-    LargeStarRenderer& operator=(const LargeStarRenderer&) = delete;
-    LargeStarRenderer& operator=(LargeStarRenderer&&) = delete;
 
     void start();
     void render();
@@ -68,7 +64,7 @@ protected:
     virtual void onMakeCurrent(const Eigen::Vector2f &viewportRcp) = 0;
 
 private:
-    struct StarVertex
+    struct StarInstance
     {
         Eigen::Vector3f              center;
         float                        scalar;  // peak radiance or pixel size
@@ -84,7 +80,7 @@ private:
     StaticShader                      m_shaderId;
     capacity_t                        m_capacity;
     capacity_t                        m_nStars      { 0 };
-    std::vector<StarVertex>           m_vertices;
+    std::unique_ptr<StarInstance[]>   m_instances; //NOSONAR
 
     CelestiaGLProgram                *m_prog        { nullptr };
     gl::Buffer::SharedPtr             m_bo;

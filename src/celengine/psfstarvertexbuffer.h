@@ -11,11 +11,11 @@
 
 #include <array>
 #include <memory>
-#include <vector>
 
 #include <Eigen/Core>
 
 #include <celrender/gl/buffer.h>
+#include <celutil/classops.h>
 #include "starpipelineowner.h"
 
 class Color;
@@ -34,7 +34,7 @@ namespace celestia::render
 // Vertices carry per-star peak radiance (HDR float) and a linear, green-
 // normalised colour.  The shader is the same in both modes; a uniform
 // selects "point" (fixed pixel disc) or "glow" (PSF approximation).
-class PsfStarVertexBuffer : public StarPipelineFlushable
+class PsfStarVertexBuffer : public StarPipelineFlushable, private util::NoMove
 {
 public:
     using capacity_t = unsigned int;
@@ -48,10 +48,6 @@ public:
     PsfStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
     ~PsfStarVertexBuffer() override = default;
     PsfStarVertexBuffer() = delete;
-    PsfStarVertexBuffer(const PsfStarVertexBuffer&) = delete;
-    PsfStarVertexBuffer(PsfStarVertexBuffer&&) = delete;
-    PsfStarVertexBuffer& operator=(const PsfStarVertexBuffer&) = delete;
-    PsfStarVertexBuffer& operator=(PsfStarVertexBuffer&&) = delete;
 
     void start(Mode mode);
     void render();
@@ -70,17 +66,17 @@ public:
 private:
     struct StarVertex
     {
-        Eigen::Vector3f            position;
-        float                      peakRadiance;
-        float                      limbRadius;   // resolved-body limb (px), 0 if none
-        float                      alpha;        // glow fade, full float precision
-        std::array<unsigned char, 4> color;      // rgb only; alpha byte unused
+        Eigen::Vector3f        position;
+        float                  peakRadiance;
+        float                  limbRadius;   // resolved-body limb (px), 0 if none
+        float                  alpha;        // glow fade, full float precision
+        std::array<GLubyte, 4> color;      // rgb only; alpha byte unused
     };
 
     const Renderer                 &m_renderer;
     capacity_t                      m_capacity;
     capacity_t                      m_nStars                { 0 };
-    std::vector<StarVertex>         m_vertices;
+    std::unique_ptr<StarVertex[]>   m_vertices; //NOSONAR
     Mode                            m_mode                  { Mode::Point };
     float                           m_pointRadius           { 1.5f };
     float                           m_optimization          { 0.1f };

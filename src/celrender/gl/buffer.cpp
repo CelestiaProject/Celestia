@@ -69,25 +69,35 @@ Buffer::unbind(Buffer::TargetHint target)
 Buffer&
 Buffer::setData(util::array_view<void> data, Buffer::BufferUsage usage)
 {
-    m_bufferSize = data.size();
+    setData(data.data(), static_cast<GLsizeiptr>(data.size()), usage);
+    return *this;
+}
+
+void
+Buffer::setData(const void* data, GLsizeiptr size, Buffer::BufferUsage usage) //NOSONAR
+{
+    m_bufferSize = size;
     m_usage = usage;
     Binder::get().bind(*this);
-    glBufferData(GLenum(m_targetHint), m_bufferSize, data.data(), GLenum(m_usage));
-    return *this;
+    glBufferData(static_cast<GLenum>(m_targetHint),
+                 size,
+                 data,
+                 static_cast<GLenum>(m_usage));
 }
 
 Buffer&
 Buffer::setSubData(GLintptr offset, util::array_view<void> data)
 {
     Binder::get().bind(*this);
-    glBufferSubData(GLenum(m_targetHint), offset, data.size(), data.data());
+    glBufferSubData(static_cast<GLenum>(m_targetHint), offset, data.size(), data.data());
     return *this;
 }
 
 Buffer&
 Buffer::invalidateData()
 {
-    return setData(util::array_view<void>(nullptr, m_bufferSize), m_usage);
+    setData(nullptr, m_bufferSize, m_usage);
+    return *this;
 }
 
 Buffer::SharedPtr
@@ -100,15 +110,24 @@ Buffer::create(TargetHint targetHint)
 
 Buffer::SharedPtr
 Buffer::create(TargetHint targetHint,
+               GLsizeiptr size,
+               BufferUsage usage)
+{
+    auto buffer = create(targetHint);
+    if (buffer)
+        buffer->setData(nullptr, size, usage);
+
+    return buffer;
+}
+
+Buffer::SharedPtr
+Buffer::create(TargetHint targetHint,
                util::array_view<void> data,
                BufferUsage usage)
 {
     auto buffer = create(targetHint);
     if (buffer)
-    {
-        Binder::get().bind(*buffer);
         buffer->setData(data, usage);
-    }
 
     return buffer;
 }

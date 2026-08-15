@@ -10,6 +10,7 @@
 #include "largestarrenderer.h"
 
 #include <array>
+#include <cassert>
 #include <cstddef>
 
 #include <celengine/glsupport.h>
@@ -49,7 +50,7 @@ LargeStarRenderer::LargeStarRenderer(Renderer    &renderer,
     m_renderer(renderer),
     m_shaderId(shaderId),
     m_capacity(capacity),
-    m_vertices(static_cast<std::size_t>(capacity))
+    m_instances(std::make_unique<StarInstance[]>(capacity))
 {
 }
 
@@ -70,9 +71,8 @@ LargeStarRenderer::render()
 
     makeCurrent();
 
-    m_bo->invalidateData().setData(
-        util::array_view(m_vertices.data(), static_cast<std::size_t>(m_nStars)),
-        gl::Buffer::BufferUsage::StreamDraw);
+    m_bo->invalidateData().setSubData(0, util::array_view(m_instances.get(),
+                                                          static_cast<std::size_t>(m_nStars)));
 
     m_vo->drawInstances(static_cast<GLsizei>(m_nStars));
     m_nStars = 0;
@@ -118,7 +118,9 @@ LargeStarRenderer::setupVertexArrayObject()
 
     auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, kQuadCorners);
 
-    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array);
+    m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                              static_cast<GLsizeiptr>(sizeof(StarInstance) * m_capacity),
+                              gl::Buffer::BufferUsage::StreamDraw);
     m_vo = std::make_unique<gl::VertexObject>(gl::VertexObject::Primitive::TriangleStrip);
 
     m_vo->addVertexBuffer(
@@ -147,8 +149,8 @@ LargeStarRenderer::setupVertexArrayObject()
         3,
         gl::VertexObject::DataType::Float,
         false,
-        sizeof(StarVertex),
-        offsetof(StarVertex, center));
+        sizeof(StarInstance),
+        offsetof(StarInstance, center));
 
     // Color stays 4-component: this layout is shared with
     // LegacyLargeStarRenderer, whose shader reads in_Color.a.
@@ -158,8 +160,8 @@ LargeStarRenderer::setupVertexArrayObject()
         4,
         gl::VertexObject::DataType::UnsignedByte,
         true,
-        sizeof(StarVertex),
-        offsetof(StarVertex, color));
+        sizeof(StarInstance),
+        offsetof(StarInstance, color));
 
     m_vo->addInstanceBuffer(
         m_bo,
@@ -167,8 +169,8 @@ LargeStarRenderer::setupVertexArrayObject()
         1,
         gl::VertexObject::DataType::Float,
         false,
-        sizeof(StarVertex),
-        offsetof(StarVertex, scalar));
+        sizeof(StarInstance),
+        offsetof(StarInstance, scalar));
 
     // continuous distance-derived glow fade; float for a smooth transition
     // (unused by the legacy shader)
@@ -178,8 +180,8 @@ LargeStarRenderer::setupVertexArrayObject()
         1,
         gl::VertexObject::DataType::Float,
         false,
-        sizeof(StarVertex),
-        offsetof(StarVertex, alpha));
+        sizeof(StarInstance),
+        offsetof(StarInstance, alpha));
 
     m_vo->addInstanceBuffer(
         m_bo,
@@ -187,8 +189,8 @@ LargeStarRenderer::setupVertexArrayObject()
         1,
         gl::VertexObject::DataType::Float,
         false,
-        sizeof(StarVertex),
-        offsetof(StarVertex, limbRadius));
+        sizeof(StarInstance),
+        offsetof(StarInstance, limbRadius));
 }
 
 void
@@ -198,19 +200,17 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
                            float                  limbRadius,
                            float                  alpha)
 {
-    if (m_nStars < m_capacity)
-    {
-        std::array<unsigned char, 4> packedColor{};
-        color.get(packedColor.data());
+    assert(m_nStars < m_capacity);
+    std::array<unsigned char, 4> packedColor{};
+    color.get(packedColor.data());
 
-        StarVertex &out = m_vertices[static_cast<std::size_t>(m_nStars)];
-        out.center     = center;
-        out.scalar     = scalar;
-        out.limbRadius = limbRadius;
-        out.alpha      = alpha;
-        out.color      = packedColor;
-        ++m_nStars;
-    }
+    StarInstance &out = m_instances[static_cast<std::size_t>(m_nStars)];
+    out.center     = center;
+    out.scalar     = scalar;
+    out.limbRadius = limbRadius;
+    out.alpha      = alpha;
+    out.color      = packedColor;
+    ++m_nStars;
 
     if (m_nStars == m_capacity)
         render();

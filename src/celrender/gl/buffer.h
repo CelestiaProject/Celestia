@@ -114,6 +114,10 @@ public:
      */
     static SharedPtr create(TargetHint targetHint);
 
+    static SharedPtr create(TargetHint  targetHint,
+                            GLsizeiptr  size,
+                            BufferUsage usage);
+
     /**
      * @brief Construct a new Buffer object.
      *
@@ -136,6 +140,8 @@ private:
     void clear();
     //! Destroy underlying OpenGL resources
     void destroy() noexcept;
+
+    void setData(const void*, GLsizeiptr, BufferUsage);
 
     inline friend void
     intrusive_ptr_add_ref(Buffer* p)

@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <memory>
 #include <system_error>
@@ -515,6 +516,7 @@ TextureFontPrivate::render(std::u16string_view line, float x, float y)
         if (g.bw > 0 && g.bh > 0)
         {
             // Only render characters if they have bitmaps
+            assert(m_instanceCount < MaxInstances);
             auto& instance = m_instances[m_instanceCount];
 
             // Make Sonar stop complaining about precision issues
@@ -550,7 +552,7 @@ TextureFontPrivate::flush()
     if (m_instanceCount == 0)
         return;
 
-    m_vbo->setSubData(0, util::array_view(m_instances.data(), m_instanceCount));
+    m_vbo->invalidateData().setSubData(0, util::array_view(m_instances.data(), m_instanceCount));
     m_vao.drawInstances(m_instanceCount);
     m_vbo->unbind();
 

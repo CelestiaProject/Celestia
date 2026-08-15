@@ -10,10 +10,12 @@
 
 #pragma once
 
+#include <cassert>
 #include <memory>
 #include <Eigen/Core>
 
 #include <celrender/gl/buffer.h>
+#include <celutil/classops.h>
 #include "starpipelineowner.h"
 
 class Color;
@@ -27,7 +29,8 @@ class VertexObject;
 }
 
 // PointStarVertexBuffer is used when hardware supports point sprites.
-class PointStarVertexBuffer : public celestia::render::StarPipelineFlushable
+class PointStarVertexBuffer : public celestia::render::StarPipelineFlushable,
+                              private celestia::util::NoMove
 {
 public:
     using capacity_t = unsigned int;
@@ -35,10 +38,6 @@ public:
     PointStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
     ~PointStarVertexBuffer() override = default;
     PointStarVertexBuffer() = delete;
-    PointStarVertexBuffer(const PointStarVertexBuffer&) = delete;
-    PointStarVertexBuffer(PointStarVertexBuffer&&) = delete;
-    PointStarVertexBuffer& operator=(const PointStarVertexBuffer&) = delete;
-    PointStarVertexBuffer& operator=(PointStarVertexBuffer&&) = delete;
 
     void startBasicPoints();
     void startSprites();
@@ -82,17 +81,13 @@ PointStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
                                const Color &color,
                                float size)
 {
-    if (m_nStars < m_capacity)
-    {
-        m_vertices[m_nStars].position = pos;
-        m_vertices[m_nStars].size = size;
-        color.get(m_vertices[m_nStars].color);
-        m_nStars++;
-    }
+    assert(m_nStars < m_capacity);
+
+    m_vertices[m_nStars].position = pos;
+    m_vertices[m_nStars].size = size;
+    color.get(m_vertices[m_nStars].color);
+    ++m_nStars;
 
     if (m_nStars == m_capacity)
-    {
         render();
-        m_nStars = 0;
-    }
 }
