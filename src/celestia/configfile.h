@@ -87,13 +87,18 @@ struct CelestiaConfig
         float labelConstellationsFadeStartDist{ 6.0f };
         float labelConstellationsFadeEndDist{ 20.0f };
 
-        unsigned int shadowTextureSize{ 256 };
-        unsigned int eclipseTextureSize{ 128 };
         unsigned int orbitPathSamplePoints{ 100 };
         unsigned int aaSamples{ 1 };
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
+        struct TextureRendering
+        {
+            unsigned int shadowSize{ 256 };
+            unsigned int eclipseSize{ 128 };
+            int anisotropy{ 8 };
+        };
+        TextureRendering textures{ };
         struct OutputRendering
         {
             bool sRGB{ false };

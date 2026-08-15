@@ -58,6 +58,7 @@
 #include <celengine/textlayout.h>
 #include <celengine/timeline.h>
 #include <celengine/timelinephase.h>
+#include <celengine/texture.h>
 #include <celengine/rectangle.h>
 #include <celengine/urlmanager.h>
 #include <celengine/visibleregion.h>
@@ -2770,6 +2771,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.output.sRGB);
+    celestia::engine::SetTextureAnisotropy(config->renderDetails.textures.anisotropy);
 
     if (gl::sRGBRendering)
     {
@@ -2791,8 +2793,8 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
     detailOptions.atmosphereSegmentCount = config->renderDetails.atmosphere.segmentCount;
     detailOptions.cloudSegmentCount = config->renderDetails.atmosphere.cloudSegmentCount;
     detailOptions.atmosphereExtinctionThreshold = config->renderDetails.atmosphere.extinctionThreshold;
-    detailOptions.shadowTextureSize = config->renderDetails.shadowTextureSize;
-    detailOptions.eclipseTextureSize = config->renderDetails.eclipseTextureSize;
+    detailOptions.shadowTextureSize = config->renderDetails.textures.shadowSize;
+    detailOptions.eclipseTextureSize = config->renderDetails.textures.eclipseSize;
     detailOptions.orbitWindowEnd = config->renderDetails.orbitWindowEnd;
     detailOptions.orbitPeriodsShown = config->renderDetails.orbitPeriodsShown;
     detailOptions.linearFadeFraction = config->renderDetails.linearFadeFraction;

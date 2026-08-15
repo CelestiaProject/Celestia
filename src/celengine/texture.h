@@ -25,6 +25,11 @@
 
 typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 
+namespace celestia::engine
+{
+void SetTextureAnisotropy(int);
+}
+
 struct TextureTile
 {
     TextureTile(unsigned int _texID) :

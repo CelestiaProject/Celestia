@@ -209,8 +209,8 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     applyNumber(renderDetails.labelConstellationsFadeStartDist, hash, "LabelConstellationsFadeStartDist"sv);
     applyNumber(renderDetails.labelConstellationsFadeEndDist, hash, "LabelConstellationsFadeEndDist"sv);
 
-    applyNumber(renderDetails.shadowTextureSize, hash, "ShadowTextureSize"sv);
-    applyNumber(renderDetails.eclipseTextureSize, hash, "EclipseTextureSize"sv);
+    applyNumber(renderDetails.textures.shadowSize, hash, "ShadowTextureSize"sv);
+    applyNumber(renderDetails.textures.eclipseSize, hash, "EclipseTextureSize"sv);
     applyNumber(renderDetails.orbitPathSamplePoints, hash, "OrbitPathSamplePoints"sv);
     applyNumber(renderDetails.atmosphere.segmentCount, hash, "AtmosphereSegmentCount"sv);
     renderDetails.atmosphere.segmentCount = std::clamp(renderDetails.atmosphere.segmentCount, 1u, 16u);
@@ -224,6 +224,8 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
         renderDetails.atmosphere.extinctionThreshold = 0.000125f;
     }
     applyNumber(renderDetails.aaSamples, hash, "AntialiasingSamples"sv);
+    applyNumber(renderDetails.textures.anisotropy, hash, "TextureAnisotropy"sv);
+    renderDetails.textures.anisotropy = std::max(renderDetails.textures.anisotropy, 1);
     applyNumber(renderDetails.SolarSystemMaxDistance, hash, "SolarSystemMaxDistance"sv);
     renderDetails.SolarSystemMaxDistance = std::clamp(renderDetails.SolarSystemMaxDistance, 1.0f, 10.0f);
     applyNumber(renderDetails.ShadowMapSize, hash, "ShadowMapSize"sv);

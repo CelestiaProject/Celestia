@@ -390,6 +390,10 @@ StarTextures
 #     reduce the jagged edges of eclipse shadows and shadows on planet
 #     rings, but it will decrease the amount of memory available for
 #     planet textures.
+#
+#   TextureAnisotropy controls anisotropic texture filtering. The default
+#   is 8. A value of 1 disables it. The configured value is limited to
+#   what the graphics driver supports.
 #------------------------------------------------------------------------
   OrbitPathSamplePoints  100
   AtmosphereSegmentCount 6
@@ -398,6 +402,7 @@ StarTextures
 
   ShadowTextureSize      256
   EclipseTextureSize     128
+  TextureAnisotropy      8
 
 
 #------------------------------------------------------------------------
