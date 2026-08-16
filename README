@@ -10,7 +10,7 @@
 *  Celestia web site: https://celestiaproject.space/                      *
 *                                                                         *
 *  Celestia documentation:                                                *
-*    https://celestiaproject.space/guides.html                                   *
+*    https://celestiaproject.space/guides.html                            *
 *    Celestia WikiBook: https://en.wikibooks.org/wiki/Celestia            *
 *                                                                         *
 *  Celestia forums: https://celestiaproject.space/forum/                  *
@@ -276,9 +276,11 @@ Other work
 ----------
 
 # Selden Ball deserves a special mention for suffering more prerelease versions
- finding more bugs, and giving more feedback than anyone else.
+  finding more bugs, and giving more feedback than anyone else.
 
-# Christophe Campos aka ElChristou created the splash screen for Celestia.
+# Robert Eltze aka TheLostProbe created the splash screen for Celestia. Askaniy
+  Anpilogov adapted the Celestia wordmark for use on the splash screen. Based
+  on the original splash made by Christophe Campos aka ElChristou.
 
 # The MacOS X icon was designed by Chris Alford: http://www.chrisalford.com/
 
