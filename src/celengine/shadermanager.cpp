@@ -57,7 +57,6 @@ constexpr std::array StaticShaderBaseNames
     "crosshair"sv,
     "depth"sv,
     "galaxy"sv,
-    "galaxy150"sv,
     "globular"sv,
     "largestar"sv,
     "psfstarglow"sv,
@@ -114,11 +113,9 @@ void main(void)
 
 #ifdef GL_ES
 constexpr std::string_view VersionHeader = "#version 300 es\n"sv;
-constexpr std::string_view VersionHeaderGeom = "#version 320 es\n"sv;
 constexpr std::string_view CommonHeader = "precision highp float;\nprecision highp sampler2DShadow;\n"sv;
 #else
 constexpr std::string_view VersionHeader = "#version 330\n"sv;
-constexpr std::string_view VersionHeaderGeom = "#version 330\n"sv;
 constexpr std::string_view CommonHeader = "\n"sv;
 #endif
 constexpr std::string_view VertexHeader = R"glsl(
@@ -128,8 +125,6 @@ uniform mat4 MVPMatrix;
 
 invariant gl_Position;
 )glsl"sv;
-
-constexpr std::string_view GeomHeader = VertexHeader;
 
 constexpr std::string_view VPFunctionFishEye = R"glsl(
 vec4 calc_vp(vec4 in_Position)
@@ -356,16 +351,6 @@ void DumpVSSource(std::string_view source)
     *g_shaderLogFile << "Vertex shader source:\n";
     DumpShaderSource(*g_shaderLogFile, source);
     *g_shaderLogFile << '\n';
-}
-
-void DumpGSSource(std::string_view source)
-{
-    if (g_shaderLogFile != nullptr)
-    {
-        *g_shaderLogFile << "Geometry shader source:\n";
-        DumpShaderSource(*g_shaderLogFile, source);
-        *g_shaderLogFile << '\n';
-    }
 }
 
 inline void DumpFSSource(std::string_view source)
@@ -2538,58 +2523,6 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
     return std::make_unique<CelestiaGLProgram>(std::move(program));
 }
 
-std::shared_ptr<CelestiaGLProgram>
-buildProgramGeom(std::string_view vs,
-                 std::string_view gs,
-                 std::string_view fs,
-                 const ShaderManager::GeomShaderParams* params,
-                 bool fisheyeEnabled)
-{
-    std::string layout;
-    if (params)
-    {
-        layout = fmt::format("layout({}) in;\nlayout({}, max_vertices = {}) out;\n"sv,
-                             InPrimitive(params->inputType),
-                             OutPrimitive(params->outType),
-                             params->nOutVertices);
-    }
-
-    auto vsSrc = fmt::format("{}{}{}{}\n", VersionHeaderGeom, CommonHeader, VertexHeader, vs);
-    auto gsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeaderGeom, CommonHeader, layout, GeomHeader, VPFunction(fisheyeEnabled), gs);
-    auto fsSrc = fmt::format("{}{}{}{}\n", VersionHeaderGeom, CommonHeader, FragmentHeader, fs);
-
-    DumpVSSource(vsSrc);
-    DumpGSSource(gsSrc);
-    DumpFSSource(fsSrc);
-
-    GLShaderStatus status = GLShaderStatus::OK;
-    auto _vs = GLVertexShader::create(vsSrc, status);
-    auto _gs = GLGeometryShader::create(gsSrc, status);
-    auto _fs = GLFragmentShader::create(fsSrc, status);
-
-    GLProgram program;
-    if (_vs.isValid() && _gs.isValid() && _fs.isValid())
-    {
-        auto builder = GLProgramBuilder::create(status);
-        if (status == GLShaderStatus::OK)
-        {
-            builder.attach(std::move(_vs));
-            builder.attach(std::move(_gs));
-            builder.attach(std::move(_fs));
-            program = builder.link(status);
-        }
-    }
-    else
-    {
-        status = GLShaderStatus::CompileError;
-    }
-
-    if (status != GLShaderStatus::OK)
-        return nullptr;
-
-    return std::make_shared<CelestiaGLProgram>(std::move(program));
-}
-
 } // end unnamed namespace
 
 bool
@@ -2817,24 +2750,18 @@ ShaderManager::getShader(const ShaderProperties& props)
 }
 
 CelestiaGLProgram*
-ShaderManager::getShader(StaticShader staticShader, const GeomShaderParams* gsParams)
-{
-    return getShader(staticShader, StaticShaderOptions::None, gsParams);
-}
-
-CelestiaGLProgram*
-ShaderManager::getShader(StaticShader staticShader, StaticShaderOptions options, const GeomShaderParams* gsParams)
+ShaderManager::getShader(StaticShader staticShader, StaticShaderOptions options)
 {
     StaticShaderProperties props{ staticShader, options };
     auto [it, inserted] = m_staticShaders.try_emplace(props);
     if (inserted)
-        it->second = loadShader(props, gsParams);
+        it->second = loadShader(props);
 
     return it->second.get();
 }
 
 std::shared_ptr<CelestiaGLProgram>
-ShaderManager::loadShader(StaticShaderProperties props, const GeomShaderParams* gsParams)
+ShaderManager::loadShader(StaticShaderProperties props)
 {
     auto name = StaticShaderBaseNames[static_cast<std::size_t>(props.shader)];
     auto vs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_vert.glsl", name)));
@@ -2846,18 +2773,7 @@ ShaderManager::loadShader(StaticShaderProperties props, const GeomShaderParams* 
         return getErrorProgram();
 
     std::shared_ptr<CelestiaGLProgram> result;
-    if (gsParams)
-    {
-        auto gs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_geom.glsl", name)));
-        if (gs.empty())
-            return getErrorProgram();
-
-        result = buildProgramGeom(vs, gs, fs, gsParams, m_fisheyeEnabled);
-    }
-    else
-    {
-        result = buildProgram(vs, fs, m_fisheyeEnabled, props.options);
-    }
+    result = buildProgram(vs, fs, m_fisheyeEnabled, props.options);
 
     return result ? result : getErrorProgram();
 }

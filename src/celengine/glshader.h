@@ -64,20 +64,6 @@ public:
     using GLShader::isValid;
 };
 
-class GLGeometryShader : private GLShader
-{
-public:
-    static constexpr GLenum ShaderType = GL_GEOMETRY_SHADER;
-
-    GLGeometryShader() = default;
-    GLGeometryShader(CreateToken, GLuint _id) : GLShader(_id) {}
-
-    static GLGeometryShader create(std::string_view source, GLShaderStatus& status);
-
-    using GLShader::getID;
-    using GLShader::isValid;
-};
-
 class GLFragmentShader : private GLShader
 {
 public:
@@ -138,7 +124,6 @@ public:
     bool isValid() const noexcept { return id != 0; }
 
     void attach(GLFragmentShader&&);
-    void attach(GLGeometryShader&&);
     void attach(GLVertexShader&&);
 
     void bindAttribute(GLuint index, const GLchar* name) const;
@@ -152,7 +137,6 @@ private:
 
     GLuint id{ 0 };
     GLFragmentShader fragmentShader;
-    GLGeometryShader geometryShader;
     GLVertexShader vertexShader;
 };
 

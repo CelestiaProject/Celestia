@@ -56,7 +56,6 @@ extern CELAPI bool EXT_texture_sRGB_R8; //NOSONAR
 extern CELAPI bool MESA_pack_invert; //NOSONAR
 #ifdef GL_ES
 extern CELAPI bool OES_texture_border_clamp; //NOSONAR
-extern CELAPI bool OES_geometry_shader; //NOSONAR
 #endif
 extern CELAPI GLint maxPointSize; //NOSONAR
 extern CELAPI GLint maxTextureSize; //NOSONAR
@@ -66,8 +65,5 @@ extern CELAPI bool sRGBRendering; //NOSONAR
 
 bool init(util::array_view<std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
-bool hasGeomShader() noexcept;
-void enableGeomShaders() noexcept;
-void disableGeomShaders() noexcept;
 
 } // end namespace celestia::gl

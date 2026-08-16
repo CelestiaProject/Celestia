@@ -51,11 +51,7 @@ private:
 
     void bindTextures();
 
-    void renderGL2();
-    void initializeGL2(const CelestiaGLProgram *prog);
-
-    void renderGL3();
-    void initializeGL3(const CelestiaGLProgram *prog);
+    void initializeGL(const CelestiaGLProgram *prog);
 
     std::vector<RenderData>  m_renderData;
 
