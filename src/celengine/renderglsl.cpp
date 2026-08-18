@@ -562,8 +562,11 @@ void renderClouds_GLSL(const RenderInfo& ri,
                        Renderer* renderer,
                        LODSphereMesh* lodSphere)
 {
-    float radius = semiAxes.maxCoeff();
-    float cloudRadius = radius + (atmosphere != nullptr ? atmosphere->cloudHeight : 0.0f);
+    const float radius = semiAxes.maxCoeff();
+    const float cloudRadius = radius + (atmosphere != nullptr ? atmosphere->cloudHeight : 0.0f);
+    const float atmosphereRadius = atmosphere != nullptr
+        ? radius + renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight)
+        : radius;
 
     boost::container::static_vector<Texture*, LODSphereMesh::MAX_SPHERE_MESH_TEXTURES> textures;
 
@@ -591,7 +594,10 @@ void renderClouds_GLSL(const RenderInfo& ri,
     {
         // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
         // ... but don't show atmospheres when there are no light sources.
-        if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
+        // Scattering integration assumes the cloud fragment is inside the finite atmosphere shell.
+        if (atmosphere->mieScaleHeight > 0.0f &&
+            shadprop.nLights > 0 &&
+            cloudRadius < atmosphereRadius)
             shadprop.texUsage |= TexUsage::Scattering;
     }
 
@@ -626,8 +632,6 @@ void renderClouds_GLSL(const RenderInfo& ri,
         if (shadprop.hasScattering())
         {
             float extinctionThreshold = renderer->getAtmosphereExtinctionThreshold();
-            float atmosphereRadius = radius +
-                                     renderer->getAtmosphereShellHeight(atmosphere->mieScaleHeight);
             prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius, atmosphereRadius,
                                           renderer->getCloudSegmentCount(),
                                           extinctionThreshold);
