@@ -93,6 +93,7 @@ enum class TexUsage : std::uint32_t
     StaticPointSize         = 0x10000,
     LineAsTriangles         = 0x20000,
     TextureCoordTransform   = 0x40000,
+    RingPhaseTexture        = 0x80000,
 };
 
 ENUM_CLASS_BITWISE_OPS(TexUsage);
@@ -217,6 +218,7 @@ struct CelestiaGLProgramLight
     Vec3ShaderParameter specular;
     Vec3ShaderParameter halfVector;
     FloatShaderParameter brightness; // max of diffuse r, g, b
+    FloatShaderParameter angularRadius;
 };
 
 struct CelestiaGLProgramShadow
@@ -289,6 +291,7 @@ public:
     FloatShaderParameter ringRadius;
     FloatShaderParameter ringHalf;
     FloatShaderParameter ringAtmosphereRadius;
+    Vec3ShaderParameter ringColor;
     Vec4ShaderParameter ringPlane;
     Vec3ShaderParameter ringCenter;
     Vec3ShaderParameter ringScale;
@@ -372,6 +375,7 @@ public:
 
 private:
     void initCommonParameters();
+    void initLightParameters();
     void initParameters();
     void initSamplers();
 
