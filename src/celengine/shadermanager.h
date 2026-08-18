@@ -192,6 +192,7 @@ struct ShaderProperties
     ShadowMask shadowCounts{ ShadowMask::None };
 
     FisheyeOverrideMode fishEyeOverride { FisheyeOverrideMode::None };
+    bool separateRayleighMieScaleHeights{ false };
 };
 
 bool
@@ -256,8 +257,7 @@ public:
                                  float objRadius,
                                  float skySphereRadius,
                                  unsigned int segmentCount,
-                                 float extinctionThreshold,
-                                 bool separateRayleighMieScaleHeights);
+                                 float extinctionThreshold);
     void setMVPMatrices(const Eigen::Matrix4f& p, const Eigen::Matrix4f& m = Eigen::Matrix4f::Identity());
 
     enum
@@ -373,6 +373,7 @@ public:
 
 private:
     void initCommonParameters();
+    void initAtmosphereParameters();
     void initParameters();
     void initSamplers();
 

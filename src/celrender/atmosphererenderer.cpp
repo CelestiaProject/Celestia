@@ -356,6 +356,7 @@ AtmosphereRenderer::render(
 
     shadprop.texUsage |= TexUsage::Scattering;
     shadprop.lightModel = LightingModel::AtmosphereModel;
+    shadprop.separateRayleighMieScaleHeights = m_renderer.getSeparateRayleighMieScaleHeights(atmosphere);
 
     ShaderProperties transmissionProps = shadprop;
     transmissionProps.nLights = 0;
@@ -408,8 +409,7 @@ AtmosphereRenderer::render(
         prog->eyePosition = ls.eyePos_obj / atmScale;
         prog->setAtmosphereParameters(atmosphere, radius, atmosphereRadius, atmosphereRadius,
                                       m_renderer.getAtmosphereSegmentCount(),
-                                      extinctionThreshold,
-                                      m_renderer.getSeparateRayleighMieScaleHeights(atmosphere));
+                                      extinctionThreshold);
         prog->setMVPMatrices(*m.projection, (*m.modelview) * math::scale(atmScale));
     };
 

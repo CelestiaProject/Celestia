@@ -10,9 +10,6 @@
 
 #pragma once
 
-#include <algorithm>
-#include <cmath>
-
 #include <Eigen/Core>
 
 #include <celutil/color.h>
@@ -40,20 +37,7 @@ struct Atmosphere
 
     float cloudShadowDepth{ 0.0f };
 
-    bool hasValidScaleHeights() const noexcept
-    {
-        return mieScaleHeight > 0.0f && std::isfinite(mieScaleHeight) &&
-               rayleighScaleHeight > 0.0f && std::isfinite(rayleighScaleHeight);
-    }
-
-    float getLegacyScaleHeight() const noexcept
-    {
-        return hasValidScaleHeights() ? std::max(mieScaleHeight, rayleighScaleHeight) : mieScaleHeight;
-    }
-
-    float getLegacyMieCoeff() const noexcept
-    {
-        float legacyScaleHeight = getLegacyScaleHeight();
-        return hasValidScaleHeights() ? mieCoeff * mieScaleHeight / legacyScaleHeight : mieCoeff;
-    }
+    bool hasValidScaleHeights() const noexcept;
+    float getLegacyScaleHeight() const noexcept;
+    float getLegacyMieCoeff() const noexcept;
 };

@@ -251,6 +251,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     Texture* emissiveTex = nullptr;
 
     shaderProps.texUsage = TexUsage::SharedTextureCoords;
+    shaderProps.separateRayleighMieScaleHeights = false;
 
     if (useNormals)
     {
@@ -383,7 +384,10 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     {
         // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
         if (atmosphere->mieScaleHeight > 0.0f)
+        {
             shaderProps.texUsage |= TexUsage::Scattering;
+            shaderProps.separateRayleighMieScaleHeights = renderer->getSeparateRayleighMieScaleHeights(*atmosphere);
+        }
     }
 
     bool hasShadowMap = shadowMap != 0 && shadowMapWidth != 0 && lightMatrix != nullptr;
@@ -449,8 +453,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
                                  renderer->getAtmosphereShellHeight(*atmosphere);
         prog->setAtmosphereParameters(*atmosphere, objRadius, objRadius, atmosphereRadius,
                                       renderer->getAtmosphereSegmentCount(),
-                                      extinctionThreshold,
-                                      renderer->getSeparateRayleighMieScaleHeights(*atmosphere));
+                                      extinctionThreshold);
         disableDepthWriteOnBlend = false;
     }
 

@@ -264,7 +264,10 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
             // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
             // ... but don't show atmospheres when there are no light sources.
             if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
+            {
                 shadprop.texUsage |= TexUsage::Scattering;
+                shadprop.separateRayleighMieScaleHeights = renderer->getSeparateRayleighMieScaleHeights(*atmosphere);
+            }
         }
 
         if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
@@ -357,8 +360,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                                      renderer->getAtmosphereShellHeight(*atmosphere);
             prog->setAtmosphereParameters(*atmosphere, radius, radius, atmosphereRadius,
                                           renderer->getAtmosphereSegmentCount(),
-                                          extinctionThreshold,
-                                          renderer->getSeparateRayleighMieScaleHeights(*atmosphere));
+                                          extinctionThreshold);
         }
     }
 
@@ -593,7 +595,10 @@ void renderClouds_GLSL(const RenderInfo& ri,
         // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
         // ... but don't show atmospheres when there are no light sources.
         if (atmosphere->mieScaleHeight > 0.0f && shadprop.nLights > 0)
+        {
             shadprop.texUsage |= TexUsage::Scattering;
+            shadprop.separateRayleighMieScaleHeights = renderer->getSeparateRayleighMieScaleHeights(*atmosphere);
+        }
     }
 
     setEclipseShadowProperties(ls, shadprop);
@@ -631,8 +636,7 @@ void renderClouds_GLSL(const RenderInfo& ri,
                                      renderer->getAtmosphereShellHeight(*atmosphere);
             prog->setAtmosphereParameters(*atmosphere, radius, cloudRadius, atmosphereRadius,
                                           renderer->getCloudSegmentCount(),
-                                          extinctionThreshold,
-                                          renderer->getSeparateRayleighMieScaleHeights(*atmosphere));
+                                          extinctionThreshold);
         }
     }
 

@@ -751,50 +751,48 @@ constexpr std::string_view
 RayleighViewOpticalDepth()
 {
     return R"glsl(
-        if (separateScaleHeights)
-        {
-            float rayleighViewStartColumn;
-            if (rayleighViewColumnValid && viewInward == cachedViewInward)
-                rayleighViewStartColumn = cachedRayleighViewColumn;
-            else
-                rayleighViewStartColumn = chapmanToSpaceWithScaleHeight(viewStartRadius, viewInward ? -viewStartMu : viewStartMu, rayleighH);
-            float rayleighViewEndColumn = chapmanToSpaceWithScaleHeight(viewEndRadius, viewInward ? -viewEndMu : viewEndMu, rayleighH);
-            rayleighSegmentDepth = max(0.0, viewInward ? rayleighViewEndColumn - rayleighViewStartColumn : rayleighViewStartColumn - rayleighViewEndColumn);
-            cachedRayleighViewColumn = rayleighViewEndColumn;
-            rayleighViewColumnValid = true;
-        }
+        float rayleighViewStartColumn;
+        if (rayleighViewColumnValid && viewInward == cachedViewInward)
+            rayleighViewStartColumn = cachedRayleighViewColumn;
+        else
+            rayleighViewStartColumn = chapmanToSpaceWithScaleHeight(viewStartRadius, viewInward ? -viewStartMu : viewStartMu, rayleighH);
+        float rayleighViewEndColumn = chapmanToSpaceWithScaleHeight(viewEndRadius, viewInward ? -viewEndMu : viewEndMu, rayleighH);
+        rayleighSegmentDepth = max(0.0, viewInward ? rayleighViewEndColumn - rayleighViewStartColumn : rayleighViewStartColumn - rayleighViewEndColumn);
+        cachedRayleighViewColumn = rayleighViewEndColumn;
+        rayleighViewColumnValid = true;
 )glsl";
 }
 
 constexpr std::string_view
-AtmosphereScatteringAccumulation()
+SeparateAtmosphereScatteringAccumulation()
 {
     return R"glsl(
-            if (separateScaleHeights)
-            {
-                float rayleighToSpace = chapmanToSpaceWithScaleHeight(sampleRadius, sampleMu, rayleighH);
-                float rayleighOdSun = max(0.0, rayleighToSpace - chapmanFromAtmosphereBoundaryWithScaleHeight(boundaryMu, rayleighBoundaryColumnScale, rayleighBoundaryGrazing));
-                odSun = max(0.0, mieToSpace - chapmanFromAtmosphereBoundaryWithScaleHeight(boundaryMu, mieBoundaryColumnScale, atmosphereBoundaryGrazing));
-                vec3 sampleTransmittance = exp(-mieExtinctionCoeff * (odAtm + odSun) - rayleighExtinctionCoeff * (rayleighOdAtm + rayleighOdSun));
-                vec3 segmentTau = mieExtinctionCoeff * segmentDepth + rayleighExtinctionCoeff * rayleighSegmentDepth;
-                vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) / max(segmentTau, vec3(1.0e-18));
-                vec3 thinIntegral = vec3(1.0) - segmentTau * 0.5 + segmentTau * segmentTau * (1.0 / 6.0);
-                vec3 thinMask = vec3(1.0) - step(vec3(1.0e-3), segmentTau);
-                segmentIntegral = mix(segmentIntegral, thinIntegral, thinMask);
-                mieScatteredLight += sampleTransmittance * (segmentDepth * segmentIntegral * sunVisibility);
-                rayleighScatteredLight += sampleTransmittance * (rayleighSegmentDepth * segmentIntegral * sunVisibility);
-            }
-            else
-            {
-                odSun = max(0.0, mieToSpace - chapmanFromAtmosphereBoundary(boundaryMu, atmosphereBoundaryGrazing));
-                vec3 segmentTau = extinctionCoeff * segmentDepth;
-                vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) * invExtinction;
-                vec3 thinIntegral = segmentDepth * (vec3(1.0) - segmentTau * 0.5 + segmentTau * segmentTau * (1.0 / 6.0));
-                vec3 thinMask = vec3(1.0) - step(vec3(1.0e-3), segmentTau);
-                segmentIntegral = mix(segmentIntegral, thinIntegral, thinMask);
-                vec3 sampleTransmittance = exp(-extinctionCoeff * (odAtm + odSun));
-                scatteredLight += sampleTransmittance * (segmentIntegral * sunVisibility);
-            }
+            float rayleighToSpace = chapmanToSpaceWithScaleHeight(sampleRadius, sampleMu, rayleighH);
+            float rayleighOdSun = max(0.0, rayleighToSpace - chapmanFromAtmosphereBoundaryWithScaleHeight(boundaryMu, rayleighBoundaryColumnScale, rayleighBoundaryGrazing));
+            odSun = max(0.0, mieToSpace - chapmanFromAtmosphereBoundaryWithScaleHeight(boundaryMu, mieBoundaryColumnScale, atmosphereBoundaryGrazing));
+            vec3 sampleTransmittance = exp(-mieExtinctionCoeff * (odAtm + odSun) - rayleighExtinctionCoeff * (rayleighOdAtm + rayleighOdSun));
+            vec3 segmentTau = mieExtinctionCoeff * segmentDepth + rayleighExtinctionCoeff * rayleighSegmentDepth;
+            vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) / max(segmentTau, vec3(1.0e-18));
+            vec3 thinIntegral = vec3(1.0) - segmentTau * 0.5 + segmentTau * segmentTau * (1.0 / 6.0);
+            vec3 thinMask = vec3(1.0) - step(vec3(1.0e-3), segmentTau);
+            segmentIntegral = mix(segmentIntegral, thinIntegral, thinMask);
+            mieScatteredLight += sampleTransmittance * (segmentDepth * segmentIntegral * sunVisibility);
+            rayleighScatteredLight += sampleTransmittance * (rayleighSegmentDepth * segmentIntegral * sunVisibility);
+)glsl";
+}
+
+constexpr std::string_view
+LegacyAtmosphereScatteringAccumulation()
+{
+    return R"glsl(
+            odSun = max(0.0, mieToSpace - chapmanFromAtmosphereBoundary(boundaryMu, atmosphereBoundaryGrazing));
+            vec3 segmentTau = extinctionCoeff * segmentDepth;
+            vec3 segmentIntegral = (vec3(1.0) - exp(-segmentTau)) * invExtinction;
+            vec3 thinIntegral = segmentDepth * (vec3(1.0) - segmentTau * 0.5 + segmentTau * segmentTau * (1.0 / 6.0));
+            vec3 thinMask = vec3(1.0) - step(vec3(1.0e-3), segmentTau);
+            segmentIntegral = mix(segmentIntegral, thinIntegral, thinMask);
+            vec3 sampleTransmittance = exp(-extinctionCoeff * (odAtm + odSun));
+            scatteredLight += sampleTransmittance * (segmentIntegral * sunVisibility);
 )glsl";
 }
 
@@ -818,12 +816,17 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int lightIndex)
     source += "    vec3 atmStep = (atmLeave - atmEnter) * inverseSegmentCount;\n";
     source += "    float stepLength = distAtm * inverseSegmentCount;\n";
     source += "    vec3 segmentStart = atmEnter;\n";
-    source += "    bool separateScaleHeights = rayleighH > 0.0;\n";
     source += "    float odAtm = 0.0;\n";
-    source += "    float rayleighOdAtm = 0.0;\n";
-    source += "    vec3 scatteredLight = vec3(0.0);\n";
-    source += "    vec3 mieScatteredLight = vec3(0.0);\n";
-    source += "    vec3 rayleighScatteredLight = vec3(0.0);\n";
+    if (props.separateRayleighMieScaleHeights)
+    {
+        source += "    float rayleighOdAtm = 0.0;\n";
+        source += "    vec3 mieScatteredLight = vec3(0.0);\n";
+        source += "    vec3 rayleighScatteredLight = vec3(0.0);\n";
+    }
+    else
+    {
+        source += "    vec3 scatteredLight = vec3(0.0);\n";
+    }
     source += "    float planetRadiusSq = atmosphereRadius.z * atmosphereRadius.z;\n";
     source += "    float shadowAngularWidth = min(0.2, sqrt(2.0 / (atmosphereRadius.z * mieH)));\n";
     source += "    float shadowWidth = (atmosphereRadius.x + atmosphereRadius.z) * 0.5 * shadowAngularWidth;\n";
@@ -833,30 +836,32 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int lightIndex)
     source += "    float cachedViewColumn = 0.0;\n";
     source += "    bool cachedViewInward = false;\n";
     source += "    bool viewColumnValid = false;\n";
-    source += "    float cachedRayleighViewColumn = 0.0;\n";
-    source += "    bool rayleighViewColumnValid = false;\n";
+    if (props.separateRayleighMieScaleHeights)
+    {
+        source += "    float cachedRayleighViewColumn = 0.0;\n";
+        source += "    bool rayleighViewColumnValid = false;\n";
+    }
     source += "    float viewStartRadius = sqrt(viewStartRadiusSq);\n";
     source += "    float viewStartMu = viewStartProjection / viewStartRadius;\n";
-    source += "    vec3 invExtinction;\n";
-    source += "    vec3 mieExtinctionCoeff;\n";
-    source += "    vec3 rayleighExtinctionCoeff;\n";
-    source += "    float mieBoundaryColumnScale = 0.0;\n";
-    source += "    float rayleighBoundaryGrazing = 0.0;\n";
-    source += "    float rayleighBoundaryColumnScale = 0.0;\n";
-    source += "    if (separateScaleHeights)\n";
-    source += "    {\n";
-    source += "        mieExtinctionCoeff = max(vec3(mieCoeff), vec3(0.0));\n";
-    source += "        rayleighExtinctionCoeff = max(extinctionCoeff - mieExtinctionCoeff, vec3(0.0));\n";
-    source += "        float mieBoundaryDensity = exp(min((atmosphereRadius.z - atmosphereRadius.x) * mieH, 0.0));\n";
-    source += "        mieBoundaryColumnScale = (mieBoundaryDensity / mieH) * atmosphereBoundaryGrazing;\n";
-    source += "        rayleighBoundaryGrazing = sqrt(1.5707963267948966 * atmosphereRadius.x * rayleighH);\n";
-    source += "        float rayleighBoundaryDensity = exp(min((atmosphereRadius.z - atmosphereRadius.x) * rayleighH, 0.0));\n";
-    source += "        rayleighBoundaryColumnScale = (rayleighBoundaryDensity / rayleighH) * rayleighBoundaryGrazing;\n";
-    source += "    }\n";
-    source += "    else\n";
-    source += "    {\n";
-    source += "        invExtinction = 1.0 / max(extinctionCoeff, vec3(1.0e-18));\n";
-    source += "    }\n";
+    if (props.separateRayleighMieScaleHeights)
+    {
+        source += "    vec3 mieExtinctionCoeff;\n";
+        source += "    vec3 rayleighExtinctionCoeff;\n";
+        source += "    float mieBoundaryColumnScale;\n";
+        source += "    float rayleighBoundaryGrazing;\n";
+        source += "    float rayleighBoundaryColumnScale;\n";
+        source += "    mieExtinctionCoeff = max(vec3(mieCoeff), vec3(0.0));\n";
+        source += "    rayleighExtinctionCoeff = max(extinctionCoeff - mieExtinctionCoeff, vec3(0.0));\n";
+        source += "    float mieBoundaryDensity = exp(min((atmosphereRadius.z - atmosphereRadius.x) * mieH, 0.0));\n";
+        source += "    mieBoundaryColumnScale = (mieBoundaryDensity / mieH) * atmosphereBoundaryGrazing;\n";
+        source += "    rayleighBoundaryGrazing = sqrt(1.5707963267948966 * atmosphereRadius.x * rayleighH);\n";
+        source += "    float rayleighBoundaryDensity = exp(min((atmosphereRadius.z - atmosphereRadius.x) * rayleighH, 0.0));\n";
+        source += "    rayleighBoundaryColumnScale = (rayleighBoundaryDensity / rayleighH) * rayleighBoundaryGrazing;\n";
+    }
+    else
+    {
+        source += "    vec3 invExtinction = 1.0 / max(extinctionCoeff, vec3(1.0e-18));\n";
+    }
     if (props.getEclipseShadowCountForLight(lightIndex) > 0)
     {
         source += "    float atmosphereShadow;\n";
@@ -883,8 +888,11 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int lightIndex)
     source += "            viewStartColumn = chapmanToSpace(viewStartRadius, viewInward ? -viewStartMu : viewStartMu);\n";
     source += "        float viewEndColumn = chapmanToSpace(viewEndRadius, viewInward ? -viewEndMu : viewEndMu);\n";
     source += "        float segmentDepth = max(0.0, viewInward ? viewEndColumn - viewStartColumn : viewStartColumn - viewEndColumn);\n";
-    source += "        float rayleighSegmentDepth = segmentDepth;\n";
-    source += RayleighViewOpticalDepth();
+    if (props.separateRayleighMieScaleHeights)
+    {
+        source += "        float rayleighSegmentDepth;\n";
+        source += RayleighViewOpticalDepth();
+    }
     source += "        cachedViewColumn = viewEndColumn;\n";
     source += "        cachedViewInward = viewInward;\n";
     source += "        viewColumnValid = true;\n";
@@ -931,25 +939,28 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int lightIndex)
     source += "            float boundaryMu = d / atmosphereRadius.x;\n";
     source += "            float mieToSpace = chapmanToSpace(sampleRadius, sampleMu);\n";
     source += "            float odSun;\n";
-    source += AtmosphereScatteringAccumulation();
+    source += props.separateRayleighMieScaleHeights
+        ? SeparateAtmosphereScatteringAccumulation()
+        : LegacyAtmosphereScatteringAccumulation();
     source += "        }\n";
     source += "        odAtm += segmentDepth;\n";
-    source += "        rayleighOdAtm += rayleighSegmentDepth;\n";
+    if (props.separateRayleighMieScaleHeights)
+        source += "        rayleighOdAtm += rayleighSegmentDepth;\n";
     source += "        segmentStart += atmStep;\n";
     source += "        viewStartRadiusSq = viewEndRadiusSq;\n";
     source += "        viewStartProjection = viewEndProjection;\n";
     source += "        viewStartRadius = viewEndRadius;\n";
     source += "        viewStartMu = viewEndMu;\n";
     source += "    }\n";
-    source += "    vec3 ex = separateScaleHeights\n";
-    source += "        ? exp(-mieExtinctionCoeff * odAtm - rayleighExtinctionCoeff * rayleighOdAtm)\n";
-    source += "        : exp(-extinctionCoeff * odAtm);\n";
+    source += props.separateRayleighMieScaleHeights
+        ? "    vec3 ex = exp(-mieExtinctionCoeff * odAtm - rayleighExtinctionCoeff * rayleighOdAtm);\n"
+        : "    vec3 ex = exp(-extinctionCoeff * odAtm);\n";
     source += "    vec3 lightColor = " + LightProperty(lightIndex, "color") + ";\n";
     source += "    float cosTheta = dot(eyeDir, " + LightProperty(lightIndex, "direction") + ");\n";
     source += ScatteringPhaseFunctions(props);
-    source += "    vec3 integratedLight = separateScaleHeights\n";
-    source += "        ? lightColor * (phRayleigh * rayleighCoeff * rayleighScatteredLight + phMie * mieCoeff * mieScatteredLight)\n";
-    source += "        : (phRayleigh * rayleighCoeff + phMie * mieCoeff) * lightColor * scatteredLight;\n";
+    source += props.separateRayleighMieScaleHeights
+        ? "    vec3 integratedLight = lightColor * (phRayleigh * rayleighCoeff * rayleighScatteredLight + phMie * mieCoeff * mieScatteredLight);\n"
+        : "    vec3 integratedLight = (phRayleigh * rayleighCoeff + phMie * mieCoeff) * lightColor * scatteredLight;\n";
     source += "    scatterEx = ex;\n";
 
     if (props.lightModel == LightingModel::AtmosphereModel)
@@ -967,9 +978,9 @@ AtmosphericEffects(const ShaderProperties& props, unsigned int lightIndex)
 
 
 std::string
-AtmosphericTransmission()
+AtmosphericTransmission(const ShaderProperties& props)
 {
-    return R"glsl({
+    std::string source = R"glsl({
     float rq = dot(eyePosition, eyeDir);
     float qq = dot(eyePosition, eyePosition) - atmosphereRadius.y;
     float d = sqrt(max(rq * rq - qq, 0.0));
@@ -982,8 +993,10 @@ AtmosphericTransmission()
     float leaveColumn = chapmanToSpace(leaveRadius,
                                        dot(nposition, viewDirection) / leaveRadius);
     float opticalDepth = max(0.0, enterColumn - leaveColumn);
-    if (rayleighH > 0.0)
+)glsl";
+    if (props.separateRayleighMieScaleHeights)
     {
+        source += R"glsl(
         float rayleighEnterColumn = chapmanToSpaceWithScaleHeight(
             enterRadius, dot(atmEnter, viewDirection) / enterRadius, rayleighH);
         float rayleighLeaveColumn = chapmanToSpaceWithScaleHeight(
@@ -993,18 +1006,19 @@ AtmosphericTransmission()
         vec3 rayleighExtinctionCoeff = max(extinctionCoeff - mieExtinctionCoeff, vec3(0.0));
         scatterEx = exp(-mieExtinctionCoeff * opticalDepth -
                         rayleighExtinctionCoeff * rayleighOpticalDepth);
+)glsl";
     }
     else
     {
-        scatterEx = exp(-extinctionCoeff * opticalDepth);
+        source += "    scatterEx = exp(-extinctionCoeff * opticalDepth);\n";
     }
-}
-)glsl";
+    source += "}\n";
+    return source;
 }
 
 
 std::string
-ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
+ScatteringConstantDeclarations(const ShaderProperties& props)
 {
     std::string source;
 
@@ -1015,7 +1029,8 @@ ScatteringConstantDeclarations(const ShaderProperties& /*props*/)
     source += DeclareUniform("mieH", Shader_Float);
     source += DeclareUniform("mieK", Shader_Float);
     source += DeclareUniform("rayleighCoeff", Shader_Vector3);
-    source += DeclareUniform("rayleighH", Shader_Float);
+    if (props.separateRayleighMieScaleHeights)
+        source += DeclareUniform("rayleighH", Shader_Float);
     source += DeclareUniform("extinctionCoeff", Shader_Vector3);
     source += ChapmanOpticalDepth();
 
@@ -2237,7 +2252,7 @@ buildAtmosphereFragmentShader(const ShaderProperties& props)
     source += DeclareLocal("scatterEx", Shader_Vector3);
     if (transmissionOnly)
     {
-        source += AtmosphericTransmission();
+        source += AtmosphericTransmission(props);
         source += "    fragColor = vec4(scatterEx, 1.0);\n";
     }
     else
@@ -2782,7 +2797,8 @@ bool operator==(const ShaderProperties& lhs, const ShaderProperties& rhs)
            lhs.shadowCounts == rhs.shadowCounts &&
            lhs.effects == rhs.effects &&
            lhs.fishEyeOverride == rhs.fishEyeOverride &&
-           lhs.lightModel == rhs.lightModel;
+           lhs.lightModel == rhs.lightModel &&
+           lhs.separateRayleighMieScaleHeights == rhs.separateRayleighMieScaleHeights;
 }
 
 std::size_t
@@ -2795,6 +2811,7 @@ std::hash<ShaderProperties>::operator()(const ShaderProperties& props) const
     boost::hash_combine(seed, props.effects);
     boost::hash_combine(seed, props.fishEyeOverride);
     boost::hash_combine(seed, props.lightModel);
+    boost::hash_combine(seed, props.separateRayleighMieScaleHeights);
     return seed;
 }
 
@@ -2969,6 +2986,21 @@ CelestiaGLProgram::initCommonParameters()
 }
 
 void
+CelestiaGLProgram::initAtmosphereParameters()
+{
+    mieCoeff = floatParam("mieCoeff");
+    mieScaleHeight = floatParam("mieH");
+    miePhaseAsymmetry = floatParam("mieK");
+    rayleighCoeff = vec3Param("rayleighCoeff");
+    if (props.separateRayleighMieScaleHeights)
+        rayleighScaleHeight = floatParam("rayleighH");
+    atmosphereRadius = vec3Param("atmosphereRadius");
+    atmosphereSegmentCount = intParam("atmosphereSegmentCount");
+    atmosphereExtinctionThreshold = floatParam("atmosphereExtinctionThreshold");
+    extinctionCoeff = vec3Param("extinctionCoeff");
+}
+
+void
 CelestiaGLProgram::initParameters()
 {
     initCommonParameters();
@@ -3053,17 +3085,7 @@ CelestiaGLProgram::initParameters()
     }
 
     if (props.hasScattering())
-    {
-        mieCoeff             = floatParam("mieCoeff");
-        mieScaleHeight       = floatParam("mieH");
-        miePhaseAsymmetry    = floatParam("mieK");
-        rayleighCoeff        = vec3Param("rayleighCoeff");
-        rayleighScaleHeight  = floatParam("rayleighH");
-        atmosphereRadius     = vec3Param("atmosphereRadius");
-        atmosphereSegmentCount = intParam("atmosphereSegmentCount");
-        atmosphereExtinctionThreshold = floatParam("atmosphereExtinctionThreshold");
-        extinctionCoeff      = vec3Param("extinctionCoeff");
-    }
+        initAtmosphereParameters();
 
     if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
     {
@@ -3281,12 +3303,11 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
                                            float objRadius,
                                            float skySphereRadius,
                                            unsigned int segmentCount,
-                                           float extinctionThreshold,
-                                           bool separateRayleighMieScaleHeights)
+                                           float extinctionThreshold)
 {
-    float sourceMieCoeff = separateRayleighMieScaleHeights
+    float sourceMieCoeff = props.separateRayleighMieScaleHeights
         ? atmosphere.mieCoeff : atmosphere.getLegacyMieCoeff();
-    float sourceMieScaleHeight = separateRayleighMieScaleHeights
+    float sourceMieScaleHeight = props.separateRayleighMieScaleHeights
         ? atmosphere.mieScaleHeight : atmosphere.getLegacyScaleHeight();
     float tMieCoeff                  = sourceMieCoeff * objRadius;
     Eigen::Vector3f tRayleighCoeff   = atmosphere.rayleighCoeff * objRadius;
@@ -3308,7 +3329,8 @@ CelestiaGLProgram::setAtmosphereParameters(const Atmosphere& atmosphere,
     miePhaseAsymmetry = 1.55f * g - 0.55f * g * g * g;
 
     rayleighCoeff = tRayleighCoeff;
-    rayleighScaleHeight = separateRayleighMieScaleHeights ? objRadius / atmosphere.rayleighScaleHeight : 0.0f;
+    if (props.separateRayleighMieScaleHeights)
+        rayleighScaleHeight = objRadius / atmosphere.rayleighScaleHeight;
 
     Eigen::Vector3f tScatterCoeffSum = tRayleighCoeff.array() + tMieCoeff;
     extinctionCoeff = tScatterCoeffSum + tAbsorptionCoeff;
