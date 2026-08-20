@@ -67,7 +67,7 @@ Nebula::setType(const std::string& typeStr)
 std::string
 Nebula::getDescription() const
 {
-    return fmt::format(_("Nebula: {}"), getType());
+    return fmt::format(fmt::runtime(_("Nebula: {}")), getType());
 }
 
 engine::GeometryHandle

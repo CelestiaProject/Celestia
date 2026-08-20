@@ -97,7 +97,7 @@ void Galaxy::setForm(const std::filesystem::path& customTmpName, const std::file
 
 std::string Galaxy::getDescription() const
 {
-    return fmt::format(_("Galaxy (Hubble type: {})"), getType());
+    return fmt::format(fmt::runtime(_("Galaxy (Hubble type: {})")), getType());
 }
 
 DeepSkyObjectType Galaxy::getObjType() const

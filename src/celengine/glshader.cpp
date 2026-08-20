@@ -83,7 +83,11 @@ GetInfoLog(GLuint obj)
 
 template<typename... Args>
 void
+#if FMT_VERSION < 90000
 writeShaderLog(std::string_view format, Args&&... args)
+#else
+writeShaderLog(fmt::format_string<Args...> format, Args&&... args)
+#endif
 {
     if (g_shaderLogFile == nullptr)
         return;
