@@ -216,7 +216,7 @@ DistanceProcessor::process(const Star& star)
     }
 
     if (m_records->front().star != oldWorst)
-        m_maxDistance = std::sqrt(distance2);
+        m_maxDistance = std::sqrt(m_records->front().distance);
 }
 
 void
