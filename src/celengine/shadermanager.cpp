@@ -2873,11 +2873,11 @@ std::shared_ptr<CelestiaGLProgram>
 ShaderManager::loadShader(StaticShaderProperties props)
 {
     auto name = StaticShaderBaseNames[static_cast<std::size_t>(props.shader)];
-    auto vs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_vert.glsl", name)));
+    auto vs = ReadShaderFile(ShaderDirectory / fmt::format("{}_vert.glsl", name));
     if (vs.empty())
         return getErrorProgram();
 
-    auto fs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_frag.glsl", name)));
+    auto fs = ReadShaderFile(ShaderDirectory / fmt::format("{}_frag.glsl", name));
     if (fs.empty())
         return getErrorProgram();
 

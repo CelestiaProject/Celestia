@@ -320,7 +320,7 @@ VirtualTexture::requestTile(Tile* tile, unsigned int lod, unsigned int u, unsign
     tile->state = TileState::Loading;
 
     unsigned int diskLod = lod - baseSplit;
-    auto filename = std::filesystem::u8path(fmt::format("{}{}_{}", tilePrefix, u, v));
+    auto filename = util::U8Path(fmt::format("{}{}_{}", tilePrefix, u, v));
     filename += tileExt;
     auto path = tilePath / fmt::format("level{:d}", diskLod) / filename;
 

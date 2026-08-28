@@ -4,6 +4,8 @@
 
 #include <fmt/format.h>
 
+#include <celutil/fsutils.h>
+
 #ifdef _WIN32
 #include <algorithm>
 #include "winutil.h"
@@ -34,7 +36,7 @@ BuildInfoURL(std::string_view infoUrl, const std::filesystem::path &resPath)
     }
 
     std::error_code ec;
-    std::filesystem::path canonical = std::filesystem::canonical(resPath / std::filesystem::u8path(infoUrl), ec);
+    std::filesystem::path canonical = std::filesystem::canonical(resPath / U8Path(infoUrl), ec);
     if (ec)
         return {};
 

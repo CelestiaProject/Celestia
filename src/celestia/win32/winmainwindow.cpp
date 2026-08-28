@@ -38,6 +38,7 @@
 #include <celestia/helper.h>
 #include <celestia/scriptmenu.h>
 #include <celestia/url.h>
+#include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include <celutil/tzutil.h>
@@ -69,6 +70,8 @@
 
 using namespace std::string_view_literals;
 using celestia::util::GetLogger;
+
+namespace util = celestia::util;
 
 namespace celestia::win32
 {
@@ -776,7 +779,7 @@ MainWindow::copyData(LPARAM lParam) const
     else if ((url.size() >= 4 && url.substr(url.size() - 4) == ".cel"sv) ||
              (url.size() >= 5 && url.substr(url.size() - 5) == ".celx"sv))
     {
-        appCore->runScript(std::filesystem::u8path(url));
+        appCore->runScript(util::U8Path(url));
     }
 }
 

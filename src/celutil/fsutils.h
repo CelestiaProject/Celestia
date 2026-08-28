@@ -32,6 +32,8 @@ struct PathHasher
     }
 };
 
+std::filesystem::path U8Path(std::string_view src);
+
 std::optional<std::filesystem::path> U8FileName(std::string_view source,
                                                 bool allowWildcardExtension = true);
 std::string PathToString(const std::filesystem::path& path);

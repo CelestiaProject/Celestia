@@ -62,7 +62,7 @@ AssociativeArray::getPath(std::string_view key) const
     if (v == nullptr)
         return std::nullopt;
 
-    return std::make_optional(PathExp(std::filesystem::u8path(*v)));
+    return std::make_optional(PathExp(U8Path(*v)));
 }
 
 std::optional<bool>

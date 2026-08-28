@@ -134,11 +134,11 @@ applyPathArray(std::vector<std::filesystem::path>& target, const AssociativeArra
                 break;
             }
 
-            target.emplace_back(celestia::util::PathExp(std::filesystem::u8path(*itemStr)));
+            target.emplace_back(celestia::util::PathExp(celestia::util::U8Path(*itemStr)));
         }
     }
     else if (auto str = value->getString(); str != nullptr)
-        target.emplace_back(celestia::util::PathExp(std::filesystem::u8path(*str)));
+        target.emplace_back(celestia::util::PathExp(celestia::util::U8Path(*str)));
     else
         GetLogger()->error("{} must be a string or an array of strings.\n", key);
 }

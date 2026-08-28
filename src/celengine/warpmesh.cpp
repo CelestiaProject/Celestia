@@ -304,7 +304,7 @@ WarpMesh::load(const std::filesystem::path& name)
 {
     constexpr std::uint32_t MESHTYPE_RECT = 2;
 
-    std::ifstream f(std::filesystem::u8path("warp") / name);
+    std::ifstream f("warp" / name);
     if (!f.good())
         return nullptr;
 
