@@ -56,8 +56,7 @@ public:
     FrustumAspect testSphere(const Eigen::Vector3d& center, double radius) const;
 
 private:
-    static constexpr unsigned int nPlanes = 6;
-    std::array<PlaneType, nPlanes> planes;
+    std::array<PlaneType, 6> planes;
 };
 
 class InfiniteFrustum
@@ -80,8 +79,7 @@ public:
     FrustumAspect testSphere(const Eigen::Vector3d& center, double radius) const;
 
 private:
-    static constexpr unsigned int nPlanes = 5;
-    std::array<PlaneType, nPlanes> planes;
+    std::array<PlaneType, 5> planes;
 };
 
 } // namespace celestia::math

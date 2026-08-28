@@ -13,6 +13,7 @@
 
 #include <array>
 #include <string_view>
+#include <vector>
 
 #include <fmt/format.h>
 
@@ -26,12 +27,10 @@ namespace celestia::win32
 namespace
 {
 
-std::vector<std::wstring>
+std::array<std::wstring, 12>
 CreateLocalizedMonthNames()
 {
-    constexpr std::size_t monthCount = 12;
-
-    constexpr std::array<CALTYPE, monthCount> monthConstants
+    constexpr std::array<CALTYPE, 12> monthConstants
     {
         CAL_SABBREVMONTHNAME1,
         CAL_SABBREVMONTHNAME2,
@@ -47,7 +46,7 @@ CreateLocalizedMonthNames()
         CAL_SABBREVMONTHNAME12,
     };
 
-    constexpr std::array<std::wstring_view, monthCount> defaultMonthNames
+    constexpr std::array<std::wstring_view, 12> defaultMonthNames
     {
         L"Jan"sv, L"Feb"sv, L"Mar"sv,
         L"Apr"sv, L"May"sv, L"Jun"sv,
@@ -55,21 +54,21 @@ CreateLocalizedMonthNames()
         L"Oct"sv, L"Nov"sv, L"Dec"sv,
     };
 
-    std::vector<std::wstring> months;
-    months.reserve(monthCount);
+    std::array<std::wstring, 12> months;
 
-    for (std::size_t i = 0; i < monthCount; ++i)
+    for (std::size_t i = 0; i < 12; ++i)
     {
         CALTYPE calType = monthConstants[i];
         int length = GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, nullptr, 0, nullptr);
         // length includes the null terminator, so also exclude length = 1
         if (length <= 1)
         {
-            months.emplace_back(defaultMonthNames[i]);
+            months[i] = defaultMonthNames[i];
             continue;
         }
 
-        std::wstring& name = months.emplace_back(static_cast<std::size_t>(length), L'\0');
+        std::wstring& name = months[i];
+        name.resize(static_cast<std::size_t>(length), L'\0');
         length = GetCalendarInfoEx(LOCALE_NAME_USER_DEFAULT, CAL_GREGORIAN, nullptr, calType, name.data(), length, nullptr);
         if (length > 1)
             name.resize(static_cast<std::size_t>(length - 1));
@@ -82,10 +81,10 @@ CreateLocalizedMonthNames()
 
 } // end unnamed namespace
 
-util::array_view<std::wstring>
+std::span<const std::wstring, 12>
 GetLocalizedMonthNames()
 {
-    static const std::vector<std::wstring> monthNames = CreateLocalizedMonthNames();
+    static const std::array<std::wstring, 12> monthNames = CreateLocalizedMonthNames();
     return monthNames;
 }
 

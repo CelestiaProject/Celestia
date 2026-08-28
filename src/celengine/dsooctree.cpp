@@ -23,7 +23,7 @@ namespace celestia::engine
 
 DSOOctreeVisibleObjectsProcessor::DSOOctreeVisibleObjectsProcessor(DSOHandler* dsoHandler, // cppcheck-suppress uninitMemberVar
                                                                    const DSOOctree::PointType& obsPosition,
-                                                                   util::array_view<PlaneType> frustumPlanes,
+                                                                   std::span<const PlaneType, 5> frustumPlanes,
                                                                    float limitingFactor) :
     m_dsoHandler(dsoHandler),
     m_obsPosition(obsPosition),

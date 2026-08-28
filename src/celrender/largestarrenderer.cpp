@@ -12,12 +12,12 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <span>
 
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/array_view.h>
 #include <celutil/color.h>
 
 namespace gl   = celestia::gl;
@@ -71,8 +71,7 @@ LargeStarRenderer::render()
 
     makeCurrent();
 
-    m_bo->invalidateData().setSubData(0, util::array_view(m_instances.get(),
-                                                          static_cast<std::size_t>(m_nStars)));
+    m_bo->invalidateData().setSubData(0, std::as_bytes(std::span{m_instances.get(), static_cast<std::size_t>(m_nStars)}));
 
     m_vo->drawInstances(static_cast<GLsizei>(m_nStars));
     m_nStars = 0;
@@ -116,7 +115,7 @@ LargeStarRenderer::setupVertexArrayObject()
 
     m_initialized = true;
 
-    auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, kQuadCorners);
+    auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{kQuadCorners}));
 
     m_bo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
                               static_cast<GLsizeiptr>(sizeof(StarInstance) * m_capacity),

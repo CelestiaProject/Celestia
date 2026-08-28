@@ -14,6 +14,7 @@
 #include <cassert>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <system_error>
 #include <tuple>
 #include <unordered_map>
@@ -28,7 +29,7 @@
 #include <celimage/image.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/array_view.h>
+#include <celutil/classops.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
@@ -97,7 +98,7 @@ LoadFontFace(FT_Library ft, const std::filesystem::path &path, int index, int si
 
 } // end unnamed namespace
 
-struct TextureFontPrivate
+struct TextureFontPrivate : private util::NoMove
 {
     static constexpr std::size_t MaxInstances = 128; // This gives BO size 4kB
 
@@ -117,13 +118,8 @@ struct TextureFontPrivate
 
     static_assert(std::is_standard_layout_v<FontInstance>);
 
-    TextureFontPrivate(const Renderer *renderer);
+    explicit TextureFontPrivate(const Renderer *renderer);
     ~TextureFontPrivate();
-    TextureFontPrivate() = delete;
-    TextureFontPrivate(const TextureFontPrivate &) = delete;
-    TextureFontPrivate(TextureFontPrivate &&) = default;
-    TextureFontPrivate &operator=(const TextureFontPrivate &) = delete;
-    TextureFontPrivate &operator=(TextureFontPrivate &&) = default;
 
     std::pair<float, float> render(std::u16string_view line, float x, float y);
 
@@ -172,7 +168,9 @@ struct TextureFontPrivate
     unsigned int m_instanceCount{ 0 };
 
     gl::VertexObject      m_vao{ gl::VertexObject::Primitive::TriangleStrip };
-    gl::Buffer::SharedPtr m_vbo{ gl::Buffer::create(gl::Buffer::TargetHint::Array) };
+    gl::Buffer::SharedPtr m_vbo{ gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                                                    sizeof(FontInstance) * MaxInstances,
+                                                    gl::Buffer::BufferUsage::StreamDraw) };
 
     bool m_shaderInUse{ false };
 };
@@ -180,8 +178,8 @@ struct TextureFontPrivate
 
 TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(renderer)
 {
-    constexpr std::array<std::uint8_t, 8> vertexData{ 0, 0, 255, 0, 0, 255, 255, 255 };
-    auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, vertexData);
+    constexpr std::array<GLubyte, 8> vertexData{ 0, 0, 255, 0, 0, 255, 255, 255 };
+    auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{vertexData}));
     m_vao.addVertexBuffer(
         vertexBuffer,
         VertexLocation,
@@ -189,8 +187,6 @@ TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(re
         gl::VertexObject::DataType::UnsignedByte,
         true);
     m_vao.setCount(4);
-
-    m_vbo->setData(util::array_view<void>(nullptr, sizeof(FontInstance) * MaxInstances), gl::Buffer::BufferUsage::StreamDraw);
 
     m_vao.addInstanceBuffer(
         m_vbo,
@@ -552,7 +548,7 @@ TextureFontPrivate::flush()
     if (m_instanceCount == 0)
         return;
 
-    m_vbo->invalidateData().setSubData(0, util::array_view(m_instances.data(), m_instanceCount));
+    m_vbo->invalidateData().setSubData(0, std::as_bytes(std::span{m_instances.data(), m_instanceCount}));
     m_vao.drawInstances(m_instanceCount);
     m_vbo->unbind();
 

@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cmath>
+#include <span>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -174,7 +175,7 @@ colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
 }
 
 void
-initGlobularData(gl::VertexObject &vo, util::array_view<Blob> points)
+initGlobularData(gl::VertexObject &vo, std::span<const Blob> points)
 {
     struct GlobularVtx
     {
@@ -231,7 +232,7 @@ initGlobularData(gl::VertexObject &vo, util::array_view<Blob> points)
         globularVtx.push_back(vtx);
     }
 
-    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, globularVtx);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{globularVtx}));
     vo = gl::VertexObject(gl::VertexObject::Primitive::Points);
     vo.addVertexBuffer(
         bo,

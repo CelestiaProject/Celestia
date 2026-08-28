@@ -938,8 +938,7 @@ void Renderer::endObjectAnnotations()
         ps.smoothLines = true;
         setPipelineState(ps);
 
-        renderAnnotations(objectAnnotations.begin(),
-                          objectAnnotations.end(),
+        renderAnnotations(objectAnnotations,
                           -depthPartitions[currentIntervalIndex].nearZ,
                           -depthPartitions[currentIntervalIndex].farZ,
                           FontStyle::Normal);
@@ -4766,7 +4765,7 @@ Renderer::renderAnnotationLabel(const Annotation &a,
 }
 
 // stars and constellations. DSOs
-void Renderer::renderAnnotations(const vector<Annotation>& annotations,
+void Renderer::renderAnnotations(std::span<const Annotation> annotations,
                                  FontStyle fs)
 {
     auto font = getFont(fs);
@@ -4832,8 +4831,8 @@ Renderer::renderForegroundAnnotations(FontStyle fs)
 
 
 // solar system objects
-vector<Renderer::Annotation>::iterator
-Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
+std::span<const Renderer::Annotation>
+Renderer::renderSortedAnnotations(std::span<const Annotation> annotations,
                                   float nearDist,
                                   float farDist,
                                   FontStyle fs)
@@ -4846,21 +4845,20 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
     ps.smoothLines = true;
     setPipelineState(ps);
 
-    return renderAnnotations(iter, depthSortedAnnotations.end(), nearDist, farDist, fs);
+    return renderAnnotations(annotations, nearDist, farDist, fs);
 }
 
 
 // locations
-vector<Renderer::Annotation>::iterator
-Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
-                            vector<Annotation>::iterator endIter,
+std::span<const Renderer::Annotation>
+Renderer::renderAnnotations(std::span<const Annotation> annotations,
                             float nearDist,
                             float farDist,
                             FontStyle fs)
 {
     auto font = getFont(fs);
     if (font == nullptr)
-        return endIter;
+        return {};
 
     TextLayout layout{ screenDpi };
     layout.setFont(font);
@@ -4873,7 +4871,8 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     // projection matrix in order to get the label text position exactly right but need to mimic
     // the depth coordinate generation of a projection.
 
-    vector<Annotation>::iterator iter = startIter;
+    auto iter = annotations.begin();
+    const auto endIter = annotations.end();
     for (; iter != endIter && iter->position.z() > nearDist; ++iter)
     {
         // Compute normalized device z
@@ -4898,7 +4897,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         }
     }
 
-    return iter;
+    return std::span(iter, endIter);
 }
 
 
@@ -5431,7 +5430,7 @@ static void draw_rectangle_solid(const Renderer &renderer,
             r.colors[i].get(vertices[i].color);
     }
 
-    bo->bind().setData(vertices, gl::Buffer::BufferUsage::StreamDraw);
+    bo->bind().setData(std::as_bytes(std::span{vertices}), gl::Buffer::BufferUsage::StreamDraw);
 
     if (!initialized)
     {
@@ -6152,7 +6151,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                    double now)
 {
     // Render everything that wasn't culled.
-    auto annotation = depthSortedAnnotations.begin();
+    auto annotations = std::span<const Annotation>{depthSortedAnnotations};
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
     int i = static_cast<int>(renderList.size()) - 1;
     m_legacyLargeStarRenderer->start();
@@ -6277,10 +6276,10 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
         }
 
         // Render annotations in this interval
-        annotation = renderSortedAnnotations(annotation,
-                                             nearPlaneDistance,
-                                             farPlaneDistance,
-                                             FontStyle::Normal);
+        annotations = renderSortedAnnotations(annotations,
+                                              nearPlaneDistance,
+                                              farPlaneDistance,
+                                              FontStyle::Normal);
         endObjectAnnotations();
     }
 

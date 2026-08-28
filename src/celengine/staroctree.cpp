@@ -38,7 +38,7 @@ constexpr float MAX_STAR_ORBIT_RADIUS = 1.0f;
 
 StarOctreeVisibleObjectsProcessor::StarOctreeVisibleObjectsProcessor(StarHandler* starHandler, // cppcheck-suppress uninitMemberVar
                                                                      const StarOctree::PointType& obsPosition,
-                                                                     util::array_view<PlaneType> frustumPlanes,
+                                                                     std::span<const PlaneType, 5> frustumPlanes,
                                                                      float limitingFactor) :
     m_starHandler(starHandler),
     m_obsPosition(obsPosition),

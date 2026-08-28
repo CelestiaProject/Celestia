@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <memory>
+#include <span>
 
 #include <celengine/frame.h>
 #include <celengine/universe.h>
@@ -30,7 +31,7 @@ class SolarSystemLoader final : public CatalogLoader
 public:
     SolarSystemLoader(SolarSystemsBuilder& builder,
                       ProgressNotifier* notifier,
-                      util::array_view<std::filesystem::path> skipPaths) :
+                      std::span<const std::filesystem::path> skipPaths) :
         CatalogLoader(notifier, skipPaths),
         m_builder(&builder)
     {

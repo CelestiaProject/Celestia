@@ -19,13 +19,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <span>
 #include <string_view>
 
 #include <fmt/format.h>
 #include <fmt/xchar.h>
 
 #include <celastro/date.h>
-#include <celutil/array_view.h>
 
 #include <windows.h>
 #include <commctrl.h>
@@ -188,7 +188,6 @@ private:
 
     std::array<RECT, NumFields> fieldRects;
     RECT clientRect;
-    util::array_view<std::wstring> monthNames{ GetLocalizedMonthNames() };
 };
 
 DatePicker::DatePicker(HWND _hwnd, CREATESTRUCT& cs) :
@@ -247,7 +246,7 @@ DatePicker::redraw(HDC hdc)
     std::array<std::wstring_view, 3> fieldText
     {
         std::wstring_view(dayBuf.data(), dayBuf.size()),
-        monthNames[static_cast<std::size_t>(date.month - 1)],
+        GetLocalizedMonthNames()[static_cast<std::size_t>(date.month - 1)],
         std::wstring_view(yearBuf.begin(), yearBuf.size()),
     };
 

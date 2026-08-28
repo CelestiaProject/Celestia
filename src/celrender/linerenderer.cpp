@@ -13,6 +13,7 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
@@ -126,7 +127,7 @@ LineRenderer::create_vbo_lines()
     m_lnVO = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
     m_lnBO = gl::Buffer::create(gl::Buffer::TargetHint::Array);
 
-    m_lnBO->setData(m_vertices, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+    m_lnBO->setData(std::as_bytes(std::span{m_vertices}), static_cast<gl::Buffer::BufferUsage>(m_storageType));
 
     m_lnVO.addVertexBuffer(
         m_lnBO,
@@ -158,7 +159,7 @@ LineRenderer::setup_vbo_lines()
     {
         if (m_storageType != StorageType::Static)
         {
-            m_lnBO->invalidateData().setData(m_vertices);
+            m_lnBO->invalidateData().setData(std::as_bytes(std::span(m_vertices)));
         }
     }
     else
@@ -188,7 +189,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineSegment, point1) + offsetof(Vertex, color)
         };
 
-        m_trBO->setData(m_segments, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO->setData(std::as_bytes(std::span{m_segments}), static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_segments.clear();
     }
     else
@@ -203,7 +204,7 @@ LineRenderer::create_vbo_triangles()
             offsetof(LineVertex, point) + offsetof(Vertex, color)
         };
 
-        m_trBO->setData(m_verticesTr, static_cast<gl::Buffer::BufferUsage>(m_storageType));
+        m_trBO->setData(std::as_bytes(std::span{m_verticesTr}), static_cast<gl::Buffer::BufferUsage>(m_storageType));
         m_verticesTr.clear();
     }
     m_trVO.addVertexBuffer(
@@ -263,11 +264,11 @@ LineRenderer::setup_vbo_triangles()
 
             if (m_primType == PrimType::Lines || (m_hints & PREFER_SIMPLE_TRIANGLES) != 0)
             {
-                m_trBO->setData(m_segments);
+                m_trBO->setData(std::as_bytes(std::span{m_segments}));
             }
             else
             {
-                m_trBO->setData(m_verticesTr);
+                m_trBO->setData(std::as_bytes(std::span{m_verticesTr}));
             }
         }
     }

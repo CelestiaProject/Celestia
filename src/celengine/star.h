@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -23,7 +24,6 @@
 
 #include <Eigen/Core>
 
-#include <celutil/array_view.h>
 #include <celutil/flag.h>
 #include <celutil/texhandle.h>
 #include "astroobj.h"
@@ -298,7 +298,7 @@ public:
     bool hasCorona() const;
     bool isBarycenter() const;
 
-    celestia::util::array_view<Star*> getOrbitingStars() const;
+    std::span<Star* const> getOrbitingStars() const;
 
 private:
     AstroCatalog::IndexNumber indexNumber{ AstroCatalog::InvalidIndex };
@@ -388,7 +388,7 @@ Star::getEllipsoidSemiAxes() const
     return details->getEllipsoidSemiAxes();
 }
 
-inline celestia::util::array_view<Star*>
+inline std::span<Star* const>
 Star::getOrbitingStars() const
 {
     if (details->orbitingStars != nullptr)

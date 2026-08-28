@@ -14,6 +14,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <string_view>
 #include <vector>
 
@@ -32,7 +33,6 @@
 #include <celestia/celestiacore.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
-#include <celutil/array_view.h>
 #include <celutil/gettext.h>
 
 #include <commctrl.h>
@@ -117,7 +117,7 @@ InitEclipseFinderItems(HWND listView, const std::vector<Eclipse>& eclipses)
 }
 
 void
-EclipseFinderDisplayItem(NMLVDISPINFO* nm, util::array_view<std::wstring> monthNames)
+EclipseFinderDisplayItem(NMLVDISPINFO* nm, std::span<const std::wstring, 12> monthNames)
 {
     auto eclipse = reinterpret_cast<const Eclipse*>(nm->item.lParam);
     if (eclipse == NULL)
@@ -297,8 +297,6 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         if (efd == NULL)
             return EndDialog(hDlg, 0);
 
-        efd->monthNames = GetLocalizedMonthNames();
-
         SetWindowLongPtr(hDlg, DWLP_USER, lParam);
         HWND hwnd = GetDlgItem(hDlg, IDC_ECLIPSES_LIST);
         InitEclipseFinderColumns(hwnd);
@@ -439,7 +437,7 @@ EclipseFinderProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 switch(hdr->code)
                 {
                 case LVN_GETDISPINFO:
-                    EclipseFinderDisplayItem(reinterpret_cast<NMLVDISPINFO*>(lParam), eclipseFinderDlg->monthNames);
+                    EclipseFinderDisplayItem(reinterpret_cast<NMLVDISPINFO*>(lParam), GetLocalizedMonthNames());
                     break;
 
                 case LVN_ITEMCHANGED:
@@ -509,7 +507,7 @@ EclipseFinderDialog::EclipseFinderDialog(HINSTANCE appInstance,
                                          CelestiaCore* _appCore) :
     appCore(_appCore),
     parent(_parent),
-    BodytoSet_(NULL)
+    BodytoSet_(nullptr)
 {
     hwnd = CreateDialogParam(appInstance,
                              MAKEINTRESOURCE(IDD_ECLIPSEFINDER),

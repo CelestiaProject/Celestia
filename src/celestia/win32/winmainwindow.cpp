@@ -334,7 +334,7 @@ MainWindow::MainWindow(HINSTANCE _appInstance,
                        ODMenu* _odAppMenu,
                        CelestiaCore* _appCore,
                        int _fullScreenMode,
-                       util::array_view<DEVMODE> _displayModes) :
+                       std::span<const DEVMODE> _displayModes) :
     appInstance(_appInstance),
     hRes(_hRes),
     menuBar(_menuBar),
@@ -1180,7 +1180,7 @@ MainWindow::paint() const
 }
 
 bool
-MainWindow::setDeviceContext(util::array_view<std::string> ignoreGLExtensions)
+MainWindow::setDeviceContext(std::span<const std::string> ignoreGLExtensions)
 {
     deviceContext = GetDC(hWnd);
     bool firstContext = false;

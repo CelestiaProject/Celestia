@@ -15,10 +15,9 @@
 #include <cstddef>
 #include <filesystem>
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
-
-#include <celutil/array_view.h>
 
 namespace celestia::util
 {
@@ -34,12 +33,12 @@ struct PathHasher
 };
 
 std::optional<std::filesystem::path> U8FileName(std::string_view source,
-                                   bool allowWildcardExtension = true);
+                                                bool allowWildcardExtension = true);
 std::string PathToString(const std::filesystem::path& path);
 std::filesystem::path LocaleFilename(const std::filesystem::path& filename);
 std::filesystem::path PathExp(std::filesystem::path&& filename);
 std::filesystem::path ResolveWildcard(const std::filesystem::path& wildcard,
-                         array_view<std::string_view> extensions);
+                                      std::span<const std::string_view> extensions);
 bool IsValidDirectory(const std::filesystem::path &dir);
 #ifndef PORTABLE_BUILD
 std::filesystem::path HomeDir();

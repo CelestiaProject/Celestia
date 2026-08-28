@@ -11,13 +11,12 @@
 
 #pragma once
 
+#include <span>
 #include <string>
-
-#include <celutil/array_view.h>
 
 namespace celestia::win32
 {
 
-util::array_view<std::wstring> GetLocalizedMonthNames();
+std::span<const std::wstring, 12> GetLocalizedMonthNames();
 
 } // end namespace celestia::win32

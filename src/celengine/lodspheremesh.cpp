@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <cmath>
 #include <limits>
+#include <span>
 
 #include <boost/container/static_vector.hpp>
 
@@ -769,8 +770,7 @@ LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
     }
 
     it->second.buffer = celestia::gl::Buffer::create(celestia::gl::Buffer::TargetHint::ElementArray,
-                                                     celestia::util::array_view<void>(indices.data(),
-                                                                                      indices.size() * sizeof(unsigned short)));
+                                                     std::as_bytes(std::span{indices}));
     it->second.indexCount = static_cast<int>(indices.size());
     return &it->second;
 }

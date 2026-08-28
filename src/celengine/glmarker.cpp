@@ -11,6 +11,7 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <span>
 
 #include <celcompat/numbers.h>
 #include <celmath/frustum.h>
@@ -35,7 +36,7 @@ constexpr float pif = celestia::numbers::pi_v<float>;
 void
 initialize(LineRenderer &lr, gl::VertexObject &vo)
 {
-    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, FilledMarkersData);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{FilledMarkersData}));
 
     vo.addVertexBuffer(
         bo,

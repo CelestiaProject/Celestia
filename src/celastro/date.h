@@ -11,9 +11,8 @@
 #pragma once
 
 #include <locale>
+#include <span>
 #include <string>
-
-#include <celutil/array_view.h>
 
 namespace celestia::astro
 {
@@ -45,7 +44,7 @@ struct LeapSecondRecord
 };
 
 // Provide leap seconds data loaded from an external source
-void setLeapSeconds(celestia::util::array_view<LeapSecondRecord>);
+void setLeapSeconds(std::span<const LeapSecondRecord>);
 
 constexpr double secondsToJulianDate(double sec)
 {

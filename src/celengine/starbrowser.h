@@ -25,7 +25,6 @@
 #include <Eigen/Core>
 
 #include <celastro/date.h>
-#include <celutil/array_view.h>
 #include <celutil/flag.h>
 #include "solarsys.h"
 #include "univcoord.h"

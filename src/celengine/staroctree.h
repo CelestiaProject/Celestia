@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstdint>
+#include <span>
 
 #include <Eigen/Geometry>
 
@@ -40,7 +41,7 @@ public:
 
     StarOctreeVisibleObjectsProcessor(StarHandler*,
                                       const StarOctree::PointType&,
-                                      util::array_view<PlaneType>,
+                                      std::span<const PlaneType, 5>,
                                       float);
 
     bool checkNode(const StarOctree::PointType&, float, float);
@@ -49,7 +50,7 @@ public:
 private:
     StarHandler* m_starHandler;
     StarOctree::PointType m_obsPosition;
-    util::array_view<PlaneType> m_frustumPlanes;
+    std::span<const PlaneType, 5> m_frustumPlanes;
     std::array<float, 5> m_projectedRadiusFactors;
     float m_limitingFactor;
 

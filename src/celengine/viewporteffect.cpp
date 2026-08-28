@@ -11,6 +11,7 @@
 #include "viewporteffect.h"
 
 #include <array>
+#include <span>
 
 #include "framebuffer.h"
 #include "render.h"
@@ -101,7 +102,9 @@ void PassthroughViewportEffect::initialize()
     };
 
     vo = gl::VertexObject(gl::VertexObject::Primitive::Triangles);
-    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, quadVertices, gl::Buffer::BufferUsage::StaticDraw);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                                 std::as_bytes(std::span{quadVertices}),
+                                 gl::Buffer::BufferUsage::StaticDraw);
 
     vo.setCount(6);
     vo.addVertexBuffer(

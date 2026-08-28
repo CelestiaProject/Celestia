@@ -34,7 +34,7 @@ inline bool has_extension(const char *name) noexcept
     return epoxy_has_gl_extension(name);
 }
 
-bool check_extension(util::array_view<std::string> list, const char *name) noexcept
+bool check_extension(std::span<const std::string> list, const char *name) noexcept
 {
     return std::find(list.begin(), list.end(), std::string(name)) == list.end()
            && has_extension(name);
@@ -42,7 +42,7 @@ bool check_extension(util::array_view<std::string> list, const char *name) noexc
 
 } // namespace
 
-bool init(util::array_view<std::string> ignore) noexcept
+bool init(std::span<const std::string> ignore) noexcept
 {
 #ifdef GL_ES
     OES_texture_border_clamp           = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");

@@ -132,7 +132,7 @@ SelectDisplayModeProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 DisplayModeDialog::DisplayModeDialog(HINSTANCE _appInstance,
                                      HWND _parent,
-                                     util::array_view<DEVMODE> _displayModes,
+                                     std::span<const DEVMODE> _displayModes,
                                      int _screenMode) :
     parent(_parent),
     displayModes(_displayModes),

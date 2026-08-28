@@ -1,11 +1,11 @@
 #include <array>
 #include <cmath>
+#include <span>
 
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
 #include <celephem/orbit.h>
 #include <celmath/mathlib.h>
-#include <celutil/array_view.h>
 
 #include <doctest.h>
 
@@ -68,14 +68,14 @@ TEST_CASE("Elliptical orbits")
         for (double inclinationDeg : testInclinations)
         {
             auto testNodes = inclinationDeg == 0.0 || inclinationDeg == 180.0
-                ? celestia::util::array_view<double>(fixedZero)
-                : celestia::util::array_view<double>(testAngles);
+                ? std::span<const double>{fixedZero}
+                : std::span<const double>{testAngles};
             for (double nodeDeg : testNodes)
             for (double eccentricity : testEccentricities)
             {
                 auto testPericenters = eccentricity == 0.0
-                    ? celestia::util::array_view<double>(fixedZero)
-                    : celestia::util::array_view<double>(testAngles);
+                    ? std::span<const double>(fixedZero)
+                    : std::span<const double>(testAngles);
                 for (double pericenterDeg : testPericenters)
                 {
                     astro::KeplerElements expected;
@@ -110,8 +110,8 @@ TEST_CASE("Hyperbolic orbits")
         for (double inclinationDeg : testInclinations)
         {
             auto testNodes = inclinationDeg == 0.0 || inclinationDeg == 180.0
-                ? celestia::util::array_view<double>(fixedZero)
-                : celestia::util::array_view<double>(testAngles);
+                ? std::span<const double>(fixedZero)
+                : std::span<const double>(testAngles);
             for (double nodeDeg : testNodes)
             for (double eccentricity : testEccentricities)
             for (double pericenterDeg : testAngles)

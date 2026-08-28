@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <cmath>
 #include <memory>
+#include <span>
 
 #include <celengine/galaxy.h>
 #include <celengine/galaxyform.h>
@@ -255,7 +256,7 @@ GalaxyRenderer::initializeGL(const CelestiaGLProgram *prog)
         0, 0, 255, 0, 0, 255, 255, 255,
     };
 
-    auto texCoordBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, texCoords);
+    auto texCoordBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{texCoords}));
 
     auto sizeLoc = prog->attribIndex("in_Size");
     auto colorLoc = prog->attribIndex("in_ColorIndex");
@@ -293,7 +294,7 @@ GalaxyRenderer::initializeGL(const CelestiaGLProgram *prog)
             gi.brightness = points[i].brightness;
         }
 
-        auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, glVertices);
+        auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{glVertices}));
 
         gl::VertexObject vo(gl::VertexObject::Primitive::TriangleStrip);
         vo.setCount(4);

@@ -1042,7 +1042,7 @@ CommandSequence CommandParser::parse()
 }
 
 
-celestia::util::array_view<std::string> CommandParser::getErrors() const
+std::span<const std::string> CommandParser::getErrors() const
 {
     return errorList;
 }

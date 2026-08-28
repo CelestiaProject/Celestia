@@ -876,12 +876,11 @@ TiledTexture::getTile(int lod, int u, int v)
     return TextureTile(glNames[v * uSplit + u]);
 }
 
-CubeMap::CubeMap(celestia::util::array_view<Image> faces) :
+CubeMap::CubeMap(std::span<const Image, 6> faces) :
     Texture(faces[0].getWidth(), faces[0].getHeight()),
     glName(0)
 {
     // Verify that all the faces are square and have the same size
-    assert(faces.size() == 6);
     const Image& firstFace = faces[0];
     std::int32_t width = firstFace.getWidth();
     if (firstFace.getHeight() != width ||

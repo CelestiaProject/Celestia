@@ -25,7 +25,6 @@
 #include <celmath/mathlib.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/array_view.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include "shadermanager.h"
@@ -134,7 +133,7 @@ setIndices(gl::VertexObject& vo,
         ++idx;
     }
 
-    vo.setIndexBuffer(gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices), 0, IndexType);
+    vo.setIndexBuffer(gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, std::as_bytes(std::span{indices})), 0, IndexType);
     vo.setCount(static_cast<GLsizei>(indices.size()));
 }
 
@@ -214,7 +213,9 @@ WarpMesh::setUpVertexObject(gl::VertexObject& vo) const
     static_assert(std::is_standard_layout_v<WarpMesh::WarpVertex>);
 
     const std::uint32_t vertexCount = m_nx * m_ny;
-    auto buf = gl::Buffer::create(gl::Buffer::TargetHint::Array, m_data, gl::Buffer::BufferUsage::StaticDraw);
+    auto buf = gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                                  std::as_bytes(std::span{m_data}),
+                                  gl::Buffer::BufferUsage::StaticDraw);
 
     vo.addVertexBuffer(
         buf,

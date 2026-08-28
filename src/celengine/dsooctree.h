@@ -15,10 +15,10 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 #include <Eigen/Geometry>
 
-#include <celutil/array_view.h>
 #include "deepskyobj.h"
 #include "octree.h"
 
@@ -42,7 +42,7 @@ public:
 
     DSOOctreeVisibleObjectsProcessor(DSOHandler*,
                                      const DSOOctree::PointType&,
-                                     util::array_view<PlaneType>,
+                                     std::span<const PlaneType, 5>,
                                      float);
 
     bool checkNode(const DSOOctree::PointType&, double, float);
@@ -51,7 +51,7 @@ public:
 private:
     DSOHandler* m_dsoHandler;
     DSOOctree::PointType m_obsPosition;
-    util::array_view<PlaneType> m_frustumPlanes;
+    std::span<const PlaneType, 5> m_frustumPlanes;
     std::array<double, 5> m_projectedRadiusFactors;
     float m_limitingFactor;
 

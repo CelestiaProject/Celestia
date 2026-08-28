@@ -12,6 +12,8 @@
 
 #include "referencemarkrenderer.h"
 
+#include <span>
+
 #include <Eigen/Core>
 
 #include <celcompat/numbers.h>
@@ -143,13 +145,13 @@ ArrowRenderer::ArrowRenderer(const Renderer& renderer) :
     auto vertices = getArrowVertices();
     auto indices = getArrowIndices();
 
-    auto m_buffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, vertices);
+    auto m_buffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{vertices}));
 
     m_vo.addVertexBuffer(m_buffer,
                          CelestiaGLProgram::VertexCoordAttributeIndex,
                          3,
                          gl::VertexObject::DataType::Float);
-    auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices);
+    auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, std::as_bytes(std::span{indices}));
     m_vo.setCount(static_cast<int>(indices.size()));
     m_vo.setIndexBuffer(indexBuffer, 0, gl::VertexObject::IndexType::UnsignedShort);
 

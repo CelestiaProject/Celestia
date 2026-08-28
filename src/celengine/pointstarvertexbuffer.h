@@ -16,9 +16,9 @@
 
 #include <celrender/gl/buffer.h>
 #include <celutil/classops.h>
+#include <celutil/color.h>
 #include "starpipelineowner.h"
 
-class Color;
 class Renderer;
 class Texture;
 class CelestiaGLProgram;

@@ -16,7 +16,6 @@
 #include <vector>
 
 #include <celestia/eclipsefinder.h>
-#include <celutil/array_view.h>
 
 #include <windows.h>
 
@@ -48,7 +47,6 @@ public:
     HWND hwnd;
 
     std::vector<Eclipse> eclipseList;
-    util::array_view<std::wstring> monthNames;
     TargetBody targetBody;
     SYSTEMTIME fromTime, toTime;
     double TimetoSet_;

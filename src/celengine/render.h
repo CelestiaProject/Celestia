@@ -13,6 +13,7 @@
 #include <array>
 #include <list>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -241,7 +242,7 @@ class Renderer
                       const Color &color,
                       const Matrices &m);
 
-    celestia::util::array_view<const Star*> getNearStars() const
+    std::span<const Star* const> getNearStars() const
     {
         return nearStars;
     }
@@ -665,19 +666,18 @@ class Renderer
                                float vOffset,
                                float depth,
                                const Matrices&);
-    void renderAnnotations(const std::vector<Annotation>&,
+    void renderAnnotations(std::span<const Annotation>,
                            FontStyle fs);
     void renderBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
-    std::vector<Annotation>::iterator renderSortedAnnotations(std::vector<Annotation>::iterator,
-                                                              float nearDist,
-                                                              float farDist,
-                                                              FontStyle fs);
-    std::vector<Annotation>::iterator renderAnnotations(std::vector<Annotation>::iterator startIter,
-                                                        std::vector<Annotation>::iterator endIter,
+    std::span<const Annotation> renderSortedAnnotations(std::span<const Annotation> annotations,
                                                         float nearDist,
                                                         float farDist,
                                                         FontStyle fs);
+    std::span<const Annotation> renderAnnotations(std::span<const Annotation> annotations,
+                                                  float nearDist,
+                                                  float farDist,
+                                                  FontStyle fs);
 
     void markersToAnnotations(const celestia::MarkerList &markers,
                               const Observer &observer,

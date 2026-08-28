@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -26,7 +27,6 @@
 #include <celengine/renderflags.h>
 #include <celengine/selection.h>
 #include <celengine/asterism.h>
-#include <celutil/array_view.h>
 
 namespace celestia::engine
 {
@@ -65,12 +65,12 @@ public:
 
 
     Selection findPath(std::string_view s,
-                       celestia::util::array_view<Selection> contexts,
+                       std::span<const Selection> contexts,
                        bool i18n = false) const;
 
     void getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                            std::string_view s,
-                           celestia::util::array_view<Selection> contexts,
+                           std::span<const Selection> contexts,
                            bool withLocations = false) const;
 
 
@@ -98,11 +98,11 @@ public:
 private:
     void getCompletion(std::vector<celestia::engine::Completion>& completion,
                        std::string_view s,
-                       celestia::util::array_view<Selection> contexts,
+                       std::span<const Selection> contexts,
                        bool withLocations = false) const;
 
     Selection find(std::string_view s,
-                   celestia::util::array_view<Selection> contexts,
+                   std::span<const Selection> contexts,
                    bool i18n = false) const;
     Selection findChildObject(const Selection& sel,
                               std::string_view name,

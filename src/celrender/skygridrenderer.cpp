@@ -17,6 +17,7 @@
 #include <array>
 #include <cmath>
 #include <iterator>
+#include <span>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -162,7 +163,7 @@ parallelSpacing(double idealSpacing)
 int
 meridianSpacing(double idealSpacing, engine::SkyGrid::LongitudeUnits longitudeUnits)
 {
-    util::array_view<int> spacingTable;
+    std::span<const int> spacingTable;
     int totalUnits;
 
     // Use degree spacings if the latitude units are degrees instead of hours

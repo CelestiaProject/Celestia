@@ -15,10 +15,9 @@
 #pragma once
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
-
-#include <celutil/array_view.h>
 
 #include <windows.h>
 
@@ -45,7 +44,7 @@ class MainWindow
 {
 public:
     MainWindow(HINSTANCE, HMODULE, HMENU, ODMenu*,
-               CelestiaCore*, int, util::array_view<DEVMODE>);
+               CelestiaCore*, int, std::span<const DEVMODE>);
     ~MainWindow();
     bool checkHWnd(HWND other) const { return other == hWnd; }
     LRESULT create(HWND);
@@ -64,7 +63,7 @@ public:
     void resize(LPARAM) const;
     void paint() const;
 
-    bool setDeviceContext(util::array_view<std::string> ignoreGLExtensions = {});
+    bool setDeviceContext(std::span<const std::string> ignoreGLExtensions = {});
     void destroyDeviceContext();
     void setRenderState(bool ready) { bReady = ready; }
     void ignoreNextMove() { ignoreNextMoveEvent = true; }
@@ -97,7 +96,7 @@ private:
     CelestiaCore* appCore;
     // The mode used when isFullScreen is true; saved and restored from the registry
     int lastFullScreenMode{ 0 };
-    util::array_view<DEVMODE> displayModes;
+    std::span<const DEVMODE> displayModes;
 
     POINT saveCursorPos{ 0, 0 };
     POINT lastMouseMove{ 0, 0 };

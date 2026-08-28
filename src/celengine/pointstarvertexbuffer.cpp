@@ -8,14 +8,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "pointstarvertexbuffer.h"
+
+#include <span>
+
 #include <celrender/gl/vertexobject.h>
-#include <celutil/color.h>
 #include "glsupport.h"
 #include "objectrenderer.h"
 #include "shadermanager.h"
 #include "render.h"
 #include "texture.h"
-#include "pointstarvertexbuffer.h"
 #include "starpipelineowner.h"
 
 namespace gl = celestia::gl;
@@ -54,7 +56,7 @@ void PointStarVertexBuffer::render()
     if (m_texture != nullptr)
         m_texture->bind();
 
-    m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
+    m_bo->invalidateData().setSubData(0, std::as_bytes(std::span{m_vertices.get(), m_nStars}));
 
     if (m_pointSizeFromVertex)
         m_vo1->draw(m_nStars);

@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <system_error>
@@ -33,7 +34,6 @@
 #include <celestia/configfile.h>
 #include <celestia/progressnotifier.h>
 #include <celestia/scriptmenu.h>
-#include <celutil/array_view.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/localeutil.h>
@@ -161,8 +161,8 @@ HWND
 CreateOpenGLWindow(HINSTANCE appInstance, HMENU menuBar, HCURSOR hDefaultCursor,
                    int x, int y, int width, int height,
                    MainWindow* mainWindow,
-                   util::array_view<DEVMODE> displayModes,
-                   util::array_view<std::string> ignoreGLExtensions = {})
+                   std::span<const DEVMODE> displayModes,
+                   std::span<const std::string> ignoreGLExtensions = {})
 {
     int newMode = mainWindow->currentMode();
     if (newMode < 0 || newMode > displayModes.size())

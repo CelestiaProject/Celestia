@@ -14,16 +14,14 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <span>
 #include <string>
 
 #include <Eigen/Core>
 
 #include <celimage/image.h>
-#include <celutil/array_view.h>
 #include <celutil/classops.h>
 #include <celutil/color.h>
-
-typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 
 namespace celestia::engine
 {
@@ -190,7 +188,7 @@ private:
 class CubeMap : public Texture
 {
 public:
-    explicit CubeMap(celestia::util::array_view<celestia::engine::Image>);
+    explicit CubeMap(std::span<const celestia::engine::Image, 6>);
     ~CubeMap();
 
     template<typename F>

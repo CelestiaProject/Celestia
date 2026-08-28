@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -13,7 +14,6 @@
 
 #include <celengine/parseobject.h>
 #include <celengine/selection.h>
-#include <celutil/array_view.h>
 
 namespace celestia::util
 {
@@ -85,7 +85,7 @@ public:
 
     UserCategoryId parent() const { return m_parent; }
     const std::string& getName(bool i18n = false) const;
-    celestia::util::array_view<UserCategoryId> children() const { return m_children; }
+    std::span<const UserCategoryId> children() const { return m_children; }
     const std::unordered_set<Selection>& members() const { return m_members; }
     bool hasChild(UserCategoryId child) const;
 

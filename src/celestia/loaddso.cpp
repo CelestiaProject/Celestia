@@ -10,6 +10,7 @@
 #include "loaddso.h"
 
 #include <fstream>
+#include <span>
 
 #include <celengine/dsodb.h>
 #include <celengine/dsodbbuilder.h>
@@ -29,7 +30,7 @@ class DeepSkyLoader final : public CatalogLoader
 public:
     DeepSkyLoader(DSODatabaseBuilder& db,
                   ProgressNotifier* notifier,
-                  util::array_view<std::filesystem::path> skipPaths) :
+                  std::span<const std::filesystem::path> skipPaths) :
         CatalogLoader(notifier, skipPaths),
         m_db(&db)
     {

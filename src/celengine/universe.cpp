@@ -1012,7 +1012,7 @@ Universe::findObjectInContext(const Selection& sel,
 //      to us to search.
 Selection
 Universe::find(std::string_view s,
-               util::array_view<Selection> contexts,
+               std::span<const Selection> contexts,
                bool i18n) const
 {
     if (starCatalog != nullptr)
@@ -1053,7 +1053,7 @@ Universe::find(std::string_view s,
 // in which the user is currently located.
 Selection
 Universe::findPath(std::string_view s,
-                   util::array_view<Selection> contexts,
+                   std::span<const Selection> contexts,
                    bool i18n) const
 {
     std::string_view::size_type pos = s.find('/', 0);
@@ -1086,7 +1086,7 @@ Universe::findPath(std::string_view s,
 void
 Universe::getCompletion(std::vector<celestia::engine::Completion>& completion,
                         std::string_view s,
-                        util::array_view<Selection> contexts,
+                        std::span<const Selection> contexts,
                         bool withLocations) const
 {
     // Solar bodies first:
@@ -1118,7 +1118,7 @@ Universe::getCompletion(std::vector<celestia::engine::Completion>& completion,
 void
 Universe::getCompletionPath(std::vector<celestia::engine::Completion>& completion,
                             std::string_view s,
-                            util::array_view<Selection> contexts,
+                            std::span<const Selection> contexts,
                             bool withLocations) const
 {
     std::string_view::size_type pos = s.rfind('/', s.length());

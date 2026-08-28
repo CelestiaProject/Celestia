@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <span>
 
 #include <celrender/gl/vertexobject.h>
 #include <celastro/astro.h>
@@ -87,7 +88,7 @@ PsfStarVertexBuffer::render()
 
     makeCurrent();
 
-    m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
+    m_bo->invalidateData().setSubData(0, std::as_bytes(std::span{m_vertices.get(), m_nStars}));
 
     m_vo->draw(m_nStars);
     m_nStars = 0;

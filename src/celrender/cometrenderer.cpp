@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <span>
 
 #include <Eigen/Geometry>
 
@@ -247,11 +248,11 @@ CometRenderer::render(const Body &body,
     m_prog->floatParam("fadeFactor") = fadeFactor;
 
     m_bo->invalidateData().setData(
-        util::array_view(m_vertices.get(), MaxVertices),
+        std::as_bytes(std::span{m_vertices.get(), MaxVertices}),
         gl::Buffer::BufferUsage::StreamDraw);
 
     m_ibo->invalidateData().setData(
-        util::array_view(m_indices.get(), MaxIndices),
+        std::as_bytes(std::span{m_indices.get(), MaxIndices}),
         gl::Buffer::BufferUsage::StreamDraw);
 
     glDisable(GL_CULL_FACE);

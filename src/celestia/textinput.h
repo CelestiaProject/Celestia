@@ -13,12 +13,12 @@
 #pragma once
 
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
 
 #include <celengine/completion.h>
-#include <celutil/array_view.h>
 
 class Color;
 class Overlay;
@@ -41,7 +41,7 @@ class TextInput
 {
 public:
     std::string_view getTypedText() const;
-    util::array_view<engine::Completion> getCompletion() const;
+    std::span<const engine::Completion> getCompletion() const;
     std::optional<Selection> getSelectedCompletion();
 
     CharEnteredResult charEntered(const Simulation*, std::string_view, bool withLocations);

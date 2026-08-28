@@ -17,6 +17,7 @@
 #include <fstream>
 #include <map>
 #include <memory>
+#include <span>
 #include <utility>
 
 #include <celastro/astro.h>
@@ -149,7 +150,7 @@ protected:
     constexpr PlanetOrbitMixin() noexcept = default;
 
     static std::array<PlanetElements, 8> gPlanetElements;
-    void computePlanetElements(double, const int*, std::size_t) const;
+    void computePlanetElements(double, std::span<const int>) const;
     void computePlanetCoords(int p, double map, double da, double dhl, double dl,
                              double dm, double dml, double dr, double ds,
                              double& eclLong, double& eclLat, double& distance) const;
@@ -158,13 +159,12 @@ protected:
 std::array<PlanetElements, 8> PlanetOrbitMixin::gPlanetElements{ };
 
 void
-PlanetOrbitMixin::computePlanetElements(double t, const int* pList, std::size_t npList) const
+PlanetOrbitMixin::computePlanetElements(double t, std::span<const int> pList) const
 {
     // Parameter t represents the Julian centuries elapsed since 1900.
     // In other words, t = (jd - 2415020.0) / 36525.0
-    for (std::size_t i = 0; i < npList; ++i)
+    for (int planet : pList)
     {
-        int planet = pList[i];
         const StaticElements& ep = gElements[planet];
         PlanetElements& pp = gPlanetElements[planet];
         double aa = ep[1]*t;
@@ -446,7 +446,7 @@ public:
         // Calculate the Julian centuries elapsed since 1900
         t = (jd - 2415020.0)/36525.0;
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         // Compute necessary planet mean anomalies
         map[0] = math::degToRad(gPlanetElements[0][0] - gPlanetElements[0][2]);
@@ -509,7 +509,7 @@ public:
 
         mas = meanAnomalySun(t);
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         //Compute necessary planet mean anomalies
         map[0] = 0.0;
@@ -811,7 +811,7 @@ public:
 
         mas = meanAnomalySun(t);
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         //Compute necessary planet mean anomalies
         map[0] = 0.0;
@@ -894,7 +894,7 @@ public:
         //Calculate the Julian centuries elapsed since 1900
         t = (jd - 2415020.0)/36525.0;
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -999,7 +999,7 @@ public:
         //Calculate the Julian centuries elapsed since 1900
         t = (jd - 2415020.0)/36525.0;
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -1125,7 +1125,7 @@ public:
         //Calculate the Julian centuries elapsed since 1900
         t = (jd - 2415020.0)/36525.0;
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -1213,7 +1213,7 @@ public:
         //Calculate the Julian centuries elapsed since 1900
         t = (jd - 2415020.0)/36525.0;
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 
@@ -1286,7 +1286,7 @@ public:
         //Calculate the Julian centuries elapsed since 1900
         t = (jd - 2415020.0)/36525.0;
 
-        computePlanetElements(t, pList.data(), pList.size());
+        computePlanetElements(t, pList);
 
         map = math::degToRad(gPlanetElements[p][0] - gPlanetElements[p][2]);
 

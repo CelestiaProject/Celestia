@@ -8,12 +8,12 @@
 // of the License, or (at your option) any later version.
 
 #include <cmath>
+#include <span>
 #include <type_traits>
 #include <utility>
 
 #include <Eigen/LU>
 
-#include <celutil/array_view.h>
 #include "frustum.h"
 
 namespace celestia::math
@@ -26,7 +26,7 @@ constexpr auto NearIdx = static_cast<std::size_t>(FrustumPlane::Near);
 constexpr auto FarIdx = static_cast<std::size_t>(FrustumPlane::Far);
 
 void
-init(Frustum::PlaneType* planes, float l, float r, float t, float b, float n)
+init(std::span<Frustum::PlaneType, 5> planes, float l, float r, float t, float b, float n)
 {
     std::array<Eigen::Vector3f, 4> normals
     {
@@ -45,7 +45,7 @@ init(Frustum::PlaneType* planes, float l, float r, float t, float b, float n)
 }
 
 void
-init(Frustum::PlaneType* planes, float fov, float aspectRatio, float n)
+init(std::span<Frustum::PlaneType, 5> planes, float fov, float aspectRatio, float n)
 {
     float h = std::tan(fov * 0.5f);
     float w = h * aspectRatio;
@@ -60,28 +60,26 @@ createFarPlane(float f)
 }
 
 void
-doTransform(Frustum::PlaneType* planes, unsigned int nPlanes, const Eigen::Matrix3f& matrix)
+doTransform(std::span<Frustum::PlaneType> planes, const Eigen::Matrix3f& matrix)
 {
-    for (unsigned int i = 0; i < nPlanes; ++i)
-    {
-        planes[i] = planes[i].transform(matrix, Eigen::Isometry);
-    }
+    for (auto& plane : planes)
+        plane.transform(matrix, Eigen::Isometry);
 }
 
 void
-doTransform(Frustum::PlaneType* planes, unsigned int nPlanes, const Eigen::Matrix4f& matrix)
+doTransform(std::span<Frustum::PlaneType> planes, const Eigen::Matrix4f& matrix)
 {
     Eigen::Matrix4f invTranspose = matrix.inverse().transpose();
 
-    for (unsigned int i = 0; i < nPlanes; ++i)
+    for (auto& plane : planes)
     {
-        planes[i].coeffs() = invTranspose * planes[i].coeffs();
-        planes[i].normalize();
+        plane.coeffs() = invTranspose * plane.coeffs();
+        plane.normalize();
     }
 }
 
 FrustumAspect
-doTest(util::array_view<Frustum::PlaneType> planes, const Eigen::Vector3f& point)
+doTest(std::span<const Frustum::PlaneType> planes, const Eigen::Vector3f& point)
 {
     for (const auto& plane : planes)
     {
@@ -94,7 +92,7 @@ doTest(util::array_view<Frustum::PlaneType> planes, const Eigen::Vector3f& point
 
 template<typename PREC>
 FrustumAspect
-doTestSphere(util::array_view<Frustum::PlaneType> planes,
+doTestSphere(std::span<const Frustum::PlaneType> planes,
              const Eigen::Matrix<PREC, 3, 1>& center,
              PREC radius)
 {
@@ -128,26 +126,26 @@ doTestSphere(util::array_view<Frustum::PlaneType> planes,
 
 Frustum::Frustum(float fov, float aspectRatio, float n, float f)
 {
-    init(planes.data(), fov, aspectRatio, n);
+    init(std::span{planes}.first<5>(), fov, aspectRatio, n);
     planes[FarIdx] = createFarPlane(f);
 }
 
 Frustum::Frustum(float l, float r, float t, float b, float n, float f)
 {
-    init(planes.data(), l, r, t, b, n);
+    init(std::span{planes}.first<5>(), l, r, t, b, n);
     planes[FarIdx] = createFarPlane(f);
 }
 
 void
 Frustum::transform(const Eigen::Matrix3f& m)
 {
-    doTransform(planes.data(), nPlanes, m);
+    doTransform(planes, m);
 }
 
 void
 Frustum::transform(const Eigen::Matrix4f& m)
 {
-    doTransform(planes.data(), nPlanes, m);
+    doTransform(planes, m);
 }
 
 FrustumAspect
@@ -172,19 +170,19 @@ Frustum::testSphere(const Eigen::Vector3d& center, double radius) const
 
 InfiniteFrustum::InfiniteFrustum(float fov, float aspectRatio, float n)
 {
-    init(planes.data(), fov, aspectRatio, n);
+    init(planes, fov, aspectRatio, n);
 }
 
 void
 InfiniteFrustum::transform(const Eigen::Matrix3f& m)
 {
-    doTransform(planes.data(), nPlanes, m);
+    doTransform(planes, m);
 }
 
 void
 InfiniteFrustum::transform(const Eigen::Matrix4f& m)
 {
-    doTransform(planes.data(), nPlanes, m);
+    doTransform(planes, m);
 }
 
 FrustumAspect

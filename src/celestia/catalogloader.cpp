@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <fstream>
 #include <system_error>
+#include <vector>
 
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
@@ -22,7 +23,7 @@ namespace celestia
 {
 
 CatalogLoader::CatalogLoader(ProgressNotifier* notifier,
-                             util::array_view<std::filesystem::path> skipPaths) :
+                             std::span<const std::filesystem::path> skipPaths) :
     m_notifier(notifier),
     m_skipPaths(skipPaths)
 {
@@ -54,7 +55,7 @@ CatalogLoader::process(const std::filesystem::path &filePath, const std::filesys
 }
 
 void
-CatalogLoader::loadExtras(util::array_view<std::filesystem::path> dirs)
+CatalogLoader::loadExtras(std::span<const std::filesystem::path> dirs)
 {
     std::vector<std::filesystem::path> entries;
     std::error_code ec;
