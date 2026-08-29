@@ -385,7 +385,7 @@ private:
 
     bool visible{ true };
     bool clickable{ true };
-    VisibilityPolicy orbitVisibility : 3;
+    VisibilityPolicy orbitVisibility : 3 { UseClassVisibility };
 
     friend class BodyFeaturesManager;
 };

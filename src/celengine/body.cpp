@@ -60,8 +60,7 @@ constexpr auto CLASSES_SECONDARY_ILLUMINATOR = BodyClassification::Planet      |
 }
 
 Body::Body(PlanetarySystem* _system, const std::string& _name) :
-    system(_system),
-    orbitVisibility(UseClassVisibility)
+    system(_system)
 {
     setName(_name);
     recomputeCullingRadius();
