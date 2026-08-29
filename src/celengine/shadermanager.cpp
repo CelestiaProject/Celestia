@@ -2641,7 +2641,7 @@ ShaderProperties::usesShadows() const
 unsigned int
 ShaderProperties::getEclipseShadowCountForLight(unsigned int lightIndex) const
 {
-    return util::is_set(shadowCounts >> lightIndex * ShadowBitsPerLight, ShadowMask::Eclipse);
+    return static_cast<unsigned int>((shadowCounts >> lightIndex * ShadowBitsPerLight) & ShadowMask::Eclipse);
 }
 
 bool
