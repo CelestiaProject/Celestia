@@ -20,7 +20,7 @@
 
 class Color
 {
- private:
+private:
     static constexpr std::uint8_t scaleFloat(float a)
     {
         return static_cast<std::uint8_t>(std::clamp(a, 0.0f, 1.0f) * 255.99f);
@@ -28,7 +28,7 @@ class Color
 
     std::array<std::uint8_t, 4> c;
 
- public:
+public:
     constexpr Color() noexcept :
         c({ 0, 0, 0, 0xff })
     {}
@@ -111,8 +111,6 @@ class Color
         return *this;
     }
 
-    friend constexpr bool operator==(Color, Color);
-
     static /*constexpr*/ const Color Black/* = Color(1.0f, 1.0f, 1.0f)*/;
     static /*constexpr*/ const Color White/* = Color(0.0f,0.0f, 0.0f)*/;
 
@@ -147,18 +145,9 @@ class Color
     {
         return enabled ? linearize() : *this;
     }
+
+    friend constexpr bool operator==(Color a, Color b) noexcept = default;
 };
-
-constexpr bool operator==(Color a, Color b)
-{
-    return (a.c[0] == b.c[0] && a.c[1] == b.c[1] &&
-            a.c[2] == b.c[2] && a.c[3] == b.c[3]);
-}
-
-constexpr bool operator!=(Color a, Color b)
-{
-    return !(a == b);
-}
 
 constexpr Color operator*(Color a, float b)
 {

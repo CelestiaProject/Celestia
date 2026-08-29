@@ -25,8 +25,8 @@ public:
 
     const std::string& value() const { return m_str; }
 
-    bool operator==(const UniqueString& other) const { return m_str == other.m_str; }
-    bool operator<(const UniqueString& other) const { return m_str < other.m_str; }
+    friend bool operator==(const UniqueString&, const UniqueString&) = default;
+    friend auto operator<=>(const UniqueString&, const UniqueString&) = default;
 
 private:
     std::string m_str;

@@ -62,20 +62,7 @@ public:
         return Eigen::Vector3f(m_red, m_green, m_blue);
     }
 
-    constexpr bool operator==(const Color& other) const
-    {
-        return std::tie(m_red, m_green, m_blue) == std::tie(other.m_red, other.m_green, other.m_blue);
-    }
-
-    constexpr bool operator!=(const Color& other) const
-    {
-        return !(*this == other);
-    }
-
-    constexpr bool operator<(const Color& other) const
-    {
-        return std::tie(m_red, m_green, m_blue) < std::tie(other.m_red, other.m_green, other.m_blue);
-    }
+    constexpr friend auto operator<=>(const Color&, const Color&) = default;
 
 private:
     float m_red{ 0.0f };
@@ -124,50 +111,24 @@ struct Material
     BlendMode blend{ BlendMode::NormalBlend };
     std::array<celestia::util::TextureHandle,
                static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
+
+    friend bool operator==(const Material&, const Material&) noexcept = default;
+
+    friend auto operator<=>(const Material& lhs, const Material& rhs)
+    {
+        // Checking opacity first and doing it backwards is deliberate. It means
+        // that after sorting, translucent materials will end up with higher
+        // material indices than opaque ones. Ultimately, after sorting
+        // mesh primitive groups by material, translucent groups will end up
+        // rendered after opaque ones.
+
+        // Reverse sense of comparison for blending--additive blending is 1, normal
+        // blending is 0, and we'd prefer to render additively blended submeshes
+        // last.
+
+        return std::tie(lhs.opacity, rhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
+           <=> std::tie(rhs.opacity, lhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
+    }
 };
-
-inline bool operator==(const Material& lhs, const Material& rhs)
-{
-    return std::tie(lhs.opacity, lhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
-        == std::tie(rhs.opacity, rhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
-}
-
-inline bool operator!=(const Material& lhs, const Material& rhs)
-{
-    return !(lhs == rhs);
-}
-
-// Define an ordering for materials; required for elimination of duplicate
-// materials.
-inline bool operator<(const Material& lhs, const Material& rhs)
-{
-    // Checking opacity first and doing it backwards is deliberate. It means
-    // that after sorting, translucent materials will end up with higher
-    // material indices than opaque ones. Ultimately, after sorting
-    // mesh primitive groups by material, translucent groups will end up
-    // rendered after opaque ones.
-
-    // Reverse sense of comparison for blending--additive blending is 1, normal
-    // blending is 0, and we'd prefer to render additively blended submeshes
-    // last.
-
-    return std::tie(lhs.opacity, rhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
-         < std::tie(rhs.opacity, lhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
-}
-
-inline bool operator>(const Material& lhs, const Material& rhs)
-{
-    return rhs < lhs;
-}
-
-inline bool operator<=(const Material& lhs, const Material& rhs)
-{
-    return !(rhs < lhs);
-}
-
-inline bool operator>=(const Material& lhs, const Material& rhs)
-{
-    return !(lhs < rhs);
-}
 
 } // namespace cmod

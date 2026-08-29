@@ -254,17 +254,9 @@ struct BodyFixedFrameKey
     explicit BodyFixedFrameKey(const Selection& tgt) : target(tgt) {}
 
     Selection target;
+
+    friend bool operator==(const BodyFixedFrameKey&, const BodyFixedFrameKey&) noexcept = default;
 };
-
-inline bool operator==(const BodyFixedFrameKey& lhs, const BodyFixedFrameKey& rhs)
-{
-    return lhs.target == rhs.target;
-}
-
-inline bool operator!=(const BodyFixedFrameKey& lhs, const BodyFixedFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<BodyFixedFrameKey>
@@ -280,17 +272,9 @@ struct BodyMeanEquatorFrameKey
 
     Selection target;
     std::optional<double> freezeEpoch;
+
+    friend bool operator==(const BodyMeanEquatorFrameKey&, const BodyMeanEquatorFrameKey&) noexcept = default;
 };
-
-inline bool operator==(const BodyMeanEquatorFrameKey& lhs, const BodyMeanEquatorFrameKey& rhs)
-{
-    return lhs.target == rhs.target && lhs.freezeEpoch == rhs.freezeEpoch;
-}
-
-inline bool operator!=(const BodyMeanEquatorFrameKey& lhs, const BodyMeanEquatorFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<BodyMeanEquatorFrameKey>
@@ -308,20 +292,9 @@ struct TwoVectorFrameKey
     int axis1;
     FrameVectorId frameVectorId2;
     int axis2;
+
+    friend bool operator==(const TwoVectorFrameKey&, const TwoVectorFrameKey&) noexcept = default;
 };
-
-inline bool operator==(const TwoVectorFrameKey& lhs, const TwoVectorFrameKey& rhs)
-{
-    return lhs.frameVectorId1 == rhs.frameVectorId1 &&
-           lhs.axis1 == rhs.axis1 &&
-           lhs.frameVectorId2 == rhs.frameVectorId2 &&
-           lhs.axis2 == rhs.axis2;
-}
-
-inline bool operator!=(const TwoVectorFrameKey& lhs, const TwoVectorFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<TwoVectorFrameKey>
@@ -339,17 +312,9 @@ struct RelativePositionKey
 
     Selection observer;
     Selection target;
+
+    friend bool operator==(const RelativePositionKey&, const RelativePositionKey&) noexcept = default;
 };
-
-inline bool operator==(const RelativePositionKey& lhs, const RelativePositionKey& rhs)
-{
-    return lhs.observer == rhs.observer && lhs.target == rhs.target;
-}
-
-inline bool operator!=(const RelativePositionKey& lhs, const RelativePositionKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<RelativePositionKey>
@@ -365,17 +330,9 @@ struct RelativeVelocityKey
 
     Selection observer;
     Selection target;
+
+    friend bool operator==(const RelativeVelocityKey&, const RelativeVelocityKey&) noexcept = default;
 };
-
-inline bool operator==(const RelativeVelocityKey& lhs, const RelativeVelocityKey& rhs)
-{
-    return lhs.observer == rhs.observer && lhs.target == rhs.target;
-}
-
-inline bool operator!=(const RelativeVelocityKey& lhs, const RelativeVelocityKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<RelativeVelocityKey>
@@ -391,17 +348,9 @@ struct ConstVectorKey
 
     Eigen::Vector3d vec;
     FrameId frameId;
+
+    friend bool operator==(const ConstVectorKey&, const ConstVectorKey&) noexcept = default;
 };
-
-inline bool operator==(const ConstVectorKey& lhs, const ConstVectorKey& rhs)
-{
-    return lhs.vec == rhs.vec && lhs.frameId == rhs.frameId;
-}
-
-inline bool operator!=(const ConstVectorKey& lhs, const ConstVectorKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<ConstVectorKey>

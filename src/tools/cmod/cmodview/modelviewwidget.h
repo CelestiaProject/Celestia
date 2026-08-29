@@ -134,14 +134,10 @@ private:
 private:
     unsigned int m_info;
 
-    friend bool operator==(const ShaderKey&, const ShaderKey&) noexcept;
-    friend bool operator!=(const ShaderKey&, const ShaderKey&) noexcept;
+    friend bool operator==(const ShaderKey&, const ShaderKey&) noexcept = default;
 
     friend struct ::std::hash<ShaderKey>;
 };
-
-inline bool operator==(const ShaderKey& lhs, const ShaderKey& rhs) noexcept { return lhs.m_info == rhs.m_info; }
-inline bool operator!=(const ShaderKey& lhs, const ShaderKey& rhs) noexcept { return lhs.m_info != rhs.m_info; }
 
 }
 

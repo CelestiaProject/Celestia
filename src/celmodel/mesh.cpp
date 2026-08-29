@@ -43,16 +43,6 @@ isOpaqueMaterial(const Material &material)
 
 } // end unnamed namespace
 
-bool operator==(const VertexAttribute& a, const VertexAttribute& b)
-{
-    return std::tie(a.semantic, a.format, a.offsetWords) == std::tie(b.semantic, b.format, b.offsetWords);
-}
-
-bool operator<(const VertexAttribute& a, const VertexAttribute& b)
-{
-    return std::tie(a.semantic, a.format, a.offsetWords) < std::tie(b.semantic, b.format, b.offsetWords);
-}
-
 VertexDescription::VertexDescription()
 {
     m_semanticMap.fill(-1);
@@ -139,14 +129,16 @@ VertexDescription::augment(cmod::VertexAttributeSemantic semantic,
     return result;
 }
 
-bool operator==(const VertexDescription& a, const VertexDescription& b)
+bool
+operator==(const VertexDescription& a, const VertexDescription& b)
 {
     return std::tie(a.m_strideBytes, a.m_attributes) == std::tie(b.m_strideBytes, b.m_attributes);
 }
 
-bool operator<(const VertexDescription& a, const VertexDescription& b)
+std::strong_ordering
+operator<=>(const VertexDescription& a, const VertexDescription& b)
 {
-    return std::tie(a.m_strideBytes, a.m_attributes) < std::tie(b.m_strideBytes, b.m_attributes);
+    return std::tie(a.m_strideBytes, a.m_attributes) <=> std::tie(b.m_strideBytes, b.m_attributes);
 }
 
 PrimitiveGroup

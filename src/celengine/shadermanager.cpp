@@ -2790,17 +2790,6 @@ bool ShaderProperties::usePointSize() const
     return util::is_set(texUsage, TexUsage::PointSprite | TexUsage::StaticPointSize);
 }
 
-bool operator==(const ShaderProperties& lhs, const ShaderProperties& rhs)
-{
-    return lhs.texUsage == rhs.texUsage &&
-           lhs.nLights == rhs.nLights &&
-           lhs.shadowCounts == rhs.shadowCounts &&
-           lhs.effects == rhs.effects &&
-           lhs.fishEyeOverride == rhs.fishEyeOverride &&
-           lhs.lightModel == rhs.lightModel &&
-           lhs.separateRayleighMieScaleHeights == rhs.separateRayleighMieScaleHeights;
-}
-
 std::size_t
 std::hash<ShaderProperties>::operator()(const ShaderProperties& props) const
 {
@@ -2813,11 +2802,6 @@ std::hash<ShaderProperties>::operator()(const ShaderProperties& props) const
     boost::hash_combine(seed, props.lightModel);
     boost::hash_combine(seed, props.separateRayleighMieScaleHeights);
     return seed;
-}
-
-bool operator==(const StaticShaderProperties& lhs, const StaticShaderProperties& rhs)
-{
-    return lhs.shader == rhs.shader && lhs.options == rhs.options;
 }
 
 std::size_t

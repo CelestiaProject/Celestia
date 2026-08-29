@@ -83,20 +83,9 @@ private:
 
     void checkNull() { if (obj == nullptr) type = SelectionType::None; }
 
-    friend bool operator==(const Selection& s0, const Selection& s1);
-    friend bool operator!=(const Selection& s0, const Selection& s1);
+    friend constexpr bool operator==(const Selection& s0, const Selection& s1) noexcept = default;
     friend struct std::hash<Selection>;
 };
-
-inline bool operator==(const Selection& s0, const Selection& s1)
-{
-    return s0.type == s1.type && s0.obj == s1.obj;
-}
-
-inline bool operator!=(const Selection& s0, const Selection& s1)
-{
-    return s0.type != s1.type || s0.obj != s1.obj;
-}
 
 template<>
 struct std::hash<Selection>

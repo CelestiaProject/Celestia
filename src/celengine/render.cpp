@@ -434,17 +434,17 @@ translateLabelModeToClassMask(RenderLabels labelMode)
 // function of Renderer::Label; if it's not a class member, C++'s
 // argument dependent lookup will not find the operator when it's
 // used as a predicate for STL algorithms.
-bool Renderer::Annotation::operator<(const Annotation& a) const
+std::partial_ordering Renderer::Annotation::operator<=>(const Annotation& a) const
 {
     // Operation is reversed because -z axis points into the screen
-    return position.z() > a.position.z();
+    return a.position.z() <=> position.z();
 }
 
 // Depth comparison for orbit paths
-bool Renderer::OrbitPathListEntry::operator<(const OrbitPathListEntry& o) const
+std::partial_ordering Renderer::OrbitPathListEntry::operator<=>(const OrbitPathListEntry& o) const
 {
     // Operation is reversed because -z axis points into the screen
-    return centerZ - radius > o.centerZ - o.radius;
+    return (o.centerZ - o.radius) <=> (centerZ - radius);
 }
 
 

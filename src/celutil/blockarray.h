@@ -63,13 +63,6 @@ public:
         iterator& operator--() { --m_position; return *this; }
         iterator operator--(int) { iterator result = *this; --m_position; return result; }
 
-        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.m_array == rhs.m_array && lhs.m_position == rhs.m_position; }
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
-        friend bool operator<(const iterator& lhs, const iterator& rhs) { return lhs.m_position < rhs.m_position; }
-        friend bool operator>(const iterator& lhs, const iterator& rhs) { return lhs.m_position > rhs.m_position; }
-        friend bool operator<=(const iterator& lhs, const iterator& rhs) { return lhs.m_position <= rhs.m_position; }
-        friend bool operator>=(const iterator& lhs, const iterator& rhs) { return lhs.m_position >= rhs.m_position; }
-
         iterator& operator+=(difference_type n) { m_position += n; return *this; }
         iterator& operator-=(difference_type n) { m_position -= n; return *this; }
         friend iterator operator+(const iterator& lhs, difference_type rhs) { iterator result = lhs; result += rhs; return result; }
@@ -88,6 +81,9 @@ public:
 
         friend class BlockArray;
         friend class const_iterator;
+
+        constexpr friend bool operator==(const iterator&, const iterator&) noexcept = default;
+        constexpr friend auto operator<=>(const iterator& lhs, const iterator& rhs) noexcept { return lhs.m_position <=> rhs.m_position; }
     };
 
     class const_iterator
@@ -114,13 +110,6 @@ public:
         const_iterator& operator--() { --m_position; return *this; }
         const_iterator operator--(int) { const_iterator result = *this; --m_position; return result; }
 
-        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_array == rhs.m_array && lhs.m_position == rhs.m_position; }
-        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
-        friend bool operator<(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position < rhs.m_position; }
-        friend bool operator>(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position > rhs.m_position; }
-        friend bool operator<=(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position <= rhs.m_position; }
-        friend bool operator>=(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position >= rhs.m_position; }
-
         const_iterator& operator+=(difference_type n) { m_position += n; return *this; }
         const_iterator& operator-=(difference_type n) { m_position -= n; return *this; }
         friend const_iterator operator+(const const_iterator& lhs, difference_type rhs) { const_iterator result = lhs; result += rhs; return result; }
@@ -138,6 +127,9 @@ public:
         difference_type m_position{ 0 };
 
         friend class BlockArray;
+
+        constexpr friend bool operator==(const const_iterator&, const const_iterator&) noexcept = default;
+        constexpr friend auto operator<=>(const const_iterator& lhs, const const_iterator& rhs) noexcept { return lhs.m_position <=> rhs.m_position; }
     };
 
     using reverse_iterator = std::reverse_iterator<iterator>;
@@ -226,33 +218,9 @@ bool operator==(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKS
 }
 
 template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator!=(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
+auto operator<=>(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
 {
-    return !(lhs == rhs);
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator<(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator>(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return rhs < lhs;
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator<=(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return !(rhs < lhs);
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator>=(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return !(lhs < rhs);
+    return std::lexicographical_compare_three_way(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template<typename T, std::size_t BLOCKSIZE>

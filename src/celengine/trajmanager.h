@@ -42,15 +42,7 @@ private:
         ephem::TrajectoryInterpolation interpolation;
         ephem::TrajectoryPrecision precision;
 
-        friend bool operator==(const Key& lhs, const Key& rhs) noexcept
-        {
-            return lhs.path == rhs.path && lhs.interpolation == rhs.interpolation && lhs.precision == rhs.precision;
-        }
-
-        friend bool operator!=(const Key& lhs, const Key& rhs) noexcept
-        {
-            return !(lhs == rhs);
-        }
+        friend bool operator==(const Key& lhs, const Key& rhs) noexcept = default;
     };
 
     struct KeyHasher
