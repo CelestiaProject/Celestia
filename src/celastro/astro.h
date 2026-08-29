@@ -243,15 +243,17 @@ double meanEclipticObliquity(double jd);
 namespace literals
 {
 
-constexpr long double operator ""_au(long double au)
+consteval long double operator ""_au(long double au)
 {
     return AUtoKilometers(au);
 }
-constexpr long double operator ""_ly(long double ly)
+
+consteval long double operator ""_ly(long double ly)
 {
     return lightYearsToKilometers(ly);
 }
-constexpr long double operator ""_c(long double n)
+
+consteval long double operator ""_c(long double n)
 {
     return speedOfLight * n;
 }

@@ -230,7 +230,7 @@ template<typename T> bool planeCircleIntersection(const Eigen::Matrix<T, 3, 1>& 
 }
 } // namespace celestia::math
 
-constexpr long double operator ""_deg(long double deg)
+consteval long double operator ""_deg(long double deg)
 {
     return celestia::math::degToRad(deg);
 }
