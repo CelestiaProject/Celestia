@@ -16,101 +16,6 @@
 #include <cstdint>
 #include <type_traits>
 
-#if defined(__has_builtin)
-#  if __has_builtin(__builtin_bit_cast)
-#    define HAVE_BUILTIN_BIT_CAST 1
-#  endif
-#elif defined(__clang__)
-#  if __clang_major__ >= 9
-#    define HAVE_BUILTIN_BIT_CAST 1
-#  endif
-#  define HAVE_BUILTIN_MEMCPY 1
-#elif defined(__GNUC__)
-#  if __GNUC__ >= 11
-#    define HAVE_BUILTIN_BIT_CAST 1
-#  endif
-#  define HAVE_BUILTIN_MEMCPY 1
-#endif
-
-#if !defined(HAVE_BUILTIN_BIT_CAST) && !defined(HAVE_BUILTIN_MEMCPY)
-#include <cstring> // memcpy
-#endif
-
-/**
- * std::endian implementation
- */
-namespace celestia::compat
-{
-
-#if __cpp_lib_endian
-
-using std::endian;
-
-#else
-
-enum class endian
-{
-#if defined(_MSC_VER) && !defined(__clang__)
-    little = 1234,
-    big    = 4321,
-    native = little
-#else
-    little = __ORDER_LITTLE_ENDIAN__,
-    big    = __ORDER_BIG_ENDIAN__,
-    native = __BYTE_ORDER__
-#endif
-};
-
-#endif // __cpp_lib_endian
-
-} // namespace celestia::compat
-
-/**
- *  std::bit_cast implementation
- */
-namespace celestia::compat
-{
-
-#if __cpp_lib_bit_cast
-
-using std::bit_cast;
-
-#else
-
-template<typename To, typename From,
-         std::enable_if_t<std::conjunction_v<std::bool_constant<sizeof(To) == sizeof(From)>,
-                                             std::is_trivially_copyable<To>,
-                                             std::is_trivially_copyable<From>>,
-                          bool> = false>
-[[nodiscard]]
-#if defined(HAVE_BUILTIN_BIT_CAST) || defined(HAVE_BUILTIN_MEMCPY)
-constexpr
-#else
-inline
-#endif
-To bit_cast(const From src) noexcept
-{
-#ifdef HAVE_BUILTIN_BIT_CAST
-    return __builtin_bit_cast(To, src);
-#else
-    static_assert(std::is_trivially_constructible_v<To>,
-        "This implementation additionally requires "
-        "destination type to be trivially constructible");
-
-    To dst;
-#ifdef HAVE_BUILTIN_MEMCPY
-    __builtin_memcpy(&dst, &src, sizeof(To));
-#else
-    std::memcpy(&dst, &src, sizeof(To));
-#endif
-    return dst;
-#endif
-}
-
-#endif // __cpp_lib_bit_cast
-
-} // namespace celestia::compat
-
 /**
  * std::byteswap implementation
  */
@@ -126,7 +31,8 @@ using std::byteswap;
 namespace impl
 {
 
-constexpr std::uint16_t bswap_16 (std::uint16_t val) noexcept
+constexpr std::uint16_t
+bswap_16 (std::uint16_t val) noexcept
 {
 #ifdef  __GNUC__
     return __builtin_bswap16(val);
@@ -135,7 +41,8 @@ constexpr std::uint16_t bswap_16 (std::uint16_t val) noexcept
 #endif
 }
 
-constexpr std::uint32_t bswap_32(std::uint32_t val) noexcept
+constexpr std::uint32_t
+bswap_32(std::uint32_t val) noexcept
 {
 #ifdef  __GNUC__
     return __builtin_bswap32(val);
@@ -145,7 +52,8 @@ constexpr std::uint32_t bswap_32(std::uint32_t val) noexcept
 #endif
 }
 
-constexpr std::uint64_t bswap_64(std::uint64_t val) noexcept
+constexpr std::uint64_t
+bswap_64(std::uint64_t val) noexcept
 {
 #ifdef  __GNUC__
     return __builtin_bswap64(val);
@@ -163,7 +71,7 @@ constexpr std::uint64_t bswap_64(std::uint64_t val) noexcept
 
 } // namespace
 
-template<typename T, std::enable_if_t<std::is_integral_v<T>, bool> = false>
+template<std::integral T>
 [[nodiscard]] constexpr T byteswap(T n) noexcept
 {
     if constexpr (sizeof(T) == 1)

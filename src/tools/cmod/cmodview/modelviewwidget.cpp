@@ -250,7 +250,8 @@ setUniformValue(const GLProgram& program, const char* name, float value)
         glUniform1f(location, value);
 }
 
-template<typename T, std::enable_if_t<std::is_same_v<typename T::Scalar, float>, int> = 0>
+template<typename T>
+    requires std::is_same_v<typename T::Scalar, float>
 void
 setUniformValue(const GLProgram& program, const char* name, const T& values)
 {

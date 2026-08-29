@@ -133,10 +133,9 @@ translate(T x, T y, T z)
     return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
 }
 
-template <typename T,
-          typename U,
-          std::enable_if_t<std::is_same_v<typename T::Scalar, typename U::Scalar> &&
-                           std::is_floating_point_v<typename T::Scalar>, bool> = true>
+template <typename T, typename U>
+    requires (std::is_same_v<typename T::Scalar, typename U::Scalar> &&
+              std::is_floating_point_v<typename T::Scalar>)
 inline auto
 mix(const T &x, const U &y, typename T::Scalar a)
 {

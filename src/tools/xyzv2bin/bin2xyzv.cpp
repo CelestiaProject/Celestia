@@ -1,4 +1,5 @@
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
@@ -10,7 +11,6 @@
 #include <fmt/format.h>
 
 #include <celephem/xyzvbinary.h>
-#include <celcompat/bit.h>
 
 #define _(s) (s)
 
@@ -44,10 +44,10 @@ static bool binaryToText(const std::string& infilename, const std::string& outfi
 
         decltype(XYZVBinaryHeader::byteOrder) byteOrder;
         std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-        if (byteOrder != static_cast<decltype(byteOrder)>(celestia::compat::endian::native))
+        if (byteOrder != static_cast<decltype(byteOrder)>(std::endian::native))
         {
             fmt::print(stderr, _("Unsupported byte order {}, expected {}.\n"),
-                       byteOrder, static_cast<int>(celestia::compat::endian::native));
+                       byteOrder, static_cast<int>(std::endian::native));
             return false;
         }
 

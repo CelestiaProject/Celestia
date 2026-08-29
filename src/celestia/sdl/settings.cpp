@@ -9,6 +9,7 @@
 
 #include "settings.h"
 
+#include <concepts>
 #include <cstddef>
 #include <cstring>
 #include <fstream>
@@ -33,7 +34,7 @@ namespace celestia::sdl
 namespace
 {
 
-template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+template<std::integral T>
 bool
 readInt(std::string_view src, T& value)
 {
@@ -46,7 +47,8 @@ readInt(std::string_view src, T& value)
     return true;
 }
 
-template<typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+template<typename T>
+    requires std::is_enum_v<T>
 bool
 readFlagsEnum(std::string_view src, T& value)
 {
@@ -58,7 +60,8 @@ readFlagsEnum(std::string_view src, T& value)
     return true;
 }
 
-template<typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+template<typename T>
+    requires std::is_enum_v<T>
 void
 printEnumInt(std::ostream& os, T value)
 {

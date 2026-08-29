@@ -10,24 +10,28 @@
 
 #pragma once
 
+#include <bit>
+#include <concepts>
+#include <cstdint>
+
 #include <celcompat/bit.h>
 
 namespace impl
 {
 
-template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = false>
+template <std::integral T>
 constexpr T LE_TO_CPU(T val) noexcept
 {
-    if constexpr (celestia::compat::endian::native == celestia::compat::endian::big)
+    if constexpr (std::endian::native == std::endian::big)
         return celestia::compat::byteswap(val);
     else
         return val;
 }
 
-template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = false>
+template <std::integral T>
 constexpr T BE_TO_CPU(T val) noexcept
 {
-    if constexpr (celestia::compat::endian::native == celestia::compat::endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return celestia::compat::byteswap(val);
     else
         return val;
@@ -37,7 +41,7 @@ constexpr T BE_TO_CPU(T val) noexcept
 
 #define LE_TO_CPU_INT16(ret, val) (ret = impl::LE_TO_CPU(val))
 #define LE_TO_CPU_INT32(ret, val) (ret = impl::LE_TO_CPU(val))
-#define LE_TO_CPU_FLOAT(ret, val) (ret = celestia::compat::bit_cast<float>(impl::LE_TO_CPU(celestia::compat::bit_cast<std::uint32_t>(val))))
+#define LE_TO_CPU_FLOAT(ret, val) (ret = std::bit_cast<float>(impl::LE_TO_CPU(std::bit_cast<std::uint32_t>(val))))
 #define BE_TO_CPU_INT16(ret, val) (ret = impl::BE_TO_CPU(val))
 #define BE_TO_CPU_INT32(ret, val) (ret = impl::BE_TO_CPU(val))
-#define BE_TO_CPU_FLOAT(ret, val) (ret = celestia::compat::bit_cast<float>(impl::BE_TO_CPU(celestia::compat::bit_cast<std::uint32_t>(val))))
+#define BE_TO_CPU_FLOAT(ret, val) (ret = std::bit_cast<float>(impl::BE_TO_CPU(std::bit_cast<std::uint32_t>(val))))

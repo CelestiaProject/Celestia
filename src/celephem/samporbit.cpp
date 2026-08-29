@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cassert>
 #include <cstdint>
 #include <cstring>
@@ -29,7 +30,6 @@
 #include <Eigen/Core>
 
 #include <celastro/date.h>
-#include <celcompat/bit.h>
 #include <celmath/mathlib.h>
 #include <celutil/filetype.h>
 #include <celutil/fsutils.h>
@@ -581,10 +581,10 @@ ParseXYZVBinaryHeader(std::istream& in, const std::filesystem::path& filename)
 
     decltype(XYZVBinaryHeader::byteOrder) byteOrder;
     std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-    if (byteOrder != static_cast<decltype(byteOrder)>(celestia::compat::endian::native))
+    if (byteOrder != static_cast<decltype(byteOrder)>(std::endian::native))
     {
         GetLogger()->error(_("Unsupported byte order {}, expected {} in {}.\n"),
-                           byteOrder, static_cast<int>(celestia::compat::endian::native), filename);
+                           byteOrder, static_cast<int>(std::endian::native), filename);
         return false;
     }
 

@@ -13,9 +13,9 @@
 #include <config.h>
 
 #include <cmath>
+#include <concepts>
 #include <cstdint>
 #include <optional>
-#include <type_traits>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -66,45 +66,39 @@ constexpr inline float LOWEST_IRRADIATION_SRGB = 1.0f / (255.0f * 12.92f);
 // used to determine when to switch from AppMag to AbsMag
 constexpr inline double LY_PER_10PARSEC = 32.615637771674336;
 
-namespace detail
-{
-template<typename T>
-using enable_if_fp = std::enable_if_t<std::is_floating_point_v<T>, T>;
-}
-
 // calculated in Sollya with a precision of 128 bits
 // =648000*149597870700/(9460730472580800*pi)
-template<typename T>
-constexpr inline auto LY_PER_PARSEC = detail::enable_if_fp<T>(3.26156377716743356213863970704550837409L);
+template<std::floating_point T>
+constexpr inline auto LY_PER_PARSEC = T(3.26156377716743356213863970704550837409L);
 
-template<typename T>
-constexpr inline auto KM_PER_LY = detail::enable_if_fp<T>(9460730472580.8L);
+template<std::floating_point T>
+constexpr inline auto KM_PER_LY = T(9460730472580.8L);
 
-template<typename T>
-constexpr inline auto KM_PER_AU = detail::enable_if_fp<T>(149597870.7L);
+template<std::floating_point T>
+constexpr inline auto KM_PER_AU = T(149597870.7L);
 
 // calculated in Sollya with a precision of 128 bits
 // =9460730472580800/149597870700
-template<typename T>
-constexpr inline auto AU_PER_LY = detail::enable_if_fp<T>(63241.077084266280268653583182317313558L);
+template<std::floating_point T>
+constexpr inline auto AU_PER_LY = T(63241.077084266280268653583182317313558L);
 
 // calculated in Sollya with a precision of 128 bits
 // =648000*149597870.700/pi
-template<typename T>
-constexpr inline auto KM_PER_PARSEC = detail::enable_if_fp<T>(3.08567758149136727891393795779647161073e13L);
+template<std::floating_point T>
+constexpr inline auto KM_PER_PARSEC = T(3.08567758149136727891393795779647161073e13L);
 
 constexpr inline double MINUTES_PER_DEG = 60.0;
 constexpr inline double SECONDS_PER_DEG = 3600.0;
 constexpr inline double DEG_PER_HRA     = 15.0;
 
-template<typename T>
-constexpr inline auto EARTH_RADIUS = detail::enable_if_fp<T>(6378.1L); // IAU 2015 Resolution B3
+template<std::floating_point T>
+constexpr inline auto EARTH_RADIUS = T(6378.1L); // IAU 2015 Resolution B3
 
-template<typename T>
-constexpr inline auto JUPITER_RADIUS = detail::enable_if_fp<T>(71492.0L); // IAU 2015 Resolution B3
+template<std::floating_point T>
+constexpr inline auto JUPITER_RADIUS = T(71492.0L); // IAU 2015 Resolution B3
 
-template<typename T>
-constexpr inline auto SOLAR_RADIUS = detail::enable_if_fp<T>(695700.0L); // IAU 2015 Resolution B3
+template<std::floating_point T>
+constexpr inline auto SOLAR_RADIUS = T(695700.0L); // IAU 2015 Resolution B3
 
 float reflectedLuminosity(float sunLuminosity, float distanceFromSun, float objRadius);
 
@@ -120,7 +114,7 @@ float irradianceToMag(float irradiance);
 float faintestMagToExposure(float faintestMag);
 float exposureToFaintestMag(float exposure);
 
-template<class T>
+template<std::floating_point T>
 CELESTIA_CMATH_CONSTEXPR T
 distanceModulus(T lyrs)
 {
@@ -128,7 +122,7 @@ distanceModulus(T lyrs)
     return T(5) * log10(lyrs / LY_PER_PARSEC<T>) - T(5);
 }
 
-template<class T>
+template<std::floating_point T>
 CELESTIA_CMATH_CONSTEXPR T
 absToAppMag(T absMag, T lyrs)
 {
@@ -136,7 +130,7 @@ absToAppMag(T absMag, T lyrs)
     return absMag + distanceModulus(lyrs);
 }
 
-template<class T>
+template<std::floating_point T>
 CELESTIA_CMATH_CONSTEXPR T
 appToAbsMag(T appMag, T lyrs)
 {
@@ -145,62 +139,86 @@ appToAbsMag(T appMag, T lyrs)
 }
 
 // Distance conversions
-template<class T> constexpr T lightYearsToParsecs(T ly)
+template<std::floating_point T>
+constexpr T
+lightYearsToParsecs(T ly)
 {
     return ly / LY_PER_PARSEC<T>;
 }
 
-template<class T> constexpr T parsecsToLightYears(T pc)
+template<std::floating_point T>
+constexpr T
+parsecsToLightYears(T pc)
 {
     return pc * LY_PER_PARSEC<T>;
 }
 
-template<class T> constexpr T lightYearsToKilometers(T ly)
+template<std::floating_point T>
+constexpr T
+lightYearsToKilometers(T ly)
 {
     return ly * KM_PER_LY<T>;
 }
 
-template<class T> constexpr T kilometersToLightYears(T km)
+template<std::floating_point T>
+constexpr T
+kilometersToLightYears(T km)
 {
     return km / KM_PER_LY<T>;
 }
 
-template<class T> constexpr T lightYearsToAU(T ly)
+template<std::floating_point T>
+constexpr T
+lightYearsToAU(T ly)
 {
     return ly * AU_PER_LY<T>;
 }
 
-template<class T> constexpr T AUtoLightYears(T au)
+template<std::floating_point T>
+constexpr T
+AUtoLightYears(T au)
 {
     return au / AU_PER_LY<T>;
 }
 
-template<class T> constexpr T AUtoKilometers(T au)
+template<std::floating_point T>
+constexpr T
+AUtoKilometers(T au)
 {
     return au * KM_PER_AU<T>;
 }
 
-template<class T> constexpr T kilometersToAU(T km)
+template<std::floating_point T>
+constexpr T
+kilometersToAU(T km)
 {
     return km / KM_PER_AU<T>;
 }
 
-template<class T> constexpr T microLightYearsToKilometers(T ly)
+template<std::floating_point T>
+constexpr T
+microLightYearsToKilometers(T ly)
 {
     return ly * (KM_PER_LY<T> * T(1e-6));
 }
 
-template<class T> constexpr T kilometersToMicroLightYears(T km)
+template<std::floating_point T>
+constexpr T
+kilometersToMicroLightYears(T km)
 {
     return km / (KM_PER_LY<T> * T(1e-6));
 }
 
-template<class T> constexpr T microLightYearsToAU(T ly)
+template<std::floating_point T>
+constexpr T
+microLightYearsToAU(T ly)
 {
     return ly * (AU_PER_LY<T> * T(1e-6));
 }
 
-template<class T> constexpr T AUtoMicroLightYears(T au)
+template<std::floating_point T>
+constexpr T
+AUtoMicroLightYears(T au)
 {
     return au / (AU_PER_LY<T> * T(1e-6));
 }

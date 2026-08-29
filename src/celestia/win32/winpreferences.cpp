@@ -14,6 +14,7 @@
 
 #include "winpreferences.h"
 
+#include <concepts>
 #include <string_view>
 #include <type_traits>
 
@@ -41,8 +42,8 @@ namespace
 
 constexpr wchar_t CelestiaRegKey[] = L"Software\\celestiaproject.space\\Celestia1.7-dev";
 
-template<typename T,
-         std::enable_if_t<std::is_integral_v<T> && sizeof(T) == sizeof(DWORD), int> = 0>
+template<std::integral T>
+    requires (sizeof(T) == sizeof(DWORD))
 bool
 GetRegistryInt(HKEY key, LPCTSTR value, T& intVal)
 {
@@ -59,8 +60,8 @@ GetRegistryInt(HKEY key, LPCTSTR value, T& intVal)
     return true;
 }
 
-template<typename T,
-         std::enable_if_t<std::is_integral_v<T> && sizeof(T) == sizeof(DWORD64), int> = 0>
+template<std::integral T>
+    requires (sizeof(T) == sizeof(DWORD64))
 bool
 GetRegistryInt(HKEY key, LPCTSTR value, T& intVal)
 {
@@ -78,7 +79,8 @@ GetRegistryInt(HKEY key, LPCTSTR value, T& intVal)
     return true;
 }
 
-template<typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+template<typename T>
+    requires std::is_enum_v<T>
 bool
 GetRegistryEnum(HKEY key, LPCTSTR value, T& enumVal)
 {
@@ -91,7 +93,8 @@ GetRegistryEnum(HKEY key, LPCTSTR value, T& enumVal)
     return false;
 }
 
-template<typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+template<typename T>
+    requires std::is_enum_v<T>
 bool
 GetRegistryEnum(HKEY key, LPCTSTR value, T& enumVal, T minValue, T maxValue)
 {
@@ -107,7 +110,7 @@ GetRegistryEnum(HKEY key, LPCTSTR value, T& enumVal, T minValue, T maxValue)
     return false;
 }
 
-template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+template<std::floating_point T>
 bool
 GetRegistryFloat(HKEY key, LPCTSTR value, T& floatVal)
 {
@@ -150,8 +153,8 @@ GetRegistryString(HKEY key, LPCTSTR value, std::string& strVal)
     return AppendWideToUTF8(std::wstring_view(buffer.data(), size), strVal) > 0;
 }
 
-template<typename T,
-         std::enable_if_t<std::is_integral_v<T> && sizeof(T) == sizeof(DWORD), int> = 0>
+template<std::integral T>
+    requires (sizeof(T) == sizeof(DWORD))
 bool
 SetRegistryInt(HKEY key, LPCTSTR value, T intVal)
 {
@@ -161,8 +164,8 @@ SetRegistryInt(HKEY key, LPCTSTR value, T intVal)
     return err == ERROR_SUCCESS;
 }
 
-template<typename T,
-         std::enable_if_t<std::is_integral_v<T> && sizeof(T) == sizeof(DWORD64), int> = 0>
+template<std::integral T>
+    requires (sizeof(T) == sizeof(DWORD64))
 bool
 SetRegistryInt(HKEY key, LPCTSTR value, T intVal)
 {
@@ -172,8 +175,8 @@ SetRegistryInt(HKEY key, LPCTSTR value, T intVal)
     return err == ERROR_SUCCESS;
 }
 
-template<typename T,
-         std::enable_if_t<std::is_enum_v<T>, int> = 0>
+template<typename T>
+    requires std::is_enum_v<T>
 bool
 SetRegistryEnum(HKEY key, LPCTSTR value, T enumVal)
 {
@@ -194,7 +197,7 @@ SetRegistryString(HKEY key, LPCTSTR value, std::string_view strVal)
     return err == ERROR_SUCCESS;
 }
 
-template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+template<std::floating_point T>
 bool
 SetRegistryFloat(HKEY key, LPCTSTR value, T floatVal)
 {

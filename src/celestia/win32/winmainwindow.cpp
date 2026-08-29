@@ -102,7 +102,8 @@ setMenuItemCheck(HMENU menuBar, int menuItem, bool checked)
 
 // Version of the function from wstringutils.h with smaller intermediate buffer
 // suitable for char event processing
-template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
+template<typename T>
+    requires std::is_same_v<typename T::value_type, char>
 void
 AppendTCharCodeToUTF8(wchar_t* tch, int nch, T& destination)
 {

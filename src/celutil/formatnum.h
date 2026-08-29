@@ -12,12 +12,12 @@
 #pragma once
 
 #include <cassert>
+#include <concepts>
 #include <iterator>
 #ifndef USE_ICU
 #include <locale>
 #endif
 #include <string_view>
-#include <type_traits>
 
 #include <fmt/format.h>
 
@@ -69,7 +69,7 @@ public:
     explicit NumberFormatter(const std::locale& loc);
 #endif
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     inline FormattedFloat<T> format(T value,
                                     unsigned int precision,
                                     NumberFormat format = NumberFormat::GroupThousands) const

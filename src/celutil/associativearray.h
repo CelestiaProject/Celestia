@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstddef>
 #include <filesystem>
 #include <functional>
@@ -48,7 +49,8 @@ public:
     const Value* getValue(std::string_view) const;
     void addValue(std::string&&, Value&&);
 
-    template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
+    template<typename T>
+        requires std::is_arithmetic_v<T>
     std::optional<T> getNumber(std::string_view key) const
     {
         auto number = getNumberImpl(key);
@@ -62,7 +64,7 @@ public:
     std::optional<std::filesystem::path> getPath(std::string_view) const;
     std::optional<bool> getBoolean(std::string_view) const;
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<Eigen::Matrix<T, 3, 1>> getVector3(std::string_view key) const
     {
         auto vec3 = getVector3Impl(key);
@@ -72,7 +74,7 @@ public:
             return convertMatrix<T>(vec3);
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<Eigen::Matrix<T, 4, 1>> getVector4(std::string_view key) const
     {
         auto vec4 = getVector4Impl(key);
@@ -86,7 +88,7 @@ public:
 
     std::optional<Color> getColor(std::string_view) const;
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<T> getAngle(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
         auto angle = getAngleImpl(key, outputScale, defaultScale);
@@ -96,7 +98,7 @@ public:
             return convertNumeric<T>(angle);
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<T> getLength(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
         auto length = getLengthImpl(key, outputScale, defaultScale);
@@ -106,7 +108,7 @@ public:
             return convertNumeric<T>(length);
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<T> getTime(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
         auto time = getTimeImpl(key, outputScale, defaultScale);
@@ -116,7 +118,7 @@ public:
             return convertNumeric<T>(time);
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<T> getMass(std::string_view key, double outputScale = 1.0, double defaultScale = 0.0) const
     {
         auto mass = getMassImpl(key, outputScale, defaultScale);
@@ -126,7 +128,7 @@ public:
             return convertNumeric<T>(mass);
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     std::optional<Eigen::Matrix<T, 3, 1>> getLengthVector(std::string_view key,
                                                           double outputScale = 1.0,
                                                           double defaultScale = 0.0) const
@@ -160,7 +162,8 @@ private:
 
     std::optional<Eigen::Vector3d> getLengthVectorImpl(std::string_view, double, double) const;
 
-    template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
+    template<typename T>
+        requires std::is_arithmetic_v<T>
     inline static std::optional<T>
     convertNumeric(const std::optional<double>& maybeDouble)
     {
@@ -169,8 +172,7 @@ private:
             : std::nullopt;
     }
 
-    template<typename T, int X, int Y,
-             std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T, int X, int Y>
     inline static std::optional<Eigen::Matrix<T, X, Y>>
     convertMatrix(const std::optional<Eigen::Matrix<double, X, Y>>& maybeMatrix)
     {
@@ -263,10 +265,9 @@ public:
     {
     }
 
-    // C++ likes implicit conversions to bool, so use template magic
+    // C++ likes implicit conversions to bool, so use concepts magic
     // to restrict this constructor to exactly bool
-    template<typename T, std::enable_if_t<std::is_same_v<T, bool>, int> = 0>
-    explicit Value(T b) :
+    explicit Value(std::same_as<bool> auto b) :
         type(ValueType::BooleanType),
         doubleData(b ? 1.0 : 0.0)
     {

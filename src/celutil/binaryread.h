@@ -1,20 +1,20 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstring>
 #include <istream>
 #include <type_traits>
 #include <utility>
 
-#include <celcompat/bit.h>
-
 namespace celestia::util
 {
 
 /*! Read a value stored in machine-native byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readNative(std::istream& in, T& value)
 {
@@ -23,7 +23,8 @@ readNative(std::istream& in, T& value)
 
 /*! Read a value stored in machine-native byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryNative(const void* src) //NOSONAR
 {
@@ -34,7 +35,8 @@ fromMemoryNative(const void* src) //NOSONAR
 
 /*! Read a value stored opposite to machine-native byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readReversed(std::istream& in, T& value)
 {
@@ -55,7 +57,8 @@ readReversed(std::istream& in, T& value)
 
 /*! Read a value stored opposite to machine-native byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryReversed(const void* src) //NOSONAR
 {
@@ -75,12 +78,12 @@ fromMemoryReversed(const void* src) //NOSONAR
 
 /*! Read a value stored in little-endian byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readLE(std::istream& in, T& value)
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return readNative(in, value);
     else
         return readReversed(in, value);
@@ -88,12 +91,12 @@ readLE(std::istream& in, T& value)
 
 /*! Read a value stored in little-endian byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryLE(const void* src) //NOSONAR
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return fromMemoryNative<T>(src);
     else
         return fromMemoryReversed<T>(src);
@@ -101,12 +104,12 @@ fromMemoryLE(const void* src) //NOSONAR
 
 /*! Read a value stored in big-endian byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readBE(std::istream& in, T& value)
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return readReversed(in, value);
     else
         return readNative(in, value);
@@ -114,12 +117,12 @@ readBE(std::istream& in, T& value)
 
 /*! Read a value stored in big-endian byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryBE(const void* src) //NOSONAR
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return fromMemoryReversed<T>(src);
     else
         return fromMemoryNative<T>(src);

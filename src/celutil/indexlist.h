@@ -8,26 +8,21 @@
 // of the License, or (at your option) any later version.
 
 #include <cassert>
+#include <concepts>
 #include <limits>
 #include <type_traits>
 #include <vector>
 
 namespace celestia::util
 {
-template <
-    typename T,
-    std::enable_if_t<std::is_integral_v<T>, bool> = true
->
+template<std::integral T>
 constexpr T
 IndexListCapacity(T nSlices, T nPoints)
 {
     return (nSlices * 2 + 4) * (nPoints - 1) - 2;
 }
 
-template <
-    typename T,
-    std::enable_if_t<std::is_integral_v<T>, bool> = true
->
+template <std::integral T>
 void
 BuildIndexList(T I, T J, std::vector<T> &out)
 {
@@ -56,10 +51,7 @@ BuildIndexList(T I, T J, std::vector<T> &out)
     }
 }
 
-template <
-    typename T,
-    std::enable_if_t<std::is_integral_v<T>, bool> = true
->
+template<std::integral T>
 void
 BuildIndexList(T I, T J, T* out)
 {

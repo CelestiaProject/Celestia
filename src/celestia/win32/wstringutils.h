@@ -24,7 +24,8 @@ namespace celestia::win32
 {
 
 // UTF-8 to wchar_t, growable
-template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, wchar_t>, int> = 0>
+template<typename T>
+    requires std::is_same_v<typename T::value_type, wchar_t>
 int
 AppendUTF8ToWide(std::string_view source, T& destination)
 {
@@ -62,7 +63,8 @@ UTF8ToWideString(std::string_view str)
     return result;
 }
 
-template<typename T, std::enable_if_t<std::is_same_v<typename T::value_type, char>, int> = 0>
+template<typename T>
+    requires std::is_same_v<typename T::value_type, char>
 int
 AppendWideToUTF8(std::wstring_view source, T& destination)
 {

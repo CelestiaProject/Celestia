@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <type_traits>
+#include <concepts>
 
 #include <celcompat/charconv.h>
 
@@ -45,7 +45,7 @@ fill_buffer(fmt::basic_memory_buffer<char, N>& buffer, const wchar_t* first, con
 
 }
 
-template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+template<std::integral T>
 compat::from_chars_result
 from_wchars(const wchar_t* first, const wchar_t* last, T& value, int base = 10)
 {

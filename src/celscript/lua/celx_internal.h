@@ -215,12 +215,14 @@ public:
         celx.push(iterator<T>, 2);
         return 1;
     }
-    template<typename T, typename C, std::enable_if_t<!std::is_pointer_v<C>, int> = 0>
+    template<typename T, typename C>
+        requires (!std::is_pointer_v<C>)
     int pushIterable(const C& a)
     {
         return pushIterable<T>(std::begin(a), std::end(a));
     }
-    template<typename T, typename C, std::enable_if_t<!std::is_pointer_v<C>, int> = 0>
+    template<typename T, typename C>
+        requires (!std::is_pointer_v<C>)
     int pushIterable(const C *a)
     {
         if (a == nullptr)

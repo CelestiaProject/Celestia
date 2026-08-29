@@ -15,9 +15,9 @@
 #include "config.h"
 
 #include <algorithm>
+#include <concepts>
 #include <csetjmp>
 #include <string>
-#include <type_traits>
 #include <utility>
 
 #include <celengine/glsupport.h>
@@ -176,13 +176,13 @@ struct AboutDialog::LibraryInfo
 {
     LibraryInfo(std::string&&, std::string&&, std::string&&);
 
-    template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+    template<std::integral T>
     LibraryInfo(std::string&& _name, std::string&& _license, T major, T minor) :
         LibraryInfo(std::move(_name), std::move(_license), fmt::format("{}.{}", major, minor))
     {
     }
 
-    template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+    template<std::integral T>
     LibraryInfo(std::string&& _name, std::string&& _license, T major, T minor, T patch) :
         LibraryInfo(std::move(_name), std::move(_license), fmt::format("{}.{}.{}", major, minor, patch))
     {
