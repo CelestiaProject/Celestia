@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cassert>
 #include <cstring>
 #include <iterator>
@@ -567,8 +568,7 @@ Mesh::getBoundingBox() const
             float fv[3];
             std::memcpy(fv, vdata, sizeof(float) * 3);
             Eigen::Vector3f center = Eigen::Map<Eigen::Vector3f>(fv);
-            float pointSize;
-            std::memcpy(&pointSize, vdata + pointSizeOffset, sizeof(float));
+            auto pointSize = std::bit_cast<float>(vdata[pointSizeOffset]);
             Eigen::Vector3f offsetVec = Eigen::Vector3f::Constant(pointSize);
 
             Eigen::AlignedBox<float, 3> pointbox(center - offsetVec, center + offsetVec);
@@ -614,10 +614,7 @@ Mesh::transform(const Eigen::Vector3f& translation, float scale)
         vdata = vertices.data() + vertexDesc.getAttribute(VertexAttributeSemantic::PointSize).offsetWords;
         for (i = 0; i < nVertices; i++, vdata += stride)
         {
-            float f;
-            std::memcpy(&f, vdata, sizeof(float));
-            f *= scale;
-            std::memcpy(vdata, &f, sizeof(float));
+            *vdata = std::bit_cast<cmod::VWord>(std::bit_cast<float>(*vdata) * scale);
         }
     }
 }
