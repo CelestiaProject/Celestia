@@ -12,6 +12,7 @@
 #pragma once
 
 #include <filesystem>
+#include <iterator>
 #include <string>
 
 #include <Eigen/Core>
@@ -36,14 +37,15 @@ class SpiceOrbit : public CachingOrbit
                double _boundingRadius);
     ~SpiceOrbit() override = default;
 
-    template<typename It>
+    template<std::forward_iterator It>
     bool init(const std::filesystem::path& path, It begin, It end)
     {
         // Load required kernel files
         while (begin != end)
         {
-            if (!loadRequiredKernel(path, *(begin++)))
+            if (!loadRequiredKernel(path, *begin))
                 return false;
+            ++begin;
         }
         return init();
     }

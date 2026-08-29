@@ -200,7 +200,7 @@ public:
     {
         return it;
     }
-    template<typename T, typename It>
+    template<typename T, std::forward_iterator It>
     int pushIterable(It begin, It end)
     {
         CelxLua celx(m_lua);
