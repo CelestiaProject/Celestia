@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -24,7 +25,6 @@
 
 #include <celutil/color.h>
 #include <celutil/flag.h>
-#include <celutil/ranges.h>
 #include <celutil/texhandle.h>
 #include <celutil/utf8.h>
 #include "meshmanager.h"
@@ -422,13 +422,17 @@ public:
 
     auto getAlternateSurfaceNames(const Body* body) const
     {
-        using range_type = decltype(celestia::util::keysView(std::declval<AltSurfaceTable>()));
-        if (!celestia::util::is_set(body->features, BodyFeatures::AlternateSurfaces))
-            return std::optional<range_type>();
+        const AltSurfaceTable* altSurfaces = nullptr;
+        if (celestia::util::is_set(body->features, BodyFeatures::AlternateSurfaces))
+        {
+            auto it = alternateSurfaces.find(body);
+            assert(it != alternateSurfaces.end());
+            altSurfaces = it->second.get();
+        }
 
-        auto it = alternateSurfaces.find(body);
-        assert(it != alternateSurfaces.end());
-        return std::make_optional(celestia::util::keysView(*it->second));
+        return altSurfaces
+            ? std::make_optional(*altSurfaces | std::views::keys)
+            : std::nullopt;
     }
 
     void addReferenceMark(Body*, std::unique_ptr<ReferenceMark>&&);
@@ -455,13 +459,17 @@ public:
 
     auto getLocations(const Body* body) const
     {
-        using range_type = decltype(celestia::util::pointerView(std::declval<BodyLocations>().locations));
-        if (!celestia::util::is_set(body->features, BodyFeatures::Locations))
-            return std::optional<range_type>();
+        const BodyLocations* bodyLocations = nullptr;
+        if (celestia::util::is_set(body->features, BodyFeatures::Locations))
+        {
+            auto it = locations.find(body);
+            assert(it != locations.end());
+            bodyLocations = &it->second;
+        }
 
-        auto it = locations.find(body);
-        assert(it != locations.end());
-        return std::make_optional(celestia::util::pointerView(it->second.locations));
+        return bodyLocations
+            ? std::make_optional(bodyLocations->locations | std::views::transform([](const auto& loc) { return loc.get(); }))
+            : std::nullopt;
     }
 
     bool getOrbitColor(const Body*, Color&) const;
