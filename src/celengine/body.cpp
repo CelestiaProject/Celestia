@@ -1466,7 +1466,7 @@ void
 BodyFeaturesManager::setOrbitColorOverridden(Body* body, bool overridden)
 {
     // don't allow setting this value unless there is an override color
-    if (overridden && orbitColors.find(body) == orbitColors.end())
+    if (overridden && !orbitColors.contains(body))
         overridden = false;
     util::set_or_unset(body->features, BodyFeatures::OrbitColor, overridden);
 }

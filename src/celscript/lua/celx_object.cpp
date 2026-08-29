@@ -284,19 +284,10 @@ static int object_setorbitvisibility(lua_State* l)
     key = lua_tostring(l, 2);
 
     auto &OrbitVisibilityMap = celx.appCore(AllErrors)->scriptMaps().OrbitVisibilityMap;
-    if (OrbitVisibilityMap.count(key) == 0)
-    {
+    if (auto it = OrbitVisibilityMap.find(key); it == OrbitVisibilityMap.end())
         GetLogger()->warn("Unknown visibility policy: {}\n", key);
-    }
-    else
-    {
-        auto visibility = static_cast<Body::VisibilityPolicy>(OrbitVisibilityMap[key]);
-
-        if (sel->body() != nullptr)
-        {
-            sel->body()->setOrbitVisibility(visibility);
-        }
-    }
+    else if (sel->body() != nullptr)
+        sel->body()->setOrbitVisibility(it->second);
 
     return 0;
 }

@@ -18,8 +18,6 @@ namespace celestia::util
 
 namespace
 {
-constexpr std::string_view httpPrefix = "http://"sv; //NOSONAR
-constexpr std::string_view httpsPrefix = "https://"sv;
 #ifdef _WIN32
 constexpr std::string_view filePrefix = "file:///"sv;
 constexpr std::wstring_view extPrefix = L"\\\\?\\"sv;
@@ -29,11 +27,8 @@ constexpr std::wstring_view extPrefix = L"\\\\?\\"sv;
 std::string
 BuildInfoURL(std::string_view infoUrl, const std::filesystem::path &resPath)
 {
-    if ((infoUrl.size() >= httpPrefix.size() && infoUrl.substr(0, httpPrefix.size()) == httpPrefix) ||
-        (infoUrl.size() >= httpsPrefix.size() && infoUrl.substr(0, httpsPrefix.size()) == httpsPrefix))
-    {
+    if (infoUrl.starts_with("http://"sv) || infoUrl.starts_with("https://"sv))
         return std::string{ infoUrl };
-    }
 
     std::error_code ec;
     std::filesystem::path canonical = std::filesystem::canonical(resPath / U8Path(infoUrl), ec);
@@ -43,7 +38,7 @@ BuildInfoURL(std::string_view infoUrl, const std::filesystem::path &resPath)
 #ifdef _WIN32
     std::wstring_view canonicalView = canonical.native();
     // Remove extended filepath prefix if any
-    if (canonicalView.size() >= extPrefix.size() && canonicalView.substr(0, extPrefix.size()) == extPrefix)
+    if (canonicalView.starts_with(extPrefix))
         canonicalView = canonicalView.substr(extPrefix.size());
 
     std::string fileUrl{ filePrefix };

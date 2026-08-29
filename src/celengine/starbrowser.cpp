@@ -79,14 +79,13 @@ parentHasPlanets(const SolarSystemCatalog* solarSystems, const Star* star)
 {
     // When searching for visible stars only, also take planets orbiting the
     // parent barycenters into account
-    const auto end = solarSystems->end();
     for (;;)
     {
         star = star->getOrbitBarycenter();
         if (star == nullptr || star->getVisibility())
             return false;
 
-        if (solarSystems->find(star->getIndex()) != end)
+        if (solarSystems->contains(star->getIndex()))
             return true;
     }
 }
@@ -110,7 +109,7 @@ StarFilter::operator()(const Star& star) const
     }
 
     if (util::is_set(m_filter, StarBrowser::Filter::WithPlanets) &&
-        m_solarSystems->find(star.getIndex()) == m_solarSystems->end() &&
+        !m_solarSystems->contains(star.getIndex()) &&
         !(visibleOnly && parentHasPlanets(m_solarSystems, &star)))
     {
         return false;

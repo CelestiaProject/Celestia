@@ -940,7 +940,7 @@ StarDatabaseBuilder::checkStcPosition(const StarDatabaseBuilder::StcHeader& head
     bool hasBarycenter = (barycenterNumber.has_value() && *barycenterNumber != AstroCatalog::InvalidIndex)
                          || (header.disposition == DataDisposition::Modify
                              && !position.has_value()
-                             && barycenters.find(header.catalogNumber) != barycenters.end());
+                             && barycenters.contains(header.catalogNumber));
 
     if (auto newOrbit = CreateOrbit(Selection(), starData, *header.path, true); newOrbit != nullptr)
     {
