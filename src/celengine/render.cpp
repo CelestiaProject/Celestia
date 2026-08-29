@@ -4099,8 +4099,8 @@ void Renderer::buildOrbitLists(const Vector3d& astrocentricObserverPos,
 
         if (body->isVisible() &&
             (body == highlightObject.body() ||
-             orbitVis == Body::AlwaysVisible ||
-             (orbitVis == Body::UseClassVisibility && util::is_set(body->getOrbitClassification(), orbitMask))))
+             orbitVis == Body::VisibilityPolicy::AlwaysVisible ||
+             (orbitVis == Body::VisibilityPolicy::UseClassVisibility && util::is_set(body->getOrbitClassification(), orbitMask))))
         {
             Vector3d orbitOrigin = Vector3d::Zero();
             Selection centerObject = phase->getFrameTree()->getOwner();

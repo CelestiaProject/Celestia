@@ -248,7 +248,7 @@ static int object_orbitvisibility(lua_State* l)
     CelxLua celx(l);
     celx.checkArgs(1, 1, "No arguments expected to object:orbitvisibility");
 
-    Body::VisibilityPolicy visibility = Body::UseClassVisibility;
+    Body::VisibilityPolicy visibility = Body::VisibilityPolicy::UseClassVisibility;
 
     Selection* sel = this_object(l);
     if (sel->body() != nullptr)
@@ -257,9 +257,9 @@ static int object_orbitvisibility(lua_State* l)
     }
 
     const char* s = "normal";
-    if (visibility == Body::AlwaysVisible)
+    if (visibility == Body::VisibilityPolicy::AlwaysVisible)
         s = "always";
-    else if (visibility == Body::NeverVisible)
+    else if (visibility == Body::VisibilityPolicy::NeverVisible)
         s = "never";
 
     lua_pushstring(l, s);

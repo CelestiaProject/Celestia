@@ -5,6 +5,7 @@
 #include <map>
 #include <string_view>
 
+#include <celengine/body.h>
 #include <celengine/renderflags.h>
 
 class Color;
@@ -33,14 +34,14 @@ struct ScriptMaps
     ScriptMaps& operator=(const ScriptMaps&) = delete;
     ScriptMaps& operator=(ScriptMaps&&) = delete;
 
-    ScriptMap<RenderFlags>        RenderFlagMap;
-    ScriptMap<RenderLabels>       LabelFlagMap;
-    ScriptMap<std::uint64_t>      LocationFlagMap;
-    ScriptMap<BodyClassification> BodyTypeMap;
-    ScriptMap<std::uint32_t>      OverlayElementMap;
-    ScriptMap<std::uint32_t>      OrbitVisibilityMap;
-    ScriptMap<Color*>             LineColorMap;
-    ScriptMap<Color*>             LabelColorMap;
+    ScriptMap<RenderFlags>            RenderFlagMap;
+    ScriptMap<RenderLabels>           LabelFlagMap;
+    ScriptMap<std::uint64_t>          LocationFlagMap;
+    ScriptMap<BodyClassification>     BodyTypeMap;
+    ScriptMap<std::uint32_t>          OverlayElementMap;
+    ScriptMap<Body::VisibilityPolicy> OrbitVisibilityMap;
+    ScriptMap<Color*>                 LineColorMap;
+    ScriptMap<Color*>                 LabelColorMap;
 };
 
 } // end namespace celestia::scripts

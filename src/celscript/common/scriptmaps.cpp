@@ -158,11 +158,11 @@ void initOverlayElementMap(ScriptMap<std::uint32_t>& OverlayElementMap)
     OverlayElementMap["Frame"sv]           = static_cast<std::uint32_t>(HudElements::ShowFrame);
 }
 
-void initOrbitVisibilityMap(ScriptMap<std::uint32_t>& OrbitVisibilityMap)
+void initOrbitVisibilityMap(ScriptMap<Body::VisibilityPolicy>& OrbitVisibilityMap)
 {
-    OrbitVisibilityMap["never"sv]          = Body::NeverVisible;
-    OrbitVisibilityMap["normal"sv]         = Body::UseClassVisibility;
-    OrbitVisibilityMap["always"sv]         = Body::AlwaysVisible;
+    OrbitVisibilityMap["never"sv]          = Body::VisibilityPolicy::NeverVisible;
+    OrbitVisibilityMap["normal"sv]         = Body::VisibilityPolicy::UseClassVisibility;
+    OrbitVisibilityMap["always"sv]         = Body::VisibilityPolicy::AlwaysVisible;
 }
 
 void initLabelColorMap(ScriptMap<Color*>& LabelColorMap, engine::RendererColors& colors)

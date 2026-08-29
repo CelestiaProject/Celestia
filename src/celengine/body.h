@@ -196,7 +196,7 @@ public:
      Body(PlanetarySystem*, const std::string& name);
      ~Body();
 
-    enum VisibilityPolicy
+    enum class VisibilityPolicy
     {
         NeverVisible       = 0,
         UseClassVisibility = 1,
@@ -385,7 +385,7 @@ private:
 
     bool visible{ true };
     bool clickable{ true };
-    VisibilityPolicy orbitVisibility : 3 { UseClassVisibility };
+    VisibilityPolicy orbitVisibility : 3 { VisibilityPolicy::UseClassVisibility };
 
     friend class BodyFeaturesManager;
 };

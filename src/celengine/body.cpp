@@ -100,7 +100,7 @@ Body::setDefaultProperties()
     clickable = true;
     manager->unsetOrbitColor(this);
     manager->unsetCometTailColor(this);
-    orbitVisibility = UseClassVisibility;
+    orbitVisibility = VisibilityPolicy::UseClassVisibility;
     recomputeCullingRadius();
 }
 
