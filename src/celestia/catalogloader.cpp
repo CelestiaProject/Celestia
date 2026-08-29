@@ -35,7 +35,7 @@ CatalogLoader::process(const std::filesystem::path &filePath, const std::filesys
     if (DetermineFileType(filePath) != contentType())
         return;
 
-    if (std::find(m_skipPaths.begin(), m_skipPaths.end(), filePath) != m_skipPaths.end())
+    if (std::ranges::find(m_skipPaths, filePath) != m_skipPaths.end())
     {
         util::GetLogger()->info(_("Skipping {} catalog: {}\n"), typeDesc(), filePath);
         return;
@@ -75,8 +75,7 @@ CatalogLoader::loadExtras(std::span<const std::filesystem::path> dirs)
                 entries.push_back(iter->path());
         }
 
-        std::sort(std::begin(entries), std::end(entries));
-
+        std::ranges::sort(entries);
         for (const auto &fn : entries)
             process(fn, fn.parent_path());
     }

@@ -163,8 +163,8 @@ isEmptyDSOName(const DSODatabase& dsodb,
 {
     std::string name = dsodb.getDSOName(dso, true);
     return name.empty() ||
-           std::all_of(name.cbegin(), name.cend(),
-                       [](char c) { return std::isspace(static_cast<unsigned char>(c)); });
+           std::ranges::all_of(name,
+                               [](char c) { return std::isspace(static_cast<unsigned char>(c)); });
 }
 
 void
@@ -182,7 +182,7 @@ populateDsoVector(std::vector<DeepSkyObject*>& dsos,
     {
         if (index == size)
         {
-            std::sort(dsos.begin(), dsos.end(), comparison);
+            std::ranges::sort(dsos, comparison);
             return;
         }
 
@@ -201,7 +201,7 @@ populateDsoVector(std::vector<DeepSkyObject*>& dsos,
 
     // We have filled up the number of requested DSOs, so only add DSOs that
     // are better than the worst DSO in the list according to the predicate.
-    std::make_heap(dsos.begin(), dsos.end(), comparison);
+    std::ranges::make_heap(dsos, comparison);
 
     for (; index < size; ++index)
     {
@@ -214,13 +214,13 @@ populateDsoVector(std::vector<DeepSkyObject*>& dsos,
 
         if (comparison(dso, dsos.front()))
         {
-            std::pop_heap(dsos.begin(), dsos.end(), comparison);
+            std::ranges::pop_heap(dsos, comparison);
             dsos.back() = dso;
-            std::push_heap(dsos.begin(), dsos.end(), comparison);
+            std::ranges::push_heap(dsos, comparison);
         }
     }
 
-    std::sort_heap(dsos.begin(), dsos.end(), comparison);
+    std::ranges::sort_heap(dsos, comparison);
 }
 
 } // end unnamed namespace
@@ -399,11 +399,10 @@ DeepSkyBrowser::DSOTableModel::sort(int column, Qt::SortOrder order)
     }
 
     DSOPredicate pred(criterion, observerPos, universe);
-
-    std::sort(dsos.begin(), dsos.end(), pred);
+    std::ranges::sort(dsos, pred);
 
     if (order == Qt::DescendingOrder)
-        std::reverse(dsos.begin(), dsos.end());
+        std::ranges::reverse(dsos);
 
     dataChanged(index(0, 0), index(dsos.size() - 1, 4));
 }

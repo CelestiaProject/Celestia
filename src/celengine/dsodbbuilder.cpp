@@ -187,12 +187,7 @@ buildCatalogNumberIndex(const engine::DSOOctree& DSOs)
     std::vector<std::uint32_t> catalogNumberIndex(DSOs.size(), UINT32_C(0));
     std::iota(catalogNumberIndex.begin(), catalogNumberIndex.end(), UINT32_C(0));
 
-    std::sort(catalogNumberIndex.begin(),
-              catalogNumberIndex.end(),
-              [&DSOs](std::uint32_t idx0, std::uint32_t idx1)
-              {
-                  return DSOs[idx0]->getIndex() < DSOs[idx1]->getIndex();
-              });
+    std::ranges::sort(catalogNumberIndex, {}, [&DSOs](std::uint32_t idx) { return DSOs[idx]->getIndex(); });
 
     return catalogNumberIndex;
 }

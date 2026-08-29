@@ -175,7 +175,7 @@ Observer* Simulation::duplicateActiveObserver()
 
 void Simulation::removeObserver(Observer* o)
 {
-    auto iter = std::find(observers.begin(), observers.end(), o);
+    auto iter = std::ranges::find(observers, o);
     if (iter != observers.end())
         observers.erase(iter);
 }
@@ -195,7 +195,7 @@ const Observer* Simulation::getActiveObserver() const
 
 void Simulation::setActiveObserver(Observer* o)
 {
-    auto iter = std::find(observers.begin(), observers.end(), o);
+    auto iter = std::ranges::find(observers, o);
     if (iter != observers.end())
         activeObserver = o;
 }
@@ -452,8 +452,8 @@ void Simulation::getObjectCompletion(std::vector<celestia::engine::Completion>& 
 
     universe->getCompletionPath(completion, s, {path, nPathEntries}, withLocations);
 
-    std::sort(completion.begin(), completion.end(),
-              [](const celestia::engine::Completion &s1, const celestia::engine::Completion &s2) { return strnatcmp(s1.getName(), s2.getName()) < 0; });
+    std::ranges::sort(completion,
+                      [](const auto &s1, const auto &s2) { return strnatcmp(s1.getName(), s2.getName()) < 0; });
 }
 
 

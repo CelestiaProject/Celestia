@@ -321,12 +321,13 @@ EnumerateDisplayModes(unsigned int minBPP,
             modes.push_back(dm);
         ++i;
     }
-    std::sort(modes.begin(), modes.end(),
-              [](const auto& dm1, const auto& dm2)
-              {
-                  return std::tie(dm1.dmBitsPerPel, dm1.dmPelsWidth, dm1.dmPelsHeight, dm1.dmDisplayFrequency) <
-                         std::tie(dm2.dmBitsPerPel, dm2.dmPelsWidth, dm2.dmPelsHeight, dm2.dmDisplayFrequency);
-              });
+
+    std::ranges::sort(modes,
+                      [](const auto& dm1, const auto& dm2)
+                      {
+                          return std::tie(dm1.dmBitsPerPel, dm1.dmPelsWidth, dm1.dmPelsHeight, dm1.dmDisplayFrequency) <
+                                 std::tie(dm2.dmBitsPerPel, dm2.dmPelsWidth, dm2.dmPelsHeight, dm2.dmDisplayFrequency);
+                      });
 
     // Bail out early if EnumDisplaySettings fails for some messed up reason
     if (modes.empty())
@@ -346,11 +347,11 @@ EnumerateDisplayModes(unsigned int minBPP,
     // pixel depth.  If for some bizarre reason that's not available,
     // fall back to the first mode in the list.
     fallbackFullScreenMode = 0;
-    if (auto iter = std::find_if(modes.begin(), modes.end(),
-                                 [](const auto& mode)
-                                 {
-                                     return mode.dmPelsWidth == 640 && mode.dmPelsHeight == 480;
-                                 });
+    if (auto iter = std::ranges::find_if(modes,
+                                         [](const auto& mode)
+                                         {
+                                             return mode.dmPelsWidth == 640 && mode.dmPelsHeight == 480;
+                                         });
         iter != modes.end())
     {
         // Add one to the mode index, since mode 0 means windowed mode

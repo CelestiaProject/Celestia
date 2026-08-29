@@ -144,7 +144,7 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
         for (unsigned int groupIndex = 0; groupIndex < mesh->getGroupCount(); ++groupIndex)
         {
             const auto* group = mesh->getGroup(groupIndex);
-            std::copy(group->indices.begin(), group->indices.end(), std::back_inserter(indices));
+            std::ranges::copy(group->indices, std::back_inserter(indices));
         }
 
         m_gpuBytes += indices.size() * sizeof(cmod::Index32);

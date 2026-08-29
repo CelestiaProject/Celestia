@@ -146,8 +146,8 @@ public:
         std::array<float, 3> p1;
         std::memcpy(p1.data(), b.attributes + posOffset, sizeof(float) * 3);
 
-        return std::equal(p0.cbegin(), p0.cend(), p1.cbegin(),
-                          [&](float f0, float f1) { return approxEqual(f0, f1, tolerance); });
+        return std::ranges::equal(p0, p1,
+                                  [&](float f0, float f1) { return approxEqual(f0, f1, tolerance); });
     }
 
 private:
@@ -178,8 +178,8 @@ public:
         std::memcpy(ptc1.data(), b.attributes + posOffset, sizeof(float) * 3);
         std::memcpy(ptc1.data() + 3, b.attributes + texCoordOffset, sizeof(float) * 2);
 
-        return std::equal(ptc0.cbegin(), ptc0.cend(), ptc1.cbegin(),
-                          [&](float f0, float f1) { return approxEqual(f0, f1, tolerance); });
+        return std::ranges::equal(ptc0, ptc1,
+                                  [&](float f0, float f1) { return approxEqual(f0, f1, tolerance); });
     }
 
 private:
@@ -274,9 +274,8 @@ addGroupWithOffset(cmod::Mesh& mesh,
 
     std::vector<cmod::Index32> newIndices;
     newIndices.reserve(group.indices.size());
-    std::transform(group.indices.cbegin(), group.indices.cend(),
-                   std::back_inserter(newIndices),
-                   [=](cmod::Index32 idx) { return idx + offset; });
+    std::ranges::transform(group.indices, std::back_inserter(newIndices),
+                           [offset](cmod::Index32 idx) { return idx + offset; });
 
     mesh.addGroup(group.prim, group.materialIndex, std::move(newIndices));
 }
@@ -314,7 +313,7 @@ joinVertices(std::vector<Face>& faces,
     }
 
     // Sort the vertices so that identical ones will be ordered consecutively
-    std::sort(vertices.begin(), vertices.end(), orderingPredicate);
+    std::ranges::sort(vertices, orderingPredicate);
 
     // Build the vertex merge map
     std::vector<std::uint32_t> mergeMap(nVertices);
@@ -949,7 +948,7 @@ UniquifyVertices(cmod::Mesh& mesh)
     }
 
     // Sort the vertices so that identical ones will be ordered consecutively
-    std::sort(vertices.begin(), vertices.end(), FullComparator(stride));
+    std::ranges::sort(vertices, FullComparator(stride));
 
     // Count the number of unique vertices
     std::uint32_t uniqueVertexCount = 0;
@@ -1003,8 +1002,7 @@ MergeModelMeshes(const cmod::Model& model)
     }
 
     // Sort the meshes by vertex description
-    std::sort(meshes.begin(), meshes.end(),
-              [](const cmod::Mesh* a, const cmod::Mesh* b) { return a->getVertexDescription() < b->getVertexDescription(); });
+    std::ranges::sort(meshes, {}, [](const cmod::Mesh* m) -> auto& { return m->getVertexDescription(); });
 
     auto newModel = std::make_unique<cmod::Model>();
 

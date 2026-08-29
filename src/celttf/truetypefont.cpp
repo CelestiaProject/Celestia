@@ -444,12 +444,14 @@ TextureFontPrivate::getGlyph(FT_ULong ch)
     if (auto pos = toPos(ch); pos != INVALID_POS)
         return m_glyphs[pos];
 
-    auto it = std::find_if(m_glyphs.cbegin() + getCommonGlyphsCount(),
-                           m_glyphs.cend(),
-                           [ch](const Glyph &g) { return g.ch == ch; });
-
-    if (it != m_glyphs.end())
+    if (auto it = std::ranges::find(m_glyphs.cbegin() + getCommonGlyphsCount(),
+                                    m_glyphs.cend(),
+                                    ch,
+                                    &Glyph::ch);
+        it != m_glyphs.end())
+    {
         return *it;
+    }
 
     Glyph c;
     if (!loadGlyphInfo(ch, c))

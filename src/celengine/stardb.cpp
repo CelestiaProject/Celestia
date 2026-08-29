@@ -51,12 +51,8 @@ StarDatabase::~StarDatabase() = default;
 Star*
 StarDatabase::find(AstroCatalog::IndexNumber catalogNumber) const
 {
-    auto it = std::lower_bound(catalogNumberIndex.begin(), catalogNumberIndex.end(),
-                               catalogNumber,
-                               [this](std::uint32_t idx, AstroCatalog::IndexNumber catNum)
-                               {
-                                   return (*octreeRoot)[idx].getIndex() < catNum;
-                               });
+    auto it = std::ranges::lower_bound(catalogNumberIndex, catalogNumber, {},
+                                       [this](std::uint32_t idx) { return (*octreeRoot)[idx].getIndex(); });
 
     if (it == catalogNumberIndex.end())
         return nullptr;

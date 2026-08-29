@@ -731,8 +731,8 @@ ODMenu::SetItemImage(HINSTANCE hInst, UINT wID, UINT idBitmap)
     if (hBitmap)
     {
         // Find menu item having specified wID.
-        auto it = std::find_if(m_menuItems.begin(), m_menuItems.end(),
-                               [wID](const auto& item) { return item.second.wID == wID; });
+        auto it = std::ranges::find(m_menuItems, wID,
+                                    [](const auto& item) { return item.second.wID; });
         if (it != m_menuItems.end())
             it->second.hBitmap = hBitmap;
     }

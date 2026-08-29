@@ -653,11 +653,11 @@ static int celestia_showconstellations(lua_State* l)
             return 0;
         }
 
-        if (auto it = std::find_if(asterisms->begin(), asterisms->end(),
-                                    [&constellation](const auto& ast)
-                                    {
-                                        return compareIgnoringCase(constellation, ast.getName(false)) == 0;
-                                    });
+        if (auto it = std::ranges::find_if(*asterisms,
+                                           [&constellation](const auto& ast)
+                                           {
+                                               return compareIgnoringCase(constellation, ast.getName(false)) == 0;
+                                           });
             it != asterisms->end())
         {
             it->setActive(true);
@@ -704,11 +704,11 @@ static int celestia_hideconstellations(lua_State* l)
             return 0;
         }
 
-        if (auto it = std::find_if(asterisms->begin(), asterisms->end(),
-                                   [&constellation](const auto& ast)
-                                   {
-                                       return compareIgnoringCase(constellation, ast.getName(false)) == 0;
-                                   });
+        if (auto it = std::ranges::find_if(*asterisms,
+                                           [&constellation](const auto& ast)
+                                           {
+                                               return compareIgnoringCase(constellation, ast.getName(false)) == 0;
+                                           });
             it != asterisms->end())
         {
             it->setActive(false);
@@ -756,11 +756,11 @@ static int celestia_setconstellationcolor(lua_State* l)
         }
 
         std::string_view constellation = lua_tostring(l, -1);
-        if (auto it = std::find_if(asterisms->begin(), asterisms->end(),
-                                    [&constellation](const auto& ast)
-                                    {
-                                        return compareIgnoringCase(constellation, ast.getName(false)) == 0;
-                                    });
+        if (auto it = std::ranges::find_if(*asterisms,
+                                           [&constellation](const auto& ast)
+                                           {
+                                               return compareIgnoringCase(constellation, ast.getName(false)) == 0;
+                                           });
             it != asterisms->end())
         {
             it->setOverrideColor(constellationColor);

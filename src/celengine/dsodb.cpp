@@ -37,14 +37,8 @@ DSODatabase::DSODatabase(std::unique_ptr<engine::DSOOctree>&& octreeRoot,
 DeepSkyObject*
 DSODatabase::find(const AstroCatalog::IndexNumber catalogNumber) const
 {
-    auto it = std::lower_bound(m_catalogNumberIndex.begin(),
-                               m_catalogNumberIndex.end(),
-                               catalogNumber,
-                               [this](std::uint32_t idx, AstroCatalog::IndexNumber catNum)
-                               {
-                                   return (*m_octreeRoot)[idx]->getIndex() < catNum;
-                               });
-
+    auto it = std::ranges::lower_bound(m_catalogNumberIndex, catalogNumber, {},
+                                       [this](std::uint32_t idx) { return (*m_octreeRoot)[idx]->getIndex(); });
     if (it == m_catalogNumberIndex.end())
         return nullptr;
 

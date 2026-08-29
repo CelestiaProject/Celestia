@@ -74,8 +74,8 @@ const char* Galaxy::getType() const
 void Galaxy::setType(const std::string& typeStr)
 {
     type = GalaxyType::Irr;
-    auto iter = std::find_if(std::begin(GalaxyTypeNames), std::end(GalaxyTypeNames),
-                             [&](const GalaxyTypeName& g) { return compareIgnoringCase(g.name, typeStr) == 0; });
+    auto iter = std::ranges::find_if(GalaxyTypeNames,
+                                     [&](const GalaxyTypeName& g) { return compareIgnoringCase(g.name, typeStr) == 0; });
     if (iter != std::end(GalaxyTypeNames))
         type = iter->type;
 }

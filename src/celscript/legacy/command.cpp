@@ -827,14 +827,10 @@ CommandSetLineColor::CommandSetLineColor(std::string _item, const Color& _color)
 void CommandSetLineColor::processInstantaneous(ExecutionEnvironment& env)
 {
     auto &LineColorMap = env.getCelestiaCore()->scriptMaps().LineColorMap;
-    if (LineColorMap.count(item) == 0)
-    {
+    if (auto it = LineColorMap.find(item); it == LineColorMap.end())
         GetLogger()->warn("Unknown line style: {}\n", item);
-    }
     else
-    {
-        *(LineColorMap[item]) = color;
-    }
+        *it->second = color;
 }
 
 
@@ -850,14 +846,10 @@ CommandSetLabelColor::CommandSetLabelColor(std::string _item, const Color& _colo
 void CommandSetLabelColor::processInstantaneous(ExecutionEnvironment& env)
 {
     auto &LabelColorMap = env.getCelestiaCore()->scriptMaps().LabelColorMap;
-    if (LabelColorMap.count(item) == 0)
-    {
+    if (auto it = LabelColorMap.find(item); it == LabelColorMap.end())
         GetLogger()->error("Unknown label style: {}\n", item);
-    }
     else
-    {
-        *(LabelColorMap[item]) = color;
-    }
+        *it->second = color;
 }
 
 
@@ -922,7 +914,7 @@ CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
                                        float _xoffset, float _yoffset,
                                        const std::filesystem::path &_filename,
                                        bool _fitscreen,
-                                       std::array<Color,4> &_colors) :
+                                       std::span<Color,4> _colors) :
     duration(_duration),
     fadeafter(_fadeafter),
     xoffset(_xoffset),
@@ -930,7 +922,7 @@ CommandScriptImage::CommandScriptImage(float _duration, float _fadeafter,
     filename(_filename),
     fitscreen(_fitscreen)
 {
-    std::copy(_colors.begin(), _colors.end(), colors.begin());
+    std::ranges::copy(_colors, colors.begin());
 }
 
 void CommandScriptImage::processInstantaneous(ExecutionEnvironment& env)
@@ -985,8 +977,8 @@ void CommandConstellations::processInstantaneous(ExecutionEnvironment& env)
         else
         {
             auto name = ast.getName(false);
-            auto it = std::find_if(constellations.begin(), constellations.end(),
-                                   [&name](Cons& c){ return compareIgnoringCase(c.name, name) == 0; });
+            auto it = std::ranges::find_if(constellations,
+                                           [&name](Cons& c){ return compareIgnoringCase(c.name, name) == 0; });
 
             if (it != constellations.end())
                 ast.setActive(it->active);
@@ -1003,8 +995,8 @@ void CommandConstellations::setValues(std::string_view _cons, bool act)
     std::string cons(_cons);
     std::replace(cons.begin(), cons.end(), '_', ' ');
 
-    auto it = std::find_if(constellations.begin(), constellations.end(),
-                           [&cons](Cons& c){ return compareIgnoringCase(c.name, cons) == 0; });
+    auto it = std::ranges::find_if(constellations,
+                                   [&cons](Cons& c){ return compareIgnoringCase(c.name, cons) == 0; });
 
     if (it != constellations.end())
         it->active = act;
@@ -1033,8 +1025,8 @@ void CommandConstellationColor::processInstantaneous(ExecutionEnvironment& env)
         else
         {
             auto name = ast.getName(false);
-            auto it = std::find_if(constellations.begin(), constellations.end(),
-                                   [&name](const std::string& c){ return compareIgnoringCase(c, name) == 0; });
+            auto it = std::ranges::find_if(constellations,
+                                           [&name](const std::string& c){ return compareIgnoringCase(c, name) == 0; });
 
             if (it != constellations.end())
             {
@@ -1070,8 +1062,8 @@ void CommandConstellationColor::setConstellations(std::string_view _cons)
     std::replace(cons.begin(), cons.end(), '_', ' ');
 
     // If not found then add a new constellation
-    if (std::none_of(constellations.begin(), constellations.end(),
-                     [&cons](const std::string& c){ return compareIgnoringCase(c, cons) == 0; }))
+    if (std::ranges::none_of(constellations,
+                             [&cons](const std::string& c){ return compareIgnoringCase(c, cons) == 0; }))
         constellations.push_back(cons);
 }
 

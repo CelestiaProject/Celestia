@@ -84,11 +84,11 @@ bool
 VertexDescription::validate() const
 {
     constexpr auto wordSize = static_cast<unsigned int>(sizeof(VWord));
-    return std::none_of(m_attributes.begin(), m_attributes.end(),
-                        [stride = m_strideBytes / wordSize](const VertexAttribute& attr)
-                        {
-                            return attr.offsetWords + VertexAttribute::getFormatSizeWords(attr.format) > stride;
-                        });
+    return std::ranges::none_of(m_attributes,
+                                [stride = m_strideBytes / wordSize](const VertexAttribute& attr)
+                                {
+                                    return attr.offsetWords + VertexAttribute::getFormatSizeWords(attr.format) > stride;
+                                });
 }
 
 VertexDescription
@@ -185,8 +185,7 @@ Mesh::clone() const
     newMesh.nVertices = nVertices;
     newMesh.vertices = vertices;
     newMesh.groups.reserve(groups.size());
-    std::transform(groups.cbegin(), groups.cend(), std::back_inserter(newMesh.groups),
-                   [](const PrimitiveGroup& group) { return group.clone(); });
+    std::ranges::transform(groups, std::back_inserter(newMesh.groups), &PrimitiveGroup::clone);
     newMesh.name = name;
     return newMesh;
 }
@@ -297,11 +296,7 @@ Mesh::remapMaterials(const std::vector<unsigned int>& materialMap)
 void
 Mesh::aggregateByMaterial()
 {
-    std::sort(groups.begin(), groups.end(),
-              [](const PrimitiveGroup& g0, const PrimitiveGroup& g1)
-              {
-                  return g0.materialIndex < g1.materialIndex;
-              });
+    std::ranges::sort(groups, {}, &PrimitiveGroup::materialIndex);
     mergePrimitiveGroups();
 }
 

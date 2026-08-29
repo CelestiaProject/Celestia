@@ -93,8 +93,11 @@ Model::setMaterial(unsigned int index, const Material& m)
     // Regenerate the texture map usage for the model by rescanning all the meshes.
     for (int i = 0; i < static_cast<int>(TextureSemantic::TextureSemanticMax); ++i)
     {
-        textureUsage[i] = std::any_of(materials.cbegin(), materials.cend(),
-                                      [&](const Material& mat) { return mat.maps[i] != util::TextureHandle::Invalid; });
+        textureUsage[i] = std::ranges::any_of(materials,
+                                              [i](const Material& mat)
+                                              {
+                                                  return mat.maps[i] != util::TextureHandle::Invalid;
+                                              });
     }
 
     return true;
@@ -247,8 +250,7 @@ Model::uniquifyMaterials()
     std::iota(indices.begin(), indices.end(), 0U);
 
     // Sort the material indices so that we can uniquify the materials
-    std::sort(indices.begin(), indices.end(),
-              [&](unsigned int a, unsigned int b) { return materials[a] < materials[b]; });
+    std::ranges::sort(indices, {}, [this](unsigned int idx) -> auto& { return materials[idx]; });
 
     // From the sorted index list construct the list of unique materials
     // and a map to convert old material indices into indices that can be
@@ -311,13 +313,9 @@ Model::sortMeshes()
         mesh.aggregateByMaterial();
 
     // Sort the meshes so that completely opaque ones are first
-    std::sort(meshes.begin(), meshes.end(),
-              [](const Mesh& a, const Mesh& b)
-              {
-                  // Because materials are sorted by opacity, we can just
-                  // compare the material index.
-                  return getMeshMaterialIndex(a) > getMeshMaterialIndex(b);
-              });
+    // Because materials are sorted by opacity, we can just
+    // compare the material index.
+    std::ranges::sort(meshes, std::ranges::greater{}, &getMeshMaterialIndex);
 
     std::vector<Mesh> newMeshes;
     for (const auto &mesh : meshes)

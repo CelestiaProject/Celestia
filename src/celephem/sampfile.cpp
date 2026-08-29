@@ -127,7 +127,7 @@ GetSampleIndex(double jd,
     std::uint32_t n = lastSample;
     if (n < 1 || n >= sampleTimes.size() || jd < sampleTimes[n - 1] || jd > sampleTimes[n])
     {
-        auto iter = std::lower_bound(sampleTimes.begin(), sampleTimes.end(), jd);
+        auto iter = std::ranges::lower_bound(sampleTimes, jd);
         n = static_cast<std::uint32_t>(iter - sampleTimes.begin());
         lastSample = n;
     }

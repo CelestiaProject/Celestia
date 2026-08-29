@@ -708,7 +708,7 @@ ColorTemperatureTable::setType(ColorTableType _type)
     case ColorTableType::Enhanced:
         colors.clear();
         colors.reserve(StarColors_Enhanced.size());
-        std::copy(StarColors_Enhanced.cbegin(), StarColors_Enhanced.cend(), std::back_inserter(colors));
+        std::ranges::copy(StarColors_Enhanced, std::back_inserter(colors));
         tempScale = static_cast<float>(StarColors_Enhanced.size() - 1) / MaxTemperature;
         return true;
 

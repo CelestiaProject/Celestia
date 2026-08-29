@@ -125,7 +125,7 @@ ResourceSystem::registerCache(ResourceCacheBase* cache)
 
     auto present = [cache](const std::vector<ResourceCacheBase*>& v)
     {
-        return std::find(v.begin(), v.end(), cache) != v.end();
+        return std::ranges::find(v, cache) != v.end();
     };
     if (present(m_caches) || present(m_pendingCaches))
         return;
@@ -147,14 +147,14 @@ ResourceSystem::unregisterCache(ResourceCacheBase* cache) noexcept
         if (slot == cache)
             slot = nullptr;
     }
-    m_pendingCaches.erase(
-        std::remove(m_pendingCaches.begin(), m_pendingCaches.end(), cache),
-        m_pendingCaches.end());
+
+    auto removedCaches = std::ranges::remove(m_pendingCaches, cache);
+    m_pendingCaches.erase(removedCaches.begin(), removedCaches.end());
 
     if (!m_iterating)
     {
-        m_caches.erase(std::remove(m_caches.begin(), m_caches.end(), nullptr),
-                       m_caches.end());
+        removedCaches = std::ranges::remove(m_caches, nullptr);
+        m_caches.erase(removedCaches.begin(), removedCaches.end());
     }
 }
 
@@ -166,7 +166,7 @@ ResourceSystem::finishCacheIteration()
                    m_caches.end());
     for (auto* cache : m_pendingCaches)
     {
-        if (std::find(m_caches.begin(), m_caches.end(), cache) == m_caches.end())
+        if (std::ranges::find(m_caches, cache) == m_caches.end())
             m_caches.push_back(cache);
     }
     m_pendingCaches.clear();

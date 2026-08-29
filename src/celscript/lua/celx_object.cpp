@@ -723,9 +723,8 @@ static int object_getinfo(lua_State* l)
 
         auto featureType = location->getFeatureType();
         auto &LocationFlagMap = celx.appCore(AllErrors)->scriptMaps().LocationFlagMap;
-        auto iter = std::find_if(LocationFlagMap.begin(),
-                                 LocationFlagMap.end(),
-                                 [&featureType](auto& it){ return it.second == featureType; });
+        auto iter = std::ranges::find(LocationFlagMap, featureType,
+                                      [](const auto& it) { return it.second; });
         if (iter != LocationFlagMap.end())
              celx.setTable("featureType", std::string(iter->first).c_str());
         else

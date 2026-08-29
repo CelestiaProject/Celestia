@@ -149,8 +149,7 @@ SampledOrbit<T>::SampledOrbit(TrajectoryInterpolation _interpolation,
 {
     assert(!sampleTimes.empty() && sampleTimes.size() == positions.size());
 
-    auto it = std::max_element(positions.begin(), positions.end(),
-                               [](const auto& a, const auto& b) { return a.squaredNorm() < b.squaredNorm(); });
+    auto it = std::ranges::max_element(positions, {}, &SampleXYZ<T>::squaredNorm);
     boundingRadius = it->template cast<double>().norm();
 }
 
@@ -389,11 +388,7 @@ SampledOrbitXYZV<T>::SampledOrbitXYZV(TrajectoryInterpolation _interpolation,
 {
     assert(!sampleTimes.empty() && sampleTimes.size() == posvels.size());
 
-    auto it = std::max_element(posvels.begin(), posvels.end(),
-                               [](const auto& a, const auto& b)
-                               {
-                                   return a.position.squaredNorm() < b.position.squaredNorm();
-                               });
+    auto it = std::ranges::max_element(posvels, {}, [](const auto& pv) { return pv.position.squaredNorm(); });
     boundingRadius = it->position.template cast<double>().norm();
 }
 

@@ -493,8 +493,7 @@ StarNameDatabase::searchCrossIndexForCatalogNumber(StarCatalog catalog, AstroCat
         return AstroCatalog::InvalidIndex;
 
     const CrossIndex& xindex = crossIndices[catalogIndex];
-    auto iter = std::lower_bound(xindex.begin(), xindex.end(), number,
-                                 [](const CrossIndexEntry& ent, AstroCatalog::IndexNumber n) { return ent.catalogNumber < n; });
+    auto iter = std::ranges::lower_bound(xindex, number, {}, &CrossIndexEntry::catalogNumber);
     return iter == xindex.end() || iter->catalogNumber != number
         ? AstroCatalog::InvalidIndex
         : iter->celCatalogNumber;
@@ -511,8 +510,7 @@ StarNameDatabase::crossIndex(StarCatalog catalog, AstroCatalog::IndexNumber celC
 
     // A simple linear search.  We could store cross indices sorted by
     // both catalog numbers and trade memory for speed
-    auto iter = std::find_if(xindex.begin(), xindex.end(),
-                             [celCatalogNumber](const CrossIndexEntry& o) { return celCatalogNumber == o.celCatalogNumber; });
+    auto iter = std::ranges::find(xindex, celCatalogNumber, &CrossIndexEntry::celCatalogNumber);
     return iter == xindex.end()
         ? AstroCatalog::InvalidIndex
         : iter->catalogNumber;
@@ -734,7 +732,6 @@ StarNameDatabase::loadCrossIndex(StarCatalog catalog, std::istream& in)
 
     GetLogger()->debug("Loaded xindex in {} ms\n", timer.getTime());
 
-    std::sort(xindex.begin(), xindex.end(),
-              [](const auto& lhs, const auto& rhs) { return lhs.catalogNumber < rhs.catalogNumber; });
+    std::ranges::sort(xindex, {}, &CrossIndexEntry::catalogNumber);
     return true;
 }

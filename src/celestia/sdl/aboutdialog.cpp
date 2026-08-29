@@ -247,11 +247,11 @@ AboutDialog::AboutDialog()
     m_libraries.emplace_back("cspice", "SPICE", getSpiceVersion());
 #endif
 
-    std::sort(m_libraries.begin(), m_libraries.end(),
-              [](const auto& a, const auto& b)
-              {
-                  return compareIgnoringCase(a.name, b.name) < 0;
-              });
+    std::ranges::sort(m_libraries,
+                      [](const auto& a, const auto& b)
+                      {
+                          return compareIgnoringCase(a.name, b.name) < 0;
+                      });
 }
 
 AboutDialog::~AboutDialog() = default;

@@ -301,7 +301,6 @@ TimelineValidator::getTimeline(const Body* body) const
 int
 TimelineValidator::phaseDepth(const TimelinePhase* phase) const
 {
-    const auto phaseBegin = m_phases.begin();
     const auto phaseEnd = m_phases.end();
     int maxTreeDepth = 0;
     if (const Body* parentBody = phase->getFrameTree()->getOwner().body(); parentBody)
@@ -313,8 +312,7 @@ TimelineValidator::phaseDepth(const TimelinePhase* phase) const
             if (parentPhase.startTime() >= phase->endTime() || parentPhase.endTime() <= phase->startTime())
                 continue;
 
-            auto phaseIt = std::find_if(phaseBegin, phaseEnd,
-                                        [&parentPhase](const auto& p) { return p.phase == &parentPhase; });
+            auto phaseIt = std::ranges::find(m_phases, &parentPhase, &PhaseStatus::phase);
             if (phaseIt == phaseEnd || phaseIt->positionDepth < 0)
                 return -1;
 
@@ -329,10 +327,8 @@ TimelineValidator::phaseDepth(const TimelinePhase* phase) const
 int
 TimelineValidator::frameDepth(const ReferenceFrame* frame) const
 {
-    const auto end = m_frames.end();
-    auto it = std::find_if(m_frames.begin(), end,
-                           [frame](const auto& f) { return f.first == frame; });
-    if (it == end)
+    auto it = std::ranges::find(m_frames, frame, [](const auto& f) { return f.first; });
+    if (it == m_frames.end())
         return -1;
 
     return it->second;
@@ -342,9 +338,7 @@ bool
 TimelineValidator::CommandProcessor::operator()(const ProcessPhase& command) const
 {
     const TimelinePhase* phase = command.phase;
-    const auto end = m_validator.m_phases.end();
-    auto it = std::find_if(m_validator.m_phases.begin(), end,
-                           [phase](const auto& p) { return p.phase == phase; });
+    auto it = std::ranges::find(m_validator.m_phases, phase, &PhaseStatus::phase);
 
     int PhaseStatus::*depthField;
     const ReferenceFrame::SharedConstPtr& (TimelinePhase::*getFrame)() const;
@@ -365,7 +359,7 @@ TimelineValidator::CommandProcessor::operator()(const ProcessPhase& command) con
         return false;
     }
 
-    if (it == end)
+    if (it == m_validator.m_phases.end())
         m_validator.m_phases.emplace_back(phase).*depthField = TimelineValidator::Invalid;
     else if (int& depth = (*it).*depthField; depth >= 0)
         return true;
@@ -399,10 +393,8 @@ bool
 TimelineValidator::CommandProcessor::operator()(const FinishPhase& command) const
 {
     const TimelinePhase* phase = command.phase;
-    const auto end = m_validator.m_phases.end();
-    auto it = std::find_if(m_validator.m_phases.begin(), end,
-                           [phase](const auto& p) { return p.phase == phase; });
-    if (it == end)
+    auto it = std::ranges::find(m_validator.m_phases, phase, &PhaseStatus::phase);
+    if (it == m_validator.m_phases.end())
     {
         assert(0);
         return false;
@@ -455,10 +447,9 @@ bool
 TimelineValidator::CommandProcessor::operator()(const ProcessFrame& command) const
 {
     const ReferenceFrame* frame = command.frame;
-    if (const auto end = m_validator.m_frames.cend(),
-        it = std::find_if(m_validator.m_frames.cbegin(), end,
-                          [frame](const auto& f) { return f.first == frame; });
-        it != end)
+    if (auto it = std::ranges::find(m_validator.m_frames, frame,
+                                    [](const auto& f) { return f.first; });
+        it != m_validator.m_frames.end())
     {
         return it->second >= 0;
     }
@@ -474,10 +465,9 @@ bool
 TimelineValidator::CommandProcessor::operator()(const FinishFrame& command) const
 {
     const ReferenceFrame* frame = command.frame;
-    const auto end = m_validator.m_frames.end();
-    auto it = std::find_if(m_validator.m_frames.begin(), end,
-                           [frame](const auto& f) { return f.first == frame; });
-    if (it == end)
+    auto it = std::ranges::find(m_validator.m_frames, frame,
+                                [](const auto& f) { return f.first; });
+    if (it == m_validator.m_frames.end())
     {
         assert(0);
         return false;

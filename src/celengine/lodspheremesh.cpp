@@ -551,11 +551,11 @@ LODSphereMesh::renderPatches(int phi0, int theta0,
     // First cull test - if all frustum points are on the wrong side of the
     // separating plane, cull the patch
     if (math::Frustum::PlaneType separatingPlane(normal, p0);
-        std::all_of(ri.fp.cbegin(), ri.fp.cend(),
-                    [&separatingPlane](const Eigen::Vector3f& fp)
-                    {
-                        return separatingPlane.signedDistance(fp) <= 0.0f;
-                    }))
+        std::ranges::all_of(ri.fp,
+                            [&separatingPlane](const Eigen::Vector3f& fp)
+                            {
+                                return separatingPlane.signedDistance(fp) <= 0.0f;
+                            }))
     {
         return;
     }

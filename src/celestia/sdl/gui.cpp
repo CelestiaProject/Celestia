@@ -40,11 +40,11 @@ Gui::Gui(Private, ImGuiContext* ctx, ImGuiIO* io, CelestiaCore* appCore, std::st
     m_io(io),
     m_iniFilename(std::move(iniFilename))
 {
-    std::sort(m_scripts.begin(), m_scripts.end(),
-              [](const auto& a, const auto& b)
-              {
-                  return compareIgnoringCase(a.title, b.title) < 0;
-              });
+    std::ranges::sort(m_scripts,
+                      [](const auto& a, const auto& b)
+                      {
+                          return compareIgnoringCase(a.title, b.title) < 0;
+                      });
 }
 
 Gui::~Gui()

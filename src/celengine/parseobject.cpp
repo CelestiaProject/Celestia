@@ -374,11 +374,7 @@ ParseStringList(const AssociativeArray& table,
     {
         // Verify that all array entries are strings
 
-        if (std::any_of(array->begin(), array->end(),
-                        [](const Value& val)
-                        {
-                            return val.getType() != util::ValueType::StringType;
-                        }))
+        if (std::ranges::any_of(*array, [](const Value& val) { return val.getType() != util::ValueType::StringType; }))
         {
             return false;
         }

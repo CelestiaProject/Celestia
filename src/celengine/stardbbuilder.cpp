@@ -287,7 +287,7 @@ parseStcHeader(util::Tokenizer& tokenizer, StarDatabaseBuilder::StcHeader& heade
         {
             auto pos = remaining.find(':');
             if (std::string_view name = remaining.substr(0, pos);
-                !name.empty() && std::find(header.names.cbegin(), header.names.cend(), name) == header.names.cend())
+                !name.empty() && std::ranges::find(header.names, name) == header.names.cend())
             {
                 header.names.emplace_back(name);
             }
@@ -675,8 +675,7 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
     for (Star& star : unsortedStars)
         binFileCatalogNumberIndex.push_back(&star);
 
-    std::sort(binFileCatalogNumberIndex.begin(), binFileCatalogNumberIndex.end(),
-                [](const Star* star0, const Star* star1) { return star0->getIndex() < star1->getIndex(); });
+    std::ranges::sort(binFileCatalogNumberIndex, {}, [](const Star* s) { return s->getIndex(); });
 
     return true;
 }
@@ -1091,9 +1090,8 @@ StarDatabaseBuilder::findWhileLoading(AstroCatalog::IndexNumber catalogNumber) c
         return nullptr;
 
     // First check for stars loaded from the binary database
-    if (auto it = std::lower_bound(binFileCatalogNumberIndex.cbegin(), binFileCatalogNumberIndex.cend(),
-                                   catalogNumber,
-                                   [](const Star* star, AstroCatalog::IndexNumber catNum) { return star->getIndex() < catNum; });
+    if (auto it = std::ranges::lower_bound(binFileCatalogNumberIndex, catalogNumber, {},
+                                           [](const Star* star) { return star->getIndex(); });
         it != binFileCatalogNumberIndex.cend() && (*it)->getIndex() == catalogNumber)
     {
         return *it;
@@ -1150,9 +1148,6 @@ StarDatabaseBuilder::buildIndexes()
         starDB->catalogNumberIndex.push_back(i);
 
     const auto& octreeRoot = *starDB->octreeRoot;
-    std::sort(starDB->catalogNumberIndex.begin(), starDB->catalogNumberIndex.end(),
-              [&octreeRoot](std::uint32_t idx0, std::uint32_t idx1)
-              {
-                  return octreeRoot[idx0].getIndex() < octreeRoot[idx1].getIndex();
-              });
+    std::ranges::sort(starDB->catalogNumberIndex, {},
+                      [&octreeRoot](std::uint32_t idx) { return octreeRoot[idx].getIndex(); });
 }

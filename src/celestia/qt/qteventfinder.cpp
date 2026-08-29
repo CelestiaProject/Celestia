@@ -218,25 +218,21 @@ EventFinder::EventTableModel::sort(int column, Qt::SortOrder order)
     switch (column)
     {
     case ReceiverColumn:
-        std::sort(eclipses.begin(), eclipses.end(),
-                  [](const Eclipse& e0, const Eclipse& e1) { return e0.receiver->getName() < e1.receiver->getName(); });
+        std::ranges::sort(eclipses, {}, [](const Eclipse& e) -> auto& { return e.receiver->getName(); });
         break;
     case OcculterColumn:
-        std::sort(eclipses.begin(), eclipses.end(),
-                  [](const Eclipse& e0, const Eclipse& e1) { return e0.occulter->getName() < e1.occulter->getName(); });
+        std::ranges::sort(eclipses, {}, [](const Eclipse& e) -> auto& { return e.occulter->getName(); });
         break;
     case StartTimeColumn:
-        std::sort(eclipses.begin(), eclipses.end(),
-                  [](const Eclipse& e0, const Eclipse& e1) { return e0.startTime < e1.startTime; });
+        std::ranges::sort(eclipses, {}, &Eclipse::startTime);
         break;
     case DurationColumn:
-        std::sort(eclipses.begin(), eclipses.end(),
-                  [](const Eclipse& e0, const Eclipse& e1) { return e0.endTime - e0.startTime < e1.endTime - e1.startTime; });
+        std::ranges::sort(eclipses, {}, [](const Eclipse& e) { return e.endTime - e.startTime; });
         break;
     }
 
     if (order == Qt::DescendingOrder)
-        std::reverse(eclipses.begin(), eclipses.end());
+        std::ranges::reverse(eclipses);
 
     dataChanged(index(0, 0), index(eclipses.size() - 1, columnCount(QModelIndex())));
 }

@@ -121,11 +121,12 @@ ViewManager::pickView(Simulation* sim,
     if (!pointOutsideView(**m_activeView, msize.first, msize.second, x, y))
         return;
 
-    m_activeView = std::find_if(m_views.begin(), m_views.end(),
-                                [&msize, x, y](const View* view) {
-                                    return view->type == View::ViewWindow &&
-                                           !pointOutsideView(*view, msize.first, msize.second, x, y);
-                                });
+    m_activeView = std::ranges::find_if(m_views,
+                                        [&msize, x, y](const View* view)
+                                        {
+                                            return view->type == View::ViewWindow &&
+                                                   !pointOutsideView(*view, msize.first, msize.second, x, y);
+                                        });
 
     // Make sure that we're left with a valid view
     if (m_activeView == m_views.end())
@@ -292,7 +293,7 @@ ViewManager::singleView(Simulation* sim, const View* av)
 void
 ViewManager::setActiveView(Simulation* sim, const View* view)
 {
-    auto it = std::find(m_views.begin(), m_views.end(), view);
+    auto it = std::ranges::find(m_views, view);
     if (it == m_views.end())
         return;
 
@@ -310,9 +311,9 @@ ViewManager::deleteView(Simulation* sim, View* v)
         return false;
 
     //Erase view and parent view from views
-    m_views.erase(std::remove_if(m_views.begin(), m_views.end(),
-                                 [v](const auto mv) { return mv == v || mv == v->parent; }),
-                  m_views.end());
+    auto removedViews = std::ranges::remove_if(m_views,
+                                               [v](const auto mv) { return mv == v || mv == v->parent; });
+    m_views.erase(removedViews.begin(), removedViews.end());
 
     sim->removeObserver(v->getObserver());
     delete(v->getObserver());
@@ -321,7 +322,7 @@ ViewManager::deleteView(Simulation* sim, View* v)
     View* nextActiveView = sibling;
     while (nextActiveView->type != View::ViewWindow)
         nextActiveView = nextActiveView->child1;
-    m_activeView = std::find(m_views.begin(), m_views.end(), nextActiveView);
+    m_activeView = std::ranges::find(m_views, nextActiveView);
     sim->setActiveObserver((*m_activeView)->observer);
     if (!m_showActiveViewFrame)
         m_startFlash = true;

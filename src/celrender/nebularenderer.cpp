@@ -63,8 +63,7 @@ void
 NebulaRenderer::render()
 {
     // draw more distant objects first
-    std::sort(m_objects.begin(), m_objects.end(),
-        [](const auto &o1, const auto &o2){ return o1.offset.squaredNorm() > o2.offset.squaredNorm(); });
+    std::ranges::sort(m_objects, std::ranges::greater{}, [](const auto& obj) { return obj.offset.squaredNorm(); });
 
     for (const auto &obj : m_objects)
         renderNebula(obj);

@@ -643,8 +643,8 @@ private:
 
 StarDetailsManager::StarDetailsManager()
 {
-    std::fill(normalStarDetails.begin(), normalStarDetails.end(), nullptr);
-    std::fill(whiteDwarfDetails.begin(), whiteDwarfDetails.end(), nullptr);
+    std::ranges::fill(normalStarDetails, nullptr);
+    std::ranges::fill(whiteDwarfDetails, nullptr);
 }
 
 StarDetailsManager&

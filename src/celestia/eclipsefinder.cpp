@@ -175,8 +175,7 @@ getTestBodies(const Body* body, double startDate, double endDate)
             continue;
         }
 
-        auto it = std::find_if(testBodies.begin(), testBodies.end(),
-                               [testBody](const BodyInfo& info) { return info.body == testBody; });
+        auto it = std::ranges::find(testBodies, testBody, &BodyInfo::body);
         if (it == testBodies.end())
         {
             testBodies.emplace_back(testBody, phaseStart, phaseEnd);
@@ -210,8 +209,8 @@ void EclipseFinder::findEclipses(double startDate,
         return;
 
     std::vector<double> previousEclipseEndTimes(testBodies.size());
-    std::transform(testBodies.cbegin(), testBodies.cend(), previousEclipseEndTimes.begin(),
-                   [](const BodyInfo& info) { return info.startTime - 1.0; });
+    std::ranges::transform(testBodies, previousEclipseEndTimes.begin(),
+                           [](const auto& info) { return info.startTime - 1.0; });
 
     // TODO: Use a fixed step of one hour for now; we should use a binary
     // search instead.

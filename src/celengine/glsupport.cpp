@@ -36,7 +36,8 @@ inline bool has_extension(const char *name) noexcept
 
 bool check_extension(std::span<const std::string> list, const char *name) noexcept
 {
-    return std::find(list.begin(), list.end(), std::string(name)) == list.end()
+    return std::ranges::find(list, std::string_view{name},
+                             [](const auto& s) -> std::string_view { return s; }) == list.end()
            && has_extension(name);
 }
 

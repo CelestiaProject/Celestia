@@ -255,18 +255,15 @@ bool WarpMesh::mapVertex(float x, float y, float& u, float& v) const
 
     const auto xStart = m_data.begin();
     const auto xEnd = xStart + m_nx;
-    auto xIt = std::lower_bound(xStart, xEnd, x,
-                                [](const WarpVertex& vtx, float xc) { return vtx.x < xc; });
+    auto xIt = std::ranges::lower_bound(xStart, xEnd, x, {}, &WarpVertex::x);
     if (xIt == xEnd)
         return false;
     const auto xIndex = static_cast<std::uint32_t>(xIt - xStart);
 
-    auto yStart = m_yCoords.begin();
-    auto yEnd = m_yCoords.end();
-    auto yIt = std::lower_bound(yStart, yEnd, y);
-    if (yIt == yEnd)
+    auto yIt = std::ranges::lower_bound(m_yCoords, y);
+    if (yIt == m_yCoords.end())
         return false;
-    const auto yIndex = static_cast<std::uint32_t>(yIt - yStart);
+    const auto yIndex = static_cast<std::uint32_t>(yIt - m_yCoords.begin());
 
     const WarpVertex* vertex = m_data.data() + (yIndex * m_nx + xIndex);
     if (xIt->x == x || xIndex == 0)

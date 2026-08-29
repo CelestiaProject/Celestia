@@ -201,9 +201,9 @@ class Renderer
 
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
-    void getViewport(std::array<int, 4>& viewport) const;
+    void getViewport(std::span<int, 4> viewport) const;
     void setViewport(int x, int y, int w, int h);
-    void setViewport(const std::array<int, 4>& viewport);
+    void setViewport(std::span<const int, 4> viewport);
     void setScissor(int x, int y, int w, int h);
     void removeScissor();
 
@@ -353,8 +353,6 @@ class Renderer
         LabelHorizontalAlignment halign : 3;
         LabelVerticalAlignment valign : 3;
         float size;
-
-        std::partial_ordering operator<=>(const Annotation&) const;
     };
 
     void addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
@@ -408,9 +406,6 @@ class Renderer
         const Star* star;
         Eigen::Vector3d origin;
         float opacity;
-
-        friend bool operator==(const OrbitPathListEntry&, const OrbitPathListEntry&) = default;
-        std::partial_ordering operator<=>(const OrbitPathListEntry&) const;
     };
 
     enum class FontStyle : std::uint8_t

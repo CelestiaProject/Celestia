@@ -231,7 +231,7 @@ Url::goTo()
     if (!m_state.m_selectedBodyName.empty())
     {
         auto body = m_state.m_selectedBodyName;
-        std::replace(body.begin(), body.end(), ':', '/');
+        std::ranges::replace(body, ':', '/');
         auto sel = sim->findObjectFromPath(body);
         sim->setSelection(sel);
     }
@@ -243,7 +243,7 @@ Url::goTo()
     if (!m_state.m_trackedBodyName.empty())
     {
         auto body = m_state.m_trackedBodyName;
-        std::replace(body.begin(), body.end(), ':', '/');
+        std::ranges::replace(body, ':', '/');
         auto sel = sim->findObjectFromPath(body);
         sim->setTrackedObject(sel);
     }
@@ -429,8 +429,8 @@ Url::parse(std::string_view urlStr) //NOSONAR
 
     int nBodies = -1;
     CelestiaState state;
-    auto it = std::find_if(modes.begin(), modes.end(),
-                           [modeStr](const Mode &m) { return compareIgnoringCase(modeStr, m.modeStr) == 0; });
+    auto it = std::ranges::find_if(modes,
+                                   [modeStr](const Mode &m) { return compareIgnoringCase(modeStr, m.modeStr) == 0; });
     if (it == modes.end())
     {
         GetLogger()->error(_("Unsupported URL mode \"{}\"!\n"), modeStr);
@@ -455,7 +455,7 @@ Url::parse(std::string_view urlStr) //NOSONAR
                 return false;
             }
             auto body = Url::decodeString(bodiesStr);
-            std::replace(body.begin(), body.end(), ':', '/');
+            std::ranges::replace(body, ':', '/');
             bodies[0] = m_appCore->getSimulation()->findObjectFromPath(body);
             state.m_refBodyName = std::move(body);
         }
@@ -467,12 +467,12 @@ Url::parse(std::string_view urlStr) //NOSONAR
                 return false;
             }
             auto body = Url::decodeString(bodiesStr.substr(0, pos));
-            std::replace(body.begin(), body.end(), ':', '/');
+            std::ranges::replace(body, ':', '/');
             bodies[0] = m_appCore->getSimulation()->findObjectFromPath(body);
             state.m_refBodyName = std::move(body);
 
             body = Url::decodeString(bodiesStr.substr(pos + 1));
-            std::replace(body.begin(), body.end(), ':', '/');
+            std::ranges::replace(body, ':', '/');
             bodies[1] = m_appCore->getSimulation()->findObjectFromPath(body);
             state.m_targetBodyName = std::move(body);
         }

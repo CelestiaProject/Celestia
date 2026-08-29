@@ -152,10 +152,7 @@ bool ReadLeapSecondsFile(const std::filesystem::path& path, std::vector<astro::L
         leapSeconds.push_back({seconds, jd});
     }
 
-    std::sort(std::begin(leapSeconds), std::end(leapSeconds), [](const auto &a, const auto &b)
-    {
-        return a.t < b.t;
-    });
+    std::ranges::sort(leapSeconds, {}, &astro::LeapSecondRecord::t);
 
     astro::setLeapSeconds(leapSeconds);
     return true;
@@ -208,9 +205,9 @@ CelestiaCore::CelestiaCore() :
 
     CreateLogger();
 
-    std::fill(std::begin(keysPressed), std::end(keysPressed), false);
-    std::fill(std::begin(shiftKeysPressed), std::end(shiftKeysPressed), false);
-    std::fill(std::begin(joyButtonsPressed), std::end(joyButtonsPressed), false);
+    std::ranges::fill(keysPressed, false);
+    std::ranges::fill(shiftKeysPressed, false);
+    std::ranges::fill(joyButtonsPressed, false);
 
     m_savedClogBuf = clog.rdbuf(console->rdbuf());
     m_savedCerrBuf = cerr.rdbuf(console->rdbuf());
@@ -3350,8 +3347,8 @@ vector<Observer*> CelestiaCore::getObservers() const
 View* CelestiaCore::getViewByObserver(const Observer *obs) const
 {
     auto end = viewManager->views().end();
-    auto it = std::find_if(viewManager->views().begin(), end,
-                           [obs](const View* view) { return view->observer == obs; });
+    auto it = std::ranges::find(viewManager->views(), obs,
+                                [](const View* view) { return view->observer; });
     return it == end ? nullptr : *it;
 }
 

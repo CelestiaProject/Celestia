@@ -171,7 +171,7 @@ CreatePlanetarySystemMenu(std::string_view parentName, const PlanetarySystem* ps
             continue;
         }
 
-        std::sort(obj->begin(), obj->end(), IntStrPairComparer{});
+        std::ranges::sort(*obj, IntStrPairComparer{});
         if (numSubMenus > 1)
         {
             // Add items to submenu

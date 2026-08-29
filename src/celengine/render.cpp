@@ -429,25 +429,6 @@ translateLabelModeToClassMask(RenderLabels labelMode)
 }
 
 
-// Depth comparison for labels
-// Note that it's essential to declare this operator as a member
-// function of Renderer::Label; if it's not a class member, C++'s
-// argument dependent lookup will not find the operator when it's
-// used as a predicate for STL algorithms.
-std::partial_ordering Renderer::Annotation::operator<=>(const Annotation& a) const
-{
-    // Operation is reversed because -z axis points into the screen
-    return a.position.z() <=> position.z();
-}
-
-// Depth comparison for orbit paths
-std::partial_ordering Renderer::OrbitPathListEntry::operator<=>(const OrbitPathListEntry& o) const
-{
-    // Operation is reversed because -z axis points into the screen
-    return (o.centerZ - o.radius) <=> (centerZ - radius);
-}
-
-
 bool Renderer::init(int winWidth, int winHeight,
                     const DetailOptions& _detailOptions,
                     engine::TextureResolution resolution,
@@ -1629,11 +1610,13 @@ void Renderer::render(const Observer& observer,
 
     removeInvisibleItems(frustum);
 
-    // Sort the annotations
-    sort(depthSortedAnnotations.begin(), depthSortedAnnotations.end());
+    // Depth sort the annotations
+    // Operation is reversed because -z axis points into the screen
+    std::ranges::sort(depthSortedAnnotations, std::ranges::greater{}, [](const auto& a) { return a.position.z(); });
 
-    // Sort the orbit paths
-    sort(orbitPathList.begin(), orbitPathList.end());
+    // Depth sort the orbit paths
+    // Operation is reversed because -z axis points into the screen
+    std::ranges::sort(orbitPathList, std::ranges::greater{}, [](const auto& p) { return p.centerZ - p.radius; });
 
 #ifndef GL_ES
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);
@@ -2291,8 +2274,9 @@ setupObjectLighting(const vector<LightSource>& suns,
     }
     else if (nLights > 2)
     {
-        sort(ls.lights, ls.lights + nLights,
-             [](const auto &l0, const auto &l1) { return l0.irradiance > l1.irradiance; });
+        std::ranges::sort(ls.lights, ls.lights + nLights,
+                          std::ranges::greater{},
+                          &DirectionalLight::irradiance);
     }
 
     // Compute the total irradiance
@@ -5137,7 +5121,7 @@ void Renderer::addWatcher(RendererWatcher* watcher)
 
 void Renderer::removeWatcher(RendererWatcher* watcher)
 {
-    auto iter = find(watchers.begin(), watchers.end(), watcher);
+    auto iter = std::ranges::find(watchers, watcher);
     if (iter != watchers.end())
         watchers.erase(iter);
 }
@@ -5253,10 +5237,10 @@ void Renderer::getViewport(int* x, int* y, int* w, int* h) const
         *h = m_viewport[3];
 }
 
-void Renderer::getViewport(std::array<int, 4>& viewport) const
+void Renderer::getViewport(std::span<int, 4> viewport) const
 {
     static_assert(sizeof(int) == sizeof(GLint), "int and GLint size mismatch");
-    std::copy(std::begin(m_viewport), std::end(m_viewport), std::begin(viewport));
+    std::ranges::copy(m_viewport, viewport.begin());
 }
 
 void Renderer::setViewport(int x, int y, int w, int h)
@@ -5265,9 +5249,9 @@ void Renderer::setViewport(int x, int y, int w, int h)
     glViewport(x, y, w, h);
 }
 
-void Renderer::setViewport(const std::array<int, 4>& viewport)
+void Renderer::setViewport(std::span<const int, 4> viewport)
 {
-    std::copy(std::begin(viewport), std::end(viewport), std::begin(m_viewport));
+    std::ranges::copy(viewport, m_viewport.begin());
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 }
 
@@ -5833,14 +5817,14 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
     // ideal for performance; should render opaque objects front to
     // back, then translucent objects back to front. However, the
     // amount of overdraw in Celestia is typically low.)
-    std::sort(renderList.begin(), renderList.end(),
-              [](const RenderListEntry& a, const RenderListEntry& b)
-              {
-                  // Operation is reversed because -z axis points into the screen
-                  if (float ka = a.centerZ - a.radius, kb = b.centerZ - b.radius; ka != kb)
-                      return ka > kb;
-                  return a.renderOrder < b.renderOrder;
-              });
+    std::ranges::sort(renderList,
+                      [](const RenderListEntry& a, const RenderListEntry& b)
+                      {
+                          // Operation is reversed because -z axis points into the screen
+                          if (float ka = a.centerZ - a.radius, kb = b.centerZ - b.radius; ka != kb)
+                              return ka > kb;
+                          return a.renderOrder < b.renderOrder;
+                      });
 }
 
 bool

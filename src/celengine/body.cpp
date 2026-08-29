@@ -1055,8 +1055,8 @@ PlanetarySystem::removeBody(const Body* body)
 {
     if (body->getSystem() != this)
         return;
-    auto iter = std::find_if(satellites.begin(), satellites.end(),
-                             [body](const auto& sat) { return sat.get() == body; });
+
+    auto iter = std::ranges::find(satellites, body, [](const auto& sat) { return sat.get(); });
     if (iter == satellites.end())
         return;
 
@@ -1311,7 +1311,7 @@ BodyFeaturesManager::removeReferenceMark(Body* body, std::string_view tag)
     ++next;
     bool isLastElement = next == end;
 
-    auto it = std::find_if(start, end, [&tag](const auto& rm) { return rm.second->getTag() == tag; });
+    auto it = std::ranges::find(start, end, tag, [](const auto& rm) { return rm.second->getTag(); });
     if (it == end)
         return false;
 
@@ -1334,7 +1334,7 @@ BodyFeaturesManager::findReferenceMark(const Body* body, std::string_view tag) c
         return nullptr;
 
     auto [start, end] = referenceMarks.equal_range(body);
-    auto it = std::find_if(start, end, [&tag](const auto& rm) { return rm.second->getTag() == tag; });
+    auto it = std::ranges::find(start, end, tag, [](const auto& rm) { return rm.second->getTag(); });
     return it == end ? nullptr : it->second.get();
 }
 
@@ -1360,11 +1360,11 @@ BodyFeaturesManager::findLocation(const Body* body, std::string_view name, bool 
     auto& bodyLocations = bodyLocationsIt->second.locations;
 
     auto iter = i18n
-        ? std::find_if(bodyLocations.begin(), bodyLocations.end(),
-                       [&name](const auto& loc) { return UTF8StringCompare(name, loc->getName(false)) == 0 ||
-                                                         UTF8StringCompare(name, loc->getName(true)) == 0; })
-        : std::find_if(bodyLocations.begin(), bodyLocations.end(),
-                       [&name](const auto& loc) { return UTF8StringCompare(name, loc->getName(false)) == 0; });
+        ? std::ranges::find_if(bodyLocations,
+                               [&name](const auto& loc) { return UTF8StringCompare(name, loc->getName(false)) == 0 ||
+                                                                 UTF8StringCompare(name, loc->getName(true)) == 0; })
+        : std::ranges::find_if(bodyLocations,
+                               [&name](const auto& loc) { return UTF8StringCompare(name, loc->getName(false)) == 0; });
 
     return iter == bodyLocations.end() ? nullptr : iter->get();
 }

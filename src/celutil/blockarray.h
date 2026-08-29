@@ -214,7 +214,7 @@ private:
 template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
 bool operator==(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
 {
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    return std::ranges::equal(lhs, rhs);
 }
 
 template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>

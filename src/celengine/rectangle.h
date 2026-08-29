@@ -11,6 +11,8 @@
 
 #include <algorithm>
 #include <array>
+#include <span>
+
 #include <celutil/color.h>
 
 class Renderer;
@@ -37,9 +39,9 @@ class Rect
         colors.fill(_color);
         hasColors = true;
     }
-    void setColor(const std::array<Color,4> &_colors)
+    void setColor(std::span<const Color, 4> _colors)
     {
-        std::copy(_colors.begin(), _colors.end(), colors.begin());
+        std::ranges::copy(_colors, colors.begin());
         hasColors = true;
     }
     void setLineWidth(float _lw)

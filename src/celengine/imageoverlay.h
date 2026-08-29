@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <filesystem>
+#include <span>
 #include <memory>
 
 #include "texture.h"
@@ -63,7 +64,7 @@ class ImageOverlay
         overrideHeight = h;
     }
     void setColor(const Color& c);
-    void setColor(std::array<Color, 4>& c);
+    void setColor(std::span<const Color, 4> c);
 
  private:
     float start          { 0.0f };

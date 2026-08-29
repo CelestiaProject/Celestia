@@ -16,13 +16,13 @@ using namespace std::string_view_literals;
 namespace celestia::util
 {
 
+#ifdef _WIN32
 namespace
 {
-#ifdef _WIN32
 constexpr std::string_view filePrefix = "file:///"sv;
 constexpr std::wstring_view extPrefix = L"\\\\?\\"sv;
-#endif
 } // end unnamed namespace
+#endif
 
 std::string
 BuildInfoURL(std::string_view infoUrl, const std::filesystem::path &resPath)
@@ -47,7 +47,7 @@ BuildInfoURL(std::string_view infoUrl, const std::filesystem::path &resPath)
     if (fileUrl.size() == filePrefix.size())
         return {};
 
-    std::replace(fileUrl.begin(), fileUrl.end(), '\\', '/');
+    std::ranges::replace(fileUrl, '\\', '/');
     return fileUrl;
 #else
     return fmt::format("file://{}", canonical.native());

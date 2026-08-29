@@ -319,16 +319,9 @@ CelestialBrowser::StarTableModel::sort(int column, Qt::SortOrder order)
         return;
     }
 
-    if (order == Qt::AscendingOrder)
-    {
-        std::sort(records.begin(), records.end(),
-                  [this, compareFn](const auto& a, const auto& b) { return (this->*compareFn)(a, b); });
-    }
-    else
-    {
-        std::sort(records.begin(), records.end(),
-                  [this, compareFn](const auto& a, const auto& b) { return (this->*compareFn)(b, a); });
-    }
+    std::ranges::sort(records, [this, compareFn](const auto& a, const auto& b) { return (this->*compareFn)(a, b); });
+    if (order == Qt::DescendingOrder)
+        std::ranges::reverse(records);
 
     dataChanged(index(0, 0), index(static_cast<int>(records.size() - 1), 4));
 }

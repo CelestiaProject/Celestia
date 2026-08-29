@@ -58,8 +58,8 @@ void
 Nebula::setType(const std::string& typeStr)
 {
     type = Nebula::Type::NotDefined;
-    auto iter = std::find_if(std::begin(NebulaTypeNames), std::end(NebulaTypeNames),
-                             [&](const NebulaTypeName& n) { return compareIgnoringCase(n.name, typeStr) == 0; });
+    auto iter = std::ranges::find_if(NebulaTypeNames,
+                                     [&](const NebulaTypeName& n) { return compareIgnoringCase(n.name, typeStr) == 0; });
     if (iter != std::end(NebulaTypeNames))
         type = iter->type;
 }

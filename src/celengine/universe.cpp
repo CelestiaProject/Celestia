@@ -693,8 +693,7 @@ Universe::markObject(const Selection& sel,
                      bool occludable,
                      celestia::MarkerSizing sizing)
 {
-    if (auto iter = std::find_if(markers.begin(), markers.end(),
-                                 [&sel](const auto& m) { return m.object() == sel; });
+    if (auto iter = std::ranges::find(markers, sel, &celestia::Marker::object);
         iter != markers.end())
     {
         // Handle the case when the object is already marked.  If the
@@ -715,8 +714,7 @@ Universe::markObject(const Selection& sel,
 void
 Universe::unmarkObject(const Selection& sel, int priority)
 {
-    auto iter = std::find_if(markers.begin(), markers.end(),
-                             [&sel](const auto& m) { return m.object() == sel; });
+    auto iter = std::ranges::find(markers, sel, &celestia::Marker::object);
     if (iter != markers.end() && priority >= iter->priority())
         markers.erase(iter);
 }
@@ -730,8 +728,7 @@ Universe::unmarkAll()
 bool
 Universe::isMarked(const Selection& sel, int priority) const
 {
-    auto iter = std::find_if(markers.begin(), markers.end(),
-                             [&sel](const auto& m) { return m.object() == sel; });
+    auto iter = std::ranges::find(markers, sel, &celestia::Marker::object);
     return iter != markers.end() && iter->priority() >= priority;
 }
 

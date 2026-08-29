@@ -101,8 +101,7 @@ buildGalacticForm(const std::filesystem::path& filename)
 
     // sort to start with the galaxy center region (x^2 + y^2 + z^2 ~ 0), such that
     // the biggest (brightest) sprites will be localized there!
-    std::sort(galacticPoints.begin(), galacticPoints.end(),
-              [](const auto &b1, const auto &b2) { return b1.position.squaredNorm() < b2.position.squaredNorm(); });
+    std::ranges::sort(galacticPoints, {}, [](const auto& b) { return b.position.squaredNorm(); });
 
     // reshuffle the galaxy points randomly...except the first kmin+1 in the center!
     // the higher that number the stronger the central "glow"

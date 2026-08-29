@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <numeric>
+#include <span>
 
 #include "randutils.h"
 
@@ -16,7 +17,7 @@ std::mt19937 createRNG()
     std::uniform_int_distribution<std::uint_least32_t> dist{0, UINT32_C(0xffffffff)};
     constexpr std::size_t seedSize = std::mt19937::state_size * (std::mt19937::word_size / 32);
     std::array<std::uint_least32_t, seedSize> seedData;
-    std::generate(seedData.begin(), seedData.end(), [&] { return dist(rd); });
+    std::ranges::generate(seedData, [&rd, &dist]() { return dist(rd); });
     std::seed_seq rngSeed(seedData.begin(), seedData.end());
     return std::mt19937{ rngSeed };
 }
@@ -35,19 +36,14 @@ struct PerlinData
     PerlinData()
     {
         auto& rng = getRNG();
-        auto permutationMid = permutation.begin() + TableSize;
-        std::iota(permutation.begin(), permutationMid, 0);
-        std::shuffle(permutation.begin(), permutationMid, rng);
-        std::copy(permutation.begin(), permutationMid, permutationMid);
+        auto halfPermuation = std::span{permutation}.first<TableSize>();
+        std::iota(halfPermuation.begin(), halfPermuation.end(), 0); // no std::ranges::iota until C++23
+        std::ranges::shuffle(halfPermuation, rng);
+        std::ranges::copy(halfPermuation, permutation.begin() + TableSize);
 
-        std::generate(gradients1D.begin(), gradients1D.end(),
-                      [&]() { return RealDists<float>::SignedUnit(rng); });
-
-        std::generate(gradients2D.begin(), gradients2D.end(),
-                      [&]() { return randomOnCircle<float>(rng); });
-
-        std::generate(gradients3D.begin(), gradients3D.end(),
-                      [&]() { return randomOnSphere<float>(rng); });
+        std::ranges::generate(gradients1D, [&rng]() { return RealDists<float>::SignedUnit(rng); });
+        std::ranges::generate(gradients2D, [&rng]() { return randomOnCircle<float>(rng); });
+        std::ranges::generate(gradients3D, [&rng]() { return randomOnSphere<float>(rng); });
     }
 
     inline int permuteIndices(int x, int y) const

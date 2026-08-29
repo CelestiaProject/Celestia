@@ -155,7 +155,7 @@ parallelSpacing(double idealSpacing)
     // the spacing closest to but not less than the ideal spacing.
 
     auto target = static_cast<int>(idealSpacing * static_cast<double>(DEG_MIN_SEC_TOTAL) * std::numbers::inv_pi);
-    auto it = std::lower_bound(DEG_MIN_SEC_SPACING.begin(), DEG_MIN_SEC_SPACING.end(), target);
+    auto it = std::ranges::lower_bound(DEG_MIN_SEC_SPACING, target);
     return it == DEG_MIN_SEC_SPACING.end() ? DEG_MIN_SEC_TOTAL : *it;
 }
 
@@ -179,7 +179,7 @@ meridianSpacing(double idealSpacing, engine::SkyGrid::LongitudeUnits longitudeUn
     }
 
     auto target = static_cast<int>(idealSpacing * static_cast<double>(totalUnits) * 0.5 * std::numbers::inv_pi);
-    auto it = std::lower_bound(spacingTable.begin(), spacingTable.end(), target);
+    auto it = std::ranges::lower_bound(spacingTable, target);
     return it == spacingTable.end() ? totalUnits : *it;
 }
 

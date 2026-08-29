@@ -131,7 +131,7 @@ parseBMPInfoHeader(const char* infoHeader,
                    const std::filesystem::path& filename)
 {
     info.infoSize = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, size));
-    if (std::find(validHeaderSizes.begin(), validHeaderSizes.end(), info.infoSize) == validHeaderSizes.end())
+    if (std::ranges::find(validHeaderSizes, info.infoSize) == validHeaderSizes.end())
     {
         GetLogger()->error(_("BMP read failure '{}' - unsupported header format\n"), filename);
         return false;
@@ -160,7 +160,7 @@ parseBMPInfoHeader(const char* infoHeader,
 
     info.bpp = util::fromMemoryLE<std::uint16_t>(infoHeader + offsetof(BMPInfoHeader, bpp));
     // We don't handle 1-, 2-, or 4-bpp images
-    if (std::find(validBpps.begin(), validBpps.end(), info.bpp) == validBpps.end())
+    if (std::ranges::find(validBpps, info.bpp) == validBpps.end())
     {
         GetLogger()->error(_("BMP read failure '{}' - invalid bits per pixel {}\n"), filename, info.bpp);
         return false;

@@ -141,8 +141,6 @@ public:
     void finalize();
 
 private:
-    static bool compare(const StarBrowserRecord&, const StarBrowserRecord&);
-
     const StarFilter* m_filter;
     std::vector<StarBrowserRecord>* m_records;
     double m_jd;
@@ -165,12 +163,6 @@ DistanceProcessor::DistanceProcessor(std::vector<StarBrowserRecord>& records,
     m_size(size)
 {
     assert(m_size > 0);
-}
-
-bool
-DistanceProcessor::compare(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs)
-{
-    return lhs.distance < rhs.distance;
 }
 
 bool
@@ -199,15 +191,15 @@ DistanceProcessor::process(const Star& star)
     {
         auto& record = m_records->emplace_back(&star);
         record.distance = distance2;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, {}, &StarBrowserRecord::distance);
     }
     else if (distance2 < m_records->front().distance)
     {
-        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::pop_heap(*m_records, {}, &StarBrowserRecord::distance);
         auto& record = m_records->back();
         record.star = &star;
         record.distance = distance2;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, {}, &StarBrowserRecord::distance);
     }
     else
     {
@@ -221,7 +213,7 @@ DistanceProcessor::process(const Star& star)
 void
 DistanceProcessor::finalize()
 {
-    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    std::ranges::sort_heap(*m_records, {}, &StarBrowserRecord::distance);
     for (StarBrowserRecord& record : *m_records)
     {
         record.distance = std::sqrt(record.distance);
@@ -250,8 +242,6 @@ public:
     void finalize();
 
 private:
-    static bool compare(const StarBrowserRecord&, const StarBrowserRecord&);
-
     const StarFilter* m_filter;
     std::vector<StarBrowserRecord>* m_records;
     double m_jd;
@@ -273,12 +263,6 @@ AppMagProcessor::AppMagProcessor(std::vector<StarBrowserRecord>& records,
     m_size(size)
 {
     assert(m_size > 0);
-}
-
-bool
-AppMagProcessor::compare(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs)
-{
-    return lhs.appMag < rhs.appMag;
 }
 
 bool
@@ -312,23 +296,23 @@ AppMagProcessor::process(const Star& star)
         auto& record = m_records->emplace_back(&star);
         record.distance = distance;
         record.appMag = appMag;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, {}, &StarBrowserRecord::appMag);
     }
     else if (appMag < m_records->front().appMag)
     {
-        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::pop_heap(*m_records, {}, &StarBrowserRecord::appMag);
         auto& record = m_records->back();
         record.star = &star;
         record.distance = distance;
         record.appMag = appMag;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, {}, &StarBrowserRecord::appMag);
     }
 }
 
 void
 AppMagProcessor::finalize()
 {
-    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    std::ranges::sort_heap(*m_records, {}, &StarBrowserRecord::appMag);
 }
 
 class AbsMagProcessor
@@ -352,7 +336,7 @@ public:
     void finalize();
 
 private:
-    static bool compare(const StarBrowserRecord&, const StarBrowserRecord&);
+    static float getAbsMag(const StarBrowserRecord&);
 
     const StarFilter* m_filter;
     std::vector<StarBrowserRecord>* m_records;
@@ -377,10 +361,10 @@ AbsMagProcessor::AbsMagProcessor(std::vector<StarBrowserRecord>& records,
     assert(m_size > 0);
 }
 
-bool
-AbsMagProcessor::compare(const StarBrowserRecord& lhs, const StarBrowserRecord& rhs)
+float
+AbsMagProcessor::getAbsMag(const StarBrowserRecord& record)
 {
-    return lhs.star->getAbsoluteMagnitude() < rhs.star->getAbsoluteMagnitude();
+    return record.star->getAbsoluteMagnitude();
 }
 
 bool
@@ -403,20 +387,20 @@ AbsMagProcessor::process(const Star& star)
     if (m_records->size() < m_size)
     {
         m_records->emplace_back(&star);
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, {}, &getAbsMag);
     }
     else if (star.getAbsoluteMagnitude() < m_records->front().star->getAbsoluteMagnitude())
     {
-        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::pop_heap(*m_records, {}, &getAbsMag);
         m_records->back().star = &star;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, {}, &getAbsMag);
     }
 }
 
 void
 AbsMagProcessor::finalize()
 {
-    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    std::ranges::sort_heap(*m_records, {}, &getAbsMag);
     for (StarBrowserRecord& record : *m_records)
     {
         record.distance = std::sqrt(distanceSquared(*record.star, m_jd, m_pos, m_ucPos));

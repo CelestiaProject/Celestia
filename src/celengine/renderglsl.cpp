@@ -279,11 +279,13 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
             // The current implementation of cloud shadows is not compatible
             // with virtual or split textures.
-            bool allowCloudShadows = std::none_of(textures.cbegin(), textures.cend(),
-                                                  [](const Texture* tex) { return tex != nullptr &&
-                                                                                  (tex->getLODCount() > 1 ||
-                                                                                   tex->getUTileCount(0) > 1 ||
-                                                                                   tex->getVTileCount(0) > 1); });
+            bool allowCloudShadows = std::ranges::none_of(textures,
+                                                          [](const Texture* tex)
+                                                          {
+                                                              return tex && (tex->getLODCount() > 1 ||
+                                                                             tex->getUTileCount(0) > 1 ||
+                                                                             tex->getVTileCount(0) > 1);
+                                                          });
 
             // Split cloud shadows can't cast shadows
             if (cloudTex != nullptr)
@@ -376,8 +378,8 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
     ps.depthTest = true;
     renderer->setPipelineState(ps);
 
-    auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
-    textures.erase(endTextures, textures.end());
+    auto removedTextures = std::ranges::remove(textures, nullptr);
+    textures.erase(removedTextures.begin(), removedTextures.end());
     lodSphere->render(attributes,
                       frustum, ri.pixWidth,
                       textures.data(), static_cast<int>(textures.size()), prog);
@@ -662,8 +664,8 @@ void renderClouds_GLSL(const RenderInfo& ri,
     ps.depthTest = true;
     renderer->setPipelineState(ps);
 
-    auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
-    textures.erase(endTextures, textures.end());
+    auto removedTextures = std::ranges::remove(textures, nullptr);
+    textures.erase(removedTextures.begin(), removedTextures.end());
     lodSphere->render(attributes,
                       frustum, ri.pixWidth,
                       textures.data(), static_cast<int>(textures.size()), prog);
