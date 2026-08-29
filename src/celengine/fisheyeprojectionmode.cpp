@@ -86,7 +86,7 @@ float FisheyeProjectionMode::getNormalizedDeviceZ(float nearZ, float farZ, float
 Eigen::Vector3f FisheyeProjectionMode::getPickRay(float x, float y, float /*zoom*/) const
 {
     float r = std::hypot(x, y);
-    float phi = celestia::numbers::pi_v<float> * r;
+    float phi = std::numbers::pi_v<float> * r;
     float sin_phi = std::sin(phi);
     float theta = std::atan2(y, x);
     float newX = sin_phi * std::cos(theta);

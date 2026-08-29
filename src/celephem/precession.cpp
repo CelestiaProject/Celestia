@@ -13,8 +13,8 @@
 #include "precession.h"
 
 #include <array>
+#include <numbers>
 
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 
 namespace celestia::ephem
@@ -114,7 +114,7 @@ EclipticPrecession_P03LP(double T)
 
     for (const EclipticPrecessionTerm& p : EclipticPrecessionTerms)
     {
-        double theta = 2.0 * celestia::numbers::pi * T / p.period;
+        double theta = 2.0 * std::numbers::pi * T / p.period;
         double s;
         double c;
         math::sincos(theta, s, c);
@@ -151,7 +151,7 @@ PrecObliquity_P03LP(double T)
 
     for (const PrecessionTerm& p : PrecessionTerms)
     {
-        double theta = 2.0 * celestia::numbers::pi * T / p.period;
+        double theta = 2.0 * std::numbers::pi * T / p.period;
         double s;
         double c;
         math::sincos(theta, s, c);

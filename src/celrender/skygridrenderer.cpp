@@ -17,6 +17,7 @@
 #include <array>
 #include <cmath>
 #include <iterator>
+#include <numbers>
 #include <span>
 #include <string>
 #include <string_view>
@@ -25,7 +26,6 @@
 #include <Eigen/Geometry>
 #include <fmt/format.h>
 
-#include <celcompat/numbers.h>
 #include <celengine/render.h>
 #include <celengine/skygrid.h>
 #include <celmath/mathlib.h>
@@ -129,8 +129,8 @@ double
 angleDiff(double a, double b)
 {
     double diff = std::fabs(a - b);
-    if (diff > numbers::pi)
-        return 2.0 * numbers::pi - diff;
+    if (diff > std::numbers::pi)
+        return 2.0 * std::numbers::pi - diff;
     else
         return diff;
 }
@@ -154,7 +154,7 @@ parallelSpacing(double idealSpacing)
     // minutes, or seconds. Choose spacings from a table. We take the table entry that gives
     // the spacing closest to but not less than the ideal spacing.
 
-    auto target = static_cast<int>(idealSpacing * static_cast<double>(DEG_MIN_SEC_TOTAL) * numbers::inv_pi);
+    auto target = static_cast<int>(idealSpacing * static_cast<double>(DEG_MIN_SEC_TOTAL) * std::numbers::inv_pi);
     auto it = std::lower_bound(DEG_MIN_SEC_SPACING.begin(), DEG_MIN_SEC_SPACING.end(), target);
     return it == DEG_MIN_SEC_SPACING.end() ? DEG_MIN_SEC_TOTAL : *it;
 }
@@ -178,7 +178,7 @@ meridianSpacing(double idealSpacing, engine::SkyGrid::LongitudeUnits longitudeUn
         totalUnits = HOUR_MIN_SEC_TOTAL;
     }
 
-    auto target = static_cast<int>(idealSpacing * static_cast<double>(totalUnits) * 0.5 * numbers::inv_pi);
+    auto target = static_cast<int>(idealSpacing * static_cast<double>(totalUnits) * 0.5 * std::numbers::inv_pi);
     auto it = std::lower_bound(spacingTable.begin(), spacingTable.end(), target);
     return it == spacingTable.end() ? totalUnits : *it;
 }
@@ -376,7 +376,7 @@ SkyGridRenderer::RenderInfo::RenderInfo(double vfov, double viewAspectRatio,
     updateAngleRange(thetaC1, thetaC3, maxDiff, minTheta, maxTheta);
     updateAngleRange(thetaC2, thetaC3, maxDiff, minTheta, maxTheta);
 
-    if (std::fabs(maxTheta - minTheta) < numbers::pi)
+    if (std::fabs(maxTheta - minTheta) < std::numbers::pi)
     {
         if (minTheta > maxTheta)
             std::swap(minTheta, maxTheta);
@@ -408,26 +408,26 @@ SkyGridRenderer::RenderInfo::RenderInfo(double vfov, double viewAspectRatio,
     if (std::fabs(viewCenter.z()) < 1.0)
         centerDec = std::asin(viewCenter.z());
     else if (viewCenter.z() < 0.0)
-        centerDec = -numbers::pi * 0.5;
+        centerDec = -std::numbers::pi * 0.5;
     else
-        centerDec = numbers::pi * 0.5;
+        centerDec = std::numbers::pi * 0.5;
 
     minDec = centerDec - halfFov;
     maxDec = centerDec + halfFov;
 
-    if (maxDec >= numbers::pi * 0.5)
+    if (maxDec >= std::numbers::pi * 0.5)
     {
         // view cone contains north pole
-        maxDec = numbers::pi * 0.5;
-        minTheta = -numbers::pi;
-        maxTheta = numbers::pi;
+        maxDec = std::numbers::pi * 0.5;
+        minTheta = -std::numbers::pi;
+        maxTheta = std::numbers::pi;
     }
-    else if (minDec <= -numbers::pi * 0.5)
+    else if (minDec <= -std::numbers::pi * 0.5)
     {
         // view cone contains south pole
-        minDec = -numbers::pi * 0.5;
-        minTheta = -numbers::pi;
-        maxTheta = numbers::pi;
+        minDec = -std::numbers::pi * 0.5;
+        minTheta = -std::numbers::pi;
+        maxTheta = std::numbers::pi;
     }
 
     idealParallelSpacing = 2.0 * halfFov / MAX_VISIBLE_ARCS;
@@ -521,14 +521,14 @@ SkyGridRenderer::drawParallels(const RenderInfo& renderInfo,
     double arcStep = (renderInfo.maxTheta - renderInfo.minTheta) / static_cast<double>(ARC_SUBDIVISIONS);
     double theta0 = renderInfo.minTheta;
 
-    auto startDec = static_cast<int>(std::ceil (DEG_MIN_SEC_TOTAL * (renderInfo.minDec * numbers::inv_pi) / static_cast<double>(decIncrement))) * decIncrement;
-    auto endDec   = static_cast<int>(std::floor(DEG_MIN_SEC_TOTAL * (renderInfo.maxDec * numbers::inv_pi) / static_cast<double>(decIncrement))) * decIncrement;
+    auto startDec = static_cast<int>(std::ceil (DEG_MIN_SEC_TOTAL * (renderInfo.minDec * std::numbers::inv_pi) / static_cast<double>(decIncrement))) * decIncrement;
+    auto endDec   = static_cast<int>(std::floor(DEG_MIN_SEC_TOTAL * (renderInfo.maxDec * std::numbers::inv_pi) / static_cast<double>(decIncrement))) * decIncrement;
 
     int count = 0;
     for (int dec = startDec; dec <= endDec; dec += decIncrement)
     {
         ++count;
-        double phi = numbers::pi * static_cast<double>(dec) / static_cast<double>(DEG_MIN_SEC_TOTAL);
+        double phi = std::numbers::pi * static_cast<double>(dec) / static_cast<double>(DEG_MIN_SEC_TOTAL);
         double cosPhi;
         double sinPhi;
         math::sincos(phi, sinPhi, cosPhi);
@@ -587,12 +587,12 @@ SkyGridRenderer::drawMeridians(const RenderInfo& renderInfo,
 {
     int totalLongitudeUnits = grid.longitudeUnits == engine::SkyGrid::LongitudeDegrees ? (DEG_MIN_SEC_TOTAL * 2) : HOUR_MIN_SEC_TOTAL;
     int raIncrement  = meridianSpacing(renderInfo.idealMeridianSpacing, grid.longitudeUnits);
-    auto startRa  = static_cast<int>(std::ceil (totalLongitudeUnits * (renderInfo.minTheta * 0.5 * numbers::inv_pi) / static_cast<double>(raIncrement))) * raIncrement;
-    auto endRa    = static_cast<int>(std::floor(totalLongitudeUnits * (renderInfo.maxTheta * 0.5 * numbers::inv_pi) / static_cast<double>(raIncrement))) * raIncrement;
+    auto startRa  = static_cast<int>(std::ceil (totalLongitudeUnits * (renderInfo.minTheta * 0.5 * std::numbers::inv_pi) / static_cast<double>(raIncrement))) * raIncrement;
+    auto endRa    = static_cast<int>(std::floor(totalLongitudeUnits * (renderInfo.maxTheta * 0.5 * std::numbers::inv_pi) / static_cast<double>(raIncrement))) * raIncrement;
 
     // Render meridians only to the last latitude circle; this looks better
     // than spokes radiating from the pole.
-    double maxMeridianAngle = numbers::pi * 0.5 * (1.0 - 2.0 * static_cast<double>(decIncrement) / static_cast<double>(DEG_MIN_SEC_TOTAL));
+    double maxMeridianAngle = std::numbers::pi * 0.5 * (1.0 - 2.0 * static_cast<double>(decIncrement) / static_cast<double>(DEG_MIN_SEC_TOTAL));
     double minDec = std::max(renderInfo.minDec, -maxMeridianAngle);
     double maxDec = std::min(renderInfo.maxDec,  maxMeridianAngle);
     double arcStep = (maxDec - minDec) / static_cast<double>(ARC_SUBDIVISIONS);
@@ -604,7 +604,7 @@ SkyGridRenderer::drawMeridians(const RenderInfo& renderInfo,
     for (int ra = startRa; ra <= endRa; ra += raIncrement)
     {
         ++count;
-        double theta = 2.0 * numbers::pi * (double) ra / (double) totalLongitudeUnits;
+        double theta = 2.0 * std::numbers::pi * (double) ra / (double) totalLongitudeUnits;
         double cosTheta;
         double sinTheta;
         math::sincos(theta, sinTheta, cosTheta);

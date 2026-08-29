@@ -1,9 +1,9 @@
 #include <array>
 #include <cmath>
+#include <numbers>
 #include <span>
 
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celephem/orbit.h>
 #include <celmath/mathlib.h>
 
@@ -15,8 +15,8 @@ namespace math = celestia::math;
 namespace
 {
 constexpr double GMsun = 0.000296014912;
-constexpr double fourpi2 = 4.0 * math::square(celestia::numbers::pi);
-constexpr double tau = 2.0 * celestia::numbers::pi;
+constexpr double fourpi2 = 4.0 * math::square(std::numbers::pi);
+constexpr double tau = 2.0 * std::numbers::pi;
 
 constexpr std::array testPeriods{
     50.0, 1200.0

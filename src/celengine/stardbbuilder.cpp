@@ -1115,7 +1115,7 @@ StarDatabaseBuilder::buildOctree()
     auto starCount = static_cast<engine::OctreeObjectIndex>(unsortedStars.size());
 
     float absMag = astro::appToAbsMag(STAR_OCTREE_MAGNITUDE,
-                                      StarDatabase::STAR_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
+                                      StarDatabase::STAR_OCTREE_ROOT_SIZE * std::numbers::sqrt3_v<float>);
 
     auto root = engine::makeDynamicOctree<StarOctreeTraits>(std::move(unsortedStars),
                                                             Eigen::Vector3f(1000.0f, 1000.0f, 1000.0f),

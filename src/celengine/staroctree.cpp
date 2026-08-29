@@ -12,8 +12,9 @@
 
 #include "staroctree.h"
 
+#include <numbers>
+
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 
 namespace celestia::engine
@@ -66,7 +67,7 @@ StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float minDistance = (m_obsPosition - center).norm() - size * numbers::sqrt3_v<float>;
+    float minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
 
     float distanceModulus = astro::distanceModulus(minDistance);
     if (minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
@@ -108,7 +109,7 @@ StarOctreeCloseObjectsProcessor::checkNode(const StarOctree::PointType& center,
 {
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float nodeDistance = (m_obsPosition - center).norm() - size * numbers::sqrt3_v<float>;
+    float nodeDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
     return nodeDistance <= m_boundingRadius;
 }
 

@@ -12,12 +12,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #include <span>
 
 #include <Eigen/Geometry>
 
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celengine/glsupport.h>
 #include <celengine/observer.h>
@@ -215,7 +215,7 @@ CometRenderer::render(const Body &body,
         float radius = static_cast<float>(i) / static_cast<float>(nTailPoints) * dustTailRadius;
         for (int j = 0; j < nTailSlices; j++)
         {
-            float theta = 2.0f * numbers::pi_v<float> * static_cast<float>(j) / static_cast<float>(nTailSlices);
+            float theta = 2.0f * std::numbers::pi_v<float> * static_cast<float>(j) / static_cast<float>(nTailSlices);
             float s, c;
             math::sincos(theta, s, c);
             CometTailVertex& vtx = m_vertices[i * nTailSlices + j];

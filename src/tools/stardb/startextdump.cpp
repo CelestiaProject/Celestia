@@ -13,8 +13,9 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <numbers>
+
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celutil/bytes.h>
 #include <celengine/stellarclass.h>
 
@@ -258,8 +259,8 @@ bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
             Eigen::Vector3d pos = astro::eclipticToEquatorial(eclipticpos);
             double distance = sqrt(x * x + y * y + z * z);
             // acos outputs angles in interval [0, pi], use negative sign for interval [-pi, 0]
-            double phi = -acos(pos.y() / distance) * 180 / celestia::numbers::pi;
-            double theta = atan2(pos.z(), -pos.x()) * 180 / celestia::numbers::pi;
+            double phi = -acos(pos.y() / distance) * 180 / std::numbers::pi;
+            double theta = atan2(pos.z(), -pos.x()) * 180 / std::numbers::pi;
             // atan2 outputs angles in interval [-pi, pi], so we add 360 to fix this
             double ra = theta - 180 + 360;
             double dec = phi + 90;

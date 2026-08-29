@@ -11,11 +11,11 @@
 
 #include <cassert>
 #include <cmath>
+#include <numbers>
 #include <span>
 
 #include <celrender/gl/vertexobject.h>
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celutil/color.h>
 
 #include "glsupport.h"
@@ -113,7 +113,7 @@ PsfStarVertexBuffer::makeCurrent()
     if (m_mode == Mode::Glow)
     {
         float a = (m_pointRadius > 0.0f) ? (m_optimization / m_pointRadius) : 0.0f;
-        float denom = (celestia::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
+        float denom = (std::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
         float b = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
         m_prog->floatParam("psfA") = a;
         m_prog->floatParam("psfB") = b;

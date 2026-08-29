@@ -184,7 +184,7 @@ DistanceProcessor::checkNode(const Eigen::Vector3f& center,
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float nodeDistance = (m_pos - center).norm() - size * numbers::sqrt3_v<float>;
+    float nodeDistance = (m_pos - center).norm() - size * std::numbers::sqrt3_v<float>;
     return nodeDistance <= m_maxDistance;
 }
 
@@ -292,7 +292,7 @@ AppMagProcessor::checkNode(const Eigen::Vector3f& center,
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float nodeDistance = (m_pos - center).norm() - size * numbers::sqrt3_v<float>;
+    float nodeDistance = (m_pos - center).norm() - size * std::numbers::sqrt3_v<float>;
     if (nodeDistance < 1e-3)
         return true;
 

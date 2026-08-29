@@ -12,12 +12,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #include <span>
 #include <vector>
 
 #include <Eigen/Core>
 
-#include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celengine/lightenv.h>
 #include <celengine/render.h>
@@ -139,7 +139,7 @@ RingRenderer::RingRenderer(Renderer& _renderer) : renderer(_renderer)
     std::uint32_t nSections = BaseSectionCount;
     for (unsigned int i = 0; i < RingRenderer::nLODs - 1; ++i)
     {
-        sectionScales[i] = static_cast<float>(std::tan(celestia::numbers::pi / static_cast<double>(nSections)));
+        sectionScales[i] = static_cast<float>(std::tan(std::numbers::pi / static_cast<double>(nSections)));
         nSections <<= 1;
     }
 }
@@ -226,7 +226,7 @@ RingRenderer::initializeLOD(unsigned int level, std::uint32_t nSections)
     std::vector<RingVertex> ringCoord;
     ringCoord.reserve(2 * nSections);
 
-    constexpr float angle = 2.0f * celestia::numbers::pi_v<float>;
+    constexpr float angle = 2.0f * std::numbers::pi_v<float>;
     for (std::uint32_t i = 0; i <= nSections; i++)
     {
         float theta = angle * static_cast<float>(i) / static_cast<float>(nSections);

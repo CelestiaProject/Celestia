@@ -12,10 +12,9 @@
 #include <config.h>
 
 #include <cmath>
+#include <numbers>
 
 #include <Eigen/Core>
-
-#include <celcompat/numbers.h>
 
 namespace celestia::math
 {
@@ -65,13 +64,13 @@ using ::std::lerp;
 
 template<typename T> inline constexpr T degToRad(T d)
 {
-    using celestia::numbers::pi_v;
+    using std::numbers::pi_v;
     return d / static_cast<T>(180) * pi_v<T>;
 }
 
 template<typename T> inline constexpr T radToDeg(T r)
 {
-    using celestia::numbers::inv_pi_v;
+    using std::numbers::inv_pi_v;
     return r * static_cast<T>(180) * inv_pi_v<T>;
 }
 
@@ -106,13 +105,13 @@ template<typename T> T pfmod(T x, T y)
 
 template<typename T> inline constexpr T circleArea(T r)
 {
-    using celestia::numbers::pi_v;
+    using std::numbers::pi_v;
     return pi_v<T> * r * r;
 }
 
 template<typename T> inline constexpr T sphereArea(T r)
 {
-    using celestia::numbers::pi_v;
+    using std::numbers::pi_v;
     return static_cast<T>(4) * pi_v<T> * r * r;
 }
 

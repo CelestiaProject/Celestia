@@ -17,12 +17,12 @@
 #include <fstream>
 #include <map>
 #include <memory>
+#include <numbers>
 #include <span>
 #include <utility>
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>
@@ -204,7 +204,7 @@ PlanetOrbitMixin::computePlanetCoords(int p, double map, double da, double dhl, 
     eclLat = std::asin(spsi) + dhl;
     eclLong = std::atan(y/clo) + om + math::degToRad(dl);
     if (clo < 0)
-        eclLong += celestia::numbers::pi;
+        eclLong += std::numbers::pi;
     eclLong = math::pfmod(eclLong, TWOPI);
     distance *= astro::KM_PER_AU<double>;
 }
@@ -333,7 +333,7 @@ EclipticToEquatorial(double fEclLat, double fEclLon,
     dec = std::asin((sy*ceps)+(cy*seps*sx));
     RA = std::atan(((sx*ceps)-(ty*seps))/cx);
     if (cx<0)
-        RA += celestia::numbers::pi; // account for atan quad ambiguity
+        RA += std::numbers::pi; // account for atan quad ambiguity
     RA = math::pfmod(RA, TWOPI);
 }
 
@@ -469,8 +469,8 @@ public:
                             eclLong, eclLat, distance);
 
         // Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -539,8 +539,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -600,12 +600,12 @@ public:
         dr = 5.43e-06*std::sin(a1)+1.575e-05*std::sin(b1)+1.627e-05*std::sin(c1)+
             3.076e-05*std::cos(d1)+9.27e-06*std::sin(h1);
 
-        eclLong = nu+math::degToRad(ls-ms+dl) + celestia::numbers::pi;
+        eclLong = nu+math::degToRad(ls-ms+dl) + std::numbers::pi;
         eclLong = math::pfmod(eclLong, TWOPI);
         distance = astro::KM_PER_AU<double> * (1.0000002*(1.0-s*std::cos(ea))+dr);
 
         // Correction for internal coordinate system
-        eclLong += celestia::numbers::pi;
+        eclLong += std::numbers::pi;
 
         double seclLong;
         double ceclLong;
@@ -769,8 +769,8 @@ public:
         EpochConvert(jd, astro::J2000, RA, dec, RA, dec);
 
         // Corrections for internal coordinate system
-        dec -= (celestia::numbers::pi/2);
-        RA += celestia::numbers::pi;
+        dec -= (std::numbers::pi/2);
+        RA += std::numbers::pi;
 
         return from_polar(RA, dec, distance);
     };
@@ -851,8 +851,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -955,8 +955,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -1082,8 +1082,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -1170,8 +1170,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -1249,8 +1249,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= (celestia::numbers::pi/2);
-        eclLong += celestia::numbers::pi;
+        eclLat -= (std::numbers::pi/2);
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -1294,8 +1294,8 @@ public:
                             eclLong, eclLat, distance);
 
         //Corrections for internal coordinate system
-        eclLat -= celestia::numbers::pi / 2;
-        eclLong += celestia::numbers::pi;
+        eclLat -= std::numbers::pi / 2;
+        eclLong += std::numbers::pi;
 
         return from_polar(eclLong, eclLat, distance);
     };
@@ -1599,8 +1599,8 @@ public:
         L += JupAscendingNode;
 
         // Corrections for internal coordinate system
-        B -= (celestia::numbers::pi/2);
-        L += celestia::numbers::pi;
+        B -= (std::numbers::pi/2);
+        L += std::numbers::pi;
 
         return from_polar(L, B, R);
     };
@@ -1689,8 +1689,8 @@ public:
         L += JupAscendingNode;
 
         // Corrections for internal coordinate system
-        B -= (celestia::numbers::pi/2);
-        L += celestia::numbers::pi;
+        B -= (std::numbers::pi/2);
+        L += std::numbers::pi;
 
         return from_polar(L, B, R);
     };
@@ -1782,8 +1782,8 @@ public:
         L += JupAscendingNode;
 
         //Corrections for internal coordinate system
-        B -= (celestia::numbers::pi/2);
-        L += celestia::numbers::pi;
+        B -= (std::numbers::pi/2);
+        L += std::numbers::pi;
 
         return from_polar(L, B, R);
     };
@@ -1920,8 +1920,8 @@ public:
         L += JupAscendingNode;
 
         //Corrections for internal coordinate system
-        B -= (celestia::numbers::pi/2);
-        L += celestia::numbers::pi;
+        B -= (std::numbers::pi/2);
+        L += std::numbers::pi;
 
         return from_polar(L, B, R);
     };
@@ -2554,7 +2554,7 @@ public:
 
     double getPeriod() const override
     {
-        return 2.0 * celestia::numbers::pi / n;
+        return 2.0 * std::numbers::pi / n;
     }
 
     double getBoundingRadius() const override

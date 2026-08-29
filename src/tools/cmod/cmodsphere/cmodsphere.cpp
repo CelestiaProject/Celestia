@@ -4,6 +4,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <numbers>
 
 #ifdef _WIN32
 #include <io.h>
@@ -11,8 +12,6 @@
 #include <fcntl.h>
 
 #include <Eigen/Core>
-
-#include <celcompat/numbers.h>
 
 unsigned int latSamples = 1440;
 unsigned int longSamples = 2880;
@@ -127,8 +126,8 @@ triangleSection(unsigned int subdiv,
             {
                 float theta = (float) acos(w.y());
                 float phi = (float) atan2(-w.z(), w.x());
-                float s = phi / (2.0f * celestia::numbers::pi_v<float>) + 0.5f;
-                float t = theta / celestia::numbers::pi_v<float>;
+                float s = phi / (2.0f * std::numbers::pi_v<float>) + 0.5f;
+                float t = theta / std::numbers::pi_v<float>;
 
                 float r = sampleBilinear(samples, longSamples, latSamples, s, t);
 

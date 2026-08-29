@@ -12,9 +12,9 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <numbers>
 #include <utility>
 
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/randutils.h>
 #include <celmodel/mesh.h>
@@ -32,8 +32,8 @@ constexpr const int MinSlices = 3;
 
 float SphereMeshParameters::value(float u, float v) const
 {
-    float theta = u * celestia::numbers::pi_v<float> * 2;
-    float phi = (v - 0.5f) * celestia::numbers::pi_v<float>;
+    float theta = u * std::numbers::pi_v<float> * 2;
+    float phi = (v - 0.5f) * std::numbers::pi_v<float>;
 
     Eigen::Vector3f p = Eigen::Vector3f(std::cos(phi) * std::cos(theta),
                                         std::sin(phi),
@@ -67,10 +67,10 @@ void SphereMesh::createSphere()
 
     for (int i = 0; i < nRings; i++)
     {
-        float phi = (static_cast<float>(i) / static_cast<float>(nRings - 1) - 0.5f) * celestia::numbers::pi_v<float>;
+        float phi = (static_cast<float>(i) / static_cast<float>(nRings - 1) - 0.5f) * std::numbers::pi_v<float>;
         for (int j = 0; j <= nSlices; j++)
         {
-            float theta = static_cast<float>(j) / static_cast<float>(nSlices) * static_cast<float>(celestia::numbers::pi * 2.0);
+            float theta = static_cast<float>(j) / static_cast<float>(nSlices) * static_cast<float>(std::numbers::pi * 2.0);
             auto x = std::cos(phi) * std::cos(theta);
             auto y = std::sin(phi);
             auto z = std::cos(phi) * std::sin(theta);

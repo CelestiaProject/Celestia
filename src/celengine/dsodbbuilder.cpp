@@ -14,13 +14,13 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <numbers>
 #include <numeric>
 #include <string>
 
 #include <Eigen/Core>
 
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celutil/associativearray.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
@@ -155,7 +155,7 @@ std::unique_ptr<engine::DSOOctree>
 buildOctree(std::vector<std::unique_ptr<DeepSkyObject>>&& DSOs)
 {
     GetLogger()->debug("Sorting DSOs into octree . . .\n");
-    float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * celestia::numbers::sqrt3_v<float>);
+    float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * std::numbers::sqrt3_v<float>);
 
     auto dsoCount = static_cast<engine::OctreeObjectIndex>(DSOs.size());
 

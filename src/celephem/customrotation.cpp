@@ -137,7 +137,7 @@ public:
     {
         // TODO: Use a more accurate model for sidereal time
         double t = tjd - astro::J2000;
-        double theta = 2 * celestia::numbers::pi * (t * 24.0 / 23.9344694 - 259.853 / 360.0);
+        double theta = 2 * std::numbers::pi * (t * 24.0 / 23.9344694 - 259.853 / 360.0);
 
         return math::YRotation(-theta);
     }
@@ -162,8 +162,8 @@ public:
         // P and Q:
         //   P = sin(pi)*sin(Pi)
         //   Q = sin(pi)*cos(Pi)
-        double P = pole.PA * 2.0 * celestia::numbers::pi / 1296000;
-        double Q = pole.QA * 2.0 * celestia::numbers::pi / 1296000;
+        double P = pole.PA * 2.0 * std::numbers::pi / 1296000;
+        double Q = pole.QA * 2.0 * std::numbers::pi / 1296000;
         double piA = std::asin(std::sqrt(P * P + Q * Q));
         double PiA = std::atan2(P, Q);
 

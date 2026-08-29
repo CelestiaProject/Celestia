@@ -13,11 +13,11 @@
 #include "spicerotation.h"
 
 #include <limits>
+#include <numbers>
 
 #include <SpiceUsr.h>
 
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celutil/logger.h>
 #include "spiceinterface.h"

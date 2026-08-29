@@ -10,7 +10,8 @@
 
 #include "eclipticlinerenderer.h"
 
-#include <celcompat/numbers.h>
+#include <numbers>
+
 #include <celengine/render.h>
 #include <celmath/mathlib.h>
 
@@ -22,7 +23,7 @@ namespace
 constexpr float kEclipticScale = 1000.0f;
 constexpr int kEclipticCount = 200;
 
-constexpr float PI = celestia::numbers::pi_v<float>;
+constexpr float PI = std::numbers::pi_v<float>;
 }
 
 EclipticLineRenderer::EclipticLineRenderer(Renderer &renderer) :

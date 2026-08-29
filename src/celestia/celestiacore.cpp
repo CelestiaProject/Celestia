@@ -30,6 +30,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <numbers>
 #include <set>
 
 #include <Eigen/Geometry>
@@ -40,7 +41,6 @@
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celengine/asterism.h>
 #include <celengine/axisarrow.h>
 #include <celengine/body.h>

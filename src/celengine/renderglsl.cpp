@@ -15,11 +15,11 @@
 #include <cmath>
 #include <cstddef>
 #include <memory>
+#include <numbers>
 #include <optional>
 
 #include <boost/container/static_vector.hpp>
 
-#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celmodel/material.h>

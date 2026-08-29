@@ -11,9 +11,9 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <numbers>
 #include <span>
 
-#include <celcompat/numbers.h>
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
@@ -29,7 +29,7 @@ using celestia::render::LineRenderer;
 
 namespace
 {
-constexpr float pif = celestia::numbers::pi_v<float>;
+constexpr float pif = std::numbers::pi_v<float>;
 
 #include "markers.inc"
 

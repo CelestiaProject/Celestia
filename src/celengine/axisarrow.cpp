@@ -9,9 +9,9 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <numbers>
 #include <utility>
 #include <vector>
-#include <celcompat/numbers.h>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/geomutil.h>

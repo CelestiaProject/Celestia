@@ -19,12 +19,12 @@
 #include <cmath>
 #include <cstddef>
 #include <memory>
+#include <numbers>
 #include <span>
 #include <utility>
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include "orbit.h"
 
@@ -3159,10 +3159,10 @@ public:
             zti += apf[i].ampl * swt;
         }
 
-        double vl = std::fmod(0.2953088138695055E+00 * t + q, celestia::numbers::pi * 2);
+        double vl = std::fmod(0.2953088138695055E+00 * t + q, std::numbers::pi * 2);
         if (vl < 0)
         {
-            vl += celestia::numbers::pi * 2;
+            vl += std::numbers::pi * 2;
         }
 
         std::array<double, 6> elem = {p, vl, zr, zi, ztr, zti};

@@ -12,11 +12,11 @@
 
 #include "referencemarkrenderer.h"
 
+#include <numbers>
 #include <span>
 
 #include <Eigen/Core>
 
-#include <celcompat/numbers.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
@@ -52,7 +52,7 @@ getArrowVertices()
     {
         float s;
         float c;
-        math::sincos((static_cast<float>(i) * 2.0f * celestia::numbers::pi_v<float>) / arrowSections, s, c);
+        math::sincos((static_cast<float>(i) * 2.0f * std::numbers::pi_v<float>) / arrowSections, s, c);
 
         vertices.emplace_back(shaftRadius * s, shaftRadius * c, 0.0f);
         vertices.emplace_back(shaftRadius * s, shaftRadius * c, shaftLength);
@@ -169,7 +169,7 @@ PlanetGridRenderer::PlanetGridRenderer(const Renderer& renderer) :
     for (unsigned int i = 0; i <= circleSubdivisions + 1; i++)
     {
         float s, c;
-        math::sincos((2.0f * celestia::numbers::pi_v<float>) * static_cast<float>(i) / circleSubdivisions, s, c);
+        math::sincos((2.0f * std::numbers::pi_v<float>) * static_cast<float>(i) / circleSubdivisions, s, c);
         Eigen::Vector3f latitudePoint(c, 0.0f, s);
         Eigen::Vector3f longitudePoint(c, s, 0.0f);
         m_latitudeRenderer.addVertex(latitudePoint);

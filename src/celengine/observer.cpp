@@ -322,7 +322,7 @@ interpolateOrientation(const Observer::JourneyParams& journey, double t)
     {
         v = math::square(std::sin((t - journey.startInterpolation) /
                                     (journey.endInterpolation - journey.startInterpolation) *
-                                    celestia::numbers::pi * 0.5));
+                                    std::numbers::pi * 0.5));
     }
 
     return journey.initialOrientation.slerp(v, journey.finalOrientation);
@@ -705,9 +705,11 @@ Observer::update(double dt, double timeScale)
         {
             inputEulerAngles += inputAngularVelocity * dt;
             // Clamp pitch between -90 and +90 to avoid gimbal lock
-            inputEulerAngles[0] = std::clamp(std::remainder(inputEulerAngles[0], 2 * celestia::numbers::pi), -0.5 * celestia::numbers::pi + std::numeric_limits<double>::epsilon(), 0.5 * celestia::numbers::pi - std::numeric_limits<double>::epsilon());
-            inputEulerAngles[1] = std::remainder(inputEulerAngles[1], 2 * celestia::numbers::pi);
-            inputEulerAngles[2] = std::remainder(inputEulerAngles[2], 2 * celestia::numbers::pi);
+            inputEulerAngles[0] = std::clamp(std::remainder(inputEulerAngles[0], 2 * std::numbers::pi),
+                                             -0.5 * std::numbers::pi + std::numeric_limits<double>::epsilon(),
+                                             0.5 * std::numbers::pi - std::numeric_limits<double>::epsilon());
+            inputEulerAngles[1] = std::remainder(inputEulerAngles[1], 2 * std::numbers::pi);
+            inputEulerAngles[2] = std::remainder(inputEulerAngles[2], 2 * std::numbers::pi);
             eulerDrivenOrientation = Eigen::AngleAxisd(inputEulerAngles[0], Eigen::Vector3d::UnitX()) *
                                      Eigen::AngleAxisd(inputEulerAngles[1], Eigen::Vector3d::UnitY()) *
                                      Eigen::AngleAxisd(inputEulerAngles[2], Eigen::Vector3d::UnitZ());
@@ -1413,7 +1415,7 @@ Observer::gotoSelectionLongLat(const Selection& selection,
 
     double sphi;
     double cphi;
-    math::sincos(-latitude + celestia::numbers::pi * 0.5, sphi, cphi);
+    math::sincos(-latitude + std::numbers::pi * 0.5, sphi, cphi);
     double stheta;
     double ctheta;
     math::sincos(static_cast<double>(longitude), stheta, ctheta);
@@ -1475,7 +1477,7 @@ Observer::getSelectionLongLat(const Selection& selection,
 
     distance = bfPos.norm();
     longitude = math::radToDeg(std::atan2(y, x));
-    latitude = math::radToDeg(celestia::numbers::pi * 0.5 - std::acos(std::clamp(z / distance, -1.0, 1.0)));
+    latitude = math::radToDeg(std::numbers::pi * 0.5 - std::acos(std::clamp(z / distance, -1.0, 1.0)));
 }
 
 void
