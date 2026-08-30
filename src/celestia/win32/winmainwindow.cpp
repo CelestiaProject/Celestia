@@ -1457,7 +1457,7 @@ MainWindow::showWWWInfo() const
     if (Star* star = sel.star(); star && url.empty())
     {
         // TODO: get rid of fixed URLs
-        constexpr std::string_view simbadUrl = "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&Ident="sv;
+        constexpr std::string_view simbadUrl = "https://simbad.cds.unistra.fr/simbad/sim-id?Ident="sv;
 
         AstroCatalog::IndexNumber number = sel.star()->getIndex();
         if (number <= StarDatabase::MAX_HIPPARCOS_NUMBER)
