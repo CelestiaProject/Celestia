@@ -168,7 +168,7 @@ public:
     template <typename T> T *newUserDataArray(T *a, int n)
     {
         T *p = static_cast<T*>(lua_newuserdata(m_lua, sizeof(T) * n));
-        std::copy(a, a + n, p);
+        std::uninitialized_copy(a, a + n, p);
         return p;
     }
     template <typename T> int pushClass(T a)
