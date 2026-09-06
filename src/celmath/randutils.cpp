@@ -98,7 +98,7 @@ float noise(float arg)
     float dx1 = dx0 - 1.0f;
     float g0 = perlinData.gradientAt(x0);
     float g1 = perlinData.gradientAt(x1);
-    return lerp(smooth(dx0), dx0 * g0, dx1 * g1);
+    return lerp(dx0 * g0, dx1 * g1, smooth(dx0));
 }
 
 float noise(const Eigen::Vector2f& arg)
@@ -120,9 +120,9 @@ float noise(const Eigen::Vector2f& arg)
     Eigen::Vector2f v01{dx0[0], dx1[1]};
     Eigen::Vector2f v11{dx1[0], dx1[1]};
     float t[2] {smooth(dx0[0]), smooth(dx0[1])};
-    float nx[2] {lerp(t[0], g00.dot(v00), g10.dot(v10)),
-                 lerp(t[0], g01.dot(v01), g11.dot(v11))};
-    return lerp(t[1], nx[0], nx[1]);
+    float nx[2] {lerp(g00.dot(v00), g10.dot(v10), t[0]),
+                 lerp(g01.dot(v01), g11.dot(v11), t[0])};
+    return lerp(nx[0], nx[1], t[1]);
 }
 
 float noise(const Eigen::Vector3f& arg)
@@ -155,13 +155,13 @@ float noise(const Eigen::Vector3f& arg)
     Eigen::Vector3f v011{dx0[0], dx1[1], dx1[2]};
     Eigen::Vector3f v111{dx1[0], dx1[1], dx1[2]};
     float t[3] {smooth(dx0[0]), smooth(dx0[1]), smooth(dx0[2])};
-    float nx[4] {lerp(t[0], g000.dot(v000), g100.dot(v100)),
-                 lerp(t[0], g010.dot(v010), g110.dot(v110)),
-                 lerp(t[0], g001.dot(v001), g101.dot(v101)),
-                 lerp(t[0], g011.dot(v011), g111.dot(v111))};
-    float ny[2] {lerp(t[1], nx[0], nx[1]),
-                 lerp(t[1], nx[2], nx[3])};
-    return lerp(t[2], ny[0], ny[1]);
+    float nx[4] {lerp(g000.dot(v000), g100.dot(v100), t[0]),
+                 lerp(g010.dot(v010), g110.dot(v110), t[0]),
+                 lerp(g001.dot(v001), g101.dot(v101), t[0]),
+                 lerp(g011.dot(v011), g111.dot(v111), t[0])};
+    float ny[2] {lerp(nx[0], nx[1], t[1]),
+                 lerp(nx[2], nx[3], t[1])};
+    return lerp(ny[0], ny[1], t[2]);
 }
 
 float turbulence(const Eigen::Vector2f& p, float freq)
