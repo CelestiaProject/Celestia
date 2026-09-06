@@ -293,7 +293,7 @@ static int font_gc(lua_State* l)
 {
     CelxLua celx(l);
     auto *font = celx.getThis<std::shared_ptr<TextureFont>>();
-    font->~shared_ptr();
+    std::destroy_at(font);
     return 0;
 }
 
