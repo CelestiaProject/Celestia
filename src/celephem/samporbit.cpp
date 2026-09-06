@@ -216,9 +216,9 @@ SampledOrbit<T>::computePositionLinear(double jd, std::uint32_t n) const
 
     const Eigen::Matrix<T, 3, 1>& s0 = positions[n - 1];
     const Eigen::Matrix<T, 3, 1>& s1 = positions[n];
-    return Eigen::Vector3d(math::lerp(t, static_cast<double>(s0.x()), static_cast<double>(s1.x())),
-                           math::lerp(t, static_cast<double>(s0.y()), static_cast<double>(s1.y())),
-                           math::lerp(t, static_cast<double>(s0.z()), static_cast<double>(s1.z())));
+    return Eigen::Vector3d(math::lerp(static_cast<double>(s0.x()), static_cast<double>(s1.x()), t),
+                           math::lerp(static_cast<double>(s0.y()), static_cast<double>(s1.y()), t),
+                           math::lerp(static_cast<double>(s0.z()), static_cast<double>(s1.z()), t));
 }
 
 template<typename T>

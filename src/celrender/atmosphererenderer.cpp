@@ -246,7 +246,7 @@ AtmosphereRenderer::computeLegacy(
         float hh = std::sqrt(h);
         float u = i <= nHorizonRings ? 0.0f :
             static_cast<float>(i - nHorizonRings) / static_cast<float>(nRings - nHorizonRings);
-        float r = math::lerp(h, 1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight);
+        float r = math::lerp(1.0f - (horizonHeight * 0.05f), 1.0f + horizonHeight, h);
 
         for (int j = 0; j < nSlices; j++)
         {

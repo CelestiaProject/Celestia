@@ -55,7 +55,7 @@ template<> inline void sincos(double angle, double& s, double& c)
 #endif
 
 #if __cplusplus < 202002L
-template<typename T> constexpr T lerp(T t, T a, T b)
+template<typename T> constexpr T lerp(T a, T b, T t)
 {
     return a + t * (b - a);
 }

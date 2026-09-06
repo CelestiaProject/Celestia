@@ -149,8 +149,8 @@ normalizeUV(float& u, float& v)
 inline void
 interpolateUV(float f, const WarpMesh::WarpVertex* a, const WarpMesh::WarpVertex* b, float& u, float& v)
 {
-    u = math::lerp(f, a->u, b->u);
-    v = math::lerp(f, a->v, b->v);
+    u = math::lerp(a->u, b->u, f);
+    v = math::lerp(a->v, b->v, f);
     normalizeUV(u, v);
 }
 

@@ -58,7 +58,7 @@ slerp(double t, const Eigen::Vector3d& v0, const Eigen::Vector3d& v1)
     double cThetaT;
     math::sincos(theta * t, sThetaT, cThetaT);
 
-    return (cThetaT * u + sThetaT * v) * math::lerp(t, r0, r1);
+    return (cThetaT * u + sThetaT * v) * math::lerp(r0, r1, t);
 }
 
 std::optional<Eigen::Vector3d>
