@@ -9,12 +9,16 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#include "celx.h"
-#include "celx_internal.h"
 #include "celx_frame.h"
+
+#include <memory>
+
+#include <Eigen/Geometry>
+
 #include <celestia/celestiacore.h>
 #include <celengine/observer.h>
-#include <Eigen/Geometry>
+#include "celx.h"
+#include "celx_internal.h"
 
 using namespace std;
 using namespace Eigen;
@@ -233,7 +237,7 @@ static int frame_gc(lua_State* l)
     ObserverFrame* frame = this_frame(l);
 
     // Explicitly call the destructor since the object was created with placement new
-    frame->~ObserverFrame();
+    std::destroy_at(frame);
 
     return 0;
 }

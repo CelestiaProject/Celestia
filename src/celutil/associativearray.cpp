@@ -448,14 +448,18 @@ Value::destroy()
 {
     switch (type)
     {
+    case ValueType::NumberType:
+    case ValueType::BooleanType:
+        std::destroy_at(&doubleData);
+        break;
     case ValueType::StringType:
-        stringData.~unique_ptr(); //NOSONAR
+        std::destroy_at(&stringData);
         break;
     case ValueType::ArrayType:
-        arrayData.~unique_ptr(); //NOSONAR
+        std::destroy_at(&arrayData);
         break;
     case ValueType::HashType:
-        hashData.~unique_ptr(); //NOSONAR
+        std::destroy_at(&hashData);
         break;
     default:
         break;
