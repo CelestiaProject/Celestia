@@ -14,7 +14,7 @@
 // per-star fields are replicated so the whole frame's glows draw at once.
 
 layout(location = 0) in vec2  in_Position;    // quad corner in [-1, 1]
-layout(location = 1) in vec3  in_Normal;      // star world position
+layout(location = 15) in vec3 in_Center;     // star world position
 layout(location = 2) in vec2  in_TexCoord0;   // quad UV in [0, 1]
 layout(location = 8) in vec3  in_Color;       // linear RGB
 layout(location = 9) in float in_Intensity;   // peak radiance
@@ -75,7 +75,7 @@ void main(void)
     v_valLimb   = valLimb;
     v_alphaFade = pow(v_alpha, fadeExp);
 
-    set_vp(vec4(in_Normal, 1.0));
+    set_vp(vec4(in_Center, 1.0));
 
     float sizePhys = 2.0 * rEff * psfPointScale;
     vec2  extent   = sizePhys * psfViewportRcp;

@@ -308,6 +308,7 @@ class Renderer
     // Point Spread Function star renderer settings (StarStyle::PointSpreadFunction).
     void  setStarPointRadius(float r);
     float getStarPointRadius() const;
+    // Positive values are clamped to [0.05, 1.0]; nonpositive values disable glow.
     void  setStarOptimization(float opt);
     float getStarOptimization() const;
     void  setStarMaxIrradiance(float v);
@@ -458,6 +459,7 @@ class Renderer
 
  private:
     void setFieldOfView(float);
+    void preparePsfStarBuffers();
     void renderPointStars(const StarDatabase& starDB,
                           float faintestVisible,
                           const Observer& observer);

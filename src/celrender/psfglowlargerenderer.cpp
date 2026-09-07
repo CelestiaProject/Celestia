@@ -19,8 +19,8 @@
 namespace celestia::render
 {
 
-PsfGlowLargeRenderer::PsfGlowLargeRenderer(Renderer &renderer, capacity_t capacity) :
-    LargeStarRenderer(renderer, StaticShader::PsfStarGlowLarge, capacity)
+PsfGlowLargeRenderer::PsfGlowLargeRenderer(const Renderer &renderer, capacity_t capacity) :
+    LargeStarRenderer(renderer, StaticShader::PsfStarGlowLarge, capacity, StaticShaderOptions::None)
 {
 }
 

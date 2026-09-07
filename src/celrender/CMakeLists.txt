@@ -19,6 +19,8 @@ set(CELRENDER_SOURCES
   legacylargestarrenderer.h
   psfglowlargerenderer.cpp
   psfglowlargerenderer.h
+  psfpointlargerenderer.cpp
+  psfpointlargerenderer.h
   linerenderer.cpp
   linerenderer.h
   nebularenderer.cpp

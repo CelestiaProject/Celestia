@@ -46,7 +46,7 @@ void PointStarVertexBuffer::startBasicPoints()
 
 void PointStarVertexBuffer::render()
 {
-    if (m_nStars == 0)
+    if (m_nStars == 0 || m_prog == nullptr)
         return;
 
     makeCurrent();
@@ -56,17 +56,23 @@ void PointStarVertexBuffer::render()
 
     m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
 
+#ifndef GL_ES
+    glEnable(GL_PROGRAM_POINT_SIZE);
+#endif
     if (m_pointSizeFromVertex)
         m_vo1->draw(m_nStars);
     else
         m_vo2->draw(m_nStars);
+#ifndef GL_ES
+    glDisable(GL_PROGRAM_POINT_SIZE);
+#endif
     m_nStars = 0;
 }
 
 void PointStarVertexBuffer::makeCurrent()
 {
     auto &owner = m_renderer.starPipelineOwner();
-    if (owner.isActive(this) || m_prog == nullptr)
+    if (m_prog == nullptr)
         return;
 
     owner.setActive(this);  // flushes whoever held the pipeline before
@@ -149,20 +155,6 @@ void PointStarVertexBuffer::finish()
 {
     render();
     m_renderer.starPipelineOwner().clearIfActive(this);
-}
-
-void PointStarVertexBuffer::enable()
-{
-#ifndef GL_ES
-    glEnable(GL_PROGRAM_POINT_SIZE);
-#endif
-}
-
-void PointStarVertexBuffer::disable()
-{
-#ifndef GL_ES
-    glDisable(GL_PROGRAM_POINT_SIZE);
-#endif
 }
 
 void PointStarVertexBuffer::setTexture(Texture *texture)

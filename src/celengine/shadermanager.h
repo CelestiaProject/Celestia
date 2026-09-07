@@ -50,8 +50,9 @@ enum class StaticShader
 // Compile-time options that select variants of a static shader via #define injection.
 enum class StaticShaderOptions : std::uint8_t
 {
-    None    = 0,
-    ToneMap = 0x01,
+    None      = 0,
+    ToneMap   = 0x01,
+    Billboard = 0x02,
 };
 
 ENUM_CLASS_BITWISE_OPS(StaticShaderOptions);
@@ -277,6 +278,7 @@ public:
         LineSideAttributeIndex      = 12,
         AlphaAttributeIndex         = 13,
         LimbRadiusAttributeIndex    = 14,
+        CenterAttributeIndex        = 15,
     };
 
     CelestiaGLProgramLight lights[MaxShaderLights];

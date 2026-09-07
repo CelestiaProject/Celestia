@@ -19,7 +19,7 @@ namespace celestia::render
 class PsfGlowLargeRenderer : public LargeStarRenderer
 {
 public:
-    explicit PsfGlowLargeRenderer(Renderer &renderer, capacity_t capacity = 2048);
+    PsfGlowLargeRenderer(const Renderer &renderer, capacity_t capacity);
     ~PsfGlowLargeRenderer() override;
 
     void setPointRadius(float r)    { m_pointRadius  = r; }

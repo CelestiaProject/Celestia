@@ -30,10 +30,12 @@ class VertexObject;
 namespace celestia::render
 {
 
+class PsfPointLargeRenderer;
+
 // Vertex buffer used by StarStyle::PointSpreadFunction.
 // Vertices carry per-star peak radiance (HDR float) and a linear, green-
-// normalised colour.  The shader is the same in both modes; a uniform
-// selects "point" (fixed pixel disc) or "glow" (PSF approximation).
+// normalised colour.  Oversized center cones use an instanced billboard
+// fallback selected by start() from the configured radius and DPI scale.
 class PsfStarVertexBuffer : public StarPipelineFlushable, private util::NoMove
 {
 public:
@@ -46,7 +48,7 @@ public:
     };
 
     PsfStarVertexBuffer(const Renderer &renderer, capacity_t capacity);
-    ~PsfStarVertexBuffer() override = default;
+    ~PsfStarVertexBuffer() override;
     PsfStarVertexBuffer() = delete;
 
     void start(Mode mode);
@@ -59,9 +61,6 @@ public:
     void setPointRadius(float r)      { m_pointRadius = r; }
     void setOptimization(float opt)   { m_optimization = opt; }
     void setPointScale(float scale)   { m_pointScale = scale; }
-
-    static void enable();
-    static void disable();
 
 private:
     struct StarVertex
@@ -82,6 +81,8 @@ private:
     float                           m_optimization          { 0.1f };
     float                           m_pointScale            { 1.0f };
     CelestiaGLProgram              *m_prog                  { nullptr };
+    std::unique_ptr<PsfPointLargeRenderer> m_largePointRenderer;
+    bool m_useLargePoints{ false };
 
     celestia::gl::Buffer::SharedPtr             m_bo;
     std::unique_ptr<celestia::gl::VertexObject> m_vo;

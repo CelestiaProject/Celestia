@@ -12,26 +12,24 @@
 namespace celestia::render
 {
 
-// Anything that owns transient GL pipeline state (a bound program,
-// VAO, uniforms) for star rendering and can be drained on demand.
+// A star buffer that can drain its pending vertices on demand.
 class StarPipelineFlushable
 {
 public:
     virtual ~StarPipelineFlushable() = default;
 
     // Drain any pending vertices and release the "active" claim with
-    // the owner.  Implementations should not call setActive() from
-    // here; the owner clears the active pointer itself before
-    // delegating to finish() to keep reentry simple.
+    // the owner.  The owner clears the active pointer before calling
+    // finish(), so rendering can reacquire it without recursively
+    // flushing the same buffer.
     virtual void finish() = 0;
 };
 
-// Tracks which star-pipeline buffer last bound its GL program/VAO,
-// so the next buffer that wants to bind can first flush whoever was
-// holding the pipeline.  Replaces the per-class `static current`
-// pointers in PointStarVertexBuffer / PsfStarVertexBuffer, which only
-// interlocked within their own class and could be left stale when
-// the other class bound a different program behind their back.
+// Tracks the last star buffer to submit a batch, so switching buffers
+// first drains its pending vertices.  This is not a GL binding cache:
+// other renderers can change programs and uniforms between submissions.
+// Every batch must rebind its program and refresh its uniforms, even
+// when its buffer is still active here.
 class StarPipelineOwner
 {
 public:
@@ -44,12 +42,7 @@ public:
         return m_active == p;
     }
 
-    // Drain whoever is currently active.  Use before binding a
-    // foreign GL program (e.g. a one-shot draw outside the star
-    // pipeline) so that buffer's pending vertices are submitted under
-    // its own program and its "active" claim is released — otherwise
-    // it would later early-return from makeCurrent() while the
-    // foreign program is still bound and draw garbage.
+    // Drain whoever is currently active and release its claim.
     void flush()
     {
         if (m_active != nullptr)

@@ -13,6 +13,7 @@
 #include <cmath>
 
 #include <celrender/gl/vertexobject.h>
+#include <celrender/psfpointlargerenderer.h>
 #include <celastro/astro.h>
 #include <celcompat/numbers.h>
 #include <celutil/color.h>
@@ -70,10 +71,24 @@ PsfStarVertexBuffer::PsfStarVertexBuffer(const Renderer &renderer,
 {
 }
 
+PsfStarVertexBuffer::~PsfStarVertexBuffer() = default;
+
 void
 PsfStarVertexBuffer::start(Mode mode)
 {
     m_mode = mode;
+    m_useLargePoints = mode == Mode::Point
+                      && 2.0f * m_pointRadius * m_pointScale > static_cast<float>(gl::maxPointSize);
+    if (m_useLargePoints)
+    {
+        if (m_largePointRenderer == nullptr)
+            m_largePointRenderer = std::make_unique<PsfPointLargeRenderer>(m_renderer, m_capacity);
+        m_largePointRenderer->setPointRadius(m_pointRadius);
+        m_largePointRenderer->setPointScale(m_pointScale);
+        m_largePointRenderer->start();
+        return;
+    }
+
     StaticShader id = (mode == Mode::Point) ? StaticShader::PsfStarPoint
                                             : StaticShader::PsfStarGlow;
     m_prog = m_renderer.getShaderManager().getShader(id);
@@ -82,6 +97,12 @@ PsfStarVertexBuffer::start(Mode mode)
 void
 PsfStarVertexBuffer::render()
 {
+    if (m_useLargePoints)
+    {
+        m_largePointRenderer->render();
+        return;
+    }
+
     if (m_nStars == 0 || m_prog == nullptr)
         return;
 
@@ -89,7 +110,14 @@ PsfStarVertexBuffer::render()
 
     m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
 
+#ifndef GL_ES
+    // makeCurrent() may flush another buffer, so enable only after it returns.
+    glEnable(GL_PROGRAM_POINT_SIZE);
+#endif
     m_vo->draw(m_nStars);
+#ifndef GL_ES
+    glDisable(GL_PROGRAM_POINT_SIZE);
+#endif
     m_nStars = 0;
 }
 
@@ -97,7 +125,7 @@ void
 PsfStarVertexBuffer::makeCurrent()
 {
     auto &owner = m_renderer.starPipelineOwner();
-    if (owner.isActive(this) || m_prog == nullptr)
+    if (m_prog == nullptr)
         return;
 
     owner.setActive(this);  // flushes whoever held the pipeline before
@@ -186,24 +214,14 @@ PsfStarVertexBuffer::setupVertexArrayObject()
 void
 PsfStarVertexBuffer::finish()
 {
+    if (m_useLargePoints)
+    {
+        m_largePointRenderer->finish();
+        return;
+    }
+
     render();
     m_renderer.starPipelineOwner().clearIfActive(this);
-}
-
-void
-PsfStarVertexBuffer::enable()
-{
-#ifndef GL_ES
-    glEnable(GL_PROGRAM_POINT_SIZE);
-#endif
-}
-
-void
-PsfStarVertexBuffer::disable()
-{
-#ifndef GL_ES
-    glDisable(GL_PROGRAM_POINT_SIZE);
-#endif
 }
 
 void
@@ -213,6 +231,12 @@ PsfStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
                              float limbRadius,
                              float alpha)
 {
+    if (m_useLargePoints)
+    {
+        m_largePointRenderer->addStar(pos, color, peakRadiance);
+        return;
+    }
+
     assert(m_nStars < m_capacity);
     m_vertices[m_nStars].position = pos;
     m_vertices[m_nStars].peakRadiance = peakRadiance;

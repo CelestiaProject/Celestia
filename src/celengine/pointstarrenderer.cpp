@@ -36,6 +36,17 @@ namespace render = celestia::render;
 using render::PsfStarVertexBuffer;
 using render::psfGreenNormalization;
 
+namespace
+{
+
+float smoothStep(float t)
+{
+    t = std::clamp(t, 0.0f, 1.0f);
+    return t * t * (3.0f - 2.0f * t);
+}
+
+} // namespace
+
 float
 celestia::engine::detail::psfAtmosphereBrightness(
     float faintestMagnitude,
@@ -44,6 +55,28 @@ celestia::engine::detail::psfAtmosphereBrightness(
     return std::min(1.0f,
                     astro::magToIrradiance(faintestMagnitudeWithoutAtmosphere
                                            - faintestMagnitude));
+}
+
+float
+celestia::engine::detail::psfGlowOnset(float peakRadiance)
+{
+    return smoothStep(peakRadiance - 1.0f);
+}
+
+float
+celestia::engine::detail::psfReflectiveGlowOnset(float glowPeak, float linkedGlowPeak)
+{
+    return linkedGlowPeak > 0.0f ? psfGlowOnset(glowPeak / linkedGlowPeak) : 1.0f;
+}
+
+float
+celestia::engine::detail::psfPointFade(float discRadiusPixels,
+                                     float pointRadius,
+                                     float pointScale)
+{
+    // Keep at least one pixel of transition even for the smallest cones.
+    float fadeEnd = std::max(2.0f, pointRadius * pointScale);
+    return smoothStep((fadeEnd - discRadiusPixels) / (fadeEnd - 1.0f));
 }
 
 // Convert a position in the universal coordinate system to astrocentric
@@ -159,6 +192,8 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // Glow (eye-PSF) contribution, additive on top of the point cone
                 if (peakRadCol > 1.0f && psf.optimization > 0.0f)
                 {
+                    float alpha = celestia::engine::detail::psfGlowOnset(peakRadCol);
+
                     // Soft-clip very bright stars so the eye-PSF radius
                     // stays bounded.  Without this, a single bright star
                     // (or a high faintest-magnitude setting) produces a
@@ -174,11 +209,11 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                     // everything smaller stays on the point-sprite path.
                     if (glowPeak > psf.glowPeakLargeThreshold)
                     {
-                        psf.glowLargeRenderer->addStar(relPos, linearStarColor, glowPeak);
+                        psf.glowLargeRenderer->addStar(relPos, linearStarColor, glowPeak, 0.0f, alpha);
                     }
                     else
                     {
-                        psf.glowBuffer->addStar(relPos, linearStarColor, glowPeak);
+                        psf.glowBuffer->addStar(relPos, linearStarColor, glowPeak, 0.0f, alpha);
                     }
                 }
             }

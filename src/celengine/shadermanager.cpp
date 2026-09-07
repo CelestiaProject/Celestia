@@ -2598,8 +2598,10 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
 {
     std::string_view toneMapDefine =
         util::is_set(options, StaticShaderOptions::ToneMap) ? "#define TONE_MAP\n"sv : ""sv;
-    std::string vsSrc = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, VPFunction(fisheyeEnabled), vs);
-    std::string fsSrc = fmt::format("{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, fs);
+    std::string_view billboardDefine =
+        util::is_set(options, StaticShaderOptions::Billboard) ? "#define BILLBOARD\n"sv : ""sv;
+    std::string vsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, billboardDefine, VPFunction(fisheyeEnabled), vs);
+    std::string fsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, billboardDefine, fs);
 
     DumpVSSource(vsSrc);
     DumpFSSource(fsSrc);

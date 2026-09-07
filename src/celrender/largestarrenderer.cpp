@@ -44,11 +44,13 @@ constexpr std::array<Corner, 4> kQuadCorners = {{
 
 } // namespace
 
-LargeStarRenderer::LargeStarRenderer(Renderer    &renderer,
+LargeStarRenderer::LargeStarRenderer(const Renderer &renderer,
                                      StaticShader shaderId,
-                                     capacity_t   capacity) :
+                                     capacity_t   capacity,
+                                     StaticShaderOptions shaderOptions) :
     m_renderer(renderer),
     m_shaderId(shaderId),
+    m_shaderOptions(shaderOptions),
     m_capacity(capacity),
     m_instances(std::make_unique<StarInstance[]>(capacity))
 {
@@ -59,7 +61,7 @@ LargeStarRenderer::~LargeStarRenderer() = default;
 void
 LargeStarRenderer::start()
 {
-    m_prog   = m_renderer.getShaderManager().getShader(m_shaderId);
+    m_prog   = m_renderer.getShaderManager().getShader(m_shaderId, m_shaderOptions);
     m_nStars = 0;
 }
 
@@ -89,7 +91,7 @@ void
 LargeStarRenderer::makeCurrent()
 {
     auto &owner = m_renderer.starPipelineOwner();
-    if (owner.isActive(this) || m_prog == nullptr)
+    if (m_prog == nullptr)
         return;
 
     owner.setActive(this);
@@ -145,7 +147,7 @@ LargeStarRenderer::setupVertexArrayObject()
 
     m_vo->addInstanceBuffer(
         m_bo,
-        CelestiaGLProgram::NormalAttributeIndex,
+        CelestiaGLProgram::CenterAttributeIndex,
         3,
         gl::VertexObject::DataType::Float,
         false,
