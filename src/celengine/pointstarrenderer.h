@@ -41,6 +41,15 @@ namespace celestia::engine::detail
 float psfAtmosphereBrightness(float faintestMagnitude,
                               float faintestMagnitudeWithoutAtmosphere);
 
+// Fade glow in over peak radiance [1, 2], before the glow's soft-clip.
+float psfGlowOnset(float peakRadiance);
+
+// Fade reflective glow over [1, 2] times the peak needed to reach the limb.
+float psfReflectiveGlowOnset(float glowPeak, float linkedGlowPeak);
+
+// Fade the cone after the mesh resolves, using physical pixels for the disc radius.
+float psfPointFade(float discRadiusPixels, float pointRadius, float pointScale);
+
 } // namespace celestia::engine::detail
 
 class PointStarRenderer : public ObjectRenderer<Star, float>

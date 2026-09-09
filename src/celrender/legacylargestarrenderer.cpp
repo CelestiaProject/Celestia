@@ -17,8 +17,8 @@
 namespace celestia::render
 {
 
-LegacyLargeStarRenderer::LegacyLargeStarRenderer(Renderer &renderer, capacity_t capacity) :
-    LargeStarRenderer(renderer, StaticShader::LargeStar, capacity)
+LegacyLargeStarRenderer::LegacyLargeStarRenderer(const Renderer &renderer, capacity_t capacity) :
+    LargeStarRenderer(renderer, StaticShader::LargeStar, capacity, StaticShaderOptions::None)
 {
 }
 

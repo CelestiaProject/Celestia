@@ -19,10 +19,18 @@ in vec3  v_color;
 in float v_peakRadiance;
 in float v_pointSize;
 
+#ifdef BILLBOARD
+in vec2 v_uv;
+#endif
+
 void main(void)
 {
     // Pixel offset from the centre of the point sprite (in screen pixels).
+#ifdef BILLBOARD
+    vec2  d  = (v_uv - vec2(0.5)) * v_pointSize;
+#else
     vec2  d  = (gl_PointCoord.xy - vec2(0.5)) * v_pointSize;
+#endif
     float px = length(d) / pointScale;
 
     float falloff = clamp(1.0 - px / pointRadius, 0.0, 1.0);

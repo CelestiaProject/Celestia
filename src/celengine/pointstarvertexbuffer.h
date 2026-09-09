@@ -47,9 +47,6 @@ public:
     void setTexture(Texture* texture);
     void setPointScale(float);
 
-    static void enable();
-    static void disable();
-
 private:
     struct StarVertex
     {

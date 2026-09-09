@@ -11,7 +11,15 @@
 
 // Point Spread Function (PSF) star renderer - point (cone) pass.
 
+#ifdef BILLBOARD
+layout(location = 0) in vec2 in_Position;
+layout(location = 15) in vec3 in_Center;
+layout(location = 2) in vec2 in_TexCoord0;
+uniform vec2 viewportRcp;
+out vec2 v_uv;
+#else
 layout(location = 0) in vec4 in_Position;
+#endif
 layout(location = 8) in vec3 in_Color;        // green-normalised, linear-space, 8-bit per channel
 layout(location = 9) in float in_Intensity;   // peakRadiance = exposure * 3 * irradiance / (pi * pointRadius^2)
 
@@ -29,6 +37,12 @@ void main(void)
 
     float size = 2.0 * pointRadius * pointScale;
     v_pointSize = size;
+#ifdef BILLBOARD
+    v_uv = in_TexCoord0;
+    set_vp(vec4(in_Center, 1.0));
+    gl_Position.xy += in_Position * size * viewportRcp * gl_Position.w;
+#else
     gl_PointSize = size;
     set_vp(in_Position);
+#endif
 }

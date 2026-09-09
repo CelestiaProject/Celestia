@@ -10,6 +10,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <memory>
 
 #include <Eigen/Core>
@@ -22,6 +23,7 @@ class Color;
 class Renderer;
 class CelestiaGLProgram;
 enum class StaticShader;
+enum class StaticShaderOptions : std::uint8_t;
 
 namespace celestia::gl
 {
@@ -53,9 +55,10 @@ public:
                  float limbRadius = 0.0f, float alpha = 1.0f);
 
 protected:
-    explicit LargeStarRenderer(Renderer &renderer, StaticShader shaderId, capacity_t capacity);
+    LargeStarRenderer(const Renderer &renderer, StaticShader shaderId, capacity_t capacity,
+                      StaticShaderOptions shaderOptions);
 
-    Renderer&          renderer() noexcept       { return m_renderer; }
+    const Renderer&    renderer() const noexcept { return m_renderer; }
     CelestiaGLProgram* program()  const noexcept { return m_prog; }
 
     // Called from makeCurrent() after the program is bound and MVP set.
@@ -76,8 +79,9 @@ private:
     void makeCurrent();
     void setupVertexArrayObject();
 
-    Renderer                         &m_renderer;
+    const Renderer                   &m_renderer;
     StaticShader                      m_shaderId;
+    StaticShaderOptions               m_shaderOptions;
     capacity_t                        m_capacity;
     capacity_t                        m_nStars      { 0 };
     std::unique_ptr<StarInstance[]>   m_instances; //NOSONAR

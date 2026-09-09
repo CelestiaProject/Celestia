@@ -1,4 +1,4 @@
-// legacylargestarrenderer.h
+// psfpointlargerenderer.h
 //
 // Copyright (C) 2026-present, the Celestia Development Team
 //
@@ -11,26 +11,23 @@
 
 #include <celrender/largestarrenderer.h>
 
-class Texture;
-
 namespace celestia::render
 {
 
-// Batched textured-billboard renderer for point-sprite stars whose
-// gl_PointSize would exceed the driver's GL_ALIASED_POINT_SIZE_RANGE.
-class LegacyLargeStarRenderer : public LargeStarRenderer
+class PsfPointLargeRenderer : public LargeStarRenderer
 {
 public:
-    LegacyLargeStarRenderer(const Renderer &renderer, capacity_t capacity);
-    ~LegacyLargeStarRenderer() override;
+    PsfPointLargeRenderer(const Renderer &renderer, capacity_t capacity);
 
-    void setTexture(Texture *texture) { m_texture = texture; }
+    void setPointRadius(float radius) { m_pointRadius = radius; }
+    void setPointScale(float scale) { m_pointScale = scale; }
 
 protected:
     void onMakeCurrent(const Eigen::Vector2f &viewportRcp) override;
 
 private:
-    Texture *m_texture { nullptr };
+    float m_pointRadius{ 1.5f };
+    float m_pointScale{ 1.0f };
 };
 
 } // namespace celestia::render
