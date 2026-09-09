@@ -148,4 +148,3 @@ endif()
 
 add_subdirectory(qt)
 add_subdirectory(sdl)
-add_subdirectory(win32)

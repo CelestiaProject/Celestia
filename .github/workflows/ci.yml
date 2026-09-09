@@ -116,7 +116,6 @@ jobs:
             -DENABLE_TOOLS=ON     `
             -DENABLE_TESTS=ON     `
             -DENABLE_SDL=OFF      `
-            -DENABLE_WIN=ON       `
             -DENABLE_QT6=ON       `
             -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
@@ -132,22 +131,6 @@ jobs:
       shell: pwsh
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
-
-    - name: Install Windows
-      shell: pwsh
-      run: |
-        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component core
-        cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --component wingui
-        Rename-Item -Path "install" -NewName "install-wingui"
-
-    - name: Upload Windows GUI
-      uses: actions/upload-artifact@v7
-      if: success()
-      with:
-        name: celestia-windows-${{matrix.platform}}-wingui
-        if-no-files-found: error
-        path: |
-          ${{github.workspace}}/install-wingui/
 
     - name: Install Qt6
       shell: pwsh
