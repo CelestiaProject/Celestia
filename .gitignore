@@ -14,7 +14,6 @@ Release/
 /po*/POTFILES
 /build*/
 /out
-/src/celestia/win32/res/resource_strings.cpp
 /src/celestia/qt/rc.cpp
 /locale/*/LC_MESSAGES/
 /extras
