@@ -2696,7 +2696,8 @@ void Renderer::renderAtmosphere(const Atmosphere* atmosphere, // NOSONAR(cpp:S10
 
         // If we're beneath the cloud level, render the interior of
         // the cloud sphere.
-        if (distance - radius < atmosphere->cloudHeight)
+        const bool insideCloudLayer = distance - radius < atmosphere->cloudHeight;
+        if (insideCloudLayer)
             glFrontFace(GL_CW);
 
         cloudTex->bind();
@@ -2720,6 +2721,7 @@ void Renderer::renderAtmosphere(const Atmosphere* atmosphere, // NOSONAR(cpp:S10
                               cloudTexOffset,
                               scaleFactors,
                               renderFlags,
+                              insideCloudLayer,
                               obj.orientation,
                               viewFrustum,
                               mvp,
