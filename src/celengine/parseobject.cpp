@@ -1234,6 +1234,48 @@ CreateTwoVectorFrame(const Universe& universe,
 }
 
 std::optional<FrameId>
+CreateSkyPlaneFrame(const Universe& universe,
+                    const AssociativeArray& frameData,
+                    Selection& defaultCenter,
+                    FrameCache& frameCache)
+{
+    defaultCenter = getFrameCenter(universe, frameData, defaultCenter);
+
+    Selection obj = defaultCenter;
+    if (const std::string* targetName = frameData.getString("Object"); targetName)
+    {
+        obj = universe.findPath(*targetName, {});
+        if (obj.empty())
+        {
+            GetLogger()->error("Target object '{}' for topocentric frame not found.\n", *targetName);
+            return std::nullopt;
+        }
+    }
+
+    // To avoid making Modify operations even more horrible to implement than they
+    // already are, use the name hierarchy to find the star rather than the frame
+    // hierarchy. In non-pathological cases, this should give the same result.
+    while (obj.getType() != SelectionType::Star)
+    {
+        if (obj.empty())
+        {
+            GetLogger()->error("No target specified for topocentric frame.\n");
+            return std::nullopt;
+        }
+
+        obj = obj.nameParent();
+    }
+
+    assert(obj.star() != nullptr);
+
+    if (double freezeEpoch = 0.0; ParseDate(frameData, "Freeze", freezeEpoch))
+        return frameCache.getFrameId(SkyPlaneFrameKey(obj.star(), freezeEpoch));
+
+    return frameCache.getFrameId(SkyPlaneFrameKey(obj.star()));
+}
+
+
+std::optional<FrameId>
 CreateJ2000EclipticFrame(const Universe& universe,
                          const AssociativeArray& frameData,
                          Selection& defaultCenter,
@@ -1448,6 +1490,18 @@ CreateComplexFrame(const Universe& universe,
         }
 
         return CreateJ2000EquatorFrame(universe, *equatorData, defaultCenter, frameCache);
+    }
+
+    if (const Value* value = frameData.getValue("SkyPlane"); value != nullptr)
+    {
+        const AssociativeArray* skyPlaneData = value->getHash();
+        if (skyPlaneData == nullptr)
+        {
+            GetLogger()->error("Object has incorrect SkyPlane frame syntax.\n");
+            return std::nullopt;
+        }
+
+        return CreateSkyPlaneFrame(universe, *skyPlaneData, defaultCenter, frameCache);
     }
 
     GetLogger()->error("Frame definition does not have a valid frame type.\n");
