@@ -235,6 +235,22 @@ private:
     int m_tertiaryAxis;
 };
 
+class SkyPlaneFrame : public ReferenceFrame
+{
+public:
+    explicit SkyPlaneFrame(Star* star, std::optional<double> freezeEpoch);
+
+    Eigen::Quaterniond getOrientation(double tjd) const override;
+    Eigen::Vector3d getAngularVelocity(double tjd) const override;
+    bool isInertial() const override;
+    void visitChildren(FrameVisitor&) const override;
+
+private:
+    Star* m_star;
+    std::optional<double> m_freezeEpoch;
+    mutable std::optional<Eigen::Quaterniond> m_savedOrientation;
+};
+
 enum class FrameId : std::size_t
 {
 };
@@ -329,7 +345,37 @@ struct std::hash<TwoVectorFrameKey>
     std::size_t operator()(const TwoVectorFrameKey&) const;
 };
 
-using FrameKey = std::variant<SimpleFrameKey, BodyFixedFrameKey, BodyMeanEquatorFrameKey, TwoVectorFrameKey>;
+struct SkyPlaneFrameKey
+{
+    explicit SkyPlaneFrameKey(Star* s, std::optional<double> freeze = std::nullopt) :
+        star(s), freezeEpoch(freeze)
+    {}
+
+    Star* star;
+    std::optional<double> freezeEpoch;
+};
+
+inline bool operator==(const SkyPlaneFrameKey& lhs, const SkyPlaneFrameKey& rhs)
+{
+    return lhs.star == rhs.star && lhs.freezeEpoch == rhs.freezeEpoch;
+}
+
+inline bool operator!=(const SkyPlaneFrameKey& lhs, const SkyPlaneFrameKey& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<>
+struct std::hash<SkyPlaneFrameKey>
+{
+    std::size_t operator()(const SkyPlaneFrameKey&) const;
+};
+
+using FrameKey = std::variant<SimpleFrameKey,
+                              BodyFixedFrameKey,
+                              BodyMeanEquatorFrameKey,
+                              TwoVectorFrameKey,
+                              SkyPlaneFrameKey>;
 
 struct RelativePositionKey
 {
