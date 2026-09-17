@@ -183,7 +183,19 @@ jobs:
           icu: ON
           qt6: ON
           analysis_artifacts: 1
+        - os: ubuntu-26.04
+          avif: ON
+          gles: ON
+          minaudio: ON
+          icu: ON
+          qt6: ON
         - os: ubuntu-24.04-arm
+          avif: ON
+          gles: ON
+          minaudio: ON
+          icu: ON
+          qt6: ON
+        - os: ubuntu-26.04-arm
           avif: ON
           gles: ON
           minaudio: ON
