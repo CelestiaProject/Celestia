@@ -502,25 +502,19 @@ FrameVector::visitChildren(FrameVisitor& visitor) const
 
 /*** SkyPlaneFrame ***/
 
-SkyPlaneFrame::SkyPlaneFrame(Star* star, std::optional<double> freezeEpoch) :
-    m_star(star),
-    m_freezeEpoch(freezeEpoch)
+SkyPlaneFrame::SkyPlaneFrame(Star* star, double freezeEpoch) :
+    m_star(star), m_freezeEpoch(freezeEpoch)
 {
 }
 
 Eigen::Quaterniond
-SkyPlaneFrame::getOrientation(double tdb) const
+SkyPlaneFrame::getOrientation(double) const
 {
-    if (m_savedOrientation.has_value())
-        return *m_savedOrientation;
+    if (m_orientation.has_value())
+        return *m_orientation;
 
-    if (m_freezeEpoch.has_value())
-        tdb = *m_freezeEpoch;
-
-    auto result = getSkyPlaneOrientation(-m_star->getPosition(tdb).toLy());
-
-    if (isInertial())
-        m_savedOrientation = result;
+    Eigen::Quaterniond result = getSkyPlaneOrientation(-m_star->getPosition(m_freezeEpoch).toLy());
+    m_orientation = result;
 
     return result;
 }
@@ -528,16 +522,13 @@ SkyPlaneFrame::getOrientation(double tdb) const
 Eigen::Vector3d
 SkyPlaneFrame::getAngularVelocity(double tdb) const
 {
-    if (isInertial())
-        return Eigen::Vector3d::Zero();
-
-    return ReferenceFrame::getAngularVelocity(tdb);
+    return Eigen::Vector3d::Zero();
 }
 
 bool
 SkyPlaneFrame::isInertial() const
 {
-    return m_freezeEpoch.has_value() || !m_star->getOrbitBarycenter();
+    return true;
 }
 
 void

@@ -1268,10 +1268,9 @@ CreateSkyPlaneFrame(const Universe& universe,
 
     assert(obj.star() != nullptr);
 
-    if (double freezeEpoch = 0.0; ParseDate(frameData, "Freeze", freezeEpoch))
-        return frameCache.getFrameId(SkyPlaneFrameKey(obj.star(), freezeEpoch));
-
-    return frameCache.getFrameId(SkyPlaneFrameKey(obj.star()));
+    double freezeEpoch = astro::J2000;
+    ParseDate(frameData, "Freeze", freezeEpoch);
+    return frameCache.getFrameId(SkyPlaneFrameKey(obj.star(), freezeEpoch));
 }
 
 

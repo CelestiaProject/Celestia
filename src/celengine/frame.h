@@ -238,7 +238,7 @@ private:
 class SkyPlaneFrame : public ReferenceFrame
 {
 public:
-    explicit SkyPlaneFrame(Star* star, std::optional<double> freezeEpoch);
+    explicit SkyPlaneFrame(Star* star, double freezeEpoch);
 
     Eigen::Quaterniond getOrientation(double tjd) const override;
     Eigen::Vector3d getAngularVelocity(double tjd) const override;
@@ -247,8 +247,8 @@ public:
 
 private:
     Star* m_star;
-    std::optional<double> m_freezeEpoch;
-    mutable std::optional<Eigen::Quaterniond> m_savedOrientation;
+    double m_freezeEpoch;
+    mutable std::optional<Eigen::Quaterniond> m_orientation;
 };
 
 enum class FrameId : std::size_t
@@ -347,12 +347,12 @@ struct std::hash<TwoVectorFrameKey>
 
 struct SkyPlaneFrameKey
 {
-    explicit SkyPlaneFrameKey(Star* s, std::optional<double> freeze = std::nullopt) :
+    explicit SkyPlaneFrameKey(Star* s, double freeze) :
         star(s), freezeEpoch(freeze)
     {}
 
     Star* star;
-    std::optional<double> freezeEpoch;
+    double freezeEpoch;
 };
 
 inline bool operator==(const SkyPlaneFrameKey& lhs, const SkyPlaneFrameKey& rhs)
