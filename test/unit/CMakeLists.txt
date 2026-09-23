@@ -16,11 +16,7 @@ set(UNIT_TEST_SOURCES
   tokenizer_test.cpp
   url_test.cpp)
 
-if(USE_ICU)
-  list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)
-else()
-  list(APPEND UNIT_TEST_SOURCES formatnum_test.cpp)
-endif()
+list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)
 
 if(WIN32)
   list(APPEND UNIT_TEST_SOURCES winutil_test.cpp)

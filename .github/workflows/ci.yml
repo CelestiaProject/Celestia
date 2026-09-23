@@ -120,7 +120,6 @@ jobs:
             -DENABLE_FFMPEG=ON    `
             -DENABLE_MINIAUDIO=ON `
             -DENABLE_LTO=ON       `
-            -DUSE_ICU=ON          `
             -DUSE_WIN_ICU=ON
 
     - name: Build
@@ -174,32 +173,27 @@ jobs:
           avif: ON
           gles: ON
           minaudio: ON
-          icu: ON
           qt6: OFF
         - os: ubuntu-24.04
           avif: ON
           gles: ON
           minaudio: ON
-          icu: ON
           qt6: ON
           analysis_artifacts: 1
         - os: ubuntu-26.04
           avif: ON
           gles: ON
           minaudio: ON
-          icu: ON
           qt6: ON
         - os: ubuntu-24.04-arm
           avif: ON
           gles: ON
           minaudio: ON
-          icu: ON
           qt6: ON
         - os: ubuntu-26.04-arm
           avif: ON
           gles: ON
           minaudio: ON
-          icu: ON
           qt6: ON
 
     runs-on: ${{matrix.config.os}}
@@ -250,8 +244,7 @@ jobs:
               -DENABLE_QT6=${{matrix.config.qt6}}            \
               -DENABLE_FFMPEG=ON                             \
               -DENABLE_LIBAVIF=${{matrix.config.avif}}       \
-              -DENABLE_MINIAUDIO=${{matrix.config.minaudio}} \
-              -DUSE_ICU=${{matrix.config.icu}}
+              -DENABLE_MINIAUDIO=${{matrix.config.minaudio}}
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -300,7 +293,8 @@ jobs:
                      libepoxy \
                      libavif \
                      qt@6 \
-                     sdl2
+                     sdl2 \
+                     icu4c
 
     - name: 'Checkout source code'
       uses: actions/checkout@v7
@@ -309,18 +303,18 @@ jobs:
 
     - name: 'Configure CMake'
       run: |
-        cmake -B ${{github.workspace}}/build \
-              -G Ninja                       \
-              -DENABLE_GLES=OFF              \
-              -DENABLE_SPICE=OFF             \
-              -DENABLE_TOOLS=OFF             \
-              -DENABLE_TESTS=ON              \
-              -DENABLE_SDL=ON                \
-              -DENABLE_QT6=ON                \
-              -DENABLE_FFMPEG=ON             \
-              -DENABLE_LIBAVIF=ON            \
-              -DENABLE_MINIAUDIO=ON          \
-              -DUSE_ICU=OFF
+        cmake -B ${{github.workspace}}/build               \
+              -G Ninja                                     \
+              -DCMAKE_PREFIX_PATH="$(brew --prefix icu4c)" \
+              -DENABLE_GLES=OFF                            \
+              -DENABLE_SPICE=OFF                           \
+              -DENABLE_TOOLS=OFF                           \
+              -DENABLE_TESTS=ON                            \
+              -DENABLE_SDL=ON                              \
+              -DENABLE_QT6=ON                              \
+              -DENABLE_FFMPEG=ON                           \
+              -DENABLE_LIBAVIF=ON                          \
+              -DENABLE_MINIAUDIO=ON
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -384,8 +378,7 @@ jobs:
               -DENABLE_SDL=ON           \
               -DENABLE_FFMPEG=OFF       \
               -DENABLE_LIBAVIF=OFF      \
-              -DENABLE_MINIAUDIO=ON     \
-              -DUSE_ICU=OFF # tests fail on freebsd
+              -DENABLE_MINIAUDIO=ON
 
     - name: Build
       shell: freebsd {0}

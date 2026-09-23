@@ -513,7 +513,7 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
     }
 
     displayApparentDiameter(overlay, dso.getRadius(), distance, loc);
-    
+
     if (dso.getAbsoluteMagnitude() > DSO_DEFAULT_ABS_MAGNITUDE)
     {
         displayApparentMagnitude(overlay,
@@ -521,7 +521,7 @@ void displayDSOinfo(const util::NumberFormatter& formatter,
                                  distance,
                                  loc);
     }
-    
+
     overlay.printf(_("Radius: %s\n"),
                  DistanceLyToStr(formatter, dso.getRadius(), 5, measurement));
 }
@@ -765,13 +765,8 @@ HudFonts::update()
 
 Hud::Hud(const std::locale& loc) :
     loc(loc),
-#ifdef USE_ICU
     m_dateFormatter(std::make_unique<celestia::engine::DateFormatter>()),
     m_numberFormatter(std::make_unique<util::NumberFormatter>())
-#else
-    m_dateFormatter(std::make_unique<celestia::engine::DateFormatter>(loc)),
-    m_numberFormatter(std::make_unique<util::NumberFormatter>(loc))
-#endif
 {
 }
 
@@ -887,7 +882,6 @@ Hud::updateFonts()
     m_dateStrWidth = 0;
 }
 
-#ifdef USE_ICU
 MeasurementSystem
 defaultMeasurementSystem()
 {
@@ -914,7 +908,6 @@ defaultMeasurementSystem()
         return MeasurementSystem::Metric;
     }
 }
-#endif
 
 void
 Hud::renderOverlay(const WindowMetrics& metrics,
@@ -925,10 +918,8 @@ Hud::renderOverlay(const WindowMetrics& metrics,
                    bool isScriptRunning,
                    bool editMode)
 {
-#ifdef USE_ICU
     if (m_hudSettings.measurementSystem == MeasurementSystem::System)
         m_hudSettings.measurementSystem = defaultMeasurementSystem();
-#endif
 
     m_overlay->setFont(m_hudFonts.font());
 

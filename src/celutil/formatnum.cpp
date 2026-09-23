@@ -19,10 +19,8 @@
 #include <celcompat/charconv.h>
 #include "utf8.h"
 
-#ifdef USE_ICU
 #include <celutil/includeicu.h>
 #include <celutil/uniquedel.h>
-#endif
 
 using namespace std::string_view_literals;
 
@@ -153,7 +151,6 @@ parseExponential(fmt::memory_buffer& buffer, ParseExpResult& result)
     return ec == std::errc{} && ptr == exponentEnd;
 }
 
-#ifdef USE_ICU
 bool getNumberSymbol(const UNumberFormat *numFormat, UNumberFormatSymbol symbol, std::string &output)
 {
     UErrorCode status = U_ZERO_ERROR;
@@ -179,11 +176,9 @@ bool getNumberSymbol(const UNumberFormat *numFormat, UNumberFormatSymbol symbol,
     u_strToUTF8(output.data(), requiredSize, nullptr, symbolString.data(), symbolString.size(), &status);
     return U_SUCCESS(status);
 }
-#endif
 
 } // end unnamed namespace
 
-#ifdef USE_ICU
 NumberFormatter::NumberFormatter()
 {
     using UniqueNumberFormat = UniquePtrDel<UNumberFormat, unum_close>;
@@ -209,29 +204,6 @@ NumberFormatter::NumberFormatter()
             m_grouping.push_back(static_cast<char>(secondaryGroupingSize));
     }
 }
-#else
-NumberFormatter::NumberFormatter(const std::locale& loc)
-{
-    if (!std::has_facet<std::numpunct<wchar_t>>(loc))
-        return;
-
-    const auto& facet = std::use_facet<std::numpunct<wchar_t>>(loc);
-    if (auto dp = facet.decimal_point(); dp != L'\0')
-    {
-        m_decimal.clear();
-        UTF8Encode(static_cast<std::uint32_t>(dp), m_decimal);
-    }
-
-    m_grouping = facet.grouping();
-    if (m_grouping.empty())
-        return;
-
-    if (auto sep = facet.thousands_sep(); sep != L'\0')
-        UTF8Encode(static_cast<std::uint32_t>(sep), m_thousands);
-    else
-        m_grouping.clear();
-}
-#endif
 
 fmt::format_context::iterator
 NumberFormatter::format_fixed(fmt::format_context::iterator out,

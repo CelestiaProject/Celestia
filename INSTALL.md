@@ -116,8 +116,9 @@ When building with Qt6 interface (see below), you need a compiler with full
 support for C++ filesystem library, e.g. GCC 8 or Clang 7.
 
 Then you need to have the following devel components installed before Celestia
-will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg, and
-libpng. Optional packages are gettext, Qt6, sdl2, ffmpeg, libavif, glu.
+will build: OpenGL, libboost, libepoxy, fmtlib, Eigen3, freetype, libjpeg,
+libpng, and icu. Optional packages are gettext, Qt6, sdl2, ffmpeg, libavif,
+glu.
 
 Earlier compilers may not have support for the C++17 float charconv functions.
 On these systems, you will also need to install the fast_float library.
@@ -213,7 +214,6 @@ In Visual Studio Code, create the workspace settings file at
   "cmake.configureSettings": {
     "CMAKE_TOOLCHAIN_FILE": "<path_to_vcpkg>/scripts/buildsystems/vcpkg.cmake",
     "ENABLE_QT6": true,
-    "USE_ICU": true,
     "USE_WIN_ICU": true
   }
 }
@@ -230,8 +230,7 @@ If you want to build the SDL front-end instead of the Qt6 front-end, you can
 replace the `ENABLE_QT6` key with `ENABLE_SDL`.
 
 On versions of Windows older than Windows 10 1903, you will need to set
-`USE_WIN_ICU` to `false`. You will then need to either switch off ICU support
-by setting `USE_ICU` to `false`, or install it via vcpkg.
+`USE_WIN_ICU` to `false`. You will then need to install it via vcpkg.
 
 Optional features (see below) can be enabled by adding additional keys to
 the `cmake.configureSettings` section. These will also require installing the
@@ -330,7 +329,7 @@ Install Homebrew
 Install required packages:
 
 ```
-brew install pkg-config cmake fast_float fmt gettext gperf libepoxy libpng lua qt@6 jpeg eigen freetype boost
+brew install pkg-config cmake fast_float fmt gettext gperf libepoxy libpng lua qt@6 jpeg eigen freetype boost icu4c
 ```
 
 Install optional packages:
@@ -346,7 +345,7 @@ Configure and build:
 ```
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_PREFIX_PATH="$(brew --prefix icu4c)"
 make -jN
 ```
 
@@ -382,7 +381,6 @@ List of supported parameters (passed as `-DPARAMETER=VALUE`):
 | ENABLE_TOOLS         | bool | OFF     | Build tools for Celestia data files
 | ENABLE_GLES          | bool | OFF     | Use OpenGL ES 3.0 in rendering code
 | USE_QT6              | bool | OFF     | Use Qt6 in Qt frontend
-| USE_ICU              | bool | OFF     | Use ICU for UTF8 decoding for text rendering
 | USE_MESHOPTIMIZER    | bool | OFF     | Use meshoptimizer when loading models
 
 Notes:
