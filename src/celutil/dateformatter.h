@@ -11,15 +11,11 @@
 
 #pragma once
 
-#ifdef USE_ICU
 #include <celutil/includeicu.h>
 #include <array>
-#include "uniquedel.h"
-#else
-#include <locale>
-#endif
 
 #include <celastro/date.h>
+#include "uniquedel.h"
 
 namespace celestia::engine
 {
@@ -27,12 +23,9 @@ namespace celestia::engine
 class DateFormatter
 {
 public:
-#ifdef USE_ICU
     DateFormatter() = default;
-#else
-    DateFormatter(const std::locale& loc) : loc(loc) {};
-#endif
     ~DateFormatter() = default;
+
     DateFormatter(const DateFormatter &) = delete;
     DateFormatter(DateFormatter &&) noexcept = default;
     DateFormatter &operator=(const DateFormatter &) = delete;
@@ -41,7 +34,6 @@ public:
     std::string formatDate(double tdb, bool local, astro::Date::Format format);
 
 private:
-#ifdef USE_ICU
     using UniqueDateFormat = util::UniquePtrDel<UDateFormat, udat_close>;
 
     static constexpr auto FormatCount = static_cast<std::size_t>(astro::Date::FormatCount);
@@ -50,9 +42,6 @@ private:
     std::array<UniqueDateFormat, FormatCount> utcFormatters;
 
     UDateFormat *getFormatter(bool local, astro::Date::Format format);
-#else
-    std::locale loc;
-#endif
 };
 
 }

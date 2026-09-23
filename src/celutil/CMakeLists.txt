@@ -51,12 +51,10 @@ set(CELUTIL_SOURCES
   utf8.h
 )
 
-if (USE_ICU)
-  list(APPEND CELUTIL_SOURCES
-    unicode.cpp
-    unicode.h
-  )
-endif()
+list(APPEND CELUTIL_SOURCES
+  unicode.cpp
+  unicode.h
+)
 
 if (WIN32)
   list(APPEND CELUTIL_SOURCES

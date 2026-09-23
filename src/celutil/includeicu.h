@@ -9,7 +9,6 @@
 
 #pragma once
 
-#ifdef USE_ICU
 #ifdef HAVE_WIN_ICU
 #include <icu.h>
 #else
@@ -22,5 +21,4 @@
 #include <unicode/ushape.h>
 #include <unicode/ustring.h>
 #include <unicode/uversion.h>
-#endif
 #endif

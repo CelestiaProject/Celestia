@@ -49,9 +49,7 @@ extern "C"
 }
 #endif
 
-#ifdef USE_ICU
 #include <celutil/includeicu.h>
-#endif
 
 #ifdef USE_LIBAVIF
 #include <avif/avif.h>
@@ -144,7 +142,6 @@ getMiniaudioVersion()
 }
 #endif
 
-#ifdef USE_ICU
 std::string
 getICUVersion()
 {
@@ -152,7 +149,6 @@ getICUVersion()
     u_getVersion(versionInfo);
     return fmt::format("{}.{}.{}.{}", +versionInfo[0], +versionInfo[1], +versionInfo[2], +versionInfo[3]);
 }
-#endif
 
 #ifdef USE_SPICE
 std::string
@@ -234,9 +230,7 @@ AboutDialog::AboutDialog()
     m_libraries.emplace_back("libavutil", avutil_license(), getFFMpegVersion(avutil_version()));
     m_libraries.emplace_back("libswscale", swscale_license(), getFFMpegVersion(swscale_version()));
 #endif
-#ifdef USE_ICU
     m_libraries.emplace_back("icu", "ICU", getICUVersion());
-#endif
 #ifdef USE_LIBAVIF
     m_libraries.emplace_back("libavif", "BSD", AVIF_VERSION_MAJOR, AVIF_VERSION_MINOR, AVIF_VERSION_PATCH);
 #endif

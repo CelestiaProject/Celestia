@@ -18,7 +18,6 @@ namespace celestia::engine
 
 std::string DateFormatter::formatDate(double tdb, bool local, astro::Date::Format format)
 {
-#ifdef USE_ICU
     auto formatter = getFormatter(local, format);
     if (formatter == nullptr)
         return {};
@@ -53,13 +52,8 @@ std::string DateFormatter::formatDate(double tdb, bool local, astro::Date::Forma
         return {};
 
     return utf8FormattedDate;
-#else
-    astro::Date d = local ? astro::TDBtoLocal(tdb) : astro::TDBtoUTC(tdb);
-    return d.toString(loc, format);
-#endif
 }
 
-#ifdef USE_ICU
 UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
 {
     auto& formatters = local ? localFormatters : utcFormatters;
@@ -104,6 +98,5 @@ UDateFormat *DateFormatter::getFormatter(bool local, astro::Date::Format format)
 
     return formatters[index].get();
 }
-#endif
 
 }

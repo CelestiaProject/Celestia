@@ -11,13 +11,8 @@
 
 #include <cstddef>
 
-#ifdef USE_ICU
 #include <celutil/flag.h>
 #include <celutil/unicode.h>
-#else
-#include <celutil/utf8.h>
-#endif
-
 
 namespace celestia::engine
 {
@@ -261,7 +256,6 @@ void TextLayout::flushInternal(bool flushFont)
 
 bool TextLayout::processString(std::string_view input, std::vector<std::u16string> &output)
 {
-#ifdef USE_ICU
     using namespace celestia::util;
 
     const ConversionOption options = ConversionOption::ArabicShaping | ConversionOption::BidiReordering;
@@ -294,36 +288,7 @@ bool TextLayout::processString(std::string_view input, std::vector<std::u16strin
 
         input = input.substr(linePos + 1);
     }
-#else
-    // Loop through all characters
-    auto len                = static_cast<std::int32_t>(input.length());
-    bool validChar          = true;
-    std::int32_t i          = 0;
-    bool endsWithLineBreak  = false;
 
-    std::u16string currentLine;
-    while (i < len && validChar)
-    {
-        std::int32_t ch = 0;
-        validChar = UTF8Decode(input, i, ch);
-        if (!validChar)
-            return false;
-
-        if (ch == u'\n')
-        {
-            output.push_back(currentLine);
-            currentLine.clear();
-            endsWithLineBreak = true;
-            continue;
-        }
-
-        currentLine.push_back(ch);
-        endsWithLineBreak = false;
-    }
-
-    if (!currentLine.empty() || endsWithLineBreak)
-        output.push_back(currentLine);
-#endif
     return true;
 }
 
