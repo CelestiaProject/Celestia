@@ -93,10 +93,10 @@ StarTextures
 	M "mstar.*"
 
 	# carbon stars
-	C "mstar.*"
-	R "mstar.*"  # former subclass of carbon star
-	N "mstar.*"  # former subclass of carbon star
-	S "mstar.*"  # roughly between M and C
+	C "redgiant.*"
+	R "redgiant.*"  # former subclass of carbon star
+	N "redgiant.*"  # former subclass of carbon star
+	S "redgiant.*"  # roughly between M and C
 
 	# Wolf-Rayet stars
 	WC "ostar.*"
