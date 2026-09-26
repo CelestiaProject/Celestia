@@ -44,6 +44,38 @@ constexpr double Tolerance = 1.0e-6;
 
 const Eigen::Quaterniond J2000Orientation{ Eigen::AngleAxis<double>(astro::J2000Obliquity, Eigen::Vector3d::UnitX()) };
 
+const Eigen::Vector3d J2000North = J2000Orientation.conjugate() * Eigen::Vector3d::UnitY();
+
+Eigen::Quaterniond
+getSkyPlaneOrientation(Eigen::Vector3d inwards)
+{
+    auto length = inwards.norm();
+    if (length < Tolerance)
+    {
+        // too close to origin, give up
+        return Eigen::Quaterniond::Identity();
+    }
+
+    inwards /= length;
+
+    Eigen::Vector3d east = inwards.cross(J2000North);
+    length = east.norm();
+    if (length < Tolerance)
+    {
+        // too close to North/South celestial pole, give up
+        return Eigen::Quaterniond::Identity();
+    }
+
+    east /= length;
+
+    Eigen::Matrix3d m;
+    m.row(0) = inwards.cross(-east).normalized();
+    m.row(1) = inwards;
+    m.row(2) = -east;
+
+    return Eigen::Quaterniond(m);
+}
+
 } // end unnamed namespace
 
 /*** ReferenceFrame ***/
@@ -468,6 +500,43 @@ FrameVector::visitChildren(FrameVisitor& visitor) const
     std::visit(ReferenceVisitor(visitor), m_data);
 }
 
+/*** SkyPlaneFrame ***/
+
+SkyPlaneFrame::SkyPlaneFrame(Star* star, double freezeEpoch) :
+    m_star(star), m_freezeEpoch(freezeEpoch)
+{
+}
+
+Eigen::Quaterniond
+SkyPlaneFrame::getOrientation(double) const
+{
+    if (m_orientation.has_value())
+        return *m_orientation;
+
+    Eigen::Quaterniond result = getSkyPlaneOrientation(-m_star->getPosition(m_freezeEpoch).toLy());
+    m_orientation = result;
+
+    return result;
+}
+
+Eigen::Vector3d
+SkyPlaneFrame::getAngularVelocity(double tdb) const
+{
+    return Eigen::Vector3d::Zero();
+}
+
+bool
+SkyPlaneFrame::isInertial() const
+{
+    return true;
+}
+
+void
+SkyPlaneFrame::visitChildren(FrameVisitor& visitor) const
+{
+    visitor.visitPosition(m_star);
+}
+
 std::size_t
 std::hash<BodyMeanEquatorFrameKey>::operator()(const BodyMeanEquatorFrameKey& obj) const
 {
@@ -514,6 +583,15 @@ std::hash<ConstVectorKey>::operator()(const ConstVectorKey& obj) const
     boost::hash_combine(seed, obj.vec.y());
     boost::hash_combine(seed, obj.vec.z());
     boost::hash_combine(seed, obj.frameId);
+    return seed;
+}
+
+std::size_t
+std::hash<SkyPlaneFrameKey>::operator()(const SkyPlaneFrameKey& obj) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, obj.star);
+    boost::hash_combine(seed, obj.freezeEpoch);
     return seed;
 }
 
@@ -575,6 +653,11 @@ FrameCache::createFrame(const FrameKey& key)
             const FrameVector& vec1 = m_cache.m_frameVectors[static_cast<std::size_t>(k.frameVectorId1)];
             const FrameVector& vec2 = m_cache.m_frameVectors[static_cast<std::size_t>(k.frameVectorId2)];
             return std::make_shared<TwoVectorFrame>(vec1, k.axis1, vec2, k.axis2);
+        }
+
+        ReferenceFrame::SharedConstPtr operator()(const SkyPlaneFrameKey& k) const
+        {
+            return std::make_shared<SkyPlaneFrame>(k.star, k.freezeEpoch);
         }
 
     private:
