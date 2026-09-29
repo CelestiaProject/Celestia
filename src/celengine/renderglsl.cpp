@@ -594,20 +594,19 @@ void renderClouds_GLSL(const RenderInfo& ri,
             shadprop.texUsage |= TexUsage::CompressedNormalTexture;
     }
 
-    if (atmosphere != nullptr && util::is_set(renderFlags, RenderFlags::ShowAtmospheres))
+    // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
+    // ... but don't show atmospheres when there are no light sources.
+    // A high cloud layer viewed from outside has no atmosphere in front of it.
+    // Keep scattering when inside the cloud layer: foreground air still contributes.
+    // Use the same finite shell as the atmosphere pass, including both scale heights.
+    if (atmosphere != nullptr &&
+        util::is_set(renderFlags, RenderFlags::ShowAtmospheres) &&
+        atmosphere->mieScaleHeight > 0.0f &&
+        shadprop.nLights > 0 &&
+        (cloudRadius < atmosphereRadius || insideCloudLayer))
     {
-        // Only use new atmosphere code in OpenGL 2.0 path when new style parameters are defined.
-        // ... but don't show atmospheres when there are no light sources.
-        // A high cloud layer viewed from outside has no atmosphere in front of it.
-        // Keep scattering when inside the cloud layer: foreground air still contributes.
-        // Use the same finite shell as the atmosphere pass, including both scale heights.
-        if (atmosphere->mieScaleHeight > 0.0f &&
-            shadprop.nLights > 0 &&
-            (cloudRadius < atmosphereRadius || insideCloudLayer))
-        {
-            shadprop.texUsage |= TexUsage::Scattering;
-            shadprop.separateRayleighMieScaleHeights = renderer->getSeparateRayleighMieScaleHeights(*atmosphere);
-        }
+        shadprop.texUsage |= TexUsage::Scattering;
+        shadprop.separateRayleighMieScaleHeights = renderer->getSeparateRayleighMieScaleHeights(*atmosphere);
     }
 
     setEclipseShadowProperties(ls, shadprop);
