@@ -2,11 +2,11 @@
 # Copyright (C) YEAR Celestia Development Team
 # This file is distributed under the same license as the celestia package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # 375gnu <375gnu@gmail.com>, 2023
 # Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,14 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: team@celestiaproject.space\n"
 "POT-Creation-Date: 2026-09-12 09:40+0200\n"
 "PO-Revision-Date: 2018-11-02 18:33+0000\n"
-"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, "
-"2026\n"
-"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/"
-"bg/)\n"
-"Language: bg\n"
+"Last-Translator: Georgi Georgiev (RacerBG) <g.georgiev.shumen@gmail.com>, 2026\n"
+"Language-Team: Bulgarian (https://app.transifex.com/celestia/teams/93131/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../src/celastro/date.cpp:507
@@ -66,8 +64,7 @@ msgstr "Грешка при зареждане на модела „{}“\n"
 #, c++-format
 msgid ""
 "   Model statistics: {} vertices, {} primitives, {} materials ({} unique)\n"
-msgstr ""
-"Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
+msgstr "Данни за модела: {} върхове, {} примитиви, {} материали ({} уникални)\n"
 
 #: ../src/celengine/modelgeometry.cpp:175
 #, c++-format
@@ -283,7 +280,7 @@ msgstr "Общ брой на звездите: {}\n"
 
 #: ../src/celengine/stardbbuilder.cpp:864
 msgid "Star has no position and no existing record to update."
-msgstr ""
+msgstr "Звездата няма позиция и липсва съществуващ запис за обновяване."
 
 #: ../src/celengine/stardbbuilder.cpp:930
 msgid "ignoring RA/Dec/Distance in favor of Position"
@@ -616,7 +613,7 @@ msgstr "Преследвай"
 #: ../src/celestia/celestiacore.cpp:1532 ../src/celestia/celestiacore.cpp:1562
 #, c++-format
 msgid "Star exposure: {:.3f}"
-msgstr ""
+msgstr "Звездна експозиция: {:.3f}"
 
 #: ../src/celestia/celestiacore.cpp:1540 ../src/celestia/celestiacore.cpp:1570
 #: ../src/celestia/celestiacore.cpp:2460
@@ -670,7 +667,7 @@ msgstr "Грешка при отваряне на очертанията на с
 
 #: ../src/celestia/celestiacore.cpp:2816
 msgid "Failed to initialize renderer"
-msgstr "Неуспешно стартиране на възпроизвеждането"
+msgstr "Неуспешно стартиране на графичния процесор"
 
 #: ../src/celestia/celestiacore.cpp:2830
 msgid "DEFAULT_MAIN_FONT"
@@ -714,12 +711,12 @@ msgstr "%s Версия: %s\n"
 #: ../src/celestia/helper.cpp:124
 #, c-format
 msgid "Vendor: %s\n"
-msgstr "Доставчик: %s\n"
+msgstr "Производител: %s\n"
 
 #: ../src/celestia/helper.cpp:127
 #, c-format
 msgid "Renderer: %s\n"
-msgstr "Възпроизвеждане: %s\n"
+msgstr "Графичен процесор: %s\n"
 
 #: ../src/celestia/helper.cpp:133
 #, c-format
@@ -1105,19 +1102,22 @@ msgstr "Записване"
 msgid "F11 Start/Pause    F12 Stop"
 msgstr "F11 за Старт и Пауза    F12 за Спиране"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loaddso.cpp:49
 msgctxt "catalog"
 msgid "deep sky"
 msgstr "обектите от дълбокото небе"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadsso.cpp:50
 msgctxt "catalog"
 msgid "solar system"
 msgstr "Слънчевата система"
 
-#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {} catalog"
+#. TRANSLATORS: this is a part of phrases "Loading {} catalog", "Skipping {}
+#. catalog"
 #: ../src/celestia/loadstars.cpp:52
 msgctxt "catalog"
 msgid "star"
@@ -1155,7 +1155,7 @@ msgstr "Местоположение на отметките"
 #. ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/addbookmark.ui:24
 msgid "Bookmark name:"
-msgstr "Име на отметка:"
+msgstr "Име на отметката:"
 
 #. ectx: property (text), widget (QLabel, label_2)
 #. ectx: property (text), widget (QLabel, label_2)
@@ -1177,7 +1177,7 @@ msgstr "Диалог"
 #. ectx: property (text), widget (QLabel, label)
 #: ../src/celestia/qt/gotoobjectdialog.ui:56
 msgid "Object name:"
-msgstr "Име на обект:"
+msgstr "Име на обекта:"
 
 #. ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/gotoobjectdialog.ui:75
@@ -1361,13 +1361,13 @@ msgstr "Мъглявини"
 #: ../src/celestia/qt/preferences.ui:112 ../src/celestia/qt/preferences.ui:569
 #: ../src/celestia/qt/qtcelestiaactions.cpp:186
 msgid "Open clusters"
-msgstr "Разсеяни купове"
+msgstr "Разсеяни звездни купове"
 
 #. ectx: property (text), widget (QCheckBox, globularClustersCheck)
 #. ectx: property (text), widget (QCheckBox, globularClusterLabelsCheck)
 #: ../src/celestia/qt/preferences.ui:119 ../src/celestia/qt/preferences.ui:576
 msgid "Globular clusters"
-msgstr "Кълбовидни купове"
+msgstr "Кълбовидни звездни купове"
 
 #. ectx: property (title), widget (QGroupBox, featuresGroupBox)
 #: ../src/celestia/qt/preferences.ui:142
@@ -1598,7 +1598,7 @@ msgstr "Минимален размер на характеристиките с
 #. ectx: attribute (title), widget (QWidget, renderTab)
 #: ../src/celestia/qt/preferences.ui:801
 msgid "Render"
-msgstr "Възпроизвеждане"
+msgstr "Визуализиране"
 
 #. ectx: property (title), widget (QGroupBox, textureResolutionGroupBox)
 #: ../src/celestia/qt/preferences.ui:822
@@ -1640,47 +1640,52 @@ msgstr "Тонирана наситеност на осветяването:"
 
 #. ectx: property (title), widget (QGroupBox, atmosphereRenderingGroupBox)
 #: ../src/celestia/qt/preferences.ui:991
-#, fuzzy
 msgid "Atmosphere"
-msgstr "Атмосфери"
+msgstr "Атмосфера"
 
-#. ectx: property (text), widget (QCheckBox, separateRayleighMieScaleHeightsCheck)
+#. ectx: property (text), widget (QCheckBox,
+#. separateRayleighMieScaleHeightsCheck)
 #: ../src/celestia/qt/preferences.ui:997
 msgid "Separate Rayleigh and Mie scale heights"
-msgstr ""
+msgstr "Разделни мащабни височини на Релей и Ми"
 
-#. ectx: property (toolTip), widget (QCheckBox, separateRayleighMieScaleHeightsCheck)
+#. ectx: property (toolTip), widget (QCheckBox,
+#. separateRayleighMieScaleHeightsCheck)
 #: ../src/celestia/qt/preferences.ui:1000
 msgid ""
 "Use separate Rayleigh and Mie scale heights for atmosphere definitions that "
 "provide legacy fallback values."
 msgstr ""
+"Използване на отделни мащабни височини на Релей и Ми за дефиниции на "
+"атмосферата, които осигуряват стари базови стойности."
 
 #. ectx: property (text), widget (QLabel, atmosphereSegmentCountLabel)
 #: ../src/celestia/qt/preferences.ui:1009
-#, fuzzy
 msgid "Atmosphere segments:"
-msgstr "Атмосфери"
+msgstr "Сегменти на атмосферата:"
 
 #. ectx: property (toolTip), widget (QSpinBox, atmosphereSegmentCountSpinBox)
 #: ../src/celestia/qt/preferences.ui:1016
 msgid "Number of integration segments used for atmospheric scattering."
 msgstr ""
+"Брой интеграционни сегменти, използвани за разсейване на светлината в "
+"атмосферата."
 
 #. ectx: property (text), widget (QLabel, cloudSegmentCountLabel)
 #: ../src/celestia/qt/preferences.ui:1033
 msgid "Cloud segments:"
-msgstr ""
+msgstr "Сегменти на облаците:"
 
 #. ectx: property (toolTip), widget (QSpinBox, cloudSegmentCountSpinBox)
 #: ../src/celestia/qt/preferences.ui:1040
 msgid "Number of integration segments used for atmospheric effects on clouds."
 msgstr ""
+"Брой интеграционни сегменти, използвани за атмосферни ефекти върху облаците."
 
 #. ectx: property (title), widget (QGroupBox, renderPathGroupBox)
 #: ../src/celestia/qt/preferences.ui:1058
 msgid "Render path"
-msgstr "Възпроизвеждане с"
+msgstr "Режим на визуализиране"
 
 #. ectx: property (text), widget (QCheckBox, antialiasLinesCheck)
 #: ../src/celestia/qt/preferences.ui:1064
@@ -1695,7 +1700,7 @@ msgstr "Визуализиране с sRGB:"
 #. ectx: property (text), widget (QLabel, toneMappingLabel)
 #: ../src/celestia/qt/preferences.ui:1087
 msgid "Tone mapping:"
-msgstr ""
+msgstr "Тонално изобразяване:"
 
 #. ectx: property (toolTip), widget (QComboBox, toneMappingCombo)
 #: ../src/celestia/qt/preferences.ui:1094
@@ -1703,6 +1708,8 @@ msgid ""
 "Softly roll off HDR highlights instead of clipping them to white. Only "
 "affects sRGB rendering."
 msgstr ""
+"Плавно смекчаване на акцентите с HDR, вместо рязкото им отрязване до бяло. "
+"Влияе само на визуализирането с sRGB."
 
 #. ectx: property (text), widget (QLabel, toneMappingExposureLabel)
 #. ectx: property (text), widget (QLabel, psfExposureLabel)
@@ -1711,12 +1718,15 @@ msgstr ""
 msgid "Exposure:"
 msgstr "Експозиция:"
 
-#. ectx: property (toolTip), widget (QDoubleSpinBox, toneMappingExposureSpinBox)
+#. ectx: property (toolTip), widget (QDoubleSpinBox,
+#. toneMappingExposureSpinBox)
 #: ../src/celestia/qt/preferences.ui:1112
 msgid ""
 "Exposure of the HDR tone mapper. Only affects sRGB rendering in Manual tone "
 "mapping mode."
 msgstr ""
+"Експозиция на тоналното изобразяване с HDR. Влияе само на визуализирането с "
+"sRGB."
 
 #. ectx: property (title), widget (QGroupBox, starStyleGroupBox)
 #: ../src/celestia/qt/preferences.ui:1169
@@ -1757,12 +1767,10 @@ msgstr "Радиус на точките (тт):"
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfRadiusSpinBox)
 #: ../src/celestia/qt/preferences.ui:1218
 msgid ""
-"Radius of the unresolved star disc in points. Larger values make every star "
-"appear bigger while conserving the flux.\n"
+"Radius of the unresolved star disc in points. Larger values make every star appear bigger while conserving the flux.\n"
 "Valid range: 1.0 to 10.0."
 msgstr ""
-"Радиус на неразделимия звезден диск в точки. По-големите стойности правят "
-"всяка звезда да изглежда по-голяма и запазват светлинния поток.\n"
+"Радиус на неразделимия звезден диск в точки. По-големите стойности правят всяка звезда да изглежда по-голяма и запазват светлинния поток.\n"
 "Валиден диапазон: от 1,0 до 10,0."
 
 #. ectx: property (text), widget (QLabel, psfOptimizationLabel)
@@ -1773,13 +1781,10 @@ msgstr "Плътност на сиянието:"
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfOptimizationSpinBox)
 #: ../src/celestia/qt/preferences.ui:1252
 msgid ""
-"Controls how tightly the eye-PSF bloom is confined around each bright star. "
-"Higher values keep the glow compact; lower values let it spread further.\n"
+"Controls how tightly the eye-PSF bloom is confined around each bright star. Higher values keep the glow compact; lower values let it spread further.\n"
 "Valid range: 0.05 to 1.0."
 msgstr ""
-"Контролира колко сбито е сиянието около всяка ярка звезда. По-високите "
-"стойности поддържат блясъка компактен, по-ниските стойности му позволяват да "
-"се разпространи по-надалеч.\n"
+"Контролира колко сбито е сиянието около всяка ярка звезда. По-високите стойности поддържат блясъка компактен, по-ниските стойности му позволяват да се разпространи по-надалеч.\n"
 "Валиден диапазон: от 0,05 до 1,0."
 
 #. ectx: property (text), widget (QLabel, psfMaxIrradianceLabel)
@@ -1804,12 +1809,10 @@ msgstr "Отрязване на бледите звезди:"
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfDimClipFactorSpinBox)
 #: ../src/celestia/qt/preferences.ui:1320
 msgid ""
-"Hyperbolic soft-clip on dim stars; higher values cull more dim stars for "
-"performance.\n"
+"Hyperbolic soft-clip on dim stars; higher values cull more dim stars for performance.\n"
 "Valid range: 1.0 to 100.0."
 msgstr ""
-"Хиперболично меко отрязване на бледите звезди, по-високите стойности "
-"премахват повече бледи звезди за по-добра производителност.\n"
+"Хиперболично меко отрязване на бледите звезди, по-високите стойности премахват повече бледи звезди за по-добра производителност.\n"
 "Валиден диапазон: от 1,0 до 100,0."
 
 #. ectx: property (toolTip), widget (QDoubleSpinBox, psfExposureSpinBox)
@@ -1831,15 +1834,13 @@ msgstr "Звездни цветове"
 
 #. ectx: attribute (title), widget (QWidget, timeTab)
 #: ../src/celestia/qt/preferences.ui:1448
-#, fuzzy
 msgid "Information"
 msgstr "Информация"
 
 #. ectx: property (text), widget (QLabel, timeZoneLabel)
 #: ../src/celestia/qt/preferences.ui:1457
-#, fuzzy
 msgid "Time zone:"
-msgstr "Часова зона: "
+msgstr "Часова зона:"
 
 #. ectx: property (text), widget (QLabel, label_3)
 #: ../src/celestia/qt/preferences.ui:1467
@@ -1848,21 +1849,20 @@ msgstr "Формат на датата:"
 
 #. ectx: property (text), widget (QLabel, hudDetailLabel)
 #: ../src/celestia/qt/preferences.ui:1477
-#, fuzzy
 msgid "Information text:"
-msgstr "Информация"
+msgstr "Текст:"
 
 #. TRANSLATORS: fps == frames per second
 #: ../src/celestia/qt/qtappwin.cpp:211
 msgctxt "fps"
 msgid "Auto"
-msgstr "Автоматична"
+msgstr "Автоматично"
 
 #. TRANSLATORS: fps == frames per second
 #: ../src/celestia/qt/qtappwin.cpp:218
 msgctxt "fps"
 msgid "Custom"
-msgstr "Персонализирана"
+msgstr "Персонализирано"
 
 #: ../src/celestia/qt/qtappwin.cpp:255
 msgid "Error getting path for log filename!"
@@ -1870,8 +1870,8 @@ msgstr "Грешка при получаване на пътя за името �
 
 #: ../src/celestia/qt/qtappwin.cpp:270
 msgid ""
-"Celestia is unable to run because the data directory was not found, probably "
-"due to improper installation."
+"Celestia is unable to run because the data directory was not found, probably"
+" due to improper installation."
 msgstr ""
 "„Celestia“ не успя да стартира, защото папката с данни липсва, вероятната "
 "причина е неправилна инсталация."
@@ -1882,13 +1882,10 @@ msgstr "Достъп до скриптовата система"
 
 #: ../src/celestia/qt/qtappwin.cpp:297
 msgid ""
-"This script requests permission to read/write files and execute external "
-"programs. Allowing this can be dangerous.\n"
+"This script requests permission to read/write files and execute external programs. Allowing this can be dangerous.\n"
 "Do you trust the script and want to allow this?"
 msgstr ""
-"Този скрипт се нуждае от разрешение за четене и записване на файлове, както "
-"и за изпълнение на външни програми. Това може да доведе до потенциален риск "
-"за сигурността.\n"
+"Този скрипт се нуждае от разрешение за четене и записване на файлове, както и за изпълнение на външни програми. Това може да доведе до потенциален риск за сигурността.\n"
 "Сигурни ли сте, че искате да продължите?"
 
 #: ../src/celestia/qt/qtappwin.cpp:365
@@ -1909,7 +1906,8 @@ msgstr "Слънчева система"
 msgid "Deep Sky Objects"
 msgstr "Обекти от дълбокото небе"
 
-#: ../src/celestia/qt/qtappwin.cpp:407 ../src/celestia/qt/qteventfinder.cpp:378
+#: ../src/celestia/qt/qtappwin.cpp:407
+#: ../src/celestia/qt/qteventfinder.cpp:378
 #: ../src/celestia/qt/qteventfinder.cpp:388
 msgid "Event Finder"
 msgstr "Търсачка на събития"
@@ -2016,31 +2014,33 @@ msgstr "Нова отметка"
 #: ../src/celestia/qt/qtappwin.cpp:1199
 #, qt-format
 msgid ""
-"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit <b>%1</b>.</"
-"p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt library: "
-"%5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt version: %6</"
-"p><p>Copyright (C) 2001-2025 by the Celestia Development Team.<br>Celestia "
-"is free software. You can redistribute it and/or modify it under the terms "
-"of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version.</p><p>Main site: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Forum: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>GitHub project: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>Celestia 1.7.0 </h1><p>Development snapshot, commit "
+"<b>%1</b>.</p><p>Built for %2 bit CPU<br>Using %3 %4<br>Built against Qt "
+"library: %5<br>NAIF kernels are %7<br>AVIF images are %8<br>Runtime Qt "
+"version: %6</p><p>Copyright (C) 2001-2025 by the Celestia Development "
+"Team.<br>Celestia is free software. You can redistribute it and/or modify it"
+" under the terms of the GNU General Public License as published by the Free "
+"Software Foundation; either version 2 of the License, or (at your option) "
+"any later version.</p><p>Main site: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Forum:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>GitHub"
+" project: <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 msgstr ""
-"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация <b>%1</"
-"b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt: "
-"%5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: %6</"
-"p><p>Авторско право (C) 2001-2025, Екипът на „Celestia“.<br>„Celestia“ е "
-"безплатен софтуер. Може да се разпространява и/или променя под условията на "
-"„GNU General Public License“, който е публикуван от „Фондацията за свободен "
-"софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша преценка).</"
-"p><p>Сайт: <a href=\"https://celestiaproject.space/\">https://"
-"celestiaproject.space/</a><br>Форум: <a href=\"https://celestiaproject.space/"
-"forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“: <a "
-"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/"
-"CelestiaProject/Celestia</a></p></html>"
+"<html><h1>„Celestia“ 1.7.0 </h1><p>В процес на разработка, компилация "
+"<b>%1</b>.</p><p>За %2 битови процесори<br>Използва %3 %4<br>Създадена с Qt:"
+" %5<br>Ядрата NAIF са %7<br>Изображенията AVIF са %8<br>Версия на Qt: "
+"%6</p><p>Авторско право (C) 2001-2025, Екипът на „Celestia“.<br>„Celestia“ е"
+" безплатен софтуер. Може да се разпространява и/или променя под условията на"
+" „GNU General Public License“, който е публикуван от „Фондацията за свободен"
+" софтуер“, версия 2 или всяка по-нова версия на Лиценза (по Ваша "
+"преценка).</p><p>Сайт: <a "
+"href=\"https://celestiaproject.space/\">https://celestiaproject.space/</a><br>Форум:"
+" <a "
+"href=\"https://celestiaproject.space/forum/\">https://celestiaproject.space/forum/</a><br>„GitHub“:"
+" <a "
+"href=\"https://github.com/CelestiaProject/Celestia\">https://github.com/CelestiaProject/Celestia</a></p></html>"
 
 #: ../src/celestia/qt/qtappwin.cpp:1235
 msgid "Unknown compiler"
@@ -2048,11 +2048,11 @@ msgstr "Неизвестен компилатор"
 
 #: ../src/celestia/qt/qtappwin.cpp:1239 ../src/celestia/qt/qtappwin.cpp:1244
 msgid "supported"
-msgstr "поддържа се"
+msgstr "поддържани"
 
 #: ../src/celestia/qt/qtappwin.cpp:1241 ../src/celestia/qt/qtappwin.cpp:1246
 msgid "not supported"
-msgstr "не се поддържа"
+msgstr "неподдържани"
 
 #: ../src/celestia/qt/qtappwin.cpp:1249 ../src/celestia/qt/qtappwin.cpp:1675
 msgid "About Celestia"
@@ -2066,12 +2066,12 @@ msgstr "<b>%1 версия:</b> %2"
 #: ../src/celestia/qt/qtappwin.cpp:1274
 #, qt-format
 msgid "<b>Vendor:</b> %1"
-msgstr "<b>Доставчик:</b> %1"
+msgstr "<b>Производител:</b> %1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1280
 #, qt-format
 msgid "<b>Renderer:</b> %1"
-msgstr "<b>Възпроизвеждане:</b> %1"
+msgstr "<b>Графичен процесор:</b> %1"
 
 #: ../src/celestia/qt/qtappwin.cpp:1287
 #, qt-format
@@ -2119,7 +2119,7 @@ msgstr "<b>Поддържани разширения:</b><br>\n"
 
 #: ../src/celestia/qt/qtappwin.cpp:1354
 msgid "Renderer Info"
-msgstr "Информация за възпроизвеждането"
+msgstr "Информация за графичния процесор"
 
 #. ***** File menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1379
@@ -2216,7 +2216,7 @@ msgstr "Задай времето"
 #. ***** Display menu *****
 #: ../src/celestia/qt/qtappwin.cpp:1478
 msgid "&Display"
-msgstr "&Дисплей"
+msgstr "&Визуализация"
 
 #: ../src/celestia/qt/qtappwin.cpp:1484
 msgid "Dee&p Sky Objects"
@@ -2385,15 +2385,15 @@ msgstr "Отметки"
 
 #: ../src/celestia/qt/qtbookmark.cpp:800
 msgid "Current simulation time"
-msgstr "Текущо време за симулация"
+msgstr "Текущо време на симулацията"
 
 #: ../src/celestia/qt/qtbookmark.cpp:801
 msgid "Simulation time at activation"
-msgstr "Време за симулация при активиране"
+msgstr "Време на симулацията при активиране"
 
 #: ../src/celestia/qt/qtbookmark.cpp:802
 msgid "System time at activation"
-msgstr "Системно време при активиране"
+msgstr "Системно време при активирането"
 
 #. Create the render flags actions
 #: ../src/celestia/qt/qtcelestiaactions.cpp:92
@@ -2472,12 +2472,12 @@ msgstr "НДП"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:210
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:482
 msgid "Globulars"
-msgstr "Кълбовидни"
+msgstr "Кълбовидни звездни купове"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:211
 #: ../src/celestia/qt/qtdeepskybrowser.cpp:490
 msgid "Open Clusters"
-msgstr "Разсеяни купове"
+msgstr "Разсеяни звездни купове"
 
 #. cloudsAction->setShortcut(QString("I"));
 #: ../src/celestia/qt/qtcelestiaactions.cpp:221
@@ -2535,7 +2535,7 @@ msgstr "Корекция на забавянето на светлината"
 #: ../src/celestia/qt/qtcelestiaactions.cpp:462
 #, qt-format
 msgid "Star exposure: %L1"
-msgstr ""
+msgstr "Звездна експозиция: %L1"
 
 #: ../src/celestia/qt/qtcelestiaactions.cpp:470
 #, qt-format
@@ -3084,11 +3084,11 @@ msgstr "Изключено"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:241
 msgid "Off"
-msgstr ""
+msgstr "Изключено"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:242
 msgid "Manual exposure"
-msgstr ""
+msgstr "Ръчна експозиция"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:311
 msgid "Blackbody D65"
@@ -3130,15 +3130,15 @@ msgstr "Отклонение по UTC"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:338
 msgid "ISO 8601"
-msgstr ""
+msgstr "ISO 8601"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:347
 msgid "Terse"
-msgstr "Сбита"
+msgstr "Кратък"
 
 #: ../src/celestia/qt/qtpreferencesdialog.cpp:348
 msgid "Verbose"
-msgstr "Подробна"
+msgstr "Подробен"
 
 #: ../src/celestia/qt/qtselectionpopup.cpp:100
 #, qt-format
@@ -3435,7 +3435,7 @@ msgstr "10 пъти по-бързо"
 
 #: ../src/celestia/qt/qttimetoolbar.cpp:50
 msgid "Set to current time"
-msgstr "Задай към текущото време"
+msgstr "Текущо време"
 
 #: ../src/celestia/qt/qttourguide.cpp:62
 msgid "No guide destinations were found."
@@ -3779,606 +3779,3 @@ msgstr "Неподдържан ред на байтовете {}, очакван
 #, c++-format
 msgid "Unsupported digits number {}, expected {}.\n"
 msgstr "Неподдържан брой числа {}, очакван {}.\n"
-
-#~ msgid "OpenGL 2.1"
-#~ msgstr "OpenGL 2.1"
-
-#~ msgid "Placeholder"
-#~ msgstr "Заместител"
-
-#~ msgid "Capture &Image...\tF10"
-#~ msgstr "Прихвани изображение...\tF10"
-
-#~ msgid "Capture &Movie...\tShift+F10"
-#~ msgstr "Прихвани видео...\tShift+F10"
-
-#~ msgid "Select &Sol\tH"
-#~ msgstr "Избери Слънцето\tH"
-
-#~ msgid "Tour G&uide..."
-#~ msgstr "Екскурзовод..."
-
-#~ msgid "Select &Object..."
-#~ msgstr "Избери обект..."
-
-#~ msgid "&Center Selection\tC"
-#~ msgstr "Центрирай селекцията\tC"
-
-#~ msgid "&Go to Selection\tG"
-#~ msgstr "Отиди до селекцията\tG"
-
-#~ msgid "&Follow Selection\tF"
-#~ msgstr "Следвай селекцията\tF"
-
-#~ msgid "S&ync Orbit Selection\tY"
-#~ msgstr "Синхронизирай избраната орбита\tY"
-
-#~ msgid "&Track Selection\tT"
-#~ msgstr "Следвай селекцията\tT"
-
-#~ msgid "Solar System &Browser..."
-#~ msgstr "Търсачка на Слънчевата система..."
-
-#~ msgid "Star B&rowser..."
-#~ msgstr "Звездна търсачка..."
-
-#~ msgid "&Eclipse Finder"
-#~ msgstr "Търсач на затъмнения"
-
-#~ msgid "10x &Faster\tL"
-#~ msgstr "10 пъти по-бързо\tL"
-
-#~ msgid "10x &Slower\tK"
-#~ msgstr "10 пъти по-бавно\tK"
-
-#~ msgid "Free&ze\tSpace"
-#~ msgstr "Замрази\tSpace"
-
-#~ msgid "&Real Time\t\\"
-#~ msgstr "Реално време\t\\"
-
-#~ msgid "Re&verse Time\tJ"
-#~ msgstr "Обърни времето\tJ"
-
-#~ msgid "Set &Time..."
-#~ msgstr "Задай времето..."
-
-#~ msgid "Show Local Time"
-#~ msgstr "Покажи местното време"
-
-#~ msgid "&Render"
-#~ msgstr "Възпроизвеждане"
-
-#~ msgid "Select Display Mode..."
-#~ msgstr "Избери режим на показване..."
-
-#~ msgid "Toggle Full Screen\tAlt+Enter"
-#~ msgstr "Превключи на цял екран\tAlt+Enter"
-
-#~ msgid "View Options..."
-#~ msgstr "Опции на изгледа..."
-
-#~ msgid "Locations..."
-#~ msgstr "Местоположения..."
-
-#~ msgid "More Stars Visible\t]"
-#~ msgstr "Повече видими звезди\t]"
-
-#~ msgid "Fewer Stars Visible\t["
-#~ msgstr "По-малко видими звезди\t["
-
-#~ msgid "Auto Magnitude\tCtrl+Y"
-#~ msgstr "Автоматична звездна величина\tCtrl+Y"
-
-#~ msgid "&Points"
-#~ msgstr "Точки"
-
-#~ msgid "&Fuzzy Points"
-#~ msgstr "Неясни точки"
-
-#~ msgid "Scaled &Discs"
-#~ msgstr "Мащабирани дискове"
-
-#~ msgid "Point &Spread Function"
-#~ msgstr "Размити точки"
-
-#~ msgid "Star &Color"
-#~ msgstr "Звезден цвят"
-
-#~ msgid "&Ambient Light"
-#~ msgstr "Фонова светлина"
-
-#~ msgid "&No"
-#~ msgstr "Не"
-
-#~ msgid "&Weakly"
-#~ msgstr "Слаба"
-
-#~ msgid "&Moderately"
-#~ msgstr "Умерена"
-
-#~ msgid "&Texture Resolution"
-#~ msgstr "Резолюция на текстурите"
-
-#~ msgid "&Low"
-#~ msgstr "Ниска"
-
-#~ msgid "&Medium"
-#~ msgstr "Средна"
-
-#~ msgid "&High"
-#~ msgstr "Висока"
-
-#~ msgid "Antialiasing\tCtrl+X"
-#~ msgstr "Изглаждане\tCtrl+X"
-
-#~ msgid "Split &Horizontally\tCtrl+R"
-#~ msgstr "Раздели хоризонтално\tCtrl+R"
-
-#~ msgid "Split &Vertically\tCtrl+U"
-#~ msgstr "Раздели вертикално\tCtrl+U"
-
-#~ msgid "&Delete Active View\tDEL"
-#~ msgstr "Изтрий активния изглед\tDEL"
-
-#~ msgid "&Single View\tCtrl+D"
-#~ msgstr "Единичен изглед\tCtrl+D"
-
-#~ msgid "Show &Frames"
-#~ msgstr "Покажи кадрите"
-
-#~ msgid "Synchronize &Time"
-#~ msgstr "Синхронизирай времето"
-
-#~ msgid "&Add Bookmarks..."
-#~ msgstr "Добави отметки..."
-
-#~ msgid "&Organize Bookmarks..."
-#~ msgstr "Организирай отметките..."
-
-#~ msgid "User &Guide"
-#~ msgstr "Ръководство на потребителя"
-
-#~ msgid "&Controls"
-#~ msgstr "Контроли"
-
-#~ msgid "&OpenGL Info"
-#~ msgstr "Информация за OpenGL"
-
-#~ msgid "&License"
-#~ msgstr "Лиценз"
-
-#~ msgid "&About Celestia"
-#~ msgstr "За „Celestia“"
-
-#~ msgid "OK"
-#~ msgstr "ОК"
-
-#~ msgid "Celestia"
-#~ msgstr "„Celestia“"
-
-#~ msgid "1.7.0"
-#~ msgstr "1.7.0"
-
-#~ msgid "Copyright (C) 2001-2021, Celestia Development Team"
-#~ msgstr "Авторско право (С) 2001-2021, Екипът на „Celestia“"
-
-#~ msgid "Celestia is free software and comes with absolutely no warranty."
-#~ msgstr "„Celestia“ е безплатен софтуер и се предлага без никаква гаранция."
-
-#~ msgid "Authors"
-#~ msgstr "Автори"
-
-#~ msgid "Chris Laurel"
-#~ msgstr "Chris Laurel"
-
-#~ msgid "Clint Weisbrod"
-#~ msgstr "Clint Weisbrod"
-
-#~ msgid "Fridger Schrempp"
-#~ msgstr "Fridger Schrempp"
-
-#~ msgid "Christophe Teyssier"
-#~ msgstr "Christophe Teyssier"
-
-#~ msgid "Grant Hutchison"
-#~ msgstr "Grant Hutchison"
-
-#~ msgid "Pat Suwalski"
-#~ msgstr "Pat Suwalski"
-
-#~ msgid "Toti"
-#~ msgstr "Toti"
-
-#~ msgid "Da Woon Jung"
-#~ msgstr "Da Woon Jung"
-
-#~ msgid "Hank Ramsey"
-#~ msgstr "Hank Ramsey"
-
-#~ msgid "Bob Ippolito"
-#~ msgstr "Bob Ippolito"
-
-#~ msgid "Vincent Giangiulio"
-#~ msgstr "Vincent Giangiulio"
-
-#~ msgid "Andrew Tribick"
-#~ msgstr "Andrew Tribick"
-
-#~ msgid "Add Bookmark"
-#~ msgstr "Добави отметка"
-
-#~ msgid "Create in >>"
-#~ msgstr "Създай в >>"
-
-#~ msgid "New Folder..."
-#~ msgstr "Нова папка..."
-
-#~ msgid "Add New Bookmark Folder"
-#~ msgstr "Добави нова папка с отметки"
-
-#~ msgid "Folder Name"
-#~ msgstr "Име на папката"
-
-#~ msgid "Celestia Controls"
-#~ msgstr "Контроли на „Celestia“"
-
-#~ msgid "Select Display Mode"
-#~ msgstr "Избери режим на показване"
-
-#~ msgid "Resolution"
-#~ msgstr "Резолюция"
-
-#~ msgid "Eclipse Finder"
-#~ msgstr "Търсач на затъмнения"
-
-#~ msgid "Compute"
-#~ msgstr "Изчисли"
-
-#~ msgid "Set Date and Go to Planet"
-#~ msgstr "Задай дата и отиди до планетата"
-
-#~ msgid "Close"
-#~ msgstr "Затвори"
-
-#~ msgid "From:"
-#~ msgstr "От:"
-
-#~ msgid "To:"
-#~ msgstr "До:"
-
-#~ msgid "On:"
-#~ msgstr "На:"
-
-#~ msgid "Search parameters"
-#~ msgstr "Параметри за търсене"
-
-#~ msgid "Solar Eclipses"
-#~ msgstr "Слънчеви затъмнения"
-
-#~ msgid "Lunar Eclipses"
-#~ msgstr "Лунни затъмнения"
-
-#~ msgid "Select Object"
-#~ msgstr "Избери обект"
-
-#~ msgid "Object Name"
-#~ msgstr "Име на обект"
-
-#~ msgid "OpenGL Driver Info"
-#~ msgstr "Информация за драйвъра на OpenGL"
-
-#~ msgid "Go to Object"
-#~ msgstr "Отиди до обект"
-
-#~ msgid "Object"
-#~ msgstr "Обект"
-
-#~ msgid "Long."
-#~ msgstr "Дълж."
-
-#~ msgid "Lat."
-#~ msgstr "Шир."
-
-#~ msgid "Distance"
-#~ msgstr "Разстояние"
-
-#~ msgid "License"
-#~ msgstr "Лиценз"
-
-#~ msgid "Landing Sites"
-#~ msgstr "Места на приземяване"
-
-#~ msgid "Montes (Mountains)"
-#~ msgstr "Montes (планини)"
-
-#~ msgid "Maria (Seas)"
-#~ msgstr "Maria (морета)"
-
-#~ msgid "Valles (Valleys)"
-#~ msgstr "Valles (долини)"
-
-#~ msgid "Terrae (Land masses)"
-#~ msgstr "Terrae (земни маси)"
-
-#~ msgid "Label Features"
-#~ msgstr "Наименования на характеристиките"
-
-#~ msgid "Show Features"
-#~ msgstr "Покажи характеристиките"
-
-#~ msgid "Show Label"
-#~ msgstr "Покажи надписа"
-
-#~ msgid "Minimum Labeled Feature Size"
-#~ msgstr "Минимален размер на характеристиките с надписи"
-
-#~ msgid "Size:"
-#~ msgstr "Размер:"
-
-#~ msgid "Codec:"
-#~ msgstr "Кодек:"
-
-#~ msgid "Rename..."
-#~ msgstr "Преименувай..."
-
-#~ msgid "Rename Bookmark or Folder"
-#~ msgstr "Преименувай отметка или папка"
-
-#~ msgid "New Name"
-#~ msgstr "Ново име"
-
-#~ msgid "Set Simulation Time"
-#~ msgstr "Задай времето за симулация"
-
-#~ msgid "Format: "
-#~ msgstr "Формат: "
-
-#~ msgid "Set To Current Time"
-#~ msgstr "Задай към текущото време"
-
-#~ msgid "Solar System Browser"
-#~ msgstr "Търсачка на Слънчевата система"
-
-#~ msgid "&Go To"
-#~ msgstr "Отиди до"
-
-#~ msgid "Solar System Objects"
-#~ msgstr "Обекти в Слънчевата система"
-
-#~ msgid "Star Browser"
-#~ msgstr "Звездна търсачка"
-
-#~ msgid "Nearest"
-#~ msgstr "Най-близки"
-
-#~ msgid "Brightest"
-#~ msgstr "Най-ярки"
-
-#~ msgid "With planets"
-#~ msgstr "С планети"
-
-#~ msgid "&Refresh"
-#~ msgstr "Опресни"
-
-#~ msgid "Star Search Criteria"
-#~ msgstr "Критерии за търсене на звезди"
-
-#~ msgid "Maximum Stars Displayed in List"
-#~ msgstr "Максимален брой на звездите"
-
-#~ msgid "View Options"
-#~ msgstr "Опции на изгледа"
-
-#~ msgid "Show:"
-#~ msgstr "Покажи:"
-
-#~ msgid "Rings"
-#~ msgstr "Пръстени"
-
-#~ msgid "Display:"
-#~ msgstr "Покажи:"
-
-#~ msgid "Ecliptic Line"
-#~ msgstr "Еклиптична линия"
-
-#~ msgid "Body / Orbit / Label display"
-#~ msgstr "Покажи телата, орбитите или надписите"
-
-#~ msgid "Latin Names"
-#~ msgstr "Латински имена"
-
-#~ msgid "(empty)"
-#~ msgstr "(празно)"
-
-#~ msgid "Invisibles"
-#~ msgstr "Невидими"
-
-#~ msgid "&Info"
-#~ msgstr "Информация"
-
-#~ msgid "Show Body Axes"
-#~ msgstr "Покажи осите на телата"
-
-#~ msgid "Show Frame Axes"
-#~ msgstr "Покажи осите на кадъра"
-
-#~ msgid "Show Sun Direction"
-#~ msgstr "Покажи посоката на Слънцето"
-
-#~ msgid "Show Velocity Vector"
-#~ msgstr "Покажи вектора на ускорението"
-
-#~ msgid "Show Planetographic Grid"
-#~ msgstr "Покажи планетографската мрежа"
-
-#~ msgid "Show Terminator"
-#~ msgstr "Покажи терминатора"
-
-#~ msgid "&Satellites"
-#~ msgstr "Сателити"
-
-#~ msgid "Orbiting Bodies"
-#~ msgstr "Орбитални тела"
-
-#~ msgid "Windowed Mode"
-#~ msgstr "В прозорец"
-
-#~ msgid "Body"
-#~ msgstr "Тяло"
-
-#~ msgid "Date"
-#~ msgstr "Дата"
-
-#~ msgid "Start"
-#~ msgstr "Старт"
-
-#~ msgid "JPEG - JFIF Compliant (*.jpg)"
-#~ msgstr "Съвместимо с JPEG – JFIF (*.jpg)"
-
-#~ msgid "Portable Network Graphics (*.png)"
-#~ msgstr "Преносими мрежови графики (*.png)"
-
-#~ msgid "Save As - Specify File to Capture Image"
-#~ msgstr "Запази като – Прихванато изображение"
-
-#~ msgid "Please use a name ending in '.jpg' or '.png'."
-#~ msgstr "Моля, използвайте име, завършващо с .jpg или .png."
-
-#~ msgid "Error"
-#~ msgstr "Грешка"
-
-#~ msgid "Could not save image file."
-#~ msgstr "Изображението не може да бъде запазено."
-
-#~ msgid "Celestia Script (*.celx, *.cel)"
-#~ msgstr "Скрипт на „Celestia“ (*.celx, *.cel)"
-
-#, c++-format
-#~ msgid ""
-#~ "License file missing!\n"
-#~ "See {}"
-#~ msgstr ""
-#~ "Лицензът липсва!\n"
-#~ "Вижте {}"
-
-#~ msgid "Unable to switch to full screen mode; running in window mode"
-#~ msgstr "Неуспешно превключване в режим на цял екран от режим в прозорец"
-
-#~ msgid "Fatal Error"
-#~ msgstr "Фатална грешка"
-
-#~ msgid "Directory expected after --dir"
-#~ msgstr "Очаква се име на папката след параметъра --dir"
-
-#~ msgid "Celestia Command Line Error"
-#~ msgstr "Грешка в командния ред на „Celestia“"
-
-#~ msgid "Configuration file name expected after --conf"
-#~ msgstr "Очаква се име на конфигурационния файл след параметъра --conf"
-
-#~ msgid "Directory expected after --extrasdir"
-#~ msgstr "Очаква се име на папката след параметъра --extrasdir"
-
-#~ msgid "URL expected after --url"
-#~ msgstr "Очаква се връзка след параметъра --url"
-
-#, c++-format
-#~ msgid "Invalid command line option '{}'"
-#~ msgstr "Невалидна опция на командния ред „{}“"
-
-#, c++-format
-#~ msgid "Loading: {}"
-#~ msgstr "Зареждане: {}"
-
-#~ msgid "Loading data files..."
-#~ msgstr "Зареждане на файловете с данни..."
-
-#, c++-format
-#~ msgid "Could not load localized resources: {}\n"
-#~ msgstr "Локализираните ресурси не може да бъдат заредени: {}\n"
-
-#, c++-format
-#~ msgid "Loaded localized resource: {}\n"
-#~ msgstr "Локализираните ресурси са заредени: {}\n"
-
-#~ msgid "Confugration file missing!"
-#~ msgstr "Конфигурационният файл липсва!"
-
-#~ msgid ""
-#~ "Old favorites file detected.\n"
-#~ "Copy to the new location?"
-#~ msgstr ""
-#~ "Открит е стар файл с предпочитани.\n"
-#~ "Копиране към новото местоположение?"
-
-#~ msgid "Copy favorites?"
-#~ msgstr "Копиране на предпочитаните?"
-
-#~ msgid "Failed to create the application window."
-#~ msgstr "Неуспешно създаване на прозореца на приложението."
-
-#~ msgid "Error locking drop target\n"
-#~ msgstr "Грешка при заключване на целта\n"
-
-#~ msgid "Failed to register drop target as OLE object.\n"
-#~ msgstr "Неуспешно регистриране на целта като OLE обект.\n"
-
-#~ msgid "Could not get appropriate pixel format for OpenGL rendering."
-#~ msgstr ""
-#~ "Подходящият формат на пикселите за визуализиране с OpenGL не може да бъде "
-#~ "избран."
-
-#~ msgid "Error getting joystick caps.\n"
-#~ msgstr "Грешка при получаване на обратна връзка от джойстика.\n"
-
-#, c++-format
-#~ msgid "Using joystick: {}\n"
-#~ msgstr "Използван джойстик: {}\n"
-
-#~ msgid "Loading URL"
-#~ msgstr "Зареждане на връзката"
-
-#~ msgid "Your system doesn't support OpenGL 3.3!"
-#~ msgstr "Вашата система не поддържа OpenGL 3.3!"
-
-#~ msgid "Releasing device context failed."
-#~ msgstr "Извличането на контекста на устройството се провали."
-
-#~ msgid "Failed to register the window class."
-#~ msgstr "Неуспешно регистриране на прозоречния клас."
-
-#~ msgid "Stop current movie capture before starting another one."
-#~ msgstr "Спри текущото прихващане на видео, преди започване на следващото."
-
-#~ msgid "Matroska (*.mkv)"
-#~ msgstr "Формат „Матрьошка“ (*.mkv)"
-
-#~ msgid "Save As - Specify Output File for Capture Movie"
-#~ msgstr "Запази като – Прихванато видео"
-
-#~ msgid "Unknown file extension specified for movie capture."
-#~ msgstr "Зададено е неизвестно разширение на файла за прихващане на видео."
-
-#~ msgid "Could not capture movie."
-#~ msgstr "Видеото не може да бъде прихванато."
-
-#, c++-format
-#~ msgid "Error opening registry key: {}\n"
-#~ msgstr "Грешка при отваряне на ключа от регистъра: {}\n"
-
-#~ msgid "Saving preferences...\n"
-#~ msgstr "Запазване на предпочитанията...\n"
-
-#~ msgid "Opened registry key\n"
-#~ msgstr "Ключът от регистъра е отворен\n"
-
-#, c++-format
-#~ msgid "Version: {}"
-#~ msgstr "Версия: {}"
-
-#~ msgid "Time Zone Name"
-#~ msgstr "Име на часовата зона"
-
-#~ msgid "UTC Offset"
-#~ msgstr "Отклонение по UTC"
