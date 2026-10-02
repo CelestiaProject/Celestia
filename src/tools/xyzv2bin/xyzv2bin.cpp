@@ -2,6 +2,7 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdio>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <istream>
@@ -12,6 +13,18 @@
 
 #include <celephem/xyzvbinary.h>
 #include <celcompat/bit.h>
+
+static constexpr std::uint16_t endianCode(celestia::compat::endian endianness)
+{
+    switch (endianness)
+    {
+    case celestia::compat::endian::little: return 1234;
+    case celestia::compat::endian::big: return 4321;
+    default: return 0;
+    }
+}
+
+static constexpr std::uint16_t nativeEndianCode = endianCode(celestia::compat::endian::native);
 
 // Scan past comments. A comment begins with the # character and ends
 // with a newline. Return true if the stream state is good. The stream
@@ -76,7 +89,7 @@ static bool xyzvToBinary(const std::string& inFilename, const std::string& outFi
     {
         std::memcpy(header.data() + offsetof(XYZVBinaryHeader, magic), XYZV_MAGIC.data(), XYZV_MAGIC.size());
 
-        auto byteOrder = static_cast<decltype(XYZVBinaryHeader::byteOrder)>(celestia::compat::endian::native);
+        auto byteOrder = static_cast<decltype(XYZVBinaryHeader::byteOrder)>(nativeEndianCode);
         auto digits =    static_cast<decltype(XYZVBinaryHeader::digits)   >(std::numeric_limits<double>::digits);
 
         std::memcpy(header.data() + offsetof(XYZVBinaryHeader, byteOrder), &byteOrder, sizeof(byteOrder));

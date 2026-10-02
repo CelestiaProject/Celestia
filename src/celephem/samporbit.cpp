@@ -46,6 +46,18 @@ namespace celestia::ephem
 namespace
 {
 
+constexpr std::uint16_t endianCode(celestia::compat::endian endianness)
+{
+    switch (endianness)
+    {
+    case celestia::compat::endian::little: return 1234;
+    case celestia::compat::endian::big: return 4321;
+    default: return 0;
+    }
+}
+
+constexpr std::uint16_t nativeEndianCode = endianCode(celestia::compat::endian::native);
+
 template<typename T>
 inline void
 convertToCelestiaCoordinates(Eigen::Matrix<T, 3, 1>& vector)
@@ -580,10 +592,10 @@ ParseXYZVBinaryHeader(std::istream& in, const std::filesystem::path& filename)
 
     decltype(XYZVBinaryHeader::byteOrder) byteOrder;
     std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-    if (byteOrder != static_cast<decltype(byteOrder)>(celestia::compat::endian::native))
+    if (byteOrder != nativeEndianCode)
     {
         GetLogger()->error(_("Unsupported byte order {}, expected {} in {}.\n"),
-                           byteOrder, static_cast<int>(celestia::compat::endian::native), filename);
+                           byteOrder, nativeEndianCode, filename);
         return false;
     }
 
