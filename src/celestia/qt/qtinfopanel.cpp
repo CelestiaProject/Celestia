@@ -30,6 +30,8 @@
 #include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celengine/selection.h>
+#include <celengine/timeline.h>
+#include <celengine/timelinephase.h>
 #include <celengine/universe.h>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
@@ -211,24 +213,22 @@ void InfoPanel::buildSolarSystemBodyPage(Body* body,
 #endif
 
     double orbitalPeriod = 0.0;
-    const celestia::ephem::Orbit* orbit = body->getOrbit(t);
+    const TimelinePhase& phase = body->getTimeline()->findPhase(t);
+    const celestia::ephem::Orbit* orbit = phase.orbit().get();
     if (orbit->isPeriodic())
         orbitalPeriod = orbit->getPeriod();
 
     // Show rotation information for natural, periodic rotators
-    if (body->getRotationModel(t)->isPeriodic() && !isArtificial)
+    if (auto rotationModel = phase.rotationModel().get(); rotationModel->isPeriodic() && !isArtificial)
     {
-        const celestia::ephem::RotationModel* rotationModel = body->getRotationModel(t);
         double rotPeriod = rotationModel->getPeriod();
 
         double dayLength = 0.0;
         bool prograde = false;
         if (orbitalPeriod > 0.0)
         {
-            Eigen::Vector3d axis = Eigen::AngleAxisd(rotationModel->equatorOrientationAtTime(t)
-                                                     * body->getBodyFrame(t)->getOrientation(t)).axis();
-            Eigen::Vector3d orbitNormal = body->getOrbitFrame(t)->getOrientation(t)
-                                        * orbit->positionAtTime(t).cross(orbit->velocityAtTime(t));
+            Eigen::Vector3d axis = phase.bodyFrame()->getOrientation(t).conjugate() * rotationModel->angularVelocityAtTime(t);
+            Eigen::Vector3d orbitNormal = phase.orbitFrame()->getOrientation(t).conjugate() * (orbit->positionAtTime(t).cross(orbit->velocityAtTime(t)));
             prograde = axis.dot(orbitNormal) >= 0;
             double siderealDaysPerYear = orbitalPeriod / rotPeriod;
             double solarDaysPerYear = prograde ? siderealDaysPerYear - 1.0 : siderealDaysPerYear + 1.0;
