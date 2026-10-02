@@ -59,7 +59,7 @@ private:
     int                                m_brightnessLoc{ -1 };
     bool                               m_initialized{ false };
     std::unique_ptr<CometTailVertex[]> m_vertices;
-    std::unique_ptr<unsigned short[]>  m_indices;
+    std::unique_ptr<GLushort[]>        m_indices;
     gl::Buffer::SharedPtr              m_bo;
     gl::Buffer::SharedPtr              m_ibo;
     gl::VertexObject                   m_vo;
