@@ -14,6 +14,18 @@
 
 #define _(s) (s)
 
+static constexpr std::uint16_t endianCode(celestia::compat::endian endianness)
+{
+    switch (endianness)
+    {
+    case celestia::compat::endian::little: return 1234;
+    case celestia::compat::endian::big: return 4321;
+    default: return 0;
+    }
+}
+
+static constexpr std::uint16_t nativeEndianCode = endianCode(celestia::compat::endian::native);
+
 static bool binaryToText(const std::string& infilename, const std::string& outfilename)
 {
     using celestia::ephem::XYZVBinaryData;
@@ -44,10 +56,10 @@ static bool binaryToText(const std::string& infilename, const std::string& outfi
 
         decltype(XYZVBinaryHeader::byteOrder) byteOrder;
         std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-        if (byteOrder != static_cast<decltype(byteOrder)>(celestia::compat::endian::native))
+        if (byteOrder != static_cast<decltype(byteOrder)>(nativeEndianCode))
         {
             fmt::print(stderr, _("Unsupported byte order {}, expected {}.\n"),
-                       byteOrder, static_cast<int>(celestia::compat::endian::native));
+                       byteOrder, nativeEndianCode);
             return false;
         }
 
