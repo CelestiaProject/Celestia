@@ -48,6 +48,9 @@ namespace
 
 constexpr std::uint16_t endianCode(celestia::compat::endian endianness)
 {
+    static_assert(celestia::compat::endian::native == celestia::compat::endian::little ||
+                  celestia::compat::endian::native == celestia::compat::endian::big,
+                  "Mixed endian systems are not supported");
     switch (endianness)
     {
     case celestia::compat::endian::little: return 1234;
