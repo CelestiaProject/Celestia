@@ -157,27 +157,26 @@ DistanceKmToStr(const util::NumberFormatter& formatter, double distance, int dig
 void
 displayRotationPeriod(const util::NumberFormatter& formatter, Overlay& overlay, double days)
 {
-    double unitValue;
+    double unitValue = std::abs(days);
     const char *unitStr;
 
-    if (days > 1.0)
+    if (unitValue > 1.0)
     {
-        unitValue = days;
         unitStr = _("days");
     }
-    else if (days > 1.0 / 24.0)
+    else if (unitValue > 1.0 / 24.0)
     {
-        unitValue = days * 24.0;
+        unitValue *= 24.0;
         unitStr = _("hours");
     }
-    else if (days > 1.0 / (24.0 * 60.0))
+    else if (unitValue > 1.0 / (24.0 * 60.0))
     {
-        unitValue = days * 24.0 * 60.0;
+        unitValue *= 24.0 * 60.0;
         unitStr = _("minutes");
     }
     else
     {
-        unitValue = days * 24.0 * 60.0 * 60.0;
+        unitValue *= 24.0 * 60.0 * 60.0;
         unitStr = _("seconds");
     }
 

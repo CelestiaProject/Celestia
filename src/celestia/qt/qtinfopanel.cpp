@@ -216,12 +216,12 @@ void InfoPanel::buildSolarSystemBodyPage(Body* body,
     const TimelinePhase& phase = body->getTimeline()->findPhase(t);
     const celestia::ephem::Orbit* orbit = phase.orbit().get();
     if (orbit->isPeriodic())
-        orbitalPeriod = orbit->getPeriod();
+        orbitalPeriod = std::abs(orbit->getPeriod());
 
     // Show rotation information for natural, periodic rotators
     if (auto rotationModel = phase.rotationModel().get(); rotationModel->isPeriodic() && !isArtificial)
     {
-        double rotPeriod = rotationModel->getPeriod();
+        double rotPeriod = std::abs(rotationModel->getPeriod());
 
         double dayLength = 0.0;
         bool prograde = false;
