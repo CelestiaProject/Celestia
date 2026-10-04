@@ -18,6 +18,7 @@
 #include <SDL.h>
 
 #include <celestia/celestiacore.h>
+#include <celutil/fsutils.h>
 #include "alerter.h"
 #include "appwindow.h"
 #include "gui.h"
@@ -176,7 +177,7 @@ Environment::getSettingsPath() const
     UniqueSDL<char> prefsPath = getPrefsDirectory();
     if (prefsPath == nullptr)
         return {};
-    return std::filesystem::u8path(prefsPath.get()) / "sdlsettings.dat";
+    return util::U8Path(prefsPath.get()) / "sdlsettings.dat";
 }
 
 std::filesystem::path
@@ -185,7 +186,7 @@ Environment::getImguiSettingsPath() const
     UniqueSDL<char> prefsPath = getPrefsDirectory();
     if (prefsPath == nullptr)
         return {};
-    return std::filesystem::u8path(prefsPath.get()) / "imguisettings.ini";
+    return util::U8Path(prefsPath.get()) / "imguisettings.ini";
 }
 
 } // end namespace celestia::sdl

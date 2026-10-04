@@ -10,6 +10,8 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "fsutils.h"
+
 #include <config.h> // HAVE_WORDEXP
 #include <array>
 #include <cctype>
@@ -35,7 +37,6 @@
 #include <wordexp.h>
 #endif // HAVE_WORDEXP
 #endif // !_WIN32
-#include "fsutils.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 260
@@ -43,6 +44,30 @@
 
 namespace celestia::util
 {
+
+std::filesystem::path
+U8Path(std::string_view source)
+{
+#ifdef _WIN32
+    if (source.empty())
+        return {};
+
+    const auto sourceLength = static_cast<int>(source.size());
+    int length = MultiByteToWideChar(CP_UTF8, 0, source.data(), sourceLength, nullptr, 0);
+    if (length <= 0)
+        return {};
+
+    std::wstring ws(static_cast<std::size_t>(length), L'\0');
+    length = MultiByteToWideChar(CP_UTF8, 0, source.data(), sourceLength, ws.data(), length);
+    if (length <= 0)
+        return {};
+
+    ws.resize(length);
+    return std::filesystem::path(std::move(ws));
+#else
+    return std::filesystem::path(source);
+#endif
+}
 
 std::optional<std::filesystem::path>
 U8FileName(std::string_view source, bool allowWildcardExtension)
@@ -95,7 +120,7 @@ U8FileName(std::string_view source, bool allowWildcardExtension)
         }
     }
 
-    return std::filesystem::u8path(source);
+    return U8Path(source);
 }
 
 std::string
@@ -104,7 +129,7 @@ PathToString(const std::filesystem::path &path)
 #ifdef _WIN32
     return WideToUTF8(path.native());
 #else
-    return path.native();
+    return path.string();
 #endif
 }
 
