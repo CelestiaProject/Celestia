@@ -31,6 +31,7 @@
 #include <fmt/ostream.h>
 
 #include <celutil/flag.h>
+#include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include "atmosphere.h"
 #include "body.h"
@@ -2875,11 +2876,11 @@ std::shared_ptr<CelestiaGLProgram>
 ShaderManager::loadShader(StaticShaderProperties props)
 {
     auto name = StaticShaderBaseNames[static_cast<std::size_t>(props.shader)];
-    auto vs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_vert.glsl", name)));
+    auto vs = ReadShaderFile(ShaderDirectory / util::U8Path(fmt::format("{}_vert.glsl", name)));
     if (vs.empty())
         return getErrorProgram();
 
-    auto fs = ReadShaderFile(ShaderDirectory / std::filesystem::u8path(fmt::format("{}_frag.glsl", name)));
+    auto fs = ReadShaderFile(ShaderDirectory / util::U8Path(fmt::format("{}_frag.glsl", name)));
     if (fs.empty())
         return getErrorProgram();
 

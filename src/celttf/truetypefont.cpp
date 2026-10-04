@@ -761,7 +761,7 @@ std::filesystem::path
 ParseFontName(const std::filesystem::path &filename, int &index, int &size)
 {
     // Format with font path/collection index(if any)/font size(if any)
-    auto fn = celestia::util::PathToString(filename);
+    auto fn = util::PathToString(filename);
     if (auto ps = fn.rfind(','); ps != std::string::npos)
     {
         if (from_chars(&fn[ps + 1], &fn[fn.size()], size).ec == std::errc())
@@ -769,9 +769,9 @@ ParseFontName(const std::filesystem::path &filename, int &index, int &size)
             if (auto pi = fn.rfind(',', ps - 1); pi != std::string::npos)
             {
                 if (from_chars(&fn[pi + 1], &fn[pi], index).ec == std::errc())
-                    return std::filesystem::u8path(fn.substr(0, pi));
+                    return util::U8Path(std::string_view(fn).substr(0, pi));
             }
-            return std::filesystem::u8path(fn.substr(0, ps));
+            return util::U8Path(std::string_view(fn).substr(0, ps));
         }
     }
     return filename;
