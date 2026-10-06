@@ -58,7 +58,7 @@ Just download the GPG public key again, check the fingerprint and expiration dat
 ### On Ubuntu 22.04/24.04/26.04 and derived systems:
 
 ```
-curl https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/xUbuntu_${VERSION}/Release.key | sudo apt-key add -
+curl https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/xUbuntu_${VERSION}/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/celestia-obs.gpg > /dev/null
 echo "deb https://download.opensuse.org/repositories/home:/munix9:/celestia:/1.7/xUbuntu_${VERSION}/ ./" | sudo tee /etc/apt/sources.list.d/celestia-obs.list
 sudo apt update && sudo apt install celestia
 ```
@@ -73,7 +73,7 @@ sudo zypper refresh
 sudo zypper install celestia
 ```
 
-Where VERSION is 15.6, 16.0, 16.1 or openSUSE_Tumbleweed.
+Where VERSION is 16.0, 16.1 or openSUSE_Tumbleweed.
 
 See also the download package sites on OBS for [celestia](https://software.opensuse.org/download.html?project=home:munix9:celestia:1.7&package=celestia) and [celestia-data](https://software.opensuse.org/download.html?project=home:munix9:celestia:1.7&package=celestia-data).
 
