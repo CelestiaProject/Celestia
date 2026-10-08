@@ -1,13 +1,12 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstring>
 #include <istream>
 #include <type_traits>
 #include <utility>
-
-#include <celcompat/bit.h>
 
 namespace celestia::util
 {
@@ -79,8 +78,7 @@ template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
 inline bool
 readLE(std::istream& in, T& value)
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return readNative(in, value);
     else
         return readReversed(in, value);
@@ -92,8 +90,7 @@ template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
 inline T
 fromMemoryLE(const void* src) //NOSONAR
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return fromMemoryNative<T>(src);
     else
         return fromMemoryReversed<T>(src);
@@ -105,8 +102,7 @@ template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
 inline bool
 readBE(std::istream& in, T& value)
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return readReversed(in, value);
     else
         return readNative(in, value);
@@ -118,8 +114,7 @@ template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
 inline T
 fromMemoryBE(const void* src) //NOSONAR
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return fromMemoryReversed<T>(src);
     else
         return fromMemoryNative<T>(src);
