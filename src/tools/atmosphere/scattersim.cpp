@@ -15,11 +15,11 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#include <numbers>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celmath/geomutil.h>
 #include <celmath/ray.h>
@@ -31,7 +31,7 @@
 using namespace std;
 using namespace Eigen;
 namespace math = celestia::math;
-using celestia::numbers::pi;
+using std::numbers::pi;
 
 // Extinction lookup table dimensions
 constexpr const unsigned int ExtinctionLUTHeightSteps = 256;

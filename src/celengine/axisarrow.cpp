@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
-#include <celcompat/numbers.h>
+
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/geomutil.h>

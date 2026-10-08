@@ -15,9 +15,9 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <numbers>
 #include <utility>
 
-#include <celcompat/numbers.h>
 #include <celephem/orbit.h>
 #include <celmath/mathlib.h>
 #include <celmath/intersect.h>
@@ -223,7 +223,7 @@ ExactPlanetPickTraversal::operator()(Body* body,
     Eigen::Vector3d bodyMiss = bodyDir - pickInfo.pickRay.direction();
 
     if (double sinAngle2 = bodyMiss.norm() / 2.0;
-        sinAngle2 < (celestia::numbers::sqrt2 * 0.5) && // sin(45 degrees) = sqrt(2)/2
+        sinAngle2 < (std::numbers::sqrt2 * 0.5) && // sin(45 degrees) = sqrt(2)/2
         distance > 0.0 && distance <= pickInfo.closestDistance)
     {
         pickInfo.closestDistance = distance;

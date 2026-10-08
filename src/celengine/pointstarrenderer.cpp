@@ -14,7 +14,6 @@
 #include <cmath>
 
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celengine/glsupport.h>
 #include <celengine/starcolors.h>
 #include <celengine/star.h>

@@ -9,7 +9,8 @@
 
 #include "units.h"
 
-#include <celcompat/numbers.h>
+#include <numbers>
+
 #include "astro.h"
 #include "date.h"
 
@@ -65,7 +66,7 @@ getAngleScale(AngleUnit unit)
     case AngleUnit::Arcminute: return 1.0 / MINUTES_PER_DEG;
     case AngleUnit::Degree: return 1.0;
     case AngleUnit::Hour: return DEG_PER_HRA;
-    case AngleUnit::Radian: return 180.0 / celestia::numbers::pi;
+    case AngleUnit::Radian: return 180.0 / std::numbers::pi;
     default: return std::nullopt;
     }
 }

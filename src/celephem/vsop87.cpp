@@ -18,13 +18,13 @@
 #include <cmath>
 #include <cstddef>
 #include <memory>
+#include <numbers>
 #include <utility>
 
 #include <config.h>
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include "orbit.h"
 
@@ -11096,8 +11096,8 @@ class VSOP87Orbit : public CachingOrbit
         r *= astro::KM_PER_AU<double>;
 
         // Corrections for internal coordinate system
-        b -= celestia::numbers::pi / 2;
-        l += celestia::numbers::pi;
+        b -= std::numbers::pi / 2;
+        l += std::numbers::pi;
 
         return Eigen::Vector3d(std::cos(l) * std::sin(b) * r,
                                std::cos(b) * r,

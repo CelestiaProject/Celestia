@@ -21,7 +21,6 @@
 #include <fmt/format.h>
 
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celmath/ellipsoid.h>
 #include <celmath/geomutil.h>
 #include <celmath/intersect.h>

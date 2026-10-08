@@ -10,9 +10,9 @@
 #include "psfglowlargerenderer.h"
 
 #include <algorithm>
+#include <numbers>
 
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celengine/glsupport.h>
 #include <celengine/shadermanager.h>
 
@@ -30,7 +30,7 @@ void
 PsfGlowLargeRenderer::onMakeCurrent(const Eigen::Vector2f &viewportRcp)
 {
     float a     = (m_pointRadius > 0.0f) ? (m_optimization / m_pointRadius) : 0.0f;
-    float denom = (celestia::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
+    float denom = (std::numbers::pi_v<float> / std::max(m_pointRadius, 1e-6f)) - a;
     float b     = (denom != 0.0f) ? (1.0f / denom) : 0.0f;
 
     program()->floatParam("psfA")           = a;

@@ -12,19 +12,19 @@
 
 #include <array>
 #include <cmath>
+#include <numbers>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/numbers.h>
 #include "mathlib.h"
 
 namespace celestia::math
 {
 
 template<class T>
-const inline Eigen::Quaternion<T> XRot90{ celestia::numbers::sqrt2_v<T> * T{0.5},
-                                          celestia::numbers::sqrt2_v<T> * T{0.5},
+const inline Eigen::Quaternion<T> XRot90{ std::numbers::sqrt2_v<T> * T{0.5},
+                                          std::numbers::sqrt2_v<T> * T{0.5},
                                           T{0},
                                           T{0} };
 
@@ -33,8 +33,8 @@ const inline Eigen::Quaternion<T> XRot180{ T{0}, T{1}, T{0}, T{0} };
 
 // Conjugate of 90 degree rotation = -90 degree rotation
 template<class T>
-const inline Eigen::Quaternion<T> XRot90Conjugate{ celestia::numbers::sqrt2_v<T> * T{0.5},
-                                                   -(celestia::numbers::sqrt2_v<T> * T{0.5}),
+const inline Eigen::Quaternion<T> XRot90Conjugate{ std::numbers::sqrt2_v<T> * T{0.5},
+                                                   -(std::numbers::sqrt2_v<T> * T{0.5}),
                                                    T{0},
                                                    T{0} };
 
@@ -42,9 +42,9 @@ template<class T>
 const inline Eigen::Quaternion<T> YRot180{ T{0}, T{0}, T{1}, T{0} };
 
 template<class T>
-const inline Eigen::Quaternion<T> YRot90Conjugate{ celestia::numbers::sqrt2_v<T> * T{0.5},
+const inline Eigen::Quaternion<T> YRot90Conjugate{ std::numbers::sqrt2_v<T> * T{0.5},
                                                    T{0},
-                                                   -(celestia::numbers::sqrt2_v<T> * T{0.5}),
+                                                   -(std::numbers::sqrt2_v<T> * T{0.5}),
                                                    T{0} };
 
 template<class T>
