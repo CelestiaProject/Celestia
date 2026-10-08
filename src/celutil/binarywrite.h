@@ -1,13 +1,12 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstring>
 #include <ostream>
 #include <type_traits>
 #include <utility>
-
-#include <celcompat/bit.h>
 
 namespace celestia::util
 {
@@ -48,8 +47,7 @@ template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
 inline bool
 writeLE(std::ostream& out, T value)
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return writeNative(out, value);
     else
         return writeReversed(out, value);
@@ -61,8 +59,7 @@ template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
 inline bool
 writeBE(std::ostream& out, T value)
 {
-    using celestia::compat::endian;
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
         return writeReversed(out, value);
     else
         return writeNative(out, value);
