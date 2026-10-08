@@ -1,8 +1,6 @@
-if(WIN32)
-  # Require more recent CMake on Windows because DLLs are a pain
-  cmake_minimum_required(VERSION 3.19)
-else()
-  cmake_minimum_required(VERSION 3.10...3.19)
+cmake_minimum_required(VERSION 3.16..3.19)
+if (WIN32 AND CMAKE_VERSION VERSION_LESS "3.19")
+  message(FATAL_ERROR "Windows builds must use CMake versions 3.19 or later")
 endif()
 
 # Plain and keyword target_link_libraries() signatures cannot be mixed
@@ -119,9 +117,9 @@ endif()
 # which are by default disabled in standard C++ mode (like std=c++11 instead of std=gnu11)
 add_definitions(-D_USE_MATH_DEFINES)
 
-# Let CMake handle setting C++17 (since 3.1)
+# Let CMake handle setting C++20 (since 3.1)
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 if(NOT CMAKE_C_STANDARD)
