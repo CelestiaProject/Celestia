@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <Eigen/Core>
 
 #include <celengine/projectionmode.h>

@@ -11,8 +11,8 @@
 #include "astro.h"
 
 #include <algorithm>
+#include <numbers>
 
-#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 
 using namespace std::string_view_literals;
@@ -182,7 +182,7 @@ decimalToHourMinSec(double angle, int& hours, int& minutes, double& seconds)
 Eigen::Vector3f
 equatorialToCelestialCart(float ra, float dec, float distance)
 {
-    using celestia::numbers::pi;
+    using std::numbers::pi;
     double theta = ra / 24.0 * pi * 2 + pi;
     double phi = (dec / 90.0 - 1.0) * pi / 2;
     double stheta;
@@ -202,7 +202,7 @@ equatorialToCelestialCart(float ra, float dec, float distance)
 Eigen::Vector3d
 equatorialToCelestialCart(double ra, double dec, double distance)
 {
-    using celestia::numbers::pi;
+    using std::numbers::pi;
     double theta = ra / 24.0 * pi * 2 + pi;
     double phi = (dec / 90.0 - 1.0) * pi / 2;
     double stheta;
@@ -222,7 +222,7 @@ void
 anomaly(double meanAnomaly, double eccentricity,
         double& trueAnomaly, double& eccentricAnomaly)
 {
-    using celestia::numbers::pi;
+    using std::numbers::pi;
     constexpr double tol = 1.745e-8;
     int iterations = 20;    // limit while() to maximum of 20 iterations.
 
@@ -377,7 +377,7 @@ StateVectorToElements(const Eigen::Vector3d& r,
 
     // compute semimajor axis
     result.semimajorAxis = 1.0 / (2.0 / rNorm - v.squaredNorm() / mu);
-    result.period = 2.0 * celestia::numbers::pi * std::sqrt(math::cube(std::abs(result.semimajorAxis)) / mu);
+    result.period = 2.0 * std::numbers::pi * std::sqrt(math::cube(std::abs(result.semimajorAxis)) / mu);
 
     return result;
 }

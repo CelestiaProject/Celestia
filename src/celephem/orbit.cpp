@@ -14,9 +14,9 @@
 #include <cassert>
 #include <cmath>
 #include <functional>
+#include <numbers>
 #include <utility>
 
-#include <celcompat/numbers.h>
 #include <celengine/body.h>
 #include <celmath/mathlib.h>
 #include <celmath/solve.h>
@@ -351,7 +351,7 @@ Eigen::Vector3d EllipticalOrbit::velocityAtE(double E, double meanMotion) const
 Eigen::Vector3d EllipticalOrbit::positionAtTime(double t) const
 {
     t = t - epoch;
-    double meanMotion = 2.0 * celestia::numbers::pi / period;
+    double meanMotion = 2.0 * std::numbers::pi / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
     double E = eccentricAnomaly(meanAnomaly);
 
@@ -362,7 +362,7 @@ Eigen::Vector3d EllipticalOrbit::positionAtTime(double t) const
 Eigen::Vector3d EllipticalOrbit::velocityAtTime(double t) const
 {
     t = t - epoch;
-    double meanMotion = 2.0 * celestia::numbers::pi / period;
+    double meanMotion = 2.0 * std::numbers::pi / period;
     double meanAnomaly = meanAnomalyAtEpoch + t * meanMotion;
     double E = eccentricAnomaly(meanAnomaly);
 
@@ -396,7 +396,7 @@ HyperbolicOrbit::HyperbolicOrbit(const astro::KeplerElements& _elements, double 
     assert(semiMajorAxis <= 0.0);
     assert(_elements.period != 0.0);
     semiMinorAxis = semiMajorAxis * std::sqrt(math::square(eccentricity) - 1.0);
-    meanMotion = 2.0 * celestia::numbers::pi / _elements.period;
+    meanMotion = 2.0 * std::numbers::pi / _elements.period;
 
     // determine start and end epoch from when the object hits the bounding radius
     double pericenterDistance = semiMajorAxis * (1.0 - eccentricity);

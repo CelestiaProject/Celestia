@@ -15,10 +15,10 @@
 #include <cstdint>
 #include <cmath>
 #include <limits>
+#include <numbers>
 
 #include <boost/container/static_vector.hpp>
 
-#include <celcompat/numbers.h>
 #include <celengine/shadermanager.h>
 #include <celengine/texture.h>
 #include <celmath/frustum.h>
@@ -78,7 +78,7 @@ createThetaArrays(ThetaArray& sinTheta, ThetaArray& cosTheta)
         }
         else
         {
-            double theta = static_cast<double>(i) / thetaDivisionsDbl * 2.0 * celestia::numbers::pi;
+            double theta = static_cast<double>(i) / thetaDivisionsDbl * 2.0 * std::numbers::pi;
             math::sincos(theta, stheta, ctheta);
         }
 
@@ -131,7 +131,7 @@ createPhiArrays(PhiArray& sinPhi, PhiArray& cosPhi)
         }
         else
         {
-            double phi = (static_cast<double>(i) / phiDivisionsDbl - 0.5) * celestia::numbers::pi;
+            double phi = (static_cast<double>(i) / phiDivisionsDbl - 0.5) * std::numbers::pi;
             math::sincos(phi, sphi, cphi);
         }
 

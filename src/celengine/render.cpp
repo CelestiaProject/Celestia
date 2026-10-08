@@ -51,7 +51,6 @@
 #include "textlayout.h"
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celengine/observer.h>
 #include <celephem/rotation.h>
 #include <celmath/frustum.h>
@@ -87,6 +86,7 @@
 #include <optional>
 #include <sstream>
 #include <iomanip>
+#include <numbers>
 #include <numeric>
 #ifdef _MSC_VER
 #include <malloc.h>
@@ -285,7 +285,7 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
     const float sigma = fwhm / 2.3548f;
     const float isig2 = 1.0f / (2.0f * sigma * sigma);
     // Store 1/sqrt(2*pi) in constexpr sfactor
-    constexpr auto sfactor = static_cast<float>(0.5 * celestia::numbers::sqrt2 * celestia::numbers::inv_sqrtpi);
+    constexpr auto sfactor = static_cast<float>(0.5 * std::numbers::sqrt2 * std::numbers::inv_sqrtpi);
     const float s = sfactor / sigma;
 
     const float center = static_cast<float>(size - 1U) * 0.5f;
@@ -1854,7 +1854,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
     float peakRadScale   = exposureFactor * starAtmosphereBrightness * 3.0f
-                           / (celestia::numbers::pi_v<float> * r * r);
+                           / (std::numbers::pi_v<float> * r * r);
     float irradiance     = astro::magToIrradiance(appMag);
     float peakRad        = peakRadScale * irradiance;
 
@@ -1889,7 +1889,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
         // Peak radiance whose bloom radius (per the shader's PSF formula)
         // equals the body's angular disc.
         float a    = starOptimization / r;
-        float invB = celestia::numbers::pi_v<float> / r - a;
+        float invB = std::numbers::pi_v<float> / r - a;
         // Exact projected limb radius; discSizeInPixels undershoots up close.
         float limbDiscPixels = discSizeInPixels;
         float fadeLimbDiscPixels = limbDiscPixels;
@@ -2551,7 +2551,7 @@ void Renderer::renderObject(const Vector3f& pos,
     const Atmosphere* atmosphere = obj.atmosphere;
 
     if (atmosphere != nullptr && atmosphere->cloudSpeed != 0.0f)
-        cloudTexOffset = static_cast<float>(-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
+        cloudTexOffset = static_cast<float>(-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * std::numbers::inv_pi, 1.0));
 
     if (obj.geometry == engine::GeometryHandle::Invalid)
     {
@@ -2879,7 +2879,7 @@ void Renderer::renderPlanetAtmosphere(Body& body,
             cloudNormalMap = m_textureManager->find(atmosphere->cloudNormalMap);
     }
     if (atmosphere->cloudSpeed != 0.0f)
-        cloudTexOffset = static_cast<float>(-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * celestia::numbers::inv_pi, 1.0));
+        cloudTexOffset = static_cast<float>(-math::pfmod(now * atmosphere->cloudSpeed * 0.5 * std::numbers::inv_pi, 1.0));
 
     renderAtmosphere(atmosphere, ri, ls, rp, pos, distance, radius,
                      scaleFactors, insidePlanet, lit,
@@ -4464,7 +4464,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                                 2.5f);
 
         starRenderer.psf.peakRadScale          = exposureFactor * starAtmosphereBrightness * 3.0f
-                                                 / (celestia::numbers::pi_v<float> * rLog * rLog);
+                                                 / (std::numbers::pi_v<float> * rLog * rLog);
         starRenderer.psf.dimGate               = dimGate;
         starRenderer.psf.glowA                 = glowA;
         starRenderer.psf.glowPeakLargeThreshold = glowPeakLargeThreshold;

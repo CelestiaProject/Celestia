@@ -12,8 +12,9 @@
 
 #include "dsooctree.h"
 
+#include <numbers>
+
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 
 namespace celestia::engine
@@ -49,7 +50,7 @@ DSOOctreeVisibleObjectsProcessor::checkNode(const DSOOctree::PointType& center,
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    double minDistance = (m_obsPosition - center).norm() - size * numbers::sqrt3;
+    double minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3;
 
     // Check whether the brightest object in this node is bright enough to render
     auto distanceModulus = static_cast<float>(astro::distanceModulus(minDistance));
@@ -93,7 +94,7 @@ DSOOctreeCloseObjectsProcessor::checkNode(const DSOOctree::PointType& center,
 {
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    double nodeDistance = (m_obsPosition - center).norm() - size * numbers::sqrt3;
+    double nodeDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3;
     return nodeDistance <= m_boundingRadius;
 }
 

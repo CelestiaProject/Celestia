@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <numbers>
 
-#include <celcompat/numbers.h>
 #include <celengine/atmosphere.h>
 #include <celengine/glsupport.h>
 #include <celengine/lightenv.h>
@@ -203,7 +203,7 @@ AtmosphereRenderer::computeLegacy(
         SkyContourPoint p;
         // We want rays with an origin at the eye point and tangent to the the
         // ellipsoid.
-        float theta = static_cast<float>(i) / static_cast<float>(nSlices) * 2.0f * numbers::pi_v<float>;
+        float theta = static_cast<float>(i) / static_cast<float>(nSlices) * 2.0f * std::numbers::pi_v<float>;
         Eigen::Vector3f w = std::cos(theta) * uAxis + std::sin(theta) * vAxis;
         w *= static_cast<float>(centerDist);
 

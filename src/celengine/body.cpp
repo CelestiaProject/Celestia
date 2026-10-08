@@ -12,10 +12,10 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <numbers>
 #include <utility>
 
 #include <celastro/astro.h>
-#include <celcompat/numbers.h>
 #include <celephem/orbit.h>
 #include <celephem/rotation.h>
 #include <celmath/mathlib.h>
@@ -37,7 +37,6 @@
 
 namespace astro = celestia::astro;
 namespace engine = celestia::engine;
-namespace numbers = celestia::numbers;
 namespace math = celestia::math;
 namespace util = celestia::util;
 
@@ -294,7 +293,7 @@ Body::getBoundingRadius() const
     if (geometry == engine::GeometryHandle::Invalid)
         return radius;
 
-    return radius * numbers::sqrt3_v<float>;
+    return radius * std::numbers::sqrt3_v<float>;
 }
 
 /*! Return the radius of sphere large enough to contain any geometry
@@ -332,7 +331,7 @@ Body::getDensity() const
     // @astro::EarthMass unit is kg
     // @radius unit km
     // so we divide density by 1e9 to have kg/m^3
-    float volume = 4.0f / 3.0f * numbers::pi_v<float> * semiAxes.prod();
+    float volume = 4.0f / 3.0f * std::numbers::pi_v<float> * semiAxes.prod();
     return volume == 0.0f ? 0.0f : mass * static_cast<float>(astro::EarthMass / 1e9) / volume;
 }
 
@@ -716,7 +715,7 @@ Body::getBodyFixedToAstrocentric(double tdb) const
 Eigen::Vector3d
 Body::planetocentricToCartesian(double lon, double lat, double alt) const
 {
-    using celestia::numbers::pi;
+    using std::numbers::pi;
     double sphi;
     double cphi;
     math::sincos(-math::degToRad(lat) + pi * 0.5, sphi, cphi);
@@ -750,7 +749,7 @@ Body::planetocentricToCartesian(const Eigen::Vector3d& lonLatAlt) const
 Eigen::Vector3d
 Body::geodeticToCartesian(double lon, double lat, double alt) const
 {
-    using celestia::numbers::pi;
+    using std::numbers::pi;
     double phi = math::degToRad(lat);
     double theta = math::degToRad(lon) + pi;
     double a2x = math::square(semiAxes.x());
@@ -783,7 +782,7 @@ Body::cartesianToPlanetocentric(const Eigen::Vector3d& v) const
 {
     Eigen::Vector3d w = v.normalized();
 
-    double lat = numbers::pi / 2.0 - std::acos(w.y());
+    double lat = std::numbers::pi / 2.0 - std::acos(w.y());
     double lon = std::atan2(w.z(), -w.x());
 
     return Eigen::Vector3d(lon, lat, v.norm() - getRadius());

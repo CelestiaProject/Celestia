@@ -13,10 +13,10 @@
 #include "visibleregion.h"
 
 #include <algorithm>
+#include <numbers>
 
 #include <Eigen/Geometry>
 
-#include <celcompat/numbers.h>
 #include <celmath/mathlib.h>
 #include <celrender/linerenderer.h>
 #include <celrender/referencemarkrenderer.h>
@@ -148,7 +148,7 @@ VisibleRegion::render(render::ReferenceMarkRenderer* refMarkRenderer,
     {
         double stheta;
         double ctheta;
-        math::sincos(static_cast<double>(i) / static_cast<double>(nSections) * 2.0 * celestia::numbers::pi, stheta, ctheta);
+        math::sincos(static_cast<double>(i) / static_cast<double>(nSections) * 2.0 * std::numbers::pi, stheta, ctheta);
         Eigen::Vector3d w = ctheta * uAxis + stheta * vAxis;
 
         Eigen::Vector3d toCenter = math::ellipsoidTangent(recipSemiAxes, w, e, e_, ee);
