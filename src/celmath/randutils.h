@@ -1,11 +1,11 @@
 #pragma once
 
 #include <cmath>
+#include <numbers>
 #include <random>
 
 #include <Eigen/Core>
 
-#include <celcompat/numbers.h>
 #include "mathlib.h"
 
 namespace celestia::math
@@ -37,7 +37,7 @@ RealDists<T>::SignedUnit{static_cast<T>(-1), static_cast<T>(1)};
 
 template<typename T>
 std::uniform_real_distribution<T>
-RealDists<T>::SignedFullAngle{-celestia::numbers::pi_v<T>, celestia::numbers::pi_v<T>};
+RealDists<T>::SignedFullAngle{-std::numbers::pi_v<T>, std::numbers::pi_v<T>};
 
 template<typename T, typename RNG = std::mt19937>
 Eigen::Matrix<T, 2, 1> randomOnCircle(RNG&& rng)

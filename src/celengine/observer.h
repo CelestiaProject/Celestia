@@ -18,7 +18,9 @@
 #pragma once
 
 #include <cstdint>
+#include <numbers>
 #include <memory>
+#include <numbers>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -26,7 +28,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celcompat/numbers.h>
 #include <celutil/flag.h>
 
 #include "selection.h"
@@ -350,7 +351,7 @@ private:
 
     Eigen::Quaterniond 	trackingOrientation{ Eigen::Quaternionf::Identity() };   // orientation prior to selecting tracking
 
-    float fov{ static_cast<float>(celestia::numbers::pi / 4.0) };
+    float fov{ static_cast<float>(std::numbers::pi / 4.0) };
     float zoom{ 1.0f };
     float alternateZoom{ 1.0f };
 

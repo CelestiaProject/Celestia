@@ -1,4 +1,5 @@
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
@@ -10,21 +11,23 @@
 #include <fmt/format.h>
 
 #include <celephem/xyzvbinary.h>
-#include <celcompat/bit.h>
 
 #define _(s) (s)
 
-static constexpr std::uint16_t endianCode(celestia::compat::endian endianness)
+static constexpr std::uint16_t endianCode(std::endian endianness)
 {
+    using enum std::endian;
+    static_assert(native == little || native == big,
+                  "Mixed endian systems are not supported");
     switch (endianness)
     {
-    case celestia::compat::endian::little: return 1234;
-    case celestia::compat::endian::big: return 4321;
+    case little: return 1234;
+    case big: return 4321;
     default: return 0;
     }
 }
 
-static constexpr std::uint16_t nativeEndianCode = endianCode(celestia::compat::endian::native);
+static constexpr std::uint16_t nativeEndianCode = endianCode(std::endian::native);
 
 static bool binaryToText(const std::string& infilename, const std::string& outfilename)
 {

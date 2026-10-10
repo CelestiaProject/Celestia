@@ -17,7 +17,7 @@
 #include <istream>
 #include <type_traits>
 
-#include <celcompat/bit.h>
+#include <celcompat/byteswap.h>
 #include "jpleph.h"
 
 namespace celestia::ephem

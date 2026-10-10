@@ -14,8 +14,8 @@
 #include "rotation.h"
 
 #include <cmath>
+#include <numbers>
 
-#include <celcompat/numbers.h>
 #include <celmath/geomutil.h>
 
 namespace celestia::ephem
@@ -221,7 +221,7 @@ UniformRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
 
-    return math::YRotation(-remainder * 2 * celestia::numbers::pi - offset);
+    return math::YRotation(-remainder * 2 * std::numbers::pi - offset);
 }
 
 
@@ -237,7 +237,7 @@ Eigen::Vector3d
 UniformRotationModel::angularVelocityAtTime(double tdb) const
 {
     Eigen::Vector3d v = equatorOrientationAtTime(tdb).conjugate() * Eigen::Vector3d::UnitY();
-    return v * (2.0 * celestia::numbers::pi / period);
+    return v * (2.0 * std::numbers::pi / period);
 }
 
 
@@ -286,7 +286,7 @@ PrecessingRotationModel::spin(double tjd) const
     // the texture.
     remainder += 0.5;
 
-    return math::YRotation(-remainder * 2 * celestia::numbers::pi - offset);
+    return math::YRotation(-remainder * 2 * std::numbers::pi - offset);
 }
 
 
@@ -303,7 +303,7 @@ PrecessingRotationModel::equatorOrientationAtTime(double tjd) const
     else
     {
         nodeOfDate = (double) ascendingNode -
-            (2.0 * celestia::numbers::pi / precessionPeriod) * (tjd - epoch);
+            (2.0 * std::numbers::pi / precessionPeriod) * (tjd - epoch);
     }
 
     return math::XRotation((double) -inclination) * math::YRotation(-nodeOfDate);

@@ -15,6 +15,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <numbers>
 #include <string>
 #include <vector>
 
@@ -22,7 +23,6 @@
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celephem/customorbit.h>
 #include <celephem/customrotation.h>
 #include <celephem/orbit.h>
@@ -61,7 +61,6 @@ namespace astro = celestia::astro;
 namespace engine = celestia::engine;
 namespace ephem = celestia::ephem;
 namespace math = celestia::math;
-namespace numbers = celestia::numbers;
 namespace util = celestia::util;
 
 namespace
@@ -694,7 +693,7 @@ CreateFixedRotationModel(double offset,
                          double inclination,
                          double ascendingNode)
 {
-    Eigen::Quaterniond q = math::YRotation(-numbers::pi - offset) *
+    Eigen::Quaterniond q = math::YRotation(-std::numbers::pi - offset) *
                            math::XRotation(-inclination) *
                            math::YRotation(-ascendingNode);
 
@@ -751,7 +750,7 @@ CreateFixedRotationModel(const Value& value)
     auto inclination = math::degToRad(rotationData->getAngle<double>("Inclination").value_or(0.0));
     auto ascendingNode = math::degToRad(rotationData->getAngle<double>("AscendingNode").value_or(0.0));
 
-    Eigen::Quaterniond q = math::YRotation(-numbers::pi - offset) *
+    Eigen::Quaterniond q = math::YRotation(-std::numbers::pi - offset) *
                            math::XRotation(-inclination) *
                            math::YRotation(-ascendingNode);
 
@@ -772,7 +771,7 @@ CreateFixedAttitudeRotationModel(const Value& value)
     auto tilt = math::degToRad(rotationData->getAngle<double>("Tilt").value_or(0.0));
     auto roll = math::degToRad(rotationData->getAngle<double>("Roll").value_or(0.0));
 
-    Eigen::Quaterniond q = math::YRotation(-numbers::pi - heading) *
+    Eigen::Quaterniond q = math::YRotation(-std::numbers::pi - heading) *
                            math::XRotation(-tilt) *
                            math::ZRotation(-roll);
 

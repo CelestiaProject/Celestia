@@ -40,7 +40,6 @@
 
 #include <celastro/astro.h>
 #include <celastro/date.h>
-#include <celcompat/numbers.h>
 #include <celengine/asterism.h>
 #include <celengine/axisarrow.h>
 #include <celengine/body.h>
