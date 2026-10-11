@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <array>
 #include <cmath>
 #include <numbers>
+#include <span>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -123,7 +123,7 @@ LookAt(const Eigen::Matrix<T, 3, 1>& from, const Eigen::Matrix<T, 3, 1>& to, con
 template<class T> bool
 ProjectPerspective(const Eigen::Matrix<T, 3, 1>& from,
                    const Eigen::Matrix<T, 4, 4>& modelViewProjectionMatrix,
-                   const std::array<int, 4>& viewport,
+                   std::span<const int, 4> viewport,
                    Eigen::Matrix<T, 3, 1>& to)
 {
     Eigen::Matrix<T, 4, 1> in(from.x(), from.y(), from.z(), static_cast<T>(1));
@@ -146,7 +146,7 @@ template<class T> bool
 ProjectFisheye(const Eigen::Matrix<T, 3, 1>& from,
                const Eigen::Matrix<T, 4, 4>& modelViewMatrix,
                const Eigen::Matrix<T, 4, 4>& projMatrix,
-               const std::array<int, 4>& viewport,
+               std::span<const int, 4> viewport,
                Eigen::Matrix<T, 3, 1>& to)
 {
     using std::atan2, std::hypot;

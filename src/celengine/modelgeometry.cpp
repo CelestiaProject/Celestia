@@ -8,16 +8,20 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include "modelgeometry.h"
+
 #include <algorithm>
 #include <array>
+#include <cstddef>
+#include <span>
 #include <vector>
 #include <utility>
+
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "glsupport.h"
-#include "modelgeometry.h"
 #include "rendcontext.h"
 
 using celestia::util::GetLogger;
@@ -135,7 +139,7 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
 
         const std::size_t vertexBytes = mesh->getVertexCount() * vertexDesc.strideBytes();
         auto vbo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
-                                      util::array_view<void>(mesh->getVertexData(), vertexBytes));
+                                      std::span(reinterpret_cast<const std::byte*>(mesh->getVertexData()), vertexBytes));
         m_gpuBytes += vertexBytes;
 
         indices.reserve(std::max(indices.capacity(), static_cast<std::size_t>(mesh->getIndexCount())));
@@ -146,7 +150,7 @@ ModelRenderGeometry::ModelRenderGeometry(std::shared_ptr<const cmod::Model> mode
         }
 
         m_gpuBytes += indices.size() * sizeof(cmod::Index32);
-        auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, indices);
+        auto indexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::ElementArray, std::as_bytes(std::span{indices}));
         indices.clear();
 
         gl::VertexObject& vao = m_vaos.emplace_back(gl::VertexObject::Primitive::Triangles);

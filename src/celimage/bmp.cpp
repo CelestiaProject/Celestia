@@ -16,10 +16,10 @@
 #include <fstream>
 #include <istream>
 #include <memory>
+#include <span>
 #include <type_traits>
 #include <vector>
 
-#include <celutil/array_view.h>
 #include <celutil/binaryread.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
@@ -284,7 +284,7 @@ void
 process8BppRow(const std::uint8_t* src,
                std::uint8_t* dst,
                std::int32_t width,
-               util::array_view<PaletteEntry> palette)
+               std::span<const PaletteEntry> palette)
 {
     for (std::int32_t x = 0; x < width; ++x)
     {
@@ -302,7 +302,7 @@ processLowBppRow(const std::uint8_t* src,
                  std::uint8_t* dst,
                  std::int32_t width,
                  std::uint32_t bpp,
-                 util::array_view<PaletteEntry> palette)
+                 std::span<const PaletteEntry> palette)
 {
     assert(bpp == 1 || bpp == 2 || bpp == 4);
     const unsigned int mask = (1U << bpp) - 1U;

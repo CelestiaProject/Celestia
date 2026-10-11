@@ -14,6 +14,7 @@
 #include <cassert>
 #include <cstddef>
 #include <memory>
+#include <span>
 #include <system_error>
 #include <tuple>
 #include <unordered_map>
@@ -28,7 +29,6 @@
 #include <celimage/image.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
-#include <celutil/array_view.h>
 #include <celutil/fsutils.h>
 #include <celutil/logger.h>
 #include <celutil/utf8.h>
@@ -172,7 +172,7 @@ struct TextureFontPrivate
     unsigned int m_instanceCount{ 0 };
 
     gl::VertexObject      m_vao{ gl::VertexObject::Primitive::TriangleStrip };
-    gl::Buffer::SharedPtr m_vbo{ gl::Buffer::create(gl::Buffer::TargetHint::Array) };
+    gl::Buffer::SharedPtr m_vbo;
 
     bool m_shaderInUse{ false };
 };
@@ -181,16 +181,17 @@ struct TextureFontPrivate
 TextureFontPrivate::TextureFontPrivate(const Renderer *renderer) : m_renderer(renderer)
 {
     constexpr std::array<std::uint8_t, 8> vertexData{ 0, 0, 255, 0, 0, 255, 255, 255 };
-    auto vertexBuffer = gl::Buffer::create(gl::Buffer::TargetHint::Array, vertexData);
     m_vao.addVertexBuffer(
-        vertexBuffer,
+        gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{vertexData})),
         VertexLocation,
         2,
         gl::VertexObject::DataType::UnsignedByte,
         true);
     m_vao.setCount(4);
 
-    m_vbo->setData(util::array_view<void>(nullptr, sizeof(FontInstance) * MaxInstances), gl::Buffer::BufferUsage::StreamDraw);
+    m_vbo = gl::Buffer::create(gl::Buffer::TargetHint::Array,
+                               static_cast<GLsizeiptr>(sizeof(FontInstance) * MaxInstances),
+                               gl::Buffer::BufferUsage::StreamDraw);
 
     m_vao.addInstanceBuffer(
         m_vbo,
@@ -552,7 +553,7 @@ TextureFontPrivate::flush()
     if (m_instanceCount == 0)
         return;
 
-    m_vbo->invalidateData().setSubData(0, util::array_view(m_instances.data(), m_instanceCount));
+    m_vbo->invalidateData().setSubData(0, std::as_bytes(std::span{m_instances.data(), m_instanceCount}));
     m_vao.drawInstances(m_instanceCount);
     m_vbo->unbind();
 

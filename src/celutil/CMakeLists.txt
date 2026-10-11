@@ -1,6 +1,5 @@
 set(CELUTIL_SOURCES
   align.h
-  array_view.h
   associativearray.cpp
   associativearray.h
   binaryread.h

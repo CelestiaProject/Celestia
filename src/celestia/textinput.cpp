@@ -41,7 +41,7 @@ TextInput::getTypedText() const
     return m_text;
 }
 
-util::array_view<engine::Completion>
+std::span<const engine::Completion>
 TextInput::getCompletion() const
 {
     return m_completion;

@@ -54,7 +54,7 @@ void PointStarVertexBuffer::render()
     if (m_texture != nullptr)
         m_texture->bind();
 
-    m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
+    m_bo->invalidateData().setSubData(0, std::as_bytes(std::span(m_vertices.get(), m_nStars)));
 
 #ifndef GL_ES
     glEnable(GL_PROGRAM_POINT_SIZE);

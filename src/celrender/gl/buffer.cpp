@@ -67,7 +67,7 @@ Buffer::unbind(Buffer::TargetHint target)
 }
 
 Buffer&
-Buffer::setData(util::array_view<void> data, Buffer::BufferUsage usage)
+Buffer::setData(std::span<const std::byte> data, Buffer::BufferUsage usage)
 {
     setData(data.data(), static_cast<GLsizeiptr>(data.size()), usage);
     return *this;
@@ -86,7 +86,7 @@ Buffer::setData(const void* data, GLsizeiptr size, Buffer::BufferUsage usage) //
 }
 
 Buffer&
-Buffer::setSubData(GLintptr offset, util::array_view<void> data)
+Buffer::setSubData(GLintptr offset, std::span<const std::byte> data)
 {
     Binder::get().bind(*this);
     glBufferSubData(static_cast<GLenum>(m_targetHint), offset, data.size(), data.data());
@@ -122,7 +122,7 @@ Buffer::create(TargetHint targetHint,
 
 Buffer::SharedPtr
 Buffer::create(TargetHint targetHint,
-               util::array_view<void> data,
+               std::span<const std::byte> data,
                BufferUsage usage)
 {
     auto buffer = create(targetHint);

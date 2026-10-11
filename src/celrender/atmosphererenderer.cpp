@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cstring>
 #include <numbers>
+#include <span>
 
 #include <celengine/atmosphere.h>
 #include <celengine/glsupport.h>
@@ -333,8 +334,8 @@ AtmosphereRenderer::renderLegacy(
     ps.blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
     m_renderer.setPipelineState(ps);
 
-    m_bo->invalidateData().setSubData(0, m_skyVertices);
-    m_ibo->invalidateData().setSubData(0, m_skyIndices);
+    m_bo->invalidateData().setSubData(0, std::as_bytes(std::span{m_skyVertices}));
+    m_ibo->invalidateData().setSubData(0, std::as_bytes(std::span{m_skyIndices}));
 
     prog->use();
     prog->setMVPMatrices(*m.projection, *m.modelview);

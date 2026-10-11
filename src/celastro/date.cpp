@@ -85,7 +85,7 @@ constexpr std::array<LeapSecondRecord, 28> LeapSeconds
     LeapSecondRecord{ 37, 2457754.5 }, // 1 Jan 2017
 };
 
-celestia::util::array_view<LeapSecondRecord> g_leapSeconds = LeapSeconds; //NOSONAR
+std::span<const LeapSecondRecord> g_leapSeconds = LeapSeconds; //NOSONAR
 
 #if !(defined(__GNUC__) && !defined(_WIN32))
 class MonthAbbreviations
@@ -135,7 +135,7 @@ timeToUTC(const std::time_t& time, std::tm& utct)
 } // end unnamed namespace
 
 void
-setLeapSeconds(celestia::util::array_view<LeapSecondRecord> leapSeconds)
+setLeapSeconds(std::span<const LeapSecondRecord> leapSeconds)
 {
     g_leapSeconds = leapSeconds;
 }

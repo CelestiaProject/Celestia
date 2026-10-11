@@ -20,6 +20,7 @@
 #include <cstring>
 #include <fstream>
 #include <istream>
+#include <span>
 #include <string_view>
 #include <type_traits>
 #include <unordered_map>
@@ -138,8 +139,8 @@ public:
 
 private:
     std::shared_ptr<const Samples<SampleXYZ<T>>> samples;
-    util::array_view<double> sampleTimes;
-    util::array_view<SampleXYZ<T>> positions;
+    std::span<const double> sampleTimes;
+    std::span<const SampleXYZ<T>> positions;
     double boundingRadius;
     mutable std::uint32_t lastSample{ 0 };
 
@@ -385,8 +386,8 @@ private:
     void initializeCubic(double, std::uint32_t, InterpolationParameters&) const;
 
     std::shared_ptr<const Samples<SampleXYZV<T>>> samples;
-    util::array_view<double> sampleTimes;
-    util::array_view<SampleXYZV<T>> posvels;
+    std::span<const double> sampleTimes;
+    std::span<const SampleXYZV<T>> posvels;
     double boundingRadius;
     mutable std::uint32_t lastSample{ 0 };
 

@@ -13,6 +13,7 @@
 #include <array>
 #include <list>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -199,9 +200,9 @@ class Renderer
 
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
-    void getViewport(std::array<int, 4>& viewport) const;
+    void getViewport(std::span<int, 4> viewport) const;
     void setViewport(int x, int y, int w, int h);
-    void setViewport(const std::array<int, 4>& viewport);
+    void setViewport(std::span<const int, 4> viewport);
     void setScissor(int x, int y, int w, int h);
     void removeScissor();
 
@@ -241,7 +242,7 @@ class Renderer
                       const Color &color,
                       const Matrices &m);
 
-    celestia::util::array_view<const Star*> getNearStars() const
+    std::span<const Star* const> getNearStars() const
     {
         return nearStars;
     }

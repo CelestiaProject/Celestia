@@ -122,7 +122,7 @@ bool skipComments(std::istream& in)
 std::uint32_t
 GetSampleIndex(double jd,
                std::uint32_t& lastSample,
-               celestia::util::array_view<double> sampleTimes)
+               std::span<const double> sampleTimes)
 {
     std::uint32_t n = lastSample;
     if (n < 1 || n >= sampleTimes.size() || jd < sampleTimes[n - 1] || jd > sampleTimes[n])

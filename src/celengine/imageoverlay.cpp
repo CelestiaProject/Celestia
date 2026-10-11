@@ -17,7 +17,7 @@ void ImageOverlay::setColor(const Color& c)
     colors.fill(c);
 }
 
-void ImageOverlay::setColor(std::array<Color, 4>& c)
+void ImageOverlay::setColor(std::span<Color, 4> c)
 {
     std::copy(c.begin(), c.end(), colors.begin());
 }
