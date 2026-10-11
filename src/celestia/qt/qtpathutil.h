@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <filesystem>
 #include <string_view>
 #include <type_traits>
@@ -35,8 +36,7 @@ QStringToPath(const QString& str)
 }
 
 // We make this a template function so the unused if constexpr branch is removed
-template<typename T,
-         std::enable_if_t<std::is_same_v<std::remove_cv_t<T>, std::filesystem::path>, int> = 0>
+template<std::same_as<std::filesystem::path> T>
 QString
 PathToQString(const T& path)
 {

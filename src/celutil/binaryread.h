@@ -13,7 +13,8 @@ namespace celestia::util
 
 /*! Read a value stored in machine-native byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readNative(std::istream& in, T& value)
 {
@@ -22,7 +23,8 @@ readNative(std::istream& in, T& value)
 
 /*! Read a value stored in machine-native byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryNative(const void* src) //NOSONAR
 {
@@ -33,7 +35,8 @@ fromMemoryNative(const void* src) //NOSONAR
 
 /*! Read a value stored opposite to machine-native byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readReversed(std::istream& in, T& value)
 {
@@ -54,7 +57,8 @@ readReversed(std::istream& in, T& value)
 
 /*! Read a value stored opposite to machine-native byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryReversed(const void* src) //NOSONAR
 {
@@ -74,7 +78,8 @@ fromMemoryReversed(const void* src) //NOSONAR
 
 /*! Read a value stored in little-endian byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readLE(std::istream& in, T& value)
 {
@@ -86,7 +91,8 @@ readLE(std::istream& in, T& value)
 
 /*! Read a value stored in little-endian byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryLE(const void* src) //NOSONAR
 {
@@ -98,7 +104,8 @@ fromMemoryLE(const void* src) //NOSONAR
 
 /*! Read a value stored in big-endian byte order from an input stream.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 readBE(std::istream& in, T& value)
 {
@@ -110,7 +117,8 @@ readBE(std::istream& in, T& value)
 
 /*! Read a value stored in big-endian byte order from memory.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline T
 fromMemoryBE(const void* src) //NOSONAR
 {

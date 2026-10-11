@@ -11,6 +11,7 @@
 
 #include <config.h>
 #include <cmath>
+#include <concepts>
 #include <fstream>
 #include <type_traits>
 
@@ -41,7 +42,8 @@ applyBoolean(bool& target, const AssociativeArray& hash, std::string_view key)
         target = *b;
 }
 
-template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
+template<typename T>
+    requires std::integral<T> || std::floating_point<T>
 void
 applyNumber(T& target, const AssociativeArray& hash, std::string_view key)
 {

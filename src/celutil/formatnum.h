@@ -12,9 +12,9 @@
 #pragma once
 
 #include <cassert>
+#include <concepts>
 #include <iterator>
 #include <string_view>
-#include <type_traits>
 
 #include <fmt/format.h>
 
@@ -62,7 +62,7 @@ class NumberFormatter
 public:
     NumberFormatter();
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, int> = 0>
+    template<std::floating_point T>
     inline FormattedFloat<T> format(T value,
                                     unsigned int precision,
                                     NumberFormat format = NumberFormat::GroupThousands) const

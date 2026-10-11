@@ -13,7 +13,8 @@ namespace celestia::util
 
 /*! Write a value to an output stream in machine-native byte order.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 writeNative(std::ostream& out, T value)
 {
@@ -22,7 +23,8 @@ writeNative(std::ostream& out, T value)
 
 /*! Write a value to an output stream with the opposite of machine-native byte order.
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 writeReversed(std::ostream& out, T value)
 {
@@ -43,7 +45,8 @@ writeReversed(std::ostream& out, T value)
 
 /*! Write a value to an output stream in little-endian byte order
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 writeLE(std::ostream& out, T value)
 {
@@ -55,7 +58,8 @@ writeLE(std::ostream& out, T value)
 
 /*! Write a value to an output stream in big-endian byte order
  */
-template<typename T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0>
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
 inline bool
 writeBE(std::ostream& out, T value)
 {

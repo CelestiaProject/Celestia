@@ -12,6 +12,7 @@
 
 #include "qtcelestiaactions.h"
 
+#include <concepts>
 #include <cstdint>
 #include <type_traits>
 
@@ -36,18 +37,22 @@ namespace
 {
 
 template<typename T, bool = std::is_enum_v<T>>
+    requires std::integral<T> || std::is_enum_v<T>
 struct IntegralOrUnderlying { using type = std::underlying_type_t<T>; };
 
 template<typename T>
-struct IntegralOrUnderlying<T, false> { using type = std::enable_if_t<std::is_integral_v<T>, T>; };
+    requires std::integral<T> || std::is_enum_v<T>
+struct IntegralOrUnderlying<T, false> { using type = T; };
 
 template<typename T>
 using IntegralOrUnderlyingT = typename IntegralOrUnderlying<T>::type;
 
-template<typename T, std::enable_if_t<std::is_integral_v<T> && sizeof(T) <= sizeof(qlonglong), int> = 0>
+template<typename T>
+    requires std::integral<T> && (sizeof(T) <= sizeof(qlonglong))
 using IntVariantType = std::conditional_t<sizeof(T) <= sizeof(uint), int, qlonglong>;
 
-template<typename T, std::enable_if_t<std::is_integral_v<T> && sizeof(T) <= sizeof(qulonglong), int> = 0>
+template<typename T>
+    requires std::integral<T> && (sizeof(T) <= sizeof(qulonglong))
 using UIntVariantType = std::conditional_t<sizeof(T) <= sizeof(int), uint, qulonglong>;
 
 template<typename T, typename U = IntegralOrUnderlyingT<T>>

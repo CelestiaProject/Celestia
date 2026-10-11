@@ -11,13 +11,14 @@
 #pragma once
 
 #include <bit>
+#include <concepts>
 
 #include <celcompat/byteswap.h>
 
 namespace impl
 {
 
-template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = false>
+template <std::integral T>
 constexpr T LE_TO_CPU(T val) noexcept
 {
     if constexpr (std::endian::native == std::endian::big)
@@ -26,7 +27,7 @@ constexpr T LE_TO_CPU(T val) noexcept
         return val;
 }
 
-template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = false>
+template <std::integral T>
 constexpr T BE_TO_CPU(T val) noexcept
 {
     if constexpr (std::endian::native == std::endian::little)
