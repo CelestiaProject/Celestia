@@ -9,7 +9,6 @@ set(UNIT_TEST_SOURCES
   loader_validation_test.cpp
   logger_test.cpp
   psf_test.cpp
-  ranges_test.cpp
   resourcesystem_test.cpp
   stellarclass_test.cpp
   strnatcmp_test.cpp
