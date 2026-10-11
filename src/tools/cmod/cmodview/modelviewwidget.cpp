@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <concepts>
 #include <cstddef>
-#include <type_traits>
 #include <utility>
 
 #include <QDebug>
@@ -250,9 +250,10 @@ setUniformValue(const GLProgram& program, const char* name, float value)
         glUniform1f(location, value);
 }
 
-template<typename T, std::enable_if_t<std::is_same_v<typename T::Scalar, float>, int> = 0>
+template<typename T>
+    requires std::same_as<typename T::Scalar, float>
 void
-setUniformValue(const GLProgram& program, const char* name, const T& values)
+setUniformValue(const GLProgram& program, const char* name, const Eigen::MatrixBase<T>& values)
 {
     GLint location = glGetUniformLocation(program.getID(), name);
     if (location < 0)

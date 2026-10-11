@@ -77,13 +77,15 @@ constexpr E operator>>(E f1, int f2)                                    \
 namespace celestia::util
 {
 
-template<typename E, std::enable_if_t<std::is_enum_v<E>, int> = 0>
+template<typename E>
+    requires std::is_enum_v<E>
 constexpr bool is_set(E f, E t)
 {
     return (f & t) != static_cast<E>(0);
 }
 
-template<typename E, std::enable_if_t<std::is_enum_v<E>, int> = 0>
+template<typename E>
+    requires std::is_enum_v<E>
 constexpr void set_or_unset(E& f, E t, bool set)
 {
     if (set)

@@ -12,135 +12,136 @@
 
 #pragma once
 
-#include <type_traits>
+#include <concepts>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 namespace celestia::math
 {
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-scale(const Eigen::Matrix<T,4,4> &m, const Eigen::Matrix<T,4,1> &s)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+scale(const Eigen::Matrix<T, 4, 4> &m, const Eigen::Matrix<T, 4, 1> &s)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-scale(const Eigen::Matrix<T,4,1> &s)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+scale(const Eigen::Matrix<T, 4, 1> &s)
 {
-    Eigen::Matrix<T,4,4> sm(Eigen::Matrix<T,4,4>::Zero());
+    Eigen::Matrix<T, 4, 4> sm(Eigen::Matrix<T, 4, 4>::Zero());
     sm.diagonal() = s;
     return sm;
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-scale(const Eigen::Matrix<T,4,4> &m, const Eigen::Matrix<T,3,1> &s)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+scale(const Eigen::Matrix<T, 4, 4> &m, const Eigen::Matrix<T, 3, 1> &s)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-scale(const Eigen::Matrix<T,3,1> &s)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+scale(const Eigen::Matrix<T, 3, 1> &s)
 {
-    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
+    return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s.x(), s.y(), s.z())).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-scale(const Eigen::Matrix<T,4,4> &m, T s)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+scale(const Eigen::Matrix<T, 4, 4> &m, T s)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s)).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s)).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
 scale(T s)
 {
-    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Scaling(s)).matrix();
+    return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Scaling(s)).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-rotate(const Eigen::Matrix<T,4,4> &m, const Eigen::Quaternion<T> &q)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+rotate(const Eigen::Matrix<T, 4, 4> &m, const Eigen::Quaternion<T> &q)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(q).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(q).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
 rotate(const Eigen::Quaternion<T> &q)
 {
     return Eigen::Transform<T,3,Eigen::Affine>(q).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-rotate(const Eigen::Matrix<T,4,4> &m, const Eigen::AngleAxis<T> &aa)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+rotate(const Eigen::Matrix<T, 4, 4> &m, const Eigen::AngleAxis<T> &aa)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(aa).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(aa).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
 rotate(const Eigen::AngleAxis<T> &aa)
 {
-    return Eigen::Transform<T,3,Eigen::Affine>(aa).matrix();
+    return Eigen::Transform<T, 3, Eigen::Affine>(aa).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-rotate(const Eigen::Matrix<T,4,4> &m, T angle, const Eigen::Matrix<T,3,1> &axis)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+rotate(const Eigen::Matrix<T, 4, 4> &m, T angle, const Eigen::Matrix<T, 3, 1> &axis)
 {
     return rotate(m, Eigen::AngleAxis<T>(angle, axis));
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-rotate(T angle, const Eigen::Matrix<T,3,1> &axis)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+rotate(T angle, const Eigen::Matrix<T, 3, 1> &axis)
 {
     return rotate(Eigen::AngleAxis<T>(angle, axis));
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-translate(const Eigen::Matrix<T,4,4> &m, const Eigen::Matrix<T,3,1> &t)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+translate(const Eigen::Matrix<T, 4, 4> &m, const Eigen::Matrix<T,3,1> &t)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(t)).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(t)).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-translate(const Eigen::Matrix<T,3,1> &t)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+translate(const Eigen::Matrix<T, 3, 1> &t)
 {
-    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(t)).matrix();
+    return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(t)).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
-translate(const Eigen::Matrix<T,4,4> &m, T x, T y, T z)
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
+translate(const Eigen::Matrix<T, 4, 4> &m, T x, T y, T z)
 {
-    return m * Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
+    return m * Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(Eigen::Matrix<T, 3, 1>(x,y,z))).matrix();
 }
 
-template<typename T>
-inline Eigen::Matrix<T,4,4>
+template<std::floating_point T>
+inline Eigen::Matrix<T, 4, 4>
 translate(T x, T y, T z)
 {
-    return Eigen::Transform<T,3,Eigen::Affine>(Eigen::Translation<T,3>(Eigen::Matrix<T,3,1>(x,y,z))).matrix();
+    return Eigen::Transform<T, 3, Eigen::Affine>(Eigen::Translation<T, 3>(Eigen::Matrix<T, 3, 1>(x,y,z))).matrix();
 }
 
-template <typename T,
-          typename U,
-          std::enable_if_t<std::is_same_v<typename T::Scalar, typename U::Scalar> &&
-                           std::is_floating_point_v<typename T::Scalar>, bool> = true>
+template <typename T, typename U>
+    requires std::floating_point<typename T::Scalar> &&
+             std::same_as<typename T::Scalar, typename U::Scalar> &&
+             (T::RowsAtCompileTime == U::RowsAtCompileTime || T::RowsAtCompileTime == Eigen::Dynamic || U::RowsAtCompileTime == Eigen::Dynamic) &&
+             (T::ColsAtCompileTime == U::ColsAtCompileTime || T::ColsAtCompileTime == Eigen::Dynamic || U::ColsAtCompileTime == Eigen::Dynamic)
 inline auto
-mix(const T &x, const U &y, typename T::Scalar a)
+mix(const Eigen::MatrixBase<T> &x, const Eigen::MatrixBase<U> &y, typename T::Scalar a)
 {
-    return x * (static_cast<typename T::Scalar>(1.0) - a) + y * a;
+    return x * (static_cast<typename T::Scalar>(1) - a) + y * a;
 }
 
 } // end namespace celestia::math
