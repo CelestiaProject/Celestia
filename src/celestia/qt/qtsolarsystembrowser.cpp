@@ -12,6 +12,7 @@
 
 #include "qtsolarsystembrowser.h"
 
+#include <span>
 #include <string>
 #include <vector>
 
@@ -41,7 +42,6 @@
 #include <celengine/stardb.h>
 #include <celengine/universe.h>
 #include <celestia/celestiacore.h>
-#include <celutil/array_view.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include "qtcolorswatchwidget.h"
@@ -174,13 +174,13 @@ private:
     TreeItem* createTreeItem(Selection sel, TreeItem* parent, int childIndex);
     void addTreeItemChildren(TreeItem* item,
                              const PlanetarySystem* sys,
-                             util::array_view<Star*> orbitingStars);
+                             std::span<Star* const> orbitingStars);
     void addTreeItemChildrenFiltered(TreeItem* item,
                                      const PlanetarySystem* sys,
-                                     util::array_view<Star*> orbitingStars);
+                                     std::span<Star* const> orbitingStars);
     void addTreeItemChildrenGrouped(TreeItem* item,
                                     const PlanetarySystem* sys,
-                                    util::array_view<Star*> orbitingStars,
+                                    std::span<Star* const> orbitingStars,
                                     Selection parent);
     TreeItem* createGroupTreeItem(BodyClassification classification,
                                   const std::vector<Body*>& objects,
@@ -255,7 +255,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
     item->obj = sel;
     item->childIndex = childIndex;
 
-    util::array_view<Star*> orbitingStars;
+    std::span<Star* const> orbitingStars;
 
     const PlanetarySystem* sys = nullptr;
     if (sel.body() != nullptr)
@@ -288,7 +288,7 @@ SolarSystemBrowser::SolarSystemTreeModel::createTreeItem(Selection sel,
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
                                                               const PlanetarySystem* sys,
-                                                              util::array_view<Star*> orbitingStars)
+                                                              std::span<Star* const> orbitingStars)
 {
     // Calculate the number of children: the number of orbiting stars plus
     // the number of orbiting solar system bodies.
@@ -324,7 +324,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildren(TreeItem* item,
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* item,
                                                                       const PlanetarySystem* sys,
-                                                                      util::array_view<Star*> orbitingStars)
+                                                                      std::span<Star* const> orbitingStars)
 {
     std::vector<Body*> bodies;
 
@@ -368,7 +368,7 @@ SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenFiltered(TreeItem* 
 void
 SolarSystemBrowser::SolarSystemTreeModel::addTreeItemChildrenGrouped(TreeItem* item,
                                                                      const PlanetarySystem* sys,
-                                                                     util::array_view<Star*> orbitingStars,
+                                                                     std::span<Star* const> orbitingStars,
                                                                      Selection parent)
 {
     std::vector<Body*> asteroids;

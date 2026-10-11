@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cmath>
 #include <numbers>
+#include <span>
 
 #include <celrender/gl/vertexobject.h>
 #include <celrender/psfpointlargerenderer.h>
@@ -108,7 +109,7 @@ PsfStarVertexBuffer::render()
 
     makeCurrent();
 
-    m_bo->invalidateData().setSubData(0, util::array_view(m_vertices.get(), m_nStars));
+    m_bo->invalidateData().setSubData(0, std::as_bytes(std::span(m_vertices.get(), m_nStars)));
 
 #ifndef GL_ES
     // makeCurrent() may flush another buffer, so enable only after it returns.

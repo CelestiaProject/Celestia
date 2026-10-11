@@ -32,7 +32,7 @@ class StarLoader final : public CatalogLoader
 public:
     StarLoader(StarDatabaseBuilder& db,
                ProgressNotifier* notifier,
-               util::array_view<std::filesystem::path> skipPaths) :
+               std::span<const std::filesystem::path> skipPaths) :
         CatalogLoader(notifier, skipPaths),
         m_db(&db)
     {

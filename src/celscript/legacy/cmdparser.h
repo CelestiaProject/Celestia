@@ -13,10 +13,10 @@
 
 #include <iosfwd>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
-#include <celutil/array_view.h>
 #include "command.h"
 
 namespace celestia
@@ -39,7 +39,7 @@ public:
     ~CommandParser();
 
     CommandSequence parse();
-    celestia::util::array_view<std::string> getErrors() const;
+    std::span<const std::string> getErrors() const;
 
 private:
     std::unique_ptr<Command> parseCommand();

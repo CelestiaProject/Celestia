@@ -13,13 +13,13 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include <celutil/array_view.h>
 #include <celutil/classops.h>
 #include "material.h"
 
@@ -120,7 +120,7 @@ public:
     const VertexAttribute& getAttribute(VertexAttributeSemantic semantic) const;
 
     unsigned int strideBytes() const noexcept { return m_strideBytes; }
-    celestia::util::array_view<VertexAttribute> attributes() const { return m_attributes; }
+    std::span<const VertexAttribute> attributes() const { return m_attributes; }
 
     bool validate() const;
 

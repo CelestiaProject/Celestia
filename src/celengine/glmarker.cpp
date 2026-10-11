@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cstddef>
 #include <numbers>
+#include <span>
 
 #include <celmath/frustum.h>
 #include <celmath/mathlib.h>
@@ -35,7 +36,7 @@ constexpr float pif = std::numbers::pi_v<float>;
 void
 initialize(LineRenderer &lr, gl::VertexObject &vo)
 {
-    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, FilledMarkersData);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{FilledMarkersData}));
 
     vo.addVertexBuffer(
         bo,

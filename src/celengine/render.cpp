@@ -5267,7 +5267,7 @@ void Renderer::getViewport(int* x, int* y, int* w, int* h) const
         *h = m_viewport[3];
 }
 
-void Renderer::getViewport(std::array<int, 4>& viewport) const
+void Renderer::getViewport(std::span<int, 4> viewport) const
 {
     static_assert(sizeof(int) == sizeof(GLint), "int and GLint size mismatch");
     std::copy(std::begin(m_viewport), std::end(m_viewport), std::begin(viewport));
@@ -5279,7 +5279,7 @@ void Renderer::setViewport(int x, int y, int w, int h)
     glViewport(x, y, w, h);
 }
 
-void Renderer::setViewport(const std::array<int, 4>& viewport)
+void Renderer::setViewport(std::span<const int, 4> viewport)
 {
     std::copy(std::begin(viewport), std::end(viewport), std::begin(m_viewport));
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
@@ -5444,7 +5444,7 @@ static void draw_rectangle_solid(const Renderer &renderer,
             r.colors[i].get(vertices[i].color);
     }
 
-    bo->bind().setData(vertices, gl::Buffer::BufferUsage::StreamDraw);
+    bo->bind().setData(std::as_bytes(std::span{vertices}), gl::Buffer::BufferUsage::StreamDraw);
 
     if (!initialized)
     {

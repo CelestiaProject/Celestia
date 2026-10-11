@@ -1,7 +1,7 @@
 #pragma once
 
+#include <span>
 #include <string>
-#include <celutil/array_view.h>
 
 #ifdef _WIN32
 #ifdef IMPORT_GLSUPPORT
@@ -63,7 +63,7 @@ extern CELAPI GLfloat maxLineWidth; //NOSONAR
 extern CELAPI GLint maxTextureAnisotropy; //NOSONAR
 extern CELAPI bool sRGBRendering; //NOSONAR
 
-bool init(util::array_view<std::string> = {}) noexcept;
+bool init(std::span<const std::string> = {}) noexcept;
 bool checkVersion(int) noexcept;
 
 } // end namespace celestia::gl

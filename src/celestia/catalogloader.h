@@ -11,9 +11,9 @@
 
 #include <iosfwd>
 #include <filesystem>
+#include <span>
 #include <string_view>
 
-#include <celutil/array_view.h>
 #include <celutil/filetype.h>
 
 class ProgressNotifier;
@@ -34,18 +34,18 @@ public:
     virtual bool load(std::istream &in, const std::filesystem::path &dir) = 0;
 
     void process(const std::filesystem::path &filePath, const std::filesystem::path &parentPath);
-    void loadExtras(util::array_view<std::filesystem::path> dirs);
+    void loadExtras(std::span<const std::filesystem::path> dirs);
 
 protected:
     CatalogLoader(ProgressNotifier* notifier,
-                  util::array_view<std::filesystem::path> skipPaths);
+                  std::span<const std::filesystem::path> skipPaths);
 
     virtual ContentType contentType() const = 0;
     virtual std::string_view typeDesc() const = 0;
 
 private:
     ProgressNotifier* m_notifier;
-    util::array_view<std::filesystem::path> m_skipPaths;
+    std::span<const std::filesystem::path> m_skipPaths;
 };
 
 } // namespace celestia

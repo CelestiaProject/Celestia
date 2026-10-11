@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <memory>
 #include <numbers>
+#include <span>
 #include <utility>
 
 #include <config.h>
@@ -39,24 +40,7 @@ struct VSOPTerm
     double A, B, C;
 };
 
-struct VSOPSeries
-{
-    template<typename std::size_t N>
-    explicit constexpr VSOPSeries(const std::array<VSOPTerm, N>& arr)
-        : terms(arr.data()), nTerms(arr.size())
-    {
-    }
-
-#ifndef HAVE_CONSTEXPR_EMPTY_ARRAY
-    explicit constexpr VSOPSeries(const std::array<VSOPTerm, 0>&)
-        : terms(nullptr), nTerms(0)
-    {
-    }
-#endif
-
-    const VSOPTerm* terms;
-    std::size_t nTerms;
-};
+using VSOPSeries = std::span<const VSOPTerm>;
 
 // Terms from the VSOP87 Planetary Theories
 // Bretagnon P., Francou G.
@@ -11003,39 +10987,34 @@ constexpr std::array sun_Z {
 double
 SumSeries(const VSOPSeries& series, double t)
 {
-    if (series.nTerms < 1)
+    if (series.empty())
         return 0.0;
 
     double x = 0.0;
-    const VSOPTerm* term = &series.terms[0];
-    for (std::size_t i = 0; i < series.nTerms; i++, term++)
-        x += term->A * std::cos(term->B + term->C * t);
+    for (const auto& term : series)
+        x += term.A * std::cos(term.B + term.C * t);
 
     return x;
 }
 
 class VSOP87Orbit : public CachingOrbit
 {
- private:
-    const VSOPSeries* vsL;
-    std::size_t nL;
-    const VSOPSeries* vsB;
-    std::size_t nB;
-    const VSOPSeries* vsR;
-    std::size_t nR;
+private:
+    std::span<const VSOPSeries> vsL;
+    std::span<const VSOPSeries> vsB;
+    std::span<const VSOPSeries> vsR;
     double period;
     double boundingRadius;
 
- public:
-    template<std::size_t NL, std::size_t NB, std::size_t NR>
-    VSOP87Orbit(const std::array<VSOPSeries, NL>& _vsL,
-                const std::array<VSOPSeries, NB>& _vsB,
-                const std::array<VSOPSeries, NR>& _vsR,
+public:
+    VSOP87Orbit(std::span<const VSOPSeries> _vsL,
+                std::span<const VSOPSeries> _vsB,
+                std::span<const VSOPSeries> _vsR,
                 double _period,
                 double _boundingRadius) :
-        vsL(_vsL.data()), nL(_vsL.size()),
-        vsB(_vsB.data()), nB(_vsB.size()),
-        vsR(_vsR.data()), nR(_vsR.size()),
+        vsL(_vsL),
+        vsB(_vsB),
+        vsR(_vsR),
         period(_period),
         boundingRadius(_boundingRadius)
     {
@@ -11066,31 +11045,30 @@ class VSOP87Orbit : public CachingOrbit
         double b = 0.0; // latitude
         double r = 0.0; // radius
 
-        std::size_t i;
         double T;
 
         // Evaluate series for l
         T = 1;
-        for (i = 0; i < nL; i++)
+        for (const auto& lSeries : vsL)
         {
-            l += SumSeries(vsL[i], t) * T;
-            T = t * T;
+            l += SumSeries(lSeries, t) * T;
+            T *= t;
         }
 
         // Evaluate series for b
         T = 1;
-        for (i = 0; i < nB; i++)
+        for (const auto& bSeries : vsB)
         {
-            b += SumSeries(vsB[i], t) * T;
-            T = t * T;
+            b += SumSeries(bSeries, t) * T;
+            T *= t;
         }
 
         // Evaluate series for r
         T = 1;
-        for (i = 0; i < nR; i++)
+        for (const auto& rSeries : vsR)
         {
-            r += SumSeries(vsR[i], t) * T;
-            T = t * T;
+            r += SumSeries(rSeries, t) * T;
+            T *= t;
         }
 
         r *= astro::KM_PER_AU<double>;
@@ -11130,26 +11108,22 @@ class VSOP87Orbit : public CachingOrbit
 // VSOP87 orbit with rectangular variables
 class VSOP87OrbitRect : public CachingOrbit
 {
- private:
-    const VSOPSeries* vsX;
-    std::size_t nX;
-    const VSOPSeries* vsY;
-    std::size_t nY;
-    const VSOPSeries* vsZ;
-    std::size_t nZ;
+private:
+    std::span<const VSOPSeries> vsX;
+    std::span<const VSOPSeries> vsY;
+    std::span<const VSOPSeries> vsZ;
     double period;
     double boundingRadius;
 
- public:
-    template<std::size_t NX, std::size_t NY, std::size_t NZ>
-    VSOP87OrbitRect(const std::array<VSOPSeries, NX>& _vsX,
-                    const std::array<VSOPSeries, NY>& _vsY,
-                    const std::array<VSOPSeries, NZ>& _vsZ,
+public:
+    VSOP87OrbitRect(std::span<const VSOPSeries> _vsX,
+                    std::span<const VSOPSeries> _vsY,
+                    std::span<const VSOPSeries> _vsZ,
                     double _period,
                     double _boundingRadius) :
-        vsX(_vsX.data()), nX(_vsX.size()),
-        vsY(_vsY.data()), nY(_vsY.size()),
-        vsZ(_vsZ.data()), nZ(_vsZ.size()),
+        vsX(_vsX),
+        vsY(_vsY),
+        vsZ(_vsZ),
         period(_period),
         boundingRadius(_boundingRadius)
     {
@@ -11183,31 +11157,30 @@ class VSOP87OrbitRect : public CachingOrbit
 
         Eigen::Vector3d v(Eigen::Vector3d::Zero());
 
-        std::size_t i;
         double T;
 
         // Evaluate series for x
         T = 1;
-        for (i = 0; i < nX; i++)
+        for (const auto& xSeries : vsX)
         {
-            v.x() += SumSeries(vsX[i], t) * T;
-            T = t * T;
+            v.x() += SumSeries(xSeries, t) * T;
+            T *= t;
         }
 
         // Evaluate series for y
         T = 1;
-        for (i = 0; i < nY; i++)
+        for (const auto& ySeries : vsY)
         {
-            v.y() += SumSeries(vsY[i], t) * T;
-            T = t * T;
+            v.y() += SumSeries(ySeries, t) * T;
+            T *= t;
         }
 
         // Evaluate series for z
         T = 1;
-        for (i = 0; i < nZ; i++)
+        for (const auto& zSeries : vsZ)
         {
-            v.z() += SumSeries(vsZ[i], t) * T;
-            T = t * T;
+            v.z() += SumSeries(zSeries, t) * T;
+            T *= t;
         }
 
         v *= astro::KM_PER_AU<double>;

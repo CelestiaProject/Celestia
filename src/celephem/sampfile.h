@@ -20,10 +20,9 @@
 #include <fstream>
 #include <istream>
 #include <limits>
+#include <span>
 #include <utility>
 #include <vector>
-
-#include <celutil/array_view.h>
 
 namespace celestia::ephem
 {
@@ -48,7 +47,7 @@ bool skipComments(std::istream& in);
 
 std::uint32_t GetSampleIndex(double jd,
                              std::uint32_t& lastSample,
-                             celestia::util::array_view<double> sampleTimes);
+                             std::span<const double> sampleTimes);
 
 
 template<typename T, typename F>

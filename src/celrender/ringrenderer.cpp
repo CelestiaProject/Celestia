@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <span>
 #include <vector>
 
 #include <Eigen/Core>
@@ -243,11 +244,10 @@ RingRenderer::initializeLOD(unsigned int level, std::uint32_t nSections)
 
         // outer point
         vertex.tex[0] = 1;
-
         ringCoord.push_back(vertex);
     }
 
-    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, ringCoord);
+    auto bo = gl::Buffer::create(gl::Buffer::TargetHint::Array, std::as_bytes(std::span{ringCoord}));
     auto& vo = vertexObjects[level];
     vo = gl::VertexObject(gl::VertexObject::Primitive::TriangleStrip);
     vo.setCount(static_cast<int>((nSections + 1) * 2))

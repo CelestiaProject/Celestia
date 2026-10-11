@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <span>
+
 #include <Eigen/Core>
 
 #include <celengine/projectionmode.h>
@@ -47,7 +49,7 @@ public:
                  const Eigen::Matrix4f& existingModelViewMatrix,
                  const Eigen::Matrix4f& existingProjectionMatrix,
                  const Eigen::Matrix4f& existingMVPMatrix,
-                 const std::array<int, 4>& viewport,
+                 std::span<const int, 4> viewport,
                  Eigen::Vector3f& result) const override;
 };
 

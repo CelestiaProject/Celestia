@@ -35,7 +35,7 @@ constexpr std::string_view UTF8_SUPERSCRIPT_8 = "\342\201\270"sv;
 constexpr std::string_view UTF8_SUPERSCRIPT_9 = "\342\201\271"sv;
 
 // clang-format off
-const std::array<std::string_view, nLetters> greekAlphabet =
+constexpr std::array<std::string_view, nLetters> greekAlphabet =
 {
     "Alpha"sv,
     "Beta"sv,
@@ -63,7 +63,7 @@ const std::array<std::string_view, nLetters> greekAlphabet =
     "Omega"sv
 };
 
-const std::array<std::string_view, nLetters> greekAlphabetUTF8 = {
+constexpr std::array<std::string_view, nLetters> greekAlphabetUTF8 = {
     "\316\261"sv, // ALF
     "\316\262"sv, // BET
     "\316\263"sv, // GAM
@@ -90,7 +90,7 @@ const std::array<std::string_view, nLetters> greekAlphabetUTF8 = {
     "\317\211"sv, // OME
 };
 
-const std::array<std::string_view, nLetters> canonicalAbbrevs =
+constexpr std::array<std::string_view, nLetters> canonicalAbbrevs =
 {
     "ALF"sv,
     "BET"sv,

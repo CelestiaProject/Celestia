@@ -15,6 +15,7 @@
 #include <locale>
 #include <string>
 #include <functional>
+#include <span>
 #include <string_view>
 #include <tuple>
 #include <optional>
@@ -393,8 +394,8 @@ public:
     void setScriptHook(std::unique_ptr<celestia::scripts::IScriptHook> &&hook) { m_scriptHook = std::move(hook); }
     celestia::scripts::ScriptMaps& scriptMaps() { return m_scriptMaps; }
 
-    void getCaptureInfo(std::array<int, 4>& viewport, celestia::engine::PixelFormat& format) const;
-    bool captureImage(std::uint8_t* buffer, const std::array<int, 4>& viewport, celestia::engine::PixelFormat format) const;
+    void getCaptureInfo(std::span<int, 4> viewport, celestia::engine::PixelFormat& format) const;
+    bool captureImage(std::uint8_t* buffer, std::span<const int, 4> viewport, celestia::engine::PixelFormat format) const;
     bool saveScreenShot(const std::filesystem::path&, ContentType = ContentType::Unknown) const;
 
     void loadAsterismsFile(const std::filesystem::path &path);

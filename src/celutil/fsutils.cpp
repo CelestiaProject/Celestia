@@ -199,7 +199,7 @@ std::filesystem::path PathExp(std::filesystem::path&& filename)
 }
 
 std::filesystem::path ResolveWildcard(const std::filesystem::path& wildcard,
-                         array_view<std::string_view> extensions)
+                                      std::span<const std::string_view> extensions)
 {
     std::filesystem::path filename(wildcard);
 

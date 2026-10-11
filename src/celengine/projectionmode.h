@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <array>
+#include <span>
 #include <tuple>
 
 #include <Eigen/Core>
@@ -58,7 +58,7 @@ public:
                          const Eigen::Matrix4f& existingModelViewMatrix,
                          const Eigen::Matrix4f& existingProjectionMatrix,
                          const Eigen::Matrix4f& existingMVPMatrix,
-                         const std::array<int, 4>& viewport,
+                         std::span<const int, 4> viewport,
                          Eigen::Vector3f& result) const = 0;
 
     void setScreenDpi(int screenDpi);

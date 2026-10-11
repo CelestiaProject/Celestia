@@ -16,6 +16,7 @@
 #include <cmath>
 #include <limits>
 #include <numbers>
+#include <span>
 
 #include <boost/container/static_vector.hpp>
 
@@ -743,11 +744,11 @@ LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
     // Create new index buffer
     // nRings is always nSlices / 2
     int nRings = nSlices / 2;
-    std::vector<unsigned short> indices;
+    std::vector<GLushort> indices;
     int expectedIndices = 2 * (nRings * (nSlices + 1) + std::max(nRings - 1, 0));
     indices.resize(expectedIndices);
 
-    std::vector<unsigned short>::size_type index = 0;
+    std::size_t index = 0;
     for (int i = 0; i < nRings; i++)
     {
         if (i > 0)
@@ -769,8 +770,7 @@ LODSphereMesh::getOrCreateIndexBuffer(int nSlices)
     }
 
     it->second.buffer = celestia::gl::Buffer::create(celestia::gl::Buffer::TargetHint::ElementArray,
-                                                     celestia::util::array_view<void>(indices.data(),
-                                                                                      indices.size() * sizeof(unsigned short)));
+                                                     std::as_bytes(std::span{indices}));
     it->second.indexCount = static_cast<int>(indices.size());
     return &it->second;
 }
