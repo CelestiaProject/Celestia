@@ -12,6 +12,7 @@
 
 #include <bit>
 #include <concepts>
+#include <cstdint>
 
 #include <celcompat/byteswap.h>
 
