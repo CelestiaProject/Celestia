@@ -47,43 +47,6 @@ ScriptObjectState* getCurrentObjectState()
     return state;
 }
 
-class HashVisitor
-{
-private:
-    lua_State* state;
-
-public:
-    explicit HashVisitor(lua_State* pState) : state{pState} {}
-
-    void operator()(const std::string& key, const util::Value& value)
-    {
-        std::size_t percentPos = key.find('%');
-        if (percentPos == std::string::npos)
-        {
-            switch (value.getType())
-            {
-            case util::ValueType::NumberType:
-                lua_pushstring(state, key.c_str());
-                lua_pushnumber(state, *value.getNumber());
-                lua_settable(state, -3);
-                break;
-            case util::ValueType::StringType:
-                lua_pushstring(state, key.c_str());
-                lua_pushstring(state, value.getString()->c_str());
-                lua_settable(state, -3);
-                break;
-            case util::ValueType::BooleanType:
-                lua_pushstring(state, key.c_str());
-                lua_pushboolean(state, *value.getBoolean());
-                lua_settable(state, -3);
-                break;
-            default:
-                break;
-            }
-        }
-    }
-};
-
 } // end unnamed namespace
 
 /*! Set the script context for ScriptedOrbits and ScriptRotations
@@ -159,8 +122,32 @@ SafeGetLuaNumber(lua_State* state,
 void
 SetLuaVariables(lua_State* state, const util::AssociativeArray& parameters)
 {
-    HashVisitor visitor(state);
-    parameters.for_all(visitor);
+    for (const auto& [key, value] : parameters.items())
+    {
+        if (key.find('%') != std::string_view::npos)
+            continue;
+
+        switch (value.getType())
+        {
+        case util::ValueType::NumberType:
+            lua_pushlstring(state, key.data(), key.size());
+            lua_pushnumber(state, *value.getNumber());
+            lua_settable(state, -3);
+            break;
+        case util::ValueType::StringType:
+            lua_pushlstring(state, key.data(), key.size());
+            lua_pushstring(state, value.getString()->c_str());
+            lua_settable(state, -3);
+            break;
+        case util::ValueType::BooleanType:
+            lua_pushlstring(state, key.data(), key.size());
+            lua_pushboolean(state, *value.getBoolean());
+            lua_settable(state, -3);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 } // end namespace celestia::ephem

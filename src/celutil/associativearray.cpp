@@ -24,15 +24,13 @@ AssociativeArray::getValue(std::string_view key) const
     if (iter == assoc.end())
         return nullptr;
 
-    return &values[iter->second];
+    return &iter->second;
 }
 
 void
 AssociativeArray::addValue(std::string&& key, Value&& val)
 {
-    std::size_t index = values.size();
-    if (assoc.try_emplace(std::move(key), index).second)
-        values.emplace_back(std::move(val));
+    assoc.try_emplace(std::move(key), std::move(val));
 }
 
 std::optional<double>
@@ -357,6 +355,41 @@ AssociativeArray::getSphericalTuple(std::string_view key) const
     return std::make_optional<Eigen::Vector3d>(*x, *y, *z);
 }
 
+Value::Value(double d) : type(ValueType::NumberType)
+{
+    std::construct_at(&doubleData, d);
+}
+
+Value::Value(const char *s) : type(ValueType::StringType)
+{
+    std::construct_at(&stringData, std::make_unique<std::string>(s));
+}
+
+Value::Value(const std::string_view sv) : type(ValueType::StringType)
+{
+    std::construct_at(&stringData, std::make_unique<std::string>(sv));
+}
+
+Value::Value(const std::string &s) : type(ValueType::StringType)
+{
+    std::construct_at(&stringData, std::make_unique<std::string>(s));
+}
+
+Value::Value(std::string&& s) : type(ValueType::StringType)
+{
+    std::construct_at(&stringData, std::make_unique<std::string>(std::move(s)));
+}
+
+Value::Value(std::unique_ptr<const ValueArray>&& a) : type(ValueType::ArrayType)
+{
+    std::construct_at(&arrayData, std::move(a));
+}
+
+Value::Value(std::unique_ptr<const AssociativeArray>&& h) : type(ValueType::HashType)
+{
+    std::construct_at(&hashData, std::move(h));
+}
+
 Value::~Value()
 {
     destroy();
@@ -366,24 +399,7 @@ Value::Value(Value&& other) noexcept :
     type(other.type),
     units(other.units)
 {
-    switch (other.type)
-    {
-    case ValueType::NumberType:
-    case ValueType::BooleanType:
-        doubleData = other.doubleData;
-        break;
-    case ValueType::StringType:
-        new (&stringData) std::unique_ptr<std::string>(std::move(other.stringData));
-        break;
-    case ValueType::ArrayType:
-        new (&arrayData) std::unique_ptr<ValueArray>(std::move(other.arrayData));
-        break;
-    case ValueType::HashType:
-        new (&hashData) std::unique_ptr<AssociativeArray>(std::move(other.hashData));
-        break;
-    default:
-        break;
-    }
+    constructValueFrom(other);
 }
 
 Value&
@@ -418,29 +434,35 @@ Value::operator=(Value&& other) noexcept
     }
 
     destroy();
-    switch (other.type)
-    {
-    case ValueType::NumberType:
-    case ValueType::BooleanType:
-        doubleData = other.doubleData;
-        break;
-    case ValueType::StringType:
-        new (&stringData) std::unique_ptr<std::string>(std::move(other.stringData));
-        break;
-    case ValueType::ArrayType:
-        new (&arrayData) std::unique_ptr<ValueArray>(std::move(other.arrayData));
-        break;
-    case ValueType::HashType:
-        new (&hashData) std::unique_ptr<AssociativeArray>(std::move(other.hashData));
-        break;
-    default:
-        break;
-    }
+    constructValueFrom(other);
 
     type = other.type;
     units = other.units;
 
     return *this;
+}
+
+void
+Value::constructValueFrom(Value& other)
+{
+    switch (other.type)
+    {
+    case ValueType::NumberType:
+    case ValueType::BooleanType:
+        std::construct_at(&doubleData, other.doubleData);
+        break;
+    case ValueType::StringType:
+        std::construct_at(&stringData, std::move(other.stringData));
+        break;
+    case ValueType::ArrayType:
+        std::construct_at(&arrayData, std::move(other.arrayData));
+        break;
+    case ValueType::HashType:
+        std::construct_at(&hashData, std::move(other.hashData));
+        break;
+    default:
+        break;
+    }
 }
 
 void
