@@ -269,18 +269,10 @@ struct BodyFixedFrameKey
 {
     explicit BodyFixedFrameKey(const Selection& tgt) : target(tgt) {}
 
+    bool operator==(const BodyFixedFrameKey&) const noexcept = default;
+
     Selection target;
 };
-
-inline bool operator==(const BodyFixedFrameKey& lhs, const BodyFixedFrameKey& rhs)
-{
-    return lhs.target == rhs.target;
-}
-
-inline bool operator!=(const BodyFixedFrameKey& lhs, const BodyFixedFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<BodyFixedFrameKey>
@@ -294,19 +286,11 @@ struct BodyMeanEquatorFrameKey
         target(tgt), freezeEpoch(freeze)
     {}
 
+    bool operator==(const BodyMeanEquatorFrameKey&) const noexcept = default;
+
     Selection target;
     std::optional<double> freezeEpoch;
 };
-
-inline bool operator==(const BodyMeanEquatorFrameKey& lhs, const BodyMeanEquatorFrameKey& rhs)
-{
-    return lhs.target == rhs.target && lhs.freezeEpoch == rhs.freezeEpoch;
-}
-
-inline bool operator!=(const BodyMeanEquatorFrameKey& lhs, const BodyMeanEquatorFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<BodyMeanEquatorFrameKey>
@@ -320,24 +304,13 @@ struct TwoVectorFrameKey
         frameVectorId1(f1), axis1(a1), frameVectorId2(f2), axis2(a2)
     {}
 
+    bool operator==(const TwoVectorFrameKey&) const noexcept = default;
+
     FrameVectorId frameVectorId1;
     int axis1;
     FrameVectorId frameVectorId2;
     int axis2;
 };
-
-inline bool operator==(const TwoVectorFrameKey& lhs, const TwoVectorFrameKey& rhs)
-{
-    return lhs.frameVectorId1 == rhs.frameVectorId1 &&
-           lhs.axis1 == rhs.axis1 &&
-           lhs.frameVectorId2 == rhs.frameVectorId2 &&
-           lhs.axis2 == rhs.axis2;
-}
-
-inline bool operator!=(const TwoVectorFrameKey& lhs, const TwoVectorFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<TwoVectorFrameKey>
@@ -351,19 +324,11 @@ struct SkyPlaneFrameKey
         star(s), freezeEpoch(freeze)
     {}
 
+    bool operator==(const SkyPlaneFrameKey&) const noexcept = default;
+
     Star* star;
     double freezeEpoch;
 };
-
-inline bool operator==(const SkyPlaneFrameKey& lhs, const SkyPlaneFrameKey& rhs)
-{
-    return lhs.star == rhs.star && lhs.freezeEpoch == rhs.freezeEpoch;
-}
-
-inline bool operator!=(const SkyPlaneFrameKey& lhs, const SkyPlaneFrameKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<SkyPlaneFrameKey>
@@ -383,19 +348,11 @@ struct RelativePositionKey
         observer(obs), target(tgt)
     {}
 
+    bool operator==(const RelativePositionKey&) const noexcept = default;
+
     Selection observer;
     Selection target;
 };
-
-inline bool operator==(const RelativePositionKey& lhs, const RelativePositionKey& rhs)
-{
-    return lhs.observer == rhs.observer && lhs.target == rhs.target;
-}
-
-inline bool operator!=(const RelativePositionKey& lhs, const RelativePositionKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<RelativePositionKey>
@@ -409,19 +366,11 @@ struct RelativeVelocityKey
         observer(obs), target(tgt)
     {}
 
+    bool operator==(const RelativeVelocityKey&) const noexcept = default;
+
     Selection observer;
     Selection target;
 };
-
-inline bool operator==(const RelativeVelocityKey& lhs, const RelativeVelocityKey& rhs)
-{
-    return lhs.observer == rhs.observer && lhs.target == rhs.target;
-}
-
-inline bool operator!=(const RelativeVelocityKey& lhs, const RelativeVelocityKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<RelativeVelocityKey>
@@ -435,19 +384,11 @@ struct ConstVectorKey
         vec(v), frameId(fid)
     {}
 
+    bool operator==(const ConstVectorKey&) const noexcept = default;
+
     Eigen::Vector3d vec;
     FrameId frameId;
 };
-
-inline bool operator==(const ConstVectorKey& lhs, const ConstVectorKey& rhs)
-{
-    return lhs.vec == rhs.vec && lhs.frameId == rhs.frameId;
-}
-
-inline bool operator!=(const ConstVectorKey& lhs, const ConstVectorKey& rhs)
-{
-    return !(lhs == rhs);
-}
 
 template<>
 struct std::hash<ConstVectorKey>

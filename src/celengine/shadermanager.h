@@ -59,12 +59,11 @@ ENUM_CLASS_BITWISE_OPS(StaticShaderOptions);
 
 struct StaticShaderProperties
 {
+    bool operator==(const StaticShaderProperties&) const noexcept = default;
+
     StaticShader        shader;
     StaticShaderOptions options;
 };
-
-bool
-operator==(const StaticShaderProperties& lhs, const StaticShaderProperties& rhs);
 
 template<>
 struct std::hash<StaticShaderProperties>
@@ -177,6 +176,8 @@ struct ShaderProperties
     bool hasScattering() const;
     bool isViewDependent() const;
 
+    bool operator==(const ShaderProperties&) const noexcept = default;
+
     std::uint16_t nLights{ 0 };
     LightingModel lightModel{ LightingModel::DiffuseModel };
     TexUsage texUsage{ TexUsage::None };
@@ -195,12 +196,6 @@ struct ShaderProperties
     FisheyeOverrideMode fishEyeOverride { FisheyeOverrideMode::None };
     bool separateRayleighMieScaleHeights{ false };
 };
-
-bool
-operator==(const ShaderProperties& lhs, const ShaderProperties& rhs);
-
-inline bool
-operator!=(const ShaderProperties& lhs, const ShaderProperties& rhs) { return !(lhs == rhs); }
 
 template<>
 struct std::hash<ShaderProperties>

@@ -83,6 +83,7 @@
 #include <cstring>
 #include <cassert>
 #include <cmath>
+#include <functional>
 #include <optional>
 #include <sstream>
 #include <iomanip>
@@ -431,26 +432,6 @@ translateLabelModeToClassMask(RenderLabels labelMode)
 
     return classMask;
 }
-
-
-// Depth comparison for labels
-// Note that it's essential to declare this operator as a member
-// function of Renderer::Label; if it's not a class member, C++'s
-// argument dependent lookup will not find the operator when it's
-// used as a predicate for STL algorithms.
-bool Renderer::Annotation::operator<(const Annotation& a) const
-{
-    // Operation is reversed because -z axis points into the screen
-    return position.z() > a.position.z();
-}
-
-// Depth comparison for orbit paths
-bool Renderer::OrbitPathListEntry::operator<(const OrbitPathListEntry& o) const
-{
-    // Operation is reversed because -z axis points into the screen
-    return centerZ - radius > o.centerZ - o.radius;
-}
-
 
 bool Renderer::init(int winWidth, int winHeight,
                     const DetailOptions& _detailOptions,
@@ -1639,10 +1620,14 @@ void Renderer::render(const Observer& observer,
     removeInvisibleItems(frustum);
 
     // Sort the annotations
-    sort(depthSortedAnnotations.begin(), depthSortedAnnotations.end());
+    // Operation is reversed because -z axis points into the screen
+    std::ranges::sort(depthSortedAnnotations, std::greater{},
+                      [](const auto& a) { return a.position.z(); });
 
     // Sort the orbit paths
-    sort(orbitPathList.begin(), orbitPathList.end());
+    // Operation is reversed because -z axis points into the screen
+    std::ranges::sort(orbitPathList, std::greater{},
+                      [](const auto& op) { return op.centerZ - op.radius; });
 
 #ifndef GL_ES
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum) renderMode);

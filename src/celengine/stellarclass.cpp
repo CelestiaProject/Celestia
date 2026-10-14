@@ -165,13 +165,6 @@ StellarClass::unpackV2(std::uint16_t st)
     return true;
 }
 
-
-bool operator<(const StellarClass& sc0, const StellarClass& sc1)
-{
-    return sc0.packV2() < sc1.packV2();
-}
-
-
 // The following code implements a state machine for parsing spectral
 // types.  It is a very forgiving parser, returning unknown for any of the
 // spectral type fields it can't find, and silently ignoring any extra

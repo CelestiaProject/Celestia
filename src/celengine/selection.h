@@ -77,26 +77,16 @@ public:
 
     inline SelectionType getType() const { return type; }
 
+    bool operator==(const Selection&) const noexcept = default;
+
 private:
     SelectionType type { SelectionType::None };
     void* obj { nullptr };
 
     void checkNull() { if (obj == nullptr) type = SelectionType::None; }
 
-    friend bool operator==(const Selection& s0, const Selection& s1);
-    friend bool operator!=(const Selection& s0, const Selection& s1);
     friend struct std::hash<Selection>;
 };
-
-inline bool operator==(const Selection& s0, const Selection& s1)
-{
-    return s0.type == s1.type && s0.obj == s1.obj;
-}
-
-inline bool operator!=(const Selection& s0, const Selection& s1)
-{
-    return s0.type != s1.type || s0.obj != s1.obj;
-}
 
 template<>
 struct std::hash<Selection>

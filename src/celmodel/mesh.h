@@ -11,6 +11,7 @@
 #pragma once
 
 #include <array>
+#include <compare>
 #include <cstddef>
 #include <cstdint>
 #include <span>
@@ -101,13 +102,12 @@ struct VertexAttribute
         }
     }
 
+    constexpr auto operator<=>(const VertexAttribute&) const noexcept = default;
+
     VertexAttributeSemantic semantic{ VertexAttributeSemantic::InvalidSemantic };
     VertexAttributeFormat   format{ VertexAttributeFormat::InvalidFormat };
     unsigned int            offsetWords{ 0 };
 };
-
-bool operator==(const VertexAttribute& a, const VertexAttribute& b);
-bool operator<(const VertexAttribute& a, const VertexAttribute& b);
 
 class VertexDescription : private celestia::util::NoCopy
 {
@@ -126,18 +126,15 @@ public:
 
     VertexDescription augment(VertexAttributeSemantic, VertexAttributeFormat) const;
 
+    bool operator==(const VertexDescription&) const noexcept;
+    std::strong_ordering operator<=>(const VertexDescription&) const noexcept;
+
 private:
     unsigned int m_strideBytes{ 0 };
     std::vector<VertexAttribute> m_attributes;
     // Vertex attributes indexed by semantic
     std::array<int, static_cast<std::size_t>(VertexAttributeSemantic::SemanticMax)> m_semanticMap;
-
-    friend bool operator==(const VertexDescription&, const VertexDescription&);
-    friend bool operator<(const VertexDescription&, const VertexDescription&);
 };
-
-bool operator==(const VertexDescription&, const VertexDescription&);
-bool operator<(const VertexDescription&, const VertexDescription&);
 
 struct PrimitiveGroup : private celestia::util::NoCopy
 {
