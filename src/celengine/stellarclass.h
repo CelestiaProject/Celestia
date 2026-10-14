@@ -91,8 +91,6 @@ public:
 
     static StellarClass parse(std::string_view);
 
-    friend bool operator<(const StellarClass& sc0, const StellarClass& sc1);
-
     // methods for StarDB Ver. 0x0100
     std::uint16_t packV1() const;
     bool unpackV1(std::uint16_t);
@@ -107,10 +105,6 @@ private:
     LuminosityClass lumClass{ Lum_Unknown };
     unsigned int subclass{ Subclass_Unknown };
 };
-
-// A rough ordering of stellar classes, from 'early' to 'late' . . .
-// Useful for organizing a list of stars by spectral class.
-bool operator<(const StellarClass& sc0, const StellarClass& sc1);
 
 inline StellarClass::StellarClass(StarType t,
                                   SpectralClass sc,

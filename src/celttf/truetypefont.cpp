@@ -784,10 +784,7 @@ struct FontCacheKey
     int index;
     int size;
 
-    bool operator==(const FontCacheKey &other) const
-    {
-        return filename == other.filename && index == other.index && size == other.size;
-    }
+    bool operator==(const FontCacheKey &other) const noexcept = default;
 };
 
 template<> struct std::hash<FontCacheKey>

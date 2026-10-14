@@ -353,8 +353,6 @@ class Renderer
         LabelHorizontalAlignment halign : 3;
         LabelVerticalAlignment valign : 3;
         float size;
-
-        bool operator<(const Annotation&) const;
     };
 
     void addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
@@ -408,8 +406,6 @@ class Renderer
         const Star* star;
         Eigen::Vector3d origin;
         float opacity;
-
-        bool operator<(const OrbitPathListEntry&) const;
     };
 
     enum class FontStyle : std::uint8_t

@@ -63,12 +63,8 @@ public:
         iterator& operator--() { --m_position; return *this; }
         iterator operator--(int) { iterator result = *this; --m_position; return result; }
 
-        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.m_array == rhs.m_array && lhs.m_position == rhs.m_position; }
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return !(lhs == rhs); }
-        friend bool operator<(const iterator& lhs, const iterator& rhs) { return lhs.m_position < rhs.m_position; }
-        friend bool operator>(const iterator& lhs, const iterator& rhs) { return lhs.m_position > rhs.m_position; }
-        friend bool operator<=(const iterator& lhs, const iterator& rhs) { return lhs.m_position <= rhs.m_position; }
-        friend bool operator>=(const iterator& lhs, const iterator& rhs) { return lhs.m_position >= rhs.m_position; }
+        bool operator==(const iterator&) const noexcept = default;
+        auto operator<=>(const iterator& other) const noexcept { return m_position <=> other.m_position; }
 
         iterator& operator+=(difference_type n) { m_position += n; return *this; }
         iterator& operator-=(difference_type n) { m_position -= n; return *this; }
@@ -114,12 +110,8 @@ public:
         const_iterator& operator--() { --m_position; return *this; }
         const_iterator operator--(int) { const_iterator result = *this; --m_position; return result; }
 
-        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_array == rhs.m_array && lhs.m_position == rhs.m_position; }
-        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return !(lhs == rhs); }
-        friend bool operator<(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position < rhs.m_position; }
-        friend bool operator>(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position > rhs.m_position; }
-        friend bool operator<=(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position <= rhs.m_position; }
-        friend bool operator>=(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_position >= rhs.m_position; }
+        bool operator==(const const_iterator&) const noexcept = default;
+        auto operator<=>(const const_iterator& other) const noexcept { return m_position <=> other.m_position; }
 
         const_iterator& operator+=(difference_type n) { m_position += n; return *this; }
         const_iterator& operator-=(difference_type n) { m_position -= n; return *this; }
@@ -226,33 +218,9 @@ bool operator==(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKS
 }
 
 template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator!=(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
+auto operator<=>(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
 {
-    return !(lhs == rhs);
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator<(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator>(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return rhs < lhs;
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator<=(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return !(rhs < lhs);
-}
-
-template<typename T, std::size_t BLOCKSIZE1, std::size_t BLOCKSIZE2>
-bool operator>=(const BlockArray<T, BLOCKSIZE1>& lhs, const BlockArray<T, BLOCKSIZE2>& rhs)
-{
-    return !(lhs < rhs);
+    return std::lexicographical_compare_three_way(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template<typename T, std::size_t BLOCKSIZE>

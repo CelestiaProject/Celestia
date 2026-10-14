@@ -62,20 +62,7 @@ public:
         return Eigen::Vector3f(m_red, m_green, m_blue);
     }
 
-    constexpr bool operator==(const Color& other) const
-    {
-        return std::tie(m_red, m_green, m_blue) == std::tie(other.m_red, other.m_green, other.m_blue);
-    }
-
-    constexpr bool operator!=(const Color& other) const
-    {
-        return !(*this == other);
-    }
-
-    constexpr bool operator<(const Color& other) const
-    {
-        return std::tie(m_red, m_green, m_blue) < std::tie(other.m_red, other.m_green, other.m_blue);
-    }
+    constexpr auto operator<=>(const Color&) const noexcept = default;
 
 private:
     float m_red{ 0.0f };
@@ -116,6 +103,8 @@ struct Material
         maps[static_cast<std::size_t>(semantic)] = handle;
     }
 
+    bool operator==(const Material&) const noexcept = default;
+
     Color diffuse;
     Color emissive;
     Color specular;
@@ -126,20 +115,9 @@ struct Material
                static_cast<std::size_t>(TextureSemantic::TextureSemanticMax)> maps;
 };
 
-inline bool operator==(const Material& lhs, const Material& rhs)
-{
-    return std::tie(lhs.opacity, lhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
-        == std::tie(rhs.opacity, rhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
-}
-
-inline bool operator!=(const Material& lhs, const Material& rhs)
-{
-    return !(lhs == rhs);
-}
-
 // Define an ordering for materials; required for elimination of duplicate
 // materials.
-inline bool operator<(const Material& lhs, const Material& rhs)
+inline auto operator<=>(const Material& lhs, const Material& rhs) noexcept
 {
     // Checking opacity first and doing it backwards is deliberate. It means
     // that after sorting, translucent materials will end up with higher
@@ -152,22 +130,7 @@ inline bool operator<(const Material& lhs, const Material& rhs)
     // last.
 
     return std::tie(lhs.opacity, rhs.blend, lhs.diffuse, lhs.emissive, lhs.specular, lhs.specularPower, lhs.maps)
-         < std::tie(rhs.opacity, lhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
-}
-
-inline bool operator>(const Material& lhs, const Material& rhs)
-{
-    return rhs < lhs;
-}
-
-inline bool operator<=(const Material& lhs, const Material& rhs)
-{
-    return !(rhs < lhs);
-}
-
-inline bool operator>=(const Material& lhs, const Material& rhs)
-{
-    return !(lhs < rhs);
+       <=> std::tie(rhs.opacity, lhs.blend, rhs.diffuse, rhs.emissive, rhs.specular, rhs.specularPower, rhs.maps);
 }
 
 } // namespace cmod
