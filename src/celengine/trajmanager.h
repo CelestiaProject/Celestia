@@ -11,7 +11,6 @@
 
 #include <cstddef>
 #include <filesystem>
-#include <functional>
 #include <memory>
 #include <unordered_map>
 
@@ -47,22 +46,7 @@ private:
 
     struct KeyHasher
     {
-        std::size_t operator()(const Key& key) const noexcept
-        {
-            // Only support 32-bit and 64-bit size_t for now
-            static_assert(sizeof(std::size_t) == sizeof(std::uint32_t) || sizeof(std::size_t) == sizeof(std::uint64_t));
-
-            // Based on documentation of boost::hash_combine
-            // Prevent Sonar complaining about platform-dependent casts that happen to be redundant on the system it runs on
-            constexpr std::size_t phi = sizeof(std::size_t) == sizeof(std::uint32_t)
-                ? static_cast<std::size_t>(0x9e3779b9) //NOSONAR
-                : static_cast<std::size_t>(0x9e3779b97f4a7c15); //NOSONAR
-
-            auto seed = std::filesystem::hash_value(key.path);
-            seed ^= std::hash<ephem::TrajectoryInterpolation>{}(key.interpolation) + phi + (seed << 6) + (seed >> 2);
-            seed ^= std::hash<ephem::TrajectoryPrecision>{}(key.precision) + phi + (seed << 6) + (seed >> 2);
-            return seed;
-        }
+        std::size_t operator()(const Key& key) const;
     };
 
     std::unordered_map<Key, std::weak_ptr<const ephem::Orbit>, KeyHasher> orbits;
