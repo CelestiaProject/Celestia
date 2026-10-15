@@ -602,7 +602,7 @@ void CommandSet::processInstantaneous(ExecutionEnvironment& env)
 // Mark object command
 
 CommandMark::CommandMark(std::string _target,
-                         celestia::MarkerRepresentation _rep,
+                         celestia::engine::MarkerRepresentation _rep,
                          bool _occludable) :
     target(std::move(_target)),
     rep(_rep),

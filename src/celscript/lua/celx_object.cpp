@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <string_view>
 
 #include <celengine/atmosphere.h>
 #include <celengine/axisarrow.h>
@@ -35,6 +36,7 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace std::string_view_literals;
 using celestia::util::GetLogger;
 
 
@@ -86,36 +88,36 @@ static const char* dsoTypeName(DeepSkyObjectType dsoType)
     }
 }
 
-static celestia::MarkerRepresentation::Symbol parseMarkerSymbol(const string& name)
+static celestia::engine::MarkerSymbol parseMarkerSymbol(const string& name)
 {
-    using namespace celestia;
+    using enum celestia::engine::MarkerSymbol;
 
-    if (compareIgnoringCase(name, "diamond") == 0)
-        return MarkerRepresentation::Diamond;
-    if (compareIgnoringCase(name, "triangle") == 0)
-        return MarkerRepresentation::Triangle;
-    if (compareIgnoringCase(name, "square") == 0)
-        return MarkerRepresentation::Square;
-    if (compareIgnoringCase(name, "filledsquare") == 0)
-        return MarkerRepresentation::FilledSquare;
-    if (compareIgnoringCase(name, "plus") == 0)
-        return MarkerRepresentation::Plus;
-    if (compareIgnoringCase(name, "x") == 0)
-        return MarkerRepresentation::X;
-    if (compareIgnoringCase(name, "leftarrow") == 0)
-        return MarkerRepresentation::LeftArrow;
-    if (compareIgnoringCase(name, "rightarrow") == 0)
-        return MarkerRepresentation::RightArrow;
-    if (compareIgnoringCase(name, "uparrow") == 0)
-        return MarkerRepresentation::UpArrow;
-    if (compareIgnoringCase(name, "downarrow") == 0)
-        return MarkerRepresentation::DownArrow;
-    if (compareIgnoringCase(name, "circle") == 0)
-        return MarkerRepresentation::Circle;
-    if (compareIgnoringCase(name, "disk") == 0)
-        return MarkerRepresentation::Disk;
+    if (compareIgnoringCase(name, "diamond"sv) == 0)
+        return Diamond;
+    if (compareIgnoringCase(name, "triangle"sv) == 0)
+        return Triangle;
+    if (compareIgnoringCase(name, "square"sv) == 0)
+        return Square;
+    if (compareIgnoringCase(name, "filledsquare"sv) == 0)
+        return FilledSquare;
+    if (compareIgnoringCase(name, "plus"sv) == 0)
+        return Plus;
+    if (compareIgnoringCase(name, "x"sv) == 0)
+        return X;
+    if (compareIgnoringCase(name, "leftarrow"sv) == 0)
+        return LeftArrow;
+    if (compareIgnoringCase(name, "rightarrow"sv) == 0)
+        return RightArrow;
+    if (compareIgnoringCase(name, "uparrow"sv) == 0)
+        return UpArrow;
+    if (compareIgnoringCase(name, "downarrow"sv) == 0)
+        return DownArrow;
+    if (compareIgnoringCase(name, "circle"sv) == 0)
+        return Circle;
+    if (compareIgnoringCase(name, "disk"sv) == 0)
+        return Disk;
     else
-        return MarkerRepresentation::Diamond;
+        return Diamond;
 }
 
 
@@ -783,7 +785,7 @@ static int object_mark(lua_State* l)
     if (colorString != nullptr)
         Color::parse(colorString, markColor);
 
-    auto markSymbol = celestia::MarkerRepresentation::Diamond;
+    auto markSymbol = celestia::engine::MarkerSymbol::Diamond;
     const char* markerString = celx.safeGetString(3, WrongType, "Second argument to object:mark must be a string");
     if (markerString != nullptr)
         markSymbol = parseMarkerSymbol(markerString);
@@ -802,9 +804,9 @@ static int object_mark(lua_State* l)
 
     bool occludable = celx.safeGetBoolean(7, WrongType, "Sixth argument to object:mark must be a boolean", true);
 
-    Simulation* sim = appCore->getSimulation();
+    const Simulation* sim = appCore->getSimulation();
 
-    celestia::MarkerRepresentation markerRep(markSymbol);
+    celestia::engine::MarkerRepresentation markerRep(markSymbol);
     markerRep.setSize(markSize);
     markerRep.setColor(markColorAlpha);
     markerRep.setLabel(markLabel);

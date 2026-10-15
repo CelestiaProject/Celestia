@@ -680,7 +680,7 @@ Universe::getSolarSystem(const Selection& sel) const
     }
 }
 
-const celestia::MarkerList&
+const celestia::engine::MarkerList&
 Universe::getMarkers() const
 {
     return markers;
@@ -688,10 +688,10 @@ Universe::getMarkers() const
 
 void
 Universe::markObject(const Selection& sel,
-                     const celestia::MarkerRepresentation& rep,
+                     const celestia::engine::MarkerRepresentation& rep,
                      int priority,
                      bool occludable,
-                     celestia::MarkerSizing sizing)
+                     celestia::engine::MarkerSizing sizing)
 {
     if (auto iter = std::find_if(markers.begin(), markers.end(),
                                  [&sel](const auto& m) { return m.object() == sel; });
@@ -705,7 +705,7 @@ Universe::markObject(const Selection& sel,
         markers.erase(iter);
     }
 
-    celestia::Marker& marker = markers.emplace_back(sel);
+    celestia::engine::Marker& marker = markers.emplace_back(sel);
     marker.setRepresentation(rep);
     marker.setPriority(priority);
     marker.setOccludable(occludable);

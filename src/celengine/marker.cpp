@@ -9,94 +9,97 @@
 // of the License, or (at your option) any later version.
 
 #include "marker.h"
+
 #include "render.h"
 
+namespace celestia::engine
+{
 
-using namespace std;
-using namespace celestia;
-
-UniversalCoord Marker::position(double jd) const
+UniversalCoord
+Marker::position(double jd) const
 {
     return m_object.getPosition(jd);
 }
 
-
-Selection Marker::object() const
+Selection
+Marker::object() const noexcept
 {
     return m_object;
 }
 
-
-int Marker::priority() const
+int
+Marker::priority() const noexcept
 {
     return m_priority;
 }
 
-
-void Marker::setPriority(int priority)
+void
+Marker::setPriority(int priority)
 {
     m_priority = priority;
 }
 
-
-void Marker::setRepresentation(const MarkerRepresentation& rep)
+void
+Marker::setRepresentation(const MarkerRepresentation& rep)
 {
     m_representation = rep;
 }
 
-
-bool Marker::occludable() const
+bool
+Marker::occludable() const noexcept
 {
     return m_occludable;
 }
 
-
-void Marker::setOccludable(bool occludable)
+void
+Marker::setOccludable(bool occludable)
 {
     m_occludable = occludable;
 }
 
-
-MarkerSizing Marker::sizing() const
+MarkerSizing
+Marker::sizing() const noexcept
 {
     return m_sizing;
 }
 
-
-void Marker::setSizing(MarkerSizing sizing)
+void
+Marker::setSizing(MarkerSizing sizing)
 {
     m_sizing = sizing;
 }
 
-
-void Marker::render(Renderer& r, float size, const Matrices &m) const
+void
+Marker::render(Renderer& r, float size, const Matrices &m) const
 {
-    m_representation.render(r, m_sizing == DistanceBasedSize ? size : m_representation.size(), m);
+    m_representation.render(r, m_sizing == MarkerSizing::DistanceBasedSize ? size : m_representation.size(), m);
 }
 
-
-void MarkerRepresentation::setColor(Color color)
+void
+MarkerRepresentation::setColor(Color color)
 {
     m_color = color;
 }
 
-
-void MarkerRepresentation::setSize(float size)
+void
+MarkerRepresentation::setSize(float size)
 {
     m_size = size;
 }
 
-
-void MarkerRepresentation::setLabel(std::string label)
+void
+MarkerRepresentation::setLabel(std::string_view label)
 {
-    m_label = std::move(label);
+    m_label = label;
 }
-
 
 /*! Render the marker symbol at the specified size. The size is
  *  the diameter of the marker in pixels.
  */
-void MarkerRepresentation::render(Renderer &r, float size, const Matrices &m) const
+void
+MarkerRepresentation::render(Renderer &r, float size, const Matrices &m) const
 {
     r.renderMarker(m_symbol, size, m_color, m);
 }
+
+} // end namespace celestia::engine

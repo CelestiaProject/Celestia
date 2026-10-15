@@ -787,7 +787,7 @@ void Renderer::getLabelAlignmentInfo(const Annotation &annotation, const Texture
 }
 
 void Renderer::addAnnotation(vector<Annotation>& annotations,
-                             const celestia::MarkerRepresentation* markerRep,
+                             const celestia::engine::MarkerRepresentation* markerRep,
                              std::string_view labelText,
                              Color color,
                              const Vector3f& pos,
@@ -833,7 +833,7 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
 }
 
 
-void Renderer::addForegroundAnnotation(const celestia::MarkerRepresentation* markerRep,
+void Renderer::addForegroundAnnotation(const celestia::engine::MarkerRepresentation* markerRep,
                                        std::string_view labelText,
                                        Color color,
                                        const Vector3f& pos,
@@ -845,7 +845,7 @@ void Renderer::addForegroundAnnotation(const celestia::MarkerRepresentation* mar
 }
 
 
-void Renderer::addBackgroundAnnotation(const celestia::MarkerRepresentation* markerRep,
+void Renderer::addBackgroundAnnotation(const celestia::engine::MarkerRepresentation* markerRep,
                                        std::string_view labelText,
                                        Color color,
                                        const Vector3f& pos,
@@ -857,7 +857,7 @@ void Renderer::addBackgroundAnnotation(const celestia::MarkerRepresentation* mar
 }
 
 
-void Renderer::addSortedAnnotation(const celestia::MarkerRepresentation* markerRep,
+void Renderer::addSortedAnnotation(const celestia::engine::MarkerRepresentation* markerRep,
                                    std::string_view labelText,
                                    Color color,
                                    const Vector3f& pos,
@@ -934,7 +934,7 @@ void Renderer::endObjectAnnotations()
 }
 
 
-void Renderer::addObjectAnnotation(const celestia::MarkerRepresentation* markerRep,
+void Renderer::addObjectAnnotation(const celestia::engine::MarkerRepresentation* markerRep,
                                    std::string_view labelText,
                                    Color color,
                                    const Vector3f& pos,
@@ -2107,7 +2107,7 @@ Renderer::locationsToAnnotations(const Body& body,
         double z = viewNormal.dot(labelPos);
         labelPos *= planetZ / z;
 
-        const celestia::MarkerRepresentation* locationMarker = nullptr;
+        const celestia::engine::MarkerRepresentation* locationMarker = nullptr;
         if (featureType & Location::City)
             locationMarker = &cityRep;
         else if (featureType & (Location::LandingSite | Location::Observatory))
@@ -3292,12 +3292,12 @@ void Renderer::renderPlanet(Body& body,
         if (bodyFeaturesManager->hasLocations(&body) && util::is_set(labelMode, RenderLabels::LocationLabels))
         {
             // Set up location markers for this body
-            using namespace celestia;
-            mountainRep    = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, colors.LocationLabel);
-            craterRep      = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, colors.LocationLabel);
-            observatoryRep = MarkerRepresentation(MarkerRepresentation::Plus,     8.0f, colors.LocationLabel);
-            cityRep        = MarkerRepresentation(MarkerRepresentation::X,        3.0f, colors.LocationLabel);
-            genericLocationRep = MarkerRepresentation(MarkerRepresentation::Square, 8.0f, colors.LocationLabel);
+            using enum MarkerSymbol;
+            mountainRep    =     MarkerRepresentation(Triangle, 8.0f, colors.LocationLabel);
+            craterRep      =     MarkerRepresentation(Circle,   8.0f, colors.LocationLabel);
+            observatoryRep =     MarkerRepresentation(Plus,     8.0f, colors.LocationLabel);
+            cityRep        =     MarkerRepresentation(X,        3.0f, colors.LocationLabel);
+            genericLocationRep = MarkerRepresentation(Square,   8.0f, colors.LocationLabel);
 
             // We need a double precision body-relative position of the
             // observer, otherwise location labels will tend to jitter.
@@ -4544,11 +4544,10 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
 
     dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
 
-    using namespace celestia;
-    galaxyRep      = MarkerRepresentation(MarkerRepresentation::Triangle, 8.0f, colors.GalaxyLabel);
-    nebulaRep      = MarkerRepresentation(MarkerRepresentation::Square,   8.0f, colors.NebulaLabel);
-    openClusterRep = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, colors.OpenClusterLabel);
-    globularRep    = MarkerRepresentation(MarkerRepresentation::Circle,   8.0f, colors.GlobularLabel);
+    galaxyRep      = MarkerRepresentation(MarkerSymbol::Triangle, 8.0f, colors.GalaxyLabel);
+    nebulaRep      = MarkerRepresentation(MarkerSymbol::Square,   8.0f, colors.NebulaLabel);
+    openClusterRep = MarkerRepresentation(MarkerSymbol::Circle,   8.0f, colors.OpenClusterLabel);
+    globularRep    = MarkerRepresentation(MarkerSymbol::Circle,   8.0f, colors.GlobularLabel);
 
     dsoDB->findVisibleDSOs(dsoRenderer,
                            obsPos,
@@ -4708,7 +4707,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
                                  float depth,
                                  const Matrices &m)
 {
-    const celestia::MarkerRepresentation& markerRep = *a.markerRep;
+    const celestia::engine::MarkerRepresentation& markerRep = *a.markerRep;
     float size = a.size > 0.0f ? a.size : markerRep.size();
 
     glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, a.color);
@@ -4716,7 +4715,7 @@ Renderer::renderAnnotationMarker(const Annotation &a,
     Matrix4f mv = math::translate(*m.modelview, (float)(int)a.position.x(), (float)(int)a.position.y(), depth);
     Matrices mm = { m.projection, &mv };
 
-    if (markerRep.symbol() == celestia::MarkerRepresentation::Crosshair)
+    if (markerRep.symbol() == celestia::engine::MarkerSymbol::Crosshair)
         renderCrosshair(size, realTime, a.color, mm);
     else
         markerRep.render(*this, size, mm);
@@ -4894,7 +4893,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
 }
 
 
-void Renderer::markersToAnnotations(const celestia::MarkerList& markers,
+void Renderer::markersToAnnotations(const celestia::engine::MarkerList& markers,
                                     const Observer& observer,
                                     double jd)
 {
@@ -4911,7 +4910,7 @@ void Renderer::markersToAnnotations(const celestia::MarkerList& markers,
         if ((offset.dot(viewVector)) > cosViewConeAngle * distance)
         {
             float symbolSize = 0.0f;
-            if (marker.sizing() == celestia::DistanceBasedSize)
+            if (marker.sizing() == celestia::engine::MarkerSizing::DistanceBasedSize)
             {
                 symbolSize = (float) (marker.representation().size() / distance) / pixelSize;
             }
@@ -5850,7 +5849,7 @@ Renderer::selectionToAnnotation(const Selection &sel,
 {
     Vector3d offset = sel.getPosition(jd).offsetFromKm(observer.getPosition());
 
-    static celestia::MarkerRepresentation cursorRep(celestia::MarkerRepresentation::Crosshair);
+    static celestia::engine::MarkerRepresentation cursorRep(celestia::engine::MarkerSymbol::Crosshair);
     if (xfrustum.testSphere(offset, sel.radius()) == math::FrustumAspect::Outside)
         return false;
 

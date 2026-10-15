@@ -912,7 +912,7 @@ SolarSystemBrowser::slotContextMenu(const QPoint& pos)
 void
 SolarSystemBrowser::slotMarkSelected()
 {
-    using namespace celestia;
+    using engine::MarkerRepresentation, engine::MarkerSymbol;
 
     QItemSelectionModel* sm = treeView->selectionModel();
     QModelIndexList rows = sm->selectedRows();
@@ -920,7 +920,7 @@ SolarSystemBrowser::slotMarkSelected()
     bool labelMarker = labelMarkerBox->checkState() == Qt::Checked;
     bool convertOK = false;
     QVariant markerData = markerSymbolBox->itemData(markerSymbolBox->currentIndex());
-    MarkerRepresentation::Symbol markerSymbol = (MarkerRepresentation::Symbol) markerData.toInt(&convertOK);
+    auto markerSymbol = static_cast<MarkerSymbol>(markerData.toInt(&convertOK));
     QVariant markerSize = markerSizeBox->itemData(markerSizeBox->currentIndex());
     float size = (float) markerSize.toInt(&convertOK);
     QColor markerColor = colorSwatch->color();

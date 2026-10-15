@@ -83,14 +83,14 @@ public:
                       std::vector<const Star*>& stars) const;
 
     void markObject(const Selection&,
-                    const celestia::MarkerRepresentation& rep,
+                    const celestia::engine::MarkerRepresentation& rep,
                     int priority,
                     bool occludable = true,
-                    celestia::MarkerSizing sizing = celestia::ConstantSize);
+                    celestia::engine::MarkerSizing sizing = celestia::engine::MarkerSizing::ConstantSize);
     void unmarkObject(const Selection&, int priority);
     void unmarkAll();
     bool isMarked(const Selection&, int priority) const;
-    const celestia::MarkerList& getMarkers() const;
+    const celestia::engine::MarkerList& getMarkers() const;
 
     celestia::engine::UrlManager* getUrlManager() const noexcept { return urlManager.get(); }
     std::string_view getInfoURL(const Selection&) const;
@@ -138,6 +138,6 @@ private:
     std::shared_ptr<celestia::engine::GeometryManager> geometryManager;
     std::unique_ptr<celestia::engine::UrlManager> urlManager;
 
-    celestia::MarkerList markers{ };
-    std::vector<const Star*> closeStars{ };
+    celestia::engine::MarkerList markers;
+    std::vector<const Star*> closeStars;
 };

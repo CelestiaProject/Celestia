@@ -573,14 +573,14 @@ class CommandPreloadTextures : public InstantaneousCommand
 class CommandMark : public InstantaneousCommand
 {
  public:
-    CommandMark(std::string, celestia::MarkerRepresentation, bool);
+    CommandMark(std::string, celestia::engine::MarkerRepresentation, bool);
 
  protected:
     void processInstantaneous(ExecutionEnvironment&) override;
 
  private:
     std::string target;
-    celestia::MarkerRepresentation rep;
+    celestia::engine::MarkerRepresentation rep;
     bool occludable;
 };
 
