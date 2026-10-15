@@ -11,10 +11,22 @@
 
 #include <utility>
 
+#include <boost/container_hash/hash.hpp>
+
 #include <celephem/samporbit.h>
 
 namespace celestia::engine
 {
+
+std::size_t
+TrajectoryManager::KeyHasher::operator()(const Key& key) const
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, std::filesystem::hash_value(key.path));
+    boost::hash_combine(seed, key.interpolation);
+    boost::hash_combine(seed, key.precision);
+    return seed;
+}
 
 std::shared_ptr<const ephem::Orbit>
 TrajectoryManager::find(const std::filesystem::path& source,
