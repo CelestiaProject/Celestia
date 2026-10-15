@@ -9,37 +9,39 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
+#include <string_view>
+#include <vector>
+
 #include <celutil/color.h>
 #include <celengine/selection.h>
 
 class Renderer;
 struct Matrices;
 
-namespace celestia
+namespace celestia::engine
 {
+enum class MarkerSymbol : int
+{
+    Diamond    = 0,
+    Triangle   = 1,
+    Square     = 2,
+    FilledSquare = 3,
+    Plus       = 4,
+    X          = 5,
+    LeftArrow  = 6,
+    RightArrow = 7,
+    UpArrow    = 8,
+    DownArrow  = 9,
+    Circle     = 10,
+    Disk       = 11,
+    Crosshair  = 12,
+};
+
 class MarkerRepresentation
 {
 public:
-    enum Symbol
-    {
-        Diamond    = 0,
-        Triangle   = 1,
-        Square     = 2,
-        FilledSquare = 3,
-        Plus       = 4,
-        X          = 5,
-        LeftArrow  = 6,
-        RightArrow = 7,
-        UpArrow    = 8,
-        DownArrow  = 9,
-        Circle     = 10,
-        Disk       = 11,
-        Crosshair  = 12,
-    };
-
-    explicit MarkerRepresentation(Symbol symbol = MarkerRepresentation::Diamond,
+    explicit MarkerRepresentation(MarkerSymbol symbol = MarkerSymbol::Diamond,
                                   float size = 10.0f,
                                   Color color = Color::White,
                                   std::string label = {}) :
@@ -50,23 +52,22 @@ public:
     {
     }
 
-    Symbol symbol() const { return m_symbol; }
-    Color color() const { return m_color; }
+    MarkerSymbol symbol() const noexcept { return m_symbol; }
+    Color color() const noexcept { return m_color; }
     void setColor(Color);
-    float size() const { return m_size; }
+    float size() const noexcept { return m_size; }
     void setSize(float size);
-    const std::string& label() const { return m_label; }
-    void setLabel(std::string);
+    std::string_view label() const { return m_label; }
+    void setLabel(std::string_view);
 
     void render(Renderer &r, float size, const Matrices &m) const;
 
 private:
-    Symbol m_symbol;
+    MarkerSymbol m_symbol;
     float m_size;
     Color m_color;
     std::string m_label;
 };
-
 
 /*! Options for marker sizing:
  *    When the sizing is set to ConstantSize, the marker size is interpreted
@@ -75,42 +76,41 @@ private:
  *    in kilometers, and the size of the marker on screen is based on
  *    the size divided by the marker's distance from the observer.
  */
-enum MarkerSizing
+enum class MarkerSizing
 {
     ConstantSize,
     DistanceBasedSize,
 };
 
-
 class Marker
 {
- public:
+public:
     Marker(const Selection& s) : m_object(s) {};
     ~Marker() = default;
 
     UniversalCoord position(double jd) const;
-    Selection object() const;
+    Selection object() const noexcept;
 
-    int priority() const;
+    int priority() const noexcept;
     void setPriority(int);
-    bool occludable() const;
+    bool occludable() const noexcept;
     void setOccludable(bool);
-    MarkerSizing sizing() const;
+    MarkerSizing sizing() const noexcept;
     void setSizing(MarkerSizing);
 
-    const MarkerRepresentation& representation() const { return m_representation; }
-    MarkerRepresentation& representation() { return m_representation; }
+    const MarkerRepresentation& representation() const noexcept { return m_representation; }
+    MarkerRepresentation& representation() noexcept { return m_representation; }
     void setRepresentation(const MarkerRepresentation& rep);
 
     void render(Renderer &r, float size, const Matrices &m) const;
 
- private:
+private:
     Selection m_object;
     int m_priority{ 0 };
-    MarkerRepresentation m_representation{ MarkerRepresentation::Diamond };
+    MarkerRepresentation m_representation{ MarkerSymbol::Diamond };
     bool m_occludable { true };
-    MarkerSizing m_sizing { ConstantSize };
+    MarkerSizing m_sizing { MarkerSizing::ConstantSize };
 };
 
-typedef std::vector<Marker> MarkerList;
-}
+using MarkerList = std::vector<Marker>;
+} // end namespace celestia::engine

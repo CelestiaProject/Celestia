@@ -132,7 +132,7 @@ constexpr std::array<float, 232> FilledMarkersData = {
 };
 
 void
-RenderFilledMarker(Renderer &r, gl::VertexObject &vo, MarkerRepresentation::Symbol symbol, float size, const Color &color, const Matrices &m)
+RenderFilledMarker(Renderer &r, gl::VertexObject &vo, MarkerSymbol symbol, float size, const Color &color, const Matrices &m)
 {
     ShaderProperties shadprop;
     shadprop.texUsage = TexUsage::VertexColors;
@@ -145,22 +145,22 @@ RenderFilledMarker(Renderer &r, gl::VertexObject &vo, MarkerRepresentation::Symb
     prog->setMVPMatrices(*m.projection, *m.modelview);
     switch (symbol)
     {
-    case MarkerRepresentation::FilledSquare:
+    case MarkerSymbol::FilledSquare:
         vo.draw(gl::VertexObject::Primitive::TriangleFan, 4, 0);
         break;
-    case MarkerRepresentation::RightArrow:
+    case MarkerSymbol::RightArrow:
         vo.draw(gl::VertexObject::Primitive::Triangles, 9, 4);
         break;
-    case MarkerRepresentation::LeftArrow:
+    case MarkerSymbol::LeftArrow:
         vo.draw(gl::VertexObject::Primitive::Triangles, 9, 13);
         break;
-    case MarkerRepresentation::UpArrow:
+    case MarkerSymbol::UpArrow:
         vo.draw(gl::VertexObject::Primitive::Triangles, 9, 22);
         break;
-    case MarkerRepresentation::DownArrow:
+    case MarkerSymbol::DownArrow:
         vo.draw(gl::VertexObject::Primitive::Triangles, 9, 31);
         break;
-    case MarkerRepresentation::Disk:
+    case MarkerSymbol::Disk:
         if (size <= 40.0f) // TODO: this should be configurable
             vo.draw(gl::VertexObject::Primitive::TriangleFan, 10, 46);
         else
@@ -359,27 +359,27 @@ constexpr std::array<float, 340> HollowMarkersData = {
 };
 
 void
-RenderHollowMarker(LineRenderer &lr, MarkerRepresentation::Symbol symbol, float size, const Color &color, const Matrices &m)
+RenderHollowMarker(LineRenderer &lr, MarkerSymbol symbol, float size, const Color &color, const Matrices &m)
 {
     lr.prerender();
     switch (symbol)
     {
-    case MarkerRepresentation::Square:
+    case MarkerSymbol::Square:
         lr.render(m, color, 8, 0);
         break;
-    case MarkerRepresentation::Triangle:
+    case MarkerSymbol::Triangle:
         lr.render(m, color, 6, 8);
         break;
-    case MarkerRepresentation::Diamond:
+    case MarkerSymbol::Diamond:
         lr.render(m, color, 8, 14);
         break;
-    case MarkerRepresentation::Plus:
+    case MarkerSymbol::Plus:
         lr.render(m, color, 4, 22);
         break;
-    case MarkerRepresentation::X:
+    case MarkerSymbol::X:
         lr.render(m, color, 4, 26);
         break;
-    case MarkerRepresentation::Circle:
+    case MarkerSymbol::Circle:
         if (size <= 40.0f) // TODO: this should be configurable
             lr.render(m, color, 20, 30);
         else

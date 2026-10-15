@@ -714,36 +714,37 @@ ParseResult parseMarkCommand(const AssociativeArray& paramList, const ScriptMaps
     auto alpha  = paramList.getNumber<float>("alpha").value_or(0.9f);
     Color color(colorv.x(), colorv.y(), colorv.z(), alpha);
 
-    celestia::MarkerRepresentation::Symbol symbol = celestia::MarkerRepresentation::Diamond;
+    auto symbol = celestia::engine::MarkerSymbol::Diamond;
     if (const std::string* symbolString = paramList.getString("symbol"); symbolString != nullptr)
     {
+        using enum celestia::engine::MarkerSymbol;
         if (compareIgnoringCase("diamond"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::Diamond;
+            symbol = Diamond;
         else if (compareIgnoringCase("triangle"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::Triangle;
+            symbol = Triangle;
         else if (compareIgnoringCase("square"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::Square;
+            symbol = Square;
         else if (compareIgnoringCase("filledsquare"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::FilledSquare;
+            symbol = FilledSquare;
         else if (compareIgnoringCase("plus"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::Plus;
+            symbol = Plus;
         else if (compareIgnoringCase("x"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::X;
+            symbol = X;
         else if (compareIgnoringCase("leftarrow"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::LeftArrow;
+            symbol = LeftArrow;
         else if (compareIgnoringCase("rightarrow"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::RightArrow;
+            symbol = RightArrow;
         else if (compareIgnoringCase("uparrow"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::UpArrow;
+            symbol = UpArrow;
         else if (compareIgnoringCase("downarrow"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::DownArrow;
+            symbol = DownArrow;
         else if (compareIgnoringCase("circle"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::Circle;
+            symbol = Circle;
         else if (compareIgnoringCase("disk"sv, *symbolString) == 0)
-            symbol = celestia::MarkerRepresentation::Disk;
+            symbol = Disk;
     }
 
-    celestia::MarkerRepresentation rep{symbol};
+    celestia::engine::MarkerRepresentation rep{symbol};
 
     rep.setSize(static_cast<float>(size));
     rep.setColor(color);

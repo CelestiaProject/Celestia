@@ -1035,7 +1035,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
             }
             else
             {
-                celestia::MarkerRepresentation markerRep(celestia::MarkerRepresentation::Diamond);
+                celestia::engine::MarkerRepresentation markerRep(celestia::engine::MarkerSymbol::Diamond);
                 markerRep.setSize(10.0f);
                 markerRep.setColor({0.0f, 1.0f, 0.0f, 0.9f});
 

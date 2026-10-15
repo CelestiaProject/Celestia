@@ -240,30 +240,30 @@ SelectionPopup::SelectionPopup(const Selection& sel,
 QMenu*
 SelectionPopup::createMarkMenu()
 {
-    using namespace celestia;
+    using engine::MarkerSymbol;
 
     QMenu* markMenu = new QMenu(_("&Mark"));
 
-    auto addSymbol = [&](const QString& name, MarkerRepresentation::Symbol symbol) {
+    const auto addSymbol = [&](const QString& name, MarkerSymbol symbol) {
         QAction* act = new QAction(name, markMenu);
         act->setData(static_cast<int>(symbol));
         connect(act, SIGNAL(triggered()), this, SLOT(slotMark()));
         markMenu->addAction(act);
     };
 
-    addSymbol(_("Diamond"),       MarkerRepresentation::Diamond);
-    addSymbol(_("Triangle"),      MarkerRepresentation::Triangle);
-    addSymbol(_("Square"),        MarkerRepresentation::Square);
-    addSymbol(_("Filled Square"), MarkerRepresentation::FilledSquare);
-    addSymbol(_("Plus"),          MarkerRepresentation::Plus);
-    addSymbol(_("X"),             MarkerRepresentation::X);
-    addSymbol(_("Left Arrow"),    MarkerRepresentation::LeftArrow);
-    addSymbol(_("Right Arrow"),   MarkerRepresentation::RightArrow);
-    addSymbol(_("Up Arrow"),      MarkerRepresentation::UpArrow);
-    addSymbol(_("Down Arrow"),    MarkerRepresentation::DownArrow);
-    addSymbol(_("Circle"),        MarkerRepresentation::Circle);
-    addSymbol(_("Disk"),          MarkerRepresentation::Disk);
-    addSymbol(_("Crosshair"),     MarkerRepresentation::Crosshair);
+    addSymbol(_("Diamond"),       MarkerSymbol::Diamond);
+    addSymbol(_("Triangle"),      MarkerSymbol::Triangle);
+    addSymbol(_("Square"),        MarkerSymbol::Square);
+    addSymbol(_("Filled Square"), MarkerSymbol::FilledSquare);
+    addSymbol(_("Plus"),          MarkerSymbol::Plus);
+    addSymbol(_("X"),             MarkerSymbol::X);
+    addSymbol(_("Left Arrow"),    MarkerSymbol::LeftArrow);
+    addSymbol(_("Right Arrow"),   MarkerSymbol::RightArrow);
+    addSymbol(_("Up Arrow"),      MarkerSymbol::UpArrow);
+    addSymbol(_("Down Arrow"),    MarkerSymbol::DownArrow);
+    addSymbol(_("Circle"),        MarkerSymbol::Circle);
+    addSymbol(_("Disk"),          MarkerSymbol::Disk);
+    addSymbol(_("Crosshair"),     MarkerSymbol::Crosshair);
 
     return markMenu;
 }
@@ -554,7 +554,7 @@ SelectionPopup::slotSelectChildObject()
 void
 SelectionPopup::slotMark()
 {
-    using namespace celestia;
+    using engine::MarkerRepresentation, engine::MarkerSymbol;
 
     QAction* action = qobject_cast<QAction*>(sender());
     if (action)
@@ -565,7 +565,9 @@ SelectionPopup::slotMark()
         {
             Simulation* sim = appCore->getSimulation();
             sim->getUniverse()->markObject(selection,
-                                           MarkerRepresentation(MarkerRepresentation::Symbol(symbol), 10.0f, Color(0.0f, 1.0f, 0.0f, 0.9f)),
+                                           MarkerRepresentation(static_cast<MarkerSymbol>(symbol),
+                                                                10.0f,
+                                                                Color(0.0f, 1.0f, 0.0f, 0.9f)),
                                            1);
 
             // Automatically enable markers

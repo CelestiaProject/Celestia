@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2023-present, Celestia Development Team
 #
@@ -125,7 +125,7 @@ result = []
 offset = 0
 for m in filledMarkers:
     offsets.append(offset)
-    count = len(m) / 2
+    count = len(m) // 2
     counts.append(count)
     offset += count
     result += m
@@ -145,14 +145,14 @@ print("constexpr std::array<float, {}> FilledMarkersData = {{".format(len(result
 i = 0
 n = 0
 while i < len(result):
-    if n < len(offsets) and i / 2 == offsets[n]:
+    if n < len(offsets) and i // 2 == offsets[n]:
         print("    // {}".format(list(FilledMarkers)[n].name))
         n += 1
     print("    {: f}f, {: f}f{}".format(result[i], result[i+1], ',' if i < len(result) - 2 else ''))
     i += 2
 print("};")
 
-print("\nvoid\nRenderFilledMarker(Renderer &r, gl::VertexObject &vo, MarkerRepresentation::Symbol symbol, float size, const Color &color, const Matrices &m)")
+print("\nvoid\nRenderFilledMarker(Renderer &r, gl::VertexObject &vo, MarkerSymbol symbol, float size, const Color &color, const Matrices &m)")
 print("{")
 print("    ShaderProperties shadprop;")
 print("    shadprop.texUsage = TexUsage::VertexColors;")
@@ -169,10 +169,10 @@ print("    {")
 for i in FilledMarkers:
     if not i.name in ['Disk', 'LargeDisk', 'SelPointer', 'Crosshair']:
         prim = 'gl::VertexObject::Primitive::TriangleFan' if i.name  == 'FilledSquare' else 'gl::VertexObject::Primitive::Triangles'
-        print("    case MarkerRepresentation::{}:".format(i.name))
+        print("    case MarkerSymbol::{}:".format(i.name))
         print("        vo.draw({}, {}, {});".format(prim, counts[i.value], offsets[i.value]))
         print("        break;")
-print("    case MarkerRepresentation::Disk:")
+print("    case MarkerSymbol::Disk:")
 print("        if (size <= 40.0f) // TODO: this should be configurable")
 print("            vo.draw(gl::VertexObject::Primitive::TriangleFan, {}, {});".format(counts[FilledMarkers.Disk.value], offsets[FilledMarkers.Disk.value]))
 print("        else")
@@ -234,7 +234,7 @@ result = []
 offset = 0
 for m in hollowMarkers:
     offsets.append(offset)
-    count = len(m) / 2
+    count = len(m) // 2
     counts.append(count)
     offset += count
     result += m
@@ -257,24 +257,24 @@ print("constexpr std::array<float, {}> HollowMarkersData = {{".format(len(result
 i = 0
 n = 0
 while i < len(result):
-    if n < len(offsets) and i / 2 == offsets[n]:
+    if n < len(offsets) and i // 2 == offsets[n]:
         print("    // {}".format(list(HollowMarkers)[n].name))
         n += 1
     print("    {: f}f, {: f}f{}".format(result[i], result[i+1], ',' if i < len(result) - 2 else ''))
     i += 2
 print("};")
 
-print("\nvoid\nRenderHollowMarker(LineRenderer &lr, MarkerRepresentation::Symbol symbol, float size, const Color &color, const Matrices &m)")
+print("\nvoid\nRenderHollowMarker(LineRenderer &lr, MarkerSymbol symbol, float size, const Color &color, const Matrices &m)")
 print("{")
 print("    lr.prerender();")
 print("    switch (symbol)")
 print("    {")
 for i in HollowMarkers:
     if i.name != 'Circle' and i.name != 'LargeCircle':
-        print("    case MarkerRepresentation::{}:".format(i.name))
+        print("    case MarkerSymbol::{}:".format(i.name))
         print("        lr.render(m, color, {}, {});".format(counts[i.value], offsets[i.value]))
         print("        break;")
-print("    case MarkerRepresentation::Circle:")
+print("    case MarkerSymbol::Circle:")
 print("        if (size <= 40.0f) // TODO: this should be configurable")
 print("            lr.render(m, color, {}, {});".format(counts[HollowMarkers.Circle.value], offsets[HollowMarkers.Circle.value]))
 print("        else")

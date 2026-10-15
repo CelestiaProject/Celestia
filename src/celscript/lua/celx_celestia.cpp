@@ -1190,7 +1190,7 @@ static int celestia_mark(lua_State* l)
 
     if (sel != nullptr)
     {
-        celestia::MarkerRepresentation markerRep(celestia::MarkerRepresentation::Diamond);
+        celestia::engine::MarkerRepresentation markerRep(celestia::engine::MarkerSymbol::Diamond);
         markerRep.setColor(Color(0.0f, 1.0f, 0.0f));
         markerRep.setSize(10.0f);
 
