@@ -5,14 +5,15 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <istream>
 #include <limits>
-#include <string>
 
 #include <fmt/format.h>
 
 #include <celephem/xyzvbinary.h>
+#include <celutil/fmtpath.h>
 
 static constexpr std::uint16_t endianCode(std::endian endianness)
 {
@@ -73,7 +74,7 @@ static bool SkipComments(std::istream& in)
 }
 
 // Convert text xyzv file to binary file.
-static bool xyzvToBinary(const std::string& inFilename, const std::string& outFilename)
+static bool xyzvToBinary(const std::filesystem::path& inFilename, const std::filesystem::path& outFilename)
 {
     using celestia::ephem::XYZVBinaryData;
     using celestia::ephem::XYZVBinaryHeader;
@@ -87,47 +88,41 @@ static bool xyzvToBinary(const std::string& inFilename, const std::string& outFi
     if (!SkipComments(in))
         return false;
 
-    std::array<char, sizeof(XYZVBinaryHeader)> header = {};
-
-    {
-        std::memcpy(header.data() + offsetof(XYZVBinaryHeader, magic), XYZV_MAGIC.data(), XYZV_MAGIC.size());
-
-        auto byteOrder = static_cast<decltype(XYZVBinaryHeader::byteOrder)>(nativeEndianCode);
-        auto digits =    static_cast<decltype(XYZVBinaryHeader::digits)   >(std::numeric_limits<double>::digits);
-
-        std::memcpy(header.data() + offsetof(XYZVBinaryHeader, byteOrder), &byteOrder, sizeof(byteOrder));
-        std::memcpy(header.data() + offsetof(XYZVBinaryHeader, digits),    &digits,    sizeof(digits));
-    }
+    XYZVBinaryHeader header;
+    static_assert(header.magic.size() == XYZV_MAGIC.size());
+    std::memcpy(header.magic.data(), XYZV_MAGIC.data(), header.magic.size());
+    header.byteOrder = nativeEndianCode;
+    header.digits = std::numeric_limits<double>::digits;
 
     // write empty header, will update it later
     if (!out.write(reinterpret_cast<const char*>(&header), sizeof(header)))
         return false;
 
-    decltype(XYZVBinaryHeader::count) counter = 0;
+    std::uint64_t counter = 0;
     while (!in.eof())
     {
-        static_assert(offsetof(XYZVBinaryData, tdb)      == 0 * sizeof(double));
-        static_assert(offsetof(XYZVBinaryData, position) == 1 * sizeof(double));
-        static_assert(offsetof(XYZVBinaryData, velocity) == 4 * sizeof(double));
-        static_assert(sizeof(XYZVBinaryData) == 7 * sizeof(double));
+        XYZVBinaryData data;
 
         std::array<double, 7> values;
-        in >> values[0]; // tdb
-        in >> values[1]; // position[0]
-        in >> values[2]; // position[1]
-        in >> values[3]; // position[2]
-        in >> values[4]; // velocity[0]
-        in >> values[5]; // velocity[1]
-        in >> values[6]; // velocity[2]
+        for (std::size_t i = 0; i < values.size(); ++i)
+            in >> values[i];
 
-        if (!in.good())
+        if (!in)
         {
             if (!in.eof())
                 fmt::print(stderr, "Error reading input file, line {}\n", counter+1);
             break;
         }
 
-        if (!out.write(reinterpret_cast<const char*>(values.data()), values.size() * sizeof(double)))
+        data.tdb = values[0];
+        data.position[0] = values[1];
+        data.position[1] = values[2];
+        data.position[2] = values[3];
+        data.velocity[0] = values[4];
+        data.velocity[1] = values[5];
+        data.velocity[2] = values[6];
+
+        if (!out.write(reinterpret_cast<const char*>(&data), sizeof(data)))
         {
             fmt::print(stderr, "Error writing output file, record N{}\n", counter);
             break;
@@ -141,10 +136,10 @@ static bool xyzvToBinary(const std::string& inFilename, const std::string& outFi
         return false;
 
     // write actual header
-    std::memcpy(header.data() + offsetof(XYZVBinaryHeader, count), &counter, sizeof(counter));
+    header.count = counter;
 
-    out.seekp(0);
-    return !!out.write(reinterpret_cast<const char*>(&header), sizeof(header));
+    return out.seekp(0, std::ios_base::beg) &&
+           out.write(reinterpret_cast<const char*>(&header), sizeof(header));
 }
 
 int main(int argc, char* argv[])

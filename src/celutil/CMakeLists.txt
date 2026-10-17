@@ -16,6 +16,7 @@ set(CELUTIL_SOURCES
   filetype.cpp
   filetype.h
   flag.h
+  fmtpath.h
   formatnum.cpp
   formatnum.h
   fsutils.cpp

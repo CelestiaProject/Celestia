@@ -28,42 +28,42 @@ namespace
 
 struct DDPixelFormat
 {
-    std::uint32_t size;
-    std::uint32_t flags;
-    std::uint32_t fourCC;
-    std::uint32_t bpp;
-    std::uint32_t redMask;
-    std::uint32_t greenMask;
-    std::uint32_t blueMask;
-    std::uint32_t alphaMask;
+    util::LE<std::uint32_t> size;
+    util::LE<std::uint32_t> flags;
+    util::LE<std::uint32_t> fourCC;
+    util::LE<std::uint32_t> bpp;
+    util::LE<std::uint32_t> redMask;
+    util::LE<std::uint32_t> greenMask;
+    util::LE<std::uint32_t> blueMask;
+    util::LE<std::uint32_t> alphaMask;
 };
 
 struct DDSCaps
 {
-    std::uint32_t caps;
-    std::uint32_t caps2;
-    std::uint32_t caps3;
-    std::uint32_t caps4;
+    util::LE<std::uint32_t> caps;
+    util::LE<std::uint32_t> caps2;
+    util::LE<std::uint32_t> caps3;
+    util::LE<std::uint32_t> caps4;
 };
 
 struct DDColorKey
 {
-    std::uint32_t lowVal;
-    std::uint32_t highVal;
+    util::LE<std::uint32_t> lowVal;
+    util::LE<std::uint32_t> highVal;
 };
 
 struct DDSurfaceDesc
 {
-    std::uint32_t size;
-    std::uint32_t flags;
-    std::uint32_t height;
-    std::uint32_t width;
-    std::uint32_t pitch;
-    std::uint32_t depth;
-    std::uint32_t mipMapLevels;
-    std::uint32_t alphaBitDepth;
-    std::uint32_t reserved;
-    std::uint32_t surface;
+    util::LE<std::uint32_t> size;
+    util::LE<std::uint32_t> flags;
+    util::LE<std::uint32_t> height;
+    util::LE<std::uint32_t> width;
+    util::LE<std::uint32_t> pitch;
+    util::LE<std::uint32_t> depth;
+    util::LE<std::uint32_t> mipMapLevels;
+    util::LE<std::uint32_t> alphaBitDepth;
+    util::LE<std::uint32_t> reserved;
+    util::LE<std::uint32_t> surface;
 
     DDColorKey ckDestOverlay;
     DDColorKey ckDestBlt;
@@ -73,17 +73,17 @@ struct DDSurfaceDesc
     DDPixelFormat format;
     DDSCaps caps;
 
-    std::uint32_t textureStage;
+    util::LE<std::uint32_t> textureStage;
 };
 
 // DX10 extended header, present when fourCC == "DX10".
 struct DDSHeaderDXT10
 {
-    std::uint32_t dxgiFormat;
-    std::uint32_t resourceDimension;
-    std::uint32_t miscFlag;
-    std::uint32_t arraySize;
-    std::uint32_t miscFlags2;
+    util::LE<std::uint32_t> dxgiFormat;
+    util::LE<std::uint32_t> resourceDimension;
+    util::LE<std::uint32_t> miscFlag;
+    util::LE<std::uint32_t> arraySize;
+    util::LE<std::uint32_t> miscFlags2;
 };
 
 // Subset of DXGI_FORMAT values relevant to Celestia.
@@ -139,21 +139,21 @@ IsSRGBS3TCFormat(PixelFormat format)
 PixelFormat
 GetUncompressedFormat(const DDSurfaceDesc& ddsd)
 {
-    util::GetLogger()->debug("DDS Format: {:08x}\n", ddsd.format.fourCC);
-    switch (ddsd.format.bpp)
+    util::GetLogger()->debug("DDS Format: {:08x}\n", ddsd.format.fourCC.get());
+    switch (ddsd.format.bpp.get())
     {
     case 24:
-        if (ddsd.format.redMask   == 0x000000ff &&
-            ddsd.format.greenMask == 0x0000ff00 &&
-            ddsd.format.blueMask  == 0x00ff0000)
+        if (ddsd.format.redMask   == UINT32_C(0x000000ff) &&
+            ddsd.format.greenMask == UINT32_C(0x0000ff00) &&
+            ddsd.format.blueMask  == UINT32_C(0x00ff0000))
         {
             return PixelFormat::sRGB;
         }
 
 #ifndef GL_ES
-        if (ddsd.format.redMask           == 0x00ff0000 &&
-                    ddsd.format.greenMask == 0x0000ff00 &&
-                    ddsd.format.blueMask  == 0x000000ff)
+        if (ddsd.format.redMask   == UINT32_C(0x00ff0000) &&
+            ddsd.format.greenMask == UINT32_C(0x0000ff00) &&
+            ddsd.format.blueMask  == UINT32_C(0x000000ff))
         {
             util::GetLogger()->warn("Uncompressed BGR DDS texture loaded as linear; GL has no sBGR internal format.\n");
             return PixelFormat::BGR;
@@ -163,19 +163,19 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
         break;
 
     case 32:
-        if (ddsd.format.redMask   == 0x00ff0000 &&
-            ddsd.format.greenMask == 0x0000ff00 &&
-            ddsd.format.blueMask  == 0x000000ff &&
-            ddsd.format.alphaMask == 0xff000000)
+        if (ddsd.format.redMask   == UINT32_C(0x00ff0000) &&
+            ddsd.format.greenMask == UINT32_C(0x0000ff00) &&
+            ddsd.format.blueMask  == UINT32_C(0x000000ff) &&
+            ddsd.format.alphaMask == UINT32_C(0xff000000))
         {
             util::GetLogger()->warn("Uncompressed BGRA DDS texture loaded as linear; GL has no sBGRA internal format.\n");
             return PixelFormat::BGRA;
         }
 
-        if (ddsd.format.redMask           == 0x000000ff &&
-                    ddsd.format.greenMask == 0x0000ff00 &&
-                    ddsd.format.blueMask  == 0x00ff0000 &&
-                    ddsd.format.alphaMask == 0xff000000)
+        if (ddsd.format.redMask   == UINT32_C(0x000000ff) &&
+            ddsd.format.greenMask == UINT32_C(0x0000ff00) &&
+            ddsd.format.blueMask  == UINT32_C(0x00ff0000) &&
+            ddsd.format.alphaMask == UINT32_C(0xff000000))
         {
             return PixelFormat::sRGBA;
         }
@@ -192,7 +192,8 @@ GetUncompressedFormat(const DDSurfaceDesc& ddsd)
 PixelFormat
 GetDXT10Format(const DDSHeaderDXT10& dx10)
 {
-    switch (static_cast<DXGIFormat>(dx10.dxgiFormat))
+    const auto dxgiFormat = dx10.dxgiFormat.get();
+    switch (static_cast<DXGIFormat>(dxgiFormat))
     {
     case DXGIFormat::BC1_UNORM:           return PixelFormat::DXT1;
     case DXGIFormat::BC1_UNORM_SRGB:      return PixelFormat::DXT1_sRGBA;
@@ -203,7 +204,7 @@ GetDXT10Format(const DDSHeaderDXT10& dx10)
     case DXGIFormat::BC7_UNORM:           return PixelFormat::BC7;
     case DXGIFormat::BC7_UNORM_SRGB:      return PixelFormat::BC7_sRGBA;
     default:
-        util::GetLogger()->error("Unsupported DXGI format in DDS DX10 header: {}\n", dx10.dxgiFormat);
+        util::GetLogger()->error("Unsupported DXGI format in DDS DX10 header: {}\n", dxgiFormat);
         return PixelFormat::Invalid;
     }
 }
@@ -211,7 +212,8 @@ GetDXT10Format(const DDSHeaderDXT10& dx10)
 PixelFormat
 GetFormat(const DDSurfaceDesc& ddsd)
 {
-    switch (ddsd.format.fourCC)
+    const auto fourCC = ddsd.format.fourCC.get();
+    switch (fourCC)
     {
     case 0:
         return GetUncompressedFormat(ddsd);
@@ -228,7 +230,7 @@ GetFormat(const DDSurfaceDesc& ddsd)
     // DX10 extended header is handled by the caller before reaching here.
 
     default:
-        util::GetLogger()->error("Unknown FourCC in DDS file: {:08x}\n", ddsd.format.fourCC);
+        util::GetLogger()->error("Unknown FourCC in DDS file: {:08x}\n", fourCC);
         return PixelFormat::Invalid;
     }
 }
@@ -291,29 +293,31 @@ std::unique_ptr<Image>
 CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istream& in, const std::filesystem::path& filename)
 {
     // DXTc texture not supported, decompress DXTc to RGB/RGBA
-    std::unique_ptr<std::uint32_t[]>pixels = nullptr;
+    std::unique_ptr<std::uint32_t[]> pixels; //NOSONAR
     bool transparent0 = format == PixelFormat::DXT1 || format == PixelFormat::DXT1_sRGBA;
-    if ((ddsd.width & 3) != 0 || (ddsd.height & 3) != 0)
+    const auto ddsdWidth = ddsd.width.get();
+    const auto ddsdHeight = ddsd.height.get();
+    if ((ddsdWidth & 3) != 0 || (ddsdHeight & 3) != 0)
     {
-        std::uint32_t nw = std::max(ddsd.width, 4u);
-        std::uint32_t nh = std::max(ddsd.height, 4u);
+        std::uint32_t nw = std::max(ddsdWidth, UINT32_C(4));
+        std::uint32_t nh = std::max(ddsdHeight, UINT32_C(4));
         auto tmp = DecompressDXTc(nw, nh, format, transparent0, in);
         if (tmp != nullptr)
         {
-            pixels = std::make_unique<std::uint32_t[]>(ddsd.width * ddsd.height);
+            pixels = std::make_unique<std::uint32_t[]>(ddsdWidth * ddsdHeight);
             // crop
-            for (std::uint32_t y = 0; y < ddsd.height; y++)
+            for (std::uint32_t y = 0; y < ddsdHeight; ++y)
             {
-                std::memcpy(pixels.get() + y * ddsd.width, tmp.get() + y * nw, ddsd.width * 4);
+                std::memcpy(pixels.get() + y * ddsdWidth, tmp.get() + y * nw, ddsdWidth * 4);
             }
         }
     }
     else
     {
-        pixels = DecompressDXTc(ddsd.width, ddsd.height, format, transparent0, in);
+        pixels = DecompressDXTc(ddsdWidth, ddsdHeight, format, transparent0, in);
     }
 
-    if (pixels == nullptr)
+    if (!pixels)
     {
         util::GetLogger()->error("Failed to decompress DDS texture file {}.\n", filename);
         return nullptr;
@@ -325,7 +329,7 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
         // are deemed not to contain alpha values in Celestia
         // https://github.com/CelestiaProject/Celestia/pull/1086
         char *ptr = reinterpret_cast<char*>(pixels.get());
-        std::uint32_t numberOfPixels = ddsd.width * ddsd.height;
+        std::uint32_t numberOfPixels = ddsdWidth * ddsdHeight;
         for (std::uint32_t index = 0; index < numberOfPixels; ++index)
         {
             std::memmove(&ptr[3 * index], &ptr[4 * index], sizeof(char) * 3);
@@ -341,8 +345,8 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
         outFormat = isSRGB ? PixelFormat::sRGB : PixelFormat::RGB;
     else
         outFormat = isSRGB ? PixelFormat::sRGBA : PixelFormat::RGBA;
-    auto img = std::make_unique<Image>(outFormat, ddsd.width, ddsd.height);
-    std::memcpy(img->getPixels(), pixels.get(), (transparent0 ? 3 : 4) * ddsd.width * ddsd.height);
+    auto img = std::make_unique<Image>(outFormat, ddsdWidth, ddsdHeight);
+    std::memcpy(img->getPixels(), pixels.get(), (transparent0 ? 3 : 4) * ddsdWidth * ddsdHeight);
     return img;
 }
 
@@ -367,34 +371,24 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
     }
 
     DDSurfaceDesc ddsd;
-    if (!in.read(reinterpret_cast<char*>(&ddsd), sizeof ddsd).good()) /* Flawfinder: ignore */
+    if (!in.read(reinterpret_cast<char*>(&ddsd), sizeof(ddsd)).good()) /* Flawfinder: ignore */
     {
         util::GetLogger()->error("DDS file {} has bad surface desc.\n", filename);
         return nullptr;
     }
-    LE_TO_CPU_INT32(ddsd.size, ddsd.size);
-    LE_TO_CPU_INT32(ddsd.pitch, ddsd.pitch);
-    LE_TO_CPU_INT32(ddsd.width, ddsd.width);
-    LE_TO_CPU_INT32(ddsd.height, ddsd.height);
-    LE_TO_CPU_INT32(ddsd.mipMapLevels, ddsd.mipMapLevels);
-    LE_TO_CPU_INT32(ddsd.format.flags, ddsd.format.flags);
-    LE_TO_CPU_INT32(ddsd.format.redMask, ddsd.format.redMask);
-    LE_TO_CPU_INT32(ddsd.format.greenMask, ddsd.format.greenMask);
-    LE_TO_CPU_INT32(ddsd.format.blueMask, ddsd.format.blueMask);
-    LE_TO_CPU_INT32(ddsd.format.alphaMask, ddsd.format.alphaMask);
-    LE_TO_CPU_INT32(ddsd.format.bpp, ddsd.format.bpp);
-    LE_TO_CPU_INT32(ddsd.format.fourCC, ddsd.format.fourCC);
 
-    if (ddsd.width == 0 || ddsd.width > Image::MAX_DIMENSION ||
-        ddsd.height == 0 || ddsd.height > Image::MAX_DIMENSION)
+    const auto ddsdWidth = ddsd.width.get();
+    const auto ddsdHeight = ddsd.height.get();
+    if (ddsdWidth == 0 || ddsdWidth > Image::MAX_DIMENSION ||
+        ddsdHeight == 0 || ddsdHeight > Image::MAX_DIMENSION)
     {
         util::GetLogger()->error("DDS file {} size out of range.\n", filename);
         return nullptr;
     }
 
-    std::uint32_t mipMapLevels = std::max(ddsd.mipMapLevels, UINT32_C(1));
+    std::uint32_t mipMapLevels = std::max(ddsd.mipMapLevels.get(), UINT32_C(1));
     std::uint32_t maxMipMapLevels = 1;
-    for (std::uint32_t size = std::max(ddsd.width, ddsd.height); size > 1; size >>= 1)
+    for (std::uint32_t size = std::max(ddsdWidth, ddsdHeight); size > 1; size >>= 1)
         ++maxMipMapLevels;
     if (mipMapLevels > maxMipMapLevels)
     {
@@ -405,15 +399,13 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
     PixelFormat format;
     if (ddsd.format.fourCC == FourCC("DX10"))
     {
-        std::array<char, sizeof(DDSHeaderDXT10)> dx10Bytes;
-        if (!in.read(dx10Bytes.data(), dx10Bytes.size()).good()) /* Flawfinder: ignore */
+        DDSHeaderDXT10 dx10;
+        if (!in.read(reinterpret_cast<char*>(&dx10), sizeof(dx10)).good()) /* Flawfinder: ignore */
         {
             util::GetLogger()->error("DDS file {} has bad DX10 header.\n", filename);
             return nullptr;
         }
-        DDSHeaderDXT10 dx10;
-        std::memcpy(&dx10, dx10Bytes.data(), sizeof dx10);
-        LE_TO_CPU_INT32(dx10.dxgiFormat, dx10.dxgiFormat);
+
         format = GetDXT10Format(dx10);
     }
     else
@@ -443,8 +435,8 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
     // TODO: Verify that the reported texture size matches the amount of
     // data expected.
     auto img = std::make_unique<Image>(format,
-                                       static_cast<std::int32_t>(ddsd.width),
-                                       static_cast<std::int32_t>(ddsd.height),
+                                       static_cast<std::int32_t>(ddsdWidth),
+                                       static_cast<std::int32_t>(ddsdHeight),
                                        static_cast<std::int32_t>(mipMapLevels));
     std::int32_t dataSize = 0;
     for (std::int32_t mip = 0; mip < img->getMipLevelCount(); ++mip)

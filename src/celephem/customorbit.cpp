@@ -3075,7 +3075,7 @@ private:
 class JPLEphOrbit : public CachingOrbit
 {
 public:
-    JPLEphOrbit(const JPLEphemeris& e,
+    JPLEphOrbit(const std::shared_ptr<const JPLEphemeris>& e,
                 JPLEphemItem _target,
                 JPLEphemItem _center,
                 double _period, double _boundingRadius) :
@@ -3103,7 +3103,7 @@ public:
     {
         // Get the position relative to the Earth (for the Moon) or
         // the solar system barycenter.
-        Eigen::Vector3d pos = ephem.getPlanetPosition(target, tjd);
+        Eigen::Vector3d pos = ephem->getPlanetPosition(target, tjd);
 
         if (center == JPLEphemItem::SSB && target != JPLEphemItem::Moon)
         {
@@ -3115,14 +3115,14 @@ public:
         }
         else
         {
-            Eigen::Vector3d centerPos = ephem.getPlanetPosition(center, tjd);
+            Eigen::Vector3d centerPos = ephem->getPlanetPosition(center, tjd);
             if (target == JPLEphemItem::Moon)
             {
-                pos += ephem.getPlanetPosition(JPLEphemItem::Earth, tjd);
+                pos += ephem->getPlanetPosition(JPLEphemItem::Earth, tjd);
             }
             if (center == JPLEphemItem::Moon)
             {
-                centerPos += ephem.getPlanetPosition(JPLEphemItem::Earth, tjd);
+                centerPos += ephem->getPlanetPosition(JPLEphemItem::Earth, tjd);
             }
 
             // Compute the position of target relative to the center
@@ -3137,7 +3137,7 @@ public:
     }
 
 private:
-    const JPLEphemeris& ephem;
+    std::shared_ptr<const JPLEphemeris> ephem;
     JPLEphemItem target;
     JPLEphemItem center;
     double period;
@@ -3150,38 +3150,45 @@ CreateJPLEphOrbit(JPLEphemItem target,
                   double period,
                   double boundingRadius)
 {
-    static bool jplephInitialized = false;
-    static JPLEphemeris* jpleph = nullptr;
+    static std::weak_ptr<const JPLEphemeris> jpleph;
 
-    // Attempt to load JPL ephemeris data if we haven't tried already
-    if (!jplephInitialized)
+    std::shared_ptr<const JPLEphemeris> eph = jpleph.lock();
+    if (!eph)
     {
-        jplephInitialized = true;
+        static bool isErrored = false;
+        if (isErrored)
+            return nullptr;
+
+        // Attempt to load JPL ephemeris data if we haven't tried already
         std::ifstream in("data/jpleph.dat", std::ios::in | std::ios::binary);
         if (in.good())
-            jpleph = JPLEphemeris::load(in);
-        if (jpleph != nullptr)
+            eph = JPLEphemeris::load(in);
+
+        if (eph)
         {
-            if (unsigned int deNumber = jpleph->getDENumber(); deNumber != 100)
+            jpleph = eph;
+            if (unsigned int deNumber = eph->getDENumber(); deNumber != 100)
                 GetLogger()->debug("Loaded DE{} ephemeris. Valid from JD {:.8f} to JD {:.8f}\n",
-                        deNumber, jpleph->getStartDate(), jpleph->getEndDate());
+                                   deNumber, eph->getStartDate(), eph->getEndDate());
             else
                 GetLogger()->debug("Loaded INPOP ephemeris. Valid from JD {:.8f} to JD {:.8f}\n",
-                                jpleph->getStartDate(), jpleph->getEndDate());
+                                   eph->getStartDate(), eph->getEndDate());
 
             GetLogger()->debug("Ephemeris record size: {} doubles, with {} endianess.\n",
-                               jpleph->getRecordSize(),
-                               jpleph->getByteSwap() ? "non-native" : "native");
+                               eph->getRecordSize(),
+                               eph->getByteSwap() ? "non-native" : "native");
+        }
+        else
+        {
+            isErrored = true;
+            return nullptr;
         }
     }
 
-    if (jpleph == nullptr)
-        return nullptr;
-
-    auto o = std::make_shared<JPLEphOrbit>(*jpleph, target, center, period, boundingRadius);
+    auto o = std::make_shared<JPLEphOrbit>(eph, target, center, period, boundingRadius);
     return std::make_shared<MixedOrbit>(std::move(o),
-                                        jpleph->getStartDate(),
-                                        jpleph->getEndDate(),
+                                        eph->getStartDate(),
+                                        eph->getEndDate(),
                                         astro::SolarMass);
 }
 
