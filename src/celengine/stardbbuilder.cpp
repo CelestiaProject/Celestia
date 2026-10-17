@@ -19,7 +19,6 @@
 #include <iterator>
 #include <numbers>
 #include <string_view>
-#include <type_traits>
 #include <utility>
 
 #include <boost/smart_ptr/intrusive_ptr.hpp>
@@ -32,7 +31,7 @@
 #include <celmath/geomutil.h>
 #include <celmath/mathlib.h>
 #include <celutil/associativearray.h>
-#include <celutil/binaryread.h>
+#include <celutil/bytes.h>
 #include <celutil/fsutils.h>
 #include <celutil/gettext.h>
 #include <celutil/infourl.h>
@@ -153,57 +152,30 @@ constexpr float VALID_APPMAG_DISTANCE_THRESHOLD = 1e-5f;
 constexpr std::string_view STARSDAT_MAGIC = "CELSTARS"sv;
 constexpr std::uint16_t StarDBVersion     = 0x0100;
 
-#pragma pack(push, 1)
-
-// stars.dat header structure
-struct StarsDatHeader
-{
-    StarsDatHeader() = delete;
-    char magic[8]; //NOSONAR
-    std::uint16_t version;
-    std::uint32_t counter;
-};
-
-// stars.dat record structure
-struct StarsDatRecord
-{
-    StarsDatRecord() = delete;
-    AstroCatalog::IndexNumber catNo;
-    float x;
-    float y;
-    float z;
-    std::int16_t absMag;
-    std::uint16_t spectralType;
-};
-
-#pragma pack(pop)
-
-static_assert(std::is_standard_layout_v<StarsDatHeader>);
-static_assert(std::is_standard_layout_v<StarsDatRecord>);
-
 bool
 parseStarsDatHeader(std::istream& in, std::uint32_t& nStarsInFile)
 {
-    std::array<char, sizeof(StarsDatHeader)> header;
-    if (!in.read(header.data(), header.size()).good()) /* Flawfinder: ignore */
+    struct StarsDatHeader
+    {
+        std::array<char, 8> magic;
+        util::LE<std::uint16_t> version;
+        util::LE<std::uint32_t> counter;
+    };
+
+    StarsDatHeader header;
+    if (!in.read(reinterpret_cast<char*>(&header), sizeof(header))) /* Flawfinder: ignore */
         return false;
 
     // Verify the magic string
-    if (auto magic = std::string_view(header.data() + offsetof(StarsDatHeader, magic), STARSDAT_MAGIC.size());
-        magic != STARSDAT_MAGIC)
-    {
+    if (std::string_view(header.magic.data(), header.magic.size()) != STARSDAT_MAGIC)
         return false;
-    }
 
     // Verify the version
-    if (auto version = util::fromMemoryLE<std::uint16_t>(header.data() + offsetof(StarsDatHeader, version));
-        version != StarDBVersion)
-    {
+    if (header.version != StarDBVersion)
         return false;
-    }
 
     // Read the star count
-    nStarsInFile = util::fromMemoryLE<std::uint32_t>(header.data() + offsetof(StarsDatHeader, counter));
+    nStarsInFile = header.counter;
     return true;
 }
 
@@ -621,40 +593,41 @@ StarDatabaseBuilder::loadBinary(std::istream& in)
     if (!parseStarsDatHeader(in, nStarsInFile))
         return false;
 
+    struct StarsDatRecord
+    {
+        util::LE<AstroCatalog::IndexNumber> catNo;
+        util::LE<float> x;
+        util::LE<float> y;
+        util::LE<float> z;
+        util::LE<std::int16_t> absMag;
+        util::LE<std::uint16_t> spectralType;
+    };
+
     constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / sizeof(StarsDatRecord);
-    std::vector<char> buffer(sizeof(StarsDatRecord) * BUFFER_RECORDS);
+    auto buffer = std::make_unique_for_overwrite<std::array<StarsDatRecord, BUFFER_RECORDS>>();
     std::uint32_t nStarsRemaining = nStarsInFile;
     while (nStarsRemaining > 0)
     {
         std::uint32_t recordsToRead = std::min(BUFFER_RECORDS, nStarsRemaining);
-        if (!in.read(buffer.data(), sizeof(StarsDatRecord) * recordsToRead).good()) /* Flawfinder: ignore */
+        if (!in.read(reinterpret_cast<char*>(buffer->data()), sizeof(StarsDatRecord) * recordsToRead).good()) /* Flawfinder: ignore */
             return false;
 
-        const char* ptr = buffer.data();
         for (std::uint32_t i = 0; i < recordsToRead; ++i)
         {
-            auto catNo = util::fromMemoryLE<AstroCatalog::IndexNumber>(ptr + offsetof(StarsDatRecord, catNo));
-            Eigen::Vector3f position(util::fromMemoryLE<float>(ptr + offsetof(StarsDatRecord, x)),
-                                     util::fromMemoryLE<float>(ptr + offsetof(StarsDatRecord, y)),
-                                     util::fromMemoryLE<float>(ptr + offsetof(StarsDatRecord, z)));
-            auto absMag = util::fromMemoryLE<std::int16_t>(ptr + offsetof(StarsDatRecord, absMag));
-            auto spectralType = util::fromMemoryLE<std::uint16_t>(ptr + offsetof(StarsDatRecord, spectralType));
-
+            const auto& record = (*buffer)[i];
             boost::intrusive_ptr<StarDetails> details = nullptr;
-            if (StellarClass sc; sc.unpackV1(spectralType))
+            if (StellarClass sc; sc.unpackV1(record.spectralType))
                 details = StarDetails::GetStarDetails(sc);
 
-            if (details == nullptr)
+            if (!details)
             {
-                GetLogger()->error(_("Bad spectral type in star database, star #{}\n"), catNo);
+                GetLogger()->error(_("Bad spectral type in star database, star #{}\n"), record.catNo.get());
                 continue;
             }
 
-            Star& star = unsortedStars.emplace_back(catNo, details);
-            star.setPosition(position);
-            star.setAbsoluteMagnitude(static_cast<float>(absMag) / 256.0f);
-
-            ptr += sizeof(StarsDatRecord);
+            Star& star = unsortedStars.emplace_back(record.catNo, details);
+            star.setPosition(Eigen::Vector3f(record.x, record.y, record.z));
+            star.setAbsoluteMagnitude(static_cast<float>(record.absMag.get()) / 256.0f);
         }
 
         nStarsRemaining -= recordsToRead;

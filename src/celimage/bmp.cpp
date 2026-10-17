@@ -17,13 +17,15 @@
 #include <istream>
 #include <memory>
 #include <span>
-#include <type_traits>
+#include <string_view>
 #include <vector>
 
-#include <celutil/binaryread.h>
+#include <celutil/bytes.h>
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "image.h"
+
+using namespace std::string_view_literals;
 
 using celestia::util::GetLogger;
 
@@ -32,42 +34,31 @@ namespace celestia::engine
 namespace
 {
 
-#pragma pack(push, 1)
-
 // BMP file definitions--can't use windows.h because we might not be
 // built on Windows!
 struct BMPFileHeader
 {
-    BMPFileHeader() = delete;
-
-    unsigned char magic[2];
-    std::uint32_t size;
-    std::uint16_t reserved1;
-    std::uint16_t reserved2;
-    std::uint32_t offset;
+    std::array<char, 2> magic;
+    util::LE<std::uint32_t> size;
+    util::LE<std::uint16_t> reserved1;
+    util::LE<std::uint16_t> reserved2;
+    util::LE<std::uint32_t> offset;
 };
 
 struct BMPInfoHeader
 {
-    BMPInfoHeader() = delete;
-
-    std::uint32_t size;
-    std::int32_t width;
-    std::int32_t height;
-    std::uint16_t planes;
-    std::uint16_t bpp;
-    std::uint32_t compression;
-    std::uint32_t imageSize;
-    std::int32_t widthPPM;
-    std::int32_t heightPPM;
-    std::uint32_t colorsUsed;
-    std::uint32_t colorsImportant;
+    util::LE<std::uint32_t> size;
+    util::LE<std::int32_t> width;
+    util::LE<std::int32_t> height;
+    util::LE<std::uint16_t> planes;
+    util::LE<std::uint16_t> bpp;
+    util::LE<std::uint32_t> compression;
+    util::LE<std::uint32_t> imageSize;
+    util::LE<std::int32_t> widthPPM;
+    util::LE<std::int32_t> heightPPM;
+    util::LE<std::uint32_t> colorsUsed;
+    util::LE<std::uint32_t> colorsImportant;
 };
-
-#pragma pack(pop)
-
-static_assert(std::is_standard_layout_v<BMPFileHeader>);
-static_assert(std::is_standard_layout_v<BMPInfoHeader>);
 
 static_assert(sizeof(BMPInfoHeader) == 40);
 
@@ -77,7 +68,7 @@ constexpr std::array<std::uint32_t, 6> validBpps
     1, 2, 4, 8, 24, 32,
 };
 
-constexpr std::array<std::size_t, 5> validHeaderSizes
+constexpr std::array<std::uint32_t, 5> validHeaderSizes
 {
     40,  // BITMAPINFOHEADER
     52,  // BITMAPV2INFOHEADER (Adobe Photoshop)
@@ -88,10 +79,10 @@ constexpr std::array<std::size_t, 5> validHeaderSizes
 
 struct PaletteEntry
 {
-    std::uint8_t blue;
-    std::uint8_t green;
-    std::uint8_t red;
-    std::uint8_t reserved;
+    util::LE<std::uint8_t> blue;
+    util::LE<std::uint8_t> green;
+    util::LE<std::uint8_t> red;
+    util::LE<std::uint8_t> reserved;
 };
 
 static_assert(std::is_trivially_copyable_v<PaletteEntry> && alignof(PaletteEntry) == 1);
@@ -101,8 +92,8 @@ struct BMPInfo
     std::uint32_t fileSize{ 0 };
     std::uint32_t offset{ 0 };
     std::uint32_t infoSize{ 0 };
-    std::int32_t width{ 0 };
-    std::int32_t height{ 0 };
+    std::int32_t  width{ 0 };
+    std::int32_t  height{ 0 };
     std::uint32_t bpp{ 0 };
     std::uint32_t rowStride{ 0 };
     std::uint32_t imageSize{ 0 };
@@ -112,63 +103,61 @@ struct BMPInfo
 };
 
 bool
-parseBMPFileHeader(const char* fileHeader, BMPInfo& info, const std::filesystem::path& filename)
+parseBMPFileHeader(const BMPFileHeader& fileHeader, BMPInfo& info, const std::filesystem::path& filename)
 {
-    if (fileHeader[0] != 'B' || fileHeader[1] != 'M')
+    if (std::string_view(fileHeader.magic.data(), fileHeader.magic.size()) != "BM"sv)
     {
         GetLogger()->error(_("BMP read failure '{}' - incorrect header bytes\n"), filename);
         return false;
     }
 
-    info.fileSize = util::fromMemoryLE<std::uint32_t>(fileHeader + offsetof(BMPFileHeader, size));
-    info.offset = util::fromMemoryLE<std::uint32_t>(fileHeader + offsetof(BMPFileHeader, offset));
+    info.fileSize = fileHeader.size;
+    info.offset = fileHeader.offset;
     return true;
 }
 
 bool
-parseBMPInfoHeader(const char* infoHeader,
+parseBMPInfoHeader(const BMPInfoHeader& infoHeader,
                    BMPInfo& info,
                    const std::filesystem::path& filename)
 {
-    info.infoSize = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, size));
-    if (std::find(validHeaderSizes.begin(), validHeaderSizes.end(), info.infoSize) == validHeaderSizes.end())
+    info.infoSize = infoHeader.size;
+    if (std::ranges::find(validHeaderSizes, info.infoSize) == validHeaderSizes.end())
     {
         GetLogger()->error(_("BMP read failure '{}' - unsupported header format\n"), filename);
         return false;
     }
 
-    info.width = util::fromMemoryLE<std::int32_t>(infoHeader + offsetof(BMPInfoHeader, width));
+    info.width = infoHeader.width;
     if (info.width <= 0 || info.width > Image::MAX_DIMENSION)
     {
         GetLogger()->error(_("BMP read failure '{}' - width out of range\n"), filename);
         return false;
     }
 
-    info.height = util::fromMemoryLE<std::int32_t>(infoHeader + offsetof(BMPInfoHeader, height));
+    info.height = infoHeader.height;
     if (info.height <= 0 || info.height > Image::MAX_DIMENSION)
     {
         GetLogger()->error(_("BMP read failure '{}' - height out of range\n"), filename);
         return false;
     }
 
-    if (auto planes = util::fromMemoryLE<std::uint16_t>(infoHeader + offsetof(BMPInfoHeader, planes));
-        planes != 1)
+    if (infoHeader.planes.get() != 1)
     {
         GetLogger()->error(_("BMP read failure '{}' - number of planes must be 1\n"), filename);
         return false;
     }
 
-    info.bpp = util::fromMemoryLE<std::uint16_t>(infoHeader + offsetof(BMPInfoHeader, bpp));
+    info.bpp = infoHeader.bpp;
     // We don't handle 1-, 2-, or 4-bpp images
-    if (std::find(validBpps.begin(), validBpps.end(), info.bpp) == validBpps.end())
+    if (std::ranges::find(validBpps, info.bpp) == validBpps.end())
     {
         GetLogger()->error(_("BMP read failure '{}' - invalid bits per pixel {}\n"), filename, info.bpp);
         return false;
     }
 
     // We currently don't support compressed BMPs
-    if (auto compression = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, compression));
-        compression != 0)
+    if (infoHeader.compression.get() != 0)
     {
         GetLogger()->error(_("BMP read failure '{}' - compressed images are not supported\n"), filename);
         return false;
@@ -200,7 +189,7 @@ parseBMPInfoHeader(const char* infoHeader,
 
     info.imageSize = info.rowStride * static_cast<std::uint32_t>(info.height);
     // Uncompressed bitmaps can have a size of 0
-    if (auto size = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, imageSize));
+    if (auto size = infoHeader.imageSize.get();
         (size != 0 && size != info.imageSize) || (info.offset + info.imageSize) < info.fileSize)
     {
         GetLogger()->error(_("BMP read failure '{}' - size mismatch\n"), filename);
@@ -210,7 +199,7 @@ parseBMPInfoHeader(const char* infoHeader,
     if (info.bpp <= 8)
     {
         info.paletteMax = UINT32_C(1) << info.bpp;
-        info.paletteCount = util::fromMemoryLE<std::uint32_t>(infoHeader + offsetof(BMPInfoHeader, colorsUsed));
+        info.paletteCount = infoHeader.colorsUsed;
         if (info.paletteCount == 0)
         {
             info.paletteCount = info.paletteMax;
@@ -228,17 +217,23 @@ parseBMPInfoHeader(const char* infoHeader,
 bool
 loadBMPHeaders(std::istream& in, BMPInfo& info, const std::filesystem::path& filename)
 {
-    std::array<char, sizeof(BMPFileHeader) + sizeof(BMPInfoHeader)> buffer;
-    if (!in.read(buffer.data(), buffer.size())) /* Flawfinder: ignore */
+    struct Headers
+    {
+        BMPFileHeader fileHeader;
+        BMPInfoHeader infoHeader;
+    };
+
+    Headers headers;
+    if (!in.read(reinterpret_cast<char*>(&headers), sizeof(headers))) /* Flawfinder: ignore */
     {
         GetLogger()->error(_("BMP read failure '{}' - could not read file headers\n"), filename);
         return false;
     }
 
-    if (!parseBMPFileHeader(buffer.data(), info, filename))
+    if (!parseBMPFileHeader(headers.fileHeader, info, filename))
         return false;
 
-    if (!parseBMPInfoHeader(buffer.data() + sizeof(BMPFileHeader), info, filename))
+    if (!parseBMPInfoHeader(headers.infoHeader, info, filename))
         return false;
 
     if (info.bpp <= 8)

@@ -21,13 +21,12 @@
 #include <optional>
 #include <string>
 #include <system_error>
-#include <type_traits>
 
 #include <fmt/format.h>
 
 #include <celcompat/charconv.h>
-#include <celutil/binaryread.h>
 #include <celutil/buffile.h>
+#include <celutil/bytes.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include <celutil/logger.h>
@@ -64,29 +63,6 @@ constexpr AstroCatalog::IndexNumber TYC3_MAX   = 3u;     // from TYC2
 // TYC1 number is <= 2907
 constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX            = 4u;
 constexpr inline AstroCatalog::IndexNumber TDSC_TYC3_MAX_RANGE_TYC1 = 2907u;
-
-#pragma pack(push, 1)
-
-// cross-index header structure
-struct CrossIndexHeader
-{
-    CrossIndexHeader() = delete;
-    char magic[8]; //NOSONAR
-    std::uint16_t version;
-};
-
-// cross-index record structure
-struct CrossIndexRecord
-{
-    CrossIndexRecord() = delete;
-    std::uint32_t catalogNumber;
-    std::uint32_t celCatalogNumber;
-};
-
-#pragma pack(pop)
-
-static_assert(std::is_standard_layout_v<CrossIndexHeader>);
-static_assert(std::is_standard_layout_v<CrossIndexRecord>);
 
 constexpr unsigned int FIRST_NUMBERED_VARIABLE = 335;
 
@@ -274,20 +250,28 @@ parseCelestiaCatalogNumber(std::string_view name,
 bool
 checkCrossIndexHeader(std::istream& in)
 {
-    std::array<char, sizeof(CrossIndexHeader)> header;
-    if (!in.read(header.data(), header.size()).good()) /* Flawfinder: ignore */
+    struct CrossIndexHeader
+    {
+        std::array<char, 8> magic;
+        util::LE<std::uint16_t> version;
+    };
+
+    CrossIndexHeader header;
+    if (!in.read(reinterpret_cast<char*>(&header), sizeof(header))) /* Flawfinder: ignore */
+    {
+        GetLogger()->error(_("Failed to read cross index header\n"));
         return false;
+    }
 
     // Verify the magic string
-    if (std::string_view(header.data() + offsetof(CrossIndexHeader, magic), CROSSINDEX_MAGIC.size()) != CROSSINDEX_MAGIC)
+    if (std::string_view(header.magic.data(), header.magic.size()) != CROSSINDEX_MAGIC)
     {
         GetLogger()->error(_("Bad header for cross index\n"));
         return false;
     }
 
     // Verify the version
-    if (auto version = util::fromMemoryLE<std::uint16_t>(header.data() + offsetof(CrossIndexHeader, version));
-        version != CrossIndexVersion)
+    if (header.version != CrossIndexVersion)
     {
         GetLogger()->error(_("Bad version for cross index\n"));
         return false;
@@ -692,13 +676,19 @@ StarNameDatabase::loadCrossIndex(StarCatalog catalog, std::istream& in)
     CrossIndex& xindex = crossIndices[catalogIndex];
     xindex = {};
 
+    struct CrossIndexRecord
+    {
+        util::LE<std::uint32_t> catalogNumber;
+        util::LE<std::uint32_t> celCatalogNumber;
+    };
+
     constexpr std::uint32_t BUFFER_RECORDS = UINT32_C(4096) / sizeof(CrossIndexRecord);
-    std::vector<char> buffer(sizeof(CrossIndexRecord) * BUFFER_RECORDS);
+    auto buffer = std::make_unique_for_overwrite<std::array<CrossIndexRecord, BUFFER_RECORDS>>();
     bool hasMoreRecords = true;
     while (hasMoreRecords)
     {
         std::size_t remainingRecords = BUFFER_RECORDS;
-        in.read(buffer.data(), buffer.size()); /* Flawfinder: ignore */
+        in.read(reinterpret_cast<char*>(buffer->data()), sizeof(CrossIndexRecord) * buffer->size()); /* Flawfinder: ignore */
         if (in.bad())
         {
             GetLogger()->error(_("Loading cross index failed\n"));
@@ -721,14 +711,11 @@ StarNameDatabase::loadCrossIndex(StarCatalog catalog, std::istream& in)
         }
 
         xindex.reserve(xindex.size() + remainingRecords);
-
-        const char* ptr = buffer.data();
-        while (remainingRecords-- > 0)
+        for (std::size_t i = 0; i < remainingRecords; ++i)
         {
             CrossIndexEntry& ent = xindex.emplace_back();
-            ent.catalogNumber = util::fromMemoryLE<AstroCatalog::IndexNumber>(ptr + offsetof(CrossIndexRecord, catalogNumber));
-            ent.celCatalogNumber = util::fromMemoryLE<AstroCatalog::IndexNumber>(ptr + offsetof(CrossIndexRecord, celCatalogNumber));
-            ptr += sizeof(CrossIndexRecord);
+            ent.catalogNumber = (*buffer)[i].catalogNumber;
+            ent.celCatalogNumber = (*buffer)[i].celCatalogNumber;
         }
     }
 

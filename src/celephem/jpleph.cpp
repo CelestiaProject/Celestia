@@ -10,7 +10,10 @@
 // Load JPL's DE200, DE405, and DE406 ephemerides and compute planet
 // positions.
 
+#include "jpleph.h"
+
 #include <array>
+#include <bit>
 #include <cassert>
 #include <cstddef>
 #include <cstring>
@@ -18,39 +21,13 @@
 #include <type_traits>
 
 #include <celcompat/byteswap.h>
-#include "jpleph.h"
+#include <celutil/bytes.h>
 
 namespace celestia::ephem
 {
 
 namespace
 {
-
-inline void getMaybeSwapUint32(std::uint32_t& dest, const char* ptr, bool swapBytes)
-{
-    std::memcpy(&dest, ptr, sizeof(std::uint32_t));
-    if (swapBytes)
-        dest = compat::byteswap(dest);
-}
-
-
-inline void getMaybeSwapDouble(double& dest, const char* ptr, bool swapBytes)
-{
-    if (swapBytes)
-    {
-        static_assert(sizeof(double) == sizeof(std::uint64_t));
-        // Because of potential issues with handling NaN representations
-        // we do the swap operation on an integer, then create the double
-        std::uint64_t reversed;
-        std::memcpy(&reversed, ptr, sizeof(double));
-        reversed = compat::byteswap(reversed);
-        std::memcpy(&dest, &reversed, sizeof(double));
-    }
-    else
-    {
-        std::memcpy(&dest, ptr, sizeof(double));
-    }
-}
 
 constexpr unsigned int NConstants         =  400;
 constexpr unsigned int ConstantNameLength =  6;
@@ -62,102 +39,49 @@ constexpr unsigned int LabelSize = 84;
 constexpr unsigned int INPOP_DE_COMPATIBLE = 100;
 constexpr unsigned int DE200 = 200;
 
-// Read a big-endian or little endian 32-bit unsigned integer
-std::uint32_t readUint(std::istream& in, bool swap)
-{
-    std::uint32_t ret;
-    in.read((char*) &ret, sizeof(std::uint32_t));
-    return swap ? compat::byteswap(ret) : ret;
-}
-
-// Read a big-endian or little endian 64-bit IEEE double.
-// If the native double format isn't IEEE 754, there will be troubles.
-double readDouble(std::istream& in, bool swap)
-{
-    char data[sizeof(double)];
-    in.read(data, sizeof(double)); /* Flawfinder: ignore */
-    double d;
-    getMaybeSwapDouble(d, data, swap);
-    return d;
-}
-
-#pragma pack(push, 1)
-
-// These packed structs are only used for offset calculations, they should
-// not be instantiated directly.
-
+template<std::endian E>
 struct JPLECoeff
 {
-    JPLECoeff() = delete;
-
-    std::uint32_t offset;
-    std::uint32_t nCoeffs;
-    std::uint32_t nGranules;
+    util::EndianBytes<std::uint32_t, E> offset;
+    util::EndianBytes<std::uint32_t, E> nCoeffs;
+    util::EndianBytes<std::uint32_t, E> nGranules;
 };
 
+template<std::endian E>
 struct JPLEFileHeader
 {
-    JPLEFileHeader() = delete;
-
     //  Three header labels
-    char headerLabels[3][LabelSize];
+    std::array<std::array<char, LabelSize>, 3> headerLabels;
 
     // Constant names
-    char constantNames[NConstants][ConstantNameLength];
+    std::array<std::array<char, ConstantNameLength>, NConstants> constantNames;
 
     // Start time, end time, and time interval
-    double startDate, endDate, daysPerInterval;
+    util::EndianBytes<double, E> startDate;
+    util::EndianBytes<double, E> endDate;
+    util::EndianBytes<double, E> daysPerInterval;
 
     // Number of constants with valid values
-    std::uint32_t nConstants;
+    util::EndianBytes<std::uint32_t, E> nConstants;
 
     // km per AU
-    double au;
+    util::EndianBytes<double, E> au;
     // Earth-Moon mass ratio
-    double earthMoonMassRatio;
+    util::EndianBytes<double, E> earthMoonMassRatio;
 
     // Coefficient information for each item in the ephemeris
-    JPLECoeff coeffInfo[JPLEphemeris::JPLEph_NItems];
+    std::array<JPLECoeff<E>, JPLEphemeris::JPLEph_NItems> coeffInfo;
 
     // DE number
-    std::uint32_t deNum;
+    util::EndianBytes<std::uint32_t, E> deNum;
 
     // Libration coefficient information
-    JPLECoeff librationCoeffInfo;
+    JPLECoeff<E> librationCoeffInfo;
 };
 
-#pragma pack(pop)
-
-static_assert(std::is_standard_layout_v<JPLECoeff>);
-static_assert(std::is_standard_layout_v<JPLEFileHeader>);
+static_assert(std::is_standard_layout_v<JPLEFileHeader<std::endian::native>>);
 
 } // end unnamed namespace
-
-
-unsigned int JPLEphemeris::getDENumber() const
-{
-    return DENum;
-}
-
-double JPLEphemeris::getStartDate() const
-{
-    return startDate;
-}
-
-double JPLEphemeris::getEndDate() const
-{
-    return endDate;
-}
-
-unsigned int JPLEphemeris::getRecordSize() const
-{
-    return recordSize;
-}
-
-bool JPLEphemeris::getByteSwap() const
-{
-    return swapBytes;
-}
 
 // Return the position of an object relative to the solar system barycenter
 // or the Earth (in the case of the Moon) at a specified TDB Julian date tjd.
@@ -187,14 +111,14 @@ Eigen::Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd)
     if (tjd < startDate)
         tjd = startDate;
     else if (tjd > endDate)
-    tjd = endDate;
+        tjd = endDate;
 
     // recNo is always >= 0:
-    auto recNo = (unsigned int) ((tjd - startDate) / daysPerInterval);
+    auto recNo = static_cast<unsigned int>((tjd - startDate) / daysPerInterval);
     // Make sure we don't go past the end of the array if t == endDate
     if (recNo >= records.size())
         recNo = records.size() - 1;
-    const JPLEphRecord* rec = &records[recNo];
+    const JPLEphRecord& rec = records[recNo];
 
     auto planetIdx = static_cast<std::size_t>(planet);
 
@@ -208,26 +132,26 @@ Eigen::Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd)
     const double* coeffs = nullptr;
 
     // nGranules is unsigned int so it will be compared against FFFFFFFF:
-    if (coeffInfo[planetIdx].nGranules == (unsigned int) -1)
+    if (coeffInfo[planetIdx].nGranules == static_cast<std::uint32_t>(-1))
     {
-        coeffs = rec->coeffs.data() + coeffInfo[planetIdx].offset;
-        u = 2.0 * (tjd - rec->t0) / daysPerInterval - 1.0;
+        coeffs = rec.coeffs.data() + coeffInfo[planetIdx].offset;
+        u = 2.0 * (tjd - rec.t0) / daysPerInterval - 1.0;
     }
     else
     {
         double daysPerGranule = daysPerInterval / coeffInfo[planetIdx].nGranules;
-        auto granule = (int) ((tjd - rec->t0) / daysPerGranule);
-        double granuleStartDate = rec->t0 + daysPerGranule * (double) granule;
-        coeffs = rec->coeffs.data() + coeffInfo[planetIdx].offset +
+        auto granule = static_cast<int>((tjd - rec.t0) / daysPerGranule);
+        double granuleStartDate = rec.t0 + daysPerGranule * (double) granule;
+        coeffs = rec.coeffs.data() + coeffInfo[planetIdx].offset +
                  granule * coeffInfo[planetIdx].nCoeffs * 3;
         u = 2.0 * (tjd - granuleStartDate) / daysPerGranule - 1.0;
     }
 
     // Evaluate the Chebyshev polynomials
-    double sum[3];
-    double cc[MaxChebyshevCoeffs];
+    std::array<double, 3> sum;
+    std::array<double, MaxChebyshevCoeffs> cc;
     unsigned int nCoeffs = coeffInfo[planetIdx].nCoeffs;
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; ++i)
     {
         cc[0] = 1.0;
         cc[1] = u;
@@ -242,17 +166,114 @@ Eigen::Vector3d JPLEphemeris::getPlanetPosition(JPLEphemItem planet, double tjd)
     return Eigen::Vector3d(sum[0], sum[1], sum[2]);
 }
 
-
-JPLEphemeris* JPLEphemeris::load(std::istream& in)
+struct JPLEphemeris::Initializer
 {
-    std::array<char, sizeof(JPLEFileHeader)> fh;
-    in.read(fh.data(), fh.size()); /* Flawfinder: ignore */
-    if (!in.good())
-        return nullptr;
+    template<std::endian E>
+    static std::shared_ptr<const JPLEphemeris>
+    initialize(std::istream& in)
+    {
+        JPLEFileHeader<E> header;
+        if (!in.seekg(0, std::ios_base::beg) ||
+            !in.read(reinterpret_cast<char*>(&header), sizeof(header))) /* Flawfinder: ignore */
+        {
+            return nullptr;
+        }
 
-    decltype(JPLEFileHeader::deNum) deNum;
-    std::memcpy(&deNum, fh.data() + offsetof(JPLEFileHeader, deNum), sizeof(deNum));
-    std::uint32_t deNum2 = compat::byteswap(deNum);
+        auto eph = std::make_shared<JPLEphemeris>(Token{});
+        eph->swapBytes = E != std::endian::native;
+        eph->DENum = header.deNum;
+
+        // Read the start time, end time, and time interval
+        eph->startDate          = header.startDate;
+        eph->endDate            = header.endDate;
+        if (eph->endDate <= eph->startDate)
+            return nullptr;
+
+        eph->daysPerInterval    = header.daysPerInterval;
+        // kilometers per astronomical unit
+        eph->au                 = header.au;
+        eph->earthMoonMassRatio = header.earthMoonMassRatio;
+
+        // Read the coefficient information for each item in the ephemeris
+        eph->recordSize = 0;
+        for (unsigned int i = 0; i < JPLEph_NItems; i++)
+        {
+            const auto& headerCoeff = header.coeffInfo[i];
+            auto& ephCoeff = eph->coeffInfo[i];
+
+            ephCoeff.offset    = headerCoeff.offset;
+            ephCoeff.nCoeffs   = headerCoeff.nCoeffs;
+            ephCoeff.nGranules = headerCoeff.nGranules;
+
+            if (ephCoeff.offset < 3)
+                return nullptr;
+
+            ephCoeff.offset -= 3;
+
+            // last item is the nutation ephemeris (only 2 components)
+            unsigned nRecords = (i == JPLEph_NItems - 1) ? 2 : 3;
+            eph->recordSize += ephCoeff.nCoeffs * ephCoeff.nGranules * nRecords;
+        }
+
+        eph->librationCoeffInfo.offset = header.librationCoeffInfo.offset;
+        eph->librationCoeffInfo.nCoeffs = header.librationCoeffInfo.nCoeffs;
+        eph->librationCoeffInfo.nGranules = header.librationCoeffInfo.nGranules;
+
+        eph->recordSize += eph->librationCoeffInfo.nCoeffs * eph->librationCoeffInfo.nGranules * 3;
+        eph->recordSize += 2; // record start and end time
+
+        // if INPOP ephemeris, read record size
+        if (eph->DENum == INPOP_DE_COMPATIBLE)
+        {
+            util::EndianBytes<std::uint32_t, E> recordSize;
+            if (!in.read(reinterpret_cast<char*>(&recordSize), sizeof(recordSize))) /* Flawfinder: ignore */
+                return nullptr;
+
+            eph->recordSize = recordSize;
+        }
+
+        // First record is the header
+        // The next record contains constant values (which we don't need)
+        if (!in.seekg(eph->recordSize * 2 * sizeof(double), std::ios_base::beg))
+            return nullptr;
+
+        auto nRecords = static_cast<unsigned int>((eph->endDate - eph->startDate) / eph->daysPerInterval);
+        eph->records.resize(nRecords);
+
+        auto recordsData = std::make_unique_for_overwrite<util::EndianBytes<double, E>[]>(nRecords * eph->recordSize);
+        if (!in.read(reinterpret_cast<char*>(recordsData.get()), sizeof(double) * nRecords * eph->recordSize)) /* Flawfinde: ignore */
+            return nullptr;
+
+        const auto* ptr = recordsData.get();
+        for (unsigned int i = 0; i < nRecords; ++i)
+        {
+            auto& ephRecord = eph->records[i];
+            ephRecord.t0 = ptr[0];
+            ephRecord.t1 = ptr[1];
+
+            // Allocate coefficient array for this record; the first two
+            // 'coefficients' are actually the start and end time (t0 and t1)
+            ephRecord.coeffs.reserve(eph->recordSize - 2);
+            for (unsigned int j = 0; j < eph->recordSize - 2; ++j)
+                ephRecord.coeffs.push_back(ptr[j + 2]);
+
+            ptr += eph->recordSize;
+        }
+
+        return eph;
+    }
+};
+
+std::shared_ptr<const JPLEphemeris>
+JPLEphemeris::load(std::istream& in)
+{
+    std::uint32_t deNum;
+    if (constexpr auto deNumOffset = offsetof(JPLEFileHeader<std::endian::native>, deNum);
+        !in.seekg(deNumOffset, std::ios_base::beg) ||
+        !in.read(reinterpret_cast<char*>(&deNum), sizeof(deNum)))
+    {
+        return nullptr;
+    }
 
     bool swapBytes;
     if (deNum == INPOP_DE_COMPATIBLE)
@@ -260,17 +281,15 @@ JPLEphemeris* JPLEphemeris::load(std::istream& in)
         // INPOP ephemeris with same endianess as CPU
         swapBytes = false;
     }
-    else if (deNum2 == INPOP_DE_COMPATIBLE)
+    else if (std::uint32_t deNumSwapped = compat::byteswap(deNum); deNumSwapped == INPOP_DE_COMPATIBLE)
     {
         // INPOP ephemeris with different endianess
         swapBytes = true;
-        deNum = compat::byteswap(deNum);
     }
-    else if ((deNum > (1u << 15)) && (deNum2 >= DE200))
+    else if ((deNum > (1u << 15)) && (deNumSwapped >= DE200))
     {
         // DE ephemeris with different endianess
         swapBytes = true;
-        deNum = deNum2;
     }
     else if ((deNum <= (1u << 15)) && (deNum >= DE200))
     {
@@ -283,83 +302,13 @@ JPLEphemeris* JPLEphemeris::load(std::istream& in)
         return nullptr;
     }
 
-    auto *eph = new JPLEphemeris();
-    eph->swapBytes = swapBytes;
-    eph->DENum = deNum;
+    constexpr auto ReverseEndian = std::endian::native == std::endian::little
+        ? std::endian::big
+        : std::endian::little;
 
-    // Read the start time, end time, and time interval
-    getMaybeSwapDouble(eph->startDate,          fh.data() + offsetof(JPLEFileHeader, startDate),          swapBytes);
-    getMaybeSwapDouble(eph->endDate,            fh.data() + offsetof(JPLEFileHeader, endDate),            swapBytes);
-    getMaybeSwapDouble(eph->daysPerInterval,    fh.data() + offsetof(JPLEFileHeader, daysPerInterval),    swapBytes);
-    // kilometers per astronomical unit
-    getMaybeSwapDouble(eph->au,                 fh.data() + offsetof(JPLEFileHeader, au),                 swapBytes);
-    getMaybeSwapDouble(eph->earthMoonMassRatio, fh.data() + offsetof(JPLEFileHeader, earthMoonMassRatio), swapBytes);
-
-    // Read the coefficient information for each item in the ephemeris
-    eph->recordSize = 0;
-    for (unsigned int i = 0; i < JPLEph_NItems; i++)
-    {
-        const char* coeffInfo = fh.data() + offsetof(JPLEFileHeader, coeffInfo) + i * sizeof(JPLECoeff);
-        getMaybeSwapUint32(eph->coeffInfo[i].offset,    coeffInfo + offsetof(JPLECoeff, offset),    swapBytes);
-        getMaybeSwapUint32(eph->coeffInfo[i].nCoeffs,   coeffInfo + offsetof(JPLECoeff, nCoeffs),   swapBytes);
-        getMaybeSwapUint32(eph->coeffInfo[i].nGranules, coeffInfo + offsetof(JPLECoeff, nGranules), swapBytes);
-        eph->coeffInfo[i].offset -= 3;
-        // last item is the nutation ephemeris (only 2 components)
-        unsigned nRecords = i == JPLEph_NItems - 1 ? 2 : 3;
-        eph->recordSize += eph->coeffInfo[i].nCoeffs * eph->coeffInfo[i].nGranules * nRecords;
-    }
-
-    const char* librationCoeffInfo = fh.data() + offsetof(JPLEFileHeader, librationCoeffInfo);
-    getMaybeSwapUint32(eph->librationCoeffInfo.offset,    librationCoeffInfo + offsetof(JPLECoeff, offset),    swapBytes);
-    getMaybeSwapUint32(eph->librationCoeffInfo.nCoeffs,   librationCoeffInfo + offsetof(JPLECoeff, nCoeffs),   swapBytes);
-    getMaybeSwapUint32(eph->librationCoeffInfo.nGranules, librationCoeffInfo + offsetof(JPLECoeff, nGranules), swapBytes);
-    eph->recordSize += eph->librationCoeffInfo.nCoeffs * eph->librationCoeffInfo.nGranules * 3;
-    eph->recordSize += 2;   // record start and end time
-
-    // if INPOP ephemeris, read record size
-    if (deNum == INPOP_DE_COMPATIBLE)
-    {
-       eph->recordSize = readUint(in, eph->swapBytes);
-       // Skip past the rest of the record
-       in.ignore(eph->recordSize * 8 - sizeof(JPLEFileHeader) - sizeof(uint32_t));
-    }
-    else
-    {
-        // Skip past the rest of the record
-        in.ignore(eph->recordSize * 8 - sizeof(JPLEFileHeader));
-    }
-
-    // The next record contains constant values (which we don't need)
-    in.ignore(eph->recordSize * 8);
-    if (!in.good())
-    {
-        delete eph;
-        return nullptr;
-    }
-
-    auto nRecords = (unsigned int) ((eph->endDate - eph->startDate) /
-                        eph->daysPerInterval);
-    eph->records.resize(nRecords);
-    for (unsigned int i = 0; i < nRecords; i++)
-    {
-        eph->records[i].t0 = readDouble(in, eph->swapBytes);
-        eph->records[i].t1 = readDouble(in, eph->swapBytes);
-
-        // Allocate coefficient array for this record; the first two
-        // 'coefficients' are actually the start and end time (t0 and t1)
-        eph->records[i].coeffs.reserve(eph->recordSize - 2);
-        for (unsigned int j = 0; j < eph->recordSize - 2; j++)
-            eph->records[i].coeffs.push_back(readDouble(in, eph->swapBytes));
-
-        // Make sure that we read this record successfully
-        if (!in.good())
-        {
-            delete eph;
-            return nullptr;
-        }
-    }
-
-    return eph;
+    return swapBytes
+        ? Initializer::initialize<ReverseEndian>(in)
+        : Initializer::initialize<std::endian::native>(in);
 }
 
 } // end namespace celestia::ephem

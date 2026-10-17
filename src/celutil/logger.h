@@ -17,29 +17,7 @@
 
 #include <fmt/format.h>
 
-#if defined(HAVE_STD_FILESYSTEM) && FMT_VERSION >= 100100
-// From fmt 10.1.0 onwards, default path formatter is unquoted
-#include <fmt/std.h>
-#elif defined(_WIN32)
-#include <celutil/winutil.h>
-#endif
-
-#if !defined(HAVE_STD_FILESYSTEM) || FMT_VERSION < 100100
-template <>
-struct fmt::formatter<std::filesystem::path> : formatter<std::string_view>
-{
-    auto format(const std::filesystem::path &path, format_context &ctx) const
-    {
-#ifdef _WIN32
-        fmt::basic_memory_buffer<char> buffer;
-        celestia::util::WideToUTF8(path.native(), buffer);
-        return formatter<std::string_view>::format(std::string_view{ buffer.data(), buffer.size() }, ctx);
-#else
-        return formatter<std::string_view>::format(path.native(), ctx);
-#endif
-    }
-};
-#endif
+#include "fmtpath.h"
 
 namespace celestia::util
 {

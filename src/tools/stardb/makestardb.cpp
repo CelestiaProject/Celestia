@@ -9,136 +9,147 @@
 //
 // Convert a file with ASCII star records to a Celestia star database
 
-#include <iostream>
+#include <array>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <filesystem>
 #include <fstream>
-#include <iomanip>
-#include <cctype>
-#include <cassert>
-#include <celastro/astro.h>
-#include <celutil/bytes.h>
-#include <celengine/star.h>
+#include <iostream>
+#include <optional>
+#include <string>
+#include <string_view>
 
-using namespace std;
+#include <Eigen/Core>
+
+#include <celastro/astro.h>
+#include <celengine/stellarclass.h>
+#include <celutil/bytes.h>
+
+using namespace std::string_view_literals;
 
 namespace astro = celestia::astro;
+namespace util = celestia::util;
 
-static string inputFilename;
-static string outputFilename;
-static bool useSphericalCoords = false;
-
-
-void Usage()
+namespace
 {
-    cerr << "Usage: makestardb [options] <input file> <output star database>\n";
-    cerr << "  Options:\n";
-    cerr << "    --spherical (or -s) : input file has spherical coords (RA/dec/distance\n";
+
+struct Options
+{
+    std::filesystem::path inputFilename;
+    std::filesystem::path outputFilename;
+    bool useSphericalCoords{ false };
+};
+
+void
+Usage()
+{
+    std::cerr << "Usage: makestardb [options] <input file> <output star database>\n"
+                 "  Options:\n"
+                 "    --spherical (or -s) : input file has spherical coords (RA/dec/distance\n";
 }
 
-
-bool parseCommandLine(int argc, char* argv[])
+std::optional<Options>
+parseCommandLine(int argc, char* argv[])
 {
     int i = 1;
     int fileCount = 0;
 
+    auto result = std::make_optional<Options>();
+    auto& options = *result;
+
     while (i < argc)
     {
-        if (argv[i][0] == '-')
+        std::string_view arg(argv[i]);
+        if (arg.starts_with('-'))
         {
-            if (!strcmp(argv[i], "--spherical") || !strcmp(argv[i], "-s"))
+            if (arg == "-s"sv || arg == "--spherical"sv)
             {
-                useSphericalCoords = true;
+                options.useSphericalCoords = true;
             }
             else
             {
-                cerr << "Unknown command line switch: " << argv[i] << '\n';
-                return false;
+                std::cerr << "Unknown command line switch: " << argv[i] << '\n';
+                return std::nullopt;
             }
-            i++;
         }
         else
         {
-            if (fileCount == 0)
+            switch (fileCount)
             {
+            case 0:
                 // input filename first
-                inputFilename = string(argv[i]);
-                fileCount++;
-            }
-            else if (fileCount == 1)
-            {
+                options.inputFilename = arg;
+                break;
+
+            case 1:
                 // output filename second
-                outputFilename = string(argv[i]);
-                fileCount++;
-            }
-            else
-            {
+                options.outputFilename = arg;
+                break;
+
+            default:
                 // more than two filenames on the command line is an error
-                return false;
+                return std::nullopt;
             }
-            i++;
+
+            ++fileCount;
         }
+
+        ++i;
     }
 
-    return true;
+    return result;
 }
 
-
-static void writeUint(ostream& out, uint32_t n)
+bool
+WriteStarDatabase(std::istream& in, std::ostream& out, bool sphericalCoords)
 {
-    LE_TO_CPU_INT32(n, n);
-    out.write(reinterpret_cast<const char*>(&n), sizeof n);
-}
-
-static void writeFloat(ostream& out, float f)
-{
-    LE_TO_CPU_FLOAT(f, f);
-    out.write(reinterpret_cast<const char*>(&f), sizeof f);
-}
-
-static void writeUshort(ostream& out, uint16_t n)
-{
-    LE_TO_CPU_INT16(n, n);
-    out.write(reinterpret_cast<const char*>(&n), sizeof n);
-}
-
-static void writeShort(ostream& out, int16_t n)
-{
-    LE_TO_CPU_INT16(n, n);
-    out.write(reinterpret_cast<const char*>(&n), sizeof n);
-}
-
-
-bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
-{
-    unsigned int nStarsInFile = 0;
-
-    in >> nStarsInFile;
-    if (!in.good())
+    struct Header
     {
-        cerr << "Error reading star count at beginning of input file.\n";
-        return 1;
+        std::array<char, 8>     magic{ 'C', 'E', 'L', 'S', 'T', 'A', 'R', 'S' }; // cppcheck-suppress unusedStructMember
+        util::LE<std::uint16_t> version{ UINT16_C(0x0100) };                     // cppcheck-suppress unusedStructMember
+        util::LE<std::uint32_t> nStarsInFile;
+    };
+
+    Header header;
+
+    std::uint32_t nStarsInFile;
+    if (!(in >> nStarsInFile))
+    {
+        std::cerr << "Error reading star count at beginning of input file.\n";
+        return false;
     }
 
-    // Write the header
-    out.write("CELSTARS", 8);
-
-    // Write the version
-    writeShort(out, 0x0100);
-
-    writeUint(out, nStarsInFile);
-
-    for (unsigned int record = 0; record < nStarsInFile; record++)
+    header.nStarsInFile = nStarsInFile;
+    if (!out.write(reinterpret_cast<const char*>(&header), sizeof(header)))
     {
-        unsigned int catalogNumber;
-        float x, y, z;
-        float absMag;
+        std::cerr << "Failed to write star database header.\n";
+        return false;
+    }
 
-        in >> catalogNumber;
-        if (in.eof())
-            return true;
-
-        if (!in.good())
+    std::string scString;
+    for (std::uint32_t i = 0; i < nStarsInFile; ++i)
+    {
+        struct Record
         {
-            cerr << "Error parsing catalog number for record #" << record << '\n';
+            util::LE<std::uint32_t> catalogNumber;
+            util::LE<float>         x;
+            util::LE<float>         y;
+            util::LE<float>         z;
+            util::LE<std::int16_t>  absMag;
+            util::LE<std::uint16_t> stellarClass;
+        };
+
+        Record record;
+
+        unsigned int catalogNumber;
+        if (in >> catalogNumber)
+        {
+            record.catalogNumber = catalogNumber;
+        }
+        else
+        {
+            std::cerr << "Error parsing catalog number for record #" << i << '\n';
             return false;
         }
 
@@ -147,96 +158,91 @@ bool WriteStarDatabase(istream& in, ostream& out, bool sphericalCoords)
             float RA, dec, distance;
             float appMag;
 
-            in >> RA >> dec >> distance;
-            if (!in.good())
+            if (!(in >> RA >> dec >> distance))
             {
-                cerr << "Error parsing position of star " << catalogNumber << '\n';
+                std::cerr << "Error parsing position of star " << catalogNumber << '\n';
                 return false;
             }
 
-            in >> appMag;
-            if (!in.good())
+            if (!(in >> appMag))
             {
-                cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
+                std::cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
                 return false;
             }
 
             Eigen::Vector3d pos =
-                astro::equatorialToCelestialCart((double) RA * 24.0 / 360.0,
-                                                 (double) dec,
-                                                 (double) distance);
-            x = (float) pos.x();
-            y = (float) pos.y();
-            z = (float) pos.z();
-            absMag = (float) (appMag + 5 - 5 * log10(distance / 3.26));
+                astro::equatorialToCelestialCart(static_cast<double>(RA) * 24.0 / 360.0,
+                                                 static_cast<double>(dec),
+                                                 static_cast<double>(distance));
+            record.x = static_cast<float>(pos.x());
+            record.y = static_cast<float>(pos.y());
+            record.z = static_cast<float>(pos.z());
+            record.absMag = static_cast<float>(appMag + 5.0 - 5.0 * std::log10(distance / 3.26));
         }
         else
         {
-            in >> x >> y >> z;
-            if (!in.good())
+            if (float x, y, z; in >> x >> y >> z)
             {
-                cerr << "Error parsing position of star " << catalogNumber << '\n';
+                record.x = x;
+                record.y = y;
+                record.z = z;
+            }
+            else
+            {
+                std::cerr << "Error parsing position of star " << catalogNumber << '\n';
                 return false;
             }
 
-            in >> absMag;
-            if (!in.good())
+            if (float absMag; in >> absMag)
             {
-                cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
+                record.absMag = static_cast<std::int16_t>(absMag * 256.0f);
+            }
+            else
+            {
+                std::cerr << "Error parsing magnitude of star " << catalogNumber << '\n';
                 return false;
             }
         }
 
-        string scString;
+        scString.clear();
         in >> scString;
-        StellarClass sc = StellarClass::parse(scString);
-#if 0
-        StarDetails* details = StarDetails::GetStarDetails(sc);
-        if (details == NULL)
+        record.stellarClass = StellarClass::parse(scString).packV1();
+
+        if (!out.write(reinterpret_cast<const char*>(&record), sizeof(record)))
         {
-            cerr << "Error parsing spectral type of star " << catalogNumber << '\n';
+            std::cerr << "Failed to write star data record for star " << catalogNumber << '\n';
             return false;
         }
-
-        // For spectral type parser debugging . . .
-        cout << scString << ' ' << details->getSpectralType() << '\n';
-#endif
-
-        writeUint(out, catalogNumber);
-        writeFloat(out, x);
-        writeFloat(out, y);
-        writeFloat(out, z);
-        writeShort(out, (int16_t) (absMag * 256.0f));
-        writeUshort(out, sc.packV1());
     }
 
     return true;
 }
 
+} // end unnamed namespace
 
 int main(int argc, char* argv[])
 {
-    if (!parseCommandLine(argc, argv) || inputFilename.empty())
+    auto options = parseCommandLine(argc, argv);
+    if (!options.has_value() || options->inputFilename.empty())
     {
         Usage();
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    ifstream inputFile(inputFilename, ios::in);
-    if (!inputFile.good())
+    std::ifstream inputFile(options->inputFilename, std::ios::in);
+    if (!inputFile)
     {
-        cerr << "Error opening input file " << inputFilename << '\n';
-        return 1;
+        std::cerr << "Error opening input file " << options->inputFilename << '\n';
+        return EXIT_FAILURE;;
     }
 
-    ofstream stardbFile(outputFilename, ios::out | ios::binary);
-    if (!stardbFile.good())
+    std::ofstream stardbFile(options->outputFilename, std::ios::out | std::ios::binary);
+    if (!stardbFile)
     {
-        cerr << "Error opening star database file " << outputFilename << '\n';
-        return 1;
+        std::cerr << "Error opening star database file " << options->outputFilename << '\n';
+        return EXIT_FAILURE;
     }
 
-    bool success = WriteStarDatabase(inputFile, stardbFile, useSphericalCoords);
-
-    return success ? 0 : 1;
+    bool success = WriteStarDatabase(inputFile, stardbFile, options->useSphericalCoords);
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
