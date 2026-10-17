@@ -9,148 +9,173 @@
 //
 // Convert an ASCII cross index to binary
 
+#include <array>
 #include <cstdint>
+#include <cstdlib>
+#include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
-#include <string>
+#include <optional>
+#include <string_view>
 
 #include <celutil/bytes.h>
 
+using namespace std::string_view_literals;
 
-static std::string inputFilename;
-static std::string outputFilename;
+namespace util = celestia::util;
 
+namespace
+{
 
-void Usage()
+struct Options
+{
+    std::filesystem::path inputFilename;
+    std::filesystem::path outputFilename;
+};
+
+void
+Usage()
 {
     std::cerr << "Usage: makexindex [input file] [output file]\n";
 }
 
-
-bool parseCommandLine(int argc, char* argv[])
+std::optional<Options>
+parseCommandLine(int argc, char* argv[])
 {
     int i = 1;
     int fileCount = 0;
 
+    auto result = std::make_optional<Options>();
+    auto& options = *result;
+
     while (i < argc)
     {
-        if (argv[i][0] == '-')
+        std::string_view arg(argv[i]);
+        if (arg.starts_with('-'))
         {
-            std::cerr << "Unknown command line switch: " << argv[i] << '\n';
-            return false;
+            std::cerr << "Unknown command line switch: " << arg << '\n';
+            return std::nullopt;
         }
         else
         {
-            if (fileCount == 0)
+            switch (fileCount)
             {
+            case 0:
                 // input filename first
-                inputFilename = std::string(argv[i]);
-                fileCount++;
-            }
-            else if (fileCount == 1)
-            {
+                options.inputFilename = std::string(argv[i]);
+                break;
+
+            case 1:
                 // output filename second
-                outputFilename = std::string(argv[i]);
-                fileCount++;
-            }
-            else
-            {
+                options.outputFilename = std::string(argv[i]);
+                break;
+
+            default:
                 // more than two filenames on the command line is an error
-                return false;
+                return std::nullopt;
             }
-            i++;
+
+            ++fileCount;
         }
+
+        ++i;
     }
 
-    return true;
+    return result;
 }
 
-
-static void writeUint(std::ostream& out, std::uint32_t n)
+bool
+WriteCrossIndex(std::istream& in, std::ostream& out)
 {
-    LE_TO_CPU_INT32(n, n);
-    out.write(reinterpret_cast<const char*>(&n), sizeof n);
-}
-
-
-static void writeShort(std::ostream& out, std::int16_t n)
-{
-    LE_TO_CPU_INT16(n, n);
-    out.write(reinterpret_cast<const char*>(&n), sizeof n);
-}
-
-
-bool WriteCrossIndex(std::istream& in, std::ostream& out)
-{
-    // Write the header
-    out.write("CELINDEX", 8);
-
-    // Write the version
-    writeShort(out, 0x0100);
-
-    unsigned int record = 0;
-    while (!in.eof())
+    struct Header
     {
-        std::uint32_t catalogNumber;
-        std::uint32_t celCatalogNumber;
+        std::array<char, 8>     magic{ 'C', 'E', 'L', 'I', 'N', 'D', 'E', 'X' }; // cppcheck-suppress unusedStructMember
+        util::LE<std::uint16_t> version{ 0x0100 };                               // cppcheck-suppress unusedStructMember
+    };
 
-        in >> catalogNumber;
-        if (in.eof())
-            return true;
+    if (Header header; !out.write(reinterpret_cast<const char*>(&header), sizeof(header)))
+    {
+        std::cerr << "Failed to write cross index header.\n";
+        return false;
+    }
 
-        in >> celCatalogNumber;
-        if (!in.good())
+    std::uint32_t i = 0;
+    for (;;)
+    {
+        struct Record
         {
-            std::cerr << "Error parsing record #" << record << '\n';
+            util::LE<std::uint32_t> catalogNumber;
+            util::LE<std::uint32_t> celCatalogNumber;
+        };
+
+        Record record;
+
+        if (std::uint32_t catalogNumber, celCatalogNumber; in >> catalogNumber >> celCatalogNumber)
+        {
+            record.catalogNumber = catalogNumber;
+            record.celCatalogNumber = celCatalogNumber;
+        }
+        else if (in.eof())
+        {
+            break;
+        }
+        else
+        {
+            std::cerr << "Error parsing record #" << i << '\n';
             return false;
         }
 
-        writeUint(out, catalogNumber);
-        writeUint(out, celCatalogNumber);
+        if (!out.write(reinterpret_cast<const char*>(&record), sizeof(record)))
+        {
+            std::cerr << "Failed to write record #" << i << '\n';
+            return false;
+        }
 
-        record++;
+        ++i;
     }
 
     return true;
 }
 
+} // end unnamed namespace
 
 int main(int argc, char* argv[])
 {
-    if (!parseCommandLine(argc, argv)/* || inputFilename.empty()*/)
+    auto options = parseCommandLine(argc, argv);
+    if (!options.has_value())
     {
         Usage();
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    std::istream* inputFile = &std::cin;
-    std::ifstream fin;
-    if (!inputFilename.empty())
+    std::istream* in = &std::cin;
+    std::ifstream inputFile;
+    if (!options->inputFilename.empty())
     {
-        fin.open(inputFilename, std::ios::in);
-        if (!fin.good())
+        inputFile.open(options->inputFilename, std::ios::in);
+        if (!inputFile)
         {
-            std::cerr << "Error opening input file " << inputFilename << '\n';
-            return 1;
+            std::cerr << "Error opening input file " << options->inputFilename << '\n';
+            return EXIT_FAILURE;
         }
-        inputFile = &fin;
+
+        in = &inputFile;
     }
 
-    std::ostream* outputFile = &std::cout;
-    std::ofstream fout;
-    if (!outputFilename.empty())
+    std::ostream* out = &std::cout;
+    std::ofstream outputFile;
+    if (!options->outputFilename.empty())
     {
-        fout.open(outputFilename, std::ios::out | std::ios::binary);
-        if (!fout.good())
+        outputFile.open(options->outputFilename, std::ios::out | std::ios::binary);
+        if (!outputFile)
         {
-            std::cerr << "Error opening output file " << outputFilename << '\n';
-            return 1;
+            std::cerr << "Error opening output file " << options->outputFilename << '\n';
+            return EXIT_FAILURE;
         }
-        outputFile = &fout;
+
+        out = &outputFile;
     }
 
-    bool success = WriteCrossIndex(*inputFile, *outputFile);
-
-    return success ? 0 : 1;
+    bool success = WriteCrossIndex(*in, *out);
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
