@@ -10,393 +10,421 @@
 // Dump the contents of a Celestia star database file in a text
 // format that's easy read and edit.
 
-#include <iostream>
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <numbers>
-#include <celastro/astro.h>
-#include <celutil/bytes.h>
-#include <celengine/stellarclass.h>
+#include <optional>
+#include <string_view>
 
-using namespace std;
+#include <Eigen/Core>
+
+#include <celastro/astro.h>
+#include <celengine/stellarclass.h>
+#include <celutil/bytes.h>
+
+using namespace std::string_view_literals;
 
 namespace astro = celestia::astro;
+namespace util = celestia::util;
 
-static string inputFilename;
-static string outputFilename;
-static string hdFilename;
-static bool useOldFormat = false;
-static bool useSphericalCoords = false;
-
-void Usage()
+namespace
 {
-    cerr << "Usage: startextdump [options] <star database file> [output file]\n";
-    cerr << "  Options:\n";
-    cerr << "    --old (or -o)       : input star database is pre-2.0 format\n";
-    cerr << "    --hd                : dump HD catalog cross reference\n";
-    cerr << "    --spherical (or -s) : output spherical coordinates (RA/dec/distance\n";
+
+struct Options
+{
+    std::filesystem::path inputFilename;
+    std::filesystem::path outputFilename;
+    std::filesystem::path hdFilename;
+    bool useOldFormat{ false };
+    bool useSphericalCoords{ false };
+};
+
+void
+Usage()
+{
+    std::cerr << "Usage: startextdump [options] <star database file> [output file]\n"
+                 "  Options:\n"
+                 "    --old (or -o)       : input star database is pre-2.0 format\n"
+                 "    --hd                : dump HD catalog cross reference\n"
+                 "    --spherical (or -s) : output spherical coordinates (RA/dec/distance\n";
 }
 
-
-static uint32_t readUint(istream& in)
+void
+printStellarClass(std::uint16_t sc, std::ostream& out)
 {
-    uint32_t n;
-    in.read(reinterpret_cast<char*>(&n), sizeof n);
-    LE_TO_CPU_INT32(n, n);
-    return n;
-}
-
-static float readFloat(istream& in)
-{
-    float f;
-    in.read(reinterpret_cast<char*>(&f), sizeof f);
-    LE_TO_CPU_FLOAT(f, f);
-    return f;
-}
-
-static int16_t readShort(istream& in)
-{
-    int16_t n;
-    in.read(reinterpret_cast<char*>(&n), sizeof n);
-    LE_TO_CPU_INT16(n, n);
-    return n;
-}
-
-static uint16_t readUshort(istream& in)
-{
-    uint16_t n;
-    in.read(reinterpret_cast<char*>(&n), sizeof n);
-    LE_TO_CPU_INT16(n, n);
-    return n;
-}
-
-static uint8_t readUbyte(istream& in)
-{
-    uint8_t n;
-    in.read((char*) &n, 1);
-    return n;
-}
-
-
-void printStellarClass(uint16_t sc, ostream& out)
-{
-    StellarClass::StarType st = (StellarClass::StarType) (sc >> 12);
-
-    if (st == StellarClass::WhiteDwarf)
+    switch (static_cast<StellarClass::StarType>(sc >> 12))
     {
-        out << "WD";
-    }
-    else if (st == StellarClass::NeutronStar)
-    {
-        out << "Q";
-    }
-    else if (st == StellarClass::BlackHole)
-    {
-        out << "X";
-    }
-    else if (st == StellarClass::NormalStar)
-    {
-        unsigned int spectralClass = (sc >> 8 & 0xf);
-        unsigned int spectralSubclass = (sc >> 4 & 0xf);
-        unsigned int luminosityClass = (sc & 0xf);
-
-        if (spectralClass == 12)
+    case StellarClass::NormalStar:
         {
-            out << '?';
-        }
-        else
-        {
-            out << "OBAFGKMRSNWW?LTC"[spectralClass];
-            out << "0123456789"[spectralSubclass];
+            unsigned int spectralClass = (sc >> 8 & 0xf);
+            unsigned int spectralSubclass = (sc >> 4 & 0xf);
+            unsigned int luminosityClass = (sc & 0xf);
+            if (spectralClass == '?')
+            {
+                out << '?';
+                return;
+            }
+
+            constexpr auto spectralTypes = "OBAFGKMRSNWW?LTC"sv;
+            out << spectralTypes[spectralClass];
+            if (spectralClass == 10)
+                out << 'C';
+            else if (spectralClass == 11)
+                out << 'N';
+
+            if (spectralSubclass < 10)
+                out << spectralSubclass;
+
             switch (luminosityClass)
             {
-            case StellarClass::Lum_Ia0:
-                out << "Ia-0";
-                break;
-            case StellarClass::Lum_Ia:
-                out << "Ia";
-                break;
-            case StellarClass::Lum_Ib:
-                out << "Ib";
-                break;
-            case StellarClass::Lum_II:
-                out << "II";
-                break;
-            case StellarClass::Lum_III:
-                out << "III";
-                break;
-            case StellarClass::Lum_IV:
-                out << "IV";
-                break;
-            case StellarClass::Lum_V:
-                out << "V";
-                break;
-            case StellarClass::Lum_VI:
-                out << "VI";
-                break;
+                case StellarClass::Lum_Ia0:
+                    out << "Ia-0";
+                    break;
+                case StellarClass::Lum_Ia:
+                    out << "Ia";
+                    break;
+                case StellarClass::Lum_Ib:
+                    out << "Ib";
+                    break;
+                case StellarClass::Lum_II:
+                    out << "II";
+                    break;
+                case StellarClass::Lum_III:
+                    out << "III";
+                    break;
+                case StellarClass::Lum_IV:
+                    out << "IV";
+                    break;
+                case StellarClass::Lum_V:
+                    out << 'V';
+                    break;
+                case StellarClass::Lum_VI:
+                    out << "VI";
+                    break;
             }
         }
+        break;
+
+    case StellarClass::WhiteDwarf:
+        {
+            unsigned int spectralClass = (sc >> 8 & 0xf);
+            unsigned int spectralSubclass = (sc >> 4 & 0xf);
+            out << 'D';
+
+            constexpr auto wdTypes = "ABCOQZ?X"sv;
+            if (spectralClass < wdTypes.size() && spectralClass != 6)
+                out << wdTypes[spectralClass];
+
+            if (spectralSubclass < 10)
+                out << spectralSubclass;
+        }
+        break;
+
+    case StellarClass::NeutronStar:
+        out << 'Q';
+        break;
+
+    case StellarClass::BlackHole:
+        out << 'X';
+        break;
+
+    default:
+        out << '?';
+        break;
+    }
+}
+
+bool
+DumpOldStarDatabase(std::istream& in, std::ostream& out, std::ostream* hdOut,
+                    bool spherical)
+{
+    std::uint32_t nStarsInFile;
+    if (util::LE<std::uint32_t> data; in.read(reinterpret_cast<char*>(&data), sizeof(data))) /* Flawfinder: ignore */
+    {
+        nStarsInFile = data.get();
     }
     else
     {
-        out << '?';
-    }
-}
-
-
-bool DumpOldStarDatabase(istream& in, ostream& out, ofstream& hdOut,
-                         bool spherical)
-{
-    uint32_t nStarsInFile = readUint(in);
-    if (!in.good())
-    {
-        cerr << "Error reading count of stars from database.\n";
+        std::cerr << "Error reading count of stars from database.\n";
         return false;
     }
 
     out << nStarsInFile << '\n';
 
-    for (uint32_t i = 0; i < nStarsInFile; i++)
+    for (std::uint32_t i = 0; i < nStarsInFile; ++i)
     {
-        if (!in.good())
+        struct Record
         {
-            cerr << "Error reading from star database at record " << i << endl;
+            util::LE<std::uint32_t> catalogNum;
+            util::LE<std::uint32_t> hdCatalogNum;
+            util::LE<float>         ra;
+            util::LE<float>         dec;
+            util::LE<float>         parallax;
+            util::LE<std::int16_t>  appMag;
+            util::LE<std::uint16_t> stellarClass;
+            std::byte               parallaxError; // unused
+        };
+
+        Record record;
+        if (!in.read(reinterpret_cast<char*>(&record), sizeof(record))) /* Flawfinder: ignore */
+        {
+            std::cerr << "Error reading from star database at record " << i << '\n';
             return false;
         }
-
-        uint32_t catalogNum    = readUint(in);
-        uint32_t HDCatalogNum  = readUint(in);
-        float  RA            = readFloat(in);
-        float  dec           = readFloat(in);
-        float  parallax      = readFloat(in);
-        int16_t  appMag        = readShort(in);
-        uint16_t stellarClass  = readUshort(in);
-        /*uint8_t  parallaxError = */readUbyte(in); // not used yet
-
         // Compute distance based on parallax
+        const auto parallax = record.parallax.get();
         double distance = astro::LY_PER_PARSEC<double> / (parallax > 0.0 ? parallax / 1000.0 : 1e-6);
+        const auto catalogNum = record.catalogNum.get();
         out << catalogNum << ' ';
-        out << setprecision(8);
+        out << std::setprecision(8);
 
         if (spherical)
         {
-            out << RA * 360.0 / 24.0 << ' ' << dec << ' ' << distance << ' ';
-            out << setprecision(6);
-            out << (float) appMag / 256.0f << ' ';
+            out << record.ra.get() * 360.0 / 24.0 << ' ' << record.dec.get() << ' ' << distance << ' ';
+            out << std::setprecision(6);
+            out << static_cast<float>(record.appMag.get()) / 256.0f << ' ';
         }
         else
         {
-            Eigen::Vector3d pos = astro::equatorialToCelestialCart((double) RA, (double) dec, distance);
-            float absMag = (float) (appMag / 256.0 + 5 -
-                                    5 * log10(distance / astro::LY_PER_PARSEC<double>));
-            out << (float) pos.x() << ' ' <<
-                   (float) pos.y() << ' ' <<
-                   (float) pos.z() << ' ';
-            out << setprecision(5);
+            Eigen::Vector3d pos = astro::equatorialToCelestialCart(static_cast<double>(record.ra.get()),
+                                                                   static_cast<double>(record.dec.get()),
+                                                                   distance);
+            auto absMag = static_cast<float>(record.appMag.get() / 256.0 + 5.0 -
+                                             5.0 * std::log10(distance / astro::LY_PER_PARSEC<double>));
+            out << static_cast<float>(pos.x()) << ' ' <<
+                   static_cast<float>(pos.y()) << ' ' <<
+                   static_cast<float>(pos.z()) << ' ';
+            out << std::setprecision(5);
             out << absMag << ' ';
         }
-        printStellarClass(stellarClass, out);
+        printStellarClass(record.stellarClass, out);
         out << '\n';
 
         // Dump HD catalog cross reference
-        if (hdOut.is_open() && HDCatalogNum != ~0u)
-            hdOut << HDCatalogNum << ' ' << catalogNum << '\n';
+        if (hdOut)
+        {
+            const auto hdCatalogNum = record.hdCatalogNum.get();
+            if (hdCatalogNum != ~UINT32_C(0))
+                (*hdOut) << hdCatalogNum << ' ' << catalogNum << '\n';
+        }
     }
 
     return true;
 }
 
-
-bool DumpStarDatabase(istream& in, ostream& out, bool spherical)
+bool
+DumpStarDatabase(std::istream& in, std::ostream& out, bool spherical)
 {
-    char header[8];
-    in.read(header, sizeof header);
-    if (strncmp(header, "CELSTARS", sizeof header))
+    struct Header
     {
-        cerr << "Missing header in star database.\n";
+        std::array<char, 8>     magic;
+        util::LE<std::uint16_t> version;
+        util::LE<std::uint32_t> nStarsInFile;
+    };
+
+    Header header;
+    if (!in.read(reinterpret_cast<char*>(&header), sizeof(header))) /* Flawfinder: ignore */
+    {
+        std::cerr << "Missing header in star database.\n";
         return false;
     }
 
-    uint16_t version = readUshort(in);
-    if (version != 0x0100)
+    if (std::string_view(header.magic.data(), header.magic.size()) != "CELSTARS"sv)
     {
-        cerr << "Unsupported file version " << (version >> 8) << '.' <<
-            (version & 0xff) << '\n';
+        std::cerr << "Not a star database file.\n";
         return false;
     }
 
-    uint32_t nStarsInFile = readUint(in);
-    if (!in.good())
+    if (auto version = header.version.get(); version != UINT16_C(0x0100))
     {
-        cerr << "Error reading count of stars from database.\n";
+        std::cerr << "Unsupported file version " << (version >> 8) << '.' <<
+                     (version & 0xff) << '\n';
         return false;
     }
+
+    auto nStarsInFile = header.nStarsInFile.get();
 
     out << nStarsInFile << '\n';
-
-    for (uint32_t i = 0; i < nStarsInFile; i++)
+    for (std::uint32_t i = 0; i < nStarsInFile; ++i)
     {
-        if (!in.good())
+        struct Record
         {
-            cerr << "Error reading from star database at record " << i << endl;
+            util::LE<std::uint32_t> catalogNum;
+            util::LE<float>         x;
+            util::LE<float>         y;
+            util::LE<float>         z;
+            util::LE<std::int16_t>  absMag;
+            util::LE<std::uint16_t> stellarClass;
+        };
+
+        Record record;
+        if (!in.read(reinterpret_cast<char*>(&record), sizeof(record))) /* Flawfinder: ignore */
+        {
+            std::cerr << "Error reading from star database at record " << i << '\n';
             return false;
         }
 
-        uint32_t catalogNum   = readUint(in);
-        float x               = readFloat(in);
-        float y               = readFloat(in);
-        float z               = readFloat(in);
-        int16_t  absMag       = readShort(in);
-        uint16_t stellarClass = readUshort(in);
-
-        out << catalogNum << ' ';
-        out << setprecision(7);
+        out << record.catalogNum.get() << ' ';
+        out << std::setprecision(7);
 
         if (spherical)
         {
-            Eigen::Vector3d eclipticpos = {(double) x, (double) y, (double) z};
+            Eigen::Vector3d eclipticpos{ record.x.get(), record.y.get(), record.z.get() };
             Eigen::Vector3d pos = astro::eclipticToEquatorial(eclipticpos);
-            double distance = sqrt(x * x + y * y + z * z);
+            double distance = pos.norm();
             // acos outputs angles in interval [0, pi], use negative sign for interval [-pi, 0]
-            double phi = -acos(pos.y() / distance) * 180 / std::numbers::pi;
-            double theta = atan2(pos.z(), -pos.x()) * 180 / std::numbers::pi;
+            double phi = -std::acos(std::clamp(pos.y() / distance, -1.0, 1.0)) * 180.0 / std::numbers::pi;
+            double theta = std::atan2(pos.z(), -pos.x()) * 180.0 / std::numbers::pi;
             // atan2 outputs angles in interval [-pi, pi], so we add 360 to fix this
-            double ra = theta - 180 + 360;
-            double dec = phi + 90;
-            float appMag = float (absMag / 256.0 - 5 + 5 * log10(distance / astro::LY_PER_PARSEC<double>));
+            double ra = theta - 180.0 + 360.0;
+            double dec = phi + 90.0;
+            auto appMag = static_cast<float>(record.absMag.get() / 256.0 - 5.0 + 5.0 * std::log10(distance / astro::LY_PER_PARSEC<double>));
 
-            out << fixed << setprecision(9) << (float) ra << ' ' << (float) dec << ' ';
-            out << setprecision(6) << (float) distance << ' ';
-            out << setprecision(2);
+            out << std::fixed << std::setprecision(9) << static_cast<float>(ra) << ' ' << static_cast<float>(dec) << ' ';
+            out << std::setprecision(6) << static_cast<float>(distance) << ' ';
+            out << std::setprecision(2);
             out << appMag << ' ';
         }
         else
         {
-            out << x << ' ' << y << ' ' << z << ' ';
-            out << setprecision(4);
-            out << ((float) absMag / 256.0f) << ' ';
+            out << record.x.get() << ' ' << record.y.get() << ' ' << record.z.get() << ' ';
+            out << std::setprecision(4);
+            out << (static_cast<float>(record.absMag.get()) / 256.0f) << ' ';
         }
 
-        printStellarClass(stellarClass, out);
+        printStellarClass(record.stellarClass, out);
         out << '\n';
     }
 
     return true;
 }
 
-
-bool parseCommandLine(int argc, char* argv[])
+std::optional<Options>
+parseCommandLine(int argc, char* argv[])
 {
     int i = 1;
     int fileCount = 0;
 
+    auto result = std::make_optional<Options>();
+    auto& options = *result;
+
     while (i < argc)
     {
-        if (argv[i][0] == '-')
+        std::string_view arg(argv[i]);
+        if (arg.starts_with('-'))
         {
-            if (!strcmp(argv[i], "--hd"))
+            if (arg == "--hd"sv)
             {
                 if (i == argc - 1)
-                {
-                    return false;
-                }
-                else
-                {
-                    i++;
-                    hdFilename = string(argv[i]);
-                }
+                    return std::nullopt;
+
+                ++i;
+                options.hdFilename = argv[i];
             }
-            else if (!strcmp(argv[i], "-o") || !strcmp(argv[i], "--old"))
+            else if (arg == "-o"sv || arg == "--old"sv)
             {
-                useOldFormat = true;
+                options.useOldFormat = true;
             }
-            else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--spherical"))
+            else if (arg == "-s"sv || arg == "--spherical"sv)
             {
-                useSphericalCoords = true;
+                options.useSphericalCoords = true;
             }
             else
             {
-                cerr << "Unknown command line switch: " << argv[i] << '\n';
-                return false;
+                std::cerr << "Unknown command line switch: " << arg << '\n';
+                return std::nullopt;
             }
-            i++;
         }
         else
         {
-            if (fileCount == 0)
+            switch (fileCount)
             {
+            case 0:
                 // input filename first
-                inputFilename = string(argv[i]);
-                fileCount++;
-            }
-            else if (fileCount == 1)
-            {
+                options.inputFilename = arg;
+                break;
+
+            case 1:
                 // output filename second
-                outputFilename = string(argv[i]);
-                fileCount++;
-            }
-            else
-            {
+                options.outputFilename = arg;
+                break;
+
+            default:
                 // more than two filenames on the command line is an error
-                return false;
+                return std::nullopt;
             }
-            i++;
+
+            ++fileCount;
         }
+
+        ++i;
     }
 
-    return true;
+    return result;
 }
 
+} // end unnamed namespace
 
-int main(int argc, char* argv[])
+int
+main(int argc, char* argv[])
 {
-    if (!parseCommandLine(argc, argv) || inputFilename.empty())
+    auto options = parseCommandLine(argc, argv);
+    if (!options.has_value() || options->inputFilename.empty())
     {
         Usage();
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    ifstream stardbFile(inputFilename, ios::in | ios::binary);
-    if (!stardbFile.good())
+    std::ifstream stardbFile(options->inputFilename, std::ios::in | std::ios::binary);
+    if (!stardbFile)
     {
-        cerr << "Error opening star database file " << inputFilename << '\n';
-        return 1;
+        std::cerr << "Error opening star database file " << options->inputFilename << '\n';
+        return EXIT_FAILURE;
     }
 
-    ofstream hdOut;
-    if (useOldFormat && !hdFilename.empty())
+    std::ostream* hdOut = nullptr;
+    std::ofstream hdFile;
+    if (options->useOldFormat && !options->hdFilename.empty())
     {
-        hdOut.open(hdFilename, ios::out);
-        if (!hdOut.good())
+        hdFile.open(options->hdFilename, std::ios::out);
+        if (!hdFile)
         {
-            cerr << "Error opening HD catalog output file " << hdFilename << '\n';
-            return 1;
+            std::cerr << "Error opening HD catalog output file " << options->hdFilename << '\n';
+            return EXIT_FAILURE;
         }
+
+        hdOut = &hdFile;
     }
 
-    bool success;
-    ostream* out = &cout;
-    ofstream fout;
-    if (!outputFilename.empty())
+    std::ostream* out;
+    std::ofstream fout;
+    if (options->outputFilename.empty())
     {
-        fout.open(outputFilename, ios::out);
-        if (!fout.good())
-        {
-            cerr << "Error opening output file " << outputFilename << '\n';
-            return 1;
-        }
-	out = &fout;
-    }
-
-    if (useOldFormat)
-    {
-        success = DumpOldStarDatabase(stardbFile, *out, hdOut,
-                                      useSphericalCoords);
+        out = &std::cout;
     }
     else
     {
-        success = DumpStarDatabase(stardbFile, *out, useSphericalCoords);
+        fout.open(options->outputFilename, std::ios::out);
+        if (!fout)
+        {
+            std::cerr << "Error opening output file " << options->outputFilename << '\n';
+            return EXIT_FAILURE;
+        }
+
+        out = &fout;
     }
 
-    return success ? 0 : 1;
+    bool success = options->useOldFormat
+        ? DumpOldStarDatabase(stardbFile, *out, hdOut, options->useSphericalCoords)
+        : DumpStarDatabase(stardbFile, *out, options->useSphericalCoords);
+
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

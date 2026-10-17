@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <memory>
 #include <vector>
 
 #include <Eigen/Core>
@@ -40,14 +41,12 @@ enum class JPLEphemItem
     SSB           = 12,
 };
 
-
 struct JPLEphCoeffInfo
 {
     std::uint32_t offset;
     std::uint32_t nCoeffs;
     std::uint32_t nGranules;
 };
-
 
 struct JPLEphRecord
 {
@@ -59,28 +58,30 @@ struct JPLEphRecord
     std::vector<double> coeffs{ };
 };
 
-
 class JPLEphemeris
 {
 private:
-    JPLEphemeris() = default;
+    struct Token { explicit Token() = default; };
 
 public:
     static constexpr std::size_t JPLEph_NItems = 12;
 
+    explicit JPLEphemeris(Token) {}
     ~JPLEphemeris() = default;
 
     Eigen::Vector3d getPlanetPosition(JPLEphemItem, double t) const;
 
-    static JPLEphemeris* load(std::istream&);
+    static std::shared_ptr<const JPLEphemeris> load(std::istream&);
 
-    unsigned int getDENumber() const;
-    double getStartDate() const;
-    double getEndDate() const;
-    bool getByteSwap() const;
-    unsigned int getRecordSize() const;
+    unsigned int getDENumber() const noexcept { return DENum; }
+    double getStartDate() const noexcept { return startDate; }
+    double getEndDate() const noexcept { return endDate; }
+    bool getByteSwap() const noexcept { return swapBytes; }
+    unsigned int getRecordSize() const noexcept { return recordSize; }
 
 private:
+    struct Initializer;
+
     std::array<JPLEphCoeffInfo, JPLEph_NItems> coeffInfo;
     JPLEphCoeffInfo librationCoeffInfo;
 

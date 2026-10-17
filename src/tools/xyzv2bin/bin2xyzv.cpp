@@ -1,35 +1,61 @@
-#include <array>
 #include <bit>
 #include <cstddef>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <limits>
-#include <string>
 #include <string_view>
 
 #include <fmt/format.h>
 
 #include <celephem/xyzvbinary.h>
+#include <celutil/bytes.h>
 
 #define _(s) (s)
 
-static constexpr std::uint16_t endianCode(std::endian endianness)
+namespace ephem = celestia::ephem;
+
+namespace
 {
-    using enum std::endian;
-    static_assert(native == little || native == big,
-                  "Mixed endian systems are not supported");
-    switch (endianness)
+
+bool
+parseHeader(std::istream& in, const std::filesystem::path& infilename)
+{
+    ephem::XYZVBinaryHeader header;
+    if (!in.read(reinterpret_cast<char*>(&header), sizeof(header))) /* Flawfinder: ignore */
     {
-    case little: return 1234;
-    case big: return 4321;
-    default: return 0;
+        fmt::print(stderr, _("Error reading header of {}.\n"), infilename.string());
+        return false;
     }
+
+    if (std::string_view(header.magic.data(), header.magic.size()) != ephem::XYZV_MAGIC)
+    {
+        fmt::print(stderr, _("Bad binary xyzv file {}.\n"), infilename.string());
+        return false;
+    }
+
+    if (header.byteOrder != ephem::nativeEndianCode)
+    {
+        fmt::print(stderr, _("Unsupported byte order {}, expected {}.\n"),
+                   header.byteOrder.get(), ephem::nativeEndianCode);
+        return false;
+    }
+
+    if (header.digits != std::numeric_limits<double>::digits)
+    {
+        fmt::print(stderr, _("Unsupported digits number {}, expected {}.\n"),
+                    header.digits.get(), std::numeric_limits<double>::digits);
+        return false;
+    }
+
+    auto count = header.count.get();
+    fmt::print(stderr, "File has {} records.\n", count);
+    return count > 0;
 }
 
-static constexpr std::uint16_t nativeEndianCode = endianCode(std::endian::native);
-
-static bool binaryToText(const std::string& infilename, const std::string& outfilename)
+bool
+binaryToText(const std::filesystem::path& infilename, const std::filesystem::path& outfilename)
 {
     using celestia::ephem::XYZVBinaryData;
     using celestia::ephem::XYZVBinaryHeader;
@@ -37,75 +63,34 @@ static bool binaryToText(const std::string& infilename, const std::string& outfi
 
     std::ifstream in(infilename, std::ios::binary);
     std::ofstream out(outfilename);
-    if (!in.good() || !out.good())
+    if (!in || !out)
     {
-        fmt::print(stderr, _("Error opening {} or {}.\n"), infilename, outfilename);
+        fmt::print(stderr, _("Error opening {} or {}.\n"), infilename.string(), outfilename.string());
         return false;
     }
 
-    {
-        std::array<char, sizeof(XYZVBinaryHeader)> header;
-        if (!in.read(header.data(), header.size())) /* Flawfinder: ignore */
-        {
-            fmt::print(stderr, _("Error reading header of {}.\n"), infilename);
-            return false;
-        }
-
-        if (std::string_view(header.data() + offsetof(XYZVBinaryHeader, magic), XYZV_MAGIC.size()) != XYZV_MAGIC)
-        {
-            fmt::print(stderr, _("Bad binary xyzv file {}.\n"), infilename);
-            return false;
-        }
-
-        decltype(XYZVBinaryHeader::byteOrder) byteOrder;
-        std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-        if (byteOrder != static_cast<decltype(byteOrder)>(nativeEndianCode))
-        {
-            fmt::print(stderr, _("Unsupported byte order {}, expected {}.\n"),
-                       byteOrder, nativeEndianCode);
-            return false;
-        }
-
-        decltype(XYZVBinaryHeader::digits) digits;
-        std::memcpy(&digits, header.data() + offsetof(XYZVBinaryHeader, digits), sizeof(digits));
-        if (digits != std::numeric_limits<double>::digits)
-        {
-            fmt::print(stderr, _("Unsupported digits number {}, expected {}.\n"),
-                       digits, std::numeric_limits<double>::digits);
-            return false;
-        }
-
-        decltype(XYZVBinaryHeader::count) count;
-        std::memcpy(&count, header.data() + offsetof(XYZVBinaryHeader, count), sizeof(count));
-        fmt::print(stderr, "File has {} records.\n", count);
-        if (count == 0)
-            return false;
-    }
+    if (!parseHeader(in, infilename))
+        return false;
 
     while (!in.eof())
     {
-        std::array<char, sizeof(XYZVBinaryData)> data;
-        if (!in.read(data.data(), data.size())) /* Flawfinder: ignore */
+        XYZVBinaryData data;
+        if (!in.read(reinterpret_cast<char*>(&data), sizeof(data))) /* Flawfinder: ignore */
             break;
 
-        double tdb;
-        std::array<double, 3> position;
-        std::array<double, 3> velocity;
-
-        std::memcpy(&tdb, data.data() + offsetof(XYZVBinaryData, tdb), sizeof(tdb));
-        std::memcpy(position.data(), data.data() + offsetof(XYZVBinaryData, position), sizeof(double) * 3);
-        std::memcpy(velocity.data(), data.data() + offsetof(XYZVBinaryData, velocity), sizeof(double) * 3);
-
         fmt::print("{} {} {} {} {} {} {}\n",
-                   tdb,
-                   position[0], position[1], position[2],
-                   velocity[0], velocity[1], velocity[2]);
+                   data.tdb.get(),
+                   data.position[0].get(), data.position[1].get(), data.position[2].get(),
+                   data.velocity[0].get(), data.velocity[1].get(), data.velocity[2].get());
     }
 
     return true;
 }
 
-int main(int argc, char* argv[])
+} // end unnamed namespace
+
+int
+main(int argc, char* argv[])
 {
     if (argc < 3)
     {

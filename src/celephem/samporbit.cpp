@@ -47,21 +47,6 @@ namespace celestia::ephem
 namespace
 {
 
-constexpr std::uint16_t endianCode(std::endian endianness)
-{
-    using enum std::endian;
-    static_assert(native == little || native == big,
-                  "Mixed endian systems are not supported");
-    switch (endianness)
-    {
-    case little: return 1234;
-    case big: return 4321;
-    default: return 0;
-    }
-}
-
-constexpr std::uint16_t nativeEndianCode = endianCode(std::endian::native);
-
 template<typename T>
 inline void
 convertToCelestiaCoordinates(Eigen::Matrix<T, 3, 1>& vector)
@@ -579,44 +564,36 @@ LoadSamplesXYZAscii(const std::filesystem::path& filename)
 bool
 ParseXYZVBinaryHeader(std::istream& in, const std::filesystem::path& filename)
 {
-    std::array<char, sizeof(XYZVBinaryHeader)> header;
-
-    // Sonar detects this as being in a critical section for some reason
-    if (!in.read(header.data(), header.size())) /* Flawfinder: ignore */ //NOSONAR
+    XYZVBinaryHeader header;
+    if (!in.read(reinterpret_cast<char*>(&header), sizeof(header))) /* Flawfinder: ignore */
     {
         GetLogger()->error(_("Error reading header of {}.\n"), filename);
         return false;
     }
 
-    if (std::string_view(header.data() + offsetof(XYZVBinaryHeader, magic), XYZV_MAGIC.size()) != XYZV_MAGIC)
+    if (std::string_view(header.magic.data(), header.magic.size()) != XYZV_MAGIC)
     {
         GetLogger()->error(_("Bad binary xyzv file {}.\n"), filename);
         return false;
     }
 
-    decltype(XYZVBinaryHeader::byteOrder) byteOrder;
-    std::memcpy(&byteOrder, header.data() + offsetof(XYZVBinaryHeader, byteOrder), sizeof(byteOrder));
-    if (byteOrder != nativeEndianCode)
+    if (header.byteOrder != nativeEndianCode)
     {
         GetLogger()->error(_("Unsupported byte order {}, expected {} in {}.\n"),
-                           byteOrder, nativeEndianCode, filename);
+                           header.byteOrder.get(), nativeEndianCode, filename);
         return false;
     }
 
-    decltype(XYZVBinaryHeader::digits) digits;
-    std::memcpy(&digits, header.data() + offsetof(XYZVBinaryHeader, digits), sizeof(digits));
-    if (digits != std::numeric_limits<double>::digits)
+    if (header.digits != std::numeric_limits<double>::digits)
     {
         GetLogger()->error(_("Unsupported digits number {}, expected {} in {}.\n"),
-                            digits, std::numeric_limits<double>::digits, filename);
+                           header.digits.get(), std::numeric_limits<double>::digits, filename);
         return false;
     }
 
-    decltype(XYZVBinaryHeader::count) count;
-    std::memcpy(&count, header.data() + offsetof(XYZVBinaryHeader, count), sizeof(count));
-    if (count == 0)
+    if (header.count == 0)
     {
-        GetLogger()->error(_("Invalid record count {} in {}.\n"), count, filename);
+        GetLogger()->error(_("Invalid record count {} in {}.\n"), header.count.get(), filename);
         return false;
     }
 
@@ -627,26 +604,22 @@ template<typename T>
 bool
 ReadXYZVBinarySample(std::istream& in, double& tdb, SampleXYZV<T>& sample)
 {
-    std::array<char, sizeof(XYZVBinaryData)> data;
-    if (!in.read(data.data(), data.size())) /* Flawfinder: ignore */
+    XYZVBinaryData data;
+    if (!in.read(reinterpret_cast<char*>(&data), sizeof(data))) /* Flawfinder: ignore */
         return false;
 
-    std::memcpy(&tdb, data.data() + offsetof(XYZVBinaryData, tdb), sizeof(double));
+    tdb = data.tdb;
 
     if constexpr (std::is_same_v<T, double>)
     {
-        std::memcpy(sample.position.data(), data.data() + offsetof(XYZVBinaryData, position), sizeof(double) * 3);
-        std::memcpy(sample.velocity.data(), data.data() + offsetof(XYZVBinaryData, velocity), sizeof(double) * 3);
-
-        sample.velocity *= astro::daysToSecs(1.0);
+        sample.position = Eigen::Matrix<T, 3, 1>(data.position[0], data.position[1], data.position[2]);
+        sample.velocity = Eigen::Matrix<T, 3, 1>(data.velocity[0], data.velocity[1], data.velocity[2])
+                        * astro::daysToSecs(1.0);
     }
     else
     {
-        Eigen::Vector3d position;
-        Eigen::Vector3d velocity;
-
-        std::memcpy(position.data(), data.data() + offsetof(XYZVBinaryData, position), sizeof(double) * 3);
-        std::memcpy(velocity.data(), data.data() + offsetof(XYZVBinaryData, velocity), sizeof(double) * 3);
+        Eigen::Vector3d position(data.position[0], data.position[1], data.position[2]);
+        Eigen::Vector3d velocity(data.velocity[0], data.velocity[1], data.velocity[2]);
 
         sample.position = position.template cast<T>();
         sample.velocity = (velocity * astro::daysToSecs(1.0)).template cast<T>();

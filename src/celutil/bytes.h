@@ -10,38 +10,101 @@
 
 #pragma once
 
+#include <array>
 #include <bit>
-#include <concepts>
+#include <cstddef>
 #include <cstdint>
+#include <type_traits>
 
 #include <celcompat/byteswap.h>
 
-namespace impl
+namespace celestia::util
 {
 
-template <std::integral T>
-constexpr T LE_TO_CPU(T val) noexcept
+static_assert(std::endian::native == std::endian::little ||
+              std::endian::native == std::endian::big,
+              "Mixed endian systems are not supported");
+
+template<typename T, std::endian E>
+    requires std::is_trivially_copyable_v<T>
+class EndianBytes
 {
-    if constexpr (std::endian::native == std::endian::big)
-        return celestia::compat::byteswap(val);
-    else
-        return val;
-}
+private:
+    using StorageType = std::array<std::byte, sizeof(T)>;
+    using IntegralType = std::conditional_t<sizeof(T) == sizeof(unsigned short), unsigned short,
+                         std::conditional_t<sizeof(T) == sizeof(unsigned int), unsigned int,
+                         std::conditional_t<sizeof(T) == sizeof(unsigned long), unsigned long,
+                         std::conditional_t<sizeof(T) == sizeof(unsigned long long), unsigned long long, void>>>>;
 
-template <std::integral T>
-constexpr T BE_TO_CPU(T val) noexcept
-{
-    if constexpr (std::endian::native == std::endian::little)
-        return celestia::compat::byteswap(val);
-    else
-        return val;
-}
+    static_assert(sizeof(StorageType) == sizeof(T));
+    static_assert(alignof(StorageType) == 1);
 
-}
+    StorageType m_bytes;
 
-#define LE_TO_CPU_INT16(ret, val) (ret = impl::LE_TO_CPU(val))
-#define LE_TO_CPU_INT32(ret, val) (ret = impl::LE_TO_CPU(val))
-#define LE_TO_CPU_FLOAT(ret, val) (ret = std::bit_cast<float>(impl::LE_TO_CPU(std::bit_cast<std::uint32_t>(val))))
-#define BE_TO_CPU_INT16(ret, val) (ret = impl::BE_TO_CPU(val))
-#define BE_TO_CPU_INT32(ret, val) (ret = impl::BE_TO_CPU(val))
-#define BE_TO_CPU_FLOAT(ret, val) (ret = std::bit_cast<float>(impl::BE_TO_CPU(std::bit_cast<std::uint32_t>(val))))
+    constexpr void set(T value) noexcept
+    {
+        if constexpr (sizeof(T) == 1 || E == std::endian::native)
+        {
+            m_bytes = std::bit_cast<StorageType>(value);
+        }
+        else if constexpr (std::is_integral_v<T>)
+        {
+            m_bytes = std::bit_cast<StorageType>(compat::byteswap(value));
+        }
+        else if constexpr (!std::is_same_v<IntegralType, void>)
+        {
+            m_bytes = std::bit_cast<StorageType>(compat::byteswap(std::bit_cast<IntegralType>(value)));
+        }
+        else
+        {
+            auto temp = std::bit_cast<StorageType>(value);
+            for (std::size_t i = 0; i < sizeof(T); ++i)
+                m_bytes[i] = temp[sizeof(T) - i - 1];
+        }
+    }
+
+public:
+    constexpr EndianBytes() noexcept = default;
+    constexpr explicit(false) EndianBytes(T value) noexcept { set(value); }
+
+    constexpr T get() const noexcept
+    {
+        if constexpr (sizeof(T) == 1 || E == std::endian::native)
+        {
+            return std::bit_cast<T>(m_bytes);
+        }
+        else if constexpr (std::is_integral_v<T>)
+        {
+            return compat::byteswap(std::bit_cast<T>(m_bytes));
+        }
+        else if constexpr (!std::is_same_v<IntegralType, void>)
+        {
+            return std::bit_cast<T>(compat::byteswap(std::bit_cast<IntegralType>(m_bytes)));
+        }
+        else
+        {
+            StorageType temp;
+            for (std::size_t i = 0; i < sizeof(T); ++i)
+                temp[i] = m_bytes[sizeof(T) - i - 1];
+            return std::bit_cast<T>(temp);
+        }
+    }
+
+    constexpr explicit(false) operator T() const noexcept { return get(); }
+
+    constexpr EndianBytes& operator=(T value) noexcept { set(value); return *this; }
+};
+
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
+using LE = EndianBytes<T, std::endian::little>;
+
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
+using BE = EndianBytes<T, std::endian::big>;
+
+template<typename T>
+    requires std::is_trivially_copyable_v<T>
+using NE = EndianBytes<T, std::endian::native>;
+
+} // end namespace celestia::util
