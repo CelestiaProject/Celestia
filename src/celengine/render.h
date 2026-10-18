@@ -11,7 +11,10 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <list>
+#include <map>
 #include <memory>
 #include <span>
 #include <string>
@@ -19,46 +22,37 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
-#include <celengine/body.h>
-#include <celengine/lightenv.h>
-#include <celengine/marker.h>
-#include <celengine/meshmanager.h>
-#include <celengine/universe.h>
-#include <celengine/selection.h>
-#include <celengine/shadermanager.h>
-#include <celengine/starcolors.h>
-#include <celengine/projectionmode.h>
-#include <celengine/rendcontext.h>
-#include <celengine/renderlistentry.h>
-#include <celengine/texmanager.h>
-#include <celengine/textlayout.h>
 #include <celimage/pixelformat.h>
-#include <celrender/gl/buffer.h>
 #include <celrender/rendererfwd.h>
+#include <celutil/color.h>
+#include "asterism.h"
+#include "body.h"
+#include "glsupport.h"
+#include "lightenv.h"
+#include "marker.h"
+#include "meshmanager.h"
+#include "projectionmode.h"
 #include "rendercolors.h"
 #include "renderflags.h"
-
-class RendererWatcher;
-class FrameTree;
-class LODSphereMesh;
-class ReferenceMark;
-class CurvePlot;
-class CurvePlotVertexBuffer;
-class PointStarVertexBuffer;
-namespace celestia::render { class PsfStarVertexBuffer; class StarPipelineOwner; }
-namespace celestia::engine { class ResourceSystem; }
-class Observer;
-struct Surface;
-struct RenderInfo;
-class Texture;
-class TextureFont;
-class FramebufferObject;
+#include "selection.h"
+#include "shadermanager.h"
+#include "starcolors.h"
+#include "textlayout.h"
 
 namespace celestia
 {
-class Rect;
+namespace engine
+{
+class RenderGeometryManager;
+class ResourceSystem;
+class TextureManager;
+class TexturePaths;
+enum class TextureResolution : int;
+}
 
 namespace gl
 {
@@ -71,14 +65,41 @@ namespace math
 class Frustum;
 class InfiniteFrustum;
 }
+
+namespace render
+{
+class PsfStarVertexBuffer;
+class StarPipelineOwner;
 }
+
+class Rect;
+}
+
+struct Atmosphere;
+class CurvePlot;
+class CurvePlotVertexBuffer;
+enum class FisheyeOverrideMode : int;
+class FramebufferObject;
+class FrameTree;
+class LODSphereMesh;
+class Observer;
+class PointStarVertexBuffer;
+class ReferenceMark;
+class RendererWatcher;
+struct RenderInfo;
+struct RenderListEntry;
+class Star;
+class StarDatabase;
+class Surface;
+class Texture;
+class TextureFont;
+class Universe;
 
 struct Matrices
 {
     const Eigen::Matrix4f *projection;
     const Eigen::Matrix4f *modelview;
 };
-
 
 struct LightSource
 {
@@ -88,7 +109,6 @@ struct LightSource
     float radius;
 };
 
-
 struct SecondaryIlluminator
 {
     const Body*     body;
@@ -96,7 +116,6 @@ struct SecondaryIlluminator
     float           radius;           // radius in km
     float           reflectedIrradiance;  // albedo times total irradiance from direct sources
 };
-
 
 enum class RenderMode
 {
@@ -106,7 +125,7 @@ enum class RenderMode
 
 class Renderer
 {
- public:
+public:
     Renderer();
     ~Renderer();
 
@@ -159,9 +178,9 @@ class Renderer
     float getAspectRatio() const;
 
     void setFaintestAM45deg(float);
-    float getFaintestAM45deg() const;
+    float getFaintestAM45deg() const noexcept;
     void setRTL(bool);
-    bool isRTL() const;
+    bool isRTL() const noexcept;
 
     void setRenderMode(RenderMode);
     void autoMag(float& faintestMag, float zoom);
@@ -172,32 +191,32 @@ class Renderer
 
     bool getInfo(std::map<std::string, std::string>& info) const;
 
-    RenderFlags getRenderFlags() const;
+    RenderFlags getRenderFlags() const noexcept;
     void setRenderFlags(RenderFlags);
-    RenderLabels getLabelMode() const;
+    RenderLabels getLabelMode() const noexcept;
     void setLabelMode(RenderLabels);
     std::shared_ptr<celestia::engine::ProjectionMode> getProjectionMode() const;
     void setProjectionMode(std::shared_ptr<celestia::engine::ProjectionMode>);
-    float getAmbientLightLevel() const;
+    float getAmbientLightLevel() const noexcept;
     void setAmbientLightLevel(float);
-    float getTintSaturation() const;
+    float getTintSaturation() const noexcept;
     void setTintSaturation(float);
-    float getMinimumOrbitSize() const;
+    float getMinimumOrbitSize() const noexcept;
     void setMinimumOrbitSize(float);
-    float getMinimumFeatureSize() const;
+    float getMinimumFeatureSize() const noexcept;
     void setMinimumFeatureSize(float);
-    float getDistanceLimit() const;
+    float getDistanceLimit() const noexcept;
     void setDistanceLimit(float);
     BodyClassification getOrbitMask() const;
     void setOrbitMask(BodyClassification);
-    int getScreenDpi() const;
+    int getScreenDpi() const noexcept;
     void setScreenDpi(int);
-    float getTextScaleFactor() const;
+    float getTextScaleFactor() const noexcept;
     void setTextScaleFactor(float);
 
-    float getScaleFactor() const;
-    float getPointWidth() const;
-    float getPointHeight() const;
+    float getScaleFactor() const noexcept;
+    float getPointWidth() const noexcept;
+    float getPointHeight() const noexcept;
 
     // GL wrappers
     void getViewport(int* x, int* y, int* w, int* h) const;
@@ -305,24 +324,24 @@ class Renderer
     }
 
     void setStarStyle(StarStyle);
-    StarStyle getStarStyle() const;
+    StarStyle getStarStyle() const noexcept;
 
     // Point Spread Function star renderer settings (StarStyle::PointSpreadFunction).
     void  setStarPointRadius(float r);
-    float getStarPointRadius() const;
+    float getStarPointRadius() const noexcept;
     // Positive values are clamped to [0.05, 1.0]; nonpositive values disable glow.
     void  setStarOptimization(float opt);
-    float getStarOptimization() const;
+    float getStarOptimization() const noexcept;
     void  setStarMaxIrradiance(float v);
-    float getStarMaxIrradiance() const;
+    float getStarMaxIrradiance() const noexcept;
     void  setStarDimClipFactor(float v);
-    float getStarDimClipFactor() const;
+    float getStarDimClipFactor() const noexcept;
     void  setStarExposure(float e);
-    float getStarExposure() const;
+    float getStarExposure() const noexcept;
     void  setToneMappingExposure(float e);
-    float getToneMappingExposure() const;
+    float getToneMappingExposure() const noexcept;
     void  setToneMappingMode(ToneMappingMode mode);
-    ToneMappingMode getToneMappingMode() const;
+    ToneMappingMode getToneMappingMode() const noexcept;
     void setResolution(celestia::engine::TextureResolution resolution);
     celestia::engine::TextureResolution getResolution() const;
     void enableSelectionPointer();
@@ -420,7 +439,7 @@ class Renderer
     std::shared_ptr<TextureFont> getFont(FontStyle) const;
     void updateFonts();
 
-    bool settingsHaveChanged() const;
+    bool settingsHaveChanged() const noexcept;
     void markSettingsChanged();
 
     void addWatcher(RendererWatcher*);
@@ -432,7 +451,6 @@ class Renderer
     celestia::engine::RenderGeometryManager* getGeometryManager() const noexcept { return m_geometryManager.get(); }
     celestia::engine::TextureManager* getTextureManager() const noexcept { return m_textureManager.get(); }
 
- public:
     struct RenderProperties
     {
         Surface* surface{ nullptr };
@@ -445,7 +463,7 @@ class Renderer
         float radius{ 1.0f };
         float geometryScale{ 1.0f };
         celestia::engine::GeometryHandle geometry{ celestia::engine::GeometryHandle::Invalid };
-	bool isStar{ false };
+	    bool isStar{ false };
     };
 
     struct DepthBufferPartition
@@ -455,7 +473,23 @@ class Renderer
         float farZ;
     };
 
- private:
+    // Location markers
+    celestia::engine::MarkerRepresentation mountainRep;
+    celestia::engine::MarkerRepresentation craterRep;
+    celestia::engine::MarkerRepresentation observatoryRep;
+    celestia::engine::MarkerRepresentation cityRep;
+    celestia::engine::MarkerRepresentation genericLocationRep;
+    celestia::engine::MarkerRepresentation galaxyRep;
+    celestia::engine::MarkerRepresentation nebulaRep;
+    celestia::engine::MarkerRepresentation openClusterRep;
+    celestia::engine::MarkerRepresentation globularRep;
+
+    std::list<RendererWatcher*> watchers;
+
+    // Colors for all lines and labels
+    celestia::engine::RendererColors colors{ celestia::engine::RendererColors::defaults() };
+
+private:
     void setFieldOfView(float);
     void preparePsfStarBuffers();
     void renderPointStars(const StarDatabase& starDB,
@@ -639,7 +673,7 @@ class Renderer
                      float receiverShadowRadius,
                      LightingState& lightingState,
                      unsigned int lightIndex,
-                     double now);
+                     double now) const;
 
     void labelConstellations(const AsterismList& asterisms,
                              const Observer& observer);
@@ -665,19 +699,18 @@ class Renderer
                                float vOffset,
                                float depth,
                                const Matrices&);
-    void renderAnnotations(const std::vector<Annotation>&,
+    void renderAnnotations(std::span<const Annotation>,
                            FontStyle fs);
     void renderBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
-    std::vector<Annotation>::iterator renderSortedAnnotations(std::vector<Annotation>::iterator,
-                                                              float nearDist,
-                                                              float farDist,
-                                                              FontStyle fs);
-    std::vector<Annotation>::iterator renderAnnotations(std::vector<Annotation>::iterator startIter,
-                                                        std::vector<Annotation>::iterator endIter,
+    std::span<const Annotation> renderSortedAnnotations(std::span<const Annotation> annotations,
                                                         float nearDist,
                                                         float farDist,
                                                         FontStyle fs);
+    std::span<const Annotation> renderAnnotations(std::span<const Annotation> annotations,
+                                                  float nearDist,
+                                                  float farDist,
+                                                  FontStyle fs);
 
     void markersToAnnotations(const celestia::engine::MarkerList &markers,
                               const Observer &observer,
@@ -707,7 +740,6 @@ class Renderer
 
     void createShadowFBO();
 
- private:
     std::unique_ptr<ShaderManager> shaderManager{ std::make_unique<ShaderManager>() };
 
     int viewportWidth{ 0 };
@@ -847,7 +879,7 @@ class Renderer
     bool m_markerDataInitialized{ false };
 
     std::unique_ptr<celestia::gl::VertexObject> m_rectVO;
-    celestia::gl::Buffer::SharedPtr m_rectBO;
+    boost::intrusive_ptr<celestia::gl::Buffer> m_rectBO;
     mutable bool m_rectInitialized{ false };
 
     // Saturation magnitude used to calculate a point star size
@@ -877,23 +909,6 @@ class Renderer
     std::shared_ptr<celestia::engine::ResourceSystem> m_resourceSystem;
     std::unique_ptr<celestia::engine::RenderGeometryManager> m_geometryManager;
     std::unique_ptr<celestia::engine::TextureManager> m_textureManager;
-
-    // Location markers
- public:
-    celestia::engine::MarkerRepresentation mountainRep;
-    celestia::engine::MarkerRepresentation craterRep;
-    celestia::engine::MarkerRepresentation observatoryRep;
-    celestia::engine::MarkerRepresentation cityRep;
-    celestia::engine::MarkerRepresentation genericLocationRep;
-    celestia::engine::MarkerRepresentation galaxyRep;
-    celestia::engine::MarkerRepresentation nebulaRep;
-    celestia::engine::MarkerRepresentation openClusterRep;
-    celestia::engine::MarkerRepresentation globularRep;
-
-    std::list<RendererWatcher*> watchers;
-
-    // Colors for all lines and labels
-    celestia::engine::RendererColors colors{ celestia::engine::RendererColors::defaults() };
 
     friend class celestia::render::AtmosphereRenderer;
     friend class PointStarRenderer;

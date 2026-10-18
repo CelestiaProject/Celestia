@@ -22,6 +22,7 @@
 #include <celengine/observer.h>
 #include <celengine/render.h>
 #include <celengine/shadermanager.h>
+#include <celengine/star.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celutil/indexlist.h>

@@ -23,6 +23,7 @@
 #include "pointstarvertexbuffer.h"
 #include "psfstarvertexbuffer.h"
 #include "render.h"
+#include "stardb.h"
 
 #include <fmt/printf.h>
 

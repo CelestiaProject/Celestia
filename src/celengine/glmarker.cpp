@@ -23,6 +23,7 @@
 #include "marker.h"
 #include "observer.h"
 #include "render.h"
+#include "shadermanager.h"
 
 using celestia::render::LineRenderer;
 

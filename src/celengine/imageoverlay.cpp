@@ -3,6 +3,7 @@
 #include "imageoverlay.h"
 #include "rectangle.h"
 #include "render.h"
+#include "shadermanager.h"
 
 ImageOverlay::ImageOverlay(const std::filesystem::path& f, Renderer *r) :
     texture(LoadTextureFromFile(f.is_relative() ? "images" / f : f,

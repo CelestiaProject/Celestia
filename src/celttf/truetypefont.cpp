@@ -25,6 +25,7 @@
 #include <celcompat/charconv.h>
 #include <celengine/glsupport.h>
 #include <celengine/render.h>
+#include <celengine/shadermanager.h>
 #include <celengine/texture.h>
 #include <celimage/image.h>
 #include <celrender/gl/buffer.h>

@@ -15,6 +15,7 @@
 #include "overlay.h"
 #include "rectangle.h"
 #include "render.h"
+#include "shadermanager.h"
 #include "textlayout.h"
 
 using namespace std;

@@ -33,6 +33,7 @@ extern "C"
 #include "glsupport.h"
 #include "rectangle.h"
 #include "render.h"
+#include "shadermanager.h"
 #include "texture.h"
 
 using celestia::util::GetLogger;

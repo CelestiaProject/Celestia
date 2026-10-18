@@ -28,6 +28,7 @@
 #include "render.h"
 #include "selection.h"
 #include "shadermanager.h"
+#include "star.h"
 #include "timeline.h"
 #include "timelinephase.h"
 
