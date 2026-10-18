@@ -34,70 +34,115 @@
 // used by Bruneton (which involved an expensive inverse trig operation
 // in the shader.)
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstdlib>
-#include <cmath>
 #include <algorithm>
-#include <map>
-#include <cassert>
+#include <array>
+#include <bit>
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <numbers>
+#include <optional>
+#include <string_view>
+
 #include <Eigen/Core>
+
 #include <celmath/mathlib.h>
+#include <celutil/bytes.h>
 
-using namespace Eigen;
-using namespace std;
+using namespace std::string_view_literals;
+
 namespace math = celestia::math;
+namespace util = celestia::util;
 
-constexpr const unsigned int HeightSamples = 32;
-constexpr const unsigned int ViewAngleSamples = 256;
-constexpr const unsigned int SunAngleSamples = 32;
+namespace
+{
+
+constexpr unsigned int HeightSamples = 32;
+constexpr unsigned int ViewAngleSamples = 256;
+constexpr unsigned int SunAngleSamples = 32;
 
 // Values settable via the command line
-static unsigned int ScatteringIntegrationSteps = 25;
+struct Options
+{
+    unsigned int ScatteringIntegrationSteps{ 25 };
+    std::filesystem::path ConfigFileName;
+    std::filesystem::path OutputFileName{ "out.atm" };
+};
 
-typedef map<string, double> ParameterSet;
-
-static const Vector3f RGBWavelengths(680.0f, 550.0f, 440.0f);
+const Eigen::Vector3f RGBWavelengths(680.0f, 550.0f, 440.0f);
 
 /** @param lambda - wavelength in nm
  *  @param n - index of refraction
  *  @param N - particles per meter^3
  */
-static float RayleighScatteringCoeff(float lambda, float n, float N)
+constexpr float
+RayleighScatteringCoeff(float lambda, float n, float N)
 {
-    float lambdaM = lambda * 1.0e-9f;
-    return (8.0f * pow(float(M_PI), 3.0f) * pow(n * n - 1.0f, 2.0f)) / (3.0f * N * pow(lambdaM, 4.0f));
+    float lambdaM4 = math::square(math::square(lambda * 1.0e-9f));
+    return (8.0f * math::cube(std::numbers::pi_v<float>) * math::square(n * n - 1.0f)) / (3.0f * N * lambdaM4);
 }
 
-static Vector3f RayleighScatteringCoeff(float n, float N)
+Eigen::Vector3f
+RayleighScatteringCoeff(float n, float N)
 {
-    return Vector3f(RayleighScatteringCoeff(RGBWavelengths.x(), n, N),
-                    RayleighScatteringCoeff(RGBWavelengths.y(), n, N),
-                    RayleighScatteringCoeff(RGBWavelengths.z(), n, N));
+    return Eigen::Vector3f(RayleighScatteringCoeff(RGBWavelengths.x(), n, N),
+                           RayleighScatteringCoeff(RGBWavelengths.y(), n, N),
+                           RayleighScatteringCoeff(RGBWavelengths.z(), n, N));
 }
 
-
-class Atmosphere
+struct ParameterSet
 {
-public:
-    float shellRadius() const
+    ParameterSet()
     {
-        return planetRadius + max(mieScaleHeight, rayleighScaleHeight) * 8.0f;
+        // Compute default rayleigh coefficients index of refraction and
+        // molecular densities for Earth's atmosphere.
+        Eigen::Vector3f rayleighCoeff = RayleighScatteringCoeff(1.00027712f, 2.5470e25f);
+        RayleighRed   = rayleighCoeff.x() * 1000.0f;
+        RayleighGreen = rayleighCoeff.y() * 1000.0f;
+        RayleighBlue  = rayleighCoeff.z() * 1000.0f;
     }
 
-    Vector3f* computeTransmittanceTable() const;
-    Vector4f* computeInscatterTable() const;
+    float RayleighScaleHeight{ 7.94f };
+    float RayleighRed;
+    float RayleighGreen;
+    float RayleighBlue;
+    float MieScaleHeight{ 1.2f };
+    float Mie{ 2.1e-3f };
+    float AbsorbRed{ 0.0f };
+    float AbsorbGreen{ 0.0f };
+    float AbsorbBlue{ 0.0f };
+    float Radius{ 6378.0f };
+};
+
+struct Atmosphere
+{
+    static constexpr unsigned int TransmittanceSampleCount = HeightSamples * ViewAngleSamples;
+    static constexpr unsigned int InscatterSampleCount = HeightSamples * ViewAngleSamples * SunAngleSamples;
+
+    using TransmittanceTable = std::array<Eigen::Vector3f, TransmittanceSampleCount>;
+    using InscatterTable = std::array<Eigen::Vector4f, InscatterSampleCount>;
+
+    float shellRadius() const
+    {
+        return planetRadius + std::max(mieScaleHeight, rayleighScaleHeight) * 8.0f;
+    }
+
+    std::unique_ptr<TransmittanceTable> computeTransmittanceTable() const;
+    std::unique_ptr<InscatterTable> computeInscatterTable(unsigned int scatteringIntegrationSteps) const;
 
     float planetRadius;
     float rayleighScaleHeight;
     float mieScaleHeight;
-    Vector3f rayleighCoeff;
+    Eigen::Vector3f rayleighCoeff;
     float mieCoeff;
-    Vector3f absorptionCoeff;
+    Eigen::Vector3f absorptionCoeff;
     float mieAsymmetry;
 };
-
 
 // Based on approximation from E. Bruneton and F. Neyret,
 //     - r is distance of eye from planet center
@@ -105,31 +150,31 @@ public:
 //     - pathLength is the distance that the ray travels through the atmosphere
 //     - H is the scale height
 //     - R is the planet radius
-float opticalDepth(float r, float mu, float l, float H, float R)
+float
+opticalDepth(float r, float mu, float l, float H, float R)
 {
-    float a = sqrt(r * 0.5 / H);
+    float a = std::sqrt(r * 0.5 / H);
     float bx = a * mu;
     float by = a * (mu + l / r);
     float sbx = math::sign(bx);
     float sby = math::sign(by);
-    float x = sby > sbx ? exp(bx * bx) : 0.0f;
-    float yx = sbx / (2.3193f * abs(bx) + sqrt(1.52f * bx * bx + 4.0f));
-    float yy = sby / (2.3193f * abs(by) + sqrt(1.52f * by * by + 4.0f)) *
-        exp(-l / H * (l / (2.0f * r) + mu));
+    float x = sby > sbx ? std::exp(bx * bx) : 0.0f;
+    float yx = sbx / (2.3193f * std::abs(bx) + std::sqrt(1.52f * bx * bx + 4.0f));
+    float yy = sby / (2.3193f * std::abs(by) + std::sqrt(1.52f * by * by + 4.0f)) *
+        std::exp(-l / H * (l / (2.0f * r) + mu));
 
-    return sqrt(6.2831f * H * r) * exp((R - r) / H) * (x + yx - yy);
+    return std::sqrt(6.2831f * H * r) * std::exp((R - r) / H) * (x + yx - yy);
 }
 
-
-Vector3f transmittance(float r, float mu, float l, const Atmosphere& atm)
+Eigen::Vector3f
+transmittance(float r, float mu, float l, const Atmosphere& atm)
 {
     float depthR = opticalDepth(r, mu, l, atm.rayleighScaleHeight, atm.planetRadius);
     float depthM = opticalDepth(r, mu, l, atm.mieScaleHeight, atm.planetRadius);
     return (-depthR * atm.rayleighCoeff
-            - depthM * Vector3f::Constant(atm.mieCoeff)
+            - depthM * Eigen::Vector3f::Constant(atm.mieCoeff)
             - depthM * atm.absorptionCoeff).array().exp();
 }
-
 
 // Parameters:
 //   h   - height of the viewpoint above the planet surface
@@ -137,7 +182,8 @@ Vector3f transmittance(float r, float mu, float l, const Atmosphere& atm)
 //   muS - cosine of the angle between the sun direction and zenith
 
 // Map a unorm to the cosine of the view angle
-static inline float toMu(float u)
+constexpr float
+toMu(float u)
 {
     float x = u * 2.0f - 1.0f;
     float signX = x < 0.0f ? 1.0f : -1.0f;
@@ -145,7 +191,8 @@ static inline float toMu(float u)
 }
 
 // Map a unorm to the cosine of the sun angle
-static inline float toMuS(float u)
+inline float
+toMuS(float u)
 {
     // Original version from Bruneton paper:
     //return (-1.0f / 3.0f) * (log(1.0f - u * (1.0f - exp(-3.6f))) + 0.6f);
@@ -154,11 +201,10 @@ static inline float toMuS(float u)
     // eliminates the faint but persistent illumination that appears even
     // when the sun is far below the horizon. Even the adjusted function may
     // still not be adequate when very large scale heights are used.
-    return (-1.0f / 2.0f) * (log(1.0f - u * (1.0f - exp(-2.6f))) + 0.6f);
+    return (-1.0f / 2.0f) * (std::log(1.0f - u * (1.0f - std::exp(-2.6f))) + 0.6f);
 }
 
-
-Vector3f*
+std::unique_ptr<Atmosphere::TransmittanceTable>
 Atmosphere::computeTransmittanceTable() const
 {
     float Rg = planetRadius;
@@ -166,8 +212,7 @@ Atmosphere::computeTransmittanceTable() const
     float Rt = shellRadius();
     float Rt2 = Rt * Rt;
 
-    unsigned int sampleCount = HeightSamples * ViewAngleSamples;
-    Vector3f* transmittanceTable = new Vector3f[sampleCount];
+    auto transmittanceTable = std::make_unique<TransmittanceTable>();
 
     // Avoid numerical precision problems by choosing a first viewer
     // position just *above* the planet surface.
@@ -175,44 +220,44 @@ Atmosphere::computeTransmittanceTable() const
 
     for (unsigned int i = 0; i < HeightSamples; ++i)
     {
-        float v = float(i) / float(HeightSamples);
+        float v = static_cast<float>(i) / static_cast<float>(HeightSamples);
         float h = v * v * (Rt - Rg) + baseHeight;
         float r = Rg + h;
         float r2 = r * r;
 
         for (unsigned int j = 0; j < ViewAngleSamples; ++j)
         {
-            float u = float(j) / float(ViewAngleSamples - 1);
-            float mu = max(-1.0f, min(1.0f, toMu(u)));
+            float u = static_cast<float>(j) / static_cast<float>(ViewAngleSamples - 1);
+            float mu = std::clamp(toMu(u), -1.0f, 1.0f);
             float cosTheta = mu;
             float sinTheta2 = 1.0f - cosTheta * cosTheta;
 
             float pathLength;
             float d = Rg2 - r2 * sinTheta2;
-            if (d > 0.0f && -r * cosTheta - sqrt(d) > 0.0f)
+            if (d > 0.0f && -r * cosTheta - std::sqrt(d) > 0.0f)
             {
-                pathLength = -r * cosTheta - sqrt(Rg2 - r2 * sinTheta2);
+                pathLength = -r * cosTheta - std::sqrt(Rg2 - r2 * sinTheta2);
             }
             else
             {
-                pathLength = -r * cosTheta + sqrt(Rt2 - r2 * sinTheta2);
+                pathLength = -r * cosTheta + std::sqrt(Rt2 - r2 * sinTheta2);
             }
 
             unsigned int index = i * ViewAngleSamples + j;
-            transmittanceTable[index] = transmittance(r, mu, pathLength, *this);
+            (*transmittanceTable)[index] = transmittance(r, mu, pathLength, *this);
 
             // Warning messages
-            if (isnan(transmittanceTable[index].x()))
+            if (std::isnan((*transmittanceTable)[index].x()))
             {
-                cout << "NaN in transmittance table at (" << j << ", " << i << ")\n";
-                cout << transmittanceTable[index].x() << endl;
-                cout << "r=" << r << ", mu=" << mu << ", l=" << pathLength << endl;
-                exit(1);
+                std::cout << "NaN in transmittance table at (" << j << ", " << i << ")\n"
+                          << (*transmittanceTable)[index].x() << "\n"
+                             "r=" << r << ", mu=" << mu << ", l=" << pathLength << '\n';
+                std::exit(EXIT_FAILURE);
             }
 
-            if (transmittanceTable[index].x() > 1.0f)
+            if ((*transmittanceTable)[index].x() > 1.0f)
             {
-                cout << "Non-physical transmittance " << transmittanceTable[index].x() << endl;
+                std::cout << "Non-physical transmittance " << (*transmittanceTable)[index].x() << '\n';
             }
         }
     }
@@ -220,9 +265,8 @@ Atmosphere::computeTransmittanceTable() const
     return transmittanceTable;
 }
 
-
-Vector4f*
-Atmosphere::computeInscatterTable() const
+std::unique_ptr<Atmosphere::InscatterTable>
+Atmosphere::computeInscatterTable(unsigned int scatteringIntegrationSteps) const
 {
     // Rg - "ground radius"
     // Rt - "transparent radius", i.e. radius of the atmosphere at some point
@@ -237,65 +281,64 @@ Atmosphere::computeInscatterTable() const
     // position just *above* the planet surface.
     float baseHeight = Rg * 1.0e-6f;
 
-    unsigned int sampleCount = HeightSamples * ViewAngleSamples * SunAngleSamples;
-    Vector4f* inscatter = new Vector4f[sampleCount];
+    auto inscatter = std::make_unique<InscatterTable>();
 
     for (unsigned int i = 0; i < HeightSamples; ++i)
     {
-        float w = float(i) / float(HeightSamples);
+        float w = static_cast<float>(i) / static_cast<float>(HeightSamples);
         float h = w * w * (Rt - Rg) + baseHeight;
         float r = Rg + h;
         float r2 = r * r;
 
-        cout << "layer " << i << ", height=" << h << "km\n";
+        std::cout << "layer " << i << ", height=" << h << "km\n";
 
-        Vector2f eye(0.0f, r);
+        Eigen::Vector2f eye(0.0f, r);
 
         for (unsigned int j = 0; j < ViewAngleSamples; ++j)
         {
-            float v = float(j) / float(ViewAngleSamples - 1);
-            float mu = max(-1.0f, min(1.0f, toMu(v)));
+            float v = static_cast<float>(j) / static_cast<float>(ViewAngleSamples - 1);
+            float mu = std::clamp(toMu(v), -1.0f, 1.0f);
             float cosTheta = mu;
             float sinTheta2 = 1.0f - cosTheta * cosTheta;
-            float sinTheta = sqrt(sinTheta2);
-            Vector2f view(sinTheta, cosTheta);
+            float sinTheta = std::sqrt(sinTheta2);
+            Eigen::Vector2f view(sinTheta, cosTheta);
 
             float pathLength;
             float d = Rg2 - r2 * sinTheta2;
-            if (d > 0.0f && -r * cosTheta - sqrt(d) > 0.0f)
+            if (d > 0.0f && -r * cosTheta - std::sqrt(d) > 0.0f)
             {
                 // Ray hits the planet
-                pathLength = -r * cosTheta - sqrt(Rg2 - r2 * sinTheta2);
+                pathLength = -r * cosTheta - std::sqrt(Rg2 - r2 * sinTheta2);
             }
             else
             {
                 // Ray hits the sky
-                pathLength = -r * cosTheta + sqrt(Rt2 - r2 * sinTheta2);
+                pathLength = -r * cosTheta + std::sqrt(Rt2 - r2 * sinTheta2);
             }
 
             for (unsigned int k = 0; k < SunAngleSamples; ++k)
             {
-                float w = float(k) / float(SunAngleSamples - 1);
+                float w = static_cast<float>(k) / static_cast<float>(SunAngleSamples - 1);
                 float muS = toMuS(w);
                 float cosPhi = muS;
-                float sinPhi = sqrt(max(0.0f, 1.0f - cosPhi * cosPhi));
-                Vector2f sun(sinPhi, cosPhi);
+                float sinPhi = std::sqrt(std::max(0.0f, 1.0f - cosPhi * cosPhi));
+                Eigen::Vector2f sun(sinPhi, cosPhi);
 
-                float stepLength = pathLength / float(ScatteringIntegrationSteps);
-                Vector2f step = view * stepLength;
+                float stepLength = pathLength / static_cast<float>(scatteringIntegrationSteps);
+                Eigen::Vector2f step = view * stepLength;
 
-                Vector3f rayleigh = Vector3f::Zero();
+                Eigen::Vector3f rayleigh = Eigen::Vector3f::Zero();
                 float mie = 0.0f;
 
-                for (unsigned int m = 0; m < ScatteringIntegrationSteps; ++m)
+                for (unsigned int m = 0; m < scatteringIntegrationSteps; ++m)
                 {
-                    Vector2f x = eye + step * m;
+                    Eigen::Vector2f x = eye + step * m;
                     float distanceToViewer = stepLength * m;
                     float rx2 = x.squaredNorm();
-                    float rx = sqrt(rx2);
+                    float rx = std::sqrt(rx2);
 
                     // Compute the transmittance along the path to the viewer
-                    Vector3f viewPathTransmittance = transmittance(r, mu, distanceToViewer, *this);
+                    Eigen::Vector3f viewPathTransmittance = transmittance(r, mu, distanceToViewer, *this);
 
                     // Compute the cosine and sine of the angle between the
                     // sun direction and zenith at the current sample.
@@ -304,13 +347,13 @@ Atmosphere::computeInscatterTable() const
 
                     // Compute the transmittance along the path to the sun
                     // and the total transmittance t.
-                    Vector3f t;
-                    if (Rg2 - rx2 * s2 < 0.0f || -rx * c - sqrt(Rg2 - rx2 * s2) < 0.0f)
+                    Eigen::Vector3f t;
+                    if (Rg2 - rx2 * s2 < 0.0f || -rx * c - std::sqrt(Rg2 - rx2 * s2) < 0.0f)
                     {
                         // Compute the distance through the atmosphere
                         // in the direction of the sun
-                        float sunPathLength = -rx * c + sqrt(Rt2 - rx2 * s2);
-                        Vector3f sunPathTransmittance = transmittance(rx, c, sunPathLength, *this);
+                        float sunPathLength = -rx * c + std::sqrt(Rt2 - rx2 * s2);
+                        Eigen::Vector3f sunPathTransmittance = transmittance(rx, c, sunPathLength, *this);
 
                         t = viewPathTransmittance.cwiseProduct(sunPathTransmittance);
                     }
@@ -318,30 +361,30 @@ Atmosphere::computeInscatterTable() const
                     {
                         // Ray to sun intersects the planet; no inscattered
                         // light at this point.
-                        t = Vector3f::Zero();
+                        t = Eigen::Vector3f::Zero();
                     }
 
                     // Accumulate Rayleigh and Mie scattering
                     float hx = rx - Rg;
-                    rayleigh += (exp(-hx / rayleighScaleHeight) * stepLength) * t;
-                    mie += exp(-hx / mieScaleHeight) * stepLength * t.x();
+                    rayleigh += (std::exp(-hx / rayleighScaleHeight) * stepLength) * t;
+                    mie += std::exp(-hx / mieScaleHeight) * stepLength * t.x();
                 }
 
                 unsigned int index = (i * ViewAngleSamples + j) * SunAngleSamples + k;
-                inscatter[index] << rayleigh.cwiseProduct(rayleighCoeff),
-                                    mie * mieCoeff;
+                (*inscatter)[index] << rayleigh.cwiseProduct(rayleighCoeff),
+                                       mie * mieCoeff;
                 if (i == HeightSamples - 1 && k == 0)
                 {
-                    cout << acos(muS) * 180.0/M_PI << ", "
-                         << acos(mu) * 180.0/M_PI << ", "
-                         << inscatter[index].transpose() << endl;
+                    std::cout << std::acos(muS) * 180.0/std::numbers::pi << ", "
+                              << std::acos(mu) * 180.0/std::numbers::pi << ", "
+                              << (*inscatter)[index].transpose() << '\n';
                 }
 
 #if 0
                 // Emit warnings about NaNs in scatter table
-                if (isnan(rayleigh.x()))
+                if (std::isnan(rayleigh.x()))
                 {
-                    cout << "NaN in inscatter table at (" << k << ", " << j << ", " << i << ")\n";
+                    std::cout << "NaN in inscatter table at (" << k << ", " << j << ", " << i << ")\n";
                 }
 #endif
             }
@@ -351,17 +394,15 @@ Atmosphere::computeInscatterTable() const
     return inscatter;
 }
 
-
-
-void usage()
+void
+usage()
 {
-    cerr << "Usage: scattertable [options] <config file>\n";
-    cerr << "   --output <filename> (or -o) : set filename of output image\n";
-    cerr << "           (default is out.atm)\n";
-    cerr << "   --scattersteps <value> (or -s)\n";
-    cerr << "           set the number of integration steps for scattering\n";
+    std::cerr << "Usage: scattertable [options] <config file>\n"
+                 "   --output <filename> (or -o) : set filename of output image\n"
+                 "           (default is out.atm)\n"
+                 "   --scattersteps <value> (or -s)\n"
+                 "           set the number of integration steps for scattering\n";
 }
-
 
 /*
  * Theory:
@@ -379,176 +420,147 @@ void usage()
  * may also be assigned wavelength dependent absorption coefficients.
  */
 
-Vector3f computeRayleighCoeffs(const Vector3f& wavelengths)
+Eigen::Vector3f
+computeRayleighCoeffs(const Eigen::Vector3f& wavelengths)
 {
     return wavelengths.array().pow(-4.0f);
 }
 
-
-void SetAtmosphereParameters(Atmosphere& atm, ParameterSet& params)
+void
+SetAtmosphereParameters(Atmosphere& atm, ParameterSet& params)
 {
-    atm.rayleighScaleHeight   = params["RayleighScaleHeight"];
-    atm.rayleighCoeff.x()     = params["RayleighRed"];
-    atm.rayleighCoeff.y()     = params["RayleighGreen"];
-    atm.rayleighCoeff.z()     = params["RayleighBlue"];
+    atm.rayleighScaleHeight   = params.RayleighScaleHeight;
+    atm.rayleighCoeff.x()     = params.RayleighRed;
+    atm.rayleighCoeff.y()     = params.RayleighGreen;
+    atm.rayleighCoeff.z()     = params.RayleighBlue;
 
-    atm.mieScaleHeight        = params["MieScaleHeight"];
-    atm.mieCoeff              = params["Mie"];
+    atm.mieScaleHeight        = params.MieScaleHeight;
+    atm.mieCoeff              = params.Mie;
 
-    atm.absorptionCoeff.x()   = params["AbsorbRed"];
-    atm.absorptionCoeff.y()   = params["AbsorbGreen"];
-    atm.absorptionCoeff.z()   = params["AbsorbBlue"];
+    atm.absorptionCoeff.x()   = params.AbsorbRed;
+    atm.absorptionCoeff.y()   = params.AbsorbGreen;
+    atm.absorptionCoeff.z()   = params.AbsorbBlue;
 
-    atm.planetRadius          = params["Radius"];
+    atm.planetRadius          = params.Radius;
 }
 
-
-void SetDefaultParameters(ParameterSet& params)
+bool
+LoadParameterSet(ParameterSet& params, const std::filesystem::path& filename)
 {
-    // Compute default rayleigh coefficients index of refraction and
-    // molecular densities for Earth's atmosphere.
-    Vector3f rayleighCoeff = RayleighScatteringCoeff(1.00027712f, 2.5470e25f);
-    float km = 1000.0f;
-
-    params["RayleighScaleHeight"] = 7.94;
-    params["RayleighRed"]         = rayleighCoeff.x() * km;
-    params["RayleighGreen"]       = rayleighCoeff.y() * km;
-    params["RayleighBlue"]        = rayleighCoeff.z() * km;
-
-    params["MieScaleHeight"]      = 1.2;
-    params["Mie"]                 = 2.1e-6f * km;
-
-    params["AbsorbRed"]           = 0.0;
-    params["AbsorbGreen"]         = 0.0;
-    params["AbsorbBlue"]          = 0.0;
-
-    params["Radius"]              = 6378.0;
-}
-
-
-bool LoadParameterSet(ParameterSet& params, const string& filename)
-{
-    ifstream in(filename);
+    std::ifstream in(filename);
 
     if (!in.good())
     {
-        cerr << "Error opening config file " << filename << endl;
+        std::cerr << "Error opening config file " << filename << '\n';
         return false;
     }
 
+    std::string name;
     while (in.good())
     {
-        string name;
+        name.clear();
         in >> name;
 
-        double numValue = 0.0;
+        float numValue = 0.0f;
         in >> numValue;
-        if (in.good())
-        {
-            params[name] = numValue;
-        }
+        if (!in.good())
+            break;
+
+        if (name == "RayleighScaleHeight"sv)
+            params.RayleighScaleHeight = numValue;
+        else if (name == "RayleighRed"sv)
+            params.RayleighRed = numValue;
+        else if (name == "RayleighGreen"sv)
+            params.RayleighGreen = numValue;
+        else if (name == "RayleighBlue"sv)
+            params.RayleighBlue = numValue;
+        else if (name == "MieScaleHeight"sv)
+            params.MieScaleHeight = numValue;
+        else if (name == "Mie"sv)
+            params.Mie = numValue;
+        else if (name == "AbsorbRed"sv)
+            params.AbsorbRed = numValue;
+        else if (name == "AbsorbGreen"sv)
+            params.AbsorbGreen = numValue;
+        else if (name == "AbsorbBlue"sv)
+            params.AbsorbBlue = numValue;
+        else if (name == "Radius"sv)
+            params.Radius = numValue;
     }
 
     if (in.bad())
     {
-        cerr << "Error in scene config file " << filename << endl;
+        std::cerr << "Error in scene config file " << filename << '\n';
         return false;
     }
-    else
-    {
-        return true;
-    }
+
+    return true;
 }
 
-
-string ConfigFileName;
-string OutputFileName("out.atm");
-
-bool parseCommandLine(int argc, char* argv[])
+std::optional<Options>
+parseCommandLine(int argc, char* argv[])
 {
     int i = 1;
     int fileCount = 0;
 
+    auto result = std::make_optional<Options>();
+    auto& options = *result;
+
     while (i < argc)
     {
-        if (argv[i][0] == '-')
+        std::string_view arg{ argv[i] };
+        if (arg.starts_with('-'))
         {
-            if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--scattersteps"))
+            if (arg == "-s"sv || arg == "--scattersteps"sv)
             {
                 if (i == argc - 1)
-                    return false;
+                    return std::nullopt;
 
-                if (sscanf(argv[i + 1], " %u", &ScatteringIntegrationSteps) != 1)
-                    return false;
-                i++;
+                if (std::sscanf(argv[i + 1], " %u", &options.ScatteringIntegrationSteps) != 1)
+                    return std::nullopt;
+                ++i;
             }
-            else if (!strcmp(argv[i], "-o") || !strcmp(argv[i], "--output"))
+            else if (arg == "-o"sv || arg == "--output"sv)
             {
                 if (i == argc - 1)
-                    return false;
+                    return std::nullopt;
 
-                OutputFileName = string(argv[i + 1]);
-                i++;
+                options.OutputFileName = std::filesystem::path(arg);
+                ++i;
             }
             else
             {
-                return false;
+                return std::nullopt;
             }
-            i++;
+            ++i;
         }
         else
         {
             if (fileCount == 0)
             {
                 // input filename first
-                ConfigFileName = string(argv[i]);
-                fileCount++;
+                options.ConfigFileName = std::filesystem::path(arg);
+                ++fileCount;
             }
             else
             {
                 // more than one filenames on the command line is an error
-                return false;
+                return std::nullopt;
             }
-            i++;
+            ++i;
         }
     }
 
-    return true;
+    return result;
 }
 
-
-union Uint16
-{
-    char bytes[2];
-    uint16_t u;
-};
-
-union Uint32
-{
-    char bytes[4];
-    uint32_t u;
-};
-
-union Float
-{
-    char bytes[4];
-    float f;
-};
-
-union FloatInt
-{
-    float f;
-    uint32_t u;
-};
-
-
 // Convert a single precision floating point value to half precision
-uint16_t floatToHalf(float f)
+constexpr std::uint16_t
+floatToHalf(float f)
 {
-    FloatInt fi;
-    fi.f = f;
+    auto fi = std::bit_cast<std::uint32_t>(f);
 
-    auto signBit = uint16_t((fi.u & 0x80000000) >> 16);
+    auto signBit = uint16_t((fi & UINT32_C(0x80000000)) >> 16);
 
     if (f > 65504.0f)
     {
@@ -561,8 +573,8 @@ uint16_t floatToHalf(float f)
         return 0xfc00;
     }
 
-    int exponent = int((fi.u >> 23) & 0xff) - 127 + 15;
-    uint32_t significand = fi.u & 0x007fffff;
+    int exponent = static_cast<int>((fi >> 23) & UINT32_C(0xff)) - 127 + 15;
+    std::uint32_t significand = fi & UINT32_C(0x007fffff);
 
     if (exponent < -9)
     {
@@ -583,16 +595,15 @@ uint16_t floatToHalf(float f)
             return signBit + 0x7c00;
         }
 
-
-            // NaN - preserve bits, but make sure that we don't
-            // make the significand zero, as that would indicate
-            // an infinity, not a NaN
-            auto nanBits = uint16_t(significand >> 13);
-            if (nanBits == 0)
-            {
-                nanBits = 1;
-            }
-            return signBit + 0x7c00 + nanBits;
+        // NaN - preserve bits, but make sure that we don't
+        // make the significand zero, as that would indicate
+        // an infinity, not a NaN
+        auto nanBits = static_cast<std::uint16_t>(significand >> 13);
+        if (nanBits == 0)
+        {
+            nanBits = 1;
+        }
+        return signBit + UINT16_C(0x7c00) + nanBits;
 
     }
     else if (exponent > 30)
@@ -608,209 +619,98 @@ uint16_t floatToHalf(float f)
     }
 }
 
-
 struct DDSPixelFormat
 {
-    uint32_t dwSize{0};
-    uint32_t dwFlags{0};
-    uint32_t dwFourCC{0};
-    uint32_t dwRGBBitCount{0};
-    uint32_t dwRBitMask{0};
-    uint32_t dwGBitMask{0};
-    uint32_t dwBBitMask{0};
-    uint32_t dwABitMask{0};
+    util::LE<std::uint32_t> dwSize{sizeof(DDSPixelFormat)};
+    util::LE<std::uint32_t> dwFlags{0};
+    util::LE<std::uint32_t> dwFourCC{0};
+    util::LE<std::uint32_t> dwRGBBitCount{0};
+    util::LE<std::uint32_t> dwRBitMask{0};
+    util::LE<std::uint32_t> dwGBitMask{0};
+    util::LE<std::uint32_t> dwBBitMask{0};
+    util::LE<std::uint32_t> dwABitMask{0};
 };
-
 
 // Header for Microsoft DDS file format
 struct DDSHeader
 {
     DDSHeader()
     {
-        fill(begin(dwReserved1), end(dwReserved1), 0);
+        std::ranges::fill(dwReserved1, 0);
     }
+    static constexpr std::uint32_t CAPS_COMPLEX = 0x000008;
+    static constexpr std::uint32_t CAPS_MIPMAP  = 0x400000;
+    static constexpr std::uint32_t CAPS_TEXTURE = 0x001000;
 
-    static const uint32_t CAPS_COMPLEX = 0x000008;
-    static const uint32_t CAPS_MIPMAP  = 0x400000;
-    static const uint32_t CAPS_TEXTURE = 0x001000;
+    static constexpr std::uint32_t DDSD_HEIGHT      = 0x2;
+    static constexpr std::uint32_t DDSD_WIDTH       = 0x4;
+    static constexpr std::uint32_t DDSD_PIXELFORMAT = 0x1000;
+    static constexpr std::uint32_t DDSD_MIPMAPCOUNT = 0x20000;
+    static constexpr std::uint32_t DDSD_DEPTH       = 0x800000;
 
-    static const uint32_t CAPS2_VOLUME = 0x200000;
-    static const uint32_t CAPS2_CUBEMAP = 0x00000200;
-    static const uint32_t CAPS2_CUBEMAP_POSITIVEX = 0x00000400;
-    static const uint32_t CAPS2_CUBEMAP_NEGATIVEX = 0x00000800;
-    static const uint32_t CAPS2_CUBEMAP_POSITIVEY = 0x00001000;
-    static const uint32_t CAPS2_CUBEMAP_NEGATIVEY = 0x00002000;
-    static const uint32_t CAPS2_CUBEMAP_POSITIVEZ = 0x00004000;
-    static const uint32_t CAPS2_CUBEMAP_NEGATIVEZ = 0x00008000;
+    static constexpr std::uint32_t D3DFMT_A16B16G16R16F = 113;
 
-    static const uint32_t DDSD_CAPS      = 0x1;
-    static const uint32_t DDSD_HEIGHT    = 0x2;
-    static const uint32_t DDSD_WIDTH     = 0x4;
-    static const uint32_t DDSD_PITCH     = 0x8;
-    static const uint32_t DDSD_PIXELFORMAT = 0x1000;
-    static const uint32_t DDSD_MIPMAPCOUNT = 0x20000;
-    static const uint32_t DDSD_LINEARSIZE  = 0x80000;
-    static const uint32_t DDSD_DEPTH       = 0x800000;
+    static constexpr std::uint32_t FOURCC      = 0x04;
 
-    static const uint32_t D3DFMT_A16B16G16R16 =   36;
-    static const uint32_t D3DFMT_A16B16G16R16F = 113;
-    static const uint32_t D3DFMT_DXT1 = 0x31545844;
-    static const uint32_t D3DFMT_DXT3 = 0x33545844;
-    static const uint32_t D3DFMT_DXT5 = 0x35545844;
-
-    static const uint32_t FOURCC      = 0x04;
-
-    uint32_t          dwSize{sizeof(DDSHeader)};
-    uint32_t          dwFlags{DDSD_PIXELFORMAT};
-    uint32_t          dwHeight{0};
-    uint32_t          dwWidth{0};
-    uint32_t          dwLinearSize{0};
-    uint32_t          dwDepth{0};
-    uint32_t          dwMipMapCount{0};
-    uint32_t          dwReserved1[11];
-    DDSPixelFormat    ddpf;
-    uint32_t          dwCaps{0};
-    uint32_t          dwCaps2{0};
-    uint32_t          dwCaps3{0};
-    uint32_t          dwCaps4{0};
-    uint32_t          dwReserved2{0};
+    util::LE<std::uint32_t>                  dwSize{sizeof(DDSHeader)};
+    util::LE<std::uint32_t>                  dwFlags{DDSD_PIXELFORMAT};
+    util::LE<std::uint32_t>                  dwHeight{0};
+    util::LE<std::uint32_t>                  dwWidth{0};
+    util::LE<std::uint32_t>                  dwLinearSize{0};
+    util::LE<std::uint32_t>                  dwDepth{0};
+    util::LE<std::uint32_t>                  dwMipMapCount{0};
+    std::array<util::NE<std::uint32_t>, 11>  dwReserved1;
+    DDSPixelFormat                           ddpf;
+    util::LE<std::uint32_t>                  dwCaps{0};
+    util::LE<std::uint32_t>                  dwCaps2{0};
+    util::LE<std::uint32_t>                  dwCaps3{0};
+    util::LE<std::uint32_t>                  dwCaps4{0};
+    util::LE<std::uint32_t>                  dwReserved2{0};
 
     void setTexture()
     {
-        dwCaps |= CAPS_TEXTURE;
+        dwCaps = dwCaps.get() | CAPS_TEXTURE;
     }
 
-    void setFourCC(uint32_t fcc)
+    void setFourCC(std::uint32_t fcc)
     {
-        dwFlags |= FOURCC;
+        dwFlags = dwFlags.get() | FOURCC;
         ddpf.dwFourCC = fcc;
     }
 
-    void setMipMapLevels(uint32_t levels)
+    void setMipMapLevels(std::uint32_t levels)
     {
-        dwCaps |= (CAPS_COMPLEX | CAPS_MIPMAP);
-        dwFlags |= DDSD_MIPMAPCOUNT;
+        dwCaps = dwCaps.get() | (CAPS_COMPLEX | CAPS_MIPMAP);
+        dwFlags = dwFlags.get() | DDSD_MIPMAPCOUNT;
         dwMipMapCount = levels;
     }
 
-    void setDimensions(uint32_t width, uint32_t height)
+    void setDimensions(std::uint32_t width, std::uint32_t height)
     {
-        dwFlags |= (DDSD_WIDTH | DDSD_HEIGHT);
+        dwFlags = dwFlags.get() | (DDSD_WIDTH | DDSD_HEIGHT);
         dwWidth = width;
         dwHeight = height;
     }
 
-    void setVolumeDimensions(uint32_t width, uint32_t height, uint32_t depth)
+    void setVolumeDimensions(std::uint32_t width, std::uint32_t height, std::uint32_t depth)
     {
-        dwCaps |= CAPS_COMPLEX;
-        dwFlags |= (DDSD_WIDTH | DDSD_HEIGHT | DDSD_DEPTH);
+        dwCaps = dwCaps.get() | CAPS_COMPLEX;
+        dwFlags = dwFlags.get() | (DDSD_WIDTH | DDSD_HEIGHT | DDSD_DEPTH);
         dwWidth = width;
         dwHeight = height;
         dwDepth = depth;
     }
 };
 
-static bool ByteSwapRequired = false;
-static bool IsLittleEndian()
+bool
+WriteDDSHeader(std::ostream& out, const DDSHeader& dds)
 {
-    Uint32 endiannessTest;
-    endiannessTest.u = 0x01020304;
-    return endiannessTest.bytes[0] == 0x04;
+    out.write(reinterpret_cast<const char*>(&dds), sizeof(dds));
+    return out.good();
 }
 
-
-// Write out a 16-bit unsigned integer in little-endian order
-static void WriteUint16(ostream& out, uint16_t u)
-{
-    static_assert(sizeof(u) == 2, "");
-
-    Uint16 ub;
-    ub.u = u;
-    if (ByteSwapRequired)
-    {
-        swap(ub.bytes[0], ub.bytes[1]);
-    }
-
-    out.write(ub.bytes, sizeof(ub.bytes));
-}
-
-
-// Write out a 32-bit unsigned integer in little-endian order
-static void WriteUint32(ostream& out, uint32_t u)
-{
-    static_assert(sizeof(u) == 4, "");
-
-    Uint32 ub;
-    ub.u = u;
-    if (ByteSwapRequired)
-    {
-        swap(ub.bytes[0], ub.bytes[3]);
-        swap(ub.bytes[1], ub.bytes[2]);
-    }
-
-    out.write(ub.bytes, sizeof(ub.bytes));
-}
-
-
-#if 0
-// Write out a single precision floating point number
-static void WriteFloat(ostream& out, float f)
-{
-    static_assert(sizeof(f) == 4, "");
-
-    Float ub;
-    ub.f = f;
-    if (ByteSwapRequired)
-    {
-        swap(ub.bytes[0], ub.bytes[3]);
-        swap(ub.bytes[1], ub.bytes[2]);
-    }
-
-    out.write(ub.bytes, sizeof(ub.bytes));
-}
-#endif
-
-
-// Convert a single precision floating point value to half precision
-// and write it out.
-static void WriteHalfFloat(ostream& out, float f)
-{
-    WriteUint16(out, floatToHalf(f));
-}
-
-
-void WriteDDSHeader(ostream& out, const DDSHeader& dds)
-{
-    WriteUint32(out, dds.dwSize);
-    WriteUint32(out, dds.dwFlags);
-    WriteUint32(out, dds.dwHeight);
-    WriteUint32(out, dds.dwWidth);
-    WriteUint32(out, dds.dwLinearSize);
-    WriteUint32(out, dds.dwDepth);
-    WriteUint32(out, dds.dwMipMapCount);
-    for (unsigned int i : dds.dwReserved1)
-    {
-        WriteUint32(out, i);
-    }
-
-    WriteUint32(out, dds.ddpf.dwSize);
-    WriteUint32(out, dds.ddpf.dwFlags);
-    WriteUint32(out, dds.ddpf.dwFourCC);
-    WriteUint32(out, dds.ddpf.dwRGBBitCount);
-    WriteUint32(out, dds.ddpf.dwRBitMask);
-    WriteUint32(out, dds.ddpf.dwGBitMask);
-    WriteUint32(out, dds.ddpf.dwBBitMask);
-    WriteUint32(out, dds.ddpf.dwABitMask);
-
-    WriteUint32(out, dds.dwCaps);
-    WriteUint32(out, dds.dwCaps2);
-    WriteUint32(out, dds.dwCaps3);
-    WriteUint32(out, dds.dwCaps4);
-    WriteUint32(out, dds.dwReserved2);
-}
-
-
-static void WriteInscatterTableDDS(ostream& out, Vector4f* inscatterTable)
+bool
+WriteInscatterTableDDS(std::ostream& out, const Atmosphere::InscatterTable& inscatterTable)
 {
     DDSHeader dds;
     dds.setTexture();
@@ -818,21 +718,29 @@ static void WriteInscatterTableDDS(ostream& out, Vector4f* inscatterTable)
     dds.setVolumeDimensions(SunAngleSamples, ViewAngleSamples, HeightSamples);
     //dds.setMipMapLevels();
 
-    WriteDDSHeader(out, dds);
-
-    unsigned int sampleCount = SunAngleSamples * ViewAngleSamples * HeightSamples;
-    for (unsigned int i = 0; i < sampleCount; ++i)
+    if (!WriteDDSHeader(out, dds))
     {
-        const Vector4f& v = inscatterTable[i];
-        WriteHalfFloat(out, v.x());
-        WriteHalfFloat(out, v.y());
-        WriteHalfFloat(out, v.z());
-        WriteHalfFloat(out, v.w());
+        std::cerr << "Failed to write inscatter table DDS header.\n";
+        return false;
     }
+
+    using ArrayType = std::array<util::LE<std::uint16_t>, Atmosphere::InscatterSampleCount * 4>;
+    auto outputData = std::make_unique_for_overwrite<ArrayType>();
+    for (unsigned int i = 0; i < Atmosphere::InscatterSampleCount; ++i)
+    {
+        const auto& v = inscatterTable[i];
+        (*outputData)[i * 4]     = floatToHalf(v.x());
+        (*outputData)[i * 4 + 1] = floatToHalf(v.y());
+        (*outputData)[i * 4 + 2] = floatToHalf(v.z());
+        (*outputData)[i * 4 + 3] = floatToHalf(v.w());
+    }
+
+    out.write(reinterpret_cast<const char*>(outputData->data()), sizeof(ArrayType));
+    return out.good();
 }
 
-
-static void WriteTransmittanceTableDDS(ostream& out, Vector3f* transmittanceTable)
+bool
+WriteTransmittanceTableDDS(std::ostream& out, const Atmosphere::TransmittanceTable& transmittanceTable)
 {
     DDSHeader dds;
     dds.setTexture();
@@ -840,137 +748,88 @@ static void WriteTransmittanceTableDDS(ostream& out, Vector3f* transmittanceTabl
     dds.setDimensions(ViewAngleSamples, HeightSamples);
     //dds.setMipMapLevels();
 
-    WriteDDSHeader(out, dds);
-
-    unsigned int sampleCount = ViewAngleSamples * HeightSamples;
-    for (unsigned int i = 0; i < sampleCount; ++i)
+    if (!WriteDDSHeader(out, dds))
     {
-        const Vector3f& v = transmittanceTable[i];
-        WriteHalfFloat(out, v.x());
-        WriteHalfFloat(out, v.y());
-        WriteHalfFloat(out, v.z());
-        WriteHalfFloat(out, 0.0f);
+        std::cerr << "Failed to write transmittance table DDS header.\n";
+        return false;
     }
+
+    using ArrayType = std::array<util::LE<std::uint16_t>, Atmosphere::TransmittanceSampleCount * 4>;
+    auto outputData = std::make_unique_for_overwrite<ArrayType>();
+    for (unsigned int i = 0; i < Atmosphere::TransmittanceSampleCount; ++i)
+    {
+        const Eigen::Vector3f& v = transmittanceTable[i];
+        (*outputData)[i * 4]     = floatToHalf(v.x());
+        (*outputData)[i * 4 + 1] = floatToHalf(v.y());
+        (*outputData)[i * 4 + 2] = floatToHalf(v.z());
+        (*outputData)[i * 4 + 3] = floatToHalf(0.0f);
+    }
+
+    out.write(reinterpret_cast<const char*>(outputData->data()), sizeof(ArrayType));
+    return out.good();
 }
 
-
+} // end unnamed namespace
 
 #if TEST_FLOAT_TO_HALF
 int main(void)
 {
-    while (cin.good())
+    while (std::cin.good())
     {
         float f = 0.0f;
-        cin >> f;
-        cout << hex << floatToHalf(f) << endl;
+        std::cin >> f;
+        std::cout << std::hex << floatToHalf(f) << '\n';
     }
     return 0;
 }
-#endif
-
+#else
 int main(int argc, char* argv[])
 {
-    bool commandLineOK = parseCommandLine(argc, argv);
-    if (!commandLineOK || ConfigFileName.empty())
+    auto options = parseCommandLine(argc, argv);
+    if (!options.has_value() || options->ConfigFileName.empty())
     {
         usage();
-        exit(1);
+        return EXIT_FAILURE;
     }
 
     ParameterSet params;
-    SetDefaultParameters(params);
-    if (!LoadParameterSet(params, ConfigFileName))
-    {
-        exit(1);
-    }
+    if (!LoadParameterSet(params, options->ConfigFileName))
+        return EXIT_FAILURE;
 
     Atmosphere atmosphere;
     SetAtmosphereParameters(atmosphere, params);
 
-    cout << "Planet radius: " << atmosphere.planetRadius << "km\n";
-    cout << "Rayleigh scale height: " << atmosphere.rayleighScaleHeight << "km\n";
-    cout << "Rayleigh coeff: " << atmosphere.rayleighCoeff.transpose() << "m^-1\n";
+    std::cout << "Planet radius: " << atmosphere.planetRadius << "km\n"
+                 "Rayleigh scale height: " << atmosphere.rayleighScaleHeight << "km\n"
+                 "Rayleigh coeff: " << atmosphere.rayleighCoeff.transpose() << "m^-1\n";
 
-    cout << "Mie scale height: " << atmosphere.mieScaleHeight << "km\n";
-    cout << "Mie coeff: " << atmosphere.mieCoeff << "m^-1\n";
-    cout << "Absorption coeff: " << atmosphere.absorptionCoeff.transpose() << "m^-1\n";
-    cout << "Using " << ScatteringIntegrationSteps << " integration steps.\n";
+    std::cout << "Mie scale height: " << atmosphere.mieScaleHeight << "km\n"
+                 "Mie coeff: " << atmosphere.mieCoeff << "m^-1\n"
+                 "Absorption coeff: " << atmosphere.absorptionCoeff.transpose() << "m^-1\n"
+                 "Using " << options->ScatteringIntegrationSteps << " integration steps.\n";
 
-    cout << "Generating transmittance table (" << ViewAngleSamples << "x"
-         << HeightSamples << ")...\n";
-    Vector3f* transmittanceTable = atmosphere.computeTransmittanceTable();
+    std::cout << "Generating transmittance table (" << ViewAngleSamples << "x"
+              << HeightSamples << ")...\n";
+    std::unique_ptr<Atmosphere::TransmittanceTable> transmittanceTable = atmosphere.computeTransmittanceTable();
 
-    cout << "Generating inscatter table (" << SunAngleSamples << "x"
-         << ViewAngleSamples << "x" << HeightSamples << ")...\n";
+    std::cout << "Generating inscatter table (" << SunAngleSamples << "x"
+              << ViewAngleSamples << "x" << HeightSamples << ")...\n";
 
-    Vector4f* inscatterTable = atmosphere.computeInscatterTable();
+    std::unique_ptr<Atmosphere::InscatterTable> inscatterTable = atmosphere.computeInscatterTable(options->ScatteringIntegrationSteps);
 
-    ByteSwapRequired = !IsLittleEndian();
-
-#if 0
-    // Write tables in a single file
-    ofstream out(OutputFileName, ostream::binary);
-
-    // Header
-    out.write("atmscatr", 8);
-
-    // Version
-    WriteUint32(out, 1u);
-
-    // Scattering parameters
-    WriteFloat(out, atmosphere.rayleighScaleHeight);
-    WriteFloat(out, atmosphere.rayleighCoeff.x());
-    WriteFloat(out, atmosphere.rayleighCoeff.y());
-    WriteFloat(out, atmosphere.rayleighCoeff.z());
-    WriteFloat(out, atmosphere.mieScaleHeight);
-    WriteFloat(out, atmosphere.mieCoeff);
-    WriteFloat(out, atmosphere.mieAsymmetry);
-    WriteFloat(out, atmosphere.absorptionCoeff.x());
-    WriteFloat(out, atmosphere.absorptionCoeff.y());
-    WriteFloat(out, atmosphere.absorptionCoeff.z());
-    WriteFloat(out, atmosphere.planetRadius);
-
-    // Transmittance table dimensions
-    WriteUint32(out, ViewAngleSamples);
-    WriteUint32(out, HeightSamples);
-
-    // Inscatter table dimensions
-    WriteUint32(out, SunAngleSamples);
-    WriteUint32(out, ViewAngleSamples);
-    WriteUint32(out, HeightSamples);
-
-    unsigned int transmittanceTableSamples = ViewAngleSamples * HeightSamples;
-    unsigned int inscatterTableSamples = SunAngleSamples * ViewAngleSamples *
-        HeightSamples;
-
-    for (unsigned int i = 0; i < transmittanceTableSamples; ++i)
-    {
-        Vector3f v = transmittanceTable[i];
-        WriteFloat(out, v.x());
-        WriteFloat(out, v.y());
-        WriteFloat(out, v.z());
-    }
-
-    for (unsigned int i = 0; i < inscatterTableSamples; ++i)
-    {
-        Vector4f v = inscatterTable[i];
-        WriteFloat(out, v.x());
-        WriteFloat(out, v.y());
-        WriteFloat(out, v.z());
-        WriteFloat(out, v.w());
-    }
-
-    out.close();
-#else
     // Write tables as separate DDS files
-    ofstream transmittanceOut("transmittance.dds", ostream::binary);
-    WriteTransmittanceTableDDS(transmittanceOut, transmittanceTable);
-    transmittanceOut.close();
+    if (std::ofstream transmittanceOut("transmittance.dds", std::ios_base::out | std::ios_base::binary);
+        !WriteTransmittanceTableDDS(transmittanceOut, *transmittanceTable))
+    {
+        return EXIT_FAILURE;
+    }
 
-    ofstream inscatterOut("inscatter.dds", ostream::binary);
-    WriteInscatterTableDDS(inscatterOut, inscatterTable);
-    inscatterOut.close();
-#endif
+    if (std::ofstream inscatterOut("inscatter.dds", std::ios_base::out | std::ios_base::binary);
+        !WriteInscatterTableDDS(inscatterOut, *inscatterTable))
+    {
+        return EXIT_FAILURE;
+    }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
+#endif
