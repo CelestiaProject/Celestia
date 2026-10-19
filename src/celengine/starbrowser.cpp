@@ -201,15 +201,15 @@ DistanceProcessor::process(const Star& star)
     {
         auto& record = m_records->emplace_back(&star);
         record.distance = distance2;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, &compare);
     }
     else if (distance2 < m_records->front().distance)
     {
-        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::pop_heap(*m_records, &compare);
         auto& record = m_records->back();
         record.star = &star;
         record.distance = distance2;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, &compare);
     }
     else
     {
@@ -223,7 +223,7 @@ DistanceProcessor::process(const Star& star)
 void
 DistanceProcessor::finalize()
 {
-    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    std::ranges::sort_heap(*m_records, &compare);
     for (StarBrowserRecord& record : *m_records)
     {
         record.distance = std::sqrt(record.distance);
@@ -235,10 +235,10 @@ class AppMagProcessor
 {
 public:
     AppMagProcessor(std::vector<StarBrowserRecord>&,
-                      std::uint32_t,
-                      const StarFilter&,
-                      const UniversalCoord&,
-                      double);
+                    std::uint32_t,
+                    const StarFilter&,
+                    const UniversalCoord&,
+                    double);
 
     ~AppMagProcessor() = default;
 
@@ -314,10 +314,11 @@ AppMagProcessor::process(const Star& star)
         auto& record = m_records->emplace_back(&star);
         record.distance = distance;
         record.appMag = appMag;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, &compare);
     }
     else if (appMag < m_records->front().appMag)
     {
+
         std::pop_heap(m_records->begin(), m_records->end(), &compare);
         auto& record = m_records->back();
         record.star = &star;
@@ -330,7 +331,7 @@ AppMagProcessor::process(const Star& star)
 void
 AppMagProcessor::finalize()
 {
-    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    std::ranges::sort_heap(*m_records, &compare);
 }
 
 class AbsMagProcessor
@@ -405,20 +406,20 @@ AbsMagProcessor::process(const Star& star)
     if (m_records->size() < m_size)
     {
         m_records->emplace_back(&star);
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, &compare);
     }
     else if (star.getAbsoluteMagnitude() < m_records->front().star->getAbsoluteMagnitude())
     {
-        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::pop_heap(*m_records, &compare);
         m_records->back().star = &star;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, &compare);
     }
 }
 
 void
 AbsMagProcessor::finalize()
 {
-    std::sort_heap(m_records->begin(), m_records->end(), &compare);
+    std::ranges::sort_heap(*m_records, &compare);
     for (StarBrowserRecord& record : *m_records)
     {
         record.distance = std::sqrt(distanceSquared(*record.star, m_jd, m_pos, m_ucPos));
@@ -485,6 +486,7 @@ StarBrowser::setPosition(const UniversalCoord& ucPos)
 void
 StarBrowser::populate(std::vector<StarBrowserRecord>& records) const
 {
+    records.clear();
     StarFilter filter(m_filter, m_universe->getSolarSystemCatalog());
     if (m_spectralTypeFilter)
         filter.setSpectralTypeFilter(m_spectralTypeFilter);
@@ -500,15 +502,15 @@ StarBrowser::populate(std::vector<StarBrowserRecord>& records) const
     {
     case Comparison::Nearest:
         processOctree<DistanceProcessor>(*octree, records, m_size, filter, m_ucPos, m_jd);
-        return;
+        break;
 
     case Comparison::ApparentMagnitude:
         processOctree<AppMagProcessor>(*octree, records, m_size, filter, m_ucPos, m_jd);
-        return;
+        break;
 
     case Comparison::AbsoluteMagnitude:
         processOctree<AbsMagProcessor>(*octree, records, m_size, filter, m_ucPos, m_jd);
-        return;
+        break;
 
     default:
         assert(0);
