@@ -34,7 +34,7 @@ const float VegaTemperatureBucket = std::nearbyint(9602.0f / TemperatureStep) * 
 const Eigen::Vector2d SRGB_R_xy(0.64, 0.33);
 const Eigen::Vector2d SRGB_G_xy(0.30, 0.60);
 const Eigen::Vector2d SRGB_B_xy(0.15, 0.06);
-const Eigen::Vector3d IlluminantE_XYZ(1.00000, 1.00000, 1.00000);
+const Eigen::Vector3d Illuminant_E_XYZ(1.00000, 1.00000, 1.00000);
 const Eigen::Vector3d D65_XYZ(0.95047, 1.00000, 1.08883);
 
 
@@ -713,8 +713,8 @@ ColorTemperatureTable::setType(ColorTableType _type)
         tempScale = static_cast<float>(StarColors_Enhanced.size() - 1) / MaxTemperature;
         return true;
 
-    case ColorTableType::Blackbody_IlluminantE:
-        createBlackbodyTable(IlluminantE_XYZ, tempScale, colors);
+    case ColorTableType::Illuminant_E:
+        createBlackbodyTable(Illuminant_E_XYZ, tempScale, colors);
         return true;
 
     case ColorTableType::Blackbody_D65:
