@@ -308,6 +308,7 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 
     {
         QSignalBlocker blocker(ui.starColorBox);
+        ui.starColorBox->addItem(_("Blackbody Illuminant E"), static_cast<int>(ColorTableType::Illuminant_E));
         ui.starColorBox->addItem(_("Blackbody D65"), static_cast<int>(ColorTableType::Blackbody_D65));
         ui.starColorBox->addItem(_("Blackbody (Solar Whitepoint)"), static_cast<int>(ColorTableType::SunWhite));
         ui.starColorBox->addItem(_("Blackbody (Vega Whitepoint)"), static_cast<int>(ColorTableType::VegaWhite));
