@@ -78,9 +78,10 @@ starStylePanel(Renderer* renderer)
     ImGui::Separator();
     enumCheckbox("Auto-magnitude", rfNew, RenderFlags::ShowAutoMag);
 
-    constexpr std::array<const char*, 4> names =
+    constexpr std::array<const char*, 5> names =
     {
         "Classic colors",
+        "Blackbody Illuminant E",
         "Blackbody D65",
         "Blackbody (Sun white)",
         "Blackbody (Vega white)",

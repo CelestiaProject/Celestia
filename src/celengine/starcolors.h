@@ -24,9 +24,10 @@
 enum class ColorTableType
 {
     Enhanced = 0,
-    Blackbody_D65 = 1,
-    SunWhite = 2,
-    VegaWhite = 3,
+    Illuminant_E = 1,
+    Blackbody_D65 = 2,
+    SunWhite = 3,
+    VegaWhite = 4,
 };
 
 class ColorTemperatureTable

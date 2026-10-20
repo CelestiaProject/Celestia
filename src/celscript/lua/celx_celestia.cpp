@@ -1772,6 +1772,9 @@ static int celestia_getstarcolor(lua_State* l)
     case ColorTableType::Enhanced:
         lua_pushstring(l, "enhanced");
         break;
+    case ColorTableType::Illuminant_E:
+        lua_pushstring(l, "illuminant_e");
+        break;
     case ColorTableType::Blackbody_D65:
         lua_pushstring(l, "blackbody_d65");
         break;

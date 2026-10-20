@@ -30,11 +30,12 @@ constexpr float TemperatureStep = MaxTemperature / static_cast<float>(BlackbodyT
 const float SolarTemperatureBucket = std::nearbyint(5772.0f / TemperatureStep) * TemperatureStep;
 const float VegaTemperatureBucket = std::nearbyint(9602.0f / TemperatureStep) * TemperatureStep;
 
-// D65 whitepoint and SRGB primary chromaticities
-const Eigen::Vector3d D65_XYZ(0.95047, 1.00000, 1.08883);
+// SRGB primary chromaticities and whitepoints
 const Eigen::Vector2d SRGB_R_xy(0.64, 0.33);
 const Eigen::Vector2d SRGB_G_xy(0.30, 0.60);
 const Eigen::Vector2d SRGB_B_xy(0.15, 0.06);
+const Eigen::Vector3d Illuminant_E_XYZ(1.00000, 1.00000, 1.00000);
+const Eigen::Vector3d D65_XYZ(0.95047, 1.00000, 1.08883);
 
 
 // Approximate colors used by older versions of Celestia
@@ -710,6 +711,10 @@ ColorTemperatureTable::setType(ColorTableType _type)
         colors.reserve(StarColors_Enhanced.size());
         std::copy(StarColors_Enhanced.cbegin(), StarColors_Enhanced.cend(), std::back_inserter(colors));
         tempScale = static_cast<float>(StarColors_Enhanced.size() - 1) / MaxTemperature;
+        return true;
+
+    case ColorTableType::Illuminant_E:
+        createBlackbodyTable(Illuminant_E_XYZ, tempScale, colors);
         return true;
 
     case ColorTableType::Blackbody_D65:

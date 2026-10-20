@@ -1195,6 +1195,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         switch (renderer->getStarColorTable())
         {
         case ColorTableType::Enhanced:
+            renderer->setStarColorTable(ColorTableType::Illuminant_E);
+            flash(_("Star color: Blackbody Illuminant E"));
+            break;
+
+        case ColorTableType::Illuminant_E:
             renderer->setStarColorTable(ColorTableType::Blackbody_D65);
             flash(_("Star color: Blackbody D65"));
             break;
