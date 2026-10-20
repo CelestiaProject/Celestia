@@ -1316,7 +1316,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                 // Use a variant of the blackbody colors with the whitepoint
                 // set to Sol being white, to ensure consistency of the Solar
                 // System textures.
-                ls.color = tintColors->lookupTintColor(temp, tintSaturation, fadeFactor);
+                ls.color = starColors->lookupTintColor(temp, tintSaturation, fadeFactor);
             }
 
             lightSources.push_back(ls);
