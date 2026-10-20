@@ -20,7 +20,6 @@
 #include <cstdint>
 #include <functional>
 #include <limits>
-#include <utility>
 #include <vector>
 
 #include <Eigen/Core>
@@ -64,17 +63,17 @@ public:
 
     enum class Filter : unsigned int
     {
-        All = 0,
-        Visible = 1,
-        Multiple = 2,
-        WithPlanets = 4,
-        SpectralType = 8,
+        All          = 0,
+        Visible      = 0x1,
+        Multiple     = 0x2,
+        WithPlanets  = 0x4,
+        SpectralType = 0x8,
     };
 
-    StarBrowser(const Universe*,
-                std::uint32_t = DefaultListStars,
-                Comparison = Comparison::Nearest,
-                Filter = Filter::Visible);
+    explicit StarBrowser(const Universe*,
+                         std::uint32_t = DefaultListStars,
+                         Comparison = Comparison::Nearest,
+                         Filter = Filter::Visible);
 
     inline Comparison comparison() const noexcept { return m_comparison; }
     inline void setComparison(Comparison newComparison) { m_comparison = newComparison; }

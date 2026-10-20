@@ -31,7 +31,7 @@ class NameDatabase;
 constexpr inline unsigned int MAX_DSO_NAMES = 10;
 
 // 100 Gly - on the order of the current size of the universe
-constexpr inline float DSO_OCTREE_ROOT_SIZE = 1.0e11f;
+constexpr inline double DSO_OCTREE_ROOT_SIZE = 1.0e11;
 
 //NOTE: this one and starDatabase should be derived from a common base class since they share lots of code and functionality.
 class DSODatabase
@@ -67,6 +67,8 @@ public:
     std::string getDSONameList(const DeepSkyObject*, const unsigned int maxNames = MAX_DSO_NAMES) const;
 
     float getAverageAbsoluteMagnitude() const;
+
+    const celestia::engine::DSOOctree* getOctree() const noexcept { return m_octreeRoot.get(); }
 
 private:
     std::unique_ptr<celestia::engine::DSOOctree> m_octreeRoot;

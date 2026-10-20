@@ -13,12 +13,11 @@ set(CELQT6_SOURCES
   qtbookmark.h
   qtcelestiaactions.cpp
   qtcelestiaactions.h
-  qtcelestialbrowser.cpp
-  qtcelestialbrowser.h
   qtcolorswatchwidget.cpp
   qtcolorswatchwidget.h
   qtcommandline.cpp
   qtcommandline.h
+  qtcompareutil.h
   qtdateutil.cpp
   qtdateutil.h
   qtdeepskybrowser.cpp
@@ -46,6 +45,8 @@ set(CELQT6_SOURCES
   qtsettimedialog.h
   qtsolarsystembrowser.cpp
   qtsolarsystembrowser.h
+  qtstarbrowser.cpp
+  qtstarbrowser.h
   qttimetoolbar.cpp
   qttimetoolbar.h
   qttourguide.cpp

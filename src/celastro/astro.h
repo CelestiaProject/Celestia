@@ -115,24 +115,22 @@ float faintestMagToExposure(float faintestMag);
 float exposureToFaintestMag(float exposure);
 
 template<std::floating_point T>
-CELESTIA_CMATH_CONSTEXPR T
+CELESTIA_CMATH_CONSTEXPR float
 distanceModulus(T lyrs)
 {
     using std::log10;
-    return T(5) * log10(lyrs / LY_PER_PARSEC<T>) - T(5);
+    return static_cast<float>(T(5) * log10(lyrs / LY_PER_PARSEC<T>) - T(5));
 }
 
-template<std::floating_point T>
-CELESTIA_CMATH_CONSTEXPR T
-absToAppMag(T absMag, T lyrs)
+CELESTIA_CMATH_CONSTEXPR float
+absToAppMag(float absMag, std::floating_point auto lyrs)
 {
     using std::log10;
     return absMag + distanceModulus(lyrs);
 }
 
-template<std::floating_point T>
-CELESTIA_CMATH_CONSTEXPR T
-appToAbsMag(T appMag, T lyrs)
+CELESTIA_CMATH_CONSTEXPR float
+appToAbsMag(float appMag, std::floating_point auto lyrs)
 {
     using std::log10;
     return appMag - distanceModulus(lyrs);
