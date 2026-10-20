@@ -61,7 +61,7 @@ public:
 private:
     StarBrowser::Filter m_filter;
     const SolarSystemCatalog* m_solarSystems;
-    std::function<bool(const char*)> m_spectralTypeFilter{ nullptr };
+    std::function<bool(const char*)> m_spectralTypeFilter;
 };
 
 StarFilter::StarFilter(StarBrowser::Filter filter, const SolarSystemCatalog* solarSystems) :
@@ -294,7 +294,7 @@ AppMagProcessor::checkNode(const Eigen::Vector3f& center,
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
     float nodeDistance = (m_pos - center).norm() - size * std::numbers::sqrt3_v<float>;
-    if (nodeDistance < 1e-3)
+    if (nodeDistance < 1e-3f)
         return true;
 
     float nodeAppMag = astro::absToAppMag(brightestMag, nodeDistance);
@@ -318,13 +318,12 @@ AppMagProcessor::process(const Star& star)
     }
     else if (appMag < m_records->front().appMag)
     {
-
-        std::pop_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::pop_heap(*m_records, &compare);
         auto& record = m_records->back();
         record.star = &star;
         record.distance = distance;
         record.appMag = appMag;
-        std::push_heap(m_records->begin(), m_records->end(), &compare);
+        std::ranges::push_heap(*m_records, &compare);
     }
 }
 

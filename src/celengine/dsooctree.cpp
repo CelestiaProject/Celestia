@@ -53,7 +53,7 @@ DSOOctreeVisibleObjectsProcessor::checkNode(const DSOOctree::PointType& center,
     double minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3;
 
     // Check whether the brightest object in this node is bright enough to render
-    auto distanceModulus = static_cast<float>(astro::distanceModulus(minDistance));
+    float distanceModulus = astro::distanceModulus(minDistance);
     if (minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
         return false;
 
@@ -71,7 +71,7 @@ DSOOctreeVisibleObjectsProcessor::process(const std::unique_ptr<DeepSkyObject>& 
         return;
 
     double distance = (m_obsPosition - obj->getPosition()).norm() - obj->getBoundingSphereRadius();
-    auto appMag = static_cast<float>((distance >= astro::LY_PER_10PARSEC) ? astro::absToAppMag(static_cast<double>(absMag), distance) : absMag);
+    float appMag = (distance >= astro::LY_PER_10PARSEC) ? astro::absToAppMag(absMag, distance) : absMag;
 
     if (appMag <= m_limitingFactor)
         m_dsoHandler->process(obj, distance, absMag);

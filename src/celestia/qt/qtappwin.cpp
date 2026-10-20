@@ -83,7 +83,6 @@
 #include <celutil/tzutil.h>
 #include "qtbookmark.h"
 #include "qtcelestiaactions.h"
-#include "qtcelestialbrowser.h"
 #include "qtcommandline.h"
 #include "qtdeepskybrowser.h"
 #include "qteventfinder.h"
@@ -95,6 +94,7 @@
 #include "qtselectionpopup.h"
 #include "qtsettimedialog.h"
 #include "qtsolarsystembrowser.h"
+#include "qtstarbrowser.h"
 #include "qttimetoolbar.h"
 #include "qttourguide.h"
 
@@ -373,9 +373,9 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     infoPanel->setVisible(false);
 
     // Create the various browser widgets
-    celestialBrowser = new CelestialBrowser(m_appCore, nullptr, infoPanel);
-    celestialBrowser->setObjectName("celestia-browser");
-    connect(celestialBrowser,
+    StarBrowser* starBrowser = new StarBrowser(m_appCore, nullptr, infoPanel);
+    starBrowser->setObjectName("celestia-browser");
+    connect(starBrowser,
             SIGNAL(selectionContextMenuRequested(const QPoint&, Selection&)),
             this,
             SLOT(slotShowSelectionContextMenu(const QPoint&, Selection&)));
@@ -396,7 +396,7 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
 
     // Set up the browser tabs
     tabWidget->addTab(solarSystemBrowser, _("Solar System"));
-    tabWidget->addTab(celestialBrowser, _("Stars"));
+    tabWidget->addTab(starBrowser, _("Stars"));
     tabWidget->addTab(deepSkyBrowser, _("Deep Sky Objects"));
 
     toolsDock->setWidget(tabWidget);

@@ -324,7 +324,7 @@ displayApparentMagnitude(Overlay& overlay,
 {
     if (distance > astro::LY_PER_10PARSEC)
     {
-        float appMag = astro::absToAppMag(absMag, static_cast<float>(distance));
+        float appMag = astro::absToAppMag(absMag, distance);
         overlay.print(loc, fmt::runtime(_("Apparent magnitude: {:.1f}\n")), appMag);
     }
     else

@@ -1,4 +1,4 @@
-// qtcelestialbrowser.h
+// qtstarbrowser.h
 //
 // Copyright (C) 2007-2008, Celestia Development Team
 // celestia-developers@lists.sourceforge.net
@@ -32,13 +32,13 @@ namespace celestia::qt
 class ColorSwatchWidget;
 class InfoPanel;
 
-class CelestialBrowser : public QWidget
+class StarBrowser : public QWidget
 {
     Q_OBJECT
 
 public:
-    CelestialBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
-    ~CelestialBrowser() = default;
+    StarBrowser(CelestiaCore* _appCore, QWidget* parent, InfoPanel* infoPanel);
+    ~StarBrowser() = default;
 
 public slots:
     void slotUncheckMultipleFilterBox();

@@ -23,6 +23,8 @@ set(CELENGINE_SOURCES
   curveplot.h
   deepskyobj.cpp
   deepskyobj.h
+  dsobrowser.cpp
+  dsobrowser.h
   dsodb.cpp
   dsodb.h
   dsodbbuilder.cpp

@@ -39,7 +39,6 @@ class BookmarkToolBar;
 class CelestiaActions;
 struct CelestiaCommandLineOptions;
 class CelestiaGlWidget;
-class CelestialBrowser;
 class EventFinder;
 class InfoPanel;
 class PreferencesDialog;
@@ -145,7 +144,6 @@ private:
 
     CelestiaGlWidget* glWidget{ nullptr };
     QDockWidget* toolsDock{ nullptr };
-    CelestialBrowser* celestialBrowser{ nullptr };
 
     CelestiaCore* m_appCore{ nullptr };
 

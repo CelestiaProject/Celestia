@@ -155,7 +155,7 @@ std::unique_ptr<engine::DSOOctree>
 buildOctree(std::vector<std::unique_ptr<DeepSkyObject>>&& DSOs)
 {
     GetLogger()->debug("Sorting DSOs into octree . . .\n");
-    float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * std::numbers::sqrt3_v<float>);
+    float absMag = astro::appToAbsMag(DSO_OCTREE_MAGNITUDE, DSO_OCTREE_ROOT_SIZE * std::numbers::sqrt3);
 
     auto dsoCount = static_cast<engine::OctreeObjectIndex>(DSOs.size());
 
