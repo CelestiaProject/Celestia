@@ -28,6 +28,15 @@ set(CELX_SOURCES
   glcompat.h
   celx_gl.cpp
   celx_gl.h
+  celx_incompatible.cpp
+  sol_celestia.cpp
+  sol_frame.cpp
+  sol_observer.cpp
+  sol_phase.cpp
+  sol_position.cpp
+  sol_rotation.cpp
+  sol_vector.cpp
 )
 
 add_library(celluascript OBJECT ${CELX_SOURCES})
+target_include_directories(celluascript PUBLIC "${CMAKE_SOURCE_DIR}/thirdparty/sol/include")
