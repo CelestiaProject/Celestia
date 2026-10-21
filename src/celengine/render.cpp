@@ -1275,7 +1275,8 @@ setupLightSources(const vector<const Star*>& nearStars,
                   const UniversalCoord& observerPos,
                   double t,
                   vector<LightSource>& lightSources,
-                  float tintSaturation)
+                  float tintSaturation,
+                  const ColorTemperatureTable* starColors)
 {
     // Fade out the illumination from cool objects. Objects at the Draper
     // point (798 K) should be visibly glowing, so set the minimum temperature
@@ -5951,7 +5952,8 @@ Renderer::buildNearSystemsLists(const Universe &universe,
                           observerPos,
                           now,
                           lightSourceList,
-                          tintSaturation);
+                          tintSaturation,
+                          starColors);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.
