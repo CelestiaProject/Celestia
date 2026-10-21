@@ -906,7 +906,7 @@ static int celestia_setlabelcolor(lua_State* l)
         *color = Color((float) red, (float) green, (float) blue, (float) opacity);
     }
 
-    return 1;
+    return 0;
 }
 
 
@@ -964,7 +964,7 @@ static int celestia_setlinecolor(lua_State* l)
         *color = Color((float) red, (float) green, (float) blue, (float) opacity);
     }
 
-    return 1;
+    return 0;
 }
 
 
