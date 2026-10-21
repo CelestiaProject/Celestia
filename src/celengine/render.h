@@ -822,8 +822,7 @@ class Renderer
     float minFeatureSize{ 20.0f };
     std::uint64_t locationFilter{ ~UINT64_C(0) };
 
-    ColorTemperatureTable starColors{ ColorTableType::Blackbody_D65 };
-    ColorTemperatureTable tintColors{ ColorTableType::SunWhite };
+    ColorTemperatureTable starColors{ ColorTableType::SunWhite };
 
     Selection highlightObject;
 

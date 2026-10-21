@@ -1276,7 +1276,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                   double t,
                   vector<LightSource>& lightSources,
                   float tintSaturation,
-                  const ColorTemperatureTable* tintColors)
+                  const ColorTemperatureTable* starColors)
 {
     // Fade out the illumination from cool objects. Objects at the Draper
     // point (798 K) should be visibly glowing, so set the minimum temperature
@@ -1300,7 +1300,8 @@ setupLightSources(const vector<const Star*>& nearStars,
             if (temp <= DARK_POINT)
                 continue;
 
-            if (tintColors == nullptr)
+            // If star color mode is Enhanced, uses legacy tint colors
+            if (starColors.type() == ColorTableType::Enhanced)
                 ls.color = legacyTintColor(temp).linearize(gl::sRGBRendering);
             else
             {
@@ -1313,9 +1314,6 @@ setupLightSources(const vector<const Star*>& nearStars,
                 // illumination.
                 ls.luminosity *= fadeFactor;
 
-                // Use a variant of the blackbody colors with the whitepoint
-                // set to Sol being white, to ensure consistency of the Solar
-                // System textures.
                 ls.color = starColors->lookupTintColor(temp, tintSaturation, fadeFactor);
             }
 
@@ -5955,7 +5953,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
                           now,
                           lightSourceList,
                           tintSaturation,
-                          starColors.type() == ColorTableType::Enhanced ? nullptr : &tintColors);
+                          starColors);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.
