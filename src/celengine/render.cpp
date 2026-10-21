@@ -5953,7 +5953,7 @@ Renderer::buildNearSystemsLists(const Universe &universe,
                           now,
                           lightSourceList,
                           tintSaturation,
-                          starColors);
+                          &starColors);
 
     // Traverse the frame trees of each nearby solar system and
     // build the list of objects to be rendered.
