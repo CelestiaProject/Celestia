@@ -1052,7 +1052,7 @@ void setTable(lua_State* l, const char* field, lua_Number value)
 }
 
 
-static void loadLuaLibs(lua_State* state);
+static void loadLuaLibs(lua_State* state, CelestiaCore*);
 
 // ==================== Initialization ====================
 bool LuaState::init(CelestiaCore* appCore)
@@ -1087,7 +1087,7 @@ bool LuaState::init(CelestiaCore* appCore)
     lua_pushnumber(state, celestia::astro::KM_PER_LY<lua_Number>/1e6);
     lua_setglobal(state, "KM_PER_MICROLY");
 
-    loadLuaLibs(state);
+    loadLuaLibs(state, appCore);
 
     // Create the celestia object
     celestia_new(state, appCore);
@@ -1131,7 +1131,9 @@ void LuaState::setLuaPath(const string& s)
 
 // ==================== Load Libraries ================================================
 
-static void loadLuaLibs(lua_State* state)
+void CreateSolMetaTables(lua_State* state, CelestiaCore* appCore);
+
+static void loadLuaLibs(lua_State* state, CelestiaCore* appCore)
 {
     openLuaLibrary(state, LUA_DBLIBNAME, luaopen_debug);
 
@@ -1152,6 +1154,8 @@ static void loadLuaLibs(lua_State* state)
     ExtendObjectMetaTable(state);
 
     LoadLuaGraphicsLibrary(state);
+
+    CreateSolMetaTables(state, appCore);
 }
 
 
