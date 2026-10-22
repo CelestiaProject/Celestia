@@ -1131,6 +1131,8 @@ void LuaState::setLuaPath(const string& s)
 
 // ==================== Load Libraries ================================================
 
+void CreateSolMetaTables(lua_State* state, CelestiaCore* appCore);
+
 static void loadLuaLibs(lua_State* state, CelestiaCore* appCore)
 {
     openLuaLibrary(state, LUA_DBLIBNAME, luaopen_debug);
@@ -1152,6 +1154,8 @@ static void loadLuaLibs(lua_State* state, CelestiaCore* appCore)
     ExtendObjectMetaTable(state);
 
     LoadLuaGraphicsLibrary(state);
+
+    CreateSolMetaTables(state, appCore);
 }
 
 
