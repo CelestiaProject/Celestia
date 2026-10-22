@@ -729,8 +729,8 @@ class Renderer
     RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
     BodyClassification bodyVisibilityMask{ ~BodyClassification::EmptyMask };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar };
-    float ambientLightLevel{ 0.1f };
-    float tintSaturation{ 0.5f };
+    float ambientLightLevel{ 0.0f };
+    float tintSaturation{ 1.0f };
     float brightnessBias{ 0.0f };
 
     float brightnessScale{ 1.0f };
