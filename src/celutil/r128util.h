@@ -15,19 +15,26 @@
 
 #pragma once
 
-#include <string>
+#include <optional>
 #include <string_view>
+
+#include <fmt/format.h>
 
 #include "r128.h"
 
 namespace celestia::util
 {
 
-std::string EncodeAsBase64(const R128 &);
-R128 DecodeFromBase64(std::string_view);
+std::optional<R128> DecodeFromBase64(std::string_view);
 
 // Checks whether the coordinate exceeds a magnitude of 2^62 microlightyears,
 // which represents the bounds of the simulated volume.
 bool isOutOfBounds(const R128 &);
 
 } // end namespace celestia::util
+
+template<>
+struct fmt::formatter<R128> : formatter<std::string_view>
+{
+    auto format(const R128& value, format_context& ctx) const -> decltype(ctx.out());
+};

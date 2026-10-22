@@ -13,14 +13,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#define R128_IMPLEMENTATION
+#include "r128util.h"
+
+#include <algorithm>
 #include <array>
+#include <bit>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
-
-#define R128_IMPLEMENTATION
-#include "r128util.h"
+#include <ranges>
 
 using namespace std::string_view_literals;
 
@@ -30,22 +33,30 @@ namespace
 constexpr std::string_view alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"sv;
 static_assert(alphabet.size() == 64, "Base64 decoder alphabet must be of length 64");
 
-constexpr std::uint8_t AsciiRange = 128;
+constexpr char MinChar = std::ranges::min(alphabet);
+constexpr char MaxChar = std::ranges::max(alphabet);
 
-using DecoderArray = std::array<std::int8_t, AsciiRange>;
+using DecoderArray = std::array<std::int8_t, (MaxChar - MinChar) + 1>;
 
-DecoderArray createBase64Decoder()
+constexpr DecoderArray
+createBase64Decoder()
 {
     DecoderArray decoder;
     decoder.fill(-1);
     for (std::size_t i = 0; i < alphabet.size(); ++i)
     {
-        std::uint8_t idx = static_cast<std::uint8_t>(alphabet[i]);
-        assert(idx < AsciiRange);
-        decoder[idx] = static_cast<std::int8_t>(i);
+        decoder[alphabet[i] - MinChar] = static_cast<std::int8_t>(i);
     }
 
     return decoder;
+}
+
+constexpr DecoderArray decoder = createBase64Decoder();
+
+constexpr std::size_t
+encodedLength(std::size_t byteCount)
+{
+    return (byteCount * 4 + 2) / 3;
 }
 
 } // end unnamed namespace
@@ -53,155 +64,85 @@ DecoderArray createBase64Decoder()
 namespace celestia::util
 {
 
-std::string EncodeAsBase64(const R128 &b)
+std::optional<R128>
+DecodeFromBase64(std::string_view val)
 {
-    // Old BigFix class used 8 16-bit words. The bulk of this function
-    // is copied from that class, so first we'll convert from two
-    // 64-bit words to 8 16-bit words so that the old code can work
-    // as-is.
-    std::array<std::uint16_t, 8> n =
+    // remove trailing equals signs
+    auto it = std::ranges::find_if_not(val | std::views::reverse,
+                                       [](char c) { return c == '='; }).base();
+    val = std::string_view(val.begin(), it);
+    if (val.empty())
+        return R128(0, 0);
+
+    if (val.size() > encodedLength(16) || (val.size() & 0x3) == 1)
+        return std::nullopt;
+
+    std::array<std::uint8_t, 16> processed;
+    processed.fill(0);
+    std::uint32_t input = 0;
+    int groupIdx = 0;
+    std::size_t processedIdx = 0;
+    std::int8_t decoded = 0;
+    for (char c : val)
     {
-        static_cast<std::uint16_t>(b.lo),
-        static_cast<std::uint16_t>(b.lo >> 16),
-        static_cast<std::uint16_t>(b.lo >> 32),
-        static_cast<std::uint16_t>(b.lo >> 48),
-
-        static_cast<std::uint16_t>(b.hi),
-        static_cast<std::uint16_t>(b.hi >> 16),
-        static_cast<std::uint16_t>(b.hi >> 32),
-        static_cast<std::uint16_t>(b.hi >> 48),
-    };
-
-    // Conversion using code from the original R128 class.
-    std::string encoded;
-    int bits, c, char_count, i;
-
-    char_count = 0;
-    bits = 0;
-
-    // Find first significant (non null) byte
-    i = 16;
-    do {
-        i--;
-        c = n[i/2];
-        if ((i & 1) != 0) c >>= 8;
-        c &= 0xff;
-    } while ((c == 0) && (i != 0));
-
-    if (i == 0)
-        return encoded;
-
-    // Then we encode starting by the LSB (i+1 bytes to encode)
-    for (auto j = 0; j <= i; j++)
-    {
-        c = n[j/2];
-        if ( (j & 1) != 0 ) c >>= 8;
-        c &= 0xff;
-        bits += c;
-        char_count++;
-        if (char_count == 3)
-        {
-            encoded += alphabet[bits >> 18];
-            encoded += alphabet[(bits >> 12) & 0x3f];
-            encoded += alphabet[(bits >> 6) & 0x3f];
-            encoded += alphabet[bits & 0x3f];
-            bits = 0;
-            char_count = 0;
-        }
-        else
-        {
-            bits <<= 8;
-        }
-    }
-
-    if (char_count != 0)
-    {
-        bits <<= 16 - (8 * char_count);
-        encoded += alphabet[bits >> 18];
-        encoded += alphabet[(bits >> 12) & 0x3f];
-        if (char_count != 1)
-            encoded += alphabet[(bits >> 6) & 0x3f];
-    }
-
-    return encoded;
-
-}
-
-R128 DecodeFromBase64(std::string_view val)
-{
-    static DecoderArray decoder = createBase64Decoder();
-
-    std::array<std::uint16_t, 8> n = {0};
-
-    // Code from original BigFix class to convert base64 string into
-    // array of 8 16-bit values.
-    int char_count = 0;
-    int bits = 0;
-
-    int i = 0;
-
-    for (unsigned char c : val)
-    {
-        if (c == '=')
-            break;
-        if (c >= AsciiRange)
-            continue;
-        std::int8_t decoded = decoder[c];
+        if (c < MinChar || c > MaxChar)
+            return std::nullopt;
+        decoded = decoder[c - MinChar];
+        // invalid mapping
         if (decoded < 0)
-            continue;
-        bits += decoded;
-        char_count++;
-        if (char_count == 4)
+            return std::nullopt;
+
+        input |= decoded;
+        ++groupIdx;
+        if (groupIdx == 4)
         {
-            n[i/2] >>= 8;
-            n[i/2] += (bits >> 8) & 0xff00;
-            i++;
-            n[i/2] >>= 8;
-            n[i/2] += bits & 0xff00;
-            i++;
-            n[i/2] >>= 8;
-            n[i/2] += (bits << 8) & 0xff00;
-            i++;
-            bits = 0;
-            char_count = 0;
+            assert((processedIdx + 2) < processed.size());
+            processed[processedIdx    ] = static_cast<std::uint8_t>(input >> 16);
+            processed[processedIdx + 1] = static_cast<std::uint8_t>((input >> 8) & 0xff);
+            processed[processedIdx + 2] = static_cast<std::uint8_t>(input & 0xff);
+            processedIdx += 3;
+            input = 0;
+            groupIdx = 0;
         }
         else
         {
-            bits <<= 6;
+            input <<= 6;
         }
     }
 
-    switch (char_count)
+    if (groupIdx != 0)
     {
-    case 2:
-        n[i/2] >>= 8;
-        n[i/2] += (bits >> 2) & 0xff00;
-        i++;
-        break;
-    case 3:
-        n[i/2] >>= 8;
-        n[i/2] += (bits >> 8) & 0xff00;
-        i++;
-        n[i/2] >>= 8;
-        n[i/2] += bits & 0xff00;
-        i++;
-        break;
+        assert(groupIdx != 1 && groupIdx < 4 &&
+               (processedIdx + groupIdx - 2) < processed.size());
+
+        input <<= 18 - 6 * groupIdx;
+        processed[processedIdx] = static_cast<std::uint8_t>(input >> 16);
+        if (groupIdx == 3)
+        {
+            if (decoded & 0x03) //NOSONAR
+            {
+                // invalid trailing character
+                return std::nullopt;
+            }
+            processed[processedIdx + 1] = static_cast<std::uint8_t>((input >> 8) & 0xff);
+        }
+        else if (decoded & 0x0f) //NOSONAR
+        {
+            // invalid trailing character
+            return std::nullopt;
+        }
     }
 
-    if ((i & 1) != 0)
-        n[i/2] >>= 8;
+    auto result = std::make_optional<R128>(0, 0);
+    auto& r128 = *result;
 
-    // Now, convert the 8 16-bit values to a 2 64-bit values
-    std::uint64_t lo = (static_cast<std::uint64_t>(n[0])
-                        | (static_cast<std::uint64_t>(n[1]) << 16)
-                        | (static_cast<std::uint64_t>(n[2]) << 32)
-                        | (static_cast<std::uint64_t>(n[3]) << 48));
-    std::uint64_t hi = (static_cast<std::uint64_t>(n[4])
-                        | (static_cast<std::uint64_t>(n[5]) << 16)
-                        | (static_cast<std::uint64_t>(n[6]) << 32)
-                        | (static_cast<std::uint64_t>(n[7]) << 48));
-    return {lo, hi};
+    for (std::size_t i = 8; i-- > 0;)
+    {
+        r128.lo = (r128.lo << 8) | processed[i];
+        r128.hi = (r128.hi << 8) | processed[i + 8];
+    }
 
+    return result;
 }
 
 bool isOutOfBounds(const R128 &b)
@@ -212,3 +153,46 @@ bool isOutOfBounds(const R128 &b)
 }
 
 } // end namespace celestia::util
+
+auto
+fmt::formatter<R128>::format(const R128& value, format_context& ctx) const -> decltype(ctx.out())
+{
+    fmt::basic_memory_buffer<char, encodedLength(16)> encoded;
+    const int byteCount = value.hi == 0
+        ? 8 - (std::countl_zero(value.lo) >> 3)
+        : 16 - (std::countl_zero(value.hi) >> 3);
+
+    std::array data{value.lo, value.hi};
+    std::uint32_t output = 0;
+    int groupIdx = 0;
+    for (int i = 0; i < byteCount; ++i)
+    {
+        output |= static_cast<std::uint32_t>((data[i >> 3] >> ((i & 7) << 3)) & 0xff);
+        ++groupIdx;
+        if (groupIdx == 3)
+        {
+            encoded.push_back(alphabet[output >> 18]);
+            encoded.push_back(alphabet[(output >> 12) & 0x3f]);
+            encoded.push_back(alphabet[(output >> 6) & 0x3f]);
+            encoded.push_back(alphabet[output & 0x3f]);
+            output = 0;
+            groupIdx = 0;
+        }
+        else
+        {
+            output <<= 8;
+        }
+    }
+
+    if (groupIdx > 0)
+    {
+        output <<= 16 - (groupIdx << 3);
+        encoded.push_back(alphabet[output >> 18]);
+        encoded.push_back(alphabet[(output >> 12) & 0x3f]);
+        if (groupIdx > 1)
+            encoded.push_back(alphabet[(output >> 6) & 0x3f]);
+    }
+
+    std::string_view view(encoded.data(), encoded.size());
+    return formatter<std::string_view>::format(view, ctx);
+}

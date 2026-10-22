@@ -1930,7 +1930,7 @@ static int celestia_newposition(lua_State* l)
     Celx_CheckArgs(l, 4, 4, "Expected 3 arguments for celestia:newposition");
     // for error checking only:
     this_celestia(l);
-    R128 components[3];
+    std::array<R128, 3> components;
     for (int i = 0; i < 3; i++)
     {
         if (lua_isnumber(l, i+2))
@@ -1940,7 +1940,16 @@ static int celestia_newposition(lua_State* l)
         }
         else if (lua_isstring(l, i+2))
         {
-            components[i] = util::DecodeFromBase64(lua_tostring(l, i+2));
+            std::string_view src = lua_tostring(l, i+2);
+            if (auto component = util::DecodeFromBase64(src); component.has_value())
+            {
+                components[i] = *component;
+            }
+            else
+            {
+                Celx_DoError(l, "String arguments to celestia:newposition must be decodable as base64");
+                return 0;
+            }
         }
         else
         {

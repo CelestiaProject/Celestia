@@ -355,12 +355,26 @@ ParseResult parseGotoLocCommand(const AssociativeArray& paramList, const ScriptM
         return std::make_unique<CommandGotoLocation>(t, *pos, rotation);
     }
 
-    const std::string* x = paramList.getString("x");
-    const std::string* y = paramList.getString("y");
-    const std::string* z = paramList.getString("z");
-    double xpos = x == nullptr ? 0.0 : static_cast<double>(DecodeFromBase64(*x));
-    double ypos = y == nullptr ? 0.0 : static_cast<double>(DecodeFromBase64(*y));
-    double zpos = z == nullptr ? 0.0 : static_cast<double>(DecodeFromBase64(*z));
+    double xpos = 0;
+    if (const std::string* x = paramList.getString("x"); x)
+    {
+        if (auto x128 = DecodeFromBase64(*x); x128.has_value())
+            xpos = static_cast<double>(*x128);
+    }
+
+    double ypos = 0;
+    if (const std::string* y = paramList.getString("y"); y)
+    {
+        if (auto y128 = DecodeFromBase64(*y); y128.has_value())
+            ypos = static_cast<double>(*y128);
+    }
+
+    double zpos = 0;
+    if (const std::string* z = paramList.getString("z"); z)
+    {
+        if (auto z128 = DecodeFromBase64(*z); z128.has_value())
+            zpos = static_cast<double>(*z128);
+    }
     auto ow = paramList.getNumber<double>("ow").value_or(0.0);
     auto ox = paramList.getNumber<double>("ox").value_or(0.0);
     auto oy = paramList.getNumber<double>("oy").value_or(0.0);
@@ -532,14 +546,17 @@ ParseResult parseSetPositionCommand(const AssociativeArray& paramList, const Scr
         return std::make_unique<CommandSetPosition>(basePosition.offsetKm(offset));
     }
 
-    const std::string* x = paramList.getString("x");
-    const std::string* y = paramList.getString("y");
-    const std::string* z = paramList.getString("z");
-    return x == nullptr || y == nullptr || z == nullptr
-        ? makeError("Missing x, y, z or base, offset parameters to setposition")
-        : std::make_unique<CommandSetPosition>(UniversalCoord(DecodeFromBase64(*x),
-                                                              DecodeFromBase64(*y),
-                                                              DecodeFromBase64(*z)));
+    if (auto x = paramList.getString("x"), y = paramList.getString("y"), z = paramList.getString("z");
+        x && y && z)
+    {
+        if (auto x128 = DecodeFromBase64(*x), y128 = DecodeFromBase64(*y), z128 = DecodeFromBase64(*z);
+            x128.has_value() && y128.has_value() && z128.has_value())
+        {
+            return std::make_unique<CommandSetPosition>(UniversalCoord(*x128, *y128, *z128));
+        }
+    }
+
+    return makeError("Missing x, y, z or base, offset parameters to setposition");
 }
 
 
