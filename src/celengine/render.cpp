@@ -1301,7 +1301,7 @@ setupLightSources(const vector<const Star*>& nearStars,
                 continue;
 
             // If star color mode is Enhanced, uses legacy tint colors
-            if (renderer->getStarColorTable() == ColorTableType::Enhanced)
+            if (starColors.type() == ColorTableType::Enhanced)
                 ls.color = legacyTintColor(temp).linearize(gl::sRGBRendering);
             else
             {
