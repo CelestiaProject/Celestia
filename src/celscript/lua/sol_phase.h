@@ -14,9 +14,9 @@ namespace celestia::celx
 class CelxPhase
 {
 public:
-    CelxPhase(TimelinePhase *p) : p(p){};
+    CelxPhase(const TimelinePhase *p) : p(p){};
 
-    TimelinePhase *get() const
+    const TimelinePhase *get() const
     {
         return p;
     }
@@ -66,7 +66,7 @@ public:
     Eigen::Quaterniond getorientation(double tdb) const;
 
 private:
-    TimelinePhase *p;
+    const TimelinePhase *p;
 };
 
 } // namespace celestia::celx

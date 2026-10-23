@@ -345,7 +345,6 @@ bool
 CelxObserver::isvalid() const
 {
     return o != nullptr;
-    ;
 }
 
 void

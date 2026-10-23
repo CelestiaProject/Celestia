@@ -1,11 +1,14 @@
-#include <Eigen/Geometry>
+#define SOL_ALL_SAFETIES_ON 1
+
 #include <cmath> // std::nan
-#include <fmt/format.h>
 #include <string_view>
 #include <variant>
-#define SOL_ALL_SAFETIES_ON 1
-#include <celengine/univcoord.h>
+
+#include <Eigen/Geometry>
+#include <fmt/format.h>
 #include <sol/sol.hpp>
+
+#include <celengine/univcoord.h>
 
 using namespace std::string_view_literals;
 

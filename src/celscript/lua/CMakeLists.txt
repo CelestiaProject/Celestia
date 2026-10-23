@@ -30,6 +30,7 @@ set(CELX_SOURCES
   celx_gl.h
   celx_incompatible.cpp
   sol_celestia.cpp
+  sol_object.cpp
   sol_frame.cpp
   sol_observer.cpp
   sol_phase.cpp

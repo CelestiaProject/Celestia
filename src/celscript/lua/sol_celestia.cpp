@@ -2077,5 +2077,6 @@ CreateCelestiaMetaTable(sol::state_view lua, CelestiaCore *core)
         &CelxCelestia::bindtranslationdomain,
         "setasterisms",
         &CelxCelestia::setasterisms);
+
     lua["testcelestia"] = CelxCelestia{ core };
 }
