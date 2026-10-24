@@ -10,13 +10,38 @@
 
 #pragma once
 
-#include <map>
+#include <optional>
 #include <string>
+#include <string_view>
+#include <variant>
+
 #include <Eigen/Geometry>
+
 #include <celengine/observer.h>
 #include <celengine/renderflags.h>
+#include <celengine/selection.h>
 
 class CelestiaCore;
+
+namespace celestia
+{
+
+/*! The TimeSource specifies what the time will be set to when the user
+ *  activates the URL.
+ *  - UseUrlTime indicates that the simulation time should be set to whatever
+ *    value was stored in the URL.
+ *  - UseSimulationTime means that the simulation time at activation is not
+ *    changed.
+ *  - UseSystemTime means that the simulation time will be set to whatever the
+ *    current system time is when the URL is activated.
+ */
+enum class UrlTimeSource : int
+{
+    UseUrlTime        = 0,
+    UseSimulationTime = 1,
+    UseSystemTime     = 2,
+    _Max,
+};
 
 /*! The CelestiaState class holds the current observer position, orientation,
  *  frame, time, and render settings. It is designed to be serialized as a cel
@@ -29,16 +54,21 @@ class CelestiaCore;
 class CelestiaState
 {
 public:
-    CelestiaState() = default;
-    explicit CelestiaState(CelestiaCore* appCore);
-    ~CelestiaState() = default;
-    // FIXME
+    static CelestiaState capture(CelestiaCore& appCore);
+    static std::optional<CelestiaState> parseURL(CelestiaCore& appCore, std::string_view urlStr);
 
-    bool loadState(std::map<std::string, std::string> &params);
-    void saveState(std::map<std::string, std::string> &params);
-    void captureState();
+    std::string createURL(UrlTimeSource timeSource = UrlTimeSource::UseUrlTime) const;
+    void apply() const;
 
 private:
+    class Parser;
+
+    struct UrlTime { double urlTime{ 0.0 }; };
+    struct SimulationTime {};
+    struct SystemTime {};
+
+    explicit CelestiaState(CelestiaCore&);
+
     // Observer frame, position, and orientation. For multiview, there needs
     // be one instance of these parameters per view saved.
     ObserverFrame::CoordinateSystem m_coordSys              { ObserverFrame::CoordinateSystem::Universal };
@@ -47,20 +77,20 @@ private:
     float                           m_fieldOfView           { 45.0f };
 
     // Time parameters
-    double                          m_tdb                   { 0.0 };
+    std::variant<SimulationTime, UrlTime, SystemTime> m_time;
     float                           m_timeScale             { 1.0f };
     bool                            m_pauseState            { false };
     bool                            m_lightTimeDelay        { false };
 
-    std::string                     m_refBodyName;
-    std::string                     m_targetBodyName;
-    std::string                     m_trackedBodyName;
-    std::string                     m_selectedBodyName;
+    Selection                       m_refBody;
+    Selection                       m_targetBody;
+    Selection                       m_trackedBody;
+    Selection                       m_selectedBody;
 
     RenderLabels                    m_labelMode             { RenderLabels::NoLabels };
     RenderFlags                     m_renderFlags           { RenderFlags::ShowNothing };
 
-    CelestiaCore                   *m_appCore               { nullptr };
-
-    friend class Url;
+    CelestiaCore& m_appCore;
 };
+
+} // end namespace celestia

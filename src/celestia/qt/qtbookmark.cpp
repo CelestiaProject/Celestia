@@ -31,7 +31,6 @@
 #include <QVariant>
 #include <QtAlgorithms>
 
-#include <celestia/url.h>
 #include <celutil/gettext.h>
 #include "xbel.h"
 
@@ -769,11 +768,11 @@ int AddBookmarkDialog::m_lastTimeSourceIndex = 0;
 
 AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
                                      QString defaultTitle,
-                                     const CelestiaState& appState,
+                                     CelestiaCore& appCore,
                                      const QImage& iconImage) :
     m_manager(manager),
     m_filterModel(nullptr),
-    m_appState(appState),
+    m_appState(CelestiaState::capture(appCore)),
     m_iconImage(iconImage)
 {
     setupUi(this);
@@ -797,9 +796,9 @@ AddBookmarkDialog::AddBookmarkDialog(BookmarkManager* manager,
     view->show();
     createInCombo->setView(view);
 
-    timeSourceCombo->addItem(_("Current simulation time"),       (int) Url::UseUrlTime);
-    timeSourceCombo->addItem(_("Simulation time at activation"), (int) Url::UseSimulationTime);
-    timeSourceCombo->addItem(_("System time at activation"),     (int) Url::UseSystemTime);
+    timeSourceCombo->addItem(_("Current simulation time"),       static_cast<int>(UrlTimeSource::UseUrlTime));
+    timeSourceCombo->addItem(_("Simulation time at activation"), static_cast<int>(UrlTimeSource::UseSimulationTime));
+    timeSourceCombo->addItem(_("System time at activation"),     static_cast<int>(UrlTimeSource::UseSystemTime));
     timeSourceCombo->setCurrentIndex(m_lastTimeSourceIndex);
 
     // Initialize to first index
@@ -819,16 +818,13 @@ AddBookmarkDialog::accept()
         m_lastTimeSourceIndex = timeSourceCombo->currentIndex();
 
         QVariant itemData = timeSourceCombo->itemData(timeSourceCombo->currentIndex());
-        Url::TimeSource timeSource = (Url::TimeSource) itemData.toInt();
-        Q_ASSERT(timeSource >= 0 && timeSource < Url::TimeSourceCount);
-
-        // Get the URL string
-        Url url(m_appState, Url::CurrentVersion, timeSource);
+        UrlTimeSource timeSource = static_cast<UrlTimeSource>(itemData.toInt());
+        Q_ASSERT(timeSource >= static_cast<UrlTimeSource>(0) && timeSource < UrlTimeSource::_Max);
 
         BookmarkItem* folder = m_manager->model()->getItem(index);
         auto* newItem = new BookmarkItem(BookmarkItem::Bookmark, folder);
         newItem->setTitle(bookmarkNameEdit->text());
-        newItem->setUrl(QString::fromStdString(url.getAsString()));
+        newItem->setUrl(QString::fromStdString(m_appState.createURL(timeSource)));
         newItem->setIcon(QIcon(QPixmap::fromImage(m_iconImage.scaled(BookmarkItem::ICON_SIZE, BookmarkItem::ICON_SIZE,
                                                                      Qt::IgnoreAspectRatio,
                                                                      Qt::SmoothTransformation))));
