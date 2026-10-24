@@ -33,8 +33,6 @@ set(CELESTIA_SOURCES
   textprintposition.cpp
   textprintposition.h
   timeinfo.h
-  url.cpp
-  url.h
   view.cpp
   view.h
   viewmanager.cpp

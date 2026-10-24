@@ -52,7 +52,6 @@
 #include <celscript/legacy/legacyscript.h>
 #include <celscript/common/scriptmaps.h>
 
-class Url;
 class Console;
 class ProgressNotifier;
 

@@ -27,6 +27,8 @@
 #include "ui_newbookmarkfolder.h"
 #include "ui_organizebookmarks.h"
 
+#include <celestia/celestiastate.h>
+
 class QIODevice;
 class QMenu;
 class QMimeData;
@@ -35,11 +37,10 @@ class QSortFilterProxyModel;
 class QVariant;
 class QWidget;
 
-class CelestiaState;
+class CelestiaCore;
 
 namespace celestia::qt
 {
-
 class BookmarkItem
 {
 public:
@@ -196,7 +197,7 @@ class AddBookmarkDialog : public QDialog, Ui_addBookmarkDialog
 public:
     AddBookmarkDialog(BookmarkManager* manager,
                       QString defaultTitle,
-                      const CelestiaState& appState,
+                      CelestiaCore& appCore,
                       const QImage& iconImage);
 
 public slots:
@@ -205,7 +206,7 @@ public slots:
 private:
     BookmarkManager* m_manager;
     QSortFilterProxyModel* m_filterModel;
-    const CelestiaState& m_appState;
+    CelestiaState m_appState;
     QImage m_iconImage;
 
     static int m_lastTimeSourceIndex;
