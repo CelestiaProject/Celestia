@@ -69,7 +69,7 @@ void PushClass(lua_State*, int);
 void setTable(lua_State*, const char*, lua_Number);
 ObserverFrame::CoordinateSystem parseCoordSys(std::string_view);
 
-static std::filesystem::path GetScriptPath(lua_State* l)
+std::filesystem::path GetScriptPath(lua_State* l)
 {
     lua_Debug ar;
     lua_getstack(l, 1, &ar);
@@ -906,7 +906,7 @@ static int celestia_setlabelcolor(lua_State* l)
         *color = Color((float) red, (float) green, (float) blue, (float) opacity);
     }
 
-    return 1;
+    return 0;
 }
 
 
@@ -964,7 +964,7 @@ static int celestia_setlinecolor(lua_State* l)
         *color = Color((float) red, (float) green, (float) blue, (float) opacity);
     }
 
-    return 1;
+    return 0;
 }
 
 
@@ -2346,7 +2346,7 @@ parseOverlayColors(lua_State* l, int slot, std::string_view methodName)
 // Returns nullptr if the filename argument was missing or invalid.
 // `methodName` is used for argc/error messages so each method reports its
 // own name.
-static std::unique_ptr<ImageOverlay>
+std::unique_ptr<ImageOverlay>
 buildImageOverlay(lua_State* l, const CelestiaCore* appCore, std::string_view methodName)
 {
     const char* filename = Celx_SafeGetString(l, 6, AllErrors, fmt::format("Fifth argument to celestia:{} must be a string (filename)", methodName).c_str());
