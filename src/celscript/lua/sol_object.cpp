@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string_view>
+#include <tuple>
 
 #define SOL_ALL_SAFETIES_ON 1
 #include <sol/sol.hpp>
@@ -689,47 +690,40 @@ catalognumber(const Selection &sel, std::string_view catalogName, sol::this_stat
     return sol::nullopt;
 }
 
+
+// FIXME: Error: [string "/tmp/t.celx"]:1: attempt to index a userdata value
+struct locationsState
+{
+    locationsState(const Selection &sel) : sel(sel), i(0) {}
+    Selection sel;
+    std::uint32_t i;
+};
+
 // Locations iterator function; two upvalues expected. Used by
 // object:locations method.
-#if 0
-static int object_locations_iter(const Selection &sel)
+sol::object locationsNext(sol::user<locationsState&> iterState, sol::this_state s)
 {
-    CelxLua celx(l);
-    Selection* sel = to_object(l, lua_upvalueindex(1));
-    if (sel == nullptr)
-    {
-        celx.doError("Bad object!");
-        return 0;
-    }
+    locationsState &iter = iterState;
 
-    // Get the current counter value
-    uint32_t i = (uint32_t) lua_tonumber(l, lua_upvalueindex(2));
-
-    const auto *body = sel.body();
+    const auto *body = iter.sel.body();
     if (body == nullptr)
-        return 0;
+        return sol::object(sol::lua_nil);
 
     auto locations = GetBodyFeaturesManager()->getLocations(body);
-    if (!locations.has_value() || i >= locations->size())
+    if (!locations.has_value() || iter.i >= locations->size())
     {
         // Return nil when we've enumerated all the locations (or if
         // there were no locations associated with the object.)
-        return 0;
+        return sol::object(sol::lua_nil);
     }
 
-    // Increment the counter
-    lua_pushnumber(l, i + 1);
-    lua_replace(l, lua_upvalueindex(2));
-
-    Location* loc = (*locations)[i];
-    if (loc == nullptr)
-        lua_pushnil(l);
-    else
-        object_new(l, Selection(loc));
-
-    return 1;
+    if (auto* loc = (*locations)[iter.i]; loc != nullptr)
+    {
+        ++(iter.i);
+        return sol::object(s.lua_state(), sol::in_place, Selection(loc));
+    }
+    return sol::object(sol::lua_nil);
 }
-#endif
 
 /*! object:locations()
  *
@@ -746,18 +740,14 @@ static int object_locations_iter(const Selection &sel)
  *
  * \endverbatim
  */
-#if 0
-static int object_locations(const Selection &sel)
+auto locations(const Selection &sel)
 {
-    CelxLua celx(l);
-    // Push a closure with two upvalues: the object and a counter
-    lua_pushvalue(l, 1);    // object
-    lua_pushnumber(l, 0);   // counter
-    lua_pushcclosure(l, object_locations_iter, 2);
-
-    return 1;
+    locationsState st(sel);
+    return std::make_tuple(
+        locationsNext,
+        sol::user<locationsState>(std::move(st)),
+        sol::lua_nil);
 }
-#endif
 
 /*! object:bodyfixedframe()
  *
@@ -1313,7 +1303,7 @@ CreateObjectMetaTable(sol::state_view lua)
         getposition,
         "getchildren",
         getchildren,
-        //"locations", locations,
+        "locations", locations,
         "bodyfixedframe",
         bodyfixedframe,
         "equatorialframe",

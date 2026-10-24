@@ -30,6 +30,7 @@ set(CELX_SOURCES
   celx_gl.h
   celx_incompatible.cpp
   sol_celestia.cpp
+  sol_misc.cpp
   sol_object.cpp
   sol_frame.cpp
   sol_observer.cpp
@@ -37,6 +38,7 @@ set(CELX_SOURCES
   sol_position.cpp
   sol_rotation.cpp
   sol_vector.cpp
+  sol_gl.cpp
 )
 
 add_library(celluascript OBJECT ${CELX_SOURCES})

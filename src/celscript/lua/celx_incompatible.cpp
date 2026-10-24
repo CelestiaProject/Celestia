@@ -10,6 +10,11 @@ void CreatePositionMetaTable(sol::state_view lua);
 void CreateRotationMetaTable(sol::state_view lua);
 void CreateFrameMetaTable(sol::state_view lua);
 void CreatePhaseMetaTable(sol::state_view lua);
+void CreateFontMetaTable(sol::state_view lua);
+void CreateCelscriptMetaTable(sol::state_view lua);
+void CreateImageMetaTable(sol::state_view lua);
+void CreateTextureMetaTable(sol::state_view lua);
+void LoadLuaGraphicsLibrary(sol::state_view lua);
 
 void CreateSolMetaTables(lua_State* state, CelestiaCore* appCore)
 {
@@ -22,4 +27,9 @@ void CreateSolMetaTables(lua_State* state, CelestiaCore* appCore)
     CreateRotationMetaTable(lua);
     CreateFrameMetaTable(lua);
     CreatePhaseMetaTable(lua);
+    CreateFontMetaTable(lua);
+    CreateCelscriptMetaTable(lua);
+    CreateImageMetaTable(lua);
+    CreateTextureMetaTable(lua);
+    LoadLuaGraphicsLibrary(lua);
 }
