@@ -77,7 +77,6 @@
 #include <celestia/ffmpegcapture.h>
 #endif
 #include <celestia/scriptmenu.h>
-#include <celestia/url.h>
 #include <celutil/gettext.h>
 #include <celutil/greek.h>
 #include <celutil/tzutil.h>
@@ -823,11 +822,8 @@ CelestiaAppWindow::slotCopyImage()
 void
 CelestiaAppWindow::slotCopyURL()
 {
-    CelestiaState appState(m_appCore);
-    appState.captureState();
-
-    Url url(appState);
-    QApplication::clipboard()->setText(url.getAsString().c_str());
+    std::string url = CelestiaState::capture(*m_appCore).createURL();
+    QApplication::clipboard()->setText(QString::fromStdString(url));
     m_appCore->flash(_("Copied URL"));
 }
 
@@ -1142,9 +1138,6 @@ CelestiaAppWindow::slotAddBookmark()
     if (defaultTitle.isEmpty())
         defaultTitle = _("New bookmark");
 
-    CelestiaState appState(m_appCore);
-    appState.captureState();
-
     // Capture the current frame buffer to use as a bookmark icon.
     QImage grabbedImage = glWidget->grabFramebuffer();
     int width = grabbedImage.width();
@@ -1157,7 +1150,7 @@ CelestiaAppWindow::slotAddBookmark()
     else
         iconImage = grabbedImage.copy(0, (height - width) / 2, width, width);
 
-    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, appState, iconImage);
+    AddBookmarkDialog dialog(m_bookmarkManager, defaultTitle, *m_appCore, iconImage);
     dialog.exec();
 
     populateBookmarkMenu();

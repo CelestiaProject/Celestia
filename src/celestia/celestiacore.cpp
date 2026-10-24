@@ -62,6 +62,7 @@
 #include <celengine/urlmanager.h>
 #include <celengine/visibleregion.h>
 #include <celengine/warpmesh.h>
+#include <celestia/celestiastate.h>
 #include <celestia/configfile.h>
 #include <celestia/favorites.h>
 #include <celestia/loaddso.h>
@@ -70,7 +71,6 @@
 #include <celestia/progressnotifier.h>
 #include <celestia/textprintposition.h>
 #include <celestia/viewmanager.h>
-#include <celestia/url.h>
 #include <celmath/geomutil.h>
 #include <celscript/legacy/execution.h>
 #include <celscript/legacy/cmdparser.h>
@@ -3124,13 +3124,14 @@ const CelestiaConfig* CelestiaCore::getConfig() const
 
 bool CelestiaCore::goToUrl(std::string_view urlStr)
 {
-    Url url(this);
-    if (!url.parse(urlStr))
+    auto state = celestia::CelestiaState::parseURL(*this, urlStr);
+    if (!state.has_value())
     {
         fatalError(_("Invalid URL"));
         return false;
     }
-    url.goTo();
+
+    state->apply();
     return true;
 }
 

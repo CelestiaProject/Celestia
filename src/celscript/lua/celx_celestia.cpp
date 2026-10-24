@@ -25,8 +25,8 @@
 #include <celestia/audiosession.h>
 #include <celestia/configfile.h>
 #include <celestia/hud.h>
-#include <celestia/url.h>
 #include <celestia/celestiacore.h>
+#include <celestia/celestiastate.h>
 #include <celestia/view.h>
 #include <celscript/common/scriptmaps.h>
 #include <celttf/truetypefont.h>
@@ -2302,11 +2302,8 @@ static int celestia_geturl(lua_State* l)
     const celestia::View* view = getViewByObserver(appCore, obs);
     appCore->setActiveView(view);
 
-    CelestiaState appState(appCore);
-    appState.captureState();
-
-    Url url(appState);
-    lua_pushstring(l, url.getAsString().c_str());
+    auto url = CelestiaState::capture(*appCore).createURL();
+    lua_pushlstring(l, url.data(), url.size());
 
     return 1;
 }
