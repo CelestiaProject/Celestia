@@ -729,8 +729,8 @@ class Renderer
     RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
     BodyClassification bodyVisibilityMask{ ~BodyClassification::EmptyMask };
     BodyClassification orbitMask{ BodyClassification::Planet | BodyClassification::Moon | BodyClassification::Stellar };
-    float ambientLightLevel{ 0.1f };
-    float tintSaturation{ 0.5f };
+    float ambientLightLevel{ 0.0f };
+    float tintSaturation{ 1.0f };
     float brightnessBias{ 0.0f };
 
     float brightnessScale{ 1.0f };
@@ -822,8 +822,7 @@ class Renderer
     float minFeatureSize{ 20.0f };
     std::uint64_t locationFilter{ ~UINT64_C(0) };
 
-    ColorTemperatureTable starColors{ ColorTableType::Blackbody_D65 };
-    ColorTemperatureTable tintColors{ ColorTableType::SunWhite };
+    ColorTemperatureTable starColors{ ColorTableType::SunWhite };
 
     Selection highlightObject;
 

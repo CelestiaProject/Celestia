@@ -44,7 +44,7 @@ struct Settings
     engine::TextureResolution textureResolution{ engine::TextureResolution::medres };
     BodyClassification orbitMask{ BodyClassification::DefaultOrbitMask };
     int ambientLight{ 0 }; // None
-    int tintSaturation{ 50 };
+    int tintSaturation{ 100 };
     int minFeatureSize{ 20 };
     ColorTableType starColors{ ColorTableType::SunWhite };
     StarStyle starStyle{ StarStyle::PointStars };
