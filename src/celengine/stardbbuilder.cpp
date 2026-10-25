@@ -519,7 +519,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                     }
                     else if (logT > 3.70)  // logT = (3.90, 3.70)
                     {
-                        double  = -37051.0203809015 + logT * (38567.2629965804 + logT * (-15065.1486316025 + logT * (2617.24637119416 + logT * -170.623810323864)));
+                        double bc = -37051.0203809015 + logT * (38567.2629965804 + logT * (-15065.1486316025 + logT * (2617.24637119416 + logT * -170.623810323864)));
                     }
                     else if (logT > 3.60)  // logT = (3.70, 3.6)
                     {
