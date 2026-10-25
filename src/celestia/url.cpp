@@ -527,7 +527,7 @@ Url::initVersion3(const std::map<std::string_view, std::string> &params, std::st
 {
     m_version = 3;
 
-    if (!astro::parseDate(std::string(timeStr), m_date))
+    if (!astro::parseDate(timeStr, m_date))
         return false;
     m_state.m_tdb = (double) m_date;
 

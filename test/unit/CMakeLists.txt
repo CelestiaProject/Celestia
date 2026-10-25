@@ -2,6 +2,7 @@ set(UNIT_TEST_SOURCES
   associativearray_test.cpp
   category_test.cpp
   constellation_test.cpp
+  date_test.cpp
   greek_test.cpp
   kepler_test.cpp
   legacy_cmdparser_test.cpp
