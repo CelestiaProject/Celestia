@@ -509,10 +509,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
 
                 double logT = std::log10(static_cast<double>(*temperature));
                 {
-                    if (logT > 4.7)
-                    {
-                        break;
-                    }
+                    if (logT > 4.7) { }
                     else if (logT > 3.9)  // logT = (4.7, 3.90)
                     {
                         double bc = -118115.450538963 + logT * (137145.973583929 + logT * (-63623.3812100225 + logT * (14741.2923562646 + logT * (-1705.87278406872 + logT * 78.8731721804990))));
@@ -525,10 +522,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                     {
                         double bc = -19053.7291496456 + logT * (15514.4866764412 + logT * (-4212.78819301717 + logT * 381.476328422343));
                     }
-                    else
-                    {
-                        break;
-                    }
+                    else { }
                 }
 
                 StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
