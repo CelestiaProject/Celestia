@@ -13,6 +13,7 @@
 #include <locale>
 #include <span>
 #include <string>
+#include <string_view>
 
 namespace celestia::astro
 {
@@ -88,7 +89,7 @@ public:
     double seconds{ 0.0 };
 };
 
-bool parseDate(const std::string&, Date&);
+bool parseDate(std::string_view, Date&);
 
 // Time scale conversions
 // UTC - Coordinated Universal Time
