@@ -508,23 +508,22 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
                 //   https://scixplorer.org/abs/2010AJ....140.1158T/abstract
 
                 double logT = std::log10(static_cast<double>(*temperature));
+
+                if (logT == std::clamp(logT,3.6,4.7))  // apparently this can be used to efficiently figure if logT is within range
                 {
-                    if (logT > 4.7) { }
-                    else if (logT > 3.9)  // logT = (4.7, 3.90)
+                    if (logT > 3.9)  // logT = (4.7, 3.90)
                     {
                         double bc = -118115.450538963 + logT * (137145.973583929 + logT * (-63623.3812100225 + logT * (14741.2923562646 + logT * (-1705.87278406872 + logT * 78.8731721804990))));
-                        StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
                     }
                     else if (logT > 3.7)  // logT = (3.90, 3.70)
                     {
                         double bc = -37051.0203809015 + logT * (38567.2629965804 + logT * (-15065.1486316025 + logT * (2617.24637119416 + logT * -170.623810323864)));
-                        StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
                     }
-                    else if (logT > 3.6)  // logT = (3.70, 3.6)
+                    else  // logT = (3.70, 3.6)
                     {
                         double bc = -19053.7291496456 + logT * (15514.4866764412 + logT * (-4212.78819301717 + logT * 381.476328422343));
-                        StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
                     }
+                    StarDetails::setBolometricCorrection(details, static_cast<float>(bc));
                 }
             }
         }
