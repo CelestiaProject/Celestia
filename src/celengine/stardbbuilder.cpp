@@ -509,7 +509,7 @@ applyTemperatureBoloCorrection(const StarDatabaseBuilder::StcHeader& header,
 
                 double logT = std::log10(static_cast<double>(*temperature));
 
-                if (logT == std::clamp(logT,3.6,4.7))  // apparently this can be used to efficiently figure if logT is within range
+                if (logT > 3.6 && logT < 4.7)
                 {
                     if (logT > 3.9)  // logT = (4.7, 3.90)
                     {
