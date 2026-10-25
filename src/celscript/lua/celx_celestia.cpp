@@ -890,9 +890,14 @@ static int celestia_setlabelcolor(lua_State* l)
     std::string_view key = lua_tostring(l, 2);
     const auto &LabelColorMap = this_celestia(l)->scriptMaps().LabelColorMap;
     if (auto it = LabelColorMap.find(key); it == LabelColorMap.end())
+    {
         GetLogger()->warn("Unknown label style: {}\n", key);
+        return 0;
+    }
     else
+    {
         color = it->second;
+    }
 
     double red     = Celx_SafeGetNumber(l, 3, AllErrors, "setlabelcolor: color values must be numbers");
     double green   = Celx_SafeGetNumber(l, 4, AllErrors, "setlabelcolor: color values must be numbers");
@@ -948,9 +953,14 @@ static int celestia_setlinecolor(lua_State* l)
     std::string_view key = lua_tostring(l, 2);
     const auto &LineColorMap = this_celestia(l)->scriptMaps().LineColorMap;
     if (auto it = LineColorMap.find(key); it == LineColorMap.end())
+    {
         GetLogger()->warn("Unknown line style: {}\n", key);
+        return 0;
+    }
     else
+    {
         color = it->second;
+    }
 
     double red     = Celx_SafeGetNumber(l, 3, AllErrors, "setlinecolor: color values must be numbers");
     double green   = Celx_SafeGetNumber(l, 4, AllErrors, "setlinecolor: color values must be numbers");
