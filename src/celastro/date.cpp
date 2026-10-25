@@ -201,29 +201,27 @@ DateValues::parseTime(std::string_view s)
     if (!skipCharacter(s, ':') || s.size() < 2)
         return false;
 
-    if (const auto endPtr = s.data() + s.size(); s.size() == 2)
+    if (auto [ptr, ec] = compat::from_chars(s.data(), s.data() + s.size(), second, compat::chars_format::fixed);
+        ec == std::errc{})
     {
-        auto intSecond = 0;
-        auto [ptr, ec] = compat::from_chars(s.data(), endPtr, intSecond);
-        if (ec != std::errc{} || ptr != endPtr)
-            return false;
-
-        second = static_cast<double>(intSecond);
-    }
-    else
-    {
-        if (!std::ranges::all_of(s.substr(0, 2), [](char c) { return c >= '0' && c <= '9'; }) ||
-            s[2] != '.')
+        auto length = ptr - s.data();
+        if (length < 2 ||
+            std::ranges::any_of(s.substr(0, 2), [](char c) { return c < '0' || c > '9'; }) ||
+            (length >= 3 && s[2] != '.'))
         {
             return false;
         }
 
-        auto [ptr, ec] = compat::from_chars(s.data(), endPtr, second, compat::chars_format::fixed);
-        if (ec != std::errc{} || ptr != endPtr)
-            return false;
+        s.remove_prefix(static_cast<std::size_t>(length));
+    }
+    else
+    {
+        return false;
     }
 
-    return true;
+    // we should extend this to handle timezones, but for now we just allow
+    // the Z or +00:00 suffix
+    return s.empty() || s == "Z"sv || s =="+00:00"sv;
 }
 
 bool
