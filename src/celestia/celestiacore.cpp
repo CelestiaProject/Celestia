@@ -501,7 +501,6 @@ void CelestiaCore::mouseButtonUp(float x, float y, int button)
 
             Selection oldSel = sim->getSelection();
             Selection newSel = sim->pickObject(pickRay, renderer->getRenderFlags(), obsPickTolerance);
-            addToHistory();
             sim->setSelection(newSel);
             if (!oldSel.empty() && oldSel == newSel)
                 sim->centerSelection();
@@ -861,15 +860,11 @@ void CelestiaCore::keyDown(int key, int modifiers)
     case Key_PageDown:
         if (showConsole)
             console->scroll(Console::PageRows);
-        else
-            back();
         break;
 
     case Key_PageUp:
         if (showConsole)
             console->scroll(-Console::PageRows);
-        else
-            forward();
         break;
     }
 
@@ -1001,13 +996,11 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\007':  // Ctrl+G
         flash(_("Goto surface"));
-        addToHistory();
         sim->geosynchronousFollow();
         sim->gotoSurface(5.0);
         break;
 
     case '\006': // Ctrl+F
-        addToHistory();
         altAzimuthMode = !altAzimuthMode;
         if (altAzimuthMode)
         {
@@ -1116,7 +1109,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case '\033': // Escape
         cancelScript();
-        addToHistory();
         if (hud->textEnterMode() != Hud::TextEnterMode::Normal)
         {
             setTextEnterMode(Hud::TextEnterMode::Normal);
@@ -1231,12 +1223,10 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '*':
-        addToHistory();
         sim->reverseObserverOrientation();
         break;
 
     case '?':
-        addToHistory();
         if (!sim->getSelection().empty())
         {
             Vector3d v = sim->getSelection().getPosition(sim->getTime()).offsetFromKm(sim->getObserver().getPosition());
@@ -1269,8 +1259,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '-':
-        addToHistory();
-
         if (sim->getSelection().body() &&
             (sim->getTargetSpeed() < 0.99_c))
         {
@@ -1294,19 +1282,16 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case ',':
-        addToHistory();
         if (observer->getFOV() > renderer->getProjectionMode()->getMinimumFOV())
             updateFOV(observer->getFOV() / 1.05f, std::nullopt, viewManager->activeView());
         break;
 
     case '.':
-        addToHistory();
         if (observer->getFOV() < renderer->getProjectionMode()->getMaximumFOV())
             updateFOV(observer->getFOV() * 1.05f, std::nullopt, viewManager->activeView());
         break;
 
     case '+':
-        addToHistory();
         if (observer->getDisplayedSurface() != "")
         {
             observer->setDisplayedSurface("");
@@ -1324,7 +1309,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '0':
-        addToHistory();
         sim->selectPlanet(-1);
         break;
 
@@ -1337,7 +1321,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
     case '7':
     case '8':
     case '9':
-        addToHistory();
         if (!(modifiers & ControlKey))
             sim->selectPlanet(c - '1');
         break;
@@ -1355,7 +1338,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'C':
-        addToHistory();
         if (c == 'c')
             sim->centerSelection();
         else
@@ -1370,20 +1352,17 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'F':
-        addToHistory();
         flash(_("Follow"));
         sim->follow();
         break;
 
     case 'G':
-        addToHistory();
         if (sim->getFrame()->getCoordinateSystem() == ObserverFrame::CoordinateSystem::Universal)
             sim->follow();
         sim->gotoSelection(5.0, Vector3f::UnitY(), ObserverFrame::CoordinateSystem::ObserverLocal);
         break;
 
     case 'H':
-        addToHistory();
         sim->setSelection(sim->getUniverse()->getStarCatalog()->find(0));
         break;
 
@@ -1392,7 +1371,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'J':
-        addToHistory();
         sim->setTimeScale(-sim->getTimeScale());
         if (sim->getTimeScale() >= 0)
             flash(_("Time: Forward"));
@@ -1401,7 +1379,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'K':
-        addToHistory();
         if (abs(sim->getTimeScale()) > TimeInfo::MinimumTimeRate)
         {
             if (c == 'k')
@@ -1414,7 +1391,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'L':
-        addToHistory();
         if (abs(sim->getTimeScale()) < MaximumTimeRate)
         {
             if (c == 'l')
@@ -1482,7 +1458,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case 'T':
-        addToHistory();
         if (sim->getTrackedObject().empty())
             sim->setTrackedObject(sim->getSelection());
         else
@@ -1513,19 +1488,16 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
     case 'Y':
         flash(_("Sync Orbit"));
-        addToHistory();
         sim->geosynchronousFollow();
         break;
 
     case ':':
         flash(_("Lock"));
-        addToHistory();
         sim->phaseLock();
         break;
 
     case '"':
         flash(_("Chase"));
-        addToHistory();
         sim->chase();
         break;
 
@@ -1555,7 +1527,6 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         break;
 
     case '\\':
-        addToHistory();
         sim->setTimeScale(1.0f);
         break;
 
@@ -1669,10 +1640,7 @@ void CelestiaCore::updateSelectionFromInput()
         sel = sim->findObjectFromPath(typedText, true);
 
     if (!sel.empty())
-    {
-        addToHistory();
         sim->setSelection(sel);
-    }
 }
 
 
@@ -3165,65 +3133,6 @@ bool CelestiaCore::goToUrl(std::string_view urlStr)
     url.goTo();
     return true;
 }
-
-
-void CelestiaCore::addToHistory()
-{
-    if (!history.empty() && historyCurrent < history.size() - 1)
-    {
-        // truncating history to current position
-        while (historyCurrent != history.size() - 1)
-            history.pop_back();
-    }
-    history.emplace_back(this);
-    historyCurrent = history.size() - 1;
-}
-
-
-void CelestiaCore::back()
-{
-    if (historyCurrent == 0)
-        return;
-
-    if (historyCurrent == history.size() - 1)
-    {
-        addToHistory();
-        historyCurrent = history.size()-1;
-    }
-    historyCurrent--;
-    history[historyCurrent].goTo();
-}
-
-
-void CelestiaCore::forward()
-{
-    if (history.empty() || historyCurrent == history.size()-1)
-        return;
-    historyCurrent++;
-    history[historyCurrent].goTo();
-}
-
-
-const vector<Url>& CelestiaCore::getHistory() const
-{
-    return history;
-}
-
-vector<Url>::size_type CelestiaCore::getHistoryCurrent() const
-{
-    return historyCurrent;
-}
-
-void CelestiaCore::setHistoryCurrent(vector<Url>::size_type curr)
-{
-    if (curr >= history.size()) return;
-    if (historyCurrent == history.size()) {
-        addToHistory();
-    }
-    historyCurrent = curr;
-    history[curr].goTo();
-}
-
 
 /*! Toggle the specified reference mark for a selection.
  *  a selection. The default value for the selection argument is
