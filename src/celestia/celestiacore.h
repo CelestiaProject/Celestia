@@ -201,15 +201,9 @@ public:
     void getLightTravelDelay(double distanceKm, int&, int&, float&);
     void setLightTravelDelay(double distanceKm);
 
-    // URLs and history navigation
+    // URL handling
     void setStartURL(const std::string& url);
     bool goToUrl(std::string_view urlStr);
-    void addToHistory();
-    void back();
-    void forward();
-    const std::vector<Url>& getHistory() const;
-    std::vector<Url>::size_type getHistoryCurrent() const;
-    void setHistoryCurrent(std::vector<Url>::size_type curr);
 
     // event processing methods
     void charEntered(const char*, int modifiers = 0);
@@ -523,8 +517,6 @@ private:
     ContextMenuHandler* contextMenuHandler{ nullptr };
     std::optional<std::function<ScriptSystemAccessPolicy()>> scriptSystemAccessHandler{ std::nullopt };
 
-    std::vector<Url> history;
-    std::vector<Url>::size_type historyCurrent{ 0 };
     std::string startURL;
 
     std::unique_ptr<celestia::ViewManager> viewManager;
