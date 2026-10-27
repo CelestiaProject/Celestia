@@ -40,7 +40,7 @@ jobs:
     - name: Update vcpkg
       shell: pwsh
       run: |
-        $vcpkgCommit = 'b8b8df2201ad8509b81a830fe0957bcb98e06c27'
+        $vcpkgCommit = '5363acb796e576328288fae60c25304e227e9839'
         pushd "$env:VCPKG_INSTALLATION_ROOT"
         git fetch origin $vcpkgCommit
         git reset --hard $vcpkgCommit
