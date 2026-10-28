@@ -13,8 +13,7 @@ set(UNIT_TEST_SOURCES
   resourcesystem_test.cpp
   stellarclass_test.cpp
   strnatcmp_test.cpp
-  tokenizer_test.cpp
-  url_test.cpp)
+  tokenizer_test.cpp)
 
 list(APPEND UNIT_TEST_SOURCES unicode_test.cpp)
 

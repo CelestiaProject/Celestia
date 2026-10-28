@@ -17,7 +17,6 @@
 #include <celestia/celestiacore.h>
 #include <celestia/celestiastate.h>
 #include <celestia/hud.h>
-#include <celestia/url.h>
 #include <celutil/gettext.h>
 
 namespace celestia::sdl
@@ -26,10 +25,8 @@ namespace celestia::sdl
 void
 doCopy(CelestiaCore& appCore)
 {
-    CelestiaState appState(&appCore);
-    appState.captureState();
-
-    if (SDL_SetClipboardText(Url(appState).getAsString().c_str()) == 0)
+    auto url = CelestiaState::capture(appCore).createURL();
+    if (SDL_SetClipboardText(url.c_str()) == 0)
         appCore.flash(_("Copied URL"));
 }
 

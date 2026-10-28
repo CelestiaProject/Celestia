@@ -33,7 +33,6 @@
 #include <celutil/stringutils.h>
 #include <celestia/celestiacore.h>
 #include <celestia/hud.h>
-#include <celestia/url.h>
 #include <celestia/viewmanager.h>
 
 #include "celx_internal.h"
