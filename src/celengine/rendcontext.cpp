@@ -9,6 +9,7 @@
 // of the License, or (at your option) any later version.
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstddef>
 
@@ -241,7 +242,7 @@ GLSL_RenderContext::initLightingEnvironment()
 void
 GLSL_RenderContext::makeCurrent(const cmod::Material& m)
 {
-    Texture* textures[4] = { nullptr, nullptr, nullptr, nullptr };
+    std::array<Texture*, 5> textures{};
     unsigned int nTextures = 0;
 
     // Set up the textures used by this object
