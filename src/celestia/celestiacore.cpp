@@ -2528,10 +2528,20 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     if (favorites == nullptr)
         favorites = std::make_unique<FavoritesList>();
 
+    struct PendingResources
+    {
+        std::shared_ptr<engine::ResourceSystem> system{ std::make_shared<engine::ResourceSystem>() };
+        std::shared_ptr<engine::GeometryManager> geometry;
+        std::unique_ptr<Universe> universe;
+    };
+
     auto geometryPaths = std::make_shared<engine::GeometryPaths>();
-    resourceSystem = std::make_shared<engine::ResourceSystem>();
-    geometryManager = std::make_shared<engine::GeometryManager>(geometryPaths, texturePaths, *resourceSystem);
-    auto universe = std::make_unique<Universe>(geometryManager, std::make_unique<engine::UrlManager>());
+    PendingResources pendingResources;
+    pendingResources.geometry = std::make_shared<engine::GeometryManager>(
+        geometryPaths, texturePaths, *pendingResources.system);
+    pendingResources.universe = std::make_unique<Universe>(
+        pendingResources.geometry, std::make_unique<engine::UrlManager>());
+    auto& universe = pendingResources.universe;
 
     /***** Load star catalogs *****/
 
@@ -2683,6 +2693,8 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     set_or_unset(observerSettings->flags, celestia::engine::ObserverFlags::AlignCameraToSurfaceOnLand, config->observer.alignCameraToSurfaceOnLand);
 
     sim = std::make_unique<Simulation>(std::move(universe), observerSettings);
+    geometryManager = std::move(pendingResources.geometry);
+    resourceSystem = std::move(pendingResources.system);
 
     // Load asterisms:
     if (!config->paths.asterismsFile.empty())

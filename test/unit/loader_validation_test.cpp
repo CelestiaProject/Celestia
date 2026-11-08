@@ -23,6 +23,7 @@
 #include <celengine/virtualtex.h>
 #include <celimage/image.h>
 #include <celimage/imageformats.h>
+#include <celestia/celestiacore.h>
 
 namespace
 {
@@ -156,6 +157,51 @@ TEST_CASE("Virtual texture loader rejects unsafe dimensions")
 
     auto texture = LoadVirtualTexture(path, Texture::DefaultColorspace);
     CHECK(texture == nullptr);
+}
+
+TEST_CASE("Simulation initialization can retry after a failed star catalog")
+{
+    TemporaryDirectory directory;
+    const auto starPath = directory.getPath("stars.dat");
+    const auto configPath = directory.getPath("invalid.cfg");
+    const auto fallbackPath = directory.getPath("fallback.cfg");
+    {
+        std::ofstream out(configPath);
+        out << "Configuration { StarDatabase \"" << starPath.generic_string() << "\" }";
+        REQUIRE(out.good());
+    }
+    {
+        std::ofstream out(fallbackPath);
+        out << "Configuration {}";
+        REQUIRE(out.good());
+    }
+
+    SUBCASE("Missing star catalog falls back successfully")
+    {
+        CelestiaCore core;
+        REQUIRE_FALSE(core.initSimulation(configPath));
+        REQUIRE(core.initSimulation(fallbackPath));
+        CHECK(core.getSimulation() != nullptr);
+    }
+    SUBCASE("Truncated star catalog falls back successfully")
+    {
+        std::ofstream out(starPath, std::ios::binary);
+        out << "CELSTARS";
+        REQUIRE(out.good());
+        out.close();
+
+        CelestiaCore core;
+        REQUIRE_FALSE(core.initSimulation(configPath));
+        REQUIRE(core.initSimulation(fallbackPath));
+        CHECK(core.getSimulation() != nullptr);
+    }
+    SUBCASE("Both initialization attempts fail")
+    {
+        CelestiaCore core;
+        REQUIRE_FALSE(core.initSimulation(configPath));
+        REQUIRE_FALSE(core.initSimulation(configPath));
+        CHECK(core.getSimulation() == nullptr);
+    }
 }
 
 TEST_SUITE_END();
