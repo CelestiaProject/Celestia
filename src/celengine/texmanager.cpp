@@ -262,6 +262,12 @@ TextureManager::find(util::TextureHandle handle)
     return m_cache->find(handle);
 }
 
+bool
+TextureManager::isLoading(util::TextureHandle handle) const
+{
+    return m_cache->isLoading(handle);
+}
+
 Texture*
 TextureManager::findShadow(util::TextureHandle handle)
 {

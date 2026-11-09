@@ -144,11 +144,13 @@ public:
     ~GLSLUnlit_RenderContext() override;
 
     void makeCurrent(const cmod::Material&) override;
+    void drawGroup(celestia::gl::VertexObject &vao, const cmod::PrimitiveGroup& group) override;
 
 private:
     void initLightingEnvironment();
 
     cmod::BlendMode blendMode;
+    bool diffuseTextureLoading{ false };
 
     ShaderProperties shaderProps;
 

@@ -121,6 +121,7 @@ public:
     ~TextureManager();
 
     Texture* find(util::TextureHandle handle);
+    bool isLoading(util::TextureHandle handle) const;
     Texture* findShadow(util::TextureHandle handle);
     TextureResolution resolution() const noexcept { return m_resolution; }
     void resolution(TextureResolution);
