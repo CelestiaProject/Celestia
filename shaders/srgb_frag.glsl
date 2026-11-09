@@ -11,8 +11,9 @@ uniform float exposure;
 // Input is assumed to be linear light; output is gamma-encoded for display.
 vec3 linearToSRGB(vec3 c)
 {
-    // Clamp negatives to avoid undefined pow() behaviour
-    c = max(c, vec3(0.0));
+    // Clip to the display range before mix(): half-float HDR overflow can
+    // produce infinity, for which mixing the transfer branches yields NaN.
+    c = clamp(c, vec3(0.0), vec3(1.0));
     vec3 higher = vec3(1.055) * pow(c, vec3(1.0 / 2.4)) - vec3(0.055);
     vec3 lower  = vec3(12.92) * c;
     // step(edge, x): 0 when x < edge, 1 when x >= edge
