@@ -107,6 +107,12 @@ public:
         return m_traits.placeholder();
     }
 
+    bool isLoading(Handle handle) const
+    {
+        auto it = m_entries.find(handle);
+        return it != m_entries.end() && it->second.state == ResourceState::Queued;
+    }
+
     void pin(Handle handle)
     {
         if (!isValid(handle))

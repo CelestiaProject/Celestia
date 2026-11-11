@@ -649,7 +649,8 @@ Observer::update(double dt, double timeScale)
 
     simTime = std::clamp(simTime, minimumSimTime, maximumSimTime);
 
-    if (observerMode == ObserverMode::Travelling)
+    bool wasTravelling = observerMode == ObserverMode::Travelling;
+    if (wasTravelling)
     {
         // Compute the fraction of the trip that has elapsed; handle zero
         // durations correctly by skipping directly to the destination.
@@ -693,7 +694,9 @@ Observer::update(double dt, double timeScale)
     // Update the position
     position = position.offsetKm(getVelocity() * dt);
 
-    if (observerMode == ObserverMode::Free)
+    // A completed journey already set this tick's orientation. The cached
+    // transformedOrientation still belongs to the previous tick until updateUniversal().
+    if (!wasTravelling && observerMode == ObserverMode::Free)
     {
         // Update the observer's orientation
         Eigen::Vector3d halfAV = getAngularVelocity() * 0.5;

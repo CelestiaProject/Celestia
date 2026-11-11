@@ -208,6 +208,7 @@ GalaxyRenderer::getRenderInfo(const GalaxyRenderer::Object &obj, float &brightne
 void
 GalaxyRenderer::bindTextures()
 {
+    glActiveTexture(GL_TEXTURE0);
     if (m_galaxyTex == nullptr)
     {
         m_galaxyTex = ImageTexture::createProcedural(kGalaxyTextureSize,
@@ -217,9 +218,10 @@ GalaxyRenderer::bindTextures()
     }
 
     assert(m_galaxyTex != nullptr);
-    glActiveTexture(GL_TEXTURE0);
     m_galaxyTex->bind();
 
+    // Texture creation binds on the active unit; preserve the galaxy mask on unit 0.
+    glActiveTexture(GL_TEXTURE1);
     if (m_colorTex == nullptr)
     {
         // Color values are authored in sRGB; mark the texture accordingly so
@@ -231,7 +233,6 @@ GalaxyRenderer::bindTextures()
     }
 
     assert(m_colorTex != nullptr);
-    glActiveTexture(GL_TEXTURE1);
     m_colorTex->bind();
 }
 

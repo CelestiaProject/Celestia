@@ -548,6 +548,13 @@ GLSLUnlit_RenderContext::GLSLUnlit_RenderContext(Renderer* renderer,
 GLSLUnlit_RenderContext::~GLSLUnlit_RenderContext() = default;
 
 void
+GLSLUnlit_RenderContext::drawGroup(gl::VertexObject &vao, const cmod::PrimitiveGroup& group)
+{
+    if (!diffuseTextureLoading)
+        RenderContext::drawGroup(vao, group);
+}
+
+void
 GLSLUnlit_RenderContext::initLightingEnvironment()
 {
     // Set the light and shadow environment, which is constant for the entire model.
@@ -558,6 +565,7 @@ GLSLUnlit_RenderContext::initLightingEnvironment()
 void
 GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
 {
+    diffuseTextureLoading = false;
     Texture* textures[4] = { nullptr, nullptr, nullptr, nullptr };
     unsigned int nTextures = 0;
 
@@ -571,6 +579,12 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
         diffuseMap != util::TextureHandle::Invalid && (useTexCoords || usePointSize))
     {
         baseTex = renderer->getTextureManager()->find(diffuseMap);
+        if (baseTex == nullptr && renderer->getTextureManager()->isLoading(diffuseMap))
+        {
+            // Avoid flashing the flat material color while the texture loads.
+            diffuseTextureLoading = true;
+            return;
+        }
         if (baseTex != nullptr)
         {
             shaderProps.texUsage |= TexUsage::DiffuseTexture;
