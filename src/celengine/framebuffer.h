@@ -61,7 +61,7 @@ class FramebufferObject
 
     bool bind();
     bool unbind(GLint oldfboId);
-    bool resolve() const;
+    bool resolve(Attachment attachments = Attachment::Color) const;
 
     // True for MSAA FBOs whose contents must be resolved before sampling.
     bool isMultisample() const { return m_msaaFboId != 0; }

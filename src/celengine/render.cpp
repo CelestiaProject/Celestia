@@ -763,7 +763,7 @@ void Renderer::getLabelAlignmentInfo(const Annotation &annotation, const Texture
         break;
     case LabelHorizontalAlignment::Start:
         halign = rtl ? TextLayout::HorizontalAlignment::Right : TextLayout::HorizontalAlignment::Left;
-        if (annotation.markerRep != nullptr)
+        if (annotation.markerRep)
             hOffset = 2.0f + std::trunc(annotation.markerRep->size() / 2.0f);
         else
             hOffset = 2.0f;
@@ -822,7 +822,8 @@ void Renderer::addAnnotation(vector<Annotation>& annotations,
         Annotation a;
         if (!special || markerRep == nullptr)
              a.labelText = labelText;
-        a.markerRep = markerRep;
+        if (markerRep != nullptr)
+            a.markerRep = *markerRep;
         a.color = color;
         a.position = win;
         a.halign = halign;
@@ -915,20 +916,7 @@ void Renderer::endObjectAnnotations()
 
     if (!objectAnnotations.empty())
     {
-        Renderer::PipelineState ps;
-        ps.blending = true;
-        ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
-        ps.depthMask = true;
-        ps.depthTest = true;
-        ps.smoothLines = true;
-        setPipelineState(ps);
-
-        renderAnnotations(objectAnnotations.begin(),
-                          objectAnnotations.end(),
-                          -depthPartitions[currentIntervalIndex].nearZ,
-                          -depthPartitions[currentIntervalIndex].farZ,
-                          FontStyle::Normal);
-
+        objectAnnotationBatches[currentIntervalIndex] = std::move(objectAnnotations);
         objectAnnotations.clear();
     }
 }
@@ -1426,11 +1414,13 @@ void Renderer::renderItem(const RenderListEntry& rle,
 }
 
 
-void Renderer::render(const Observer& observer,
-                      const Universe& universe,
-                      float faintestMagNight,
-                      const Selection& sel)
+void Renderer::renderScene(const Observer& observer,
+                           const Universe& universe,
+                           float faintestMagNight,
+                           const Selection& sel)
 {
+    assert(!annotationsPending);
+
     // Get the observer's time
     double now = observer.getTime();
     realTime = observer.getRealTime();
@@ -1478,6 +1468,9 @@ void Renderer::render(const Observer& observer,
     foregroundAnnotations.clear();
     backgroundAnnotations.clear();
     objectAnnotations.clear();
+    backgroundAnnotationBatches.clear();
+    objectAnnotationBatches.clear();
+    selectionPointerPosition.reset();
 
     // Put all solar system bodies into the render list.  Stars close and
     // large enough to have discernible surface detail are also placed in
@@ -1589,14 +1582,14 @@ void Renderer::render(const Observer& observer,
     renderAsterisms(universe, dist, asterismMVP);
     renderBoundaries(universe, dist, asterismMVP);
 
-    // Render star and deep sky object labels
-    renderBackgroundAnnotations(FontStyle::Normal);
+    // Preserve the font and ordering of background annotation batches.
+    queueBackgroundAnnotations(FontStyle::Normal);
 
-    // Render constellations labels
+    // Collect constellation labels
     if (util::is_set(labelMode, RenderLabels::ConstellationLabels) && universe.getAsterisms() != nullptr)
     {
         labelConstellations(*universe.getAsterisms(), observer);
-        renderBackgroundAnnotations(FontStyle::Large);
+        queueBackgroundAnnotations(FontStyle::Large);
     }
 
     if (util::is_set(renderFlags, RenderFlags::ShowMarkers))
@@ -1611,9 +1604,7 @@ void Renderer::render(const Observer& observer,
         selectionVisible = selectionToAnnotation(sel, observer, xfrustum, now);
     }
 
-    // Render background markers; rendering of other markers is deferred until
-    // solar system objects are rendered.
-    renderBackgroundAnnotations(FontStyle::Normal);
+    queueBackgroundAnnotations(FontStyle::Normal);
 
     removeInvisibleItems(frustum);
 
@@ -1632,18 +1623,91 @@ void Renderer::render(const Observer& observer,
 #endif
 
     int nIntervals = buildDepthPartitions();
+    objectAnnotationBatches.resize(nIntervals);
     renderSolarSystemObjects(observer, nIntervals, now);
 
-    renderForegroundAnnotations(FontStyle::Normal);
-
-    if (showSelectionPointer && !selectionVisible && util::is_set(renderFlags, RenderFlags::ShowMarkers))
+    if (showSelectionPointer && !selectionVisible && !sel.empty() &&
+        util::is_set(renderFlags, RenderFlags::ShowMarkers))
     {
-        renderSelectionPointer(observer, now, xfrustum, sel);
+        Vector3d position = sel.getPosition(now).offsetFromKm(observer.getPosition());
+        if (xfrustum.testSphere(position, sel.radius()) == math::FrustumAspect::Outside)
+            selectionPointerPosition = position;
     }
 
 #ifndef GL_ES
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
+    annotationsPending = true;
+}
+
+
+void Renderer::renderAnnotations()
+{
+    if (!annotationsPending)
+        return;
+
+    PipelineState ps;
+    ps.blending = true;
+    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
+    ps.depthTest = true;
+    ps.smoothLines = true;
+    setPipelineState(ps);
+
+    // Background annotations belong behind all scene geometry, not at the
+    // midpoint of the depth buffer used by their orthographic projection.
+    // This preserves opaque occlusion, but not attenuation by transparent objects.
+    glDepthRange(1.0, 1.0);
+    for (const auto& batch : backgroundAnnotationBatches)
+        renderAnnotations(batch.annotations, batch.font);
+
+    auto annotation = depthSortedAnnotations.begin();
+    int nIntervals = static_cast<int>(depthPartitions.size());
+    float intervalSize = 1.0f / static_cast<float>(std::max(1, nIntervals));
+    for (int interval = 0; interval < nIntervals; ++interval)
+    {
+        glDepthRange(1.0f - (interval + 1) * intervalSize,
+                     1.0f - interval * intervalSize);
+        const auto& partition = depthPartitions[interval];
+        annotation = renderSortedAnnotations(annotation,
+                                             -partition.nearZ,
+                                             -partition.farZ,
+                                             FontStyle::Normal);
+        auto& objects = objectAnnotationBatches[interval];
+        renderAnnotations(objects.begin(), objects.end(),
+                          -partition.nearZ, -partition.farZ,
+                          FontStyle::Normal);
+    }
+
+    glDepthRange(0.0, 1.0);
+    renderForegroundAnnotations(FontStyle::Normal);
+    if (selectionPointerPosition)
+        renderSelectionPointer(*selectionPointerPosition);
+
+    discardAnnotations();
+}
+
+
+bool Renderer::annotationsRequireDepth() const
+{
+    return annotationsPending &&
+        (!depthSortedAnnotations.empty() ||
+         std::any_of(backgroundAnnotationBatches.begin(), backgroundAnnotationBatches.end(),
+                     [](const auto& batch) { return !batch.annotations.empty(); }) ||
+         std::any_of(objectAnnotationBatches.begin(), objectAnnotationBatches.end(),
+                     [](const auto& batch) { return !batch.empty(); }));
+}
+
+
+void Renderer::discardAnnotations()
+{
+    backgroundAnnotationBatches.clear();
+    objectAnnotationBatches.clear();
+    foregroundAnnotations.clear();
+    depthSortedAnnotations.clear();
+    backgroundAnnotations.clear();
+    objectAnnotations.clear();
+    selectionPointerPosition.reset();
+    annotationsPending = false;
 }
 
 static Eigen::Vector3f
@@ -4767,16 +4831,29 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
 
     Matrix4f mv = Matrix4f::Identity();
     Matrices m = { &m_orthoProjMatrix, &mv };
+    bool textActive = false;
+    Color textColor;
 
     for (const auto &annotation : annotations)
     {
-        if (annotation.markerRep != nullptr)
+        if (annotation.markerRep)
         {
+            layout.end();
+            textActive = false;
             renderAnnotationMarker(annotation, layout, 0.0f, m);
         }
 
         if (!annotation.labelText.empty())
         {
+            if (!textActive || textColor != annotation.color)
+            {
+                layout.end();
+                glVertexAttrib(CelestiaGLProgram::ColorAttributeIndex, annotation.color);
+                layout.begin(*m.projection, *m.modelview);
+                textColor = annotation.color;
+                textActive = true;
+            }
+
             TextLayout::HorizontalAlignment alignment = TextLayout::HorizontalAlignment::Left;
             float hOffset = 0.0f;
             float vOffset = 0.0f;
@@ -4784,23 +4861,21 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
             getLabelAlignmentInfo(annotation, font.get(), alignment, hOffset, vOffset);
 
             layout.setHorizontalAlignment(alignment);
-            renderAnnotationLabel(annotation, layout, hOffset, vOffset, 0.0f, m);
+            layout.moveAbsolute(std::trunc(annotation.position.x()) + hOffset + PixelOffset,
+                                std::trunc(annotation.position.y()) + vOffset + PixelOffset);
+            layout.render(annotation.labelText);
+            layout.flushLine();
         }
     }
+    layout.end();
 }
 
 
 void
-Renderer::renderBackgroundAnnotations(FontStyle fs)
+Renderer::queueBackgroundAnnotations(FontStyle fs)
 {
-    Renderer::PipelineState ps;
-    ps.blending = true;
-    ps.blendFunc = {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA};
-    ps.depthTest = true;
-    ps.smoothLines = true;
-    setPipelineState(ps);
-
-    renderAnnotations(backgroundAnnotations, fs);
+    if (!backgroundAnnotations.empty())
+        backgroundAnnotationBatches.push_back({ fs, std::move(backgroundAnnotations) });
     backgroundAnnotations.clear();
 }
 
@@ -4869,7 +4944,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
         float z = getProjectionMode()->getNormalizedDeviceZ(nearDist, farDist, iter->position.z());
         float ndc_z = std::clamp(z, -1.0f, 1.0f);
 
-        if (iter->markerRep != nullptr)
+        if (iter->markerRep)
         {
             renderAnnotationMarker(*iter, layout, ndc_z, m);
         }
@@ -6147,7 +6222,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
                                    double now)
 {
     // Render everything that wasn't culled.
-    auto annotation = depthSortedAnnotations.begin();
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
     int i = static_cast<int>(renderList.size()) - 1;
     m_legacyLargeStarRenderer->start();
@@ -6266,11 +6340,6 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             m_psfGlowLargeRenderer->finish();
         }
 
-        // Render annotations in this interval
-        annotation = renderSortedAnnotations(annotation,
-                                             nearPlaneDistance,
-                                             farPlaneDistance,
-                                             FontStyle::Normal);
         endObjectAnnotations();
     }
 

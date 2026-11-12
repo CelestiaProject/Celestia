@@ -261,10 +261,11 @@ View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, 
 }
 
 
-void
-View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, int gWidth, int gHeight)
+bool
+View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, int gWidth, int gHeight,
+                bool needsComposition)
 {
-    int count = static_cast<int>(effects.size());
+    int count = static_cast<int>(effects.size()) + (needsComposition ? 1 : 0);
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
 
@@ -289,11 +290,11 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
     bool useFloat = false;
     for (int i = count - 1; i >= 0; i--)
     {
-        useFloat = useFloat || effects[i]->needsFloatSource();
+        if (i < static_cast<int>(effects.size()))
+            useFloat = useFloat || effects[i]->needsFloatSource();
 
-        // Only the first FBO needs MSAA to match the output framebuffer.
-        // Subsequent FBOs receive already-resolved blits so samples=1 suffices.
-        int samples = (i == 0) ? samplesToRequest : 1;
+        // Scene geometry and final annotations use the output's sample count.
+        int samples = (i == 0 || i == count - 1) ? samplesToRequest : 1;
 
         auto& fbo = fbos[i];
 
@@ -312,8 +313,10 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
         {
             GetLogger()->error("Error creating view FBO {}.\n", i);
             fbo = nullptr;
+            return false;
         }
     }
+    return true;
 }
 
 

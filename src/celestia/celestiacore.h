@@ -531,6 +531,8 @@ private:
     std::optional<Eigen::Vector2f> dragStart{ std::nullopt };
 
     std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
+    PassthroughViewportEffect* sceneDisplayEffect{ nullptr };
+    std::unique_ptr<ViewportEffect> presentationEffect;
     bool isViewportEffectUsed { false };
     bool needsUpdateFonts{ false };
 

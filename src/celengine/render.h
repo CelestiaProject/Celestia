@@ -13,6 +13,7 @@
 #include <array>
 #include <list>
 #include <memory>
+#include <optional>
 #include <span>
 #include <string>
 #include <string_view>
@@ -165,10 +166,14 @@ class Renderer
 
     void setRenderMode(RenderMode);
     void autoMag(float& faintestMag, float zoom);
-    void render(const Observer&,
-                const Universe&,
-                float faintestVisible,
-                const Selection& sel);
+    void renderScene(const Observer&,
+                     const Universe&,
+                     float faintestVisible,
+                     const Selection& sel);
+    // Draw after scene display mapping, using retained scene depth.
+    void renderAnnotations();
+    bool annotationsRequireDepth() const;
+    void discardAnnotations();
 
     bool getInfo(std::map<std::string, std::string>& info) const;
 
@@ -348,7 +353,7 @@ class Renderer
     struct Annotation
     {
         std::string labelText;
-        const celestia::engine::MarkerRepresentation* markerRep;
+        std::optional<celestia::engine::MarkerRepresentation> markerRep;
         Color color;
         Eigen::Vector3f position;
         LabelHorizontalAlignment halign : 3;
@@ -465,10 +470,7 @@ class Renderer
                               const Observer&,
                               float faintestMagNight);
     void renderSkyGrids(const Observer& observer);
-    void renderSelectionPointer(const Observer& observer,
-                                double now,
-                                const celestia::math::InfiniteFrustum& viewFrustum,
-                                const Selection& sel);
+    void renderSelectionPointer(Eigen::Vector3d position);
 
     void renderAsterisms(const Universe&, float, const Matrices&);
     void renderBoundaries(const Universe&, float, const Matrices&);
@@ -667,7 +669,7 @@ class Renderer
                                const Matrices&);
     void renderAnnotations(const std::vector<Annotation>&,
                            FontStyle fs);
-    void renderBackgroundAnnotations(FontStyle fs);
+    void queueBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
     std::vector<Annotation>::iterator renderSortedAnnotations(std::vector<Annotation>::iterator,
                                                               float nearDist,
@@ -765,6 +767,15 @@ class Renderer
     std::vector<Annotation> foregroundAnnotations;
     std::vector<Annotation> depthSortedAnnotations;
     std::vector<Annotation> objectAnnotations;
+    struct BackgroundAnnotationBatch
+    {
+        FontStyle font;
+        std::vector<Annotation> annotations;
+    };
+    std::vector<BackgroundAnnotationBatch> backgroundAnnotationBatches;
+    std::vector<std::vector<Annotation>> objectAnnotationBatches;
+    std::optional<Eigen::Vector3d> selectionPointerPosition;
+    bool annotationsPending{ false };
     std::vector<OrbitPathListEntry> orbitPathList;
     LightingState::EclipseShadowVector eclipseShadows[MaxLights];
 
