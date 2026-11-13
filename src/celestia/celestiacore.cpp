@@ -188,23 +188,6 @@ float ComputeRotationCoarseness(const Simulation& sim)
     return coarseness;
 }
 
-bool HasAnnotationDepthBuffer()
-{
-    GLint framebuffer = 0;
-    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &framebuffer);
-    GLenum attachment = framebuffer == 0 ? GL_DEPTH : GL_DEPTH_ATTACHMENT;
-    GLint type = GL_NONE;
-    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, attachment,
-                                         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
-    if (type == GL_NONE)
-        return false;
-    GLint bits = 0;
-    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, attachment,
-                                         GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &bits);
-    // Require at least the precision requested for the scene framebuffer.
-    return bits >= 24;
-}
-
 } // anonymous namespace
 
 CelestiaCore::CelestiaCore() :
@@ -2031,6 +2014,7 @@ void CelestiaCore::draw()
 
 void CelestiaCore::resize(GLsizei w, GLsizei h)
 {
+    annotationDepthFramebuffer.reset();
     if (h == 0)
         h = 1;
 
@@ -2049,6 +2033,27 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         return;
 }
 
+bool CelestiaCore::hasAnnotationDepthBuffer(GLuint framebuffer)
+{
+    if (annotationDepthFramebuffer == framebuffer)
+        return annotationDepthAvailable;
+
+    annotationDepthFramebuffer = framebuffer;
+    annotationDepthAvailable = false;
+    GLenum attachment = framebuffer == 0 ? GL_DEPTH : GL_DEPTH_ATTACHMENT;
+    GLint type = GL_NONE;
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, attachment,
+                                         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
+    if (type == GL_NONE)
+        return false;
+    GLint bits = 0;
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, attachment,
+                                         GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &bits);
+    // Require at least the precision requested for the scene framebuffer.
+    annotationDepthAvailable = bits >= 24;
+    return annotationDepthAvailable;
+}
+
 void CelestiaCore::draw(View* view)
 {
     if (view->type != View::ViewWindow) return;
@@ -2063,7 +2068,7 @@ void CelestiaCore::draw(View* view)
     }
 
     auto screenFbo = FramebufferObject::wrapCurrentBinding();
-    bool needsComposition = !presentationEffect->isIdentity() || !HasAnnotationDepthBuffer();
+    bool needsComposition = !presentationEffect->isIdentity() || !hasAnnotationDepthBuffer(screenFbo.id());
     if (!view->updateFBOs(viewportEffects, metrics.width, metrics.height, needsComposition, sceneSamples))
         return;
 
@@ -2787,6 +2792,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<unsigned int> aaSamples,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
+    annotationDepthFramebuffer.reset();
     GLint maxSamples = 1;
     glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
     sceneSamples = static_cast<int>(std::clamp(aaSamples.value_or(config->renderDetails.aaSamples),
@@ -2794,9 +2800,14 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.output.sRGB);
     celestia::engine::SetTextureAnisotropy(config->renderDetails.textures.anisotropy);
 
+    bool useFloatScene = gl::sRGBRendering && gl::colorBufferHalfFloat;
+    if (gl::sRGBRendering && !useFloatScene)
+        GetLogger()->warn("Half-float color buffers are unavailable; using RGBA8 scene rendering "
+                         "with reduced precision and clipped HDR highlights.\n");
+
     // Even an identity pass keeps annotations out of the scene framebuffer.
     auto sceneEffect = std::make_unique<PassthroughViewportEffect>(
-        gl::sRGBRendering, gl::sRGBRendering, true);
+        useFloatScene, gl::sRGBRendering, true);
     sceneDisplayEffect = sceneEffect.get();
     viewportEffects.push_back(std::move(sceneEffect));
     if (presentationEffect == nullptr)

@@ -432,6 +432,7 @@ private:
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     void renderOverlay();
+    bool hasAnnotationDepthBuffer(GLuint framebuffer);
     Eigen::Vector3f getPickRay(float x, float y, const celestia::View *view) const;
     void updateFOV(float fov, const std::optional<Eigen::Vector2f> &focus, const celestia::View *view);
 #ifdef CELX
@@ -534,6 +535,8 @@ private:
     std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
     PassthroughViewportEffect* sceneDisplayEffect{ nullptr };
     int sceneSamples{ 1 };
+    std::optional<GLuint> annotationDepthFramebuffer{ std::nullopt };
+    bool annotationDepthAvailable{ false };
     std::unique_ptr<ViewportEffect> presentationEffect;
     bool isViewportEffectUsed { false };
     bool needsUpdateFonts{ false };

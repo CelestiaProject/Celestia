@@ -14,6 +14,7 @@ CELAPI bool OES_texture_border_clamp          = false; //NOSONAR
 CELAPI bool ARB_invalidate_subdata             = false; //NOSONAR
 #endif
 CELAPI bool dualSourceBlending                 = false; //NOSONAR
+CELAPI bool colorBufferHalfFloat               = false; //NOSONAR
 CELAPI bool ARB_texture_compression_bptc      = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc      = false; //NOSONAR
 CELAPI bool EXT_texture_compression_s3tc_srgb = false; //NOSONAR
@@ -47,6 +48,9 @@ bool init(std::span<const std::string> ignore) noexcept
 #ifdef GL_ES
     OES_texture_border_clamp           = check_extension(ignore, "GL_OES_texture_border_clamp") || check_extension(ignore, "GL_EXT_texture_border_clamp");
     dualSourceBlending                 = check_extension(ignore, "GL_EXT_blend_func_extended");
+    colorBufferHalfFloat               = checkVersion(GLES_3_2)
+                                         || check_extension(ignore, "GL_EXT_color_buffer_half_float")
+                                         || check_extension(ignore, "GL_EXT_color_buffer_float");
     if (dualSourceBlending)
     {
         GLint maxDualSourceDrawBuffers = 0;
@@ -62,6 +66,7 @@ bool init(std::span<const std::string> ignore) noexcept
     ARB_invalidate_subdata         = check_extension(ignore, "GL_ARB_invalidate_subdata");
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
     dualSourceBlending             = true;
+    colorBufferHalfFloat           = true;
 #endif
     EXT_texture_compression_s3tc   = check_extension(ignore, "GL_EXT_texture_compression_s3tc");
 #ifdef GL_ES

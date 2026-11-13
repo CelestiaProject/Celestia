@@ -381,9 +381,7 @@ FramebufferObject::bind()
 {
     if (isValid())
     {
-        // For non-owning wrappers (e.g. the screen framebuffer), bind the stored ID directly.
-        // For owned FBOs, prefer the MSAA renderbuffer FBO when available.
-        glBindFramebuffer(GL_FRAMEBUFFER, (!m_owned || m_msaaFboId == 0) ? m_fboId : m_msaaFboId);
+        glBindFramebuffer(GL_FRAMEBUFFER, id());
         return true;
     }
 
