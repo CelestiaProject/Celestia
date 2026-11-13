@@ -263,14 +263,14 @@ View::drawBorder(Overlay* overlay, int gWidth, int gHeight, const Color &color, 
 
 bool
 View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, int gWidth, int gHeight,
-                bool needsComposition)
+                bool needsComposition, int sceneSamples)
 {
     int count = static_cast<int>(effects.size()) + (needsComposition ? 1 : 0);
     auto newWidth = static_cast<GLuint>(width * gWidth);
     auto newHeight = static_cast<GLuint>(height * gHeight);
 
-    // Query the sample count of the currently bound (output) framebuffer so the
-    // first viewport-effect FBO matches it.  glGetIntegerv(GL_SAMPLES) returns 0
+    // Query the output sample count for annotation composition.
+    // glGetIntegerv(GL_SAMPLES) returns 0
     // on some drivers when multisampling is off, so clamp to at least 1.
     GLint currentSamples = 0;
     glGetIntegerv(GL_SAMPLES, &currentSamples);
@@ -293,8 +293,7 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
         if (i < static_cast<int>(effects.size()))
             useFloat = useFloat || effects[i]->needsFloatSource();
 
-        // Scene geometry and final annotations use the output's sample count.
-        int samples = (i == 0 || i == count - 1) ? samplesToRequest : 1;
+        int samples = i == 0 ? sceneSamples : (i == count - 1 ? samplesToRequest : 1);
 
         auto& fbo = fbos[i];
 

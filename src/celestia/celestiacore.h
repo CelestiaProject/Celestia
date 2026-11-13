@@ -194,6 +194,7 @@ public:
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer(celestia::engine::TextureResolution,
                       std::optional<bool> sRGBRendering = std::nullopt,
+                      std::optional<unsigned int> aaSamples = std::nullopt,
                       bool useMesaPackInvert = true);
     void start(double t);
     void start();
@@ -532,6 +533,7 @@ private:
 
     std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
     PassthroughViewportEffect* sceneDisplayEffect{ nullptr };
+    int sceneSamples{ 1 };
     std::unique_ptr<ViewportEffect> presentationEffect;
     bool isViewportEffectUsed { false };
     bool needsUpdateFonts{ false };

@@ -2064,7 +2064,7 @@ void CelestiaCore::draw(View* view)
 
     auto screenFbo = FramebufferObject::wrapCurrentBinding();
     bool needsComposition = !presentationEffect->isIdentity() || !HasAnnotationDepthBuffer();
-    if (!view->updateFBOs(viewportEffects, metrics.width, metrics.height, needsComposition))
+    if (!view->updateFBOs(viewportEffects, metrics.width, metrics.height, needsComposition, sceneSamples))
         return;
 
     if (!presentationEffect->preprocess(renderer, view->getFBO(0)))
@@ -2784,8 +2784,13 @@ LoadFontHelper(const Renderer* renderer,
 
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
+                                std::optional<unsigned int> aaSamples,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
+    GLint maxSamples = 1;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    sceneSamples = static_cast<int>(std::clamp(aaSamples.value_or(config->renderDetails.aaSamples),
+        1u, static_cast<unsigned int>(std::max(1, maxSamples))));
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.output.sRGB);
     celestia::engine::SetTextureAnisotropy(config->renderDetails.textures.anisotropy);
 
