@@ -47,9 +47,9 @@ bool ViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo, Frame
     if (!dst->bind())
         return false;
 
-    Renderer::PipelineState ps;
-    ps.depthMask = true;
-    renderer->setPipelineState(ps);
+    Renderer::PipelineState pipelineState;
+    pipelineState.depthMask = true;
+    renderer->setPipelineState(pipelineState);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     return true;
@@ -100,10 +100,10 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
     if (toneMap)
         prog->floatParam("exposure") = renderer->getToneMappingExposure();
     bool preserveDepth = util::is_set(m_baseOptions, StaticShaderOptions::PreserveDepth);
-    Renderer::PipelineState ps;
-    ps.depthTest = preserveDepth;
-    ps.depthMask = preserveDepth;
-    renderer->setPipelineState(ps);
+    Renderer::PipelineState pipelineState;
+    pipelineState.depthTest = preserveDepth;
+    pipelineState.depthMask = preserveDepth;
+    renderer->setPipelineState(pipelineState);
     prog->samplerParam("tex") = 0;
     prog->samplerParam("depthTex") = 1;
     glActiveTexture(GL_TEXTURE1);

@@ -2106,23 +2106,23 @@ void CelestiaCore::draw(View* view)
             break;
         }
     }
-    if (ok)
-    {
-        renderer->renderAnnotations();
-        if (needsComposition)
-        {
-            auto* composition = view->getFBO(nEffects);
-            screenFbo.bind();
-            renderer->setRenderRegion(x, y, viewWidth, viewHeight);
-            ok = presentationEffect->prerender(renderer, composition, &screenFbo) &&
-                 presentationEffect->render(renderer, composition, viewWidth, viewHeight);
-            if (!ok)
-                GetLogger()->error("Unable to present annotated view.\n");
-        }
-    }
-    else
+    if (!ok)
     {
         renderer->discardAnnotations();
+        screenFbo.bind();
+        return;
+    }
+
+    renderer->renderAnnotations();
+    if (needsComposition)
+    {
+        auto* composition = view->getFBO(nEffects);
+        screenFbo.bind();
+        renderer->setRenderRegion(x, y, viewWidth, viewHeight);
+        ok = presentationEffect->prerender(renderer, composition, &screenFbo) &&
+             presentationEffect->render(renderer, composition, viewWidth, viewHeight);
+        if (!ok)
+            GetLogger()->error("Unable to present annotated view.\n");
     }
     screenFbo.bind();
     isViewportEffectUsed = ok;

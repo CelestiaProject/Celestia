@@ -293,7 +293,11 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
         if (i < static_cast<int>(effects.size()))
             useFloat = useFloat || effects[i]->needsFloatSource();
 
-        int samples = i == 0 ? sceneSamples : (i == count - 1 ? samplesToRequest : 1);
+        int samples = 1;
+        if (i == 0)
+            samples = sceneSamples;
+        else if (i == count - 1)
+            samples = samplesToRequest;
 
         auto& fbo = fbos[i];
 

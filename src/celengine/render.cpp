@@ -1665,8 +1665,8 @@ void Renderer::renderAnnotations()
     float intervalSize = 1.0f / static_cast<float>(std::max(1, nIntervals));
     for (int interval = 0; interval < nIntervals; ++interval)
     {
-        glDepthRange(1.0f - (interval + 1) * intervalSize,
-                     1.0f - interval * intervalSize);
+        glDepthRange(1.0f - static_cast<float>(interval + 1) * intervalSize,
+                     1.0f - static_cast<float>(interval) * intervalSize);
         const auto& partition = depthPartitions[interval];
         annotation = renderSortedAnnotations(annotation,
                                              -partition.nearZ,
@@ -1691,9 +1691,9 @@ bool Renderer::annotationsRequireDepth() const
 {
     return annotationsPending &&
         (!depthSortedAnnotations.empty() ||
-         std::any_of(backgroundAnnotationBatches.begin(), backgroundAnnotationBatches.end(),
+         std::ranges::any_of(backgroundAnnotationBatches,
                      [](const auto& batch) { return !batch.annotations.empty(); }) ||
-         std::any_of(objectAnnotationBatches.begin(), objectAnnotationBatches.end(),
+         std::ranges::any_of(objectAnnotationBatches,
                      [](const auto& batch) { return !batch.empty(); }));
 }
 
@@ -4875,7 +4875,7 @@ void
 Renderer::queueBackgroundAnnotations(FontStyle fs)
 {
     if (!backgroundAnnotations.empty())
-        backgroundAnnotationBatches.push_back({ fs, std::move(backgroundAnnotations) });
+        backgroundAnnotationBatches.emplace_back(fs, std::move(backgroundAnnotations));
     backgroundAnnotations.clear();
 }
 
@@ -6236,8 +6236,8 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
         // Set the depth range for this interval--each interval is allocated an
         // equal section of the depth buffer.
-        glDepthRange(1.0f - (interval + 1) * intervalSize,
-                     1.0f - interval * intervalSize);
+        glDepthRange(1.0f - static_cast<float>(interval + 1) * intervalSize,
+                     1.0f - static_cast<float>(interval) * intervalSize);
 
         // Set up a perspective projection using the current interval's near and
         // far clip planes.
