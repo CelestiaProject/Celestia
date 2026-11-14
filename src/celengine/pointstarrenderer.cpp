@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 
 #include <celastro/astro.h>
 #include <celengine/glsupport.h>
@@ -52,6 +53,13 @@ celestia::engine::detail::psfSoftClip(float peakRadiance, float dimGate)
     double peak = peakRadiance;
     double gate = dimGate;
     return static_cast<float>(std::sqrt((peak - gate) * (peak + gate)));
+}
+
+float
+celestia::engine::detail::psfPeakRadianceScale(float pointRadius, float exposure, float atmosphereBrightness)
+{
+    // The integral of max(1 - distance / radius, 0) is pi * radius^2 / 3.
+    return exposure * atmosphereBrightness * 3.0f / (std::numbers::pi_v<float> * pointRadius * pointRadius);
 }
 
 float
@@ -163,12 +171,10 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         {
             if (starStyle == StarStyle::PointSpreadFunction)
             {
-                // Linear-radiance PSF renderer.  The shader receives a
-                // per-vertex peak radiance (cone volume = 1/3 base area
-                // x peak):  peakRad = exposure * 3 * irradiance / (pi * r^2).
-                // Irradiance is in the Vega-normalised system; the constant
-                // SI conversion factor is absorbed by the framebuffer
-                // exposure.  Per-frame constants (psf.peakRadScale,
+                // Relative linear-RGB PSF renderer. The shader receives a
+                // per-vertex peak using psfPeakRadianceScale's normalization
+                // of Vega-normalized irradiance over logical-pixel area.
+                // Per-frame constants (psf.peakRadScale,
                 // psf.dimGate, psf.glowA, psf.glowPeakLargeThreshold) are
                 // precomputed in renderPointStars so the inner loop only
                 // does the per-star irradiance and green normalisation.

@@ -40,6 +40,10 @@ namespace celestia::engine::detail
 
 float psfSoftClip(float peakRadiance, float dimGate);
 
+// Maps Vega-normalized irradiance to cone peak radiance; the integral is
+// exposure * atmosphereBrightness over 96-DPI logical-pixel area.
+float psfPeakRadianceScale(float pointRadius, float exposure, float atmosphereBrightness);
+
 float psfAtmosphereBrightness(float faintestMagnitude,
                               float faintestMagnitudeWithoutAtmosphere);
 
@@ -82,7 +86,7 @@ public:
         // Per-frame derived constants, hoisted out of process() to keep
         // the per-star inner loop tight.  Filled in renderPointStars
         // before findVisibleStars runs.
-        float peakRadScale          { 0.0f }; // exposure * 3 / (pi * r^2)
+        float peakRadScale          { 0.0f }; // psfPeakRadianceScale, before tint and dim clipping
         float dimGate               { 0.0f }; // soft-clip threshold; peak <= dimGate culled
         float glowA                 { 0.0f }; // optimization / r
         float glowPeakLargeThreshold{ 0.0f }; // glowPeak above which sizePhys > maxPointSize

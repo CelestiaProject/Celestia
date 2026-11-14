@@ -1898,8 +1898,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
 
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
-    float peakRadScale   = exposureFactor * starAtmosphereBrightness * 3.0f
-                           / (std::numbers::pi_v<float> * r * r);
+    float peakRadScale = celestia::engine::detail::psfPeakRadianceScale(r, exposureFactor, starAtmosphereBrightness);
     float irradiance     = astro::magToIrradiance(appMag);
     float peakRad        = peakRadScale * irradiance;
 
@@ -4492,7 +4491,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
         // Precompute per-frame PSF constants once instead of recomputing
         // them per-star inside PointStarRenderer::process.
-        //   peakRad = exposure * 3 * irradiance / (pi * r^2)
+        //   peakRad = psfPeakRadianceScale(...) * irradiance
         //   dimGate = soft-clip threshold; peakRad <= dimGate -> star culled,
         //             dimmed = sqrt(peakRad^2 - dimGate^2) above it
         //   a       = optimization / r  (Spencer eye-PSF coefficient)
@@ -4508,8 +4507,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                                 * glowA / (2.0f * scale),
                                                 2.5f);
 
-        starRenderer.psf.peakRadScale          = exposureFactor * starAtmosphereBrightness * 3.0f
-                                                 / (std::numbers::pi_v<float> * rLog * rLog);
+        starRenderer.psf.peakRadScale = celestia::engine::detail::psfPeakRadianceScale(rLog, exposureFactor, starAtmosphereBrightness);
         starRenderer.psf.dimGate               = dimGate;
         starRenderer.psf.glowA                 = glowA;
         starRenderer.psf.glowPeakLargeThreshold = glowPeakLargeThreshold;
