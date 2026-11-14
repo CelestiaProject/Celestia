@@ -32,6 +32,7 @@ public:
     virtual bool prerender(Renderer*, FramebufferObject* fbo, FramebufferObject* dst);
     virtual bool render(Renderer*, FramebufferObject*, int width, int height) = 0;
     virtual bool distortXY(float& x, float& y);
+    virtual bool isIdentity() const { return false; }
 
     // Bitmask of FramebufferObject attachment flags this effect samples
     // from the source FBO. Anything else may be discarded before resolve.
@@ -48,14 +49,19 @@ public:
 class PassthroughViewportEffect : public ViewportEffect
 {
 public:
-    explicit PassthroughViewportEffect(bool needsFloatSource = false);
+    explicit PassthroughViewportEffect(bool needsFloatSource = false, bool convertToSRGB = false,
+                                       bool preserveDepth = false);
     ~PassthroughViewportEffect() override = default;
 
     bool needsFloatSource() const override { return m_needsFloatSource; }
+    bool isIdentity() const override { return m_baseOptions == StaticShaderOptions::None; }
+    void setPreserveDepth(bool);
+    FramebufferObject::Attachment sourceAttachments() const override;
     bool render(Renderer*, FramebufferObject*, int width, int height) override;
 
 private:
     bool m_needsFloatSource;
+    StaticShaderOptions m_baseOptions;
 
     celestia::gl::VertexObject vo;
 

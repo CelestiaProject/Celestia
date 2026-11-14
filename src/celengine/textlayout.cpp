@@ -88,9 +88,9 @@ void TextLayout::moveAbsolute(float newPositionX, float newPositionY, bool updat
             flushInternal(false);
         positionX = newPositionX;
         positionY = newPositionY;
-        if (updateAlignment)
-            alignmentEdgeX = positionX;
     }
+    if (updateAlignment)
+        alignmentEdgeX = positionX;
 }
 
 void TextLayout::moveRelative(float dx, float dy, Unit unit, bool updateAlignment)
@@ -171,6 +171,11 @@ void TextLayout::render(std::string_view text)
 void TextLayout::flush()
 {
     flushInternal(true);
+}
+
+void TextLayout::flushLine()
+{
+    flushInternal(false);
 }
 
 void TextLayout::end()

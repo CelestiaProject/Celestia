@@ -2014,6 +2014,7 @@ void CelestiaCore::draw()
 
 void CelestiaCore::resize(GLsizei w, GLsizei h)
 {
+    annotationDepthFramebuffer.reset();
     if (h == 0)
         h = 1;
 
@@ -2032,69 +2033,104 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
         return;
 }
 
+bool CelestiaCore::hasAnnotationDepthBuffer(GLuint framebuffer)
+{
+    if (annotationDepthFramebuffer == framebuffer)
+        return annotationDepthAvailable;
+
+    annotationDepthFramebuffer = framebuffer;
+    annotationDepthAvailable = false;
+    GLenum attachment = framebuffer == 0 ? GL_DEPTH : GL_DEPTH_ATTACHMENT;
+    GLint type = GL_NONE;
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, attachment,
+                                         GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
+    if (type == GL_NONE)
+        return false;
+    GLint bits = 0;
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, attachment,
+                                         GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &bits);
+    // Require at least the precision requested for the scene framebuffer.
+    annotationDepthAvailable = bits >= 24;
+    return annotationDepthAvailable;
+}
+
 void CelestiaCore::draw(View* view)
 {
     if (view->type != View::ViewWindow) return;
 
-    bool viewportEffectUsed = false;
+    isViewportEffectUsed = false;
 
     int nEffects = static_cast<int>(viewportEffects.size());
-    FramebufferObject *fbo = nullptr;
-    // Capture the screen framebuffer before any binding changes so we can
-    // restore it after the effect chain without relying on preprocess to save it.
-    auto screenFbo = nEffects > 0 ? std::make_optional(FramebufferObject::wrapCurrentBinding())
-                                  : std::nullopt;
-    if (nEffects > 0)
+    if (presentationEffect == nullptr || sceneDisplayEffect == nullptr)
     {
-        // create/update FBOs for viewport effect chain
-        view->updateFBOs(viewportEffects, metrics.width, metrics.height);
-        fbo = view->getFBO(0);
+        GetLogger()->error("No viewport presentation pass configured.\n");
+        return;
     }
-    bool process = fbo != nullptr && viewportEffects[0]->preprocess(renderer, fbo);
+
+    auto screenFbo = FramebufferObject::wrapCurrentBinding();
+    bool needsComposition = !presentationEffect->isIdentity() || !hasAnnotationDepthBuffer(screenFbo.id());
+    if (!view->updateFBOs(viewportEffects, metrics.width, metrics.height, needsComposition, sceneSamples))
+        return;
+
+    if (!presentationEffect->preprocess(renderer, view->getFBO(0)))
+    {
+        GetLogger()->error("Unable to prepare scene framebuffer.\n");
+        screenFbo.bind();
+        return;
+    }
 
     auto x = static_cast<int>(view->x * static_cast<float>(metrics.width));
     auto y = static_cast<int>(view->y * static_cast<float>(metrics.height));
     auto viewWidth = static_cast<int>(view->width * static_cast<float>(metrics.width));
     auto viewHeight = static_cast<int>(view->height * static_cast<float>(metrics.height));
-    // If we need to process, we draw to the FBO which starts at point zero
-    renderer->setRenderRegion(process ? 0 : x, process ? 0 : y, viewWidth, viewHeight, !view->isRootView() && !process);
+    renderer->setRenderRegion(0, 0, viewWidth, viewHeight, false);
 
     if (view->isRootView())
-        sim->render(*renderer);
+        sim->renderScene(*renderer);
     else
-        sim->render(*renderer, *view->observer);
+        sim->renderScene(*renderer, *view->observer);
 
-    if (process)
+    bool preserveDepth = renderer->annotationsRequireDepth();
+    sceneDisplayEffect->setPreserveDepth(preserveDepth);
+    if (!preserveDepth && presentationEffect->isIdentity())
+        needsComposition = false;
+
+    bool ok = true;
+    for (int i = 0; i < nEffects; i++)
     {
-        bool ok = true;
-        for (int i = 0; i < nEffects; i++)
+        bool toScreen = !needsComposition && i == nEffects - 1;
+        if (toScreen)
+            renderer->setRenderRegion(x, y, viewWidth, viewHeight);
+        FramebufferObject* dst = toScreen ? &screenFbo : view->getFBO(i + 1);
+        FramebufferObject* src = view->getFBO(i);
+        if (!viewportEffects[i]->prerender(renderer, src, dst) ||
+            !viewportEffects[i]->render(renderer, src, viewWidth, viewHeight))
         {
-            FramebufferObject* dst;
-            if (i == nEffects - 1)
-            {
-                // The last effect renders to the screen FBO, needs to be reset
-                // to start from (x,y) instead of point zero
-                dst = &screenFbo.value();
-                if (x != 0 || y != 0)
-                    renderer->setRenderRegion(x, y, viewWidth, viewHeight);
-            }
-            else
-            {
-                dst = view->getFBO(i + 1);
-            }
-
-            FramebufferObject* src = view->getFBO(i);
-            if (!viewportEffects[i]->prerender(renderer, src, dst) ||
-                !viewportEffects[i]->render(renderer, src, viewWidth, viewHeight))
-            {
-                GetLogger()->error("Unable to render viewport effect.\n");
-                ok = false;
-                break;
-            }
+            GetLogger()->error("Unable to render viewport effect.\n");
+            ok = false;
+            break;
         }
-        viewportEffectUsed = ok;
     }
-    isViewportEffectUsed = viewportEffectUsed;
+    if (!ok)
+    {
+        renderer->discardAnnotations();
+        screenFbo.bind();
+        return;
+    }
+
+    renderer->renderAnnotations();
+    if (needsComposition)
+    {
+        auto* composition = view->getFBO(nEffects);
+        screenFbo.bind();
+        renderer->setRenderRegion(x, y, viewWidth, viewHeight);
+        ok = presentationEffect->prerender(renderer, composition, &screenFbo) &&
+             presentationEffect->render(renderer, composition, viewWidth, viewHeight);
+        if (!ok)
+            GetLogger()->error("Unable to present annotated view.\n");
+    }
+    screenFbo.bind();
+    isViewportEffectUsed = ok;
 }
 
 void CelestiaCore::setSafeAreaInsets(int left, int top, int right, int bottom)
@@ -2389,8 +2425,11 @@ Eigen::Vector3f CelestiaCore::getPickRay(float x, float y, const celestia::View 
                           pickX, pickY);
     pickX *= aspectRatio;
     if (isViewportEffectUsed)
-        for (const auto& effect : viewportEffects)
-            effect->distortXY(pickX, pickY);
+    {
+        presentationEffect->distortXY(pickX, pickY);
+        for (auto effect = viewportEffects.rbegin(); effect != viewportEffects.rend(); ++effect)
+            (*effect)->distortXY(pickX, pickY);
+    }
 
     // Pick ray depends on view size, setting the size from the view
     // and then restore to the size of the window
@@ -2637,7 +2676,7 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
             GetLogger()->warn("Unknown viewport effect {}\n", config->viewportEffect);
         }
         if (effect != nullptr)
-            viewportEffects.push_back(std::move(effect));
+            presentationEffect = std::move(effect);
     }
 
     if (!config->measurementSystem.empty())
@@ -2750,20 +2789,29 @@ LoadFontHelper(const Renderer* renderer,
 
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
+                                std::optional<unsigned int> aaSamples,
                                 [[maybe_unused]] bool useMesaPackInvert)
 {
+    annotationDepthFramebuffer.reset();
+    GLint maxSamples = 1;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    sceneSamples = static_cast<int>(std::clamp(aaSamples.value_or(config->renderDetails.aaSamples),
+        1u, static_cast<unsigned int>(std::max(1, maxSamples))));
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.output.sRGB);
     celestia::engine::SetTextureAnisotropy(config->renderDetails.textures.anisotropy);
 
-    if (gl::sRGBRendering)
-    {
-        // Apply sRGB output correction via software post-process.
-        // The SRGBViewportEffect shader performs the linear→sRGB conversion
-        // as the final rendering step, keeping the pipeline consistent across
-        // all GL variants without relying on GL_FRAMEBUFFER_SRGB or
-        // platform-specific sRGB surface negotiation.
-        viewportEffects.push_back(std::make_unique<PassthroughViewportEffect>(true));
-    }
+    bool useFloatScene = gl::sRGBRendering && gl::colorBufferHalfFloat;
+    if (gl::sRGBRendering && !useFloatScene)
+        GetLogger()->warn("Half-float color buffers are unavailable; using RGBA8 scene rendering "
+                         "with reduced precision and clipped HDR highlights.\n");
+
+    // Even an identity pass keeps annotations out of the scene framebuffer.
+    auto sceneEffect = std::make_unique<PassthroughViewportEffect>(
+        useFloatScene, gl::sRGBRendering, true);
+    sceneDisplayEffect = sceneEffect.get();
+    viewportEffects.push_back(std::move(sceneEffect));
+    if (presentationEffect == nullptr)
+        presentationEffect = std::make_unique<PassthroughViewportEffect>();
 
     renderer->setRenderFlags(RenderFlags::ShowStars |
                              RenderFlags::ShowPlanets |
@@ -2799,7 +2847,7 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
         return false;
     }
 
-    renderer->colors = renderer->colors.linearize(gl::sRGBRendering);
+    renderer->colors = renderer->colors.linearizeSceneColors(gl::sRGBRendering);
     m_scriptMaps.initColorMaps(renderer->colors);
     renderer->setToneMappingMode(config->renderDetails.output.toneMapping);
 
