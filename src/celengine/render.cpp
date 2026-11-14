@@ -903,9 +903,7 @@ void Renderer::beginObjectAnnotations()
     // It's an error to call beginObjectAnnotations a second time
     // without first calling end.
     assert(!objectAnnotationSetOpen);
-    assert(objectAnnotations.empty());
-
-    objectAnnotations.clear();
+    objectAnnotationBatches[currentIntervalIndex].start = objectAnnotations.size();
     objectAnnotationSetOpen = true;
 }
 
@@ -913,12 +911,7 @@ void Renderer::beginObjectAnnotations()
 void Renderer::endObjectAnnotations()
 {
     objectAnnotationSetOpen = false;
-
-    if (!objectAnnotations.empty())
-    {
-        objectAnnotationBatches[currentIntervalIndex] = std::move(objectAnnotations);
-        objectAnnotations.clear();
-    }
+    objectAnnotationBatches[currentIntervalIndex].end = objectAnnotations.size();
 }
 
 
@@ -1467,8 +1460,8 @@ void Renderer::renderScene(const Observer& observer,
     depthSortedAnnotations.clear();
     foregroundAnnotations.clear();
     backgroundAnnotations.clear();
-    objectAnnotations.clear();
     backgroundAnnotationBatches.clear();
+    objectAnnotations.clear();
     objectAnnotationBatches.clear();
     selectionPointerPosition.reset();
 
@@ -1658,9 +1651,11 @@ void Renderer::renderAnnotations()
     // This preserves opaque occlusion, but not attenuation by transparent objects.
     glDepthRange(1.0, 1.0);
     for (const auto& batch : backgroundAnnotationBatches)
-        renderAnnotations(batch.annotations, batch.font);
+        renderAnnotations(std::span(backgroundAnnotations.cbegin() + batch.start,
+                                    backgroundAnnotations.cbegin() + batch.end),
+                          batch.font);
 
-    auto annotation = depthSortedAnnotations.begin();
+    auto annotation = depthSortedAnnotations.cbegin();
     int nIntervals = static_cast<int>(depthPartitions.size());
     float intervalSize = 1.0f / static_cast<float>(std::max(1, nIntervals));
     for (int interval = 0; interval < nIntervals; ++interval)
@@ -1672,8 +1667,9 @@ void Renderer::renderAnnotations()
                                              -partition.nearZ,
                                              -partition.farZ,
                                              FontStyle::Normal);
-        auto& objects = objectAnnotationBatches[interval];
-        renderAnnotations(objects.begin(), objects.end(),
+        const auto& objectBatch = objectAnnotationBatches[interval];
+        renderAnnotations(objectAnnotations.cbegin() + objectBatch.start,
+                          objectAnnotations.cbegin() + objectBatch.end,
                           -partition.nearZ, -partition.farZ,
                           FontStyle::Normal);
     }
@@ -1692,9 +1688,9 @@ bool Renderer::annotationsRequireDepth() const
     return annotationsPending &&
         (!depthSortedAnnotations.empty() ||
          std::ranges::any_of(backgroundAnnotationBatches,
-                     [](const auto& batch) { return !batch.annotations.empty(); }) ||
+                             [](const auto& batch) { return batch.start != batch.end; }) ||
          std::ranges::any_of(objectAnnotationBatches,
-                     [](const auto& batch) { return !batch.empty(); }));
+                             [](const auto& batch) { return batch.start != batch.end; }));
 }
 
 
@@ -4819,7 +4815,7 @@ Renderer::renderAnnotationLabel(const Annotation &a,
 }
 
 // stars and constellations. DSOs
-void Renderer::renderAnnotations(const vector<Annotation>& annotations,
+void Renderer::renderAnnotations(std::span<const Annotation> annotations,
                                  FontStyle fs)
 {
     auto font = getFont(fs);
@@ -4874,9 +4870,17 @@ void Renderer::renderAnnotations(const vector<Annotation>& annotations,
 void
 Renderer::queueBackgroundAnnotations(FontStyle fs)
 {
-    if (!backgroundAnnotations.empty())
-        backgroundAnnotationBatches.emplace_back(fs, std::move(backgroundAnnotations));
-    backgroundAnnotations.clear();
+    if (backgroundAnnotations.empty())
+        return;
+
+    auto lastEnd = backgroundAnnotationBatches.empty()
+        ? std::size_t(0)
+        : backgroundAnnotationBatches.back().end;
+
+    if (lastEnd == backgroundAnnotations.size())
+        return;
+
+    backgroundAnnotationBatches.emplace_back(fs, lastEnd, backgroundAnnotations.size());
 }
 
 
@@ -4896,8 +4900,8 @@ Renderer::renderForegroundAnnotations(FontStyle fs)
 
 
 // solar system objects
-vector<Renderer::Annotation>::iterator
-Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
+vector<Renderer::Annotation>::const_iterator
+Renderer::renderSortedAnnotations(vector<Annotation>::const_iterator iter,
                                   float nearDist,
                                   float farDist,
                                   FontStyle fs)
@@ -4915,9 +4919,9 @@ Renderer::renderSortedAnnotations(vector<Annotation>::iterator iter,
 
 
 // locations
-vector<Renderer::Annotation>::iterator
-Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
-                            vector<Annotation>::iterator endIter,
+vector<Renderer::Annotation>::const_iterator
+Renderer::renderAnnotations(vector<Annotation>::const_iterator startIter,
+                            vector<Annotation>::const_iterator endIter,
                             float nearDist,
                             float farDist,
                             FontStyle fs)
@@ -4937,7 +4941,7 @@ Renderer::renderAnnotations(vector<Annotation>::iterator startIter,
     // projection matrix in order to get the label text position exactly right but need to mimic
     // the depth coordinate generation of a projection.
 
-    vector<Annotation>::iterator iter = startIter;
+    auto iter = startIter;
     for (; iter != endIter && iter->position.z() > nearDist; ++iter)
     {
         // Compute normalized device z

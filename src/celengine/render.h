@@ -667,19 +667,19 @@ class Renderer
                                float vOffset,
                                float depth,
                                const Matrices&);
-    void renderAnnotations(const std::vector<Annotation>&,
+    void renderAnnotations(std::span<const Annotation>,
                            FontStyle fs);
     void queueBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
-    std::vector<Annotation>::iterator renderSortedAnnotations(std::vector<Annotation>::iterator,
+    std::vector<Annotation>::const_iterator renderSortedAnnotations(std::vector<Annotation>::const_iterator,
+                                                                    float nearDist,
+                                                                    float farDist,
+                                                                    FontStyle fs);
+    std::vector<Annotation>::const_iterator renderAnnotations(std::vector<Annotation>::const_iterator startIter,
+                                                              std::vector<Annotation>::const_iterator endIter,
                                                               float nearDist,
                                                               float farDist,
                                                               FontStyle fs);
-    std::vector<Annotation>::iterator renderAnnotations(std::vector<Annotation>::iterator startIter,
-                                                        std::vector<Annotation>::iterator endIter,
-                                                        float nearDist,
-                                                        float farDist,
-                                                        FontStyle fs);
 
     void markersToAnnotations(const celestia::engine::MarkerList &markers,
                               const Observer &observer,
@@ -769,11 +769,19 @@ class Renderer
     std::vector<Annotation> objectAnnotations;
     struct BackgroundAnnotationBatch
     {
-        FontStyle font;
-        std::vector<Annotation> annotations;
+        FontStyle font{ FontStyle::Normal };
+        std::size_t start{ 0 };
+        std::size_t end{ 0 };
     };
+
+    struct ObjectAnnotationBatch
+    {
+        std::size_t start{ 0 };
+        std::size_t end{ 0 };
+    };
+
     std::vector<BackgroundAnnotationBatch> backgroundAnnotationBatches;
-    std::vector<std::vector<Annotation>> objectAnnotationBatches;
+    std::vector<ObjectAnnotationBatch> objectAnnotationBatches;
     std::optional<Eigen::Vector3d> selectionPointerPosition;
     bool annotationsPending{ false };
     std::vector<OrbitPathListEntry> orbitPathList;
