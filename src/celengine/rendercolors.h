@@ -18,8 +18,9 @@ namespace celestia::engine
 {
 
 // A plain aggregate holding one default Color per renderer visual element.
-// Construct a fresh set of defaults via RendererColors::defaults(), then
-// apply individual members to Renderer::*Color fields as needed.
+// Construct a fresh set of defaults via RendererColors::defaults().
+// Label colors and SelectionCursor remain in display sRGB; scene colors may
+// be converted to linear light.
 struct RendererColors
 {
     // --- label colors ---
@@ -69,10 +70,9 @@ struct RendererColors
     // Returns a RendererColors populated with the built-in default sRGB values.
     static RendererColors defaults();
 
-    // Returns a copy of this RendererColors with every color converted from
-    // sRGB to linear light, ready for use in a linear-light rendering pipeline.
-    RendererColors linearize() const;
-    RendererColors linearize(bool enabled) const { return enabled ? linearize() : *this; }
+    // Convert scene colors to linear light, retaining display-space annotations.
+    RendererColors linearizeSceneColors() const;
+    RendererColors linearizeSceneColors(bool enabled) const { return enabled ? linearizeSceneColors() : *this; }
 };
 
 } // namespace celestia::engine

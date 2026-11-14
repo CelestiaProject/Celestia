@@ -63,30 +63,30 @@ RendererColors RendererColors::defaults()
     };
 }
 
-RendererColors RendererColors::linearize() const
+RendererColors RendererColors::linearizeSceneColors() const
 {
     return RendererColors
     {
         // label colors
-        /* StarLabel               */ StarLabel.linearize(),
-        /* PlanetLabel             */ PlanetLabel.linearize(),
-        /* DwarfPlanetLabel        */ DwarfPlanetLabel.linearize(),
-        /* MoonLabel               */ MoonLabel.linearize(),
-        /* MinorMoonLabel          */ MinorMoonLabel.linearize(),
-        /* AsteroidLabel           */ AsteroidLabel.linearize(),
-        /* CometLabel              */ CometLabel.linearize(),
-        /* SpacecraftLabel         */ SpacecraftLabel.linearize(),
-        /* LocationLabel           */ LocationLabel.linearize(),
-        /* GalaxyLabel             */ GalaxyLabel.linearize(),
-        /* GlobularLabel           */ GlobularLabel.linearize(),
-        /* NebulaLabel             */ NebulaLabel.linearize(),
-        /* OpenClusterLabel        */ OpenClusterLabel.linearize(),
-        /* ConstellationLabel      */ ConstellationLabel.linearize(),
-        /* EquatorialGridLabel     */ EquatorialGridLabel.linearize(),
-        /* PlanetographicGridLabel */ PlanetographicGridLabel.linearize(),
-        /* GalacticGridLabel       */ GalacticGridLabel.linearize(),
-        /* EclipticGridLabel       */ EclipticGridLabel.linearize(),
-        /* HorizonGridLabel        */ HorizonGridLabel.linearize(),
+        /* StarLabel               */ StarLabel,
+        /* PlanetLabel             */ PlanetLabel,
+        /* DwarfPlanetLabel        */ DwarfPlanetLabel,
+        /* MoonLabel               */ MoonLabel,
+        /* MinorMoonLabel          */ MinorMoonLabel,
+        /* AsteroidLabel           */ AsteroidLabel,
+        /* CometLabel              */ CometLabel,
+        /* SpacecraftLabel         */ SpacecraftLabel,
+        /* LocationLabel           */ LocationLabel,
+        /* GalaxyLabel             */ GalaxyLabel,
+        /* GlobularLabel           */ GlobularLabel,
+        /* NebulaLabel             */ NebulaLabel,
+        /* OpenClusterLabel        */ OpenClusterLabel,
+        /* ConstellationLabel      */ ConstellationLabel,
+        /* EquatorialGridLabel     */ EquatorialGridLabel,
+        /* PlanetographicGridLabel */ PlanetographicGridLabel,
+        /* GalacticGridLabel       */ GalacticGridLabel,
+        /* EclipticGridLabel       */ EclipticGridLabel,
+        /* HorizonGridLabel        */ HorizonGridLabel,
 
         // orbit colors
         /* StarOrbit               */ StarOrbit.linearize(),
@@ -109,7 +109,7 @@ RendererColors RendererColors::linearize() const
         /* EclipticGrid            */ EclipticGrid.linearize(),
         /* HorizonGrid             */ HorizonGrid.linearize(),
         /* Ecliptic                */ Ecliptic.linearize(),
-        /* SelectionCursor         */ SelectionCursor.linearize(),
+        /* SelectionCursor         */ SelectionCursor,
     };
 }
 

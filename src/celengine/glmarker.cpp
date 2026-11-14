@@ -14,14 +14,12 @@
 #include <numbers>
 #include <span>
 
-#include <celmath/frustum.h>
 #include <celmath/mathlib.h>
 #include <celmath/vecgl.h>
 #include <celrender/gl/buffer.h>
 #include <celrender/gl/vertexobject.h>
 #include <celrender/linerenderer.h>
 #include "marker.h"
-#include "observer.h"
 #include "render.h"
 
 using celestia::render::LineRenderer;
@@ -103,20 +101,9 @@ Renderer::renderMarker(MarkerSymbol symbol,
  *  should only be called when the selection lies outside the view frustum.
  */
 void
-Renderer::renderSelectionPointer(const Observer& observer,
-                                 double now,
-                                 const math::InfiniteFrustum& viewFrustum,
-                                 const Selection& sel)
+Renderer::renderSelectionPointer(Eigen::Vector3d position)
 {
     constexpr float cursorDistance = 20.0f;
-    if (sel.empty())
-        return;
-
-    // Get the position of the cursor relative to the eye
-    Eigen::Vector3d position = sel.getPosition(now).offsetFromKm(observer.getPosition());
-    if (viewFrustum.testSphere(position, sel.radius()) != math::FrustumAspect::Outside)
-        return;
-
     assert(shaderManager != nullptr);
     auto* prog = shaderManager->getShader(StaticShader::SelPointer);
     if (prog == nullptr)

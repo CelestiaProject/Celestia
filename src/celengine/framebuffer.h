@@ -32,8 +32,14 @@ class FramebufferObject
     ~FramebufferObject();
 
     // Create a non-owning wrapper around the currently bound GL framebuffer.
-    // Only bind() is valid on the resulting object; other methods will assert.
+    // Only id() and bind() are valid on the resulting object.
     static FramebufferObject wrapCurrentBinding();
+
+    // The framebuffer used by bind(), including the MSAA target when present.
+    GLuint id() const
+    {
+        return (!m_owned || m_msaaFboId == 0) ? m_fboId : m_msaaFboId;
+    }
 
     bool isValid() const;
     GLuint width() const
@@ -61,7 +67,7 @@ class FramebufferObject
 
     bool bind();
     bool unbind(GLint oldfboId);
-    bool resolve() const;
+    bool resolve(Attachment attachments = Attachment::Color) const;
 
     // True for MSAA FBOs whose contents must be resolved before sampling.
     bool isMultisample() const { return m_msaaFboId != 0; }
@@ -71,7 +77,7 @@ class FramebufferObject
     void discard(Attachment attachments) const;
 
  private:
-    explicit FramebufferObject(GLuint fboId); // non-owning wrapper; only bind() is valid
+    explicit FramebufferObject(GLuint fboId); // non-owning wrapper; only id() and bind() are valid
 
     void generateColorTexture();
     void generateDepthTexture();

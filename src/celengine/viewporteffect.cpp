@@ -29,23 +29,27 @@ bool ViewportEffect::preprocess(Renderer* renderer, FramebufferObject* fbo)
 
 bool ViewportEffect::prerender(Renderer* renderer, FramebufferObject* fbo, FramebufferObject* dst)
 {
+    auto attachments = sourceAttachments();
     // Discard unused attachments now. MSAA path skips this since resolve()
     // invalidates the MSAA renderbuffers itself.
     if (!fbo->isMultisample())
     {
         constexpr auto allAttachments =
             FramebufferObject::Attachment::Color | FramebufferObject::Attachment::Depth;
-        fbo->discard(allAttachments & ~sourceAttachments());
+        fbo->discard(allAttachments & ~attachments);
     }
 
     // For renderbuffer MSAA (desktop GL / GLES3), blit the MSAA color buffer into
     // the resolve texture before switching to the destination framebuffer
-    if (!fbo->resolve())
+    if (!fbo->resolve(attachments))
         return false;
 
     if (!dst->bind())
         return false;
 
+    Renderer::PipelineState pipelineState;
+    pipelineState.depthMask = true;
+    renderer->setPipelineState(pipelineState);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     return true;
@@ -56,28 +60,56 @@ bool ViewportEffect::distortXY(float &x, float &y)
     return true;
 }
 
-PassthroughViewportEffect::PassthroughViewportEffect(bool needsFloatSource) :
-    m_needsFloatSource(needsFloatSource)
+PassthroughViewportEffect::PassthroughViewportEffect(bool needsFloatSource, bool convertToSRGB,
+                                                   bool preserveDepth) :
+    m_needsFloatSource(needsFloatSource),
+    m_baseOptions((convertToSRGB ? StaticShaderOptions::ConvertToSRGB : StaticShaderOptions::None) |
+                  (preserveDepth ? StaticShaderOptions::PreserveDepth : StaticShaderOptions::None))
 {
+}
+
+void PassthroughViewportEffect::setPreserveDepth(bool enabled)
+{
+    if (enabled)
+        m_baseOptions |= StaticShaderOptions::PreserveDepth;
+    else
+        m_baseOptions &= ~StaticShaderOptions::PreserveDepth;
+}
+
+FramebufferObject::Attachment PassthroughViewportEffect::sourceAttachments() const
+{
+    return util::is_set(m_baseOptions, StaticShaderOptions::PreserveDepth)
+        ? FramebufferObject::Attachment::Color | FramebufferObject::Attachment::Depth
+        : FramebufferObject::Attachment::Color;
 }
 
 bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fbo, int width, int height)
 {
-    bool toneMap = renderer->getToneMappingMode() != ToneMappingMode::None;
-    auto *prog = renderer->getShaderManager().getShader(
-        StaticShader::sRGB,
-        toneMap ? StaticShaderOptions::ToneMap : StaticShaderOptions::None);
+    auto options = m_baseOptions;
+    bool toneMap = util::is_set(options, StaticShaderOptions::ConvertToSRGB) &&
+                   renderer->getToneMappingMode() != ToneMappingMode::None;
+    if (toneMap)
+        options |= StaticShaderOptions::ToneMap;
+    auto *prog = renderer->getShaderManager().getShader(StaticShader::sRGB, options);
     if (prog == nullptr)
         return false;
 
     initialize();
 
     prog->use();
-    prog->samplerParam("tex") = 0;
     if (toneMap)
         prog->floatParam("exposure") = renderer->getToneMappingExposure();
+    bool preserveDepth = util::is_set(m_baseOptions, StaticShaderOptions::PreserveDepth);
+    Renderer::PipelineState pipelineState;
+    pipelineState.depthTest = preserveDepth;
+    pipelineState.depthMask = preserveDepth;
+    renderer->setPipelineState(pipelineState);
+    prog->samplerParam("tex") = 0;
+    prog->samplerParam("depthTex") = 1;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, preserveDepth ? fbo->depthTexture() : 0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fbo->colorTexture());
-    renderer->setPipelineState(ps);
     vo.draw();
     glBindTexture(GL_TEXTURE_2D, 0);
 

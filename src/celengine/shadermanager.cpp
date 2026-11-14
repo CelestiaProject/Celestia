@@ -2601,8 +2601,12 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
         util::is_set(options, StaticShaderOptions::ToneMap) ? "#define TONE_MAP\n"sv : ""sv;
     std::string_view billboardDefine =
         util::is_set(options, StaticShaderOptions::Billboard) ? "#define BILLBOARD\n"sv : ""sv;
+    std::string_view convertToSRGBDefine =
+        util::is_set(options, StaticShaderOptions::ConvertToSRGB) ? "#define CONVERT_TO_SRGB\n"sv : ""sv;
+    std::string_view preserveDepthDefine =
+        util::is_set(options, StaticShaderOptions::PreserveDepth) ? "#define PRESERVE_DEPTH\n"sv : ""sv;
     std::string vsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, billboardDefine, VPFunction(fisheyeEnabled), vs);
-    std::string fsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, billboardDefine, fs);
+    std::string fsSrc = fmt::format("{}{}{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, billboardDefine, convertToSRGBDefine, preserveDepthDefine, fs);
 
     DumpVSSource(vsSrc);
     DumpFSSource(fsSrc);

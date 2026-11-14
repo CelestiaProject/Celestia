@@ -97,6 +97,9 @@ class TextLayout
     /// This ensures all the text is submitted and rendered, must be called after begin
     void flush();
 
+    /// Queue the current line without submitting the font's glyph batch.
+    void flushLine();
+
     /// Ends the session and unbind font, flush if necessary
     void end();
 
