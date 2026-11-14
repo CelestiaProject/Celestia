@@ -1655,7 +1655,7 @@ void Renderer::renderAnnotations()
                                     backgroundAnnotations.cbegin() + batch.end),
                           batch.font);
 
-    auto annotation = depthSortedAnnotations.cbegin();
+    auto annotations = std::span<const Annotation>(depthSortedAnnotations);
     int nIntervals = static_cast<int>(depthPartitions.size());
     float intervalSize = 1.0f / static_cast<float>(std::max(1, nIntervals));
     for (int interval = 0; interval < nIntervals; ++interval)
@@ -1663,14 +1663,15 @@ void Renderer::renderAnnotations()
         glDepthRange(1.0f - static_cast<float>(interval + 1) * intervalSize,
                      1.0f - static_cast<float>(interval) * intervalSize);
         const auto& partition = depthPartitions[interval];
-        annotation = renderSortedAnnotations(annotation,
-                                             -partition.nearZ,
-                                             -partition.farZ,
-                                             FontStyle::Normal);
+        annotations = renderSortedAnnotations(annotations,
+                                              -partition.nearZ,
+                                              -partition.farZ,
+                                              FontStyle::Normal);
         const auto& objectBatch = objectAnnotationBatches[interval];
-        renderAnnotations(objectAnnotations.cbegin() + objectBatch.start,
-                          objectAnnotations.cbegin() + objectBatch.end,
-                          -partition.nearZ, -partition.farZ,
+        renderAnnotations(std::span<const Annotation>(objectAnnotations)
+                              .subspan(objectBatch.start, objectBatch.end - objectBatch.start),
+                          -partition.nearZ,
+                          -partition.farZ,
                           FontStyle::Normal);
     }
 
@@ -4900,8 +4901,8 @@ Renderer::renderForegroundAnnotations(FontStyle fs)
 
 
 // solar system objects
-vector<Renderer::Annotation>::const_iterator
-Renderer::renderSortedAnnotations(vector<Annotation>::const_iterator iter,
+std::span<const Renderer::Annotation>
+Renderer::renderSortedAnnotations(std::span<const Annotation> annotations,
                                   float nearDist,
                                   float farDist,
                                   FontStyle fs)
@@ -4914,21 +4915,20 @@ Renderer::renderSortedAnnotations(vector<Annotation>::const_iterator iter,
     ps.smoothLines = true;
     setPipelineState(ps);
 
-    return renderAnnotations(iter, depthSortedAnnotations.end(), nearDist, farDist, fs);
+    return renderAnnotations(annotations, nearDist, farDist, fs);
 }
 
 
 // locations
-vector<Renderer::Annotation>::const_iterator
-Renderer::renderAnnotations(vector<Annotation>::const_iterator startIter,
-                            vector<Annotation>::const_iterator endIter,
+std::span<const Renderer::Annotation>
+Renderer::renderAnnotations(std::span<const Annotation> annotations,
                             float nearDist,
                             float farDist,
                             FontStyle fs)
 {
     auto font = getFont(fs);
     if (font == nullptr)
-        return endIter;
+        return {};
 
     TextLayout layout{ screenDpi };
     layout.setFont(font);
@@ -4941,8 +4941,8 @@ Renderer::renderAnnotations(vector<Annotation>::const_iterator startIter,
     // projection matrix in order to get the label text position exactly right but need to mimic
     // the depth coordinate generation of a projection.
 
-    auto iter = startIter;
-    for (; iter != endIter && iter->position.z() > nearDist; ++iter)
+    auto iter = annotations.begin();
+    for (; iter != annotations.end() && iter->position.z() > nearDist; ++iter)
     {
         // Compute normalized device z
         float z = getProjectionMode()->getNormalizedDeviceZ(nearDist, farDist, iter->position.z());
@@ -4966,7 +4966,7 @@ Renderer::renderAnnotations(vector<Annotation>::const_iterator startIter,
         }
     }
 
-    return iter;
+    return { iter, annotations.end() };
 }
 
 

@@ -671,15 +671,14 @@ class Renderer
                            FontStyle fs);
     void queueBackgroundAnnotations(FontStyle fs);
     void renderForegroundAnnotations(FontStyle fs);
-    std::vector<Annotation>::const_iterator renderSortedAnnotations(std::vector<Annotation>::const_iterator,
-                                                                    float nearDist,
-                                                                    float farDist,
-                                                                    FontStyle fs);
-    std::vector<Annotation>::const_iterator renderAnnotations(std::vector<Annotation>::const_iterator startIter,
-                                                              std::vector<Annotation>::const_iterator endIter,
-                                                              float nearDist,
-                                                              float farDist,
-                                                              FontStyle fs);
+    std::span<const Annotation> renderSortedAnnotations(std::span<const Annotation>,
+                                                        float nearDist,
+                                                        float farDist,
+                                                        FontStyle fs);
+    std::span<const Annotation> renderAnnotations(std::span<const Annotation>,
+                                                  float nearDist,
+                                                  float farDist,
+                                                  FontStyle fs);
 
     void markersToAnnotations(const celestia::engine::MarkerList &markers,
                               const Observer &observer,
