@@ -24,6 +24,8 @@ TEST_SUITE_BEGIN("PSF");
 TEST_CASE("PSF soft clipping preserves its curve without overflowing finite peaks")
 {
     using celestia::engine::detail::psfSoftClip;
+    CHECK(psfSoftClip(2.0f, 3.0f) == 0.0f);
+    CHECK(psfSoftClip(1.0f, std::numeric_limits<float>::infinity()) == 0.0f);
     CHECK(psfSoftClip(5.0f, 3.0f) == doctest::Approx(4.0f));
     for (float peak : { 1.0e20f, 1.0e30f, std::numeric_limits<float>::max() })
     {

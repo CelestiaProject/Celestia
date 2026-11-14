@@ -1190,6 +1190,17 @@ Star::getApparentMagnitude(float ly) const
 }
 
 float
+Star::getApparentIrradiance(float ly) const
+{
+    // Apply extinction before exponentiation using the same conversion as culling.
+    float extinctedMagnitude = absMag;
+    if (extinction != 0.0f)
+        extinctedMagnitude += extinction * ly;
+
+    return astro::absMagToIrradiance(extinctedMagnitude, astro::lightYearsToKilometers(ly));
+}
+
+float
 Star::getLuminosity() const
 {
     return astro::absMagToLum(absMag);

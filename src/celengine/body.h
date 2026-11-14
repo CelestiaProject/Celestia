@@ -288,6 +288,10 @@ public:
     float getApparentMagnitude(float sunLuminosity,
                                const Eigen::Vector3d& sunPosition,
                                const Eigen::Vector3d& viewerPosition) const;
+    // Vega-normalized visual irradiance, including phase; positions are in km.
+    float getApparentIrradiance(float sunLuminosity,
+                                const Eigen::Vector3d& sunPosition,
+                                const Eigen::Vector3d& viewerPosition) const;
 
     UniversalCoord getPosition(double tdb) const;
     Eigen::Quaterniond getOrientation(double tdb) const;
