@@ -21,6 +21,26 @@ using celestia::engine::detail::psfReflectiveGlowOnset;
 
 TEST_SUITE_BEGIN("PSF");
 
+TEST_CASE("PSF soft clipping preserves its curve without overflowing finite peaks")
+{
+    using celestia::engine::detail::psfSoftClip;
+    CHECK(psfSoftClip(5.0f, 3.0f) == doctest::Approx(4.0f));
+    for (float peak : { 1.0e20f, 1.0e30f, std::numeric_limits<float>::max() })
+    {
+        CAPTURE(peak);
+        float actual = psfSoftClip(peak, peak * 0.5f);
+        double p = peak;
+        double g = p * 0.5;
+        CHECK(std::isfinite(actual));
+        CHECK(actual == doctest::Approx(std::sqrt(p * p - g * g)));
+    }
+    float gate = 1.0e20f;
+    float peak = std::nextafter(gate, std::numeric_limits<float>::infinity());
+    double p = peak;
+    double g = gate;
+    CHECK(psfSoftClip(peak, gate) == doctest::Approx(std::sqrt((p - g) * (p + g))));
+}
+
 TEST_CASE("PSF glow fades in between peak radiance one and two")
 {
     CHECK(psfGlowOnset(0.0f) == 0.0f);

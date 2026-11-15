@@ -1912,7 +1912,7 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
     // unchanged.  See issue #2559.
     if (peakRad <= dimGate)
         return;
-    peakRad = std::sqrt(peakRad * peakRad - dimGate * dimGate);
+    peakRad = celestia::engine::detail::psfSoftClip(peakRad, dimGate);
 
     float greenScale = 1.0f;
     Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);

@@ -38,6 +38,8 @@ constexpr inline float GlareOpacity          = 0.65f;
 namespace celestia::engine::detail
 {
 
+float psfSoftClip(float peakRadiance, float dimGate);
+
 float psfAtmosphereBrightness(float faintestMagnitude,
                               float faintestMagnitudeWithoutAtmosphere);
 
