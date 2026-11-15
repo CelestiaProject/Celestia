@@ -12,6 +12,7 @@ set(UNIT_TEST_SOURCES
   r128_test.cpp
   resourcesystem_test.cpp
   stellarclass_test.cpp
+  staroctree_test.cpp
   strnatcmp_test.cpp
   tokenizer_test.cpp)
 

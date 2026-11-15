@@ -12,6 +12,8 @@
 
 #include "staroctree.h"
 
+#include <cmath>
+#include <limits>
 #include <numbers>
 
 #include <celastro/astro.h>
@@ -69,12 +71,22 @@ StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
     float minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
 
-    float distanceModulus = astro::distanceModulus(minDistance);
-    if (minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
+    if (float distanceModulus = astro::distanceModulus(minDistance);
+        minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
         return false;
 
-    // Dimmest absolute magnitude to process
-    m_dimmest = minDistance > 0 ? (m_limitingFactor - distanceModulus) : 1000;
+    m_dimmest = std::numeric_limits<float>::infinity();
+    Eigen::Vector3f halfSize = Eigen::Vector3f::Constant(size);
+    Eigen::Vector3f nearestPoint = m_obsPosition.cwiseMax(center - halfSize).cwiseMin(center + halfSize);
+    if (float minStarDistance = (m_obsPosition - nearestPoint).norm();
+        minStarDistance > MAX_STAR_ORBIT_RADIUS)
+    {
+        // Round outward before subtraction as well as afterward: the final
+        // magnitude addition can round a boundary star back into visibility.
+        float limit = std::nextafter(m_limitingFactor, std::numeric_limits<float>::infinity());
+        m_dimmest = std::nextafter(limit - astro::distanceModulus(minStarDistance),
+                                  std::numeric_limits<float>::infinity());
+    }
 
     return true;
 }
@@ -82,7 +94,7 @@ StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center
 void
 StarOctreeVisibleObjectsProcessor::process(const Star& obj) const
 {
-    if (obj.getAbsoluteMagnitude() > m_dimmest)
+    if (obj.getAbsoluteMagnitude() > m_dimmest && obj.getExtinction() >= 0.0f)
         return;
 
     float distance = (m_obsPosition - obj.getPosition()).norm();
