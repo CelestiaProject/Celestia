@@ -2599,6 +2599,11 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
 {
     std::string_view toneMapDefine =
         util::is_set(options, StaticShaderOptions::ToneMap) ? "#define TONE_MAP\n"sv : ""sv;
+    std::string_view toneMapCurveDefine;
+    if (util::is_set(options, StaticShaderOptions::ToneMapACES))
+        toneMapCurveDefine = "#define TONE_MAP_ACES\n"sv;
+    else if (util::is_set(options, StaticShaderOptions::ToneMapReinhard))
+        toneMapCurveDefine = "#define TONE_MAP_REINHARD\n"sv;
     std::string_view billboardDefine =
         util::is_set(options, StaticShaderOptions::Billboard) ? "#define BILLBOARD\n"sv : ""sv;
     std::string_view convertToSRGBDefine =
@@ -2606,7 +2611,7 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
     std::string_view preserveDepthDefine =
         util::is_set(options, StaticShaderOptions::PreserveDepth) ? "#define PRESERVE_DEPTH\n"sv : ""sv;
     std::string vsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, billboardDefine, VPFunction(fisheyeEnabled), vs);
-    std::string fsSrc = fmt::format("{}{}{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, billboardDefine, convertToSRGBDefine, preserveDepthDefine, fs);
+    std::string fsSrc = fmt::format("{}{}{}{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, toneMapCurveDefine, billboardDefine, convertToSRGBDefine, preserveDepthDefine, fs);
 
     DumpVSSource(vsSrc);
     DumpFSSource(fsSrc);

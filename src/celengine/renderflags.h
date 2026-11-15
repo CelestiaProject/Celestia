@@ -33,11 +33,13 @@ enum class RenderLabels : std::uint32_t
 
 ENUM_CLASS_BITWISE_OPS(RenderLabels);
 
-// Tone mapping / exposure mode applied when rendering to an HDR (sRGB) framebuffer.
+// Tone curve applied to HDR scene light before sRGB output conversion.
 enum class ToneMappingMode : std::uint8_t
 {
-    None   = 0, // No tone mapping; linear output
-    Manual = 1, // Fixed user-specified exposure
+    None     = 0,
+    Manual   = 1, // Legacy name for the exponential curve.
+    ACES     = 2, // Narkowicz fit, not the full ACES color-management pipeline.
+    Reinhard = 3,
 };
 
 enum class RenderFlags : std::uint64_t

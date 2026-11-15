@@ -16,14 +16,18 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include <doctest.h>
 
+#include <celengine/texmanager.h>
 #include <celengine/texture.h>
 #include <celengine/virtualtex.h>
 #include <celimage/image.h>
 #include <celimage/imageformats.h>
 #include <celestia/celestiacore.h>
+#include <celestia/configfile.h>
+#include <celutil/logger.h>
 
 namespace
 {
@@ -201,6 +205,33 @@ TEST_CASE("Simulation initialization can retry after a failed star catalog")
         REQUIRE_FALSE(core.initSimulation(configPath));
         REQUIRE_FALSE(core.initSimulation(configPath));
         CHECK(core.getSimulation() == nullptr);
+    }
+}
+
+TEST_CASE("Tone mapping configuration accepts new curves and preserves legacy modes")
+{
+    celestia::util::CreateLogger();
+    TemporaryDirectory directory;
+    const auto path = directory.getPath("tone-mapping.cfg");
+    for (const auto& [name, expected] : std::array{
+             std::pair{ "Off", ToneMappingMode::None },
+             std::pair{ "Manual", ToneMappingMode::Manual },
+             std::pair{ "Exponential", ToneMappingMode::Manual },
+             std::pair{ "aces", ToneMappingMode::ACES },
+             std::pair{ "rEiNhArD", ToneMappingMode::Reinhard },
+             std::pair{ "Unknown", ToneMappingMode::ACES } })
+    {
+        CAPTURE(name);
+        {
+            std::ofstream out(path);
+            out << "Configuration { ToneMappingMode \"" << name << "\" }";
+            REQUIRE(out.good());
+        }
+        CelestiaConfig config;
+        config.renderDetails.output.toneMapping = ToneMappingMode::ACES;
+        celestia::engine::TexturePaths textures;
+        REQUIRE(ReadCelestiaConfig(path, config, textures));
+        CHECK(config.renderDetails.output.toneMapping == expected);
     }
 }
 

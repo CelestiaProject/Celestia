@@ -89,7 +89,13 @@ bool PassthroughViewportEffect::render(Renderer* renderer, FramebufferObject* fb
     bool toneMap = util::is_set(options, StaticShaderOptions::ConvertToSRGB) &&
                    renderer->getToneMappingMode() != ToneMappingMode::None;
     if (toneMap)
+    {
         options |= StaticShaderOptions::ToneMap;
+        if (renderer->getToneMappingMode() == ToneMappingMode::ACES)
+            options |= StaticShaderOptions::ToneMapACES;
+        else if (renderer->getToneMappingMode() == ToneMappingMode::Reinhard)
+            options |= StaticShaderOptions::ToneMapReinhard;
+    }
     auto *prog = renderer->getShaderManager().getShader(StaticShader::sRGB, options);
     if (prog == nullptr)
         return false;

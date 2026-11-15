@@ -48,13 +48,15 @@ enum class StaticShader
 };
 
 // Compile-time options that select variants of a static shader via #define injection.
-enum class StaticShaderOptions : std::uint8_t
+enum class StaticShaderOptions : std::uint16_t
 {
-    None          = 0,
-    ToneMap       = 0x01,
-    Billboard     = 0x02,
-    ConvertToSRGB = 0x04,
-    PreserveDepth = 0x08,
+    None            = 0,
+    ToneMap         = 0x01,
+    Billboard       = 0x02,
+    ConvertToSRGB   = 0x04,
+    PreserveDepth   = 0x08,
+    ToneMapACES     = 0x100,
+    ToneMapReinhard = 0x200,
 };
 
 ENUM_CLASS_BITWISE_OPS(StaticShaderOptions);

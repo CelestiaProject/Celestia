@@ -23,7 +23,7 @@ class Color;
 class Renderer;
 class CelestiaGLProgram;
 enum class StaticShader;
-enum class StaticShaderOptions : std::uint8_t;
+enum class StaticShaderOptions : std::uint16_t;
 
 namespace celestia::gl
 {

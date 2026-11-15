@@ -239,16 +239,17 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
     {
         QSignalBlocker blocker(ui.toneMappingCombo);
         ui.toneMappingCombo->addItem(_("Off"));
-        ui.toneMappingCombo->addItem(_("Manual exposure"));
+        ui.toneMappingCombo->addItem(_("Exponential"));
+        ui.toneMappingCombo->addItem(_("ACES (fitted)"));
+        ui.toneMappingCombo->addItem(_("Reinhard"));
         ui.toneMappingCombo->setCurrentIndex(
             static_cast<int>(renderer->getToneMappingMode()));
     }
     ui.toneMappingExposureSpinBox->setValue(renderer->getToneMappingExposure());
-    // Exposure only applies in Manual tone mapping mode.
     {
-        bool manual = ui.toneMappingCombo->currentIndex() == 1;
-        ui.toneMappingExposureLabel->setVisible(manual);
-        ui.toneMappingExposureSpinBox->setVisible(manual);
+        bool toneMapping = ui.toneMappingCombo->currentIndex() > 0;
+        ui.toneMappingExposureLabel->setVisible(toneMapping);
+        ui.toneMappingExposureSpinBox->setVisible(toneMapping);
     }
 
     switch (renderer->getResolution())
@@ -825,10 +826,10 @@ void
 PreferencesDialog::on_toneMappingCombo_currentIndexChanged(int index) const
 {
     Renderer* renderer = appCore->getRenderer();
-    renderer->setToneMappingMode(static_cast<ToneMappingMode>(std::clamp(index, 0, 1)));
-    // Exposure only applies in Manual tone mapping mode.
-    ui.toneMappingExposureLabel->setVisible(index == 1);
-    ui.toneMappingExposureSpinBox->setVisible(index == 1);
+    renderer->setToneMappingMode(static_cast<ToneMappingMode>(
+        std::clamp(index, 0, static_cast<int>(ToneMappingMode::Reinhard))));
+    ui.toneMappingExposureLabel->setVisible(index > 0);
+    ui.toneMappingExposureSpinBox->setVisible(index > 0);
 }
 
 void

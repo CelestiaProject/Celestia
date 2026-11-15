@@ -1102,14 +1102,14 @@
               <item>
                <widget class="QLabel" name="toneMappingExposureLabel">
                 <property name="text">
-                 <string>Exposure:</string>
+                 <string>Tonemapping exposure:</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="toneMappingExposureSpinBox">
                 <property name="toolTip">
-                 <string>Exposure of the HDR tone mapper. Only affects sRGB rendering in Manual tone mapping mode.</string>
+                 <string>Exposure applied before the selected HDR tone curve. Only affects sRGB rendering when tone mapping is enabled.</string>
                 </property>
                 <property name="decimals">
                  <number>3</number>
