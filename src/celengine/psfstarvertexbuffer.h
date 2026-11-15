@@ -92,13 +92,9 @@ private:
     void setupVertexArrayObject();
 };
 
-// Normalises a linear-RGB star colour following CSR.py's
-// `green_normalization()` (V-band reference + saturation limit).  The
-// returned colour has max channel = 1 (fits in a UByte attribute) and
-// no channel below `saturationLimit`; `greenScale` receives the
-// `1 / green` factor that the caller bakes into the per-star peak
-// radiance so the shader's `color * peak` product reproduces
-// `(color_arr / green) * peak`.
+// Normalises linear RGB using green as a V-band proxy, following CSR.py.
+// Desaturates toward `saturationLimit` and returns a max-channel-normalized tint.
+// Multiply peak radiance by `greenScale` to recover green normalization.
 Color psfGreenNormalization(const Color &c, float saturationLimit, float &greenScale);
 
 } // namespace celestia::render

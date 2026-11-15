@@ -1,5 +1,6 @@
 set(UNIT_TEST_SOURCES
   associativearray_test.cpp
+  astro_test.cpp
   category_test.cpp
   constellation_test.cpp
   date_test.cpp

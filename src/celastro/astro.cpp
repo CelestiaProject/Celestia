@@ -95,7 +95,9 @@ lumToAppMag(float lum, float lyrs)
 float
 lumToIrradiance(float lum, float km)
 {
-    return lum * SOLAR_POWER / (math::sphereArea(km * 1000) * VEGAN_IRRADIANCE);
+    double distanceMeters = km * 1000.0;
+    return static_cast<float>(static_cast<double>(lum) * SOLAR_POWER
+                              / (math::sphereArea(distanceMeters) * VEGAN_IRRADIANCE));
 }
 
 
