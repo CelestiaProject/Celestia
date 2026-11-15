@@ -451,7 +451,7 @@ NightTextureBlend()
 {
 #if 1
     // Output the blend factor for night lights textures
-    return "totalLight = 1.0 - totalLight;\ntotalLight = totalLight * totalLight * totalLight * totalLight;\n"sv;
+    return "totalLight = clamp(1.0 - totalLight, 0.0, 1.0);\ntotalLight = totalLight * totalLight * totalLight * totalLight;\n"sv;
 #else
     // Alternate night light blend function; much sharper falloff near terminator.
     return "totalLight = clamp(10.0 * (0.1 - totalLight), 0.0, 1.0);\n"sv;
