@@ -1380,7 +1380,11 @@ R"glsl(
 
     if (props.isViewDependent() || props.hasScattering() ||
         props.hasEclipseShadows() || props.hasRingShadows())
+    {
+        if (props.hasScattering())
+            source += "centroid ";
         source += DeclareOutput("position", Shader_Vector3);
+    }
 
     // Shadow parameters
     if (props.hasRingShadows())
@@ -1616,7 +1620,11 @@ buildFragmentShader(const ShaderProperties& props)
 
     if (props.isViewDependent() || props.hasScattering() ||
         props.hasEclipseShadows() || props.hasRingShadows())
+    {
+        if (props.hasScattering())
+            source += "centroid ";
         source += DeclareInput("position", Shader_Vector3);
+    }
 
     if (props.lightModel != LightingModel::UnlitModel)
     {
