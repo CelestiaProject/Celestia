@@ -451,7 +451,7 @@ NightTextureBlend()
 {
 #if 1
     // Output the blend factor for night lights textures
-    return "totalLight = 1.0 - totalLight;\ntotalLight = totalLight * totalLight * totalLight * totalLight;\n"sv;
+    return "totalLight = clamp(1.0 - totalLight, 0.0, 1.0);\ntotalLight = totalLight * totalLight * totalLight * totalLight;\n"sv;
 #else
     // Alternate night light blend function; much sharper falloff near terminator.
     return "totalLight = clamp(10.0 * (0.1 - totalLight), 0.0, 1.0);\n"sv;
@@ -1380,7 +1380,11 @@ R"glsl(
 
     if (props.isViewDependent() || props.hasScattering() ||
         props.hasEclipseShadows() || props.hasRingShadows())
+    {
+        if (props.hasScattering())
+            source += "centroid ";
         source += DeclareOutput("position", Shader_Vector3);
+    }
 
     // Shadow parameters
     if (props.hasRingShadows())
@@ -1616,7 +1620,11 @@ buildFragmentShader(const ShaderProperties& props)
 
     if (props.isViewDependent() || props.hasScattering() ||
         props.hasEclipseShadows() || props.hasRingShadows())
+    {
+        if (props.hasScattering())
+            source += "centroid ";
         source += DeclareInput("position", Shader_Vector3);
+    }
 
     if (props.lightModel != LightingModel::UnlitModel)
     {
@@ -2599,6 +2607,11 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
 {
     std::string_view toneMapDefine =
         util::is_set(options, StaticShaderOptions::ToneMap) ? "#define TONE_MAP\n"sv : ""sv;
+    std::string_view toneMapCurveDefine;
+    if (util::is_set(options, StaticShaderOptions::ToneMapACES))
+        toneMapCurveDefine = "#define TONE_MAP_ACES\n"sv;
+    else if (util::is_set(options, StaticShaderOptions::ToneMapReinhard))
+        toneMapCurveDefine = "#define TONE_MAP_REINHARD\n"sv;
     std::string_view billboardDefine =
         util::is_set(options, StaticShaderOptions::Billboard) ? "#define BILLBOARD\n"sv : ""sv;
     std::string_view convertToSRGBDefine =
@@ -2606,7 +2619,7 @@ buildProgram(std::string_view vs, std::string_view fs, bool fisheyeEnabled,
     std::string_view preserveDepthDefine =
         util::is_set(options, StaticShaderOptions::PreserveDepth) ? "#define PRESERVE_DEPTH\n"sv : ""sv;
     std::string vsSrc = fmt::format("{}{}{}{}{}{}\n", VersionHeader, CommonHeader, VertexHeader, billboardDefine, VPFunction(fisheyeEnabled), vs);
-    std::string fsSrc = fmt::format("{}{}{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, billboardDefine, convertToSRGBDefine, preserveDepthDefine, fs);
+    std::string fsSrc = fmt::format("{}{}{}{}{}{}{}{}{}\n", VersionHeader, CommonHeader, FragmentHeader, toneMapDefine, toneMapCurveDefine, billboardDefine, convertToSRGBDefine, preserveDepthDefine, fs);
 
     DumpVSSource(vsSrc);
     DumpFSSource(fsSrc);

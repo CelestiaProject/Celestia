@@ -47,6 +47,14 @@ float smoothStep(float t)
 } // namespace
 
 float
+celestia::engine::detail::psfSoftClip(float peakRadiance, float dimGate)
+{
+    double peak = peakRadiance;
+    double gate = dimGate;
+    return static_cast<float>(std::sqrt((peak - gate) * (peak + gate)));
+}
+
+float
 celestia::engine::detail::psfAtmosphereBrightness(
     float faintestMagnitude,
     float faintestMagnitudeWithoutAtmosphere)
@@ -173,7 +181,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
                 // asymptotically unchanged.  See issue #2559.
                 if (peakRad <= psf.dimGate)
                     return;
-                peakRad = std::sqrt(peakRad * peakRad - psf.dimGate * psf.dimGate);
+                peakRad = celestia::engine::detail::psfSoftClip(peakRad, psf.dimGate);
 
                 // Normalise the star colour against its green channel
                 // (with a saturation floor) so the brightest channel

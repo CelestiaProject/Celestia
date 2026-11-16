@@ -30,8 +30,17 @@ void main(void)
 {
     vec4 color = texture(tex, texCoord);
 #ifdef TONE_MAP
-    // Exponential tone mapping to roll off HDR highlights.
-    color.rgb = vec3(1.0) - exp(-exposure * color.rgb);
+    vec3 x = exposure * clamp(color.rgb, vec3(0.0), vec3(65504.0));
+    x = mix(x, vec3(0.0), isnan(x));
+#if defined(TONE_MAP_ACES)
+    // Narkowicz's ACES filmic fit, evaluated in the scene's linear RGB space.
+    color.rgb = clamp((x * (2.51 * x + 0.03))
+                    / (x * (2.43 * x + 0.59) + 0.14), vec3(0.0), vec3(1.0));
+#elif defined(TONE_MAP_REINHARD)
+    color.rgb = x / (vec3(1.0) + x);
+#else
+    color.rgb = vec3(1.0) - exp(-x);
+#endif
 #endif
 #ifdef CONVERT_TO_SRGB
     color.rgb = linearToSRGB(color.rgb);

@@ -25,15 +25,12 @@ namespace celestia::engine
 {
 
 using StarOctree = StaticOctree<Star, float>;
+// Callbacks receive distance in light years and apparent magnitude.
 using StarHandler = OctreeProcessor<Star, float>;
 
-// This class searches the octree for objects that are likely to be visible
-// to a viewer with the specified obsPosition and limitingFactor.  The
-// octreeProcessor is invoked for each potentially visible object --no object with
-// a property greater than limitingFactor will be processed, but
-// objects that are outside the view frustum may be.  Frustum tests are performed
-// only at the node level to optimize the octree traversal, so an exact test
-// (if one is required) is the responsibility of the callback method.
+// Frustum tests are node-level; callbacks may receive stars outside the view.
+// Nearby orbiting stars may exceed the magnitude limit so their precise
+// distances can be checked by the callback.
 class StarOctreeVisibleObjectsProcessor
 {
 public:

@@ -38,6 +38,8 @@ constexpr inline float GlareOpacity          = 0.65f;
 namespace celestia::engine::detail
 {
 
+float psfSoftClip(float peakRadiance, float dimGate);
+
 float psfAtmosphereBrightness(float faintestMagnitude,
                               float faintestMagnitudeWithoutAtmosphere);
 
@@ -71,7 +73,7 @@ public:
         const Eigen::Matrix4f* modelView { nullptr };
 
         // User-facing parameters (set per-frame from Renderer state).
-        float pointRadius    { 1.5f };   // px
+        float pointRadius    { 1.5f };   // 96-DPI logical pixels
         float pointScale     { 1.0f };   // DPI scale
         float optimization   { 0.1f };
         float maxIrradiance  { 0.0f };   // 0 = disabled

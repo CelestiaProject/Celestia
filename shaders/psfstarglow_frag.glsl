@@ -11,7 +11,7 @@
 
 // Point Spread Function (PSF) star renderer - glow (eye-PSF) pass.
 // Approximation of Greg Spencer et al. (1995) photopic PSF.
-// Outputs linear radiance; assumes additive blending and an sRGB framebuffer.
+// Outputs relative linear RGB with additive blending.
 
 uniform float pointRadius;
 uniform float psfA;

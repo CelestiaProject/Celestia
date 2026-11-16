@@ -10,7 +10,7 @@
 // of the License, or (at your option) any later version.
 
 // Point Spread Function (PSF) star renderer - point (cone) pass.
-// Outputs linear radiance; assumes additive blending and an sRGB framebuffer.
+// Outputs relative linear RGB with additive blending.
 
 uniform float pointRadius;
 uniform float pointScale;

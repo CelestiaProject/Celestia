@@ -23,7 +23,7 @@ layout(location = 0) in vec4 in_Position;
 layout(location = 8) in vec3 in_Color;        // green-normalised, linear-space, 8-bit per channel
 layout(location = 9) in float in_Intensity;   // peakRadiance = exposure * 3 * irradiance / (pi * pointRadius^2)
 
-uniform float pointRadius; // pt, user setting (1..10)
+uniform float pointRadius; // 96-DPI logical pixels
 uniform float pointScale;  // DPI scale
 
 out vec3  v_color;
