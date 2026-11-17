@@ -14,6 +14,6 @@ class CelestiaCore;
 namespace celestia::sdl
 {
 
-void renderDialog(const CelestiaCore*, bool*);
+void renderDialog(CelestiaCore*, bool*);
 
 }

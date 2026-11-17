@@ -1066,6 +1066,24 @@
              </widget>
             </item>
             <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_sceneMSAA">
+              <item>
+               <widget class="QLabel" name="sceneMSAALabel">
+                <property name="text">
+                 <string>Scene MSAA:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="sceneMSAACombo">
+                <property name="toolTip">
+                 <string>Smooth edges in the 3D scene. Higher settings use more GPU time and memory.</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
              <layout class="QHBoxLayout">
               <item>
                <widget class="QLabel" name="sRGBRenderingLabel">

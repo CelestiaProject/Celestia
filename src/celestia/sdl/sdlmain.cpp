@@ -77,7 +77,7 @@ main(int argc, char **argv)
     if (!celestiaCore->initSimulation())
         return EXIT_FAILURE;
 
-    if (!environment->setGLAttributes(celestiaCore->getConfig()->renderDetails.aaSamples))
+    if (!environment->setGLAttributes(celestiaCore->getConfig()->renderDetails.output.presentAaSamples))
         return EXIT_FAILURE;
 
     std::filesystem::path dataDir = getDataDir();

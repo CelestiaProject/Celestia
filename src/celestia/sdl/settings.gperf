@@ -18,6 +18,7 @@ lokTextures,       &readLokTextures,       &writeLokTextures
 renderFlags,       &readRenderFlags,       &writeRenderFlags
 labelMode,         &readLabelMode,         &writeLabelMode
 textureResolution, &readTextureResolution, &writeTextureResolution
+sceneMSAASamples,   &readSceneMSAASamples,   &writeSceneMSAASamples
 orbitMask,         &readOrbitMask,         &writeOrbitMask
 ambientLight,      &readAmbientLight,      &writeAmbientLight
 tintSaturation,    &readTintSaturation,    &writeTintSaturation

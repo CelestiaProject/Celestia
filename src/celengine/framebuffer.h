@@ -57,6 +57,12 @@ class FramebufferObject
         return m_samples;
     }
 
+    // Keep the request even if allocation falls back to fewer samples.
+    int requestedSamples() const
+    {
+        return m_requestedSamples;
+    }
+
     bool useFloatColor() const
     {
         return m_useFloatColor;
@@ -95,6 +101,7 @@ class FramebufferObject
     GLuint m_colorRboId{ 0 };
     GLuint m_depthRboId{ 0 };
     int    m_samples;
+    int    m_requestedSamples;
     bool   m_useFloatColor;
     GLenum m_status;
     bool   m_owned;

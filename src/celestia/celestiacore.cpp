@@ -2787,6 +2787,26 @@ LoadFontHelper(const Renderer* renderer,
     return LoadTextureFont(renderer, fontPath.is_absolute() ? fontPath : std::filesystem::path("fonts") / fontPath);
 }
 
+unsigned int CelestiaCore::getSceneMSAASamples() const
+{
+    return static_cast<unsigned int>(sceneSamples);
+}
+
+unsigned int CelestiaCore::getMaxSceneMSAASamples() const
+{
+    return maxSceneSamples;
+}
+
+void CelestiaCore::setSceneMSAASamples(unsigned int samples)
+{
+    int clampedSamples = static_cast<int>(std::clamp(samples, 1u, maxSceneSamples));
+    if (sceneSamples == clampedSamples)
+        return;
+
+    sceneSamples = clampedSamples;
+    renderer->markSettingsChanged();
+}
+
 bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
                                 std::optional<bool> sRGBRendering,
                                 std::optional<unsigned int> aaSamples,
@@ -2795,8 +2815,8 @@ bool CelestiaCore::initRenderer(engine::TextureResolution resolution,
     annotationDepthFramebuffer.reset();
     GLint maxSamples = 1;
     glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
-    sceneSamples = static_cast<int>(std::clamp(aaSamples.value_or(config->renderDetails.aaSamples),
-        1u, static_cast<unsigned int>(std::max(1, maxSamples))));
+    maxSceneSamples = static_cast<unsigned int>(std::max(1, maxSamples));
+    setSceneMSAASamples(aaSamples.value_or(config->renderDetails.getSceneAASamples()));
     gl::sRGBRendering = sRGBRendering.value_or(config->renderDetails.output.sRGB);
     celestia::engine::SetTextureAnisotropy(config->renderDetails.textures.anisotropy);
 

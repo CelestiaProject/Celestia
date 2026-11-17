@@ -302,10 +302,10 @@ View::updateFBOs(const std::vector<std::unique_ptr<ViewportEffect>>& effects, in
         auto& fbo = fbos[i];
 
         if (fbo
-            && fbo->width()         == newWidth
-            && fbo->height()        == newHeight
-            && fbo->samples()       == samples
-            && fbo->useFloatColor() == useFloat)
+            && fbo->width()            == newWidth
+            && fbo->height()           == newHeight
+            && fbo->requestedSamples() == samples
+            && fbo->useFloatColor()    == useFloat)
             continue;
 
         fbo = std::make_unique<FramebufferObject>(newWidth, newHeight,

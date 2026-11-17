@@ -136,7 +136,11 @@ CelestiaGlWidget::initializeGL()
     if (settings.contains("sRGBRendering"))
         sRGBOverride = settings.value("sRGBRendering").toBool();
 
-    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), sRGBOverride, std::nullopt, false))
+    std::optional<unsigned int> sceneSamples;
+    if (settings.contains("SceneAntialiasingSamples"))
+        sceneSamples = settings.value("SceneAntialiasingSamples").toUInt();
+
+    if (!appCore->initRenderer(static_cast<engine::TextureResolution>(textureResolution), sRGBOverride, sceneSamples, false))
     {
         // cerr << "Failed to initialize renderer.\n";
         exit(1);
