@@ -179,7 +179,8 @@ AppWindow::dumpGLInfo() const
 bool
 AppWindow::run(const Settings& settings)
 {
-    m_appCore->initRenderer(settings.textureResolution);
+    if (!m_appCore->initRenderer(settings.textureResolution, std::nullopt, settings.sceneMSAASamples))
+        return false;
 
     auto renderer = m_appCore->getRenderer();
     const auto* config = m_appCore->getConfig();

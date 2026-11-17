@@ -106,6 +106,7 @@ private slots:
     void on_featureSizeSpinBox_valueChanged(int value);
 
     void on_antialiasLinesCheck_stateChanged(int state);
+    void on_sceneMSAACombo_currentIndexChanged(int index);
     void on_separateRayleighMieScaleHeightsCheck_stateChanged(int state) const;
     void on_atmosphereSegmentCountSpinBox_valueChanged(int value) const;
     void on_cloudSegmentCountSpinBox_valueChanged(int value) const;

@@ -196,6 +196,10 @@ public:
                       std::optional<bool> sRGBRendering = std::nullopt,
                       std::optional<unsigned int> aaSamples = std::nullopt,
                       bool useMesaPackInvert = true);
+    unsigned int getSceneMSAASamples() const;
+    unsigned int getMaxSceneMSAASamples() const;
+    // Applied on the next draw; no current GL context is required.
+    void setSceneMSAASamples(unsigned int samples);
     void start(double t);
     void start();
     void getLightTravelDelay(double distanceKm, int&, int&, float&);
@@ -535,6 +539,7 @@ private:
     std::vector<std::unique_ptr<ViewportEffect>> viewportEffects;
     PassthroughViewportEffect* sceneDisplayEffect{ nullptr };
     int sceneSamples{ 1 };
+    unsigned int maxSceneSamples{ 1 };
     std::optional<GLuint> annotationDepthFramebuffer{ std::nullopt };
     bool annotationDepthAvailable{ false };
     std::unique_ptr<ViewportEffect> presentationEffect;

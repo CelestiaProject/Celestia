@@ -10,6 +10,7 @@
 #pragma once
 
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -89,6 +90,9 @@ struct CelestiaConfig
 
         unsigned int orbitPathSamplePoints{ 100 };
         unsigned int aaSamples{ 1 };
+
+        unsigned int getSceneAASamples() const { return output.sceneAaSamples.value_or(aaSamples); }
+
         float SolarSystemMaxDistance{ 1.0f };
         unsigned int ShadowMapSize{ 0 };
         std::vector<std::string> ignoreGLExtensions{ };
@@ -101,6 +105,8 @@ struct CelestiaConfig
         TextureRendering textures{ };
         struct OutputRendering
         {
+            std::optional<unsigned int> sceneAaSamples;
+            unsigned int presentAaSamples{ 1 };
             bool sRGB{ false };
             float toneMappingExposure{ 1.0f };
             ToneMappingMode toneMapping{ ToneMappingMode::None };

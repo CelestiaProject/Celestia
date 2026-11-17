@@ -462,13 +462,24 @@ StarTextures
 
 
 #-----------------------------------------------------------------------
-# Set the level of multisample antialiasing.  Not all 3D graphics
+# Set the level of scene multisample antialiasing. Not all 3D graphics
 # hardware supports antialiasing, though most newer graphics chipsets
 # do.  Larger values will result in smoother edges with a cost in
 # rendering speed.  4 is a sensible setting for recent, higher-end
 # graphics hardware; 2 is probably better mid-range graphics.  The
 # default value is 1, which disables antialiasing.
-  AntialiasingSamples        4
+# Legacy scene-MSAA fallback, used only when SceneAntialiasingSamples is omitted.
+#  AntialiasingSamples        4
+
+# Scene and presentation MSAA can be configured independently.
+# SceneAntialiasingSamples defaults to AntialiasingSamples when omitted.
+# PresentAntialiasingSamples defaults to 1 (off), independently of the scene.
+# Set either target to 1 to disable its MSAA.
+# SceneAntialiasingSamples affects the 3D scene and can also be changed at
+# runtime. PresentAntialiasingSamples affects the window/presentation target
+# (including annotations and overlays) and requires a restart to change.
+  SceneAntialiasingSamples   4
+  PresentAntialiasingSamples 1
 
 
 #------------------------------------------------------------------------

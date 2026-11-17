@@ -232,6 +232,9 @@ applyRenderDetails(CelestiaConfig::RenderDetails& renderDetails, const Associati
     }
     applyBoolean(renderDetails.atmosphere.separateRayleighMieScaleHeights, hash, "SeparateRayleighMieScaleHeights"sv);
     applyNumber(renderDetails.aaSamples, hash, "AntialiasingSamples"sv);
+    if (auto samples = hash.getNumber<unsigned int>("SceneAntialiasingSamples"sv); samples.has_value())
+        renderDetails.output.sceneAaSamples = *samples;
+    applyNumber(renderDetails.output.presentAaSamples, hash, "PresentAntialiasingSamples"sv);
     applyNumber(renderDetails.textures.anisotropy, hash, "TextureAnisotropy"sv);
     renderDetails.textures.anisotropy = std::max(renderDetails.textures.anisotropy, 1);
     applyNumber(renderDetails.SolarSystemMaxDistance, hash, "SolarSystemMaxDistance"sv);

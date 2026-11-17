@@ -13,6 +13,8 @@
 #include <array>
 #include <cassert>
 
+#include <celutil/logger.h>
+
 namespace
 {
 
@@ -45,6 +47,7 @@ FramebufferObject::FramebufferObject(GLuint width, GLuint height, Attachment att
     m_depthTexId(0),
     m_fboId(0),
     m_samples(samples > 1 ? samples : 1),
+    m_requestedSamples(m_samples),
     m_useFloatColor(useFloatColor),
     m_status(GL_FRAMEBUFFER_UNSUPPORTED),
     m_owned(true)
@@ -62,6 +65,7 @@ FramebufferObject::FramebufferObject(GLuint fboId) :
     m_depthTexId(0),
     m_fboId(fboId),
     m_samples(1),
+    m_requestedSamples(1),
     m_useFloatColor(false),
     m_status(GL_FRAMEBUFFER_COMPLETE),
     m_owned(false)
@@ -85,6 +89,7 @@ FramebufferObject::FramebufferObject(FramebufferObject &&other) noexcept:
     m_colorRboId(other.m_colorRboId),
     m_depthRboId(other.m_depthRboId),
     m_samples(other.m_samples),
+    m_requestedSamples(other.m_requestedSamples),
     m_useFloatColor(other.m_useFloatColor),
     m_status(other.m_status),
     m_owned(other.m_owned)
@@ -108,6 +113,7 @@ FramebufferObject& FramebufferObject::operator=(FramebufferObject &&other) noexc
     m_colorRboId    = other.m_colorRboId;
     m_depthRboId    = other.m_depthRboId;
     m_samples       = other.m_samples;
+    m_requestedSamples = other.m_requestedSamples;
     m_useFloatColor = other.m_useFloatColor;
     m_status        = other.m_status;
     m_owned         = other.m_owned;
@@ -309,6 +315,9 @@ FramebufferObject::generateMSAAFbo(Attachment attachments)
 
     if (m_status != GL_FRAMEBUFFER_COMPLETE)
     {
+        celestia::util::GetLogger()->warn("Unable to create {}x MSAA framebuffer (status {:#x}); "
+                                          "falling back to single-sample rendering.\n",
+                                          m_requestedSamples, m_status);
         // MSAA FBO creation failed; clean up MSAA resources and fall back to
         // the texture-based FBO without MSAA.
         glDeleteFramebuffers(1, &m_msaaFboId);

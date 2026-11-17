@@ -12,12 +12,16 @@
 
 #include "renderdialog.h"
 
+#include <string>
+
+#include <fmt/format.h>
 #include <imgui.h>
 
 #include <celengine/render.h>
 #include <celengine/starcolors.h>
 #include <celengine/texmanager.h>
 #include <celestia/celestiacore.h>
+#include <celutil/gettext.h>
 #include "helpers.h"
 
 namespace celestia::sdl
@@ -98,8 +102,9 @@ starStylePanel(Renderer* renderer)
 }
 
 void
-miscellaneousPanel(Renderer* renderer)
+miscellaneousPanel(CelestiaCore* appCore)
 {
+    Renderer* renderer = appCore->getRenderer();
     RenderFlags rf = renderer->getRenderFlags();
     RenderFlags rfNew = rf;
 
@@ -111,13 +116,29 @@ miscellaneousPanel(Renderer* renderer)
 
     enumCheckbox("Anti-aliased lines", rfNew, RenderFlags::ShowSmoothLines);
 
+    auto currentSamples = appCore->getSceneMSAASamples();
+    if (auto preview = currentSamples == 1 ? std::string(_("Off")) : fmt::format("{}x", currentSamples);
+        ImGui::BeginCombo("Scene MSAA", preview.c_str()))
+    {
+        for (unsigned int samples = 1; samples <= appCore->getMaxSceneMSAASamples(); samples *= 2)
+        {
+            auto label = samples == 1 ? std::string(_("Off")) : fmt::format("{}x", samples);
+            bool selected = samples == currentSamples;
+            if (ImGui::Selectable(label.c_str(), selected))
+                appCore->setSceneMSAASamples(samples);
+            if (selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
     if (rfNew != rf)
         renderer->setRenderFlags(rfNew);
 }
 
 } // end unnamed namespace
 
-void renderDialog(const CelestiaCore* appCore, bool* isOpen)
+void renderDialog(CelestiaCore* appCore, bool* isOpen)
 {
     if (!*isOpen)
         return;
@@ -136,7 +157,7 @@ void renderDialog(const CelestiaCore* appCore, bool* isOpen)
             starStylePanel(renderer);
 
         if (ImGui::CollapsingHeader("Miscellaneous"))
-            miscellaneousPanel(renderer);
+            miscellaneousPanel(appCore);
     }
 
     ImGui::End();

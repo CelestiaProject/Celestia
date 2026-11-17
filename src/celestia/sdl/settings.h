@@ -10,6 +10,7 @@
 #pragma once
 
 #include <filesystem>
+#include <optional>
 
 #include <SDL_video.h>
 
@@ -42,6 +43,7 @@ struct Settings
     RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
     RenderLabels labelMode{ RenderLabels::I18nConstellationLabels };
     engine::TextureResolution textureResolution{ engine::TextureResolution::medres };
+    std::optional<unsigned int> sceneMSAASamples;
     BodyClassification orbitMask{ BodyClassification::DefaultOrbitMask };
     int ambientLight{ 0 }; // None
     int tintSaturation{ 100 };

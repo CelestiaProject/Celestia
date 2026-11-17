@@ -190,6 +190,20 @@ writeTextureResolution(std::ostream& os, const Settings& settings)
 }
 
 void
+readSceneMSAASamples(Settings& settings, std::string_view value)
+{
+    unsigned int samples;
+    if (readInt(value, samples))
+        settings.sceneMSAASamples = samples > 0 ? std::optional(samples) : std::nullopt;
+}
+
+void
+writeSceneMSAASamples(std::ostream& os, const Settings& settings)
+{
+    fmt::print(os, "{}", settings.sceneMSAASamples.value_or(0u));
+}
+
+void
 readOrbitMask(Settings& settings, std::string_view value)
 {
     readFlagsEnum(value, settings.orbitMask);
@@ -363,6 +377,7 @@ Settings::fromApplication(const AppWindow& appWindow, const CelestiaCore* appCor
         settings.renderFlags = renderer->getRenderFlags();
         settings.labelMode = renderer->getLabelMode();
         settings.textureResolution = renderer->getResolution();
+        settings.sceneMSAASamples = appCore->getSceneMSAASamples();
         settings.orbitMask = renderer->getOrbitMask();
         settings.ambientLight = static_cast<int>(renderer->getAmbientLightLevel() * 100.0f);
         settings.tintSaturation = static_cast<int>(renderer->getTintSaturation() * 100.0f);

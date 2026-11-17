@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <utility>
 
 #include <doctest.h>
@@ -233,6 +234,55 @@ TEST_CASE("Tone mapping configuration accepts new curves and preserves legacy mo
         REQUIRE(ReadCelestiaConfig(path, config, textures));
         CHECK(config.renderDetails.output.toneMapping == expected);
     }
+}
+
+TEST_CASE("MSAA configuration separates scene sampling from presentation")
+{
+    celestia::util::CreateLogger();
+    TemporaryDirectory directory;
+    const auto path = directory.getPath("msaa.cfg");
+    for (const auto& [settings, expectedScene, expectedPresent] : std::array{
+             std::tuple{ "AntialiasingSamples 4", 4u, 1u },
+             std::tuple{ "AntialiasingSamples 4 SceneAntialiasingSamples 1", 1u, 1u },
+             std::tuple{ "AntialiasingSamples 4 PresentAntialiasingSamples 2", 4u, 2u },
+             std::tuple{ "AntialiasingSamples 4 SceneAntialiasingSamples 8 PresentAntialiasingSamples 2", 8u, 2u },
+         })
+    {
+        CAPTURE(settings);
+        {
+            std::ofstream out(path);
+            out << "Configuration { " << settings << " }";
+            REQUIRE(out.good());
+        }
+        CelestiaConfig config;
+        celestia::engine::TexturePaths textures;
+        REQUIRE(ReadCelestiaConfig(path, config, textures));
+        CHECK(config.renderDetails.getSceneAASamples() == expectedScene);
+        CHECK(config.renderDetails.output.presentAaSamples == expectedPresent);
+    }
+}
+
+TEST_CASE("Layered MSAA configuration preserves explicit per-target overrides")
+{
+    celestia::util::CreateLogger();
+    TemporaryDirectory directory;
+    const auto path = directory.getPath("msaa.cfg");
+    CelestiaConfig config;
+    celestia::engine::TexturePaths textures;
+    {
+        std::ofstream out(path);
+        out << "Configuration { AntialiasingSamples 4 SceneAntialiasingSamples 2 }";
+        REQUIRE(out.good());
+    }
+    REQUIRE(ReadCelestiaConfig(path, config, textures));
+    {
+        std::ofstream out(path);
+        out << "Configuration { AntialiasingSamples 8 PresentAntialiasingSamples 1 }";
+        REQUIRE(out.good());
+    }
+    REQUIRE(ReadCelestiaConfig(path, config, textures));
+    CHECK(config.renderDetails.getSceneAASamples() == 2);
+    CHECK(config.renderDetails.output.presentAaSamples == 1);
 }
 
 TEST_SUITE_END();
