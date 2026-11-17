@@ -2,7 +2,6 @@
 // Licensed under the GNU General Public License, version 2 or later.
 
 #include <array>
-#include <cmath>
 #include <limits>
 
 #include <doctest.h>
@@ -40,26 +39,18 @@ TEST_SUITE_BEGIN("Star culling");
 TEST_CASE("Magnitude prefilter retains stars rounded onto the visibility boundary")
 {
     Fixture fixture;
-    bool found = false;
-    for (int i = 0; i < 50000; ++i)
-    {
-        Star star;
-        star.setPosition(Eigen::Vector3f(2.0f + i * 0.0007f, 0, 0));
-        float distance = star.getPosition().norm();
-        float cutoff = 4.0f - celestia::astro::distanceModulus(distance);
-        star.setAbsoluteMagnitude(std::nextafter(cutoff, std::numeric_limits<float>::infinity()));
-        if (star.getApparentMagnitude(distance) > 4.0f)
-            continue;
-        REQUIRE(fixture.processor.checkNode(star.getPosition(), 0.0f, 0.0f));
-        fixture.processor.process(star);
-        CHECK(fixture.handler.count == 1);
-        star.setAbsoluteMagnitude(100.0f);
-        fixture.processor.process(star);
-        CHECK(fixture.handler.count == 1);
-        found = true;
-        break;
-    }
-    REQUIRE(found);
+    Star star;
+    star.setPosition(Eigen::Vector3f(celestia::astro::LY_PER_PARSEC<float>, 0, 0));
+    // At one parsec, this positive magnitude rounds onto -5 even with excess precision.
+    star.setAbsoluteMagnitude(std::numeric_limits<float>::min());
+    Fixture::Processor processor{ &fixture.handler, Eigen::Vector3f::Zero(), fixture.planes, -5.0f };
+    REQUIRE(star.getApparentMagnitude(star.getPosition().norm()) == -5.0f);
+    REQUIRE(processor.checkNode(star.getPosition(), 0.0f, 0.0f));
+    processor.process(star);
+    CHECK(fixture.handler.count == 1);
+    star.setAbsoluteMagnitude(100.0f);
+    processor.process(star);
+    CHECK(fixture.handler.count == 1);
 }
 
 TEST_CASE("Magnitude prefilter does not discard extinction-brightened stars")
