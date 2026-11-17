@@ -20,8 +20,8 @@
 #include <iterator>
 #include <optional>
 #include <ostream>
+#include <sstream>
 #include <string_view>
-#include <system_error>
 #include <tuple>
 #include <utility>
 
@@ -1196,28 +1196,23 @@ float calculateShadow()
 std::string
 ReadShaderFile(const std::filesystem::path &path)
 {
-    std::error_code ec;
-    std::uintmax_t size = std::filesystem::file_size(path, ec);
-    if (ec)
-    {
-        GetLogger()->error("Failed to get file size of {}.\n", path);
-        return {};
-    }
-
     std::ifstream in(path);
-    if (!in.good())
+    if (!in)
     {
         GetLogger()->error("Failed to open {}.\n", path);
         return {};
     }
 
-    std::string s(size, '\0');
-    in.read(&s[0], size); /* Flawfinder: ignore */
+    std::ostringstream s;
+    s << in.rdbuf();
 
-    if (!in.good() && !in.eof())
+    if (s.fail() || (in.fail() && !in.eof()))
+    {
+        GetLogger()->error("Failed to read {}.\n", path);
         return {};
+    }
 
-    return s;
+    return std::move(s).str();
 }
 
 GLProgram
