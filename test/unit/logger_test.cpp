@@ -1,15 +1,20 @@
+#include <memory>
+#include <sstream>
+#include <string>
+
 #include <doctest.h>
 
-#include <sstream>
-#include <iostream>
-#include <memory>
 #include <celutil/logger.h>
 
 using celestia::util::Logger;
 using celestia::util::Level;
 using celestia::util::CreateLogger;
 
-#define CLEAR(s) s.str(""); s.clear()
+#define CLEAR(s) do       \
+{                         \
+    s.str(std::string{}); \
+    s.clear();            \
+} while (false)
 
 TEST_SUITE_BEGIN("Logger");
 
@@ -21,27 +26,27 @@ TEST_CASE("logger")
         auto logger = std::make_unique<Logger>(Level::Info, log, err);
 
         logger->error("number={}\n", 123);
-        REQUIRE(err.str() == "number=123\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "number=123\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->warn("string={}\n", "foobar");
-        REQUIRE(err.str() == "string=foobar\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "string=foobar\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->info("hello world\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str() == "hello world\n");
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view() == "hello world\n");
         CLEAR(log);
 
         logger->verbose("hi there\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
 
         logger->debug("s={} e={}\n", 1, 'a');
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
     }
 
     SUBCASE("With VERBOSE Level")
@@ -50,28 +55,28 @@ TEST_CASE("logger")
         auto logger = std::make_unique<Logger>(Level::Verbose, log, err);
 
         logger->error("number={}\n", 123);
-        REQUIRE(err.str() == "number=123\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "number=123\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->warn("string={}\n", "foobar");
-        REQUIRE(err.str() == "string=foobar\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "string=foobar\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->info("hello world\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str() == "hello world\n");
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view() == "hello world\n");
         CLEAR(log);
 
         logger->verbose("hi there\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str() == "hi there\n");
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view() == "hi there\n");
         CLEAR(log);
 
         logger->debug("s={} e={}\n", 1, 'a');
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
     }
 
     SUBCASE("With WARN Level")
@@ -80,26 +85,26 @@ TEST_CASE("logger")
         auto logger = std::make_unique<Logger>(Level::Warning, log, err);
 
         logger->error("number={}\n", 123);
-        REQUIRE(err.str() == "number=123\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "number=123\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->warn("string={}\n", "foobar");
-        REQUIRE(err.str() == "string=foobar\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "string=foobar\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->info("hello world\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
 
         logger->verbose("hi there\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
 
         logger->debug("s={} e={}\n", 1, 'a');
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
     }
 
     SUBCASE("With ERROR Level")
@@ -108,25 +113,25 @@ TEST_CASE("logger")
         auto logger = std::make_unique<Logger>(Level::Error, log, err);
 
         logger->error("number={}\n", 123);
-        REQUIRE(err.str() == "number=123\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "number=123\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->warn("string={}\n", "foobar");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
 
         logger->info("hello world\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
 
         logger->verbose("hi there\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
 
         logger->debug("s={} e={}\n", 1, 'a');
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view().empty());
     }
 
     SUBCASE("With DEBUG Level")
@@ -135,28 +140,28 @@ TEST_CASE("logger")
         auto logger = std::make_unique<Logger>(Level::Debug, log, err);
 
         logger->error("number={}\n", 123);
-        REQUIRE(err.str() == "number=123\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "number=123\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->warn("string={}\n", "foobar");
-        REQUIRE(err.str() == "string=foobar\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "string=foobar\n");
+        REQUIRE(log.view().empty());
         CLEAR(err);
 
         logger->info("hello world\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str() == "hello world\n");
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view() == "hello world\n");
         CLEAR(log);
 
         logger->verbose("hi there\n");
-        REQUIRE(err.str().empty());
-        REQUIRE(log.str() == "hi there\n");
+        REQUIRE(err.view().empty());
+        REQUIRE(log.view() == "hi there\n");
         CLEAR(log);
 
         logger->debug("s={} e={}\n", 1, 'a');
-        REQUIRE(err.str() == "s=1 e=a\n");
-        REQUIRE(log.str().empty());
+        REQUIRE(err.view() == "s=1 e=a\n");
+        REQUIRE(log.view().empty());
     }
 }
 

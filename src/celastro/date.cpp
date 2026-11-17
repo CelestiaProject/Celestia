@@ -109,7 +109,7 @@ MonthAbbreviations::MonthAbbreviations(const std::locale& loc)
         std::wostringstream stream;
         stream.imbue(loc);
         stream << std::put_time(&tm, L"%b");
-        abbreviations[i] = util::WideToUTF8(stream.str());
+        abbreviations[i] = util::WideToUTF8(stream.view());
     }
 }
 #endif
