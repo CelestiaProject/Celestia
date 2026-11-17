@@ -48,6 +48,33 @@ float smoothStep(float t)
 
 } // namespace
 
+celestia::engine::detail::LegacyPointAppearance
+celestia::engine::detail::legacyPointAppearance(float irradiance, float size, bool scaledDiscs,
+                                                float logExposure, float responseScale, float bias)
+{
+    LegacyPointAppearance result{ size, 0.0f, 0.0f, 0.0f };
+    result.alpha = std::max(0.0f, (std::log(irradiance) + logExposure) * responseScale + bias);
+    if (result.alpha > 1.0f)
+    {
+        float logExcess = (result.alpha - 1.0f) / responseScale;
+        if (scaledDiscs)
+        {
+            float discScale = std::min(MaxScaledDiscStarSize, std::exp2(0.3f * astro::LN_MAG * logExcess));
+            result.discSize *= std::max(1.0f, discScale);
+            result.glareAlpha = std::min(0.5f, discScale / 4.0f);
+            result.glareSize = result.discSize * 3.0f;
+        }
+        else
+        {
+            float discScale = std::min(100.0f, astro::LN_MAG * logExcess + 2.0f);
+            result.glareAlpha = std::min(GlareOpacity, (discScale - 2.0f) / 4.0f);
+            result.glareSize = 2.0f * discScale * size;
+        }
+        result.alpha = 1.0f;
+    }
+    return result;
+}
+
 float
 celestia::engine::detail::psfSoftClip(float brightness, float threshold)
 {
@@ -239,12 +266,7 @@ void PointStarRenderer::process(const Star& star, float distance, float irradian
             {
                 float pointSize, alpha, glareSize, glareAlpha;
                 float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
-                renderer->calculatePointSize(astro::irradianceToMag(irradiance),
-                                             size,
-                                             pointSize,
-                                             alpha,
-                                             glareSize,
-                                             glareAlpha);
+                renderer->calculatePointSize(irradiance, size, pointSize, alpha, glareSize, glareAlpha);
 
                 if (glareSize != 0.0f)
                     glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
@@ -258,8 +280,7 @@ void PointStarRenderer::process(const Star& star, float distance, float irradian
                 Vector3f starDir = relPos.normalized();
                 if (starDir.dot(viewNormal) > cosFOV)
                 {
-                    float appMag = astro::irradianceToMag(irradiance);
-                    float distr = min(1.0f, 3.5f * (labelThresholdMag - appMag)/labelThresholdMag);
+                    float distr = min(1.0f, labelResponseScale * std::log(irradiance / labelThresholdIrradiance));
                     Color color = Color(renderer->colors.StarLabel, distr * renderer->colors.StarLabel.alpha());
                     renderer->addBackgroundAnnotation(nullptr,
                                                       starDB->getStarName(star, true),

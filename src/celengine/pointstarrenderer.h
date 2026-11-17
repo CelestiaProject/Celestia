@@ -38,6 +38,17 @@ constexpr inline float GlareOpacity          = 0.65f;
 namespace celestia::engine::detail
 {
 
+struct LegacyPointAppearance
+{
+    float discSize;
+    float alpha;
+    float glareSize;
+    float glareAlpha;
+};
+
+LegacyPointAppearance legacyPointAppearance(float irradiance, float size, bool scaledDiscs,
+                                            float logExposure, float responseScale, float bias);
+
 float psfSoftClip(float brightness, float threshold);
 
 // Maps Vega-normalized irradiance to cone peak radiance; the integral is
@@ -105,7 +116,7 @@ public:
     const StarDatabase* starDB                  { nullptr };
     const ColorTemperatureTable* colorTemp      { nullptr };
     float SolarSystemMaxDistance                { 1.0f };
-    float labelThresholdIrradiance              { 0.0f };
+    float labelResponseScale                    { 0.0f };
     float cosFOV                                { 1.0f };
 
     StarStyle starStyle                         { StarStyle::FuzzyPointStars };

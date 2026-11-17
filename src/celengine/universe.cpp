@@ -489,7 +489,7 @@ public:
                    float);
     ~CloseDSOPicker() = default;
 
-    void process(const std::unique_ptr<DeepSkyObject>& dso, double distance, float appMag); //NOSONAR
+    void process(const std::unique_ptr<DeepSkyObject>& dso, double distance, float irradiance); //NOSONAR
 
 public:
     Eigen::Vector3d  pickOrigin;
@@ -857,12 +857,7 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
 
     DSOPicker picker(orig, dir, renderFlags, tolerance);
-    dsoCatalog->findVisibleDSOs(picker,
-                                orig,
-                                rotation.conjugate(),
-                                tolerance,
-                                1.0f,
-                                faintestMag);
+    dsoCatalog->findVisibleDSOs(picker, orig, rotation.conjugate(), tolerance, 1.0f, celestia::astro::magToIrradiance(faintestMag));
     if (picker.pickedDSO != nullptr)
         return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
     else

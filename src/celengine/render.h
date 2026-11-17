@@ -586,7 +586,7 @@ class Renderer
                          float discSizeInPixels,
                          const Matrices&);
 
-    void calculatePointSize(float appMag,
+    void calculatePointSize(float irradiance,
                             float size,
                             float &discSize,
                             float &alpha,
@@ -866,8 +866,8 @@ class Renderer
     celestia::gl::Buffer::SharedPtr m_rectBO;
     mutable bool m_rectInitialized{ false };
 
-    // Saturation magnitude used to calculate a point star size
-    float satPoint;
+    // Logarithmic exposure for the legacy point-style display response.
+    float legacyLogExposure{ 0.0f };
 
     std::unique_ptr<LODSphereMesh> m_lodSphere;
     std::unique_ptr<Texture> m_gaussianDiscTex;

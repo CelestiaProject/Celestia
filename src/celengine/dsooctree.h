@@ -26,12 +26,13 @@ namespace celestia::engine
 {
 
 using DSOOctree = StaticOctree<std::unique_ptr<DeepSkyObject>, double>;
+// Handlers receive Vega-normalized irradiance, capped at ten parsecs.
 using DSOHandler = OctreeProcessor<std::unique_ptr<DeepSkyObject>, double>;
 
 // This class searches the octree for objects that are likely to be visible
-// to a viewer with the specified obsPosition and limitingFactor.  The
+// to a viewer with the specified obsPosition and minimum irradiance. The
 // octreeProcessor is invoked for each potentially visible object --no object with
-// a property greater than limitingFactor will be processed, but
+// irradiance below the threshold will be processed, but
 // objects that are outside the view frustum may be.  Frustum tests are performed
 // only at the node level to optimize the octree traversal, so an exact test
 // (if one is required) is the responsibility of the callback method.
@@ -53,9 +54,7 @@ private:
     DSOOctree::PointType m_obsPosition;
     std::span<const PlaneType, 5> m_frustumPlanes;
     std::array<double, 5> m_projectedRadiusFactors;
-    float m_limitingFactor;
-
-    float m_dimmest{ 1000.0f };
+    float m_minimumIrradiance;
 };
 
 class DSOOctreeCloseObjectsProcessor
