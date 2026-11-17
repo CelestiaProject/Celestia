@@ -1,9 +1,7 @@
 #include <algorithm>
-#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <ios>
-#include <iterator>
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -31,15 +29,15 @@ private:
 celestia::util::TextureHandle
 ModelIO::getHandle(const std::filesystem::path& path, bool /* linear */)
 {
-    auto it = std::find(paths.cbegin(), paths.cend(), path);
-    if (it == paths.cend())
+    auto it = std::ranges::find(paths, path);
+    if (it == paths.end())
     {
         auto result = static_cast<celestia::util::TextureHandle>(paths.size());
         paths.push_back(path);
         return result;
     }
 
-    return static_cast<celestia::util::TextureHandle>(it - paths.cbegin());
+    return static_cast<celestia::util::TextureHandle>(it - paths.begin());
 }
 
 const std::filesystem::path*
@@ -81,9 +79,7 @@ TEST_CASE("CMOD binary to ASCII roundtrip")
     sourceData.clear();
     REQUIRE(sourceData.seekg(0, std::ios_base::beg).good());
 
-    std::istreambuf_iterator<char> end;
-    REQUIRE(std::equal(std::istreambuf_iterator<char>(sourceData), end,
-                       std::istreambuf_iterator<char>(roundtrippedData), end));
+    REQUIRE(sourceData.view() == roundtrippedData.view());
 }
 
 TEST_SUITE_END();
