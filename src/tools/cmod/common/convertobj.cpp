@@ -305,7 +305,7 @@ WavefrontLoader::reportError(const std::string& message)
     //cerr << message << endl;
     std::ostringstream os;
     os << "Line " << m_lineNumber << ": " << message;
-    m_errorMessage = os.str();
+    m_errorMessage = std::move(os).str();
 
     m_model = nullptr;
 }
