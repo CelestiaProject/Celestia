@@ -436,6 +436,7 @@ AtmosphereRenderer::render(
         m_renderer.m_lodSphere->render(0,
                                        shellFrustum,
                                        ri.pixWidth,
+                                       {},
                                        nullptr);
     }
 
@@ -466,8 +467,8 @@ AtmosphereRenderer::render(
         m_renderer.m_lodSphere->render(0,
                                        shellFrustum,
                                        ri.pixWidth,
-                                       scatteringProg,
-                                       ringShadowTex);
+                                       std::span{&ringShadowTex, ringShadowTex ? 1U : 0U},
+                                       scatteringProg);
     }
 
     glFrontFace(GL_CCW);

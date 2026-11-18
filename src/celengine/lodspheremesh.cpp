@@ -16,9 +16,6 @@
 #include <cmath>
 #include <limits>
 #include <numbers>
-#include <span>
-
-#include <boost/container/static_vector.hpp>
 
 #include <celengine/shadermanager.h>
 #include <celengine/texture.h>
@@ -300,45 +297,19 @@ LODSphereMesh::~LODSphereMesh()
 void
 LODSphereMesh::render(const math::Frustum& frustum,
                       float pixWidth,
-                      Texture** tex,
-                      int nTextures,
+                      std::span<Texture* const> tex,
                       CelestiaGLProgram *program)
 {
-    render(Normals, frustum, pixWidth, tex, nTextures, program);
+    render(Normals, frustum, pixWidth, tex, program);
 }
-
-
-void
-LODSphereMesh::render(unsigned int attributes,
-                      const math::Frustum& frustum,
-                      float pixWidth,
-                      CelestiaGLProgram *program,
-                      Texture* tex0,
-                      Texture* tex1,
-                      Texture* tex2,
-                      Texture* tex3)
-{
-    boost::container::static_vector<Texture*, 4> tex;
-    if (tex0 != nullptr)
-        tex.push_back(tex0);
-    if (tex1 != nullptr)
-        tex.push_back(tex1);
-    if (tex2 != nullptr)
-        tex.push_back(tex2);
-    if (tex3 != nullptr)
-        tex.push_back(tex3);
-    render(attributes, frustum, pixWidth,
-           tex.data(), static_cast<int>(tex.size()), program);
-}
-
 
 void LODSphereMesh::render(unsigned int attributes,
                            const math::Frustum& frustum,
                            float pixWidth,
-                           Texture** tex,
-                           int nTextures,
+                           std::span<Texture* const> tex,
                            CelestiaGLProgram *program)
 {
+    assert(program || tex.empty());
     int lod = 64;
     int lodBias = getSphereLOD(pixWidth);
 
@@ -360,8 +331,7 @@ void LODSphereMesh::render(unsigned int attributes,
         phiExtent /= split;
     }
 
-    if (tex == nullptr)
-        nTextures = 0;
+    auto nTextures = static_cast<int>(tex.size());
 
     RenderInfo ri(step, attributes, frustum);
 

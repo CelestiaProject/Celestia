@@ -2045,8 +2045,11 @@ static void renderSphereUnlit(const RenderInfo& ri,
     ps.depthTest = true;
     r->setPipelineState(ps);
 
+    // Version of Boost in Ubuntu 22.04 is too old to have the built-in
+    // conversion to std::span. So write it manually.
     lodSphere->render(frustum, ri.pixWidth,
-                      textures.data(), static_cast<int>(textures.size()), prog);
+                      std::span{textures.data(), textures.size()},
+                      prog);
 }
 
 
@@ -2076,7 +2079,7 @@ static void renderCloudsUnlit(const RenderInfo& ri,
     ps.depthTest = true;
     r->setPipelineState(ps);
 
-    lodSphere->render(frustum, ri.pixWidth, &cloudTex, 1, prog);
+    lodSphere->render(frustum, ri.pixWidth, std::span{&cloudTex, 1}, prog);
 }
 
 void
