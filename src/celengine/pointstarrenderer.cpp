@@ -145,7 +145,7 @@ PointStarRenderer::PointStarRenderer() :
 {
 }
 
-void PointStarRenderer::process(const Star& star, float distance, float irradiance)
+void PointStarRenderer::process(const Star& star, float distance, float irradiance) // NOSONAR(cpp:S3776)
 {
     if (distance > distanceLimit)
         return;

@@ -49,8 +49,7 @@ StarOctreeVisibleObjectsProcessor::StarOctreeVisibleObjectsProcessor(StarHandler
     m_minimumIrradiance(minimumIrradiance),
     m_limitingMagnitude(minimumIrradiance > 0.0f
                             ? std::nextafter(astro::irradianceToMag(minimumIrradiance), std::numeric_limits<float>::infinity())
-                            : std::numeric_limits<float>::infinity()),
-    m_dimmest(std::numeric_limits<float>::infinity())
+                            : std::numeric_limits<float>::infinity())
 {
     for (int i = 0; i < 5; ++i)
         m_projectedRadiusFactors[i] = m_frustumPlanes[i].normal().cwiseAbs().sum();
@@ -73,11 +72,10 @@ StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
-
     // Node factors remain catalog absolute magnitudes; compare their maximum
     // possible irradiance with the same threshold used for individual stars.
-    if (!(minDistance <= 0.0f
+    if (float minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
+        !(minDistance <= 0.0f
           || astro::absMagToIrradiance(factor, astro::lightYearsToKilometers(minDistance)) >= m_minimumIrradiance))
         return false;
 

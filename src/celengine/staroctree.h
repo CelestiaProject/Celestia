@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstdint>
+#include <limits>
 #include <span>
 
 #include <Eigen/Geometry>
@@ -51,7 +52,7 @@ private:
     std::array<float, 5> m_projectedRadiusFactors;
     float m_minimumIrradiance;
     float m_limitingMagnitude;
-    float m_dimmest;
+    float m_dimmest{ std::numeric_limits<float>::infinity() };
 };
 
 class StarOctreeCloseObjectsProcessor
