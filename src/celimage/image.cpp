@@ -161,7 +161,7 @@ Image::Image(PixelFormat fmt, std::int32_t w, std::int32_t h, std::int32_t mip) 
     assert(height > 0 && height <= MAX_DIMENSION);
 
     pitch = pad(w * components);
-    pixels = std::make_unique<std::uint8_t[]>(size);
+    pixels = std::make_unique<std::byte[]>(size);
 }
 
 bool
@@ -212,19 +212,19 @@ Image::getComponents() const
     return components;
 }
 
-std::uint8_t*
+std::byte*
 Image::getPixels()
 {
     return pixels.get();
 }
 
-const std::uint8_t*
+const std::byte*
 Image::getPixels() const
 {
     return pixels.get();
 }
 
-std::uint8_t*
+std::byte*
 Image::getPixelRow(std::int32_t mip, std::int32_t row)
 {
     if (mip >= mipLevels || row >= std::max(height >> mip, 1))
@@ -237,13 +237,13 @@ Image::getPixelRow(std::int32_t mip, std::int32_t row)
     return getMipLevel(mip) + row * pitch;
 }
 
-std::uint8_t*
+std::byte*
 Image::getPixelRow(std::int32_t row)
 {
     return getPixelRow(0, row);
 }
 
-std::uint8_t*
+std::byte*
 Image::getMipLevel(std::int32_t mip)
 {
     if (mip >= mipLevels)
@@ -256,7 +256,7 @@ Image::getMipLevel(std::int32_t mip)
     return pixels.get() + offset;
 }
 
-const std::uint8_t*
+const std::byte*
 Image::getMipLevel(int mip) const
 {
     if (mip >= mipLevels)
@@ -337,7 +337,7 @@ Image::computeNormalMap(float scale, bool wrap) const
 
     auto normalMap = std::make_unique<Image>(PixelFormat::RGBA, width, height);
 
-    std::uint8_t* nmPixels = normalMap->getPixels();
+    std::byte* nmPixels = normalMap->getPixels();
     std::int32_t nmPitch = normalMap->getPitch();
 
     // Compute normals using differences between adjacent texels.
@@ -359,10 +359,10 @@ Image::computeNormalMap(float scale, bool wrap) const
             float rmag = 1.0f / std::sqrt(dx * dx + dy * dy + 1.0f);
 
             std::int32_t n = rowBase + j * 4;
-            nmPixels[n]     = static_cast<std::uint8_t>(128 + 127 * dx * rmag);
-            nmPixels[n + 1] = static_cast<std::uint8_t>(128 + 127 * dy * rmag);
-            nmPixels[n + 2] = static_cast<std::uint8_t>(128 + 127 * rmag);
-            nmPixels[n + 3] = 255;
+            nmPixels[n]     = static_cast<std::byte>(128 + 127 * dx * rmag);
+            nmPixels[n + 1] = static_cast<std::byte>(128 + 127 * dy * rmag);
+            nmPixels[n + 2] = static_cast<std::byte>(128 + 127 * rmag);
+            nmPixels[n + 3] = std::byte{255};
         }
     }
 
@@ -374,24 +374,24 @@ void Image::forceLinear()
     format = getLinearFormat(format);
 }
 
-std::unique_ptr<std::uint8_t[]>
-expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
+std::unique_ptr<std::byte[]>
+expandLuminanceToRGBA(const std::byte* src, std::int32_t width, std::int32_t height)
 {
-    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
+    auto dst = std::make_unique<std::byte[]>(width * height * 4);
     for (std::int32_t i = 0; i < width * height; ++i)
     {
         dst[i * 4 + 0] = src[i];
         dst[i * 4 + 1] = src[i];
         dst[i * 4 + 2] = src[i];
-        dst[i * 4 + 3] = 255;
+        dst[i * 4 + 3] = std::byte{255};
     }
     return dst;
 }
 
-std::unique_ptr<std::uint8_t[]>
-expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height)
+std::unique_ptr<std::byte[]>
+expandLuminanceAlphaToRGBA(const std::byte* src, std::int32_t width, std::int32_t height)
 {
-    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
+    auto dst = std::make_unique<std::byte[]>(width * height * 4);
     for (std::int32_t i = 0; i < width * height; ++i)
     {
         dst[i * 4 + 0] = src[i * 2];

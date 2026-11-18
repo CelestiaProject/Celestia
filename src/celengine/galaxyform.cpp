@@ -48,7 +48,7 @@ buildGalacticForm(const std::filesystem::path& filename)
     rng.seed(1312);
     for (int i = 0; i < width * height; i++)
     {
-        std::uint8_t value = img->getPixels()[rgb * i];
+        auto value = static_cast<std::uint8_t>(img->getPixels()[rgb * i]);
         if (value > 10)
         {
             auto idxf = static_cast<float>(i);

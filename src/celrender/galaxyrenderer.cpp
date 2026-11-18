@@ -11,7 +11,7 @@
 #include "galaxyrenderer.h"
 
 #include <cassert>
-#include <cstdint>
+#include <cstddef>
 #include <cmath>
 #include <memory>
 #include <span>
@@ -36,14 +36,14 @@ constexpr int kGalaxyTextureSize = 128;
 constexpr float kSpriteScaleFactor = 1.0f / 1.55f;
 
 void
-galaxyTextureEval(float u, float v, std::uint8_t *pixel)
+galaxyTextureEval(float u, float v, std::byte *pixel)
 {
     float r = std::max(0.0f, 0.9f - std::hypot(u, v));
-    *pixel = static_cast<std::uint8_t>(r * 255.99f);
+    *pixel = static_cast<std::byte>(r * 255.99f);
 }
 
 void
-colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
+colorTextureEval(float u, float /*v*/, std::byte *pixel)
 {
     auto i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
 
@@ -52,7 +52,7 @@ colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
     float hue = (i < 28)
         ? 25.0f * std::tanh(0.0615f * static_cast<float>(27 - i))
         : 245.0f;
-    Color::fromHSV(hue, 0.20f, 1.0f).get(pixel);
+    Color::fromHSV(hue, 0.20f, 1.0f).get(std::span<std::byte, 4>(pixel, 4));
 }
 
 } // anonymous namespace

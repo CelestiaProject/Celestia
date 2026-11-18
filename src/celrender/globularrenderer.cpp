@@ -101,7 +101,7 @@ relStarDensity(float eta)
 }
 
 void
-centerCloudTexEval(float u, float v, std::uint8_t *pixel)
+centerCloudTexEval(float u, float v, std::byte *pixel)
 {
     /*! For reasons of speed, calculate central "cloud" texture only for
      *  8 bins of King_1962 concentration, c = CBin, XI(CBin), RRatio(CBin).
@@ -125,11 +125,11 @@ centerCloudTexEval(float u, float v, std::uint8_t *pixel)
     float profile_2d = (1.0f / std::sqrt(rho2) - 1.0f)/c2d + 1.0f;
     profile_2d = profile_2d * profile_2d;
 
-    *pixel = static_cast<std::uint8_t>(relStarDensity(eta) * profile_2d * 255.99f);
+    *pixel = static_cast<std::byte>(relStarDensity(eta) * profile_2d * 255.99f);
 }
 
 void
-colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
+colorTextureEval(float u, float /*v*/, std::byte *pixel)
 {
     auto i = static_cast<int>((u * 0.5f + 0.5f) * 255.99f); // [-1, 1] -> [0, 255]
 
@@ -150,7 +150,7 @@ colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
     if (i == 255)
     {
         // Red Giant star color: i = 255:
-        Color::fromHSV(25.0f, 0.65f, 1.0f).get(pixel);
+        Color::fromHSV(25.0f, 0.65f, 1.0f).get(std::span<std::byte, 4>{pixel, 4});
     }
     else
     {
@@ -170,7 +170,7 @@ colorTextureEval(float u, float /*v*/, std::uint8_t *pixel)
         if (hue > 60.0 && hue < 180.0)
             sat = 0.0f;
 
-        Color::fromHSV(hue, sat, 0.85f).get(pixel);
+        Color::fromHSV(hue, sat, 0.85f).get(std::span<std::byte, 4>{pixel, 4});
     }
 }
 
@@ -348,7 +348,7 @@ buildGlobularForm(GlobularForm& globularForm, float c)
 }
 
 void
-globularTextureEval(float u, float v, std::uint8_t *pixel)
+globularTextureEval(float u, float v, std::byte *pixel)
 {
     // use an exponential luminosity shape for the individual stars
     // giving sort of a halo for the brighter (i.e.bigger) stars.
@@ -356,7 +356,7 @@ globularTextureEval(float u, float v, std::uint8_t *pixel)
     static const float Lumi0 = std::exp(-kLumiShape);
     float lumi = std::max(0.0f, std::exp(-kLumiShape * std::hypot(u, v)) - Lumi0);
 
-    *pixel = static_cast<std::uint8_t>(lumi * 255.99f);
+    *pixel = static_cast<std::byte>(lumi * 255.99f);
 }
 
 float

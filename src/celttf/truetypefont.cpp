@@ -382,9 +382,9 @@ TextureFontPrivate::buildAtlas()
         auto bitmapRows = static_cast<int>(g->bitmap.rows);
         for (int y = 0; y < bitmapRows; y++)
         {
-            std::uint8_t *dst = img->getPixelRow(oy + y) + ox * img->getComponents();
-            const std::uint8_t *src = g->bitmap.buffer + y * g->bitmap.width;
-            memcpy(dst, src, g->bitmap.width);
+            std::byte *dst = img->getPixelRow(oy + y) + ox * img->getComponents();
+            const unsigned char *src = g->bitmap.buffer + y * g->bitmap.width;
+            std::memcpy(dst, src, g->bitmap.width);
         }
 
         c.tx = static_cast<float>(ox) / static_cast<float>(m_texWidth);

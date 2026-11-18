@@ -203,8 +203,8 @@ LargeStarRenderer::addStar(const Eigen::Vector3f &center,
                            float                  alpha)
 {
     assert(m_nStars < m_capacity);
-    std::array<unsigned char, 4> packedColor{};
-    color.get(packedColor.data());
+    std::array<std::uint8_t, 4> packedColor{};
+    color.get(packedColor);
 
     StarInstance &out = m_instances[static_cast<std::size_t>(m_nStars)];
     out.center     = center;

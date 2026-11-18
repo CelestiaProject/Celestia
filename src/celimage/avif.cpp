@@ -153,7 +153,7 @@ LoadAVIFImage(const std::filesystem::path& filename)
 
     bool isLinear = IsLinearAVIF(decoder->image);
     auto image = std::make_unique<Image>(isLinear ? PixelFormat::RGBA : PixelFormat::sRGBA, rgb.width, rgb.height);
-    rgb.pixels = image->getPixels();
+    rgb.pixels = reinterpret_cast<std::uint8_t*>(image->getPixels());
     rgb.rowBytes = image->getWidth() * image->getComponents();
 
     if (avifImageYUVToRGB(decoder->image, &rgb) != AVIF_RESULT_OK)

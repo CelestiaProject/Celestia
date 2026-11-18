@@ -11,6 +11,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <list>
 #include <memory>
 #include <optional>
@@ -241,7 +242,7 @@ class Renderer
     bool getSeparateRayleighMieScaleHeights() const noexcept;
     bool getSeparateRayleighMieScaleHeights(const Atmosphere&) const noexcept;
 
-    bool captureFrame(int, int, int, int, celestia::engine::PixelFormat format, unsigned char*) const;
+    bool captureFrame(int, int, int, int, celestia::engine::PixelFormat format, std::byte*) const;
 
     void renderMarker(celestia::engine::MarkerSymbol symbol,
                       float size,

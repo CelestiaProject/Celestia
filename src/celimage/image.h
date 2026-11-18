@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <filesystem>
 #include <memory>
@@ -41,12 +42,12 @@ public:
     std::int32_t getMipLevelCount() const;
     PixelFormat getFormat() const;
     std::int32_t getComponents() const;
-    std::uint8_t* getPixels();
-    const std::uint8_t* getPixels() const;
-    std::uint8_t* getPixelRow(std::int32_t row);
-    std::uint8_t* getPixelRow(std::int32_t mip, std::int32_t row);
-    std::uint8_t* getMipLevel(std::int32_t mip);
-    const std::uint8_t* getMipLevel(std::int32_t mip) const;
+    std::byte* getPixels();
+    const std::byte* getPixels() const;
+    std::byte* getPixelRow(std::int32_t row);
+    std::byte* getPixelRow(std::int32_t mip, std::int32_t row);
+    std::byte* getMipLevel(std::int32_t mip);
+    const std::byte* getMipLevel(std::int32_t mip) const;
     std::int32_t getSize() const;
     std::int32_t getMipLevelSize(std::int32_t mip) const;
 
@@ -70,13 +71,13 @@ private:
     std::int32_t components;
     PixelFormat format;
     std::int32_t size;
-    std::unique_ptr<std::uint8_t[]> pixels;
+    std::unique_ptr<std::byte[]> pixels;
 };
 
-std::unique_ptr<std::uint8_t[]>
-expandLuminanceToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height);
+std::unique_ptr<std::byte[]>
+expandLuminanceToRGBA(const std::byte* src, std::int32_t width, std::int32_t height);
 
-std::unique_ptr<std::uint8_t[]>
-expandLuminanceAlphaToRGBA(const std::uint8_t* src, std::int32_t width, std::int32_t height);
+std::unique_ptr<std::byte[]>
+expandLuminanceAlphaToRGBA(const std::byte* src, std::int32_t width, std::int32_t height);
 
 } // namespace celestia::engine

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstdint>
 #include <cstdlib>
 #include <cmath>
 #include <span>
@@ -100,8 +101,8 @@ needsRGBAExpansion(PixelFormat format, [[maybe_unused]] bool needsMipmap)
 #endif
 }
 
-std::unique_ptr<std::uint8_t[]>
-expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
+std::unique_ptr<std::byte[]>
+expandToRGBA(const std::byte* src, int width, int height, PixelFormat format)
 {
     if (format == PixelFormat::sLuminance)
         return expandLuminanceToRGBA(src, width, height);
@@ -109,13 +110,13 @@ expandToRGBA(const std::uint8_t* src, int width, int height, PixelFormat format)
         return expandLuminanceAlphaToRGBA(src, width, height);
 
     // RGB → RGBA
-    auto dst = std::make_unique<std::uint8_t[]>(width * height * 4);
+    auto dst = std::make_unique<std::byte[]>(width * height * 4);
     for (int i = 0; i < width * height; ++i)
     {
         dst[i * 4 + 0] = src[i * 3 + 0];
         dst[i * 4 + 1] = src[i * 3 + 1];
         dst[i * 4 + 2] = src[i * 3 + 2];
-        dst[i * 4 + 3] = 255;
+        dst[i * 4 + 3] = std::byte{255};
     }
     return dst;
 }
@@ -533,8 +534,8 @@ LoadPrecomputedTileMipMaps(const Image& img, Image& tile,
             int srcV = v * tileMipHeight / 4;
             int tileOffset = srcV * srcBytesPerRow + srcU * blockSize;
 
-            const std::uint8_t *imgMip = img.getMipLevel(std::min(mip, mipLevelCount));
-            std::uint8_t *tileMip = tile.getMipLevel(mip);
+            const std::byte *imgMip = img.getMipLevel(std::min(mip, mipLevelCount));
+            std::byte *tileMip = tile.getMipLevel(mip);
 
             for (int y = 0; y < vBlocks; y++)
             {
@@ -579,7 +580,7 @@ ComputeTileMipMaps(const Image& img, Image& tile,
     }
     else
     {
-        const std::uint8_t* tilePixels = img.getPixels() +
+        const std::byte* tilePixels = img.getPixels() +
             (v * tileHeight * img.getWidth() + u * tileWidth) * components;
         for (int y = 0; y < tileHeight; y++)
         {
