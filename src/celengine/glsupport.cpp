@@ -12,6 +12,7 @@ namespace celestia::gl
 CELAPI bool OES_texture_border_clamp          = false; //NOSONAR
 #else
 CELAPI bool ARB_invalidate_subdata             = false; //NOSONAR
+CELAPI bool ARB_texture_storage                = false; //NOSONAR
 #endif
 CELAPI bool dualSourceBlending                 = false; //NOSONAR
 CELAPI bool colorBufferHalfFloat               = false; //NOSONAR
@@ -64,6 +65,7 @@ bool init(std::span<const std::string> ignore) noexcept
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_EXT_texture_compression_bptc");
 #else
     ARB_invalidate_subdata         = check_extension(ignore, "GL_ARB_invalidate_subdata");
+    ARB_texture_storage            = check_extension(ignore, "GL_ARB_texture_storage");
     ARB_texture_compression_bptc   = check_extension(ignore, "GL_ARB_texture_compression_bptc");
     dualSourceBlending             = true;
     colorBufferHalfFloat           = true;

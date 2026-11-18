@@ -18,6 +18,17 @@
 namespace
 {
 
+inline bool
+hasTextureStorage()
+{
+#ifdef GL_ES
+    return true;
+#else
+    return celestia::gl::checkVersion(celestia::gl::GL_4_2)
+        || celestia::gl::ARB_texture_storage;
+#endif
+}
+
 // glInvalidateFramebuffer: core in GLES 3.0 and desktop GL 4.3 (or via GL_ARB_invalidate_subdata).
 inline bool
 hasInvalidateFramebuffer()
@@ -176,7 +187,10 @@ FramebufferObject::generateColorTexture()
     GLenum format = m_useFloatColor ? GL_RGBA : GL_RGB;
     GLenum type = m_useFloatColor ? GL_FLOAT : GL_UNSIGNED_BYTE;
 #endif
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, type, nullptr);
+    if (hasTextureStorage())
+        glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, m_width, m_height);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, type, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -206,8 +220,10 @@ FramebufferObject::generateDepthTexture()
 
     // Set the texture dimensions
     GLint internalFormat = GL_DEPTH_COMPONENT24;
-    GLenum type = GL_UNSIGNED_INT;
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, GL_DEPTH_COMPONENT, type, nullptr);
+    if (hasTextureStorage())
+        glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, m_width, m_height);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
 
     // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);

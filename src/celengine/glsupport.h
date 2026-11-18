@@ -46,6 +46,7 @@ enum Version
 
 #ifndef GL_ES
 extern CELAPI bool ARB_invalidate_subdata; //NOSONAR
+extern CELAPI bool ARB_texture_storage; //NOSONAR
 #endif
 extern CELAPI bool dualSourceBlending; //NOSONAR
 extern CELAPI bool colorBufferHalfFloat; //NOSONAR
