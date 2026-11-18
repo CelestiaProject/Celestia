@@ -12,6 +12,7 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 #include <unordered_map>
 #include <vector>
 
@@ -44,12 +45,9 @@ public:
     LODSphereMesh& operator=(LODSphereMesh&&) = delete;
 
     void render(unsigned int attributes, const celestia::math::Frustum&, float pixWidth,
-                Texture** tex, int nTextures, CelestiaGLProgram *);
-    void render(unsigned int attributes, const celestia::math::Frustum&, float pixWidth, CelestiaGLProgram *,
-                Texture* tex0 = nullptr, Texture* tex1 = nullptr,
-                Texture* tex2 = nullptr, Texture* tex3 = nullptr);
+                std::span<Texture* const> tex, CelestiaGLProgram *);
     void render(const celestia::math::Frustum&, float pixWidth,
-                Texture** tex, int nTextures, CelestiaGLProgram *);
+                std::span<Texture* const> tex, CelestiaGLProgram *);
 
     enum
     {

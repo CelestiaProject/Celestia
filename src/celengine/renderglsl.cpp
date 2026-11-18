@@ -206,7 +206,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
         renderer->setPipelineState(ps);
 
         glDisable(GL_CULL_FACE);
-        lodSphere->render(LODSphereMesh::Normals, frustum, 1.0f, nullptr, 0, prog);
+        lodSphere->render(LODSphereMesh::Normals, frustum, 1.0f, {}, prog);
         glEnable(GL_CULL_FACE);
         return;
     }
@@ -377,9 +377,11 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
-    lodSphere->render(attributes,
-                      frustum, ri.pixWidth,
-                      textures.data(), static_cast<int>(textures.size()), prog);
+    // Version of Boost in Ubuntu 22.04 is too old to have the built-in
+    // conversion to std::span. So write it manually.
+    lodSphere->render(attributes, frustum, ri.pixWidth,
+                      std::span{textures.data(), textures.size()},
+                      prog);
 }
 
 
@@ -669,9 +671,9 @@ void renderClouds_GLSL(const RenderInfo& ri,
 
     auto endTextures = std::remove(textures.begin(), textures.end(), nullptr);
     textures.erase(endTextures, textures.end());
-    lodSphere->render(attributes,
-                      frustum, ri.pixWidth,
-                      textures.data(), static_cast<int>(textures.size()), prog);
+    lodSphere->render(attributes, frustum, ri.pixWidth,
+                      std::span{textures.data(), textures.size()},
+                      prog);
 
     prog->textureOffset = 0.0f;
 }
