@@ -251,7 +251,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
     Texture* specTex = nullptr;
     Texture* emissiveTex = nullptr;
 
-    shaderProps.texUsage = TexUsage::SharedTextureCoords;
+    shaderProps.texUsage = TexUsage::None;
     shaderProps.separateRayleighMieScaleHeights = false;
 
     if (useNormals)
@@ -573,7 +573,7 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
     Texture* baseTex = nullptr;
 
     shaderProps.lightModel = LightingModel::EmissiveModel;
-    shaderProps.texUsage = TexUsage::SharedTextureCoords;
+    shaderProps.texUsage = TexUsage::None;
 
     if (util::TextureHandle diffuseMap = m.getMap(cmod::TextureSemantic::DiffuseMap);
         diffuseMap != util::TextureHandle::Invalid && (useTexCoords || usePointSize))
@@ -615,7 +615,7 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
         textures[i]->bind();
     }
 
-    prog->lights[0].diffuse = m.diffuse.toVector3();
+    prog->lights.diffuse[0] = m.diffuse.toVector3();
     prog->opacity = m.opacity;
 
     if (usePointSize)

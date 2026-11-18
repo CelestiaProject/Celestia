@@ -412,10 +412,7 @@ void LODSphereMesh::render(unsigned int attributes,
     if ((attributes & Normals) != 0)
         glEnableVertexAttribArray(CelestiaGLProgram::NormalAttributeIndex);
 
-    for (int i = 0; i < nTextures; i++)
-    {
-        glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + i);
-    }
+    glEnableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
 
     if ((attributes & Tangents) != 0)
         glEnableVertexAttribArray(CelestiaGLProgram::TangentAttributeIndex);
@@ -476,13 +473,12 @@ void LODSphereMesh::render(unsigned int attributes,
     for (int i = 0; i < nTextures; i++)
     {
         tex[i]->endUsage();
-        glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex + i);
     }
 
+    glDisableVertexAttribArray(CelestiaGLProgram::TextureCoord0AttributeIndex);
+
     if (nTextures > 1)
-    {
         glActiveTexture(GL_TEXTURE0);
-    }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -597,12 +593,9 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
                               stride, PTR(0));
     }
 
-    for (int tc = 0; tc < nTexturesUsed; tc++)
-    {
-        glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex + tc,
-                              2, GL_FLOAT, GL_FALSE,
-                              stride, PTR(texCoordOffset * sizeof(float)));
-    }
+    glVertexAttribPointer(CelestiaGLProgram::TextureCoord0AttributeIndex,
+                          2, GL_FLOAT, GL_FALSE,
+                          stride, PTR(texCoordOffset * sizeof(float)));
 
     if ((ri.attributes & Tangents) != 0)
     {
@@ -663,8 +656,8 @@ LODSphereMesh::renderSection(int phi0, int theta0, int extent,
             tc.u0[tex] = tc.u0[tex] * tile.du + tile.u;
             tc.v0[tex] = tc.v0[tex] * tile.dv + tile.v;
 
-            program->texCoordTransforms[tex].base = Eigen::Vector2f(tc.u0[tex], tc.v0[tex]);
-            program->texCoordTransforms[tex].delta = Eigen::Vector2f(-tc.du[tex], -tc.dv[tex]);
+            // pack two 2-element vectors: first two elements are base, last two are delta
+            program->texCoordTransforms[tex] = Eigen::Vector4f(tc.u0[tex], tc.v0[tex], -tc.du[tex], -tc.dv[tex]);
 
             // We track the current texture to avoid unnecessary and costly
             // texture state changes.
