@@ -13,6 +13,8 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
+#include <span>
 #include <string_view>
 
 #include <Eigen/Core>
@@ -71,12 +73,14 @@ public:
         return *this;
     }
 
-    inline void get(std::uint8_t *rgba) const
+    inline void get(std::span<std::byte, 4> rgba) const
     {
-        rgba[0] = c[Red];
-        rgba[1] = c[Green];
-        rgba[2] = c[Blue];
-        rgba[3] = c[Alpha];
+        std::memcpy(rgba.data(), c.data(), rgba.size_bytes());
+    }
+
+    inline void get(std::span<std::uint8_t, 4> rgba) const
+    {
+        std::memcpy(rgba.data(), c.data(), rgba.size_bytes());
     }
 
     constexpr const std::uint8_t* data() const { return c.data(); }

@@ -3353,7 +3353,7 @@ void CelestiaCore::getCaptureInfo(std::span<int, 4> viewport, celestia::engine::
     format = renderer->getPreferredCaptureFormat();
 }
 
-bool CelestiaCore::captureImage(std::uint8_t* buffer,
+bool CelestiaCore::captureImage(std::byte* buffer,
                                 std::span<const int, 4> viewport,
                                 celestia::engine::PixelFormat format) const
 {

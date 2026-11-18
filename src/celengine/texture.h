@@ -11,19 +11,16 @@
 #pragma once
 
 #include <array>
-#include <cstdint>
+#include <cstddef>
 #include <filesystem>
 #include <memory>
 #include <span>
-#include <string>
 
 #include <Eigen/Core>
 
 #include <celimage/image.h>
 #include <celutil/classops.h>
 #include <celutil/color.h>
-
-typedef void (*ProceduralTexEval)(float, float, float, std::uint8_t*);
 
 namespace celestia::engine
 {
@@ -156,7 +153,7 @@ ImageTexture::createProcedural(int width, int height,
     for (int y = 0; y < height; ++y)
     {
         float v = (static_cast<float>(y) + 0.5f) / fheight * 2 - 1;
-        std::uint8_t* ptr = img.getPixelRow(y);
+        std::byte* ptr = img.getPixelRow(y);
         for (int x = 0; x < width; ++x)
         {
             float u = (static_cast<float>(x) + 0.5f) / fwidth * 2 - 1;
@@ -226,7 +223,7 @@ CubeMap::createProcedural(int size, celestia::engine::PixelFormat format, F func
         for (int y = 0; y < size; ++y)
         {
             float t = (static_cast<float>(y) + 0.5f) / fsize * 2 - 1;
-            std::uint8_t* ptr = face.getPixelRow(y);
+            std::byte* ptr = face.getPixelRow(y);
             for (int x = 0; x < size; ++x)
             {
                 float s = (static_cast<float>(x) + 0.5f) / fsize * 2 - 1;

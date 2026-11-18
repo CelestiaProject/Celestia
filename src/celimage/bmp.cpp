@@ -260,8 +260,8 @@ loadBMPHeaders(std::istream& in, BMPInfo& info, const std::filesystem::path& fil
 }
 
 void
-processRow(const std::uint8_t* src,
-           std::uint8_t* dst,
+processRow(const std::byte* src,
+           std::byte* dst,
            std::int32_t width,
            std::size_t srcOffset)
 {
@@ -276,25 +276,25 @@ processRow(const std::uint8_t* src,
 }
 
 void
-process8BppRow(const std::uint8_t* src,
-               std::uint8_t* dst,
+process8BppRow(const std::byte* src,
+               std::byte* dst,
                std::int32_t width,
                std::span<const PaletteEntry> palette)
 {
     for (std::int32_t x = 0; x < width; ++x)
     {
-        const PaletteEntry& color = palette[*src];
-        dst[0] = color.red;
-        dst[1] = color.green;
-        dst[2] = color.blue;
+        const PaletteEntry& color = palette[static_cast<std::size_t>(*src)];
+        dst[0] = static_cast<std::byte>(color.red.get());
+        dst[1] = static_cast<std::byte>(color.green.get());
+        dst[2] = static_cast<std::byte>(color.blue.get());
         ++src;
         dst += 3;
     }
 }
 
 void
-processLowBppRow(const std::uint8_t* src,
-                 std::uint8_t* dst,
+processLowBppRow(const std::byte* src,
+                 std::byte* dst,
                  std::int32_t width,
                  std::uint32_t bpp,
                  std::span<const PaletteEntry> palette)
@@ -305,11 +305,11 @@ processLowBppRow(const std::uint8_t* src,
     unsigned int shift = initalShift;
     for (std::int32_t x = 0; x < width; ++x)
     {
-        unsigned int idx = (*src >> shift) & mask;
+        unsigned int idx = static_cast<unsigned int>(*src >> shift) & mask;
         const PaletteEntry& color = palette[idx];
-        dst[0] = color.red;
-        dst[1] = color.green;
-        dst[2] = color.blue;
+        dst[0] = static_cast<std::byte>(color.red.get());
+        dst[1] = static_cast<std::byte>(color.green.get());
+        dst[2] = static_cast<std::byte>(color.blue.get());
         if (shift > 0)
         {
             shift -= bpp;
@@ -338,7 +338,7 @@ LoadBMPImage(std::istream& in, const std::filesystem::path& filename)
     }
 
     // slurp the image data
-    std::vector<std::uint8_t> pixels(info.imageSize);
+    std::vector<std::byte> pixels(info.imageSize);
     if (!in.read(reinterpret_cast<char*>(pixels.data()), info.imageSize)) /* Flawfinder: ignore */
     {
         GetLogger()->error(_("BMP read failure '{}' - could not read image data\n"), filename);
@@ -348,10 +348,10 @@ LoadBMPImage(std::istream& in, const std::filesystem::path& filename)
     auto img = std::make_unique<Image>(PixelFormat::RGB, info.width, info.height);
 
     // Copy the image and perform any necessary conversions
-    const std::uint8_t* src = pixels.data();
+    const std::byte* src = pixels.data();
     for (std::int32_t y = info.height; y-- > 0;)
     {
-        std::uint8_t* dst = img->getPixelRow(y);
+        std::byte* dst = img->getPixelRow(y);
 
         switch (info.bpp)
         {

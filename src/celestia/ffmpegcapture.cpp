@@ -12,6 +12,7 @@ extern "C"
 #include <libswscale/swscale.h>
 }
 
+#include <cstddef>
 #include <iostream>
 #include <vector>
 #include <fmt/format.h>
@@ -434,7 +435,7 @@ static void captureImage(AVFrame *pict, int width, int height, const Renderer *r
     y += (h - height) / 2;
     r->captureFrame(x, y, width, height,
                     r->getPreferredCaptureFormat(),
-                    pict->data[0]);
+                    reinterpret_cast<std::byte*>(pict->data[0]));
 }
 
 // encode one video frame and send it to the muxer

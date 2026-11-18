@@ -8,14 +8,17 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <csetjmp>
+#include <cstddef>
 #include <cstdio>  // fopen, fclose
 #include <cstring> // memcpy
 #include <memory>
-#include <setjmp.h>
+
 extern "C"
 {
 #include <jpeglib.h>
 }
+
 #include <celutil/gettext.h>
 #include <celutil/logger.h>
 #include "image.h"
@@ -36,26 +39,26 @@ using my_error_ptr = struct my_error_mgr *;
 METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 {
     // cinfo->err really points to a my_error_mgr struct, so coerce pointer
-    auto myerr = (my_error_ptr) cinfo->err;
+    auto myerr = reinterpret_cast<my_error_ptr>(cinfo->err);
 
     // Always display the message.
     // We could postpone this until after returning, if we chose.
     (*cinfo->err->output_message) (cinfo);
 
     // Return control to the setjmp point
-    longjmp(myerr->setjmp_buffer, 1);
+    std::longjmp(myerr->setjmp_buffer, 1);
 }
 
 bool SaveJPEGImage(const std::filesystem::path& filename,
                    int width, int height,
                    int rowStride,
-                   const std::uint8_t *pixels,
+                   const std::byte *pixels,
                    bool removeAlpha)
 {
 #ifdef _WIN32
-    FILE* out = _wfopen(filename.c_str(), L"wb");
+    std::FILE* out = _wfopen(filename.c_str(), L"wb");
 #else
-    FILE* out = fopen(filename.c_str(), "wb");
+    std::FILE* out = std::fopen(filename.c_str(), "wb");
 #endif
     if (out == nullptr)
     {
@@ -66,7 +69,7 @@ bool SaveJPEGImage(const std::filesystem::path& filename,
     struct jpeg_compress_struct cinfo;
 
     struct jpeg_error_mgr jerr;
-    JSAMPROW row[1];
+    JSAMPROW row;
 
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
@@ -84,35 +87,33 @@ bool SaveJPEGImage(const std::filesystem::path& filename,
 
     jpeg_start_compress(&cinfo, TRUE);
 
-    std::unique_ptr<std::uint8_t[]> rowOut;
+    std::unique_ptr<JSAMPLE[]> rowOut;
     if (removeAlpha)
-        rowOut = std::make_unique<std::uint8_t[]>(width * 3);
+        rowOut = std::make_unique<JSAMPLE[]>(width * 3);
 
     while (cinfo.next_scanline < cinfo.image_height)
     {
-        const std::uint8_t *rowHead = &pixels[rowStride * cinfo.next_scanline];
+        const std::byte *rowHead = &pixels[rowStride * cinfo.next_scanline];
         // Strip alpha values if we are in RGBA format
         if (removeAlpha)
         {
             for (int x = 0; x < width; x++)
             {
-                const std::uint8_t* pixelIn = &rowHead[x * 4];
-                std::uint8_t* pixelOut = &rowOut.get()[x * 3];
-                pixelOut[0] = pixelIn[0];
-                pixelOut[1] = pixelIn[1];
-                pixelOut[2] = pixelIn[2];
+                const std::byte* pixelIn = &rowHead[x * 4];
+                JSAMPLE* pixelOut = &rowOut.get()[x * 3];
+                std::memcpy(pixelOut, pixelIn, 3);
             }
-            row[0] = rowOut.get();
+            row = rowOut.get();
         }
         else
         {
-            row[0] = const_cast<std::uint8_t*>(rowHead); //NOSONAR
+            row = reinterpret_cast<JSAMPLE*>(const_cast<std::byte*>(rowHead)); //NOSONAR
         }
-        (void) jpeg_write_scanlines(&cinfo, row, 1);
+        jpeg_write_scanlines(&cinfo, &row, 1);
     }
 
     jpeg_finish_compress(&cinfo);
-    fclose(out);
+    std::fclose(out);
     jpeg_destroy_compress(&cinfo);
 
     return true;
@@ -142,9 +143,9 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // requires it in order to read binary files.
 
 #ifdef _WIN32
-    FILE *in = _wfopen(filename.c_str(), L"rb");
+    std::FILE *in = _wfopen(filename.c_str(), L"rb");
 #else
-    FILE *in = fopen(filename.c_str(), "rb");
+    std::FILE *in = std::fopen(filename.c_str(), "rb");
 #endif
     if (in == nullptr)
     {
@@ -162,7 +163,7 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
         // If we get here, the JPEG code has signaled an error.
         // We need to clean up the JPEG object, close the input file, and return.
         jpeg_destroy_decompress(&cinfo);
-        fclose(in);
+        std::fclose(in);
         delete img;
 
         util::GetLogger()->error(_("Error reading JPEG image: {}\n"), filename);
@@ -176,13 +177,13 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     jpeg_stdio_src(&cinfo, in);
 
     // Step 3: read file parameters with jpeg_read_header()
-    (void) jpeg_read_header(&cinfo, TRUE);
+    jpeg_read_header(&cinfo, TRUE);
 
     if (cinfo.image_width == 0 || cinfo.image_width > Image::MAX_DIMENSION ||
         cinfo.image_height == 0 || cinfo.image_height > Image::MAX_DIMENSION)
     {
         jpeg_destroy_decompress(&cinfo);
-        fclose(in);
+        std::fclose(in);
         util::GetLogger()->error(_("JPEG dimensions out of range: {}\n"), filename);
         return nullptr;
     }
@@ -198,7 +199,7 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
 
     // Step 5: Start decompressor
 
-    (void) jpeg_start_decompress(&cinfo);
+    jpeg_start_decompress(&cinfo);
     // We can ignore the return value since suspension is not possible
     // with the stdio data source.
 
@@ -211,7 +212,7 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     row_stride = cinfo.output_width * cinfo.output_components;
     // Make a one-row-high sample array that will go away when done with image
     buffer = (*cinfo.mem->alloc_sarray)
-        ((j_common_ptr) & cinfo, JPOOL_IMAGE, row_stride, 1);
+        (reinterpret_cast<j_common_ptr>(&cinfo), JPOOL_IMAGE, row_stride, 1);
 
     // Step 6: while (scan lines remain to be read)
     //             jpeg_read_scanlines(...);
@@ -235,17 +236,17 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
         // jpeg_read_scanlines expects an array of pointers to scanlines.
         // Here the array is only one element long, but you could ask for
         // more than one scanline at a time if that's more convenient.
-        (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+        jpeg_read_scanlines(&cinfo, buffer, 1);
 
         // Assume put_scanline_someplace wants a pointer and sample count.
         // put_scanline_someplace(buffer[0], row_stride);
         std::memcpy(img->getPixelRow(cont), buffer[0], row_stride);
-        cont++;
+        ++cont;
     }
 
     // Step 7: Finish decompression
 
-    (void) jpeg_finish_decompress(&cinfo);
+    jpeg_finish_decompress(&cinfo);
     // We can ignore the return value since suspension is not possible
     // with the stdio data source.
 
@@ -259,7 +260,7 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // so as to simplify the setjmp error logic above.  (Actually, I don't
     // think that jpeg_destroy can do an error exit, but why assume anything...
 
-    fclose(in);
+    std::fclose(in);
 
     // At this point you may want to check to see whether any corrupt-data
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).

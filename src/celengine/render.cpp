@@ -277,7 +277,7 @@ static void RectToSphericalMapEval(float x, float y, float z,
 #endif
 
 
-static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
+static void BuildGaussianDiscMipLevel(std::byte* mipPixels,
                                       unsigned int log2size,
                                       float fwhm,
                                       float power)
@@ -300,13 +300,14 @@ static void BuildGaussianDiscMipLevel(unsigned char* mipPixels,
             float f = s * std::exp(-r2 * isig2) * power;
 
             constexpr float colorScale = 0x1.fffffep+7f; // next float below 256
-            mipPixels[i * size + j] = static_cast<unsigned char>(colorScale * std::min(f, 1.0f));
+            *mipPixels = static_cast<std::byte>(colorScale * std::min(f, 1.0f));
+            ++mipPixels;
         }
     }
 }
 
 
-static void BuildGlareMipLevel(unsigned char* mipPixels,
+static void BuildGlareMipLevel(std::byte* mipPixels,
                                unsigned int log2size,
                                float scale,
                                float base)
@@ -322,7 +323,8 @@ static void BuildGlareMipLevel(unsigned char* mipPixels,
             float r = std::hypot(x, y);
             float f = std::pow(base, r * scale);
             constexpr float colorScale = 0x1.fffffep+7f; // next float below 256
-            mipPixels[i * size + j] = static_cast<unsigned char>(colorScale * std::min(f, 1.0f));
+            *mipPixels = static_cast<std::byte>(colorScale * std::min(f, 1.0f));
+            ++mipPixels;
         }
     }
 }
@@ -5418,7 +5420,7 @@ Renderer::getPreferredCaptureFormat() const noexcept
 #endif
 }
 
-bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, unsigned char* buffer) const
+bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, std::byte* buffer) const
 {
     glReadPixels(x, y, w, h, toGLFormat(format), GL_UNSIGNED_BYTE, (void*) buffer);
     bool ok = glGetError() == GL_NO_ERROR;
@@ -5436,12 +5438,12 @@ bool Renderer::captureFrame(int x, int y, int w, int h, PixelFormat format, unsi
 #else
         uint8_t *tempLine = static_cast<uint8_t*>(alloca(realWidth));
 #endif
-        uint8_t *fb = buffer;
+        std::byte *fb = buffer;
         for (int i = 0, p = realWidth * (h - 1); i < p; i += realWidth, p -= realWidth)
         {
-            memcpy(tempLine, &fb[i],   realWidth);
-            memcpy(&fb[i],   &fb[p],   realWidth);
-            memcpy(&fb[p],   tempLine, realWidth);
+            std::memcpy(tempLine, &fb[i],   realWidth);
+            std::memcpy(&fb[i],   &fb[p],   realWidth);
+            std::memcpy(&fb[p],   tempLine, realWidth);
         }
     }
     return ok;

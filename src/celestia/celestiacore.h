@@ -393,7 +393,7 @@ public:
     celestia::scripts::ScriptMaps& scriptMaps() { return m_scriptMaps; }
 
     void getCaptureInfo(std::span<int, 4> viewport, celestia::engine::PixelFormat& format) const;
-    bool captureImage(std::uint8_t* buffer, std::span<const int, 4> viewport, celestia::engine::PixelFormat format) const;
+    bool captureImage(std::byte* buffer, std::span<const int, 4> viewport, celestia::engine::PixelFormat format) const;
     bool saveScreenShot(const std::filesystem::path&, ContentType = ContentType::Unknown) const;
 
     void loadAsterismsFile(const std::filesystem::path &path);

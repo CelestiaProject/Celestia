@@ -298,7 +298,7 @@ AtmosphereRenderer::computeLegacy(
             Color(brightness * color.x(),
                   brightness * color.y(),
                   brightness * color.z(),
-                  fade * (minOpacity + (1.0f - minOpacity)) * atten).get(&vtx.color[0]);
+                  fade * (minOpacity + (1.0f - minOpacity)) * atten).get(vtx.color);
         }
     }
     m_skyContour.clear();

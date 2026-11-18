@@ -243,7 +243,7 @@ PsfStarVertexBuffer::addStar(const Eigen::Vector3f &pos,
     m_vertices[m_nStars].peakRadiance = peakRadiance;
     m_vertices[m_nStars].limbRadius = limbRadius;
     m_vertices[m_nStars].alpha = alpha;
-    color.get(m_vertices[m_nStars].color.data());
+    color.get(m_vertices[m_nStars].color);
     ++m_nStars;
 
     if (m_nStars == m_capacity)

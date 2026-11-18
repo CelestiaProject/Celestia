@@ -183,10 +183,10 @@ LoadPNGImage(std::FILE* in, const std::filesystem::path& filename)
     passes = png_set_interlace_handling(pngPtr);
     for (int pass = 0; pass < passes; ++pass)
     {
-        png_bytep rowPtr = img->getPixels();
+        std::byte* rowPtr = img->getPixels();
         for (png_uint_32 row = 0; row < height; ++row)
         {
-            png_read_row(pngPtr, rowPtr, nullptr);
+            png_read_row(pngPtr, reinterpret_cast<png_bytep>(rowPtr), nullptr);
             rowPtr += pitch;
         }
     }
@@ -202,7 +202,7 @@ SavePNGImage(std::FILE* out,
              std::int32_t width,
              std::int32_t height,
              std::int32_t rowStride,
-             const std::uint8_t* pixels,
+             const std::byte* pixels,
              bool removeAlpha)
 {
     png_structp pngPtr = nullptr;
@@ -252,7 +252,7 @@ SavePNGImage(std::FILE* out,
     // We do not use interlacing so we can just write the rows out in order
     for (std::int32_t row = 0; row < height; ++row)
     {
-        png_write_row(pngPtr, pixels);
+        png_write_row(pngPtr, reinterpret_cast<png_const_bytep>(pixels));
         pixels += rowStride;
     }
 
