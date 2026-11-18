@@ -168,7 +168,7 @@ public:
     template <typename T> T *newUserDataArray(T *a, int n)
     {
         T *p = static_cast<T*>(lua_newuserdata(m_lua, sizeof(T) * n));
-        std::uninitialized_copy(a, a + n, p);
+        std::uninitialized_copy_n(a, n, p);
         return p;
     }
     template <typename T> int pushClass(T a)
@@ -206,11 +206,7 @@ public:
         CelxLua celx(m_lua);
         auto n = static_cast<int>(std::distance(begin, end));
         T* array = celx.newUserDataArray<T>(n);
-        for (auto it = begin; it != end; ++it)
-        {
-            *array = value(*it);
-            ++array;
-        }
+        std::uninitialized_copy(begin, end, array);
         celx.push(n - 1);
         celx.push(iterator<T>, 2);
         return 1;
