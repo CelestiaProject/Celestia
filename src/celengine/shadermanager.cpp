@@ -11,6 +11,7 @@
 #include "shadermanager.h"
 
 #include <algorithm>
+#include <bit>
 #include <cassert>
 #include <cstddef>
 #include <cmath>
@@ -23,6 +24,7 @@
 #include <sstream>
 #include <string_view>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 #include <boost/container_hash/hash.hpp>
@@ -38,7 +40,6 @@
 #include "glsupport.h"
 #include "lightenv.h"
 
-
 using celestia::util::GetLogger;
 using namespace std::string_view_literals;
 namespace gl = celestia::gl;
@@ -48,6 +49,13 @@ namespace util = celestia::util;
 
 namespace
 {
+constexpr TexUsage TransformableTexturesMask = TexUsage::DiffuseTexture
+                                             | TexUsage::SpecularTexture
+                                             | TexUsage::NormalTexture
+                                             | TexUsage::NightTexture
+                                             | TexUsage::EmissiveTexture
+                                             | TexUsage::OverlayTexture;
+
 constexpr const int ShadowSampleKernelWidth = 2;
 
 const std::filesystem::path ShaderDirectory{ "shaders" };
@@ -193,27 +201,13 @@ constexpr std::string_view CommonAttribs = R"glsl(
 layout(location = 0) in vec4 in_Position;
 layout(location = 1) in vec3 in_Normal;
 layout(location = 2) in vec4 in_TexCoord0;
-layout(location = 3) in vec4 in_TexCoord1;
-layout(location = 4) in vec4 in_TexCoord2;
-layout(location = 5) in vec4 in_TexCoord3;
 layout(location = 8) in vec4 in_Color;
-)glsl"sv;
-
-constexpr std::string_view TextureTransformUniforms = R"glsl(
-uniform vec2 texCoordBase0;
-uniform vec2 texCoordBase1;
-uniform vec2 texCoordBase2;
-uniform vec2 texCoordBase3;
-uniform vec2 texCoordDelta0;
-uniform vec2 texCoordDelta1;
-uniform vec2 texCoordDelta2;
-uniform vec2 texCoordDelta3;
 )glsl"sv;
 
 std::string
 LightProperty(unsigned int i, std::string_view property)
 {
-    return fmt::format("light{}_{}", i, property);
+    return fmt::format("light_{}[{}]", property, i);
 }
 
 std::string
@@ -281,6 +275,12 @@ std::string
 DeclareUniform(std::string_view name, ShaderVariableType type)
 {
     return fmt::format("uniform {} {};\n", ShaderTypeString(type), name);
+}
+
+std::string
+DeclareUniformArray(std::string_view name, ShaderVariableType type, unsigned int size)
+{
+    return fmt::format("uniform {} {}[{}];\n", ShaderTypeString(type), name, size);
 }
 
 std::string
@@ -365,25 +365,40 @@ inline void DumpFSSource(std::string_view source)
 }
 
 std::string
+TextureTransformUniforms(const ShaderProperties& props)
+{
+    std::string source;
+    if (props.hasTextureCoordTransform())
+    {
+        using TexUsageUnderlyingType = std::underlying_type_t<TexUsage>;
+        int nTextures = std::popcount(static_cast<TexUsageUnderlyingType>(props.texUsage & TransformableTexturesMask));
+        if (nTextures > 0)
+        {
+            source = DeclareUniformArray("texCoordTransform", Shader_Vector4, static_cast<unsigned int>(nTextures));
+        }
+    }
+
+    return source;
+}
+
+std::string
 DeclareLights(const ShaderProperties& props)
 {
-    if (props.nLights == 0)
-        return {};
-
     std::string source;
-    for (unsigned int i = 0; i < props.nLights; i++)
+    if (props.nLights > 0)
     {
-        source += DeclareUniform(fmt::format("light{}_direction", i), Shader_Vector3);
-        source += DeclareUniform(fmt::format("light{}_diffuse", i), Shader_Vector3);
+        source += DeclareUniformArray("light_direction", Shader_Vector3, props.nLights);
+        source += DeclareUniformArray("light_diffuse", Shader_Vector3, props.nLights);
         if (props.hasSpecular())
         {
-            source += DeclareUniform(fmt::format("light{}_specular", i), Shader_Vector3);
-            source += DeclareUniform(fmt::format("light{}_halfVector", i), Shader_Vector3);
+            source += DeclareUniformArray("light_specular", Shader_Vector3, props.nLights);
+            source += DeclareUniformArray("light_halfVector", Shader_Vector3, props.nLights);
         }
+
         if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
-            source += DeclareUniform(fmt::format("light{}_color", i), Shader_Vector3);
+            source += DeclareUniformArray("light_color", Shader_Vector3, props.nLights);
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
-            source += DeclareUniform(fmt::format("light{}_brightness", i), Shader_Float);
+            source += DeclareUniformArray("light_brightness", Shader_Float, props.nLights);
     }
 
     return source;
@@ -417,7 +432,8 @@ ShadowDepth(unsigned int i)
 std::string
 TexCoord2D(unsigned int i, bool transform)
 {
-    return transform ? fmt::format("(texCoordBase{} + texCoordDelta{} * in_TexCoord{}.st)", i, i, i) : fmt::format("in_TexCoord{}.st", i);
+    using namespace std::string_literals;
+    return transform ? fmt::format("(texCoordTransform[{0}].st + texCoordTransform[{0}].pq * in_TexCoord0.st)", i) : "in_TexCoord0.st"s;
 }
 
 
@@ -1075,22 +1091,10 @@ TextureCoordDeclarations(const ShaderProperties& props, ShaderInOut inOut)
 
     auto declare = inOut == Shader_In ? DeclareInput : DeclareOutput;
 
-    if (props.hasSharedTextureCoords())
+    if (props.hasTextureCoordTransform())
     {
-        // If the shared texture coords flag is set, use the diffuse texture
-        // coordinate for sampling all the texture maps.
-        if (util::is_set(props.texUsage, TexUsage::DiffuseTexture  |
-                                         TexUsage::NormalTexture   |
-                                         TexUsage::SpecularTexture |
-                                         TexUsage::NightTexture    |
-                                         TexUsage::EmissiveTexture |
-                                         TexUsage::OverlayTexture))
-        {
-            source += declare("diffTexCoord", Shader_Vector2);
-        }
-    }
-    else
-    {
+        // Texture coordinate transforms may be different per texture, so
+        // output separate texture coordinates
         if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
             source += declare("diffTexCoord", Shader_Vector2);
         if (util::is_set(props.texUsage, TexUsage::NormalTexture))
@@ -1103,6 +1107,10 @@ TextureCoordDeclarations(const ShaderProperties& props, ShaderInOut inOut)
             source += declare("emissiveTexCoord", Shader_Vector2);
         if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
             source += declare("overlayTexCoord", Shader_Vector2);
+    }
+    else if (util::is_set(props.texUsage, TransformableTexturesMask))
+    {
+        source += declare("diffTexCoord", Shader_Vector2);
     }
 
     if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
@@ -1335,8 +1343,7 @@ R"glsl(
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
-    if (props.hasTextureCoordTransform())
-        source += TextureTransformUniforms;
+    source += TextureTransformUniforms(props);
 
     source += DeclareLights(props);
     source += TextureCoordDeclarations(props, Shader_Out);
@@ -1421,51 +1428,48 @@ R"glsl(
     // Output the texture coordinates. Use just a single texture coordinate if all textures are mapped
     // identically. The texture offset is added for cloud maps; specular and night texture are not offset
     // because cloud layers never have these textures.
-    bool hasTexCoordTransform = props.hasTextureCoordTransform();
-    if (props.hasSharedTextureCoords())
-    {
-        if (util::is_set(props.texUsage, TexUsage::DiffuseTexture  |
-                                         TexUsage::NormalTexture   |
-                                         TexUsage::SpecularTexture |
-                                         TexUsage::NightTexture    |
-                                         TexUsage::EmissiveTexture |
-                                         TexUsage::OverlayTexture))
-        {
-            source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-            source += "diffTexCoord.x += texCoordOffset;\n";
-        }
-    }
-    else
+    if (props.hasTextureCoordTransform())
     {
         if (util::is_set(props.texUsage, TexUsage::DiffuseTexture))
         {
-            source += "diffTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(texCoordOffset, 0.0);\n";
-            nTexCoords++;
+            source += "diffTexCoord = " + TexCoord2D(nTexCoords, true) + " + vec2(texCoordOffset, 0.0);\n";
+            ++nTexCoords;
         }
 
         if (util::is_set(props.texUsage, TexUsage::NormalTexture))
         {
-            source += "normTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + " + vec2(texCoordOffset, 0.0);\n";
-            nTexCoords++;
+            source += "normTexCoord = " + TexCoord2D(nTexCoords, true) + " + vec2(texCoordOffset, 0.0);\n";
+            ++nTexCoords;
         }
 
         if (util::is_set(props.texUsage, TexUsage::SpecularTexture))
         {
-            source += "specTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-            nTexCoords++;
+            source += "specTexCoord = " + TexCoord2D(nTexCoords, true) + ";\n";
+            ++nTexCoords;
         }
 
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
         {
-            source += "nightTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-            nTexCoords++;
+            source += "nightTexCoord = " + TexCoord2D(nTexCoords, true) + ";\n";
+            ++nTexCoords;
         }
 
         if (util::is_set(props.texUsage, TexUsage::EmissiveTexture))
         {
-            source += "emissiveTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
+            source += "emissiveTexCoord = " + TexCoord2D(nTexCoords, true) + ";\n";
+            ++nTexCoords;
+        }
+
+        if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
+        {
+            source += "overlayTexCoord = " + TexCoord2D(nTexCoords, true) + ";\n";
             nTexCoords++;
         }
+    }
+    else if (util::is_set(props.texUsage, TransformableTexturesMask))
+    {
+        source += "diffTexCoord = " + TexCoord2D(0, false) + ";\n";
+        source += "diffTexCoord.x += texCoordOffset;\n";
     }
 
     // Ring texture coordinates are smooth across the ring plane. The fragment
@@ -1534,12 +1538,6 @@ R"glsl(
         }
     }
 
-    if (util::is_set(props.texUsage, TexUsage::OverlayTexture) && !props.hasSharedTextureCoords())
-    {
-        source += "overlayTexCoord = " + TexCoord2D(nTexCoords, hasTexCoordTransform) + ";\n";
-        nTexCoords++;
-    }
-
     if (util::is_set(props.texUsage, TexUsage::PointSprite))
         source += PointSizeCalculation();
     else if (util::is_set(props.texUsage, TexUsage::StaticPointSize))
@@ -1568,16 +1566,26 @@ buildFragmentShader(const ShaderProperties& props)
     source += FragmentHeader;
 
     std::string diffTexCoord("diffTexCoord");
-    std::string specTexCoord("specTexCoord");
-    std::string nightTexCoord("nightTexCoord");
-    std::string emissiveTexCoord("emissiveTexCoord");
-    std::string normTexCoord("normTexCoord");
-    if (props.hasSharedTextureCoords())
+    std::string specTexCoord;
+    std::string nightTexCoord;
+    std::string normTexCoord;
+    std::string emissiveTexCoord;
+    std::string overlayTexCoord;
+    if (props.hasTextureCoordTransform())
+    {
+        specTexCoord = "specTexCoord";
+        nightTexCoord = "nightTexCoord";
+        emissiveTexCoord = "emissiveTexCoord";
+        normTexCoord = "normTexCoord";
+        overlayTexCoord = "overlayTexCoord";
+    }
+    else
     {
         specTexCoord     = diffTexCoord;
         nightTexCoord    = diffTexCoord;
         normTexCoord     = diffTexCoord;
         emissiveTexCoord = diffTexCoord;
+        overlayTexCoord  = diffTexCoord;
     }
 
     source += TextureSamplerDeclarations(props);
@@ -1886,7 +1894,7 @@ buildFragmentShader(const ShaderProperties& props)
     // Mix in the overlay color with the base color
     if (util::is_set(props.texUsage, TexUsage::OverlayTexture))
     {
-        source += "vec4 overlayColor = texture(overlayTex, overlayTexCoord.st);\n";
+        source += "vec4 overlayColor = texture(overlayTex, " + overlayTexCoord + ".st);\n";
         source += "color.rgb = mix(color.rgb, overlayColor.rgb, overlayColor.a);\n";
     }
 
@@ -2149,8 +2157,6 @@ buildAtmosphereVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
-    if (props.hasTextureCoordTransform())
-        source += TextureTransformUniforms;
 
     source += DeclareLights(props);
     source += DeclareUniform("eyePosition", Shader_Vector3);
@@ -2275,8 +2281,7 @@ buildEmissiveVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
-    if (props.hasTextureCoordTransform())
-        source += TextureTransformUniforms;
+    source += TextureTransformUniforms(props);
 
     source += DeclareUniform("opacity", Shader_Float);
 
@@ -2285,7 +2290,7 @@ buildEmissiveVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     // models, the material color is premultiplied with the light color.
     // Emissive shaders interoperate better with other shaders if they also
     // take the color from light source 0.
-    source += DeclareUniform("light0_diffuse", Shader_Vector3);
+    source += DeclareUniformArray("light_diffuse", Shader_Vector3, 1);
 
     if (props.usePointSize())
         source += PointSizeDeclaration();
@@ -2393,8 +2398,7 @@ buildParticleVertexShader(const ShaderProperties& props, bool fisheyeEnabled)
     source += CommonHeader;
     source += VertexHeader;
     source += CommonAttribs;
-    if (props.hasTextureCoordTransform())
-        source += TextureTransformUniforms;
+    source += TextureTransformUniforms(props);
 
     source += "// PARTICLE SHADER\n";
     fmt::format_to(std::back_inserter(source), "// shadow count: {:x}\n", static_cast<std::uint32_t>(props.shadowCounts));
@@ -2737,14 +2741,6 @@ ShaderProperties::hasShadowsForLight(unsigned int light) const
            hasCloudShadowForLight(light);
 }
 
-// Returns true if diffuse, specular, bump, and night textures all use the
-// same texture coordinate set.
-bool
-ShaderProperties::hasSharedTextureCoords() const
-{
-    return util::is_set(texUsage, TexUsage::SharedTextureCoords);
-}
-
 bool
 ShaderProperties::hasTextureCoordTransform() const
 {
@@ -2989,14 +2985,14 @@ CelestiaGLProgram::initParameters()
     initCommonParameters();
     for (unsigned int i = 0; i < props.nLights; i++)
     {
-        lights[i].direction  = vec3Param(LightProperty(i, "direction").c_str());
-        lights[i].diffuse    = vec3Param(LightProperty(i, "diffuse").c_str());
-        lights[i].specular   = vec3Param(LightProperty(i, "specular").c_str());
-        lights[i].halfVector = vec3Param(LightProperty(i, "halfVector").c_str());
+        lights.direction[i]  = vec3Param(LightProperty(i, "direction").c_str());
+        lights.diffuse[i]    = vec3Param(LightProperty(i, "diffuse").c_str());
+        lights.specular[i]   = vec3Param(LightProperty(i, "specular").c_str());
+        lights.halfVector[i] = vec3Param(LightProperty(i, "halfVector").c_str());
         if (util::is_set(props.texUsage, TexUsage::NightTexture))
-            lights[i].brightness = floatParam(LightProperty(i, "brightness").c_str());
+            lights.brightness[i] = floatParam(LightProperty(i, "brightness").c_str());
         if (props.lightModel == LightingModel::AtmosphereModel || props.hasScattering())
-            lights[i].color = vec3Param(LightProperty(i, "color").c_str());
+            lights.color[i] = vec3Param(LightProperty(i, "color").c_str());
 
         if (props.hasRingShadowForLight(i))
             ringShadowLOD[i] = floatParam(IndexedParameter("ringShadowLOD", i).c_str());
@@ -3016,21 +3012,14 @@ CelestiaGLProgram::initParameters()
     if (props.hasTextureCoordTransform())
     {
         for (unsigned int i = 0; i < texCoordTransforms.size(); ++i)
-        {
-            texCoordTransforms[i].base = vec2Param(fmt::format("texCoordBase{}", i).c_str());
-            texCoordTransforms[i].delta = vec2Param(fmt::format("texCoordDelta{}", i).c_str());
-        }
+            texCoordTransforms[i] = vec4Param(fmt::format("texCoordTransform[{}]", i).c_str());
     }
 
     if (props.hasSpecular())
-    {
         shininess            = floatParam("shininess");
-    }
 
     if (props.isViewDependent() || props.hasScattering())
-    {
         eyePosition          = vec3Param("eyePosition");
-    }
 
     opacity      = floatParam("opacity");
     ambientColor = vec3Param("ambientColor");
@@ -3063,22 +3052,16 @@ CelestiaGLProgram::initParameters()
         cloudHorizon = floatParam("cloudHorizon");
 
     if (util::is_set(props.texUsage, TexUsage::ShadowMapTexture))
-    {
         ShadowMatrix0       = mat4Param("ShadowMatrix0");
-    }
 
     if (props.hasScattering())
         initAtmosphereParameters();
 
     if (util::is_set(props.lightModel, LightingModel::LunarLambertModel))
-    {
         lunarLambert         = floatParam("lunarLambert");
-    }
 
     if (props.usePointSize())
-    {
         pointScale           = floatParam("pointScale");
-    }
 
     if (util::is_set(props.texUsage, TexUsage::LineAsTriangles))
     {
@@ -3174,16 +3157,16 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         const DirectionalLight& light = ls.lights[i];
 
         Eigen::Vector3f lightColor = light.color.toVector3() * light.irradiance;
-        lights[i].color = light.color.toVector3();
-        lights[i].direction = light.direction_obj;
-        lights[i].diffuse = lightColor.cwiseProduct(diffuseColor);
-        lights[i].brightness = lightColor.maxCoeff();
-        lights[i].specular = lightColor.cwiseProduct(specularColor);
+        lights.color[i] = light.color.toVector3();
+        lights.direction[i] = light.direction_obj;
+        lights.diffuse[i] = lightColor.cwiseProduct(diffuseColor);
+        lights.brightness[i] = lightColor.maxCoeff();
+        lights.specular[i] = lightColor.cwiseProduct(specularColor);
 
         Eigen::Vector3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
         if (halfAngle_obj.norm() != 0.0f)
             halfAngle_obj.normalize();
-        lights[i].halfVector = halfAngle_obj;
+        lights.halfVector[i] = halfAngle_obj;
     }
 
     eyePosition = ls.eyePos_obj;
