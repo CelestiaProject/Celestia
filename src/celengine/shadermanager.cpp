@@ -3147,10 +3147,21 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
                                       Color materialSpecular,
                                       Color materialEmissive)
 {
-    unsigned int nLights = std::min(MaxShaderLights, ls.nLights);
+    setLightParameters(ls,
+                       materialDiffuse.toVector3(),
+                       materialSpecular.toVector3(),
+                       materialEmissive.toVector3(),
+                       materialDiffuse.alpha());
+}
 
-    Eigen::Vector3f diffuseColor = materialDiffuse.toVector3();
-    Eigen::Vector3f specularColor = materialSpecular.toVector3();
+void
+CelestiaGLProgram::setLightParameters(const LightingState& ls,
+                                      const Eigen::Vector3f& materialDiffuse,
+                                      const Eigen::Vector3f& materialSpecular,
+                                      const Eigen::Vector3f& materialEmissive,
+                                      float materialOpacity)
+{
+    unsigned int nLights = std::min(MaxShaderLights, ls.nLights);
 
     for (unsigned int i = 0; i < nLights; i++)
     {
@@ -3159,9 +3170,9 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
         Eigen::Vector3f lightColor = light.color.toVector3() * light.irradiance;
         lights.color[i] = light.color.toVector3();
         lights.direction[i] = light.direction_obj;
-        lights.diffuse[i] = lightColor.cwiseProduct(diffuseColor);
+        lights.diffuse[i] = lightColor.cwiseProduct(materialDiffuse);
         lights.brightness[i] = lightColor.maxCoeff();
-        lights.specular[i] = lightColor.cwiseProduct(specularColor);
+        lights.specular[i] = lightColor.cwiseProduct(materialSpecular);
 
         Eigen::Vector3f halfAngle_obj = ls.eyeDir_obj + light.direction_obj;
         if (halfAngle_obj.norm() != 0.0f)
@@ -3170,8 +3181,8 @@ CelestiaGLProgram::setLightParameters(const LightingState& ls,
     }
 
     eyePosition = ls.eyePos_obj;
-    ambientColor = ls.ambientColor.cwiseProduct(diffuseColor) + materialEmissive.toVector3();
-    opacity = materialDiffuse.alpha();
+    ambientColor = ls.ambientColor.cwiseProduct(materialDiffuse) + materialEmissive;
+    opacity = materialOpacity;
 }
 
 /** Set GLSL shader constants for shadows from ellipsoid occluders; shadows from
