@@ -54,4 +54,11 @@ struct RenderListEntry
     // Tie-break rank for co-centered transparent entries. A larger value sorts
     // farther and is drawn earlier: far ring, atmosphere, near ring.
     std::uint8_t renderOrder{ 0 };
+
+    bool isRingSystem() const
+    {
+        return renderableType == RenderableRingSystem ||
+               renderableType == RenderableRingSystemNear ||
+               renderableType == RenderableRingSystemFar;
+    }
 };

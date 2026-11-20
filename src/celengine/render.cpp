@@ -8,7 +8,6 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
-#define DEBUG_COALESCE               0
 #define DEBUG_SECONDARY_ILLUMINATION 0
 #define DEBUG_ORBIT_CACHE            0
 
@@ -3444,11 +3443,9 @@ void Renderer::renderRingSystem(Body& body,
         ringsScaleFactor = geometryScale;
     }
 
-    // Reuse the ring lighting across the near and far half draws. Only the split
-    // draws in two halves, so the whole-ring (Both) case skips the cache.
+    // Reuse frame-local ring lighting across halves and depth intervals.
     LightingState lights;
-    bool split = renderHalf != celestia::render::RingRenderHalf::Both;
-    if (auto it = ringLightingCache.find(&body); split && it != ringLightingCache.end())
+    if (auto it = ringLightingCache.find(&body); it != ringLightingCache.end())
     {
         lights = it->second;
     }
@@ -3463,8 +3460,7 @@ void Renderer::renderRingSystem(Body& body,
                             lights);
         assert(lights.nLights <= MaxLights);
         lights.ambientColor = ambientColor.toVector3();
-        if (split)
-            ringLightingCache[&body] = lights;
+        ringLightingCache[&body] = lights;
     }
 
     // Build the rings model-view matrix.
@@ -5775,11 +5771,26 @@ Renderer::removeInvisibleItems(const math::InfiniteFrustum &frustum)
         case RenderListEntry::RenderableRingSystem:
         case RenderListEntry::RenderableRingSystemNear:
         case RenderListEntry::RenderableRingSystemFar:
-        case RenderListEntry::RenderableAtmosphere:
             radius = ri.radius;
             cullRadius = radius;
             convex = false;
             break;
+
+        case RenderListEntry::RenderableAtmosphere:
+        {
+            const Atmosphere* atmosphere = bodyFeaturesManager->getAtmosphere(ri.body);
+            float shellHeight = atmosphere->mieScaleHeight > 0.0f
+                ? getAtmosphereShellHeight(*atmosphere)
+                : atmosphere->height;
+            if (util::is_set(renderFlags, RenderFlags::ShowCloudMaps) &&
+                atmosphere->cloudTexture != util::TextureHandle::Invalid)
+                shellHeight = std::max(shellHeight, atmosphere->cloudHeight);
+            // ri.radius may be the ring radius for transparent sorting only.
+            radius = ri.body->getRadius() + shellHeight;
+            cullRadius = radius;
+            convex = false;
+            break;
+        }
 
         case RenderListEntry::RenderableBody:
             radius = ri.body->getBoundingRadius();
@@ -6084,145 +6095,26 @@ Renderer::buildNearSystemsLists(const Universe &universe,
 int
 Renderer::buildDepthPartitions()
 {
-    // Since we're rendering objects of a huge range of sizes spread over
-    // vast distances, we can't just rely on the hardware depth buffer to
-    // handle hidden surface removal without a little help. We'll partition
-    // the depth buffer into spans that can be rendered without running
-    // into terrible depth buffer precision problems. Typically, each body
-    // with an apparent size greater than one pixel is allocated its own
-    // depth buffer interval. However, this will not correctly handle
-    // overlapping objects.  If two objects overlap in depth, we must
-    // assign them to the same interval.
-
-    depthPartitions.clear();
-    int nIntervals = 0;
-    int nEntries = (int)renderList.size();
-    float prevNear = -1e12f; // ~ 1 light year
-    if (nEntries > 0)
-        prevNear = renderList[nEntries - 1].farZ * 1.01f;
-
-    int i;
-
-    // Completely partition the depth buffer. Scan from back to front
-    // through all the renderable items that passed the culling test.
-    for (i = nEntries - 1; i >= 0; i--)
+    std::optional<float> nearestAnnotationZ;
+    for (const auto& orbit : orbitPathList)
     {
-        // Only consider renderables that will occupy more than one pixel.
-        if (renderList[i].discSizeInPixels > 1.0f)
-        {
-            if (nIntervals == 0 ||
-                renderList[i].farZ >= depthPartitions[nIntervals - 1].nearZ)
-            {
-                // This object spans a depth interval that's disjoint with
-                // the current interval, so create a new one for it, and
-                // another interval to fill the gap between the last
-                // interval.
-                DepthBufferPartition partition;
-                partition.index = nIntervals;
-                partition.nearZ = renderList[i].farZ;
-                partition.farZ = prevNear;
-
-                // Omit null intervals
-                // TODO: Is this necessary? Shouldn't the >= test prevent this?
-                if (partition.nearZ != partition.farZ)
-                {
-                    depthPartitions.push_back(partition);
-                    nIntervals++;
-                }
-
-                partition.index = nIntervals;
-                partition.nearZ = renderList[i].nearZ;
-                partition.farZ = renderList[i].farZ;
-                depthPartitions.push_back(partition);
-                nIntervals++;
-
-                prevNear = partition.nearZ;
-            }
-            else
-            {
-                // This object overlaps the current span; expand the
-                // interval so that it completely contains the object.
-                DepthBufferPartition& partition = depthPartitions[nIntervals - 1];
-                partition.nearZ = max(partition.nearZ, renderList[i].nearZ);
-                partition.farZ = min(partition.farZ, renderList[i].farZ);
-                prevNear = partition.nearZ;
-            }
-        }
+        float nearZ = min(-MinNearPlaneDistance, orbit.centerZ + orbit.radius);
+        nearestAnnotationZ = max(nearestAnnotationZ.value_or(nearZ), nearZ);
     }
-
-    // Scan the list of orbit paths and find the closest one. We'll need
-    // adjust the nearest interval to accommodate it.
-    float zNearest = prevNear;
-    for (i = 0; i < (int)orbitPathList.size(); i++)
-    {
-        const OrbitPathListEntry& o = orbitPathList[i];
-        float minNearDistance = min(-MinNearPlaneDistance, o.centerZ + o.radius);
-        if (minNearDistance > zNearest)
-            zNearest = minNearDistance;
-    }
-
-    // Adjust the nearest interval to include the closest marker (if it's
-    // closer to the observer than anything else).
     if (!depthSortedAnnotations.empty())
     {
-        // Factor of 0.999 ensures that the near plane does not fall
-        // exactly at the marker's z coordinate (in which case the marker
-        // would be susceptible to getting clipped.)
-        float closestZ = depthSortedAnnotations.back().position.z();
-        if (-closestZ > zNearest)
-            zNearest = -closestZ * 0.999f;
+        // Keep markers off the near clip plane.
+        float nearZ = -depthSortedAnnotations.back().position.z() * 0.999f;
+        nearestAnnotationZ = max(nearestAnnotationZ.value_or(nearZ), nearZ);
     }
 
-#if DEBUG_COALESCE
-    clog << "nEntries: " << nEntries << ",   zNearest: " << zNearest
-         << ",   prevNear: " << prevNear << "\n";
-#endif
-
-    // If the nearest distance wasn't set, nothing should appear
-    // in the frontmost depth buffer interval (so we can set the near plane
-    // of the front interval to whatever we want as long as it's less than
-    // the far plane distance.
-    if (zNearest == prevNear)
-        zNearest = 0.0f;
-
-    // Add one last interval for the span from 0 to the front of the
-    // nearest object
-    // TODO: closest object may not be at entry 0, since objects are
-    // sorted by far distance.
-    float closest = zNearest;
-    if (nEntries > 0)
-    {
-        closest = max(closest, renderList[0].nearZ);
-
-        // Setting a the near plane distance to zero results in unreliable rendering, even
-        // if we don't care about the depth buffer. Compromise and set the near plane
-        // distance to a small fraction of distance to the nearest object.
-        if (closest == 0.0f)
-        {
-            closest = renderList[0].nearZ * 0.01f;
-        }
-    }
-
-    DepthBufferPartition partition;
-    partition.index = nIntervals;
-    partition.nearZ = closest;
-    partition.farZ = prevNear;
-    depthPartitions.push_back(partition);
-
-    nIntervals++;
-
-    // If orbits are enabled, adjust the farthest partition so that it
-    // can contain the orbit.
+    std::optional<float> farthestOrbitZ;
     if (!orbitPathList.empty())
-    {
-        depthPartitions[0].farZ = min(depthPartitions[0].farZ,
-                                      orbitPathList.back().centerZ - orbitPathList.back().radius);
-    }
+        farthestOrbitZ = orbitPathList.back().centerZ - orbitPathList.back().radius;
 
-    // We want to avoid overpartitioning the depth buffer. In this stage, we
-    // coalesce partitions that have small spans in the depth buffer.
-    // TODO: Implement this step!
-    return nIntervals;
+    engine::detail::buildDepthPartitions(
+        renderList, nearestAnnotationZ, farthestOrbitZ, depthSortedEntries, depthPartitions);
+    return static_cast<int>(depthPartitions.size());
 }
 
 void
@@ -6232,7 +6124,7 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 {
     // Render everything that wasn't culled.
     float intervalSize = 1.0f / static_cast<float>(max(1, nIntervals));
-    int i = static_cast<int>(renderList.size()) - 1;
+    auto intervalEntries = engine::detail::partitionRenderList(renderList, depthPartitions, depthPartitionEntries);
     m_legacyLargeStarRenderer->start();
     m_legacyLargeGlareRenderer->start();
     for (int interval = 0; interval < nIntervals; interval++)
@@ -6256,21 +6148,13 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
 
         setCurrentProjectionMatrix(proj);
 
-        int firstInInterval = i;
-
         // Render just the opaque objects in the first pass
-        while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
+        for (const auto* entry : intervalEntries[interval])
         {
-            // This interval should completely contain the item
-            // Unless it's just a point?
-            // assert(renderList[i].nearZ <= depthPartitions[interval].near);
-
             // Treat objects that are smaller than one pixel as transparent and
             // render them in the second pass.
-            if (renderList[i].isOpaque && renderList[i].discSizeInPixels > 1.0f)
-                renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance, m);
-
-            i--;
+            if (entry->isOpaque && entry->discSizeInPixels > 1.0f)
+                renderItem(*entry, observer, nearPlaneDistance, farPlaneDistance, m);
         }
 
         // Render orbit paths
@@ -6298,14 +6182,11 @@ Renderer::renderSolarSystemObjects(const Observer &observer,
             }
         }
 
-        // Render transparent objects in the second pass
-        i = firstInInterval;
-        while (i >= 0 && renderList[i].farZ < depthPartitions[interval].nearZ)
+        // Render transparent objects in their original back-to-front order.
+        for (const auto* entry : intervalEntries[interval])
         {
-            if (!renderList[i].isOpaque || renderList[i].discSizeInPixels <= 1.0f)
-                renderItem(renderList[i], observer, nearPlaneDistance, farPlaneDistance, m);
-
-            i--;
+            if (!entry->isOpaque || entry->discSizeInPixels <= 1.0f)
+                renderItem(*entry, observer, nearPlaneDistance, farPlaneDistance, m);
         }
 
         Renderer::PipelineState ps;
