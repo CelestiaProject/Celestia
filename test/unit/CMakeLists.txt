@@ -4,6 +4,7 @@ set(UNIT_TEST_SOURCES
   category_test.cpp
   constellation_test.cpp
   date_test.cpp
+  depthpartition_test.cpp
   greek_test.cpp
   kepler_test.cpp
   legacy_cmdparser_test.cpp

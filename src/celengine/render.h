@@ -24,6 +24,7 @@
 #include <Eigen/Core>
 
 #include <celengine/body.h>
+#include <celengine/depthpartition.h>
 #include <celengine/lightenv.h>
 #include <celengine/marker.h>
 #include <celengine/meshmanager.h>
@@ -454,12 +455,7 @@ class Renderer
 	bool isStar{ false };
     };
 
-    struct DepthBufferPartition
-    {
-        int index;
-        float nearZ;
-        float farZ;
-    };
+    using DepthBufferPartition = celestia::engine::DepthBufferPartition;
 
  private:
     void setFieldOfView(float);
@@ -763,6 +759,8 @@ class Renderer
     std::vector<RenderListEntry> renderList;
     std::vector<SecondaryIlluminator> secondaryIlluminators;
     std::vector<DepthBufferPartition> depthPartitions;
+    std::vector<const RenderListEntry*> depthSortedEntries;
+    std::vector<std::vector<const RenderListEntry*>> depthPartitionEntries;
     std::vector<Annotation> backgroundAnnotations;
     std::vector<Annotation> foregroundAnnotations;
     std::vector<Annotation> depthSortedAnnotations;
