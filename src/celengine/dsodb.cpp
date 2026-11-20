@@ -133,7 +133,7 @@ DSODatabase::findVisibleDSOs(engine::DSOHandler& dsoHandler,
                              const Eigen::Quaternionf& obsOrient,
                              float fovY,
                              float aspectRatio,
-                             float limitingMag) const
+                             float minimumIrradiance) const
 {
     // Compute the bounding planes of an infinite view frustum
     std::array<Eigen::Hyperplane<double, 3>, 5> frustumPlanes;
@@ -158,10 +158,7 @@ DSODatabase::findVisibleDSOs(engine::DSOHandler& dsoHandler,
         frustumPlanes[i] = Eigen::Hyperplane<double, 3>(planeNormals[i], obsPos);
     }
 
-    engine::DSOOctreeVisibleObjectsProcessor processor(&dsoHandler,
-                                                       obsPos,
-                                                       frustumPlanes,
-                                                       limitingMag);
+    engine::DSOOctreeVisibleObjectsProcessor processor(&dsoHandler, obsPos, frustumPlanes, minimumIrradiance);
 
     m_octreeRoot->processDepthFirst(processor);
 }

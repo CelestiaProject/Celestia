@@ -10,6 +10,7 @@
 
 #include "deepskyobj.h"
 
+#include <algorithm>
 #include <cmath>
 #include <utility>
 
@@ -72,6 +73,20 @@ void
 DeepSkyObject::setAbsoluteMagnitude(float _absMag)
 {
     absMag = _absMag;
+}
+
+double
+DeepSkyObject::getLogReferenceIrradiance() const
+{
+    return -static_cast<double>(absMag) / astro::LN_MAG;
+}
+
+float
+DeepSkyObject::getApparentIrradiance(double distanceLightYears) const
+{
+    double clampedDistance = std::max(distanceLightYears, astro::LY_PER_10PARSEC);
+    float distanceKm = static_cast<float>(astro::lightYearsToKilometers(clampedDistance));
+    return astro::absMagToIrradiance(absMag, distanceKm);
 }
 
 std::string

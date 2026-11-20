@@ -12,6 +12,7 @@
 
 #include "dsooctree.h"
 
+#include <algorithm>
 #include <numbers>
 
 #include <celastro/astro.h>
@@ -25,11 +26,11 @@ namespace celestia::engine
 DSOOctreeVisibleObjectsProcessor::DSOOctreeVisibleObjectsProcessor(DSOHandler* dsoHandler, // cppcheck-suppress uninitMemberVar
                                                                    const DSOOctree::PointType& obsPosition,
                                                                    std::span<const PlaneType, 5> frustumPlanes,
-                                                                   float limitingFactor) :
+                                                                   float minimumIrradiance) :
     m_dsoHandler(dsoHandler),
     m_obsPosition(obsPosition),
     m_frustumPlanes(frustumPlanes),
-    m_limitingFactor(limitingFactor)
+    m_minimumIrradiance(minimumIrradiance)
 {
     for (int i = 0; i < 5; ++i)
         m_projectedRadiusFactors[i] = m_frustumPlanes[i].normal().cwiseAbs().sum();
@@ -52,29 +53,23 @@ DSOOctreeVisibleObjectsProcessor::checkNode(const DSOOctree::PointType& center,
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
     double minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3;
 
-    // Check whether the brightest object in this node is bright enough to render
-    float distanceModulus = astro::distanceModulus(minDistance);
-    if (minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
-        return false;
+    // Node factors are catalog absolute magnitudes; use the same capped
+    // distance and irradiance conversion as the individual-object test.
+    if (minDistance <= 0.0)
+        return true;
 
-    // Dimmest absolute magnitude to process
-    m_dimmest = minDistance > 0.0 ? (m_limitingFactor - distanceModulus) : 1000.0;
-
-    return true;
+    float distanceKm = static_cast<float>(astro::lightYearsToKilometers(std::max(minDistance, astro::LY_PER_10PARSEC)));
+    return astro::absMagToIrradiance(factor, distanceKm) >= m_minimumIrradiance;
 }
 
 void
 DSOOctreeVisibleObjectsProcessor::process(const std::unique_ptr<DeepSkyObject>& obj) const //NOSONAR
 {
-    float absMag = obj->getAbsoluteMagnitude();
-    if (absMag > m_dimmest)
-        return;
-
     double distance = (m_obsPosition - obj->getPosition()).norm() - obj->getBoundingSphereRadius();
-    float appMag = (distance >= astro::LY_PER_10PARSEC) ? astro::absToAppMag(absMag, distance) : absMag;
+    float irradiance = obj->getApparentIrradiance(distance);
 
-    if (appMag <= m_limitingFactor)
-        m_dsoHandler->process(obj, distance, absMag);
+    if (irradiance >= m_minimumIrradiance)
+        m_dsoHandler->process(obj, distance, irradiance);
 }
 
 DSOOctreeCloseObjectsProcessor::DSOOctreeCloseObjectsProcessor(DSOHandler* dsoHandler,
@@ -104,9 +99,8 @@ DSOOctreeCloseObjectsProcessor::process(const std::unique_ptr<DeepSkyObject>& ob
     Eigen::Vector3d offset = m_obsPosition - obj->getPosition();
     if (offset.squaredNorm() < m_radiusSquared)
     {
-        float  absMag   = obj->getAbsoluteMagnitude();
         double distance = offset.norm() - obj->getBoundingSphereRadius();
-        m_dsoHandler->process(obj, distance, absMag);
+        m_dsoHandler->process(obj, distance, obj->getApparentIrradiance(distance));
     }
 }
 

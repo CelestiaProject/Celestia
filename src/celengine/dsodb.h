@@ -57,7 +57,7 @@ public:
                          const Eigen::Quaternionf& obsOrientation,
                          float fovY,
                          float aspectRatio,
-                         float limitingMag) const;
+                         float minimumIrradiance) const;
 
     void findCloseDSOs(celestia::engine::DSOHandler& dsoHandler,
                        const Eigen::Vector3d& obsPosition,

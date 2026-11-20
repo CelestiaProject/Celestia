@@ -57,4 +57,28 @@ TEST_CASE("Finite source and distance extremes retain representable irradiance")
     }
 }
 
+TEST_CASE("Absolute magnitude conversion preserves representable irradiance beyond float luminosity range")
+{
+    struct Sample
+    {
+        float magnitude;
+        float distance;
+    };
+    const Sample samples[] = {
+        { -100.0f, 10000.0f },
+        { 120.0f, 0.000001f },
+    };
+    for (const auto& sample : samples)
+    {
+        CAPTURE(sample.magnitude);
+        CAPTURE(sample.distance);
+        float expected = astro::magToIrradiance(astro::absToAppMag(sample.magnitude, sample.distance));
+        float actual = astro::absMagToIrradiance(sample.magnitude, astro::lightYearsToKilometers(sample.distance));
+        REQUIRE(std::isfinite(expected));
+        REQUIRE(expected > 0.0f);
+        REQUIRE(std::isfinite(actual));
+        CHECK(actual / expected == doctest::Approx(1.0f));
+    }
+}
+
 TEST_SUITE_END();

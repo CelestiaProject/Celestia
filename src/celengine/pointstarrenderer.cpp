@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
+#include <numbers>
 
 #include <celastro/astro.h>
 #include <celengine/glsupport.h>
@@ -46,12 +48,55 @@ float smoothStep(float t)
 
 } // namespace
 
-float
-celestia::engine::detail::psfSoftClip(float peakRadiance, float dimGate)
+celestia::engine::detail::LegacyPointAppearance
+celestia::engine::detail::legacyPointAppearance(float irradiance, float size, bool scaledDiscs,
+                                                float logExposure, float responseScale, float bias)
 {
-    double peak = peakRadiance;
-    double gate = dimGate;
-    return static_cast<float>(std::sqrt((peak - gate) * (peak + gate)));
+    LegacyPointAppearance result{ size, 0.0f, 0.0f, 0.0f };
+    result.alpha = std::max(0.0f, (std::log(irradiance) + logExposure) * responseScale + bias);
+    if (result.alpha > 1.0f)
+    {
+        float logExcess = (result.alpha - 1.0f) / responseScale;
+        if (scaledDiscs)
+        {
+            float discScale = std::min(MaxScaledDiscStarSize, std::exp2(0.3f * astro::LN_MAG * logExcess));
+            result.discSize *= std::max(1.0f, discScale);
+            result.glareAlpha = std::min(0.5f, discScale / 4.0f);
+            result.glareSize = result.discSize * 3.0f;
+        }
+        else
+        {
+            float discScale = std::min(100.0f, astro::LN_MAG * logExcess + 2.0f);
+            result.glareAlpha = std::min(GlareOpacity, (discScale - 2.0f) / 4.0f);
+            result.glareSize = 2.0f * discScale * size;
+        }
+        result.alpha = 1.0f;
+    }
+    return result;
+}
+
+float
+celestia::engine::detail::psfSoftClip(float brightness, float threshold)
+{
+    if (brightness <= threshold)
+        return 0.0f;
+
+    double value = brightness;
+    double gate = threshold;
+    return static_cast<float>(std::sqrt((value - gate) * (value + gate)));
+}
+
+float
+celestia::engine::detail::psfPeakRadianceScale(float pointRadius, float exposure, float atmosphereBrightness)
+{
+    // The integral of max(1 - distance / radius, 0) is pi * radius^2 / 3.
+    return exposure * atmosphereBrightness * 3.0f / (std::numbers::pi_v<float> * pointRadius * pointRadius);
+}
+
+float
+celestia::engine::detail::psfMinimumIrradiance(float peakRadianceScale, float dimGate)
+{
+    return peakRadianceScale > 0.0f ? dimGate / peakRadianceScale : std::numeric_limits<float>::infinity();
 }
 
 float
@@ -100,7 +145,7 @@ PointStarRenderer::PointStarRenderer() :
 {
 }
 
-void PointStarRenderer::process(const Star& star, float distance, float appMag)
+void PointStarRenderer::process(const Star& star, float distance, float irradiance) // NOSONAR(cpp:S3776)
 {
     if (distance > distanceLimit)
         return;
@@ -150,8 +195,8 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             relPos = hPos.cast<float>() * -astro::kilometersToLightYears(1.0f);
             distance = relPos.norm();
 
-            // Recompute apparent magnitude using new distance computation
-            appMag = star.getApparentMagnitude(distance);
+            // Recompute irradiance, including extinction, at the precise distance.
+            irradiance = star.getApparentIrradiance(distance);
 
             discSizeInPixels = star.getRadius() / astro::lightYearsToKilometers(distance) / pixelSize;
         }
@@ -163,25 +208,18 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
         {
             if (starStyle == StarStyle::PointSpreadFunction)
             {
-                // Linear-radiance PSF renderer.  The shader receives a
-                // per-vertex peak radiance (cone volume = 1/3 base area
-                // x peak):  peakRad = exposure * 3 * irradiance / (pi * r^2).
-                // Irradiance is in the Vega-normalised system; the constant
-                // SI conversion factor is absorbed by the framebuffer
-                // exposure.  Per-frame constants (psf.peakRadScale,
-                // psf.dimGate, psf.glowA, psf.glowPeakLargeThreshold) are
+                // Relative linear-RGB PSF renderer. The shader receives a
+                // per-vertex peak using psfPeakRadianceScale's normalization
+                // of Vega-normalized irradiance over logical-pixel area.
+                // Per-frame constants (psf.peakRadScale,
+                // psf.minimumIrradiance, psf.glowA, psf.glowPeakLargeThreshold) are
                 // precomputed in renderPointStars so the inner loop only
-                // does the per-star irradiance and green normalisation.
+                // does the per-star dimming and green normalisation.
 
-                float irradiance = astro::magToIrradiance(appMag);
-                float peakRad    = psf.peakRadScale * irradiance;
-
-                // Hyperbolic soft-clip: stars with peakRad close to dimGate
-                // fade smoothly toward zero, while peakRad >> dimGate is
-                // asymptotically unchanged.  See issue #2559.
-                if (peakRad <= psf.dimGate)
+                float dimmedIrradiance = celestia::engine::detail::psfSoftClip(irradiance, psf.minimumIrradiance);
+                if (dimmedIrradiance <= 0.0f)
                     return;
-                peakRad = celestia::engine::detail::psfSoftClip(peakRad, psf.dimGate);
+                float peakRad = psf.peakRadScale * dimmedIrradiance;
 
                 // Normalise the star colour against its green channel
                 // (with a saturation floor) so the brightest channel
@@ -228,12 +266,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             {
                 float pointSize, alpha, glareSize, glareAlpha;
                 float size = BaseStarDiscSize * static_cast<float>(renderer->getScreenDpi()) / 96.0f;
-                renderer->calculatePointSize(appMag,
-                                             size,
-                                             pointSize,
-                                             alpha,
-                                             glareSize,
-                                             glareAlpha);
+                renderer->calculatePointSize(irradiance, size, pointSize, alpha, glareSize, glareAlpha);
 
                 if (glareSize != 0.0f)
                     glareVertexBuffer->addStar(relPos, Color(starColor, glareAlpha), glareSize);
@@ -242,12 +275,12 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             }
 
             // Place labels for stars brighter than the specified label threshold brightness
-            if (util::is_set(labelMode, RenderLabels::StarLabels) && appMag < labelThresholdMag)
+            if (util::is_set(labelMode, RenderLabels::StarLabels) && irradiance > labelThresholdIrradiance)
             {
                 Vector3f starDir = relPos.normalized();
                 if (starDir.dot(viewNormal) > cosFOV)
                 {
-                    float distr = min(1.0f, 3.5f * (labelThresholdMag - appMag)/labelThresholdMag);
+                    float distr = min(1.0f, labelResponseScale * std::log(irradiance / labelThresholdIrradiance));
                     Color color = Color(renderer->colors.StarLabel, distr * renderer->colors.StarLabel.alpha());
                     renderer->addBackgroundAnnotation(nullptr,
                                                       starDB->getStarName(star, true),
@@ -274,7 +307,7 @@ void PointStarRenderer::process(const Star& star, float distance, float appMag)
             rle.distance = rle.position.norm();
             rle.radius = star.getRadius();
             rle.discSizeInPixels = discSizeInPixels;
-            rle.appMag = appMag;
+            rle.irradiance = irradiance;
             rle.isOpaque = true;
             renderList->push_back(rle);
 

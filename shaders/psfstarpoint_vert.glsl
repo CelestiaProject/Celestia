@@ -21,7 +21,7 @@ out vec2 v_uv;
 layout(location = 0) in vec4 in_Position;
 #endif
 layout(location = 8) in vec3 in_Color;        // green-normalised, linear-space, 8-bit per channel
-layout(location = 9) in float in_Intensity;   // peakRadiance = exposure * 3 * irradiance / (pi * pointRadius^2)
+layout(location = 9) in float in_Intensity;   // exposed peak after dim clipping and tint normalization
 
 uniform float pointRadius; // 96-DPI logical pixels
 uniform float pointScale;  // DPI scale

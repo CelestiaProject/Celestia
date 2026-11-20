@@ -48,7 +48,7 @@ class ClosestStarFinder : public engine::StarHandler
 public:
     ClosestStarFinder(float _maxDistance, const Universe* _universe);
     ~ClosestStarFinder() = default;
-    void process(const Star& star, float distance, float appMag) override;
+    void process(const Star& star, float distance, float irradiance) override;
 
 public:
     float maxDistance;
@@ -86,7 +86,7 @@ class NearStarFinder : public engine::StarHandler
 public:
     NearStarFinder(float _maxDistance, std::vector<const Star*>& nearStars);
     ~NearStarFinder() = default;
-    void process(const Star& star, float distance, float appMag);
+    void process(const Star& star, float distance, float irradiance);
 
 private:
     float maxDistance;
@@ -345,7 +345,7 @@ public:
                     float _maxDistance,
                     float angle);
     ~CloseStarPicker() = default;
-    void process(const Star& star, float lowPrecDistance, float appMag) override;
+    void process(const Star& star, float lowPrecDistance, float irradiance) override;
 
 public:
     UniversalCoord pickOrigin;
@@ -489,7 +489,7 @@ public:
                    float);
     ~CloseDSOPicker() = default;
 
-    void process(const std::unique_ptr<DeepSkyObject>& dso, double distance, float appMag); //NOSONAR
+    void process(const std::unique_ptr<DeepSkyObject>& dso, double distance, float irradiance); //NOSONAR
 
 public:
     Eigen::Vector3d  pickOrigin;
@@ -828,11 +828,7 @@ Universe::pickStar(const UniversalCoord& origin,
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
 
     StarPicker picker(o, direction, when, tolerance);
-    starCatalog->findVisibleStars(picker,
-                                  o,
-                                  rotation.conjugate(),
-                                  tolerance, 1.0f,
-                                  faintestMag);
+    starCatalog->findVisibleStars(picker, o, rotation.conjugate(), tolerance, 1.0f, celestia::astro::magToIrradiance(faintestMag));
     if (picker.pickedStar != nullptr)
         return Selection(const_cast<Star*>(picker.pickedStar));
     else
@@ -861,12 +857,7 @@ Universe::pickDeepSkyObject(const UniversalCoord& origin,
     rotation.setFromTwoVectors(-Eigen::Vector3f::UnitZ(), direction);
 
     DSOPicker picker(orig, dir, renderFlags, tolerance);
-    dsoCatalog->findVisibleDSOs(picker,
-                                orig,
-                                rotation.conjugate(),
-                                tolerance,
-                                1.0f,
-                                faintestMag);
+    dsoCatalog->findVisibleDSOs(picker, orig, rotation.conjugate(), tolerance, 1.0f, celestia::astro::magToIrradiance(faintestMag));
     if (picker.pickedDSO != nullptr)
         return Selection(const_cast<DeepSkyObject*>(picker.pickedDSO));
     else

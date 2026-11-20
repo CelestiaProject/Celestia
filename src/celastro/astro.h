@@ -102,7 +102,10 @@ constexpr inline auto SOLAR_RADIUS = T(695700.0L); // IAU 2015 Resolution B3
 
 float reflectedLuminosity(float sunLuminosity, float distanceFromSun, float objRadius);
 
-// Magnitude conversions
+// Magnitude conversions use visual luminosity relative to the Sun, not
+// bolometric power. Irradiance is Vega-normalized: apparent magnitude zero
+// corresponds to irradiance one, rather than an SI value in W/m^2.
+// The irradiance conversion helpers take positive distances in kilometres.
 float lumToAbsMag(float lum);
 float lumToAppMag(float lum, float lyrs);
 float lumToIrradiance(float lum, float km);

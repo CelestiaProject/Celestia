@@ -895,13 +895,21 @@ Body::getApparentMagnitude(float sunLuminosity,
                            const Eigen::Vector3d& sunPosition,
                            const Eigen::Vector3d& viewerPosition) const
 {
+    return astro::irradianceToMag(getApparentIrradiance(sunLuminosity, sunPosition, viewerPosition));
+}
+
+float
+Body::getApparentIrradiance(float sunLuminosity,
+                            const Eigen::Vector3d& sunPosition,
+                            const Eigen::Vector3d& viewerPosition) const
+{
     double distanceToViewer = viewerPosition.norm();
     double distanceToSun = sunPosition.norm();
     auto illuminatedFraction = static_cast<float>(1.0 + (viewerPosition / distanceToViewer).dot(sunPosition / distanceToSun))
                              * 0.5f;
 
-    return astro::lumToAppMag(getLuminosity(sunLuminosity, (float) distanceToSun) * illuminatedFraction,
-                              static_cast<float>(astro::kilometersToLightYears(distanceToViewer)));
+    float luminosity = getLuminosity(sunLuminosity, static_cast<float>(distanceToSun)) * illuminatedFraction;
+    return astro::lumToIrradiance(luminosity, static_cast<float>(distanceToViewer));
 }
 
 BodyClassification

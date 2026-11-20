@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstdint>
+#include <limits>
 #include <span>
 
 #include <Eigen/Geometry>
@@ -25,11 +26,11 @@ namespace celestia::engine
 {
 
 using StarOctree = StaticOctree<Star, float>;
-// Callbacks receive distance in light years and apparent magnitude.
+// Callbacks receive distance in light years and Vega-normalized visual irradiance.
 using StarHandler = OctreeProcessor<Star, float>;
 
 // Frustum tests are node-level; callbacks may receive stars outside the view.
-// Nearby orbiting stars may exceed the magnitude limit so their precise
+// Nearby orbiting stars may be below the irradiance limit so their precise
 // distances can be checked by the callback.
 class StarOctreeVisibleObjectsProcessor
 {
@@ -49,9 +50,9 @@ private:
     StarOctree::PointType m_obsPosition;
     std::span<const PlaneType, 5> m_frustumPlanes;
     std::array<float, 5> m_projectedRadiusFactors;
-    float m_limitingFactor;
-
-    float m_dimmest{ 1000.0f };
+    float m_minimumIrradiance;
+    float m_limitingMagnitude;
+    float m_dimmest{ std::numeric_limits<float>::infinity() };
 };
 
 class StarOctreeCloseObjectsProcessor
