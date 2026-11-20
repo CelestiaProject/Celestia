@@ -48,7 +48,8 @@ public:
                      const Matrices &m,
                      bool inside,
                      RingRenderHalf renderHalf,
-                     float atmosphereRadius);
+                     float atmosphereRadius,
+                     float farPlaneDistance);
 
 private:
     void initializeLOD(unsigned int, std::uint32_t);

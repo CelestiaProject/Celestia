@@ -1365,11 +1365,10 @@ void Renderer::renderItem(const RenderListEntry& rle,
             half = celestia::render::RingRenderHalf::Near;
         else if (rle.renderableType == RenderListEntry::RenderableRingSystemFar)
             half = celestia::render::RingRenderHalf::Far;
-        renderRingSystem(*rle.body,
-                         rle.position,
-                         static_cast<float>(rle.distance),
+        renderRingSystem(rle,
                          observer,
                          nearPlaneDistance,
+                         farPlaneDistance,
                          m,
                          half);
         break;
@@ -2660,7 +2659,8 @@ void Renderer::renderObject(const Vector3f& pos,
                                     segmentSizeInPixels,
                                     ringsMVP, distance <= obj.rings->innerRadius,
                                     celestia::render::RingRenderHalf::Both,
-                                    0.0f);
+                                    0.0f,
+                                    farPlaneDistance);
     }
 }
 
@@ -3384,14 +3384,16 @@ void Renderer::renderPlanet(Body& body,
 }
 
 
-void Renderer::renderRingSystem(Body& body,
-                                const Vector3f& pos,
-                                float distance,
+void Renderer::renderRingSystem(const RenderListEntry& rle,
                                 const Observer& observer,
                                 float nearPlaneDistance,
+                                float farPlaneDistance,
                                 const Matrices &m,
                                 celestia::render::RingRenderHalf renderHalf)
 {
+    Body& body = *rle.body;
+    const Vector3f& pos = rle.position;
+    float distance = static_cast<float>(rle.distance);
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
     const RingSystem* rings = bodyFeaturesManager->getRings(&body);
@@ -3498,7 +3500,8 @@ void Renderer::renderRingSystem(Body& body,
                                 ringsMVP,
                                 false,
                                 renderHalf,
-                                atmosphereRadius);
+                                atmosphereRadius,
+                                farPlaneDistance);
 }
 
 

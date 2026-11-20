@@ -556,11 +556,10 @@ class Renderer
                                 float farPlaneDistance,
                                 const Matrices& m);
 
-    void renderRingSystem(Body& body,
-                          const Eigen::Vector3f& pos,
-                          float distance,
+    void renderRingSystem(const RenderListEntry& rle,
                           const Observer& observer,
                           float nearPlaneDistance,
+                          float farPlaneDistance,
                           const Matrices&,
                           celestia::render::RingRenderHalf);
 
