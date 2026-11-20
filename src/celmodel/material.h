@@ -62,6 +62,14 @@ public:
         return Eigen::Vector3f(m_red, m_green, m_blue);
     }
 
+    Color linearize(bool enabled) const noexcept
+    {
+        return enabled ? Color(::Color::linearizeScalar(m_red),
+                               ::Color::linearizeScalar(m_green),
+                               ::Color::linearizeScalar(m_blue))
+                       : *this;
+    }
+
     constexpr auto operator<=>(const Color&) const noexcept = default;
 
 private:

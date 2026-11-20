@@ -239,6 +239,11 @@ public:
                             Color materialDiffuse,
                             Color materialSpecular,
                             Color materialEmissive);
+    void setLightParameters(const LightingState& ls,
+                            const Eigen::Vector3f& materialDiffuse,
+                            const Eigen::Vector3f& materialSpecular,
+                            const Eigen::Vector3f& materialEmissive,
+                            float materialOpacity);
     void setEclipseShadowParameters(const LightingState& ls,
                                     const Eigen::Vector3f& scale,
                                     const Eigen::Quaternionf& orientation);
