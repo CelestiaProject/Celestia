@@ -1,51 +1,53 @@
 {
 	Name   "Jupiter"
 	Target "Sol/Jupiter"
-	Description "Jupiter is the largest planet in our solar system and the fifth from the sun.  Like the other large outer planets, Jupiter is a gas giant, with no solid surface.  The Great Red Spot is the biggest and longest-lived of the many storms in Jupiter's turbulent atmosphere; this Earth-sized tempest has been around for at least 300 years."
+	Description "Jupiter is the largest planet in our solar system and the fifth from the sun.  Like the other large outer planets, Jupiter is a gas giant, with no solid surface.  A fast rotation speed of 10 hours creates strong jet streams that separate clouds into dark belts and bright zones.  The Great Red Spot is the biggest and longest-lived of the many storms in Jupiter's turbulent atmosphere; this Earth-sized tempest has been around for at least 300 years."
+}
+
+{
+	Name "Io"
+	Target "Sol/Jupiter/Io"
+	Distance 9000
+	DistanceUnits "km"
+	Description "Io is the innermost of the four Galilean moons of Jupiter.  It is the fourth-largest moon in the solar system, slightly larger than Earth's Moon.  Its distinctive yellow, red, white, black and green-colored formations are from surface deposits of sulfur, sulfur dioxide frost and other sulfur compounds that are produced from over 400 active volcanoes.  These volcanoes produce lakes and floodplains of molten sulfur or silicate rock.  Volcanic plumes rising from the surface of Io were first photographed by the Voyager 1 spacecraft.  Io also has more than 100 mountains, some of which are taller than Mount Everest."
+}
+
+{
+	Name "Europa"
+	Target "Sol/Jupiter/Europa"
+	Distance 7000
+	DistanceUnits "km"
+	Description "Slightly smaller than Earth's Moon, Europa is the sixth-closest of the known moons of Jupiter.  Europa is primarily made of silicate rock with a water-ice crust.  Dark streaks crisscross a white, smooth surface that has relatively few craters.  Tidal heating produces a subsurface saltwater ocean with more than twice the amount of water as Earth's global ocean.  Europa has emerged as one of the most likely locations in the Solar System where life could exist."
+}
+
+{
+	Name "Titan"
+	Target "Sol/Saturn/Titan"
+	Description "Saturn's largest moon Titan has a rocky core surrounded by water ice, salty liquid water and a water ice outer crust.  The dense atmosphere is 97% nitrogen with methane, hydrogen and traces of hydrocarbons.  Seasonal weather patterns form from clouds of methane and liquid methane rain.  A thick, orange smog hides a surface of mountains, hills and valleys but few impact craters.  Dark dunes of hydrocarbon sand stretch across the equator.  Polar regions are carved with lakes, rivers and seas of liquid methane.  While described as the most Earth-like object in the Solar System, it has a different chemistry and a temperature of -179 degrees centigrade."
+}
+
+{
+	Name "Enceladus"
+	Target "Sol/Saturn/Enceladus"
+	Distance 1500
+	DistanceUnits "km"
+	Description "Enceladus is the sixth-largest moon of Saturn.  Some surface areas are covered by fresh, clean ice; but Enceladus also has old, heavily cratered regions and young, tectonically formed terrain.  The Cassini spacecraft discovered cryovolcanoes near the south pole -- shooting out geyser-like jets of water vapor, molecular hydrogen and volatile gases, plus solid sodium chloride crystals and water-ice particles.  Some of this material escapes from Enceladus and forms Saturn's E ring.  Analysis of the plumes shows evidence for an environment that could support hydrothermal vent microorganisms."
 }
 
 {
 	Name "Pluto and Charon"
-	Target "Sol/Pluto"
-	Distance 40000
+	Target "Sol/Pluto-Charon"
+	Distance 75000
 	DistanceUnits "km"
-	Description "Pluto orbits our sun at a average distance of nearly six billion kilometers.  Its moon Charon is so large that the two are often referred to as a 'double planet'."
+	Description "The dwarf planet Pluto orbits our sun at a average distance of 5.8 billion kilometers.  Pluto is about two-thirds the width of our Moon and its largest moon Charon is half the width of Pluto.  Charon is so large compared to Pluto that the two orbit each other and are often referred to as a 'dwarf double planet'.  The spacecraft New Horizons flew by Pluto-Charon in July 2015 and revealed a large, heart-shaped feature on Pluto."
 }
 
 {
 	Name "Eros"
 	Target "Sol/Eros"
-	Description "Eros is a potato-shaped near-Earth asteroid about 33 km long.  Thanks to the NEAR Shoemaker spacecraft, more is known about Eros than any other Asteroid.  On Feb 14, 2001 NEAR descended on Eros and became the first spacecraft ever to land on an asteroid."
-}
-
-{
-	Name "Alpha Centauri"
-	Target "Alpha Centauri"
-	Distance 90
-	DistanceUnits "au"
-	Description "Alpha Centauri A and B are together with Proxima Centauri, the nearest star system to us.  Alpha Cen A is very similar to our own Sun, though slightly older and brighter.  B is dimmer and redder, and Proxima is so dim that it is can't be seen by the naked eye even though it is the star nearest to the Sun."
-}
-
-{
-	Name "Pleiades"
-	Target "Alcyone"
-	Distance 35
-	DistanceUnits "ly"
-	Description "The Pleiades star cluster is a group of bright recently-formed stars.  The Pleiades are named for the seven sisters from Greek mythology, though telescopes have revealed that there are considerable more than seven stars in the cluster."
-}
-
-{
-	Name "Hyades"
-	Target "63 Tau"
-	Distance 25
-	DistanceUnits "ly"
-	Description "Named for the five daughters of Atlas and Aethra, the Hyades is one of the most prominent open star clusters in the sky.  It is estimated that the stars of the Hyades are approximately 660 million years old--over six times older than the hotter, bluer Pleiades stars which appear nearby in our night sky."
-}
-
-{
-	Name "Gliese 876 b"
-	Target "Gliese 876/b"
-	Description "Gliese 876 b is a giant planet orbiting a red dwarf star.  It is in a 2:1 orbital resonance with another planet in the system."
+	Distance 65
+	DistanceUnits "km"
+	Description "Eros is a potato-shaped near-Earth asteroid about 33 km long.  Like most asteroids, Eros is made mainly of rock and metals.  The NEAR Shoemaker spacecraft orbited Eros for a year, making it the first asteroid ever studied from an orbit around the asteroid.  Then on Feb 12, 2001 NEAR Shoemaker descended on Eros and it became the first asteroid to have a spacecraft land on its surface."
 }
 
 {
@@ -53,24 +55,63 @@
 	Target "Sol/Ida"
 	Distance 200
 	DistanceUnits "km"
-	Description "The Galileo spacecraft photographed the asteroid 243 Ida in 1993 on its way to Jupiter.  These pictures revealed that Ida had a tiny satellite that was later named Dactyl.  Several other asteroids have since been discovered also to have satellites."
+	Description "Ida is a distinctly elongated asteroid located in the asteroid belt between Mars and Jupiter.  The Galileo spacecraft photographed Ida in 1993 on its way to Jupiter.  These pictures revealed that Ida had a tiny satellite that was later named Dactyl.  It was the first asteroid found to have a natural satellite, though several other asteroids have since been discovered that have satellites.  Gravity is so weak on Ida that an astronaut standing on its surface could leap from one end of it to the other."
+}
+
+{
+	Name "Alpha Centauri"
+	Target "Alpha Centauri"
+	Distance 60
+	DistanceUnits "au"
+	Description "Alpha Centauri is a triple star system and is the closest star system to us.  Alpha Centauri A is very similar to our own Sun, though slightly older, larger and brighter.  Alpha Centauri B is slightly smaller, cooler, dimmer and redder.  To the naked eye, these two stars appear to be a single star.  Proxima Centauri is a small faint red dwarf, so dim it can't be seen by the naked eye even though it is the star nearest to the Sun."
+}
+
+{
+	Name "Pleiades"
+	Target "Alcyone"
+	Distance 30
+	DistanceUnits "ly"
+	Description "The Pleiades star cluster is a group of hot, blue luminous, recently-formed stars.  This open cluster is about 444 light years from Earth, making it one of the nearest star clusters.  The Pleiades are named for the seven sisters from Greek mythology -- though up to 14 stars can be seen with the naked eye and telescopes have revealed that there are over 1000 stars in the cluster."
+}
+
+{
+	Name "Hyades"
+	Target "63 Tau"
+	Distance 30
+	DistanceUnits "ly"
+	Description "Named for the five daughters of Atlas and Aethra, the Hyades is one of the most prominent open star clusters in the sky.  It is located about 153 light years from Earth, making it the nearest star cluster.  It is estimated that the stars of the Hyades are approximately 625 million years old--over six times older than the hotter, bluer Pleiades stars which appear nearby."
+}
+
+{
+	Name "Poltergeist"
+	Target "PSR B1257+12/PSR B1257+12 c"
+	Description "Poltergeist (PSR B1257+12 c) and Phobetor (PSR B1257+12 d) are exoplanets orbiting the pulsar Lich (PSR B1257+12).  They are approximately 2,300 light-years away from Earth.  In 1992 they became the first planets ever discovered and confirmed outside the Solar System.  They were discovered using the pulsar timing method, where the regular pulses of a pulsar are measured to determine if there are variations in the data that could be caused by a planet.  Bathed in intense radiation from the pulsar, they cannot support life.  This is an artist's concept of the planet."
 }
 
 {
 	Name "51 Peg b"
 	Target "51 Peg/b"
-	Description "51 Pegasi b was the first planet discovered orbiting a normal star other than our Sun.  It is a gas giant planet and orbits extremely close to its parent star--less than one fifth the distance between Mercury and our sun.  That a gas giant could exist so close to a star has forced astronomers to seriously revise their theories of solar system formation."
+	Description "51 Pegasi b was the first planet discovered orbiting a Sun-like star.  It is a gas giant planet and orbits extremely close to its parent star--less than one fifth the distance between Mercury and the Sun.  Initially thought to be an anomaly, numerous other similar systems have been found leading to the concept of 'hot Jupiters'.  That a gas giant could exist so close to a star has forced astronomers to seriously revise their theories of solar system formation.  This is an artist's concept of the planet."
 }
 
 {
-	Name "Albireo"
-	Target "Albireo"
-	Distance 0.6
-	Description "Because of the contrasting orange and blue-white colors of its component stars, the Albireo double star system is considered one of the most beautiful pairs in the sky.  The orange star is a Type K giant, and its companion is a B dwarf."
+	Name "Gliese 876 b"
+	Target "Gliese 876/b"
+	Description "Gliese 876 b is the first planet discovered to be orbiting a red dwarf star.  It is a gas giant planet with no solid surface - similar to Jupiter.  It is estimated to have about twice the mass of Jupiter.  It is in a 1:2:4 orbital resonance with the inner planet Gliese 876 c and the outer planet Gliese 876 e.  This is an artist's concept of the planet."
+}
+
+{
+	Name "PSR B1919+21"
+	Target "PSR B1919+21"
+	Distance 50
+	DistanceUnits "km"
+	Description "PSR B1919+21 is the first pulsar ever discovered.  Uniform, repeatable pulses were found in data from a radio telescope array on November 28, 1967.  The pulses repeated about every 1.33 seconds with a duration of 0.04 seconds.  It was first thought to be noise, then was nicknamed LGM (for 'little green men') as a potential extraterrestrial signal.  The new object was explained as a rapidly rotating neutron star that emits beams of electromagnetic radiation from its magnetic poles.  It is observed only when the beam is pointing directly towards the Earth, similar to a lighthouse."
 }
 
 {
 	Name "Comet Borrelly"
 	Target "Sol/Borrelly"
-	Description "One September 22, 2001, Comet Borrelly became the second comet to be imaged at close range by a spacecraft.  Despite not being designed for a comet flyby, Deep Space 1 approached within 2200 kilometers of the Borrelly's nucleus to return the highest resolution pictures we have of a cometary core."
+	Distance 20
+	DistanceUnits "km"
+	Description "On September 22, 2001, Comet Borrelly became the second comet to be imaged at close range by a spacecraft.  Despite not being designed for a comet flyby, Deep Space 1 approached within 2200 kilometers of Borrelly's nucleus to return high resolution pictures of the cometary core."
 }
