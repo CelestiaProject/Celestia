@@ -6,11 +6,13 @@
 // of the License, or (at your option) any later version.
 
 #include <array>
+#include <cmath>
 #include <vector>
 
 #include <doctest.h>
 
 #include <celengine/depthpartition.h>
+#include <celmath/geomutil.h>
 
 namespace
 {
@@ -173,4 +175,78 @@ TEST_CASE("Depth partition buffers survive shrinking and regrowing without stale
         else
             CHECK(groups[i].size() == 1);
     }
+}
+
+TEST_CASE("Nearby orbit bounds retain the physical foreground gap across spanning rings")
+{
+    const std::array entries{
+        entry(RenderListEntry::RenderableBody, 193000.0f, 474000.0f),
+        entry(RenderListEntry::RenderableRingSystemNear, 149000.0f, 552000.0f),
+        entry(RenderListEntry::RenderableAtmosphere, 192000.0f, 472000.0f),
+        entry(RenderListEntry::RenderableRingSystemFar, 149000.0f, 552000.0f),
+    };
+    std::vector<const RenderListEntry*> depthEntries;
+    std::vector<celestia::engine::DepthBufferPartition> partitionStorage;
+    std::vector<std::vector<const RenderListEntry*>> groupStorage;
+    auto partitions = celestia::engine::detail::buildDepthPartitions(
+        entries, -0.0001f, -3.5e9f, depthEntries, partitionStorage);
+    auto groups = celestia::engine::detail::partitionRenderList(entries, partitions, groupStorage);
+
+    CHECK(partitions.back().nearZ == -0.0001f);
+    CHECK(partitions.back().farZ == entries[2].nearZ);
+    const std::vector<const RenderListEntry*> ringOrder{&entries[3], &entries[1]};
+    CHECK(groups.back() == ringOrder);
+}
+
+TEST_CASE("Points on ring near bounds stay inside their assigned clip interval")
+{
+    std::array entries{
+        entry(RenderListEntry::RenderableRingSystem, 1.0f, 10.0f),
+        entry(RenderListEntry::RenderableStar, 1.0f, 1.0f),
+    };
+    entries[1].discSizeInPixels = 0.5f;
+    SUBCASE("Exactly on the ring bound") {}
+    SUBCASE("One ULP in front of the ring bound")
+    {
+        entries[1].nearZ = std::nextafter(entries[1].nearZ, 0.0f);
+        entries[1].farZ = entries[1].nearZ;
+    }
+    std::vector<const RenderListEntry*> depthEntries;
+    std::vector<celestia::engine::DepthBufferPartition> partitionStorage;
+    std::vector<std::vector<const RenderListEntry*>> groupStorage;
+    auto partitions = celestia::engine::detail::buildDepthPartitions(
+        entries, -0.1f, {}, depthEntries, partitionStorage);
+    auto groups = celestia::engine::detail::partitionRenderList(entries, partitions, groupStorage);
+    REQUIRE_FALSE(groups.back().empty());
+    CHECK(groups.back().front() == &entries[1]);
+    const auto& partition = partitions.back();
+    Eigen::Vector4f point(0.0f, 0.0f, entries[1].nearZ, 1.0f);
+    Eigen::Vector4f clip = celestia::math::Perspective(90.0f, 1.0f, -partition.nearZ, -partition.farZ) * point;
+    CHECK(clip.z() >= -clip.w());
+    CHECK(clip.z() <= clip.w());
+}
+
+TEST_CASE("Emitted orbit segments behind ring near bounds render in only one interval")
+{
+    const std::array entries{
+        entry(RenderListEntry::RenderableBody, 121735.6002586f, 300000.0f),
+        entry(RenderListEntry::RenderableRingSystem, 94010.2098329f, 400000.0f),
+    };
+    std::vector<const RenderListEntry*> depthEntries;
+    std::vector<celestia::engine::DepthBufferPartition> partitionStorage;
+    auto partitions = celestia::engine::detail::buildDepthPartitions(
+        entries, -0.0001f, {}, depthEntries, partitionStorage);
+    const Eigen::Vector4f start(23247.8508035f, 0.0f, -97386.0002472f, 1.0f);
+    const Eigen::Vector4f end(22408.2492279f, 0.0f, -95695.9961626f, 1.0f);
+    unsigned int visibleIntervals = 0;
+    for (const auto& partition : partitions)
+    {
+        auto projection = celestia::math::Perspective(90.0f, 1280.0f / 720.0f, -partition.nearZ, -partition.farZ);
+        Eigen::Vector4f clipStart = projection * start;
+        Eigen::Vector4f clipEnd = projection * end;
+        if (clipStart.z() >= -clipStart.w() && clipStart.z() <= clipStart.w() &&
+            clipEnd.z() >= -clipEnd.w() && clipEnd.z() <= clipEnd.w())
+            ++visibleIntervals;
+    }
+    CHECK(visibleIntervals == 1);
 }

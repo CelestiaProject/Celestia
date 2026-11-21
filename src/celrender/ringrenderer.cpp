@@ -156,13 +156,18 @@ RingRenderer::renderRings(const RingSystem& rings,
                           const Matrices &m,
                           bool inside,
                           RingRenderHalf renderHalf,
-                          float atmosphereRadius)
+                          float atmosphereRadius,
+                          float farPlaneDistance)
 {
     float inner = rings.innerRadius / planetRadius;
     float outer = rings.outerRadius / planetRadius;
     Texture* ringsTex = renderer.getTextureManager()->find(rings.texture);
 
+    // A tiny orbit near plane can round a finite perspective far plane away.
+    bool clipFarPlane = (*m.projection)(2, 2) == -1.0f && (*m.projection)(3, 2) == -1.0f;
     ShaderProperties shadprop = createShaderProperties(ls, ringsTex, renderShadow);
+    if (clipFarPlane)
+        shadprop.texUsage |= TexUsage::ClipFarPlane;
 
     // Get a shader for the current rendering configuration
     auto* prog = renderer.getShaderManager().getShader(shadprop);
@@ -193,6 +198,13 @@ RingRenderer::renderRings(const RingSystem& rings,
     }
     prog->ringHalf = ringHalf;
     prog->ringAtmosphereRadius = atmosphereRadius;
+
+    if (clipFarPlane)
+    {
+        Eigen::Vector4f farClipPlane = m.modelview->row(2).transpose();
+        farClipPlane.w() += farPlaneDistance;
+        prog->ringFarClipPlane = farClipPlane;
+    }
 
     setUpShadowParameters(prog, ls, planetOblateness);
 

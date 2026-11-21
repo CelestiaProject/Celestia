@@ -2031,6 +2031,8 @@ buildRingsFragmentShader(const ShaderProperties& props)
     source += DeclareUniform("ambientColor", Shader_Vector3);
     source += DeclareUniform("ringHalf", Shader_Float);
     source += DeclareUniform("ringAtmosphereRadius", Shader_Float);
+    if (util::is_set(props.texUsage, TexUsage::ClipFarPlane))
+        source += DeclareUniform("ringFarClipPlane", Shader_Vector4);
 
     source += DeclareLights(props);
 
@@ -2134,6 +2136,11 @@ buildRingsFragmentShader(const ShaderProperties& props)
         }
     }
 
+    if (util::is_set(props.texUsage, TexUsage::ClipFarPlane))
+    {
+        // Reject after filtering to preserve texture derivatives at the clip edge.
+        source += "if (dot(ringFarClipPlane, vec4(position, 1.0)) < 0.0) discard;\n";
+    }
     source += "if (dropFragment) opticalDepth = 0.0;\n";
     source += "fragColor = vec4(color.rgb * diff.rgb, opticalDepth);\n";
 
@@ -2980,6 +2987,28 @@ CelestiaGLProgram::initAtmosphereParameters()
 }
 
 void
+CelestiaGLProgram::initRingParameters()
+{
+    if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
+    {
+        ringWidth            = floatParam("ringWidth");
+        ringRadius           = floatParam("ringRadius");
+        ringPlane            = vec4Param("ringPlane");
+        ringCenter           = vec3Param("ringCenter");
+        ringScale            = vec3Param("ringScale");
+    }
+    else if (props.lightModel == LightingModel::RingIllumModel)
+    {
+        ringWidth            = floatParam("ringWidth");
+        ringRadius           = floatParam("ringRadius");
+        ringHalf             = floatParam("ringHalf");
+        ringAtmosphereRadius = floatParam("ringAtmosphereRadius");
+        if (util::is_set(props.texUsage, TexUsage::ClipFarPlane))
+            ringFarClipPlane = vec4Param("ringFarClipPlane");
+    }
+}
+
+void
 CelestiaGLProgram::initParameters()
 {
     initCommonParameters();
@@ -3024,21 +3053,7 @@ CelestiaGLProgram::initParameters()
     opacity      = floatParam("opacity");
     ambientColor = vec3Param("ambientColor");
 
-    if (util::is_set(props.texUsage, TexUsage::RingShadowTexture))
-    {
-        ringWidth            = floatParam("ringWidth");
-        ringRadius           = floatParam("ringRadius");
-        ringPlane            = vec4Param("ringPlane");
-        ringCenter           = vec3Param("ringCenter");
-        ringScale            = vec3Param("ringScale");
-    }
-    else if (props.lightModel == LightingModel::RingIllumModel)
-    {
-        ringWidth            = floatParam("ringWidth");
-        ringRadius           = floatParam("ringRadius");
-        ringHalf             = floatParam("ringHalf");
-        ringAtmosphereRadius = floatParam("ringAtmosphereRadius");
-    }
+    initRingParameters();
 
     textureOffset = floatParam("texCoordOffset");
 
