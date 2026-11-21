@@ -27,6 +27,8 @@ class IScript
     virtual bool handleKeyEvent(const char* key);
     virtual bool handleTickEvent(double dt);
     virtual bool tick(double) = 0;
+    virtual bool wantsKeyboard() const;
+    virtual bool wantsExclusiveInput() const;
 };
 
 class IScriptPlugin

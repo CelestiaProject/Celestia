@@ -33,6 +33,8 @@ class LuaScript : public IScript
     bool handleKeyEvent(const char* key) override;
     bool handleTickEvent(double dt) override;
     bool tick(double) override;
+    bool wantsKeyboard() const override;
+    bool wantsExclusiveInput() const override;
 
  private:
     CelestiaCore *m_appCore;

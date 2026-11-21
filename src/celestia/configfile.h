@@ -146,6 +146,7 @@ struct CelestiaConfig
     StarDetails::StarTextureSet starTextures{ };
 
     std::string scriptSystemAccessPolicy{ };
+    std::string scriptRunMode{ };
 
     unsigned int consoleLogRows{ 200 };
 

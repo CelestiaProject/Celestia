@@ -32,4 +32,14 @@ bool IScript::handleTickEvent(double /*dt*/)
     return false;
 }
 
+bool IScript::wantsKeyboard() const
+{
+    return false;
+}
+
+bool IScript::wantsExclusiveInput() const
+{
+    return false;
+}
+
 } // end namespace celestia::scripts

@@ -49,6 +49,7 @@
 #include <celscript/lua/luascript.h>
 #endif
 #include <celscript/common/script.h>
+#include <celscript/common/scriptrunner.h>
 #include <celscript/legacy/legacyscript.h>
 #include <celscript/common/scriptmaps.h>
 
@@ -177,6 +178,13 @@ public:
         Deny        = 2,
     };
 
+    enum class ScriptRunMode
+    {
+        Replace,
+        Concurrent,
+        Default,
+    };
+
     enum class InteractionFlags : unsigned int
     {
         None                = 0x0,
@@ -266,7 +274,7 @@ public:
     bool isCaptureActive();
     bool isRecording();
 
-    void runScript(const std::filesystem::path& filename, bool i18n = true);
+    void runScript(const std::filesystem::path& filename, ScriptRunMode mode = ScriptRunMode::Default, bool i18n = true);
     void cancelScript();
 
     int getHudDetail();
@@ -423,6 +431,9 @@ public:
     ScriptSystemAccessPolicy getScriptSystemAccessPolicy() const;
     void setScriptSystemAccessPolicy(ScriptSystemAccessPolicy);
 
+    ScriptRunMode getScriptRunMode() const;
+    void setScriptRunMode(ScriptRunMode mode);
+
     ScriptSystemAccessPolicy requestScriptSystemAccessPolicy();
 
     void setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>&);
@@ -434,6 +445,7 @@ public:
     celestia::engine::TexturePaths* getTexturePaths() const noexcept { return texturePaths.get(); }
 
 private:
+    void updateScriptKeyboardInput();
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     void renderOverlay();
@@ -469,22 +481,16 @@ private:
     celestia::TimeInfo timeInfo;
     Timer* timer{ nullptr };
 
-    std::unique_ptr<celestia::scripts::IScript>             m_script;
+    celestia::scripts::ScriptRunner                         m_scripts;
     std::unique_ptr<celestia::scripts::IScriptHook>         m_scriptHook;
     std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
 #ifdef CELX
     std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
 #endif
 
-    celestia::scripts::ScriptMaps m_scriptMaps;
+    bool m_shuttingDown{ false };
 
-    enum ScriptState
-    {
-        ScriptCompleted,
-        ScriptRunning,
-        ScriptPaused,
-    };
-    ScriptState scriptState{ ScriptCompleted };
+    celestia::scripts::ScriptMaps m_scriptMaps;
 
     std::string timeZoneName;      // Name of the current time zone
 
@@ -548,6 +554,7 @@ private:
     bool needsUpdateFonts{ false };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
+    ScriptRunMode scriptRunMode { ScriptRunMode::Replace };
 
     std::unique_ptr<Console> console;
     std::ofstream m_logfile;

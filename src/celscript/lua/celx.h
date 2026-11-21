@@ -59,6 +59,9 @@ public:
     void requestIO();
 
     bool charEntered(const char*);
+    void requestKeyboard(bool requested) { m_keyboardRequested = requested; }
+    bool wantsKeyboard() const { return m_keyboardRequested || wantsExclusiveInput(); }
+    bool wantsExclusiveInput() const { return ioMode == IOMode::Asking; }
     double getTime() const;
     int screenshotCount;
     double timeout;
@@ -95,6 +98,8 @@ private:
     double scriptAwakenTime{ 0.0 };
     IOMode ioMode{ IOMode::NotDetermined };
     bool eventHandlerEnabled{ false };
+    bool m_keyboardRequested{ false };
+    bool m_ioPromptActive{ false };
 };
 
 celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);

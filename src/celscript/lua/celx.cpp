@@ -430,8 +430,11 @@ static const char* readStreamChunk(lua_State* /*unused*/, void* udata, size_t* s
 // Returns true if keypress has been consumed
 bool LuaState::charEntered(const char* c_p)
 {
-    if (ioMode == IOMode::Asking && getTime() > timeout)
+    if (ioMode == IOMode::Asking)
     {
+        if (!m_ioPromptActive || getTime() <= timeout)
+            return true;
+
         int stackTop = lua_gettop(costate);
         // TRANSLATORS: Y is first letter of Yes
         if (compareIgnoringCase(c_p, "Y") == 0 || compareIgnoringCase(c_p, _("Y")) == 0)
@@ -451,7 +454,6 @@ bool LuaState::charEntered(const char* c_p)
             GetLogger()->error("ERROR: appCore not found\n");
             return true;
         }
-        appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterMode::PassToScript);
         appCore->showText("", 0, 0, 0, 0);
         // Restore renderflags:
         lua_pushstring(costate, "celestia-savedrenderflags");
@@ -472,6 +474,9 @@ bool LuaState::charEntered(const char* c_p)
         lua_settop(costate,stackTop);
         return true;
     }
+    if (!m_keyboardRequested)
+        return false;
+
     bool result = true;
     lua_getglobal(costate, KbdCallback);
     lua_pushstring(costate, c_p);
@@ -771,6 +776,8 @@ bool LuaState::tick(double dt)
         lua_gettable(state, LUA_REGISTRYINDEX);
         if (lua_isnil(state, -1))
         {
+            m_ioPromptActive = true;
+            timeout = getTime() + 1.0;
             lua_pushstring(state, "celestia-savedrenderflags");
             void* userData = lua_newuserdata(state, sizeof(RenderFlags));
             new (userData) RenderFlags(appCore->getRenderer()->getRenderFlags());
@@ -789,7 +796,6 @@ bool LuaState::tick(double dt)
                               "y = yes, ESC = cancel script, any other key = no"),
                               0, 0,
                               -15, 5, 5);
-            appCore->setTextEnterMode(appCore->getTextEnterMode() | celestia::Hud::TextEnterMode::PassToScript);
         }
         else
         {
@@ -799,7 +805,6 @@ bool LuaState::tick(double dt)
                               "Do you trust the script and want to allow this?"),
                               0, 0,
                               -15, 5, 5);
-            appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterMode::PassToScript);
         }
 
         return false;

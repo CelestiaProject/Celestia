@@ -351,6 +351,7 @@ ReadCelestiaConfig(const std::filesystem::path& filename,
     applyString(config.temperatureScale, *configParams, "TemperatureScale"sv);
     applyString(config.layoutDirection, *configParams, "LayoutDirection"sv);
     applyString(config.scriptSystemAccessPolicy, *configParams, "ScriptSystemAccessPolicy"sv);
+    applyString(config.scriptRunMode, *configParams, "ScriptRunMode"sv);
 
     applyNumber(config.consoleLogRows, *configParams, "LogSize"sv);
 

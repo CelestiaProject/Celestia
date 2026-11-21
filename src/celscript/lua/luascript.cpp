@@ -80,6 +80,16 @@ bool LuaScript::tick(double dt)
     return m_celxScript->tick(dt);
 }
 
+bool LuaScript::wantsKeyboard() const
+{
+    return m_celxScript->wantsKeyboard();
+}
+
+bool LuaScript::wantsExclusiveInput() const
+{
+    return m_celxScript->wantsExclusiveInput();
+}
+
 bool LuaScriptPlugin::isOurFile(const std::filesystem::path &p) const
 {
     auto ext = p.extension();
