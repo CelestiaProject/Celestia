@@ -102,6 +102,32 @@ void setEclipseShadowProperties(const LightingState& ls,
     }
 }
 
+void renderGeometryWithMaterialOverride(RenderGeometry* geometry,
+                                        const RenderInfo& ri,
+                                        util::TextureHandle texOverride,
+                                        double tsec,
+                                        RenderContext& rc)
+{
+    // An SSC texture overrides all materials specified in the geometry file.
+    if (texOverride != util::TextureHandle::Invalid)
+    {
+        cmod::Material material;
+        material.diffuse = cmod::Color(ri.color);
+        material.specular = cmod::Color(ri.specularColor);
+        material.specularPower = ri.specularPower;
+        material.setMap(cmod::TextureSemantic::DiffuseMap, texOverride);
+
+        // RenderInfo surface colors are already in the rendering color space.
+        rc.setMaterial(&material, RenderContext::MaterialColorSpace::Linear);
+        rc.lock();
+        geometry->render(rc, tsec);
+    }
+    else
+    {
+        geometry->render(rc, tsec);
+    }
+}
+
 
 /*! Render a mesh object
  *  Parameters:
@@ -490,24 +516,7 @@ void renderGeometry_GLSL(RenderGeometry* geometry,
     ps.depthTest = true;
     renderer->setPipelineState(ps);
 
-    // Handle material override; a texture specified in an ssc file will
-    // override all materials specified in the geometry file.
-    if (texOverride != util::TextureHandle::Invalid)
-    {
-        cmod::Material m;
-        m.diffuse = cmod::Color(ri.color);
-        m.specular = cmod::Color(ri.specularColor);
-        m.specularPower = ri.specularPower;
-
-        m.setMap(cmod::TextureSemantic::DiffuseMap, texOverride);
-        rc.setMaterial(&m);
-        rc.lock();
-        geometry->render(rc, tsec);
-    }
-    else
-    {
-        geometry->render(rc, tsec);
-    }
+    renderGeometryWithMaterialOverride(geometry, ri, texOverride, tsec, rc);
 }
 
 
@@ -530,24 +539,7 @@ void renderGeometry_GLSL_Unlit(RenderGeometry* geometry,
     ps.depthTest = true;
     renderer->setPipelineState(ps);
 
-    // Handle material override; a texture specified in an ssc file will
-    // override all materials specified in the model file.
-    if (texOverride != util::TextureHandle::Invalid)
-    {
-        cmod::Material m;
-        m.diffuse = cmod::Color(ri.color);
-        m.specular = cmod::Color(ri.specularColor);
-        m.specularPower = ri.specularPower;
-
-        m.setMap(cmod::TextureSemantic::DiffuseMap, texOverride);
-        rc.setMaterial(&m);
-        rc.lock();
-        geometry->render(rc, tsec);
-    }
-    else
-    {
-        geometry->render(rc, tsec);
-    }
+    renderGeometryWithMaterialOverride(geometry, ri, texOverride, tsec, rc);
 }
 
 

@@ -12,6 +12,7 @@ set(UNIT_TEST_SOURCES
   logger_test.cpp
   psf_test.cpp
   r128_test.cpp
+  rendcontext_test.cpp
   resourcesystem_test.cpp
   stellarclass_test.cpp
   staroctree_test.cpp

@@ -39,8 +39,14 @@ public:
     virtual void updateShader(const cmod::VertexDescription& desc, cmod::PrimitiveGroupType primType);
     virtual void drawGroup(celestia::gl::VertexObject &vao, const cmod::PrimitiveGroup& group);
 
+    enum class MaterialColorSpace
+    {
+        sRGB,
+        Linear,
+    };
+
     const cmod::Material* getMaterial() const;
-    void setMaterial(const cmod::Material*);
+    void setMaterial(const cmod::Material*, MaterialColorSpace);
     void lock() { locked = true; }
     void unlock() { locked = false; }
     bool isLocked() const { return locked; }
@@ -61,6 +67,8 @@ public:
     Eigen::Quaternionf getCameraOrientation() const;
 
 protected:
+    cmod::Color convertMaterialColor(const cmod::Color&) const;
+
     Renderer* renderer;
     bool usePointSize{ false };
     bool useStaticPointSize{ false };
@@ -72,6 +80,7 @@ private:
     static const inline cmod::Material defaultMaterial{ };
 
     const cmod::Material* material{ &defaultMaterial };
+    MaterialColorSpace materialColorSpace{ MaterialColorSpace::sRGB };
     bool locked{ false };
     RenderPass renderPass{ PrimaryPass };
     float pointScale{ 1.0f };
