@@ -16,6 +16,7 @@
 #include <cstring>
 #include <fstream>
 #include <istream>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -232,6 +233,12 @@ bool readPointArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh&
     }
 
     auto pointsCount = static_cast<std::int32_t>(nPoints);
+    if (pointsCount > std::numeric_limits<std::uint16_t>::max() - triMesh.getVertexCount())
+    {
+        GetLogger()->error("Accumulated point array count exceeds the 3DS mesh limit\n");
+        return false;
+    }
+
     std::int32_t expectedSize = headerSize + pointsCount * static_cast<std::int32_t>(3 * sizeof(float));
     if (contentSize < expectedSize)
     {
@@ -404,6 +411,12 @@ bool readFaceArray(std::istream& in, std::int32_t contentSize, M3DTriangleMesh& 
 
     auto faceCount = static_cast<std::int32_t>(nFaces);
     std::int32_t expectedSize = headerSize + faceCount * static_cast<std::int32_t>(4 * sizeof(std::uint16_t));
+    if (faceCount > std::numeric_limits<std::uint16_t>::max() - triMesh.getFaceCount())
+    {
+        GetLogger()->error("Accumulated face array count exceeds the 3DS mesh limit\n");
+        return false;
+    }
+
     if (contentSize < expectedSize)
     {
         GetLogger()->error("Content size {} too small to include face array with {} entries\n", contentSize, nFaces);
@@ -490,6 +503,38 @@ bool processTriangleMeshChunk(std::istream& in, M3DChunkType chunkType, std::int
 }
 
 
+bool validateTriangleMesh(const M3DTriangleMesh& triMesh)
+{
+    auto vertexCount = triMesh.getVertexCount();
+    auto faceCount = triMesh.getFaceCount();
+    for (std::uint32_t i = 0; i < faceCount; ++i)
+    {
+        std::uint16_t v0, v1, v2;
+        triMesh.getFace(static_cast<std::uint16_t>(i), v0, v1, v2);
+        if (v0 >= vertexCount || v1 >= vertexCount || v2 >= vertexCount)
+        {
+            GetLogger()->error("Face {} references a vertex outside the mesh's {} vertices\n", i, vertexCount);
+            return false;
+        }
+    }
+
+    for (std::uint32_t i = 0; i < triMesh.getMeshMaterialGroupCount(); ++i)
+    {
+        const auto* matGroup = triMesh.getMeshMaterialGroup(i);
+        for (auto faceIndex : matGroup->faces)
+        {
+            if (faceIndex >= faceCount)
+            {
+                GetLogger()->error("Material group {} references face {} outside the mesh's {} faces\n", i, faceIndex, faceCount);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
 bool processModelChunk(std::istream& in, M3DChunkType chunkType, std::int32_t contentSize, M3DModel& model)
 {
     if (chunkType != M3DChunkType::TriangleMesh)
@@ -500,6 +545,8 @@ bool processModelChunk(std::istream& in, M3DChunkType chunkType, std::int32_t co
     GetLogger()->debug("Processing TriangleMesh chunk\n");
     M3DTriangleMesh triMesh;
     if (!readChunks(in, contentSize, triMesh, processTriangleMeshChunk)) { return false; }
+    // Face arrays may precede point arrays, so validate references only after parsing the mesh.
+    if (!validateTriangleMesh(triMesh)) { return false; }
     model.addTriMesh(std::move(triMesh));
     return true;
 }
