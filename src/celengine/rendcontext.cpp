@@ -63,31 +63,43 @@ RenderContext::getMaterial() const
 }
 
 void
-RenderContext::setMaterial(const cmod::Material* newMaterial)
+RenderContext::setMaterial(const cmod::Material* newMaterial, MaterialColorSpace colorSpace)
 {
     if (locked)
         return;
 
     if (newMaterial == nullptr)
+    {
         newMaterial = &defaultMaterial;
+        colorSpace = MaterialColorSpace::sRGB;
+    }
 
     if (renderPass == PrimaryPass)
     {
-        if (newMaterial != material)
+        if (newMaterial != material || colorSpace != materialColorSpace)
         {
             material = newMaterial;
+            materialColorSpace = colorSpace;
             makeCurrent(*material);
         }
     }
     else if (renderPass == EmissivePass)
     {
         if (material->getMap(cmod::TextureSemantic::EmissiveMap) !=
-            newMaterial->getMap(cmod::TextureSemantic::EmissiveMap))
+            newMaterial->getMap(cmod::TextureSemantic::EmissiveMap) ||
+            colorSpace != materialColorSpace)
         {
             material = newMaterial;
+            materialColorSpace = colorSpace;
             makeCurrent(*material);
         }
     }
+}
+
+cmod::Color
+RenderContext::convertMaterialColor(const cmod::Color& color) const
+{
+    return color.linearize(gl::sRGBRendering && materialColorSpace == MaterialColorSpace::sRGB);
 }
 
 void
@@ -422,9 +434,9 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
         prog->floatParam("shadowMapSize") = static_cast<float>(shadowMapWidth);
     }
 
-    const auto diffuse = m.diffuse.linearize(gl::sRGBRendering);
-    const auto specular = m.specular.linearize(gl::sRGBRendering);
-    const auto emissive = m.emissive.linearize(gl::sRGBRendering);
+    const auto diffuse = convertMaterialColor(m.diffuse);
+    const auto specular = convertMaterialColor(m.specular);
+    const auto emissive = convertMaterialColor(m.emissive);
 
     if (gl::sRGBRendering)
     {
@@ -629,7 +641,7 @@ GLSLUnlit_RenderContext::makeCurrent(const cmod::Material& m)
         textures[i]->bind();
     }
 
-    prog->lights.diffuse[0] = m.diffuse.linearize(gl::sRGBRendering).toVector3();
+    prog->lights.diffuse[0] = convertMaterialColor(m.diffuse).toVector3();
     prog->opacity = m.opacity;
 
     if (usePointSize)

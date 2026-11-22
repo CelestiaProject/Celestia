@@ -194,7 +194,7 @@ ModelRenderGeometry::render(RenderContext& rc, double /* t */)
                 material = m_model->getMaterial(materialIndex);
             }
 
-            rc.setMaterial(material);
+            rc.setMaterial(material, RenderContext::MaterialColorSpace::sRGB);
             rc.drawGroup(m_vaos[meshIndex], *group);
         }
     }

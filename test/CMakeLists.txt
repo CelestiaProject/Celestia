@@ -21,6 +21,7 @@ macro(test_case)
   )
   target_include_directories(${tgt} PRIVATE "${_CELESTIA_TESTS_BASE_DIR}/doctest")
   if(WIN32)
+    target_compile_definitions(${tgt} PRIVATE IMPORT_GLSUPPORT)
     # Need to copy the dlls before test discovery
     add_custom_command(
       TARGET ${tgt} PRE_LINK
