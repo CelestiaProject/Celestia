@@ -30,7 +30,7 @@ namespace
 class ScriptedOrbit : public CachingOrbit
 {
  public:
-    ScriptedOrbit(lua_State*,
+    ScriptedOrbit(ScriptedObjectContext,
                   std::string&&,
                   double boundingRadius,
                   double period,
@@ -45,7 +45,7 @@ class ScriptedOrbit : public CachingOrbit
     void getValidRange(double& begin, double& end) const override;
 
  private:
-    lua_State* luaState{ nullptr };
+    ScriptedObjectContext context;
     std::string luaOrbitObjectName;
     double boundingRadius{ 1.0 };
     double period{ 0.0 };
@@ -54,13 +54,13 @@ class ScriptedOrbit : public CachingOrbit
 };
 
 
-ScriptedOrbit::ScriptedOrbit(lua_State* pLuaState,
+ScriptedOrbit::ScriptedOrbit(ScriptedObjectContext pContext,
                              std::string&& pLuaOrbitObjectName,
                              double pBoundingRadius,
                              double pPeriod,
                              double pValidRangeBegin,
                              double pValidRangeEnd)
-    : luaState(pLuaState),
+    : context(std::move(pContext)),
       luaOrbitObjectName(std::move(pLuaOrbitObjectName)),
       boundingRadius(pBoundingRadius),
       period(pPeriod),
@@ -74,6 +74,9 @@ Eigen::Vector3d
 ScriptedOrbit::computePosition(double tjd) const
 {
     Eigen::Vector3d pos(Eigen::Vector3d::Zero());
+    auto* luaState = context->state;
+    if (luaState == nullptr)
+        return pos;
     lua_getglobal(luaState, luaOrbitObjectName.c_str());
     if (lua_istable(luaState, -1))
     {
@@ -83,7 +86,7 @@ ScriptedOrbit::computePosition(double tjd) const
         {
             lua_pushvalue(luaState, -2); // push 'self' on stack
             lua_pushnumber(luaState, tjd);
-            if (lua_pcall(luaState, 2, 3, 0) == 0)
+            if (context->protectedCall(2, 3) == 0)
             {
                 pos = Eigen::Vector3d(lua_tonumber(luaState, -3),
                                       lua_tonumber(luaState, -2),
@@ -179,7 +182,8 @@ CreateScriptedOrbit(const std::string* moduleName,
                     const util::AssociativeArray& parameters,
                     const std::filesystem::path& path)
 {
-    lua_State* luaState = GetScriptedObjectContext();
+    auto context = GetScriptedObjectContextHandle();
+    lua_State* luaState = context ? context->state : nullptr;
     if (luaState == nullptr)
     {
         GetLogger()->warn("ScriptedOrbits are currently disabled.\n");
@@ -197,7 +201,7 @@ CreateScriptedOrbit(const std::string* moduleName,
         }
 
         lua_pushstring(luaState, moduleName->c_str());
-        if (lua_pcall(luaState, 1, 1, 0) != 0)
+        if (context->protectedCall(1, 1) != 0)
         {
             GetLogger()->error("Failed to load module for ScriptedOrbit: {}\n", lua_tostring(luaState, -1));
             lua_pop(luaState, 1);
@@ -230,7 +234,7 @@ CreateScriptedOrbit(const std::string* moduleName,
     }
 
     // Call the generator function
-    if (lua_pcall(luaState, 1, 1, 0) != 0)
+    if (context->protectedCall(1, 1) != 0)
     {
         // Some sort of error occurred--the error message is atop the stack
         GetLogger()->error("Error calling ScriptedOrbit generator function: {}\n",
@@ -289,7 +293,7 @@ CreateScriptedOrbit(const std::string* moduleName,
         return nullptr;
     }
 
-    return std::make_shared<ScriptedOrbit>(luaState,
+    return std::make_shared<ScriptedOrbit>(std::move(context),
                                            std::move(luaOrbitObjectName),
                                            boundingRadius,
                                            period,

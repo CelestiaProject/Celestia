@@ -28,6 +28,10 @@
 #include <celimage/imageformats.h>
 #include <celestia/celestiacore.h>
 #include <celestia/configfile.h>
+#include <celestia/progressnotifier.h>
+#ifdef CELX
+#include <celephem/scriptobject.h>
+#endif
 #include <celutil/logger.h>
 
 namespace
@@ -172,7 +176,7 @@ TEST_CASE("Simulation initialization can retry after a failed star catalog")
     const auto fallbackPath = directory.getPath("fallback.cfg");
     {
         std::ofstream out(configPath);
-        out << "Configuration { StarDatabase \"" << starPath.generic_string() << "\" }";
+        out << "Configuration { ScriptSystemAccessPolicy \"allow\" StarDatabase \"" << starPath.generic_string() << "\" }";
         REQUIRE(out.good());
     }
     {
@@ -185,7 +189,9 @@ TEST_CASE("Simulation initialization can retry after a failed star catalog")
     {
         CelestiaCore core;
         REQUIRE_FALSE(core.initSimulation(configPath));
+        CHECK(core.getScriptSystemAccessPolicy() == CelestiaCore::ScriptSystemAccessPolicy::Ask);
         REQUIRE(core.initSimulation(fallbackPath));
+        CHECK(core.getScriptSystemAccessPolicy() == CelestiaCore::ScriptSystemAccessPolicy::Ask);
         CHECK(core.getSimulation() != nullptr);
     }
     SUBCASE("Truncated star catalog falls back successfully")
@@ -196,8 +202,24 @@ TEST_CASE("Simulation initialization can retry after a failed star catalog")
         out.close();
 
         CelestiaCore core;
-        REQUIRE_FALSE(core.initSimulation(configPath));
+        using Policy = CelestiaCore::ScriptSystemAccessPolicy;
+        core.setScriptSystemAccessPolicy(Policy::Deny);
+        struct CatalogProgress : ProgressNotifier
+        {
+            explicit CatalogProgress(CelestiaCore& core) : core(core) {}
+            void update(const std::string&) override
+            {
+                called = true;
+                CHECK(core.getScriptSystemAccessPolicy() == Policy::Allow);
+            }
+            CelestiaCore& core;
+            bool called{ false };
+        } progress(core);
+        REQUIRE_FALSE(core.initSimulation(configPath, {}, {}, &progress));
+        CHECK(progress.called);
+        CHECK(core.getScriptSystemAccessPolicy() == Policy::Deny);
         REQUIRE(core.initSimulation(fallbackPath));
+        CHECK(core.getScriptSystemAccessPolicy() == Policy::Deny);
         CHECK(core.getSimulation() != nullptr);
     }
     SUBCASE("Both initialization attempts fail")
@@ -207,6 +229,61 @@ TEST_CASE("Simulation initialization can retry after a failed star catalog")
         REQUIRE_FALSE(core.initSimulation(configPath));
         CHECK(core.getSimulation() == nullptr);
     }
+    using Policy = CelestiaCore::ScriptSystemAccessPolicy;
+    struct DenyAccess : ProgressNotifier
+    {
+        explicit DenyAccess(CelestiaCore& core) : core(core) {}
+        void update(const std::string&) override { core.setScriptSystemAccessPolicy(Policy::Deny); }
+        CelestiaCore& core;
+    };
+    SUBCASE("A frontend policy change survives catalog failure and retry")
+    {
+        CelestiaCore core;
+        core.setScriptSystemAccessPolicy(Policy::Allow);
+        DenyAccess progress(core);
+        REQUIRE_FALSE(core.initSimulation(configPath, {}, {}, &progress));
+        CHECK(core.getScriptSystemAccessPolicy() == Policy::Deny);
+        REQUIRE(core.initSimulation(fallbackPath));
+        CHECK(core.getScriptSystemAccessPolicy() == Policy::Deny);
+    }
+#ifdef CELX
+    SUBCASE("A downgrade during a successful retry isolates subsequent catalog scripts")
+    {
+        CelestiaCore core;
+        core.setScriptSystemAccessPolicy(Policy::Deny);
+        REQUIRE_FALSE(core.initSimulation(configPath));
+        {
+            std::ofstream out(starPath, std::ios::binary);
+            constexpr char emptyCatalog[] = "CELSTARS\x00\x01\x00\x00\x00\x00";
+            out.write(emptyCatalog, sizeof(emptyCatalog) - 1);
+            REQUIRE(out.good());
+        }
+        struct CatalogPolicyChanges : DenyAccess
+        {
+            using DenyAccess::DenyAccess;
+            void update(const std::string& path) override
+            {
+                DenyAccess::update(path);
+                auto* firstPrivate = celestia::ephem::GetScriptedObjectContext();
+                REQUIRE(firstPrivate != nullptr);
+                core.setScriptSystemAccessPolicy(Policy::Allow);
+                REQUIRE(luaL_dostring(firstPrivate, "celestia:requestsystemaccess(); catalogMarker = 42") == 0);
+                DenyAccess::update(path);
+                REQUIRE(celestia::ephem::GetScriptedObjectContext() != firstPrivate);
+                lua_getglobal(firstPrivate, "catalogMarker");
+                CHECK(lua_tonumber(firstPrivate, -1) == 42);
+                lua_pop(firstPrivate, 1);
+            }
+        } progress(core);
+        REQUIRE(core.initSimulation(configPath, {}, {}, &progress));
+        REQUIRE(core.getScriptSystemAccessPolicy() == Policy::Deny);
+        auto* context = celestia::ephem::GetScriptedObjectContext();
+        REQUIRE(context != nullptr);
+        lua_getglobal(context, "io");
+        CHECK(lua_isnil(context, -1));
+        lua_pop(context, 1);
+    }
+#endif
 }
 
 TEST_CASE("Tone mapping configuration accepts new curves and preserves legacy modes")

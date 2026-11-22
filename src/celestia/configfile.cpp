@@ -172,7 +172,16 @@ applyPaths(CelestiaConfig::Paths& paths, const AssociativeArray& hash)
     applyPath(paths.leapSecondsFile, hash, "LeapSecondsFile"sv);
 #ifdef CELX
     applyPath(paths.scriptScreenshotDirectory, hash, "ScriptScreenshotDirectory"sv);
-    applyPath(paths.luaHook, hash, "LuaHook"sv);
+    if (auto hook = hash.getPath("LuaHook"sv); hook.has_value())
+    {
+        paths.luaHooks.clear();
+        if (!hook->empty())
+            paths.luaHooks.push_back(*hook);
+    }
+    else
+    {
+        applyPathArray(paths.luaHooks, hash, "LuaHook"sv);
+    }
 #endif
 }
 

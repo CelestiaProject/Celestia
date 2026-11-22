@@ -220,6 +220,7 @@ CelestiaCore::~CelestiaCore()
 {
     m_shuttingDown = true;
     cancelScript();
+    m_scriptHook.reset();
 
     if (movieCapture != nullptr)
         recordEnd();
@@ -400,18 +401,33 @@ void CelestiaCore::cancelScript()
 {
     if (!m_scripts.empty())
     {
-        if (is_set(hud->textEnterMode(), Hud::TextEnterMode::PassToScript))
-            setTextEnterMode(hud->textEnterMode() & ~Hud::TextEnterMode::PassToScript);
         m_scripts.clear();
+        updateScriptKeyboardInput(false);
     }
 }
 
-void CelestiaCore::updateScriptKeyboardInput()
+std::weak_ptr<const bool> CelestiaCore::acquireScriptKeyboardCapture()
 {
-    auto mode = hud->textEnterMode();
-    setTextEnterMode(m_scripts.wantsKeyboard()
-                     ? mode | Hud::TextEnterMode::PassToScript
-                     : mode & ~Hud::TextEnterMode::PassToScript);
+    // Starting capture after a frontend release must not reactivate earlier requests.
+    if (!m_keyboardCapture || !is_set(hud->textEnterMode(), Hud::TextEnterMode::PassToScript))
+        m_keyboardCapture = std::make_shared<const bool>(true);
+    return m_keyboardCapture;
+}
+
+void CelestiaCore::updateScriptKeyboardInput(std::optional<bool> request)
+{
+    const auto mode = hud->textEnterMode();
+    constexpr auto passToScript = Hud::TextEnterMode::PassToScript;
+    const bool requested = request.value_or(false) || m_scripts.wantsKeyboard() ||
+                           (m_scriptHook && m_scriptHook->wantsKeyboard());
+    if (requested == m_scriptKeyboardRequested && request != requested)
+    {
+        // An unchanged request must not undo a frontend's explicit release.
+        return;
+    }
+
+    m_scriptKeyboardRequested = requested;
+    setTextEnterMode(requested ? mode | passToScript : mode & ~passToScript);
 }
 
 
@@ -425,7 +441,7 @@ void CelestiaCore::runScript(const std::filesystem::path& filename, ScriptRunMod
 
     if (m_scripts.isCanceling())
     {
-        GetLogger()->warn("Cannot launch a script from a canceled script's cleanup callback\n");
+        GetLogger()->warn("Cannot launch a script during script cancellation\n");
         return;
     }
 
@@ -957,7 +973,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
 
 #ifdef CELX
-    if (c != '\033' && (m_scripts.wantsExclusiveInput() || is_set(hud->textEnterMode(), Hud::TextEnterMode::PassToScript)))
+    if (c != '\033' && is_set(hud->textEnterMode(), Hud::TextEnterMode::PassToScript))
     {
         bool handled = m_scripts.charEntered(c_p);
         updateScriptKeyboardInput();
@@ -1141,6 +1157,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
 
 
     case '\033': // Escape
+    {
         cancelScript();
         if (hud->textEnterMode() != Hud::TextEnterMode::Normal)
         {
@@ -1157,6 +1174,7 @@ void CelestiaCore::charEntered(const char *c_p, int modifiers)
         }
         flash(_("Cancel"));
         break;
+    }
 
     case ' ':
         if (sim->getPauseState() == true)
@@ -2046,7 +2064,7 @@ void CelestiaCore::resize(GLsizei w, GLsizei h)
     metrics.height = h;
 
     setFOVFromZoom();
-    if (m_scriptHook != nullptr && m_scriptHook->call("resize", float(w), float(h)))
+    if (m_scriptHook != nullptr && m_scriptHook->call("resize", static_cast<float>(w), static_cast<float>(h)))
         return;
 }
 
@@ -2504,6 +2522,7 @@ void CelestiaCore::initLocale()
 
 bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
                                   const vector<std::filesystem::path>& extrasDirs,
+                                  [[maybe_unused]] const vector<std::filesystem::path>& luaHooks,
                                   ProgressNotifier* progressNotifier)
 {
     config = std::make_unique<CelestiaConfig>();
@@ -2551,28 +2570,56 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
     }
 #endif
 
-    // Insert additional extras directories into the configuration. These
-    // additional directories typically come from the command line. It may
-    // be useful to permit other command line overrides of config file fields.
-    // Only insert the additional extras directories that aren't also
-    // listed in the configuration file. The additional directories are added
-    // after the ones from the config file and the order in which they were
-    // specified is preserved. This process in O(N*M), but the number of
-    // additional extras directories should be small.
-    for (const auto& dir : extrasDirs)
+    // Append new paths in command-line order after the configured paths.
+    auto& configuredExtras = config->paths.extrasDirs;
+    for (const auto& path : extrasDirs)
     {
-        if (find(config->paths.extrasDirs.begin(), config->paths.extrasDirs.end(), dir) ==
-            config->paths.extrasDirs.end())
-        {
-            config->paths.extrasDirs.push_back(dir);
-        }
+        if (std::ranges::find(configuredExtras, path) == configuredExtras.end())
+            configuredExtras.push_back(path);
     }
+#ifdef CELX
+    auto& configuredHooks = config->paths.luaHooks;
+    for (const auto& path : luaHooks)
+    {
+        auto samePath = [&path](const auto& other)
+        {
+            std::error_code ec;
+            return path == other || std::filesystem::equivalent(path, other, ec);
+        };
+        if (std::ranges::none_of(configuredHooks, samePath))
+            configuredHooks.push_back(path);
+    }
+#endif
 
     hud = std::make_unique<Hud>(loc);
+
+    if (!config->scriptSystemAccessPolicy.empty())
+    {
+        m_policyBeforeCatalogLoad = scriptSystemAccessPolicy;
+        if (compareIgnoringCase(config->scriptSystemAccessPolicy, "ask") == 0)
+            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Ask;
+        else if (compareIgnoringCase(config->scriptSystemAccessPolicy, "allow") == 0)
+            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Allow;
+        else if (compareIgnoringCase(config->scriptSystemAccessPolicy, "deny") == 0)
+            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Deny;
+        else
+            GetLogger()->warn("Unknown script system access policy {}\n", config->scriptSystemAccessPolicy);
+    }
 
 #ifdef CELX
     initLuaHook(progressNotifier);
 #endif
+
+    auto failCatalogLoad = [&](const char* message)
+    {
+        if (auto previous = std::exchange(m_policyBeforeCatalogLoad, std::nullopt))
+            scriptSystemAccessPolicy = *previous;
+#ifdef CELX
+        m_scriptHook.reset();
+#endif
+        fatalError(message, false);
+        return false;
+    };
 
     KeyRotationAccel = math::degToRad(config->mouse.rotateAcceleration);
     MouseRotationSensitivity = math::degToRad(config->mouse.rotationSensitivity);
@@ -2605,21 +2652,16 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
 
     std::unique_ptr<StarDatabase> starCatalog = loadStars(*config, progressNotifier, *geometryPaths, *texturePaths, *universe->getUrlManager());
     if (starCatalog == nullptr)
-    {
-        fatalError(_("Cannot read star database."), false);
-        return false;
-    }
+        return failCatalogLoad(_("Cannot read star database."));
     universe->setStarCatalog(std::move(starCatalog));
 
     /***** Load the deep sky catalogs *****/
 
     std::unique_ptr<DSODatabase> dsoCatalog = loadDSO(*config, progressNotifier, *geometryPaths, *universe->getUrlManager());
     if (dsoCatalog == nullptr)
-    {
-        fatalError(_("Cannot read DSO database."), false);
-        return false;
-    }
+        return failCatalogLoad(_("Cannot read DSO database."));
     universe->setDSOCatalog(std::move(dsoCatalog));
+    m_policyBeforeCatalogLoad.reset();
 
     /***** Load the solar system catalogs *****/
 
@@ -2728,18 +2770,6 @@ bool CelestiaCore::initSimulation(const std::filesystem::path& configFileName,
             setScriptRunMode(ScriptRunMode::Concurrent);
         else
             GetLogger()->warn("Unknown script run mode {}\n", config->scriptRunMode);
-    }
-
-    if (!config->scriptSystemAccessPolicy.empty())
-    {
-        if (compareIgnoringCase(config->scriptSystemAccessPolicy, "ask") == 0)
-            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Ask;
-        else if (compareIgnoringCase(config->scriptSystemAccessPolicy, "allow") == 0)
-            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Allow;
-        else if (compareIgnoringCase(config->scriptSystemAccessPolicy, "deny") == 0)
-            scriptSystemAccessPolicy = ScriptSystemAccessPolicy::Deny;
-        else
-            GetLogger()->warn("Unknown script system access policy {}\n", config->scriptSystemAccessPolicy);
     }
 
     if (!config->layoutDirection.empty())
@@ -3533,7 +3563,10 @@ TemperatureScale CelestiaCore::getTemperatureScale() const
 
 void CelestiaCore::setScriptSystemAccessPolicy(ScriptSystemAccessPolicy newPolicy)
 {
+    m_policyBeforeCatalogLoad.reset();
     scriptSystemAccessPolicy = newPolicy;
+    if (!sim && m_scriptHook && newPolicy != ScriptSystemAccessPolicy::Allow)
+        m_scriptHook->restrictCatalogContext();
 }
 
 CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::getScriptSystemAccessPolicy() const
@@ -3556,19 +3589,22 @@ void CelestiaCore::setScriptRunMode(ScriptRunMode mode)
     scriptRunMode = mode;
 }
 
-CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::requestScriptSystemAccessPolicy()
+CelestiaCore::ScriptSystemAccessPolicy CelestiaCore::requestScriptSystemAccessPolicy(const std::string& scriptPath)
 {
-    if (scriptSystemAccessPolicy == ScriptSystemAccessPolicy::Ask && scriptSystemAccessHandler.has_value())
-        return scriptSystemAccessHandler.value()();
-    return scriptSystemAccessPolicy;
+    if (scriptSystemAccessPolicy != ScriptSystemAccessPolicy::Ask)
+        return scriptSystemAccessPolicy;
+    if (scriptSystemAccessHandler && *scriptSystemAccessHandler &&
+        (*scriptSystemAccessHandler)(scriptPath) == ScriptSystemAccessPolicy::Allow)
+        return ScriptSystemAccessPolicy::Allow;
+    return ScriptSystemAccessPolicy::Deny;
 }
 
-void CelestiaCore::setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>& newScriptSystemAccessHandler)
+void CelestiaCore::setScriptSystemAccessHandler(const std::optional<ScriptSystemAccessHandler>& newScriptSystemAccessHandler)
 {
     scriptSystemAccessHandler = newScriptSystemAccessHandler;
 }
 
-std::optional<std::function<CelestiaCore::ScriptSystemAccessPolicy()>> CelestiaCore::getScriptSystemAccessHandler() const
+std::optional<CelestiaCore::ScriptSystemAccessHandler> CelestiaCore::getScriptSystemAccessHandler() const
 {
     return scriptSystemAccessHandler;
 }

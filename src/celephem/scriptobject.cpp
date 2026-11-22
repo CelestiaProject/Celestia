@@ -11,6 +11,7 @@
 
 #include <cstddef>
 #include <string_view>
+#include <utility>
 
 #include <fmt/format.h>
 
@@ -28,12 +29,12 @@ namespace
 class ScriptObjectState
 {
 private:
-    lua_State* context{ nullptr };
+    ScriptedObjectContext context;
     unsigned int nameIndex{ 1 };
 
 public:
-    lua_State* getContext() { return context; }
-    void setContext(lua_State* luaState) { context = luaState; }
+    const ScriptedObjectContext& getContext() const { return context; }
+    void setContext(ScriptedObjectContext value) { context = std::move(value); }
     unsigned int getNameIndex() { return nameIndex++; }
 };
 
@@ -49,13 +50,17 @@ ScriptObjectState* getCurrentObjectState()
 
 } // end unnamed namespace
 
-/*! Set the script context for ScriptedOrbits and ScriptRotations
- *  Should be called just once at initialization.
- */
+/*! Select the context for newly loaded scripted orbits and rotations. */
 void
-SetScriptedObjectContext(lua_State* l)
+SetScriptedObjectContext(ScriptedObjectContext context)
 {
-    getCurrentObjectState()->setContext(l);
+    getCurrentObjectState()->setContext(std::move(context));
+}
+
+ScriptedObjectContext
+GetScriptedObjectContextHandle()
+{
+    return getCurrentObjectState()->getContext();
 }
 
 
@@ -64,7 +69,8 @@ SetScriptedObjectContext(lua_State* l)
 lua_State*
 GetScriptedObjectContext()
 {
-    return getCurrentObjectState()->getContext();
+    const auto& context = getCurrentObjectState()->getContext();
+    return context ? context->state : nullptr;
 }
 
 

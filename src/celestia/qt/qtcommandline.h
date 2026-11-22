@@ -24,6 +24,7 @@ struct CelestiaCommandLineOptions
     QString logFilename{ };
     QString startDirectory{ };
     QStringList extrasDirectories{ };
+    QStringList luaHooks{ };
     QString startURL{ };
     QString configFileName{ };
     bool skipSplashScreen{ false };

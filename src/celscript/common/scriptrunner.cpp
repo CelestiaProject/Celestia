@@ -66,25 +66,19 @@ ScriptRunner::add(std::unique_ptr<IScript> script, State state)
         return;
     auto entry = std::make_shared<Entry>(*this, std::move(script), state);
     entry->position = m_scripts.insert(m_scripts.end(), entry);
-    if (m_dispatching)
-        checkExclusive(entry);
 }
 
 void
 ScriptRunner::clear()
 {
+    FlagGuard guard(m_canceling);
     auto scripts = std::exchange(m_scripts, {});
-    m_exclusiveScript.reset();
     // Snapshot references may defer cleanup until the active callback returns.
     for (const auto &entry : scripts)
+    {
         entry->canceled = true;
-}
-
-void
-ScriptRunner::checkExclusive(const std::shared_ptr<Entry> &entry)
-{
-    if (!entry->canceled && m_exclusiveScript.expired() && entry->script->wantsExclusiveInput())
-        m_exclusiveScript = entry;
+        entry->script->markCanceled();
+    }
 }
 
 void
@@ -107,25 +101,6 @@ ScriptRunner::wantsKeyboard() const
     return std::ranges::any_of(m_scripts, [](const auto &entry) { return entry->script->wantsKeyboard(); });
 }
 
-bool
-ScriptRunner::wantsExclusiveInput() const
-{
-    return std::ranges::any_of(m_scripts, [](const auto &entry) { return entry->script->wantsExclusiveInput(); });
-}
-
-std::shared_ptr<ScriptRunner::Entry>
-ScriptRunner::exclusiveScript()
-{
-    auto entry = m_exclusiveScript.lock();
-    if (entry != nullptr && !entry->canceled && entry->script->wantsExclusiveInput())
-        return entry;
-
-    auto it = std::ranges::find_if(m_scripts, [](const auto &candidate) { return candidate->script->wantsExclusiveInput(); });
-    entry = it != m_scripts.end() ? *it : nullptr;
-    m_exclusiveScript = entry;
-    return entry;
-}
-
 void
 ScriptRunner::tickEntry(const std::shared_ptr<Entry> &entry, double dt)
 {
@@ -133,19 +108,11 @@ ScriptRunner::tickEntry(const std::shared_ptr<Entry> &entry, double dt)
         return;
 
     entry->script->handleTickEvent(entry->state == State::Paused ? 0.0 : dt);
-    checkExclusive(entry);
-    if (!m_exclusiveScript.expired() || entry->canceled || entry->state != State::Running)
+    if (entry->canceled || entry->state != State::Running)
         return;
 
-    if (entry->script->tick(dt))
-    {
-        if (!entry->canceled)
-            m_scripts.erase(entry->position);
-    }
-    else
-    {
-        checkExclusive(entry);
-    }
+    if (entry->script->tick(dt) && !entry->canceled)
+        m_scripts.erase(entry->position);
 }
 
 void
@@ -157,49 +124,27 @@ ScriptRunner::tick(double dt)
     FlagGuard guard(m_dispatching);
     // Keep callbacks alive if they cancel/replace scripts, and defer new scripts
     // until the next frame.
-    auto exclusive = exclusiveScript();
-    if (!exclusive)
+    std::vector scripts(m_scripts.begin(), m_scripts.end());
+    for (auto &entry : scripts)
     {
-        std::vector scripts(m_scripts.begin(), m_scripts.end());
-        for (auto &entry : scripts)
-        {
-            tickEntry(entry, dt);
-            entry.reset();
-            if (!m_exclusiveScript.expired())
-                break;
-        }
-        exclusive = m_exclusiveScript.lock();
-    }
-
-    // Advance only the active permission prompt, without resuming script execution.
-    if (exclusive != nullptr && exclusive->script->tick(0.0) && !exclusive->canceled)
-    {
-        m_scripts.erase(exclusive->position);
+        tickEntry(entry, dt);
+        entry.reset();
     }
 }
 
 template<typename F>
 bool
-ScriptRunner::dispatch(F &&callback, bool exclusiveCharacters)
+ScriptRunner::dispatch(F &&callback)
 {
-    if (m_dispatching)
-        return true;
+    if (m_dispatchingInput)
+        return false;
 
     FlagGuard guard(m_dispatching);
-    if (auto exclusive = exclusiveScript(); exclusive != nullptr)
-    {
-        if (exclusiveCharacters)
-            callback(*exclusive->script);
-        return true;
-    }
-
+    FlagGuard inputGuard(m_dispatchingInput);
     std::vector scripts(m_scripts.begin(), m_scripts.end());
     for (auto it = scripts.rbegin(); it != scripts.rend(); ++it)
     {
         if (!(*it)->canceled && callback(*(*it)->script))
-            return true;
-        checkExclusive(*it);
-        if (!m_exclusiveScript.expired())
             return true;
     }
     return false;
@@ -208,7 +153,7 @@ ScriptRunner::dispatch(F &&callback, bool exclusiveCharacters)
 bool
 ScriptRunner::charEntered(const char *text)
 {
-    return dispatch([text](IScript &script) { return script.wantsKeyboard() && script.charEntered(text); }, true);
+    return dispatch([text](IScript &script) { return script.wantsKeyboard() && script.charEntered(text); });
 }
 
 bool

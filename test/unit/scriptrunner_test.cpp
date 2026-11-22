@@ -22,15 +22,13 @@ struct ScriptState
     int events{ 0 };
     int keys{ 0 };
     bool finished{ false };
-    bool exclusive{ false };
+    bool wantsKeyboard{ false };
     bool destroyed{ false };
     double eventDt{ 0.0 };
     std::function<void()> onTick;
     std::function<void()> onEvent;
     std::function<bool(std::string_view)> onKey;
     std::function<void()> onDestroy;
-
-    void setExclusive(bool value) { exclusive = value; }
 };
 
 class TestScript : public celestia::scripts::IScript
@@ -75,11 +73,7 @@ public:
     }
     bool wantsKeyboard() const override
     {
-        return m_state.exclusive;
-    }
-    bool wantsExclusiveInput() const override
-    {
-        return m_state.exclusive;
+        return m_state.wantsKeyboard;
     }
 
 private:
@@ -208,77 +202,25 @@ TEST_CASE("Input replacement cannot destroy the active callback")
     CHECK(second.destroyed);
 }
 
-TEST_CASE("Permission prompts pause all scripts and serialize input ownership")
+TEST_CASE("Keyboard capture routes characters without pausing other scripts")
 {
-    ScriptState earlier, prompt, running;
+    ScriptState capture, running;
     celestia::scripts::ScriptRunner runner;
-    prompt.setExclusive(true);
-    runner.add(std::make_unique<TestScript>(earlier));
-    runner.add(std::make_unique<TestScript>(prompt));
+    capture.wantsKeyboard = true;
+    capture.onKey = [](std::string_view key) { return key == "a"; };
+    runner.add(std::make_unique<TestScript>(capture));
     runner.add(std::make_unique<TestScript>(running));
     runner.tick(0.1);
-    CHECK(prompt.ticks == 1);
-    CHECK(earlier.ticks == 0);
-    CHECK(running.ticks == 0);
-    CHECK(earlier.events == 0);
-    CHECK(prompt.events == 0);
-    CHECK(running.events == 0);
-    earlier.setExclusive(true);
-    runner.tick(0.1);
-    CHECK(earlier.ticks == 0);
-    CHECK(prompt.ticks == 2);
-    CHECK(running.ticks == 0);
-    CHECK(runner.charEntered("y"));
-    CHECK(prompt.keys == 1);
-    CHECK(earlier.keys == 0);
-    CHECK(running.keys == 0);
-    CHECK(runner.handleKeyEvent("y"));
-    CHECK(prompt.keys == 1);
-    prompt.setExclusive(false);
-    runner.tick(0.1);
-    CHECK(earlier.ticks == 1);
-    CHECK(prompt.ticks == 2);
-    CHECK(prompt.events == 0);
-    CHECK(running.ticks == 0);
-    earlier.setExclusive(false);
-    runner.tick(0.1);
-    CHECK(earlier.ticks == 2);
-    CHECK(prompt.ticks == 3);
+    CHECK(capture.ticks == 1);
     CHECK(running.ticks == 1);
-    CHECK(running.events == 1);
-}
-
-TEST_CASE("New permission requests stop script execution in the same frame")
-{
-    for (bool fromEvent : { false, true })
-    {
-        CAPTURE(fromEvent);
-        ScriptState requester, running;
-        celestia::scripts::ScriptRunner runner;
-        auto request = [&] { requester.setExclusive(true); };
-        if (fromEvent)
-            requester.onEvent = request;
-        else
-            requester.onTick = request;
-        runner.add(std::make_unique<TestScript>(requester));
-        runner.add(std::make_unique<TestScript>(running));
-        runner.tick(0.1);
-        CHECK(requester.events == 1);
-        CHECK(requester.ticks == (fromEvent ? 1 : 2));
-        CHECK(running.events == 0);
-        CHECK(running.ticks == 0);
-        runner.tick(0.1);
-        CHECK(requester.events == 1);
-        CHECK(running.events == 0);
-        CHECK(running.ticks == 0);
-        requester.onEvent = {};
-        requester.onTick = {};
-        requester.setExclusive(false);
-        runner.tick(0.1);
-        CHECK(requester.events == 2);
-        CHECK(running.events == 1);
-        CHECK(running.ticks == 1);
-    }
+    CHECK(runner.wantsKeyboard());
+    CHECK(runner.charEntered("a"));
+    CHECK(capture.keys == 1);
+    CHECK(running.keys == 0);
+    capture.wantsKeyboard = false;
+    CHECK_FALSE(runner.wantsKeyboard());
+    CHECK_FALSE(runner.charEntered("a"));
+    CHECK(capture.keys == 1);
 }
 
 TEST_SUITE_END();

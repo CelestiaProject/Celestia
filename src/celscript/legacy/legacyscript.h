@@ -34,6 +34,7 @@ class LegacyScript : public IScript
     bool load(std::istream&, const std::filesystem::path&, std::string&);
 
     bool tick(double) override;
+    void markCanceled() override;
 
  private:
     CelestiaCore *m_appCore;

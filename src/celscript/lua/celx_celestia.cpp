@@ -2083,9 +2083,8 @@ static int celestia_requestkeyboard(lua_State* l)
         return 0;
     }
 
-    auto mode = appCore->getTextEnterMode();
-
-    if (lua_toboolean(l, 2))
+    const bool requested = lua_toboolean(l, 2) != 0;
+    if (requested)
     {
         // Check for existence of charEntered:
         lua_getglobal(l, KbdCallback);
@@ -2094,15 +2093,8 @@ static int celestia_requestkeyboard(lua_State* l)
             Celx_DoError(l, "script requested keyboard, but did not provide callback");
         }
         lua_remove(l, -1);
-
-        mode = mode | Hud::TextEnterMode::PassToScript;
     }
-    else
-    {
-        mode = mode & ~Hud::TextEnterMode::PassToScript;
-    }
-    appCore->setTextEnterMode(mode);
-    getLuaStateObject(l)->requestKeyboard(lua_toboolean(l, 2) != 0);
+    getLuaStateObject(l)->requestKeyboard(requested, *appCore);
 
     return 0;
 }
@@ -2174,8 +2166,7 @@ static int celestia_takescreenshot(lua_State* l)
     Celx_CheckArgs(l, 1, 3, "Need 0 to 2 arguments for celestia:takescreenshot");
     CelestiaCore* appCore = this_celestia(l);
     LuaState* luastate = getLuaStateObject(l);
-    // make sure we don't timeout because of taking a screenshot:
-    double timeToTimeout = luastate->timeout - luastate->getTime();
+    const double start = luastate->getTime();
 
     const char* filetype = Celx_SafeGetString(l, 2, WrongType, "First argument to celestia:takescreenshot must be a string");
     if (filetype == nullptr)
@@ -2212,8 +2203,7 @@ static int celestia_takescreenshot(lua_State* l)
     success = appCore->saveScreenShot(filepath);
     lua_pushboolean(l, success);
 
-    // no matter how long it really took, make it look like 0.1s to timeout check:
-    luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
+    luastate->chargeIOTime(start);
     return 1;
 }
 
@@ -2246,6 +2236,11 @@ static int celestia_getscriptpath(lua_State* l)
 
 static int celestia_runscript(lua_State* l)
 {
+    if (getLuaStateObject(l)->isCanceled())
+    {
+        GetLogger()->warn("Cannot launch a script from a canceled script\n");
+        return 0;
+    }
     Celx_CheckArgs(l, 2, 4, "One to three arguments expected for celestia:runscript");
     const char* scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
     auto mode = CelestiaCore::ScriptRunMode::Default;

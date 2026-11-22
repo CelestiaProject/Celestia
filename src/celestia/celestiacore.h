@@ -199,6 +199,7 @@ public:
     static void initLocale();
     bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
                         const std::vector<std::filesystem::path>& extrasDirs = {},
+                        const std::vector<std::filesystem::path>& luaHooks = {},
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer(celestia::engine::TextureResolution,
                       std::optional<bool> sRGBRendering = std::nullopt,
@@ -265,6 +266,8 @@ public:
     std::string getTimeZoneName() const;
     void setTimeZoneName(const std::string&);
     void setTextEnterMode(celestia::Hud::TextEnterMode);
+    void updateScriptKeyboardInput(std::optional<bool> request = std::nullopt);
+    std::weak_ptr<const bool> acquireScriptKeyboardCapture();
     celestia::Hud::TextEnterMode getTextEnterMode() const;
 
     void initMovieCapture(MovieCapture*);
@@ -434,10 +437,11 @@ public:
     ScriptRunMode getScriptRunMode() const;
     void setScriptRunMode(ScriptRunMode mode);
 
-    ScriptSystemAccessPolicy requestScriptSystemAccessPolicy();
+    using ScriptSystemAccessHandler = std::function<ScriptSystemAccessPolicy(const std::string&)>;
+    ScriptSystemAccessPolicy requestScriptSystemAccessPolicy(const std::string& scriptPath);
 
-    void setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>&);
-    std::optional<std::function<ScriptSystemAccessPolicy()>> getScriptSystemAccessHandler() const;
+    void setScriptSystemAccessHandler(const std::optional<ScriptSystemAccessHandler>&);
+    std::optional<ScriptSystemAccessHandler> getScriptSystemAccessHandler() const;
 
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
@@ -445,7 +449,6 @@ public:
     celestia::engine::TexturePaths* getTexturePaths() const noexcept { return texturePaths.get(); }
 
 private:
-    void updateScriptKeyboardInput();
     void charEnteredAutoComplete(const char*);
     void updateSelectionFromInput();
     void renderOverlay();
@@ -482,6 +485,8 @@ private:
     Timer* timer{ nullptr };
 
     celestia::scripts::ScriptRunner                         m_scripts;
+    bool                                                    m_scriptKeyboardRequested{ false };
+    std::shared_ptr<const bool>                             m_keyboardCapture;
     std::unique_ptr<celestia::scripts::IScriptHook>         m_scriptHook;
     std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
 #ifdef CELX
@@ -527,7 +532,7 @@ private:
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
-    std::optional<std::function<ScriptSystemAccessPolicy()>> scriptSystemAccessHandler{ std::nullopt };
+    std::optional<ScriptSystemAccessHandler> scriptSystemAccessHandler{ std::nullopt };
 
     std::string startURL;
 
@@ -554,6 +559,7 @@ private:
     bool needsUpdateFonts{ false };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
+    std::optional<ScriptSystemAccessPolicy> m_policyBeforeCatalogLoad;
     ScriptRunMode scriptRunMode { ScriptRunMode::Replace };
 
     std::unique_ptr<Console> console;

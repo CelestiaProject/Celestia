@@ -15,6 +15,8 @@
 #define LUA_VER 0x050100
 #endif
 
+#include <functional>
+#include <memory>
 #include <string>
 
 #include <lua.hpp>
@@ -29,7 +31,15 @@ class AssociativeArray;
 namespace ephem
 {
 
-void SetScriptedObjectContext(lua_State* l);
+// Objects keep the handle, not the VM. Its pointer is cleared before Lua runs finalizers.
+struct ScriptedObjectVM
+{
+    lua_State* state;
+    std::function<int(int, int)> protectedCall;
+};
+using ScriptedObjectContext = std::shared_ptr<const ScriptedObjectVM>;
+void SetScriptedObjectContext(ScriptedObjectContext);
+ScriptedObjectContext GetScriptedObjectContextHandle();
 
 lua_State* GetScriptedObjectContext();
 

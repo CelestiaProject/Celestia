@@ -152,8 +152,8 @@ AppWindow::AppWindow(Private,
     m_environment(environment),
     m_window(std::move(window)),
     m_context(std::move(context)),
-    m_appCore(std::move(celestiaCore)),
     m_alerter(std::move(alerter)),
+    m_appCore(std::move(celestiaCore)),
     m_isFullscreen(isFullscreen)
 {
     m_alerter->setWindow(m_window.get());

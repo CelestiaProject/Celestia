@@ -32,7 +32,7 @@ namespace
 class ScriptedRotation : public RotationModel
 {
  public:
-    ScriptedRotation(lua_State*,
+    ScriptedRotation(ScriptedObjectContext,
                      std::string&&,
                      double,
                      double,
@@ -46,7 +46,7 @@ class ScriptedRotation : public RotationModel
     void getValidRange(double& begin, double& end) const override;
 
  private:
-    lua_State* luaState{ nullptr };
+    ScriptedObjectContext context;
     std::string luaRotationObjectName;
     double period{ 0.0 };
     double validRangeBegin{ 0.0 };
@@ -60,12 +60,12 @@ class ScriptedRotation : public RotationModel
 };
 
 
-ScriptedRotation::ScriptedRotation(lua_State* pLuaState,
+ScriptedRotation::ScriptedRotation(ScriptedObjectContext pContext,
                                    std::string&& pLuaRotationObjectName,
                                    double pPeriod,
                                    double pValidRangeBegin,
                                    double pValidRangeEnd)
-    : luaState(pLuaState),
+    : context(std::move(pContext)),
       luaRotationObjectName(std::move(pLuaRotationObjectName)),
       period(pPeriod),
       validRangeBegin(pValidRangeBegin),
@@ -77,7 +77,7 @@ ScriptedRotation::ScriptedRotation(lua_State* pLuaState,
 Eigen::Quaterniond
 ScriptedRotation::spin(double tjd) const
 {
-    if (tjd != lastTime || !cacheable)
+    if (auto* luaState = context->state; luaState != nullptr && (tjd != lastTime || !cacheable))
     {
         lua_getglobal(luaState, luaRotationObjectName.c_str());
         if (lua_istable(luaState, -1))
@@ -88,7 +88,7 @@ ScriptedRotation::spin(double tjd) const
             {
                 lua_pushvalue(luaState, -2); // push 'self' on stack
                 lua_pushnumber(luaState, tjd);
-                if (lua_pcall(luaState, 2, 4, 0) == 0)
+                if (context->protectedCall(2, 4) == 0)
                 {
                     lastOrientation = Eigen::Quaterniond(lua_tonumber(luaState, -4),
                                                          lua_tonumber(luaState, -3),
@@ -178,7 +178,8 @@ CreateScriptedRotation(const std::string* moduleName,
                             const util::AssociativeArray& parameters,
                             const std::filesystem::path& path)
 {
-    lua_State* luaState = GetScriptedObjectContext();
+    auto context = GetScriptedObjectContextHandle();
+    lua_State* luaState = context ? context->state : nullptr;
     if (luaState == nullptr)
     {
         GetLogger()->warn("ScriptedRotations are currently disabled.\n");
@@ -196,7 +197,7 @@ CreateScriptedRotation(const std::string* moduleName,
         }
 
         lua_pushstring(luaState, moduleName->c_str());
-        if (lua_pcall(luaState, 1, 1, 0) != 0)
+        if (context->protectedCall(1, 1) != 0)
         {
             GetLogger()->error("Failed to load module for ScriptedRotation: {}\n", lua_tostring(luaState, -1));
             lua_pop(luaState, 1);
@@ -229,7 +230,7 @@ CreateScriptedRotation(const std::string* moduleName,
     }
 
     // Call the generator function
-    if (lua_pcall(luaState, 1, 1, 0) != 0)
+    if (context->protectedCall(1, 1) != 0)
     {
         // Some sort of error occurred--the error message is atop the stack
         GetLogger()->error("Error calling ScriptedRotation generator function: {}\n",
@@ -267,7 +268,7 @@ CreateScriptedRotation(const std::string* moduleName,
         return nullptr;
     }
 
-    return std::make_shared<ScriptedRotation>(luaState,
+    return std::make_shared<ScriptedRotation>(std::move(context),
                                               std::move(luaRotationObjectName),
                                               period,
                                               validRangeBegin,

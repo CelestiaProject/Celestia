@@ -360,13 +360,26 @@ StarTextures
 
 
 #------------------------------------------------------------------------
+# LuaHook loads trusted Lua files with unrestricted system access.
+# A single filename or an array of filenames is accepted. Each file has
+# its own Lua state and registers callbacks with celestia:setluahook.
+# Hooks run in configuration order. Input dispatch stops when a hook
+# consumes the event; tick and renderoverlay callbacks run for all hooks.
+# When scripted orbits and rotations share a hook context, they use the
+# first loaded hook's state.
+#------------------------------------------------------------------------
+#  LuaHook [ "first-hook.lua" "second-hook.lua" ]
+
+
+#------------------------------------------------------------------------
 # CELX-scripts can request permission to perform dangerous operations,
 # such as reading, writing and deleting files or executing external
 # programs. If granted, a malicious script could use this to destroy
 # data or compromise system security.
 # The following parameter determines what Celestia does upon such
 # requests:
-#  "ask": ask the user if he want's to allow access (default)
+#  "ask": ask the user for permission (default); deny if the frontend
+#         cannot obtain an explicit approval
 #  "allow": always allow such requests
 #  "deny": always deny such requests
 #------------------------------------------------------------------------

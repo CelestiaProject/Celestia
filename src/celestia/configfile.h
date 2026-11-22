@@ -48,7 +48,7 @@ struct CelestiaConfig
         std::filesystem::path leapSecondsFile{ };
 #ifdef CELX
         std::filesystem::path scriptScreenshotDirectory{ };
-        std::filesystem::path luaHook{ };
+        std::vector<std::filesystem::path> luaHooks{ };
 #endif
     };
 

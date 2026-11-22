@@ -44,7 +44,6 @@ public:
     void setPaused(bool paused) const;
     bool allPaused() const;
     bool wantsKeyboard() const;
-    bool wantsExclusiveInput() const;
 
     void tick(double dt);
     bool charEntered(const char *);
@@ -68,14 +67,12 @@ private:
     };
 
     template<typename F>
-    bool dispatch(F &&, bool exclusiveCharacters = false);
-    void checkExclusive(const std::shared_ptr<Entry> &);
+    bool dispatch(F &&);
     void tickEntry(const std::shared_ptr<Entry> &, double dt);
-    std::shared_ptr<Entry> exclusiveScript();
 
     ScriptList m_scripts;
-    std::weak_ptr<Entry> m_exclusiveScript;
     bool m_dispatching{ false };
+    bool m_dispatchingInput{ false };
     bool m_canceling{ false };
 };
 

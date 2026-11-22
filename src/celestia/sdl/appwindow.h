@@ -71,8 +71,8 @@ private:
     std::shared_ptr<Environment> m_environment;
     UniqueWindow m_window;
     UniqueGLContext m_context;
-    std::unique_ptr<CelestiaCore> m_appCore;
     std::unique_ptr<Alerter> m_alerter;
+    std::unique_ptr<CelestiaCore> m_appCore;
     std::unique_ptr<Gui> m_gui;
 
     int m_width{ 0 };

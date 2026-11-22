@@ -28,7 +28,10 @@ class IScript
     virtual bool handleTickEvent(double dt);
     virtual bool tick(double) = 0;
     virtual bool wantsKeyboard() const;
-    virtual bool wantsExclusiveInput() const;
+    virtual void markCanceled()
+    {
+        // Scripts without pending work need no action before destruction.
+    }
 };
 
 class IScriptPlugin
@@ -67,6 +70,11 @@ class IScriptHook
     virtual bool call(const char *method, float x, float y) const = 0;
     virtual bool call(const char *method, float x, float y, int b) const = 0;
     virtual bool call(const char *method, double dt) const = 0;
+    virtual bool wantsKeyboard() const { return false; }
+    virtual void restrictCatalogContext()
+    {
+        // Hooks that do not provide a catalog context have nothing to restrict.
+    }
 
     CelestiaCore *appCore() const { return m_appCore; }
 

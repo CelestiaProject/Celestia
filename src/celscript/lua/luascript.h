@@ -11,6 +11,7 @@
 
 #include <celscript/common/script.h>
 #include <iosfwd>
+#include <vector>
 
 class LuaState;
 struct CelestiaConfig;
@@ -34,7 +35,7 @@ class LuaScript : public IScript
     bool handleTickEvent(double dt) override;
     bool tick(double) override;
     bool wantsKeyboard() const override;
-    bool wantsExclusiveInput() const override;
+    void markCanceled() override;
 
  private:
     CelestiaCore *m_appCore;
@@ -63,20 +64,28 @@ class LuaHook : public IScriptHook
  public:
     LuaHook() = delete;
     LuaHook(CelestiaCore *appCore) : IScriptHook(appCore) {};
-    ~LuaHook() override = default;
+    ~LuaHook() override;
     LuaHook(const LuaHook&) = delete;
-    LuaHook(LuaHook&&) = default;
+    LuaHook(LuaHook&&) = delete;
     LuaHook& operator=(const LuaHook&) = delete;
-    LuaHook& operator=(LuaHook&&) = default;
+    LuaHook& operator=(LuaHook&&) = delete;
 
     bool call(const char *method) const override;
     bool call(const char *method, const char *keyName) const override;
     bool call(const char *method, float x, float y) const override;
     bool call(const char *method, float x, float y, int b) const override;
     bool call(const char *method, double dt) const override;
+    bool wantsKeyboard() const override;
+    void restrictCatalogContext() override;
 
  private:
-    std::unique_ptr<LuaState> m_state;
+    bool createPrivateContext(const std::string&);
+    template<typename... Args>
+    bool dispatch(const char* method, bool stopOnHandled, Args... args) const;
+
+    std::vector<std::unique_ptr<LuaState>> m_states;
+    // Catalog objects keep their original VM even if startup policy changes.
+    std::vector<std::unique_ptr<LuaState>> m_privateContexts;
 
     friend bool CreateLuaEnvironment(CelestiaCore*, const CelestiaConfig*, ProgressNotifier*);
 };

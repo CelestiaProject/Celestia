@@ -901,13 +901,11 @@ static int object_preloadtexture(lua_State* l)
     if (sel->body() != nullptr && renderer != nullptr)
     {
         LuaState* luastate = celx.getLuaStateObject();
-        // make sure we don't timeout because of texture-loading:
-        double timeToTimeout = luastate->timeout - luastate->getTime();
+        const double start = luastate->getTime();
 
         renderer->loadTextures(sel->body());
 
-        // no matter how long it really took, make it look like 0.1s:
-        luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
+        luastate->chargeIOTime(start);
     }
 
     return 0;

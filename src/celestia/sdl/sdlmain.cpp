@@ -75,10 +75,11 @@ main(int argc, char **argv)
     environment->setWarpCursor(settings.warpCursor);
 #endif
 
-    auto celestiaCore = std::make_unique<CelestiaCore>();
     auto alerter = std::make_unique<celestia::sdl::Alerter>();
+    auto celestiaCore = std::make_unique<CelestiaCore>();
     celestiaCore->setAlerter(alerter.get());
     celestiaCore->setCursorHandler(environment.get());
+    celestiaCore->setScriptSystemAccessHandler(celestia::sdl::Alerter::requestScriptSystemAccess);
 
     if (!celestiaCore->initSimulation())
         return EXIT_FAILURE;
