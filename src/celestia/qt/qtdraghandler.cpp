@@ -19,16 +19,21 @@ DragHandler::begin(const QMouseEvent &m, qreal s, int b)
 }
 
 void
-DragHandler::move(const QMouseEvent &m, qreal s)
+DragHandler::move(const QMouseEvent &m, qreal s, bool warp)
 {
     if (scale != s)
         begin(m, s, buttons);
     auto relativeMovement = m.globalPosition() - saveCursorPos;
+    const int modifiers = effectiveButtons();
+    // Script callbacks can enter a nested event loop and end this drag.
+    if (warp)
+        restoreCursorPosition();
+    else
+        saveCursorPos = m.globalPosition();
     appCore->mouseMove(
-        static_cast<float>(relativeMovement.x() * scale),
-        static_cast<float>(relativeMovement.y() * scale),
-        effectiveButtons());
-    saveCursorPos = m.globalPosition();
+        static_cast<float>(relativeMovement.x() * s),
+        static_cast<float>(relativeMovement.y() * s),
+        modifiers);
 }
 
 void
@@ -62,26 +67,6 @@ void
 WarpingDragHandler::restoreCursorPosition() const
 {
     QCursor::setPos(saveCursorPos.toPoint());
-}
-
-void
-WarpingDragHandler::move(const QMouseEvent &m, qreal s)
-{
-    if (scale != s)
-        begin(m, s, buttons);
-    auto relativeMovement = m.globalPosition() - saveCursorPos;
-    appCore->mouseMove(
-        static_cast<float>(relativeMovement.x() * scale),
-        static_cast<float>(relativeMovement.y() * scale),
-        effectiveButtons());
-
-    restoreCursorPosition();
-}
-
-void
-WarpingDragHandler::finish()
-{
-    restoreCursorPosition();
 }
 
 std::unique_ptr<DragHandler>

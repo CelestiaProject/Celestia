@@ -81,13 +81,38 @@ CelestiaGlWidget::CelestiaGlWidget(QWidget* parent, const char* /* name */, Cele
     setMouseTracking(true);
 
     dragHandler = createDragHandler(appCore);
-    cursorVisible = true;
+    setWarpCursor(QSettings().value("WarpCursor", true).toBool());
 
     // We use glClear directly, so we don't need it called by Qt.
     setUpdateBehavior(QOpenGLWidget::PartialUpdate);
 }
 
 CelestiaGlWidget::~CelestiaGlWidget() = default;
+
+bool
+CelestiaGlWidget::warpsCursor() const
+{
+    return dragWarpsCursor.value_or(requestedWarp && dragHandler->supportsCursorWarp());
+}
+
+void
+CelestiaGlWidget::setWarpCursor(bool enabled)
+{
+    requestedWarp = enabled;
+}
+
+void
+CelestiaGlWidget::endDrag(bool restorePosition)
+{
+    if (dragMoved && dragWarpsCursor.value_or(false))
+    {
+        if (restorePosition)
+            dragHandler->restoreCursorPosition();
+        setCursor(QCursor(Qt::CrossCursor));
+    }
+    dragMoved = false;
+    dragWarpsCursor.reset();
+}
 
 /*!
   Paint the box. The actual openGL commands for drawing the box are
@@ -231,19 +256,19 @@ CelestiaGlWidget::mouseMoveEvent(QMouseEvent* m)
     if (m->modifiers() & Qt::AltModifier)
         buttons |= CelestiaCore::AltKey;
 #endif
-
     if ((m->buttons() & (Qt::LeftButton | Qt::RightButton)) != 0)
     {
-        if (cursorVisible)
+        if (!dragWarpsCursor.has_value())
+            return;
+        if (!dragMoved)
         {
-            // Hide the cursor.
-            setCursor(QCursor(Qt::BlankCursor));
-            cursorVisible = false;
-
-            dragHandler->begin(*m, scale, buttons);
+            dragHandler->setButtons(buttons);
+            if (*dragWarpsCursor)
+                setCursor(QCursor(Qt::BlankCursor));
+            dragMoved = true;
         }
 
-        dragHandler->move(*m, scale);
+        dragHandler->move(*m, scale, *dragWarpsCursor);
     }
     else
     {
@@ -256,6 +281,12 @@ CelestiaGlWidget::mousePressEvent(QMouseEvent* m)
 {
     qreal scale = devicePixelRatioF();
     auto [x, y] = mousePosition(*m, scale);
+
+    if ((m->buttons() & (Qt::LeftButton | Qt::RightButton)) == m->button())
+    {
+        dragWarpsCursor = requestedWarp && dragHandler->supportsCursorWarp();
+        dragHandler->begin(*m, scale, 0);
+    }
 
     if (m->button() == Qt::LeftButton)
     {
@@ -280,15 +311,11 @@ CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
     qreal scale = devicePixelRatioF();
     auto [x, y] = mousePosition(*m, scale);
 
+    if (dragWarpsCursor.has_value() && !(m->buttons() & (Qt::LeftButton | Qt::RightButton)))
+        endDrag(true);
+
     if (m->button() == Qt::LeftButton)
     {
-        if (!cursorVisible)
-        {
-            // Restore the cursor position and make it visible again.
-            setCursor(QCursor(Qt::CrossCursor));
-            cursorVisible = true;
-            dragHandler->finish();
-        }
         dragHandler->clearButton(CelestiaCore::LeftButton);
         appCore->mouseButtonUp(x, y, CelestiaCore::LeftButton);
     }
@@ -299,13 +326,6 @@ CelestiaGlWidget::mouseReleaseEvent(QMouseEvent* m)
     }
     else if (m->button() == Qt::RightButton)
     {
-        if (!cursorVisible)
-        {
-            // Restore the cursor position and make it visible again.
-            setCursor(QCursor(Qt::CrossCursor));
-            cursorVisible = true;
-            dragHandler->finish();
-        }
         dragHandler->clearButton(CelestiaCore::RightButton);
         appCore->mouseButtonUp(x, y, CelestiaCore::RightButton);
     }
@@ -537,6 +557,10 @@ CelestiaGlWidget::event(QEvent* event)
         appCore->setScreenDpi(static_cast<int>(logicalDpiY() * devicePixelRatioF()));
         // resizeGL is not called on screen change, we need to manually call it to update drawable size
         resizeGL(width(), height());
+    }
+    else if (dragWarpsCursor.has_value() && (event->type() == QEvent::UngrabMouse || event->type() == QEvent::WindowDeactivate))
+    {
+        endDrag(false);
     }
     return QOpenGLWidget::event(event);
 }

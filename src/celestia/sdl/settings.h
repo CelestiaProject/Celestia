@@ -39,6 +39,7 @@ struct Settings
     int width{ 640 };
     int height{ 480 };
     bool isFullscreen{ false };
+    bool warpCursor{ true };
     bool lokTextures{ false };
     RenderFlags renderFlags{ RenderFlags::DefaultRenderFlags };
     RenderLabels labelMode{ RenderLabels::I18nConstellationLabels };

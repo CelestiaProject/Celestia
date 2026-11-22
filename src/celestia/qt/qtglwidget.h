@@ -14,6 +14,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <celengine/glsupport.h>
 
@@ -47,6 +48,8 @@ public:
 
     void setCursorShape(CelestiaCore::CursorShape) override;
     CelestiaCore::CursorShape getCursorShape() const override;
+    bool warpsCursor() const override;
+    void setWarpCursor(bool enabled);
 
 protected:
     void initializeGL() override;
@@ -64,12 +67,15 @@ protected:
 
 private:
     bool handleSpecialKey(QKeyEvent* e, bool down);
+    void endDrag(bool restorePosition);
 
     CelestiaCore* appCore;
     Renderer* appRenderer;
     int lastX{ 0 };
     int lastY{ 0 };
-    bool cursorVisible;
+    bool dragMoved{ false };
+    bool requestedWarp{ true };
+    std::optional<bool> dragWarpsCursor;
     std::unique_ptr<DragHandler> dragHandler;
     CelestiaCore::CursorShape currentCursor;
 };

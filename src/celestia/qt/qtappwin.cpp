@@ -884,6 +884,7 @@ void
 CelestiaAppWindow::slotPreferences()
 {
     PreferencesDialog dlg(this, m_appCore);
+    connect(&dlg, &PreferencesDialog::warpCursorChanged, glWidget, &CelestiaGlWidget::setWarpCursor);
     dlg.exec();
 }
 
