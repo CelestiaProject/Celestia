@@ -25,13 +25,13 @@
 
 find_path(LIBEPOXY_INCLUDE_DIR
           NAMES epoxy/gl.h
-          HINTS LIBEPOXY_DIR
+          HINTS ${LIBEPOXY_DIR}
           DOC "epoxy headers")
 mark_as_advanced(LIBEPOXY_INCLUDE_DIR)
 
 find_library(LIBEPOXY_LIBRARY
              NAMES epoxy
-             HINTS LIBEPOXY_DIR
+             HINTS ${LIBEPOXY_DIR}
              DOC "epoxy libraries")
 mark_as_advanced(LIBEPOXY_LIBRARY)
 
