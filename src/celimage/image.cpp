@@ -425,8 +425,8 @@ std::unique_ptr<Image> Image::load(const std::filesystem::path& filename)
     ContentType type = DetermineFileType(filename);
 
     util::GetLogger()->verbose(_("Loading image from file {}\n"), filename);
-    Image* img = nullptr;
 
+    std::unique_ptr<Image> img;
     switch (type)
     {
     case ContentType::JPEG:
@@ -452,7 +452,7 @@ std::unique_ptr<Image> Image::load(const std::filesystem::path& filename)
         break;
     }
 
-    return std::unique_ptr<Image>(img);
+    return img;
 }
 
 } // namespace celestia::engine

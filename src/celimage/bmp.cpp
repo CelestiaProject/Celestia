@@ -386,7 +386,7 @@ LoadBMPImage(std::istream& in, const std::filesystem::path& filename)
 
 } // anonymous namespace
 
-Image*
+std::unique_ptr<Image>
 LoadBMPImage(const std::filesystem::path& filename)
 {
     std::ifstream bmpFile(filename, std::ios_base::in | std::ios_base::binary);
@@ -396,7 +396,7 @@ LoadBMPImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    return LoadBMPImage(bmpFile, filename).release();
+    return LoadBMPImage(bmpFile, filename);
 }
 
 } // namespace celestia::engine

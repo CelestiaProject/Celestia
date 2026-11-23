@@ -49,79 +49,8 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
     std::longjmp(myerr->setjmp_buffer, 1);
 }
 
-bool SaveJPEGImage(const std::filesystem::path& filename,
-                   int width, int height,
-                   int rowStride,
-                   const std::byte *pixels,
-                   bool removeAlpha)
-{
-#ifdef _WIN32
-    std::FILE* out = _wfopen(filename.c_str(), L"wb");
-#else
-    std::FILE* out = std::fopen(filename.c_str(), "wb");
-#endif
-    if (out == nullptr)
-    {
-        util::GetLogger()->error("Can't open screen capture file '{}'\n", filename);
-        return false;
-    }
-
-    struct jpeg_compress_struct cinfo;
-
-    struct jpeg_error_mgr jerr;
-    JSAMPROW row;
-
-    cinfo.err = jpeg_std_error(&jerr);
-    jpeg_create_compress(&cinfo);
-
-    jpeg_stdio_dest(&cinfo, out);
-
-    cinfo.image_width = width;
-    cinfo.image_height = height;
-    cinfo.input_components = 3;
-    cinfo.in_color_space = JCS_RGB;
-
-    jpeg_set_defaults(&cinfo);
-
-    jpeg_set_quality(&cinfo, 90, TRUE);
-
-    jpeg_start_compress(&cinfo, TRUE);
-
-    std::unique_ptr<JSAMPLE[]> rowOut;
-    if (removeAlpha)
-        rowOut = std::make_unique<JSAMPLE[]>(width * 3);
-
-    while (cinfo.next_scanline < cinfo.image_height)
-    {
-        const std::byte *rowHead = &pixels[rowStride * cinfo.next_scanline];
-        // Strip alpha values if we are in RGBA format
-        if (removeAlpha)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                const std::byte* pixelIn = &rowHead[x * 4];
-                JSAMPLE* pixelOut = &rowOut.get()[x * 3];
-                std::memcpy(pixelOut, pixelIn, 3);
-            }
-            row = rowOut.get();
-        }
-        else
-        {
-            row = reinterpret_cast<JSAMPLE*>(const_cast<std::byte*>(rowHead)); //NOSONAR
-        }
-        jpeg_write_scanlines(&cinfo, &row, 1);
-    }
-
-    jpeg_finish_compress(&cinfo);
-    std::fclose(out);
-    jpeg_destroy_compress(&cinfo);
-
-    return true;
-}
-
-} // anonymous namespace
-
-Image* LoadJPEGImage(const std::filesystem::path& filename)
+Image*
+LoadJPEGImage(std::FILE* in, const std::filesystem::path& filename)
 {
     Image* img = nullptr;
 
@@ -142,17 +71,6 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
     // requires it in order to read binary files.
 
-#ifdef _WIN32
-    std::FILE *in = _wfopen(filename.c_str(), L"rb");
-#else
-    std::FILE *in = std::fopen(filename.c_str(), "rb");
-#endif
-    if (in == nullptr)
-    {
-        util::GetLogger()->error(_("Could not open JPEG file {}\n"), filename);
-        return nullptr;
-    }
-
     // Step 1: allocate and initialize JPEG decompression object
     // We set up the normal JPEG error routines, then override error_exit.
     cinfo.err = jpeg_std_error(&jerr.pub);
@@ -163,7 +81,6 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
         // If we get here, the JPEG code has signaled an error.
         // We need to clean up the JPEG object, close the input file, and return.
         jpeg_destroy_decompress(&cinfo);
-        std::fclose(in);
         delete img;
 
         util::GetLogger()->error(_("Error reading JPEG image: {}\n"), filename);
@@ -183,7 +100,6 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
         cinfo.image_height == 0 || cinfo.image_height > Image::MAX_DIMENSION)
     {
         jpeg_destroy_decompress(&cinfo);
-        std::fclose(in);
         util::GetLogger()->error(_("JPEG dimensions out of range: {}\n"), filename);
         return nullptr;
     }
@@ -255,16 +171,102 @@ Image* LoadJPEGImage(const std::filesystem::path& filename)
     // This is an important step since it will release a good deal of memory.
     jpeg_destroy_decompress(&cinfo);
 
-    // After finish_decompress, we can close the input file.
-    // Here we postpone it until after no more JPEG errors are possible,
-    // so as to simplify the setjmp error logic above.  (Actually, I don't
-    // think that jpeg_destroy can do an error exit, but why assume anything...
-
-    std::fclose(in);
-
     // At this point you may want to check to see whether any corrupt-data
     // warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 
+    return img;
+}
+
+bool
+SaveJPEGImage(const std::filesystem::path& filename,
+              int width, int height,
+              int rowStride,
+              const std::byte *pixels,
+              bool removeAlpha)
+{
+#ifdef _WIN32
+    std::FILE* out = _wfopen(filename.c_str(), L"wb");
+#else
+    std::FILE* out = std::fopen(filename.c_str(), "wb");
+#endif
+    if (out == nullptr)
+    {
+        util::GetLogger()->error("Can't open screen capture file '{}'\n", filename);
+        return false;
+    }
+
+    struct jpeg_compress_struct cinfo;
+
+    struct jpeg_error_mgr jerr;
+    JSAMPROW row;
+
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_compress(&cinfo);
+
+    jpeg_stdio_dest(&cinfo, out);
+
+    cinfo.image_width = width;
+    cinfo.image_height = height;
+    cinfo.input_components = 3;
+    cinfo.in_color_space = JCS_RGB;
+
+    jpeg_set_defaults(&cinfo);
+
+    jpeg_set_quality(&cinfo, 90, TRUE);
+
+    jpeg_start_compress(&cinfo, TRUE);
+
+    std::unique_ptr<JSAMPLE[]> rowOut;
+    if (removeAlpha)
+        rowOut = std::make_unique<JSAMPLE[]>(width * 3);
+
+    while (cinfo.next_scanline < cinfo.image_height)
+    {
+        const std::byte *rowHead = &pixels[rowStride * cinfo.next_scanline];
+        // Strip alpha values if we are in RGBA format
+        if (removeAlpha)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                const std::byte* pixelIn = &rowHead[x * 4];
+                JSAMPLE* pixelOut = &rowOut.get()[x * 3];
+                std::memcpy(pixelOut, pixelIn, 3);
+            }
+            row = rowOut.get();
+        }
+        else
+        {
+            row = reinterpret_cast<JSAMPLE*>(const_cast<std::byte*>(rowHead)); //NOSONAR
+        }
+        jpeg_write_scanlines(&cinfo, &row, 1);
+    }
+
+    jpeg_finish_compress(&cinfo);
+    std::fclose(out);
+    jpeg_destroy_compress(&cinfo);
+
+    return true;
+}
+
+} // anonymous namespace
+
+std::unique_ptr<Image>
+LoadJPEGImage(const std::filesystem::path& filename)
+{
+#ifdef _WIN32
+    std::FILE *in = _wfopen(filename.c_str(), L"rb");
+#else
+    std::FILE *in = std::fopen(filename.c_str(), "rb");
+#endif
+    if (!in)
+    {
+        util::GetLogger()->error(_("Could not open JPEG file {}\n"), filename);
+        return nullptr;
+    }
+
+    std::unique_ptr<Image> img{LoadJPEGImage(in, filename)};
+
+    std::fclose(in);
     return img;
 }
 
