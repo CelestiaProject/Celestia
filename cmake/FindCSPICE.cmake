@@ -22,7 +22,7 @@
 # Find include directory
 find_path(CSPICE_INCLUDE_DIR
           NAMES "SpiceUsr.h"
-          HINTS CSPICE_DIR
+          HINTS ${CSPICE_DIR}
           PATH_SUFFIXES "include" "include/cspice"
           DOC "cspice include directory")
 mark_as_advanced(CSPICE_INCLUDE_DIR)
@@ -30,7 +30,8 @@ mark_as_advanced(CSPICE_INCLUDE_DIR)
 # Find CSPICE library
 find_library(CSPICE_LIBRARY
              NAMES "cspice" "libcspice" "cspice.a"
-             HINTS CSPICE_DIR
+             HINTS ${CSPICE_DIR}
+             PATH_SUFFIXES "lib"
              DOC "cspice libraries")
 mark_as_advanced(CSPICE_LIBRARY)
 

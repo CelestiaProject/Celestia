@@ -25,13 +25,13 @@
 
 find_path(LIBAVIF_INCLUDE_DIR
           NAMES avif/avif.h
-          HINTS LIBAVIF_DIR
+          HINTS ${LIBAVIF_DIR}
           DOC "avif headers")
 mark_as_advanced(LIBAVIF_INCLUDE_DIR)
 
 find_library(LIBAVIF_LIBRARY
              NAMES avif
-             HINTS LIBAVIF_DIR
+             HINTS ${LIBAVIF_DIR}
              DOC "avif libraries")
 mark_as_advanced(LIBAVIF_LIBRARY)
 
