@@ -106,7 +106,7 @@ IsLinearAVIF(const avifImage* img)
 
 } // end unnamed namespace
 
-Image*
+std::unique_ptr<Image>
 LoadAVIFImage(const std::filesystem::path& filename)
 {
     UniqueAVIFDecoder decoder{ avifDecoderCreate() };
@@ -162,7 +162,7 @@ LoadAVIFImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    return image.release();
+    return image;
 }
 
 } // namespace celestia::engine

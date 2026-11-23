@@ -11,18 +11,19 @@
 #pragma once
 
 #include <filesystem>
+#include <memory>
 
 #include <celimage/image.h>
 
 namespace celestia::engine
 {
 
-Image* LoadJPEGImage(const std::filesystem::path& filename);
-Image* LoadBMPImage(const std::filesystem::path& filename);
-Image* LoadPNGImage(const std::filesystem::path& filename);
-Image* LoadDDSImage(const std::filesystem::path& filename);
+std::unique_ptr<Image> LoadJPEGImage(const std::filesystem::path& filename);
+std::unique_ptr<Image> LoadBMPImage(const std::filesystem::path& filename);
+std::unique_ptr<Image> LoadPNGImage(const std::filesystem::path& filename);
+std::unique_ptr<Image> LoadDDSImage(const std::filesystem::path& filename);
 #ifdef USE_LIBAVIF
-Image* LoadAVIFImage(const std::filesystem::path& filename);
+std::unique_ptr<Image> LoadAVIFImage(const std::filesystem::path& filename);
 #endif
 
 bool SaveJPEGImage(const std::filesystem::path& filename, const Image& image);

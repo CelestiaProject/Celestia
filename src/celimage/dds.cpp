@@ -15,6 +15,7 @@
 #include <fstream>
 #include <algorithm>
 #include <memory>
+
 #include <celengine/glsupport.h>
 #include <celutil/logger.h>
 #include <celutil/bytes.h>
@@ -352,7 +353,8 @@ CreateDecompressedImage(const DDSurfaceDesc& ddsd, PixelFormat format, std::istr
 
 } // anonymous namespace
 
-Image* LoadDDSImage(const std::filesystem::path& filename)
+std::unique_ptr<Image>
+LoadDDSImage(const std::filesystem::path& filename)
 {
     std::ifstream in(filename, std::ios::in | std::ios::binary);
     if (!in.good())
@@ -430,7 +432,7 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
     if (IsCompressedFormat(format) && !IsBPTCFormat(format)
         && (!gl::EXT_texture_compression_s3tc
             || (IsSRGBS3TCFormat(format) && !gl::EXT_texture_compression_s3tc_srgb)))
-        return CreateDecompressedImage(ddsd, format, in, filename).release();
+        return CreateDecompressedImage(ddsd, format, in, filename);
 
     // TODO: Verify that the reported texture size matches the amount of
     // data expected.
@@ -447,7 +449,7 @@ Image* LoadDDSImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    return img.release();
+    return img;
 }
 
 } // namespace celestia::engine

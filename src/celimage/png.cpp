@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstddef>
 #include <filesystem>
+#include <memory>
 
 #include <png.h>
 #include <zlib.h>
@@ -264,7 +265,8 @@ SavePNGImage(std::FILE* out,
 
 } // end unnamed namespace
 
-Image* LoadPNGImage(const std::filesystem::path& filename)
+std::unique_ptr<Image>
+LoadPNGImage(const std::filesystem::path& filename)
 {
 #ifdef _WIN32
     std::FILE* fp = _wfopen(filename.c_str(), L"rb");
@@ -277,7 +279,7 @@ Image* LoadPNGImage(const std::filesystem::path& filename)
         return nullptr;
     }
 
-    Image* img = LoadPNGImage(fp, filename);
+    std::unique_ptr<Image> img{LoadPNGImage(fp, filename)};
 
     std::fclose(fp);
     return img;
