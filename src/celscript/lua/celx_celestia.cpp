@@ -3140,7 +3140,8 @@ static int celestia_loadtexture(lua_State* l)
            Celx_DoError(l, "Invalid mipMapMode");
     }
     std::filesystem::path base_dir = GetScriptPath(l);
-    auto t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode);
+    // celx textures are drawn in the HUD pass, which writes without sRGB encoding.
+    auto t = LoadTextureFromFile(base_dir / s, addressMode, mipMapMode, Texture::LinearColorspace);
     if (t == nullptr) return 0;
     return celx.pushClass(t.release());
 }

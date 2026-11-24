@@ -7,7 +7,9 @@
 ImageOverlay::ImageOverlay(const std::filesystem::path& f, Renderer *r) :
     texture(LoadTextureFromFile(f.is_relative() ? "images" / f : f,
                                 Texture::EdgeClamp,
-                                Texture::NoMipMaps)),
+                                Texture::NoMipMaps,
+                                // The HUD pass writes without sRGB encoding, so skip the decode too.
+                                Texture::LinearColorspace)),
     renderer(r)
 {
 }
