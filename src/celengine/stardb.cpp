@@ -214,7 +214,7 @@ StarDatabase::findVisibleStars(engine::StarHandler& starHandler,
                                const Eigen::Quaternionf& orientation,
                                float fovY,
                                float aspectRatio,
-                               float limitingMag) const
+                               float minimumIrradiance) const
 {
     // Compute the bounding planes of an infinite view frustum
     Eigen::Matrix3f rot = orientation.toRotationMatrix();
@@ -236,10 +236,7 @@ StarDatabase::findVisibleStars(engine::StarHandler& starHandler,
         frustumPlanes[i] = Eigen::Hyperplane<float, 3>(planeNormals[i], position);
     }
 
-    engine::StarOctreeVisibleObjectsProcessor processor(&starHandler,
-                                                        position,
-                                                        frustumPlanes,
-                                                        limitingMag);
+    engine::StarOctreeVisibleObjectsProcessor processor(&starHandler, position, frustumPlanes, minimumIrradiance);
 
     octreeRoot->processDepthFirst(processor);
 }

@@ -65,7 +65,7 @@ class OctreeProcessor
 {
 public:
     virtual ~OctreeProcessor() = default;
-    virtual void process(const OBJ& obj, PREC distance, float appMag) = 0;
+    virtual void process(const OBJ& obj, PREC distance, float brightness) = 0;
 
 protected:
     OctreeProcessor() = default;

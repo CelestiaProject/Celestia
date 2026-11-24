@@ -85,6 +85,9 @@ public:
 
     float getAbsoluteMagnitude() const;
     void setAbsoluteMagnitude(float);
+    double getLogReferenceIrradiance() const;
+    // DSO visibility retains the ten-parsec brightness cap at close range.
+    float getApparentIrradiance(double distanceLightYears) const;
 
     bool isVisible() const { return visible; }
     void setVisible(bool _visible) { visible = _visible; }

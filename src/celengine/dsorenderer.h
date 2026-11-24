@@ -24,6 +24,15 @@
 class DeepSkyObject;
 class DSODatabase;
 
+namespace celestia::engine::detail
+{
+
+double dsoIrradianceScale(double distanceLightYears);
+float dsoDisplayBrightness(double logReferenceIrradiance, double irradianceScale,
+                           double averageLogIrradiance, double minimumLogIrradiance, float correction);
+
+} // namespace celestia::engine::detail
+
 class DSORenderer : public ObjectRenderer<std::unique_ptr<DeepSkyObject>, double>
 {
 public:
@@ -39,7 +48,10 @@ public:
     Eigen::Matrix3f orientationMatrixT;
     DSODatabase    *dsoDB{ nullptr };
 
-    float         avgAbsMag{ 0.0f };
+    double averageLogIrradiance{ 0.0 };
+    double minimumLogIrradiance{ 0.0 };
+    float brightnessCorrection{ 0.0f };
+    float labelResponseScale{ 0.0f };
     std::uint32_t dsosProcessed{ 0 };
 
     celestia::render::GalaxyRenderer      *galaxyRenderer{ nullptr };

@@ -54,6 +54,15 @@ negateIf(double& d, bool condition)
         d = -d;
 }
 
+float
+lumToIrradianceImpl(double lum, float km)
+{
+    static const float solarIrradianceAtTenParsecs = magToIrradiance(SOLAR_ABSMAG);
+    // Normalize at ten parsecs; retain double precision until after distance scaling.
+    double distanceRatio = 10.0 * KM_PER_PARSEC<double> / km;
+    return static_cast<float>(lum * solarIrradianceAtTenParsecs * distanceRatio * distanceRatio);
+}
+
 } // end unnamed namespace
 
 
@@ -69,10 +78,8 @@ float reflectedLuminosity(float sunLuminosity,
     return sunLuminosity * 0.25f * lengthRatio * lengthRatio;
 }
 
-
-// The following notation rules apply in the functions below and in the code in general:
-// - Luminosity is implied in solar units (in SI, flux is measured in W)
-// - Irradiance is implied in vegan units (in SI, it is measured in W/m^2)
+// These magnitude conversions use visual luminosity in solar units and
+// Vega-normalized irradiance, not bolometric power or SI irradiance.
 
 // Absolute magnitude is the logarithmic inverse of luminosity.
 // Apparent magnitude is the logarithmic inverse of irradiance.
@@ -95,9 +102,7 @@ lumToAppMag(float lum, float lyrs)
 float
 lumToIrradiance(float lum, float km)
 {
-    double distanceMeters = km * 1000.0;
-    return static_cast<float>(static_cast<double>(lum) * SOLAR_POWER
-                              / (math::sphereArea(distanceMeters) * VEGAN_IRRADIANCE));
+    return lumToIrradianceImpl(lum, km);
 }
 
 
@@ -118,7 +123,8 @@ appMagToLum(float mag, float lyrs)
 float
 absMagToIrradiance(float mag, float km)
 {
-    return lumToIrradiance(absMagToLum(mag), km);
+    double luminosity = std::exp((static_cast<double>(SOLAR_ABSMAG) - mag) / LN_MAG);
+    return lumToIrradianceImpl(luminosity, km);
 }
 
 

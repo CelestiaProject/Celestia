@@ -42,11 +42,14 @@ constexpr float MAX_STAR_ORBIT_RADIUS = 1.0f;
 StarOctreeVisibleObjectsProcessor::StarOctreeVisibleObjectsProcessor(StarHandler* starHandler, // cppcheck-suppress uninitMemberVar
                                                                      const StarOctree::PointType& obsPosition,
                                                                      std::span<const PlaneType, 5> frustumPlanes,
-                                                                     float limitingFactor) :
+                                                                     float minimumIrradiance) :
     m_starHandler(starHandler),
     m_obsPosition(obsPosition),
     m_frustumPlanes(frustumPlanes),
-    m_limitingFactor(limitingFactor)
+    m_minimumIrradiance(minimumIrradiance),
+    m_limitingMagnitude(minimumIrradiance > 0.0f
+                            ? std::nextafter(astro::irradianceToMag(minimumIrradiance), std::numeric_limits<float>::infinity())
+                            : std::numeric_limits<float>::infinity())
 {
     for (int i = 0; i < 5; ++i)
         m_projectedRadiusFactors[i] = m_frustumPlanes[i].normal().cwiseAbs().sum();
@@ -69,23 +72,32 @@ StarOctreeVisibleObjectsProcessor::checkNode(const StarOctree::PointType& center
 
     // Compute the distance to node; this is equal to the distance to
     // the cellCenterPos of the node minus the boundingRadius of the node, scale * SQRT3.
-    float minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
-
-    if (float distanceModulus = astro::distanceModulus(minDistance);
-        minDistance > 0.0 && (factor + distanceModulus) > m_limitingFactor)
+    // Node factors remain catalog absolute magnitudes; compare their maximum
+    // possible irradiance with the same threshold used for individual stars.
+    if (float minDistance = (m_obsPosition - center).norm() - size * std::numbers::sqrt3_v<float>;
+        !(minDistance <= 0.0f
+          || astro::absMagToIrradiance(factor, astro::lightYearsToKilometers(minDistance)) >= m_minimumIrradiance))
         return false;
 
     m_dimmest = std::numeric_limits<float>::infinity();
-    Eigen::Vector3f halfSize = Eigen::Vector3f::Constant(size);
-    Eigen::Vector3f nearestPoint = m_obsPosition.cwiseMax(center - halfSize).cwiseMin(center + halfSize);
-    if (float minStarDistance = (m_obsPosition - nearestPoint).norm();
-        minStarDistance > MAX_STAR_ORBIT_RADIUS)
+    if (m_minimumIrradiance > 0.0f)
     {
-        // Round outward before subtraction as well as afterward: the final
-        // magnitude addition can round a boundary star back into visibility.
-        float limit = std::nextafter(m_limitingFactor, std::numeric_limits<float>::infinity());
-        m_dimmest = std::nextafter(limit - astro::distanceModulus(minStarDistance),
-                                  std::numeric_limits<float>::infinity());
+        // Clamp in catalog coordinates so the lower bound uses the same
+        // floating-point subtraction as the final star distance.
+        Eigen::Vector3f halfSize = Eigen::Vector3f::Constant(size);
+        Eigen::Vector3f nearestPoint = m_obsPosition.cwiseMax(center - halfSize).cwiseMin(center + halfSize);
+        if (float minStarDistance = (m_obsPosition - nearestPoint).norm();
+            minStarDistance > MAX_STAR_ORBIT_RADIUS)
+        {
+            // The magnitude limit is rounded outward at construction; round the
+            // subtraction outward too before validating against the irradiance limit.
+            float dimmest = std::nextafter(m_limitingMagnitude - astro::distanceModulus(minStarDistance),
+                                           std::numeric_limits<float>::infinity());
+            // Keep rounded cutoff cases on the final irradiance path. Only reject
+            // fainter magnitudes if the prefilter boundary is already below it.
+            if (astro::absMagToIrradiance(dimmest, astro::lightYearsToKilometers(minStarDistance)) < m_minimumIrradiance)
+                m_dimmest = dimmest;
+        }
     }
 
     return true;
@@ -98,10 +110,10 @@ StarOctreeVisibleObjectsProcessor::process(const Star& obj) const
         return;
 
     float distance = (m_obsPosition - obj.getPosition()).norm();
-    float appMag   = obj.getApparentMagnitude(distance);
+    float irradiance = obj.getApparentIrradiance(distance);
 
-    if (appMag <= m_limitingFactor || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
-        m_starHandler->process(obj, distance, appMag);
+    if (irradiance >= m_minimumIrradiance || (distance < MAX_STAR_ORBIT_RADIUS && obj.getOrbit()))
+        m_starHandler->process(obj, distance, irradiance);
 }
 
 StarOctreeCloseObjectsProcessor::StarOctreeCloseObjectsProcessor(StarHandler* starHandler,
@@ -132,9 +144,9 @@ StarOctreeCloseObjectsProcessor::process(const Star& obj) const
     if (offset.squaredNorm() < m_radiusSquared)
     {
         float distance = offset.norm();
-        float appMag   = obj.getApparentMagnitude(distance);
+        float irradiance = obj.getApparentIrradiance(distance);
 
-        m_starHandler->process(obj, distance, appMag);
+        m_starHandler->process(obj, distance, irradiance);
     }
 }
 

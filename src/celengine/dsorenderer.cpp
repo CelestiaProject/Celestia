@@ -28,32 +28,35 @@ namespace util = celestia::util;
 
 namespace
 {
-// The parameter 'enhance' adjusts the DSO brightness as viewed from "inside"
-// (e.g. MilkyWay as seen from Earth). It provides an enhanced apparent core
-// brightness appMag  ~ absMag - enhance. 'enhance' thus serves to uniformly
-// enhance the too low sprite luminosity at close distance.
+// Retain the legacy close-range core enhancement for extended objects.
 constexpr double enhance = 4.0;
 constexpr float CubeCornerToCenterDistance = 1.7320508075688772f;
 
-float
-brightness(float avgAbsMag, float absMag, float appMag, float brightnessCorr, float faintestMag)
+} // anonymous namespace
+
+double
+celestia::engine::detail::dsoIrradianceScale(double distanceLightYears)
 {
-    // Input: display looks satisfactory for 0.2 < brightness < O(1.0)
-    // Ansatz: brightness = a - b * appMag(distanceToDSO), emulating eye sensitivity...
-    // determine a,b such that
-    // a - b * absMag = absMag / avgAbsMag ~ 1; a - b * faintestMag = 0.2.
-    // The 2nd eq. guarantees that the faintest galaxies are still visible.
-
-    float r = absMag / avgAbsMag;
-    float b = r - (r - 0.2f) * (absMag - appMag) / (absMag - faintestMag);
-
-    // obviously, brightness(appMag = absMag) = r and
-    // brightness(appMag = faintestMag) = 0.2, as desired.
-
-    return std::max(0.0f, b * brightnessCorr);
+    if (distanceLightYears >= astro::LY_PER_10PARSEC)
+    {
+        double ratio = astro::LY_PER_10PARSEC / distanceLightYears;
+        return ratio * ratio;
+    }
+    return std::exp(-enhance * std::tanh(distanceLightYears / astro::LY_PER_10PARSEC - 1.0) / astro::LN_MAG);
 }
 
-} // anonymous namespace
+float
+celestia::engine::detail::dsoDisplayBrightness(double logReferenceIrradiance, double irradianceScale,
+                                               double averageLogIrradiance, double minimumLogIrradiance, float correction)
+{
+    // Keep the empirical logarithmic display curve, including its 0.2 floor
+    // at the visibility limit. Relative irradiance avoids overflow for
+    // uncalibrated catalog objects carrying the -1000 magnitude sentinel.
+    double referenceBrightness = logReferenceIrradiance / averageLogIrradiance;
+    double brightness = referenceBrightness
+        + (referenceBrightness - 0.2) * std::log(irradianceScale) / (logReferenceIrradiance - minimumLogIrradiance);
+    return std::max(0.0f, static_cast<float>(brightness * correction));
+}
 
 DSORenderer::DSORenderer() : ObjectRenderer(DSO_OCTREE_ROOT_SIZE)
 {
@@ -61,7 +64,7 @@ DSORenderer::DSORenderer() : ObjectRenderer(DSO_OCTREE_ROOT_SIZE)
 
 void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
                           double distanceToDSO,
-                          float absMag)
+                          float irradiance)
 {
     if (distanceToDSO > distanceLimit || !dso->isVisible())
         return;
@@ -77,11 +80,8 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
     if (frustum.testSphere(center, (float) dsoRadius) == math::FrustumAspect::Outside)
         return;
 
-    float appMag;
-    if (distanceToDSO >= astro::LY_PER_10PARSEC)
-        appMag = astro::absToAppMag(absMag, distanceToDSO);
-    else
-        appMag = absMag + (float) (enhance * tanh(distanceToDSO/astro::LY_PER_10PARSEC - 1.0));
+    double irradianceScale = celestia::engine::detail::dsoIrradianceScale(distanceToDSO);
+    double logReferenceIrradiance = dso->getLogReferenceIrradiance();
 
     if (util::is_set(renderFlags, dso->getRenderMask()))
     {
@@ -104,26 +104,25 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
             }
         }
 
-        float b = 2.3f * (faintestMag - 4.75f) / renderer->getFaintestAM45deg(); // brightnesCorr
+        auto brightness = [&](double average) {
+            return celestia::engine::detail::dsoDisplayBrightness(logReferenceIrradiance, irradianceScale, average,
+                                                                  minimumLogIrradiance, brightnessCorrection);
+        };
         switch (dso->getObjType())
         {
         case DeepSkyObjectType::Galaxy:
             // -19.04f == average over 10937 galaxies in galaxies.dsc.
-            b = brightness(-19.04f, absMag, appMag, b, faintestMag);
-            galaxyRenderer->add(static_cast<const Galaxy*>(dso.get()), relPos, b, nearZ, farZ);
+            galaxyRenderer->add(static_cast<const Galaxy*>(dso.get()), relPos, brightness(19.04 / astro::LN_MAG), nearZ, farZ);
             break;
         case DeepSkyObjectType::Globular:
             // -6.86f == average over 150 globulars in globulars.dsc.
-            b = brightness(-6.86f, absMag, appMag, b, faintestMag);
-            globularRenderer->add(static_cast<const Globular*>(dso.get()), relPos, b, nearZ, farZ);
+            globularRenderer->add(static_cast<const Globular*>(dso.get()), relPos, brightness(6.86 / astro::LN_MAG), nearZ, farZ);
             break;
         case DeepSkyObjectType::Nebula:
-            b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
-            nebulaRenderer->add(static_cast<const Nebula*>(dso.get()), relPos, b, nearZ, farZ);
+            nebulaRenderer->add(static_cast<const Nebula*>(dso.get()), relPos, brightness(averageLogIrradiance), nearZ, farZ);
             break;
         case DeepSkyObjectType::OpenCluster:
-            b = brightness(avgAbsMag, absMag, appMag, b, faintestMag);
-            openClusterRenderer->add(static_cast<const OpenCluster*>(dso.get()), relPos, b, nearZ, farZ);
+            openClusterRenderer->add(static_cast<const OpenCluster*>(dso.get()), relPos, brightness(averageLogIrradiance), nearZ, farZ);
             break;
         default:
             // Unsupported DSO
@@ -139,51 +138,62 @@ void DSORenderer::process(const std::unique_ptr<DeepSkyObject>& dso, //NOSONAR
     if (util::is_set(labelMode, labelMask))
     {
         Color labelColor;
-        float appMagEff = 6.0f;
+        double labelIrradiance = irradiance;
+        if (distanceToDSO < astro::LY_PER_10PARSEC)
+            labelIrradiance *= irradianceScale;
         float step = 6.0f;
         float symbolSize = 0.0f;
         const celestia::engine::MarkerRepresentation* rep = nullptr;
 
-        // Use magnitude based fading for galaxies, and distance based
-        // fading for nebulae and open clusters.
+        // Nebula and open-cluster labels retain their distance-based reference
+        // brightness, independently of the object's catalog photometry.
         switch (labelMask)
         {
         case RenderLabels::NebulaLabels:
+            if (distanceToDSO < 0.0)
+                return;
             rep = &renderer->nebulaRep;
             labelColor = renderer->colors.NebulaLabel;
-            appMagEff = astro::absToAppMag(-7.5f, distanceToDSO);
+            {
+                static const float reference = astro::magToIrradiance(-7.5f);
+                double ratio = astro::LY_PER_10PARSEC / distanceToDSO;
+                labelIrradiance = reference * ratio * ratio;
+            }
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 6.0f;
             break;
         case RenderLabels::OpenClusterLabels:
+            if (distanceToDSO < 0.0)
+                return;
             rep = &renderer->openClusterRep;
             labelColor = renderer->colors.OpenClusterLabel;
-            appMagEff = astro::absToAppMag(-6.0f, distanceToDSO);
+            {
+                static const float reference = astro::magToIrradiance(-6.0f);
+                double ratio = astro::LY_PER_10PARSEC / distanceToDSO;
+                labelIrradiance = reference * ratio * ratio;
+            }
             symbolSize = (float)(dso->getRadius() / distanceToDSO) / pixelSize;
             step = 4.0f;
             break;
         case RenderLabels::GalaxyLabels:
             labelColor = renderer->colors.GalaxyLabel;
-            appMagEff = appMag;
             step = 6.0f;
             break;
         case RenderLabels::GlobularLabels:
             labelColor = renderer->colors.GlobularLabel;
-            appMagEff = appMag;
             step = 3.0f;
             break;
         default:
             // Unrecognized object class
             labelColor = Color::White;
-            appMagEff = appMag;
             step = 6.0f;
             break;
         }
 
-        if (appMagEff < labelThresholdMag)
+        if (labelIrradiance > labelThresholdIrradiance)
         {
-            // introduce distance dependent label transparency.
-            float distr = std::min(1.0f, step * (labelThresholdMag - appMagEff) / labelThresholdMag);
+            double opacity = step * labelResponseScale * std::log(labelIrradiance / labelThresholdIrradiance);
+            float distr = static_cast<float>(std::min(1.0, opacity));
             labelColor.alpha(distr * labelColor.alpha());
 
             renderer->addBackgroundAnnotation(rep,

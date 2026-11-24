@@ -26,11 +26,9 @@ public:
     Renderer*  renderer         { nullptr };
 
     float pixelSize             { 0.0f };
-    float faintestMag           { 0.0f };
     float distanceLimit         { 0.0f };
 
-    // Objects brighter than labelThresholdMag will be labeled
-    float labelThresholdMag     { 0.0f };
+    float labelThresholdIrradiance { 0.0f };
 
     RenderFlags renderFlags     { RenderFlags::ShowNothing };
     RenderLabels labelMode      { RenderLabels::NoLabels };

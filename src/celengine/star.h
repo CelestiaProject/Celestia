@@ -241,7 +241,7 @@ StarDetails::isBarycenter() const
     return spectralType.data() == "Bary"sv;
 }
 
-class Star
+class Star // NOSONAR(cpp:S1448)
 {
 public:
     static constexpr AstroCatalog::IndexNumber MaxTychoCatalogNumber = 0xf0000000;
@@ -273,6 +273,8 @@ public:
     void setExtinction(float);
 
     float getApparentMagnitude(float) const;
+    // Vega-normalized visual irradiance; distance is in light years.
+    float getApparentIrradiance(float ly) const;
     float getLuminosity() const;
     float getBolometricLuminosity() const;
 

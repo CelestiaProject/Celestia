@@ -83,6 +83,7 @@
 #include <cassert>
 #include <cmath>
 #include <functional>
+#include <limits>
 #include <optional>
 #include <sstream>
 #include <iomanip>
@@ -1340,7 +1341,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
         renderStar(*rle.star,
                    rle.position,
                    static_cast<float>(rle.distance),
-                   rle.appMag,
+                   rle.irradiance,
                    observer,
                    nearPlaneDistance, farPlaneDistance,
                    m);
@@ -1350,7 +1351,7 @@ void Renderer::renderItem(const RenderListEntry& rle,
         renderPlanet(*rle.body,
                      rle.position,
                      rle.distance,
-                     rle.appMag,
+                     rle.irradiance,
                      observer,
                      nearPlaneDistance, farPlaneDistance,
                      m);
@@ -1487,7 +1488,7 @@ void Renderer::renderScene(const Observer& observer,
         saturationMag = saturationMagNight;
     }
 
-    faintestPlanetMag = faintestMag;
+    minimumPlanetIrradiance = astro::magToIrradiance(faintestMag);
     if (util::is_set(renderFlags, RenderFlags::ShowSolarSystemObjects | RenderFlags::ShowOrbits))
     {
         buildNearSystemsLists(universe, observer, xfrustum, now);
@@ -1511,13 +1512,9 @@ void Renderer::renderScene(const Observer& observer,
                   faintestMagWithoutAtmosphere)
             : 1.0f;
 
-    // Now we need to determine how to scale the brightness of stars.  The
-    // brightness will be proportional to the apparent magnitude, i.e.
-    // a logarithmic function of the stars apparent brightness.  This mimics
-    // the response of the human eye.  We sort of fudge things here and
-    // maintain a minimum range of six magnitudes between faintest visible
-    // and saturation; this keeps stars from popping in or out as the sun
-    // sets or rises.
+    // Preserve the legacy styles' logarithmic display response to irradiance.
+    // Calibrate it from the magnitude-based controls once per frame, retaining
+    // at least six magnitudes of range to avoid popping at dawn and dusk.
     if (faintestMag - saturationMag >= 6.0f)
         brightnessScale = 1.0f / (faintestMag -  saturationMag);
     else
@@ -1527,8 +1524,8 @@ void Renderer::renderScene(const Observer& observer,
     if (starStyle == StarStyle::ScaledDiscStars)
         brightnessScale *= 2.0f;
 
-    // Calculate saturation magnitude
-    satPoint = faintestMag - (1.0f - brightnessBias) / brightnessScale;
+    brightnessScale *= astro::LN_MAG;
+    legacyLogExposure = faintestMag / astro::LN_MAG;
 
     ambientColor = Color(ambientLightLevel, ambientLightLevel, ambientLightLevel).linearize(gl::sRGBRendering);
 
@@ -1723,47 +1720,19 @@ calculateQuadCenter(const Eigen::Quaternionf &cameraOrientation,
 }
 
 void
-Renderer::calculatePointSize(float appMag,
+Renderer::calculatePointSize(float irradiance,
                              float size,
                              float &discSize,
                              float &alpha,
                              float &glareSize,
                              float &glareAlpha) const
 {
-    alpha = std::max(0.0f, (faintestMag - appMag) * brightnessScale + brightnessBias);
-
-    discSize = size;
-    if (starStyle == StarStyle::ScaledDiscStars)
-    {
-        if (alpha > 1.0f)
-        {
-            float discScale = std::min(MaxScaledDiscStarSize, std::exp2(0.3f * (satPoint - appMag)));
-            discSize *= std::max(1.0f, discScale);
-
-            glareAlpha = std::min(0.5f, discScale / 4.0f);
-            glareSize = discSize * 3.0f;
-
-            alpha = 1.0f;
-        }
-        else
-        {
-            glareSize = glareAlpha = 0.0f;
-        }
-    }
-    else
-    {
-        if (alpha > 1.0f)
-        {
-            float discScale = std::min(100.0f, satPoint - appMag + 2.0f);
-            glareAlpha = std::min(GlareOpacity, (discScale - 2.0f) / 4.0f);
-            glareSize = 2.0f * discScale * size;
-            alpha = 1.0f;
-        }
-        else
-        {
-            glareSize = glareAlpha = 0.0f;
-        }
-    }
+    auto appearance = celestia::engine::detail::legacyPointAppearance(irradiance, size, starStyle == StarStyle::ScaledDiscStars,
+                                                                      legacyLogExposure, brightnessScale, brightnessBias);
+    discSize = appearance.discSize;
+    alpha = appearance.alpha;
+    glareSize = appearance.glareSize;
+    glareAlpha = appearance.glareAlpha;
 }
 
 // If the an object occupies a pixel or less of screen space, we don't
@@ -1773,7 +1742,7 @@ Renderer::calculatePointSize(float appMag,
 // object to smooth things out, making it dimmer as the disc size exceeds the
 // max disc size.
 void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
-                                   float appMag,
+                                   float irradiance,
                                    float discSizeInPixels,
                                    const Color &color,
                                    bool useHalos,
@@ -1786,7 +1755,7 @@ void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
     if (starStyle == StarStyle::PointSpreadFunction)
     {
         float pointScale = static_cast<float>(screenDpi) / 96.0f;
-        addStarAsPsfPoint(info, color, appMag, pointScale, discSizeInPixels, emissive);
+        addStarAsPsfPoint(info, color, irradiance, pointScale, discSizeInPixels, emissive);
         return;
     }
 
@@ -1805,7 +1774,7 @@ void Renderer::renderObjectAsPoint(const PointObjectInfo& info,
 
     float scale = static_cast<float>(screenDpi) / 96.0f;
     float pointSize, alpha, glareSize, glareAlpha;
-    calculatePointSize(appMag, BaseStarDiscSize * scale, pointSize, alpha, glareSize, glareAlpha);
+    calculatePointSize(irradiance, BaseStarDiscSize * scale, pointSize, alpha, glareSize, glareAlpha);
 
     if (useScaledDiscs && discSizeInPixels > MaxScaledDiscStarSize)
         glareAlpha = std::min(glareAlpha, (MaxScaledDiscStarSize - discSizeInPixels) / MaxScaledDiscStarSize + 1.0f);
@@ -1872,7 +1841,7 @@ computePsfGlowAlpha(float distance, float radius,
 
 void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
                                  const Color    &color,
-                                 float           appMag,
+                                 float           irradiance,
                                  float           pointScale,
                                  float           discSizeInPixels,
                                  bool            emissive)
@@ -1897,22 +1866,17 @@ void Renderer::addStarAsPsfPoint(const PointObjectInfo &info,
 
     float exposureFactor = std::max(starExposure, 1.0e-6f);
     float r              = std::max(starPointRadius, 1.0e-3f);
-    float peakRadScale   = exposureFactor * starAtmosphereBrightness * 3.0f
-                           / (std::numbers::pi_v<float> * r * r);
-    float irradiance     = astro::magToIrradiance(appMag);
-    float peakRad        = peakRadScale * irradiance;
-
+    float peakRadScale = celestia::engine::detail::psfPeakRadianceScale(r, exposureFactor, starAtmosphereBrightness);
     float dimGate = (celestia::gl::sRGBRendering
                         ? astro::LOWEST_IRRADIATION_SRGB
                         : astro::LOWEST_IRRADIATION)
                     * starDimClipFactor;
 
-    // Hyperbolic soft-clip: stars with peakRad close to dimGate fade
-    // smoothly toward zero, while peakRad >> dimGate is asymptotically
-    // unchanged.  See issue #2559.
-    if (peakRad <= dimGate)
+    float minimumIrradiance = celestia::engine::detail::psfMinimumIrradiance(peakRadScale, dimGate);
+    float dimmedIrradiance = celestia::engine::detail::psfSoftClip(irradiance, minimumIrradiance);
+    if (dimmedIrradiance <= 0.0f)
         return;
-    peakRad = celestia::engine::detail::psfSoftClip(peakRad, dimGate);
+    float peakRad = peakRadScale * dimmedIrradiance;
 
     float greenScale = 1.0f;
     Color linearStarColor = psfGreenNormalization(color, 0.1f, greenScale);
@@ -3309,7 +3273,7 @@ void Renderer::setupPlanetLighting(Body& body, // NOSONAR(cpp:S107,cpp:S3776)
 void Renderer::renderPlanet(Body& body,
                             const Vector3f& pos,
                             double distance,
-                            float appMag,
+                            float irradiance,
                             const Observer& observer,
                             float nearPlaneDistance,
                             float farPlaneDistance,
@@ -3375,7 +3339,7 @@ void Renderer::renderPlanet(Body& body,
         if (float maxCoeff = surfaceColor.toVector3().maxCoeff(); maxCoeff > 0.0f) // ignore [ 0 0 0 ]; used by old addons to make objects not get rendered as point
         {
             renderObjectAsPoint(PointObjectInfo{pos, static_cast<float>(distance), body.getRadius()},
-                                appMag,
+                                irradiance,
                                 discSizeInPixels,
                                 surfaceColor * (1.0f / maxCoeff), // normalize point color; 'darkness' is handled by size of point determined by GeomAlbedo.
                                 false, false);
@@ -3508,7 +3472,7 @@ void Renderer::renderRingSystem(const RenderListEntry& rle,
 void Renderer::renderStar(const Star& star,
                           const Vector3f& pos,
                           float distance,
-                          float appMag,
+                          float irradiance,
                           const Observer& observer,
                           float nearPlaneDistance,
                           float farPlaneDistance,
@@ -3572,7 +3536,7 @@ void Renderer::renderStar(const Star& star,
     }
 
     renderObjectAsPoint(PointObjectInfo{pos, distance, star.getRadius()},
-                        appMag,
+                        irradiance,
                         discSizeInPixels,
                         color,
                         star.hasCorona(), true);
@@ -3761,7 +3725,7 @@ void Renderer::addRenderListEntries(RenderListEntry& rle, // NOSONAR(cpp:S3776)
                                     Body& body,
                                     bool isLabeled)
 {
-    bool visibleAsPoint = rle.appMag < faintestPlanetMag && body.isVisibleAsPoint();
+    bool visibleAsPoint = rle.irradiance > minimumPlanetIrradiance && body.isVisibleAsPoint();
     const BodyFeaturesManager* bodyFeaturesManager = GetBodyFeaturesManager();
 
     if (rle.discSizeInPixels > 1 || visibleAsPoint || isLabeled)
@@ -3997,17 +3961,17 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             // Calculate the size of the planet/moon disc in pixels
             float discSize = (body->getCullingRadius() / (float) dist_v) / pixelSize;
 
-            // Compute the apparent magnitude; instead of summing the reflected
+            // Compute the irradiance; instead of summing the reflected
             // light from all nearby stars, we just consider the one with the
             // highest apparent brightness.
-            float appMag = 100.0f;
+            float irradiance = 0.0f;
             for (const auto &lightSource : lightSourceList)
             {
                 Eigen::Vector3d sunPos = pos_v - lightSource.position;
-                appMag = std::min(appMag, body->getApparentMagnitude(lightSource.luminosity, sunPos, pos_v));
+                irradiance = std::max(irradiance, body->getApparentIrradiance(lightSource.luminosity, sunPos, pos_v));
             }
 
-            bool visibleAsPoint = appMag < faintestPlanetMag && body->isVisibleAsPoint();
+            bool visibleAsPoint = irradiance > minimumPlanetIrradiance && body->isVisibleAsPoint();
             bool isLabeled = util::is_set(body->getOrbitClassification(), labelClassMask);
 
             if ((discSize > 1 || visibleAsPoint || isLabeled) && isBodyVisible(body, bodyVisibilityMask))
@@ -4017,7 +3981,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 rle.position = pos_v.cast<float>();
                 rle.distance = dist_v;
                 rle.centerZ = pos_v.cast<float>().dot(viewMatZ);
-                rle.appMag   = appMag;
+                rle.irradiance = irradiance;
                 rle.discSizeInPixels = body->getRadius() / ((float) dist_v * pixelSize);
 
                 // TODO: Remove this. It's only used in two places: for calculating comet tail
@@ -4049,11 +4013,11 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
             float largestPossible = 0.0f;
 
             // If the viewer is not within the subtree bounding sphere, see if we can cull it because
-            // it contains no objects brighter than the limiting magnitude and no objects that will
+            // it contains no objects above the irradiance threshold and no objects that will
             // be larger than one pixel in size.
             if (minPossibleDistance > 1.0f)
             {
-                // Figure out the magnitude of the brightest possible object in the subtree.
+                // Figure out the irradiance of the brightest possible object in the subtree.
 
                 // Compute the luminosity from reflected light of the largest object in the subtree
                 float lum = 0.0f;
@@ -4062,7 +4026,7 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                     Eigen::Vector3d sunPos = pos_v - lightSource.position;
                     lum += luminosityAtOpposition(lightSource.luminosity, (float) sunPos.norm(), (float) subtree->maxChildRadius());
                 }
-                brightestPossible = astro::lumToAppMag(lum, astro::kilometersToLightYears(minPossibleDistance));
+                brightestPossible = astro::lumToIrradiance(lum, minPossibleDistance);
                 largestPossible = (float) subtree->maxChildRadius() / minPossibleDistance / pixelSize;
             }
             else
@@ -4070,11 +4034,11 @@ void Renderer::buildRenderLists(const Vector3d& astrocentricObserverPos,
                 // Viewer is within the bounding sphere, so the object could be very close.
                 // Assume that an object in the subree could be very bright or large,
                 // so no culling will occur.
-                brightestPossible = -100.0f;
+                brightestPossible = std::numeric_limits<float>::infinity();
                 largestPossible = 100.0f;
             }
 
-            if (brightestPossible < faintestPlanetMag || largestPossible > 1.0f)
+            if (brightestPossible > minimumPlanetIrradiance || largestPossible > 1.0f)
             {
                 // See if the object or any of its children are within the view frustum
                 if (viewFrustum.testSphere(pos_v.cast<float>(), (float) subtree->boundingSphereRadius()) != math::FrustumAspect::Outside)
@@ -4455,7 +4419,6 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.cosFOV            = std::cos(math::degToRad(calcMaxFOV(fov, getAspectRatio())) / 2.0f);
 
     starRenderer.pixelSize         = pixelSize;
-    starRenderer.faintestMag       = faintestMag;
     starRenderer.distanceLimit     = distanceLimit;
     starRenderer.labelMode         = labelMode;
     starRenderer.SolarSystemMaxDistance = SolarSystemMaxDistance;
@@ -4468,7 +4431,9 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
-    starRenderer.labelThresholdMag = 1.2f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
+    float labelThresholdMag = 1.2f * std::max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * std::log10(effDistanceToScreen)));
+    starRenderer.labelThresholdIrradiance = astro::magToIrradiance(labelThresholdMag);
+    starRenderer.labelResponseScale = 3.5f * astro::LN_MAG / labelThresholdMag;
 
     starRenderer.colorTemp = &starColors;
 
@@ -4485,7 +4450,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
     starRenderer.glareVertexBuffer->setTexture(m_gaussianGlareTex.get());
     starRenderer.glareVertexBuffer->setPointScale(scale);
 
-    float iterFaintestMag = faintestMagNight;
+    float minimumStarIrradiance = astro::magToIrradiance(faintestMagNight);
     Renderer::PipelineState ps;
     ps.blending = true;
 
@@ -4495,9 +4460,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
 
         // Precompute per-frame PSF constants once instead of recomputing
         // them per-star inside PointStarRenderer::process.
-        //   peakRad = exposure * 3 * irradiance / (pi * r^2)
-        //   dimGate = soft-clip threshold; peakRad <= dimGate -> star culled,
-        //             dimmed = sqrt(peakRad^2 - dimGate^2) above it
+        //   peakRad = psfPeakRadianceScale(...) * irradiance
+        //   minimumIrradiance = dimGate / peakRadScale, in source units
         //   a       = optimization / r  (Spencer eye-PSF coefficient)
         //   sizePhys > maxPointSize  <=>  glowPeak > (maxPointSize*a/(2*pointScale))^2.5
         float exposureFactor = std::max(starExposure, 1.0e-6f);
@@ -4511,9 +4475,8 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                                                 * glowA / (2.0f * scale),
                                                 2.5f);
 
-        starRenderer.psf.peakRadScale          = exposureFactor * starAtmosphereBrightness * 3.0f
-                                                 / (std::numbers::pi_v<float> * rLog * rLog);
-        starRenderer.psf.dimGate               = dimGate;
+        starRenderer.psf.peakRadScale = celestia::engine::detail::psfPeakRadianceScale(rLog, exposureFactor, starAtmosphereBrightness);
+        starRenderer.psf.minimumIrradiance = celestia::engine::detail::psfMinimumIrradiance(starRenderer.psf.peakRadScale, dimGate);
         starRenderer.psf.glowA                 = glowA;
         starRenderer.psf.glowPeakLargeThreshold = glowPeakLargeThreshold;
 
@@ -4521,10 +4484,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
         // threshold. peakRadScale includes atmospheric eye adaptation, so
         // daylight shifts this threshold brighter instead of restoring the
         // night-sky cutoff.
-        //   peakRad = dimGate  =>  m = (1/0.4) *
-        //       log10(atmosphereBrightness * exposure * 3 / (pi * r^2 * dimGate))
-        float psfFaintMag = std::log10(starRenderer.psf.peakRadScale / dimGate) / 0.4f;
-        iterFaintestMag = std::max(faintestMagNight, psfFaintMag);
+        minimumStarIrradiance = std::min(minimumStarIrradiance, starRenderer.psf.minimumIrradiance);
     }
     else
     {
@@ -4544,7 +4504,7 @@ void Renderer::renderPointStars(const StarDatabase& starDB,
                             getCameraOrientationf(),
                             math::degToRad(fov),
                             getAspectRatio(),
-                            iterFaintestMag);
+                            minimumStarIrradiance);
 
     if (starStyle == StarStyle::PointSpreadFunction)
     {
@@ -4595,8 +4555,9 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     dsoRenderer.obsPos           = obsPos;
     // size/pixelSize =0.86 at 120deg, 1.43 at 45deg and 1.6 at 0deg.
     dsoRenderer.pixelSize        = pixelSize;
-    dsoRenderer.avgAbsMag        = dsoDB->getAverageAbsoluteMagnitude();
-    dsoRenderer.faintestMag      = faintestMag;
+    dsoRenderer.averageLogIrradiance = -static_cast<double>(dsoDB->getAverageAbsoluteMagnitude()) / astro::LN_MAG;
+    dsoRenderer.minimumLogIrradiance = -static_cast<double>(faintestMag) / astro::LN_MAG;
+    dsoRenderer.brightnessCorrection = 2.3f * (faintestMag - 4.75f) / getFaintestAM45deg();
     dsoRenderer.renderFlags      = renderFlags;
     dsoRenderer.labelMode        = labelMode;
 
@@ -4605,7 +4566,9 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
     // = 1.0 at startup
     float effDistanceToScreen = mmToInches((float) REF_DISTANCE_TO_SCREEN) * pixelSize * getScreenDpi();
 
-    dsoRenderer.labelThresholdMag = 2.0f * max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
+    float labelThresholdMag = 2.0f * std::max(1.0f, (faintestMag - 4.0f) * (1.0f - 0.5f * log10(effDistanceToScreen)));
+    dsoRenderer.labelThresholdIrradiance = astro::magToIrradiance(labelThresholdMag);
+    dsoRenderer.labelResponseScale = astro::LN_MAG / labelThresholdMag;
 
     galaxyRep      = MarkerRepresentation(MarkerSymbol::Triangle, 8.0f, colors.GalaxyLabel);
     nebulaRep      = MarkerRepresentation(MarkerSymbol::Square,   8.0f, colors.NebulaLabel);
@@ -4617,7 +4580,7 @@ void Renderer::renderDeepSkyObjects(const Universe& universe,
                            cameraOrientation,
                            math::degToRad(fov),
                            getAspectRatio(),
-                           2 * faintestMagNight);
+                           astro::magToIrradiance(2 * faintestMagNight));
 
     m_galaxyRenderer->render();
     m_globularRenderer->render();
