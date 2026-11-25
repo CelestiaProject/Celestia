@@ -42,7 +42,7 @@ public:
                                        const Environment&);
 
     void processEvent(const SDL_Event&) const;
-    void render();
+    void render(Environment&);
 
     inline bool wantCaptureKeyboard() const { return m_io->WantCaptureKeyboard; }
     inline bool wantCaptureMouse() const { return m_io->WantCaptureMouse; }
@@ -52,6 +52,7 @@ public:
 
 private:
     void menuBar();
+    void fileMenu();
     void scriptMenu();
 
     CelestiaCore* m_appCore;
@@ -67,6 +68,9 @@ private:
     bool m_isAboutDialogOpen{ false };
     bool m_isObjectsDialogOpen{ false };
     bool m_isRenderDialogOpen{ false };
+#ifndef __EMSCRIPTEN__
+    bool m_isInputDialogOpen{ false };
+#endif
     bool m_isTimeDialogOpen{ false };
 
     float m_menuBarHeight{ 0.0f };

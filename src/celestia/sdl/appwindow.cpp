@@ -38,6 +38,12 @@ namespace celestia::sdl
 namespace
 {
 
+#ifdef __EMSCRIPTEN__
+constexpr bool AlwaysHideDragCursor = true;
+#else
+constexpr bool AlwaysHideDragCursor = false;
+#endif
+
 void
 setTimezone(CelestiaCore& appCore)
 {
@@ -218,6 +224,7 @@ AppWindow::run(const Settings& settings)
 #endif
 
     auto saveSettings = Settings::fromApplication(*this, m_appCore.get());
+    saveSettings.warpCursor = m_environment->warpCursorRequested();
     saveSettings.save(m_environment->getSettingsPath());
 
     SDL_StopTextInput();
@@ -270,7 +277,7 @@ AppWindow::update()
 
     m_appCore->tick();
     m_appCore->draw();
-    m_gui->render();
+    m_gui->render(*m_environment);
     SDL_GL_SwapWindow(m_window.get());
 
     return !m_gui->isQuitRequested();
@@ -384,6 +391,12 @@ AppWindow::handleMouseButtonDownEvent(const SDL_MouseButtonEvent& event)
     if (button == -1)
         return;
 
+    if ((button & (CelestiaCore::LeftButton | CelestiaCore::RightButton)) != 0)
+    {
+        if (m_dragButtons == 0)
+            m_environment->beginDrag();
+        m_dragButtons |= button;
+    }
     m_lastX = event.x;
     m_lastY = event.y;
     float scaling = getScalingFactor(*m_appCore);
@@ -395,25 +408,27 @@ AppWindow::handleMouseButtonDownEvent(const SDL_MouseButtonEvent& event)
 void
 AppWindow::handleMouseButtonUpEvent(const SDL_MouseButtonEvent& event)
 {
-    if (m_gui->wantCaptureMouse())
-        return;
-
     int button = toCelestiaButton(event.button);
     if (button == -1)
         return;
 
-    if ((button & (CelestiaCore::LeftButton | CelestiaCore::RightButton)) != 0
-        && SDL_ShowCursor(SDL_QUERY) == SDL_DISABLE)
+    if ((m_dragButtons & button) != 0)
     {
-        SDL_ShowCursor(SDL_ENABLE);
-#ifndef __EMSCRIPTEN__
-        // Mouse warping is not supported in browser
-        SDL_WarpMouseInWindow(m_window.get(), m_lastX, m_lastY);
-#endif
+        m_dragButtons &= ~button;
+        if (m_dragButtons == 0)
+        {
+            if (SDL_ShowCursor(SDL_QUERY) == SDL_DISABLE)
+            {
+                SDL_ShowCursor(SDL_ENABLE);
+                if (m_environment->warpsCursor())
+                    SDL_WarpMouseInWindow(m_window.get(), m_lastX, m_lastY);
+            }
+            m_environment->endDrag();
+        }
     }
+    else if (m_gui->wantCaptureMouse())
+        return;
 
-    m_lastX = event.x;
-    m_lastY = event.y;
     float scaling = getScalingFactor(*m_appCore);
     m_appCore->mouseButtonUp(static_cast<float>(event.x) * scaling,
                              static_cast<float>(event.y) * scaling,
@@ -445,12 +460,14 @@ AppWindow::handleMouseMotionEvent(const SDL_MouseMotionEvent& event)
     if ((event.state & SDL_BUTTON_RMASK) != 0)
         buttons |= CelestiaCore::RightButton;
 
+    buttons &= m_dragButtons;
     if (buttons == 0)
         return;
 
+    const bool warp = m_environment->warpsCursor();
     Sint32 dx = event.x - m_lastX;
     Sint32 dy = event.y - m_lastY;
-    if (SDL_ShowCursor(SDL_QUERY) == SDL_ENABLE)
+    if ((AlwaysHideDragCursor || warp) && SDL_ShowCursor(SDL_QUERY) == SDL_ENABLE)
     {
         SDL_ShowCursor(SDL_DISABLE);
         m_lastX = event.x;
@@ -461,14 +478,13 @@ AppWindow::handleMouseMotionEvent(const SDL_MouseMotionEvent& event)
     m_appCore->mouseMove(static_cast<float>(dx) * scaling,
                          static_cast<float>(dy) * scaling,
                          buttons);
-
-#ifdef __EMSCRIPTEN__
-    // Mouse warping is not supported in browser
-    m_lastX = event.x;
-    m_lastY = event.y;
-#else
-    SDL_WarpMouseInWindow(m_window.get(), m_lastX, m_lastY);
-#endif
+    if (warp)
+        SDL_WarpMouseInWindow(m_window.get(), m_lastX, m_lastY);
+    else
+    {
+        m_lastX = event.x;
+        m_lastY = event.y;
+    }
 }
 
 void
@@ -479,6 +495,12 @@ AppWindow::handleWindowEvent(const SDL_WindowEvent& event)
         SDL_GL_GetDrawableSize(m_window.get(), &m_width, &m_height);
         m_appCore->resize(m_width, m_height);
         updateScreenDpi();
+    }
+    else if (event.event == SDL_WINDOWEVENT_FOCUS_LOST && m_dragButtons != 0)
+    {
+        SDL_ShowCursor(SDL_ENABLE);
+        m_dragButtons = 0;
+        m_environment->endDrag();
     }
 }
 

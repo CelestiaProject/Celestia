@@ -102,7 +102,7 @@ Gui::processEvent(const SDL_Event& event) const
 }
 
 void
-Gui::render()
+Gui::render([[maybe_unused]] Environment& environment)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -112,6 +112,18 @@ Gui::render()
 
     objectsDialog(m_appCore, &m_isObjectsDialogOpen);
     renderDialog(m_appCore, &m_isRenderDialogOpen);
+#ifndef __EMSCRIPTEN__
+    if (m_isInputDialogOpen)
+    {
+        if (ImGui::Begin("Input", &m_isInputDialogOpen, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            bool warpCursor = environment.warpCursorRequested();
+            if (ImGui::Checkbox("Warp cursor during drags", &warpCursor))
+                environment.setWarpCursor(warpCursor);
+        }
+        ImGui::End();
+    }
+#endif
     if (m_isAboutDialogOpen)
     {
         if (m_aboutDialog == nullptr)
@@ -144,23 +156,7 @@ Gui::menuBar()
 
     if (ImGui::BeginMenu("File"))
     {
-        if (ImGui::BeginMenu("Scripts..."))
-        {
-            scriptMenu();
-            ImGui::EndMenu();
-        }
-
-        ImGui::Separator();
-
-        if (ImGui::MenuItem("Objects..."))
-            m_isObjectsDialogOpen = true;
-        if (ImGui::MenuItem("Render..."))
-            m_isRenderDialogOpen = true;
-
-        ImGui::Separator();
-        if (ImGui::MenuItem("Exit"))
-            m_isQuitRequested = true;
-
+        fileMenu();
         ImGui::EndMenu();
     }
 
@@ -192,6 +188,31 @@ Gui::menuBar()
     }
 
     ImGui::EndMainMenuBar();
+}
+
+void
+Gui::fileMenu()
+{
+    if (ImGui::BeginMenu("Scripts..."))
+    {
+        scriptMenu();
+        ImGui::EndMenu();
+    }
+
+    ImGui::Separator();
+
+    if (ImGui::MenuItem("Objects..."))
+        m_isObjectsDialogOpen = true;
+    if (ImGui::MenuItem("Render..."))
+        m_isRenderDialogOpen = true;
+#ifndef __EMSCRIPTEN__
+    if (ImGui::MenuItem("Input..."))
+        m_isInputDialogOpen = true;
+#endif
+
+    ImGui::Separator();
+    if (ImGui::MenuItem("Exit"))
+        m_isQuitRequested = true;
 }
 
 void

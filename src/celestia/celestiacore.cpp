@@ -593,9 +593,8 @@ void CelestiaCore::mouseMove(float dx, float dy, int modifiers)
         proposedLocation.value().x() += dx;
         proposedLocation.value().y() += dy;
 
-        // In touch mode, it is not possible to warp the touch
-        // location so always update dragLocation
-        if ((modifiers & Touch) != 0)
+        // Only a warped pointer returns to the same anchor after each move.
+        if ((modifiers & Touch) != 0 || (cursorHandler != nullptr && !cursorHandler->warpsCursor()))
             dragLocation = proposedLocation;
     }
 

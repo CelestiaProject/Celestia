@@ -133,6 +133,8 @@ PreferencesDialog::PreferencesDialog(QWidget* parent, CelestiaCore* core) :
 {
     ui.setupUi(this);
 
+    ui.warpCursorCheck->setChecked(QSettings().value("WarpCursor", true).toBool());
+
     // Get flags
     Renderer* renderer = appCore->getRenderer();
     Observer* observer = appCore->getSimulation()->getActiveObserver();
@@ -802,6 +804,13 @@ PreferencesDialog::on_featureSizeSpinBox_valueChanged(int value)
     ui.featureSizeSlider->blockSignals(true);
     ui.featureSizeSlider->setValue(value);
     ui.featureSizeSlider->blockSignals(false);
+}
+
+void
+PreferencesDialog::on_warpCursorCheck_clicked(bool enabled)
+{
+    QSettings().setValue("WarpCursor", enabled);
+    emit warpCursorChanged(enabled);
 }
 
 void

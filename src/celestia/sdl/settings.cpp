@@ -132,6 +132,19 @@ writeIsFullscreen(std::ostream& os, const Settings& settings)
 }
 
 void
+readWarpCursor(Settings& settings, std::string_view value)
+{
+    if (int b; readInt(value, b) && (b == 0 || b == 1))
+        settings.warpCursor = static_cast<bool>(b);
+}
+
+void
+writeWarpCursor(std::ostream& os, const Settings& settings)
+{
+    fmt::print(os, "{:d}", settings.warpCursor);
+}
+
+void
 readLokTextures(Settings& settings, std::string_view value)
 {
     if (int b; readInt(value, b) && (b == 0 || b == 1))

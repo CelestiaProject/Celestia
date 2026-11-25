@@ -40,11 +40,16 @@ public:
     DragHandler &operator=(DragHandler &&)      = delete;
 
     virtual void begin(const QMouseEvent &, qreal, int);
-    virtual void move(const QMouseEvent &, qreal);
-    virtual void finish(){ /* nothing to do */ };
+    void move(const QMouseEvent &, qreal, bool warp);
+    virtual bool supportsCursorWarp() const { return false; }
+    virtual void restoreCursorPosition() const
+    {
+        // The fallback handler cannot reposition the cursor.
+    }
 
     void setButton(int);
     void clearButton(int);
+    void setButtons(int mask) { buttons = mask; }
 
 protected:
     CelestiaCore *appCore;
@@ -62,11 +67,8 @@ class WarpingDragHandler : public DragHandler
 public:
     using DragHandler::DragHandler;
 
-    void move(const QMouseEvent &, qreal) override;
-    void finish() override;
-
-private:
-    void restoreCursorPosition() const;
+    bool supportsCursorWarp() const override { return true; }
+    void restoreCursorPosition() const override;
 };
 
 std::unique_ptr<DragHandler> createDragHandler(CelestiaCore *);

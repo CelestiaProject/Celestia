@@ -1461,6 +1461,20 @@ Valid range: 1.0 to 100.0.</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="inputTab">
+      <attribute name="title">
+       <string>Input</string>
+      </attribute>
+      <layout class="QFormLayout" name="inputLayout">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="warpCursorCheck">
+         <property name="text">
+          <string>Warp cursor during drags</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="timeTab">
       <attribute name="title">
        <string>Information</string>

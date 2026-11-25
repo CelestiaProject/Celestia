@@ -80,6 +80,7 @@ private:
     float m_scale{ 0.0f };
 
     // mouse drag data
+    int m_dragButtons{ 0 };
     Sint32 m_lastX{ 0 };
     Sint32 m_lastY{ 0 };
 

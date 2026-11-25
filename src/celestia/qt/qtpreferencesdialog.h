@@ -29,7 +29,11 @@ public:
     PreferencesDialog(QWidget* parent, CelestiaCore* core);
     ~PreferencesDialog() = default;
 
+signals:
+    void warpCursorChanged(bool enabled);
+
 private slots:
+    void on_warpCursorCheck_clicked(bool enabled);
     void on_starsCheck_stateChanged(int state);
     void on_planetsCheck_stateChanged(int state);
     void on_dwarfPlanetsCheck_stateChanged(int state);

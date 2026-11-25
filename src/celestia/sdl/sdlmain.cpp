@@ -70,9 +70,15 @@ main(int argc, char **argv)
     if (!environment)
         return EXIT_FAILURE;
 
+    Settings settings = Settings::load(environment->getSettingsPath());
+#ifndef __EMSCRIPTEN__
+    environment->setWarpCursor(settings.warpCursor);
+#endif
+
     auto celestiaCore = std::make_unique<CelestiaCore>();
     auto alerter = std::make_unique<celestia::sdl::Alerter>();
     celestiaCore->setAlerter(alerter.get());
+    celestiaCore->setCursorHandler(environment.get());
 
     if (!celestiaCore->initSimulation())
         return EXIT_FAILURE;
@@ -86,8 +92,6 @@ main(int argc, char **argv)
     std::filesystem::current_path(dataDir, ec);
     if (ec)
         return EXIT_FAILURE;
-
-    Settings settings = Settings::load(environment->getSettingsPath());
 
     auto window = environment->createAppWindow(settings, std::move(celestiaCore), std::move(alerter));
     if (!window)

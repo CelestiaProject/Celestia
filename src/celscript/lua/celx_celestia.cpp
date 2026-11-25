@@ -174,6 +174,14 @@ static int celestia_gettextwidth(lua_State* l)
     return 1;
 }
 
+static int celestia_getwarpcursor(lua_State* l)
+{
+    Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getwarpcursor()");
+    const auto* handler = this_celestia(l)->getCursorHandler();
+    lua_pushboolean(l, handler != nullptr && handler->warpsCursor());
+    return 1;
+}
+
 static int celestia_getscreendpi(lua_State* l)
 {
     Celx_CheckArgs(l, 1, 1, "No arguments expected for celestia:getscreendp()");
@@ -2942,6 +2950,7 @@ void CreateCelestiaMetaTable(lua_State* l)
     Celx_RegisterMethod(l, "setaltazimuthmode", celestia_setaltazimuthmode);
     Celx_RegisterMethod(l, "getaltazimuthmode", celestia_getaltazimuthmode);
     Celx_RegisterMethod(l, "getscreendpi", celestia_getscreendpi);
+    Celx_RegisterMethod(l, "getwarpcursor", celestia_getwarpcursor);
     Celx_RegisterMethod(l, "setscreendpi", celestia_setscreendpi);
     Celx_RegisterMethod(l, "hide", celestia_hide);
     Celx_RegisterMethod(l, "getrenderflags", celestia_getrenderflags);
