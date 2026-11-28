@@ -253,6 +253,17 @@ displaySpeed(const util::NumberFormatter& formatter, Overlay& overlay, float spe
     overlay.print(fmt::runtime(_("Speed: {} {}\n")), formatter.format(unitValue, 3, SigDigitNum), unitStr);
 }
 
+// Split a non-negative value in degrees or hours into whole units, minutes and seconds,
+// rounded to tenths of a second first so that the seconds never show as 60.0.
+void
+splitToTenthsOfSeconds(double value, int& units, int& minutes, double& seconds)
+{
+    auto tenths = static_cast<long long>(std::round(value * 36000.0));
+    units = static_cast<int>(tenths / 36000);
+    minutes = static_cast<int>((tenths / 600) % 60);
+    seconds = static_cast<double>(tenths % 600) / 10.0;
+}
+
 // Display a positive angle as degrees, minutes, and seconds. If the angle is less than one
 // degree, only minutes and seconds are shown; if the angle is less than one minute, only
 // seconds are displayed.
@@ -262,20 +273,15 @@ angleToStr(double angle, const std::locale& loc)
     int degrees;
     int minutes;
     double seconds;
-    astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
+    splitToTenthsOfSeconds(std::abs(angle), degrees, minutes, seconds);
 
     if (degrees > 0)
-    {
-        return fmt::format(loc, "{}° {:02d}′ {:.1f}″",
-                           degrees, std::abs(minutes), std::abs(seconds));
-    }
+        return fmt::format(loc, "{}° {:02d}′ {:.1f}″", degrees, minutes, seconds);
 
     if (minutes > 0)
-    {
-        return fmt::format(loc, "{:02d}′ {:.1f}″", std::abs(minutes), std::abs(seconds));
-    }
+        return fmt::format(loc, "{:02d}′ {:.1f}″", minutes, seconds);
 
-    return fmt::format(loc, "{:.2f}″", std::abs(seconds));
+    return fmt::format(loc, "{:.2f}″", std::abs(angle) * 3600.0);
 }
 
 void
@@ -298,10 +304,11 @@ displayDeclination(Overlay& overlay, double angle, const std::locale& loc)
     int degrees;
     int minutes;
     double seconds;
-    astro::decimalToDegMinSec(angle, degrees, minutes, seconds);
+    splitToTenthsOfSeconds(std::abs(angle), degrees, minutes, seconds);
 
+    // The sign comes from the format, so pass negative degrees for southern declinations
     overlay.print(loc, fmt::runtime(_("Dec: {:+d}° {:02d}′ {:.1f}″\n")),
-                  std::abs(degrees), std::abs(minutes), std::abs(seconds));
+                  angle < 0.0 ? -degrees : degrees, minutes, seconds);
 }
 
 void
@@ -310,10 +317,10 @@ displayRightAscension(Overlay& overlay, double angle, const std::locale& loc)
     int hours;
     int minutes;
     double seconds;
-    astro::decimalToHourMinSec(angle, hours, minutes, seconds);
+    splitToTenthsOfSeconds(angle / 15.0, hours, minutes, seconds);
 
     overlay.print(loc, fmt::runtime(_("RA: {}h {:02}m {:.1f}s\n")),
-                  hours, std::abs(minutes), std::abs(seconds));
+                  hours % 24, minutes, seconds);
 }
 
 void
