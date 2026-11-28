@@ -7,7 +7,11 @@
 
 #include <doctest.h>
 
+#include <vector>
+
+#include <celengine/lightenv.h>
 #include <celengine/rendcontext.h>
+#include <celengine/shadermanager.h>
 
 namespace
 {
@@ -110,4 +114,26 @@ TEST_CASE("Legacy material colors are unchanged for either source color space")
         CHECK(context.specular == material.specular);
         CHECK(context.emissive == material.emissive);
     }
+}
+
+TEST_CASE("Eclipse shadows from lights beyond MaxShaderLights are ignored")
+{
+    // Systems with more stars than the shaders support (#2565) have
+    // LightingState::nLights > MaxShaderLights. Setting up the shader
+    // properties must only touch the lights the shader actually uses;
+    // before the fix this tripped the assert in
+    // ShaderProperties::setEclipseShadowCountForLight.
+    static_assert(MaxLights > MaxShaderLights);
+
+    std::vector<EclipseShadow> shadows(1);
+    LightingState ls;
+    ls.nLights = MaxLights;
+    for (unsigned int i = 0; i < MaxLights; ++i)
+    {
+        ls.lights[i].castsShadows = true;
+        ls.shadows[i] = &shadows;
+    }
+
+    // Constructing the context sets up the per-light shadow properties.
+    GLSL_RenderContext context(nullptr, ls, 1.0f, Eigen::Quaternionf::Identity(), nullptr, nullptr);
 }
