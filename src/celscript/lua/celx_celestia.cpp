@@ -2083,9 +2083,8 @@ static int celestia_requestkeyboard(lua_State* l)
         return 0;
     }
 
-    auto mode = appCore->getTextEnterMode();
-
-    if (lua_toboolean(l, 2))
+    const bool requested = lua_toboolean(l, 2) != 0;
+    if (requested)
     {
         // Check for existence of charEntered:
         lua_getglobal(l, KbdCallback);
@@ -2094,14 +2093,8 @@ static int celestia_requestkeyboard(lua_State* l)
             Celx_DoError(l, "script requested keyboard, but did not provide callback");
         }
         lua_remove(l, -1);
-
-        mode = mode | Hud::TextEnterMode::PassToScript;
     }
-    else
-    {
-        mode = mode & ~Hud::TextEnterMode::PassToScript;
-    }
-    appCore->setTextEnterMode(mode);
+    getLuaStateObject(l)->requestKeyboard(requested, *appCore);
 
     return 0;
 }
@@ -2173,8 +2166,7 @@ static int celestia_takescreenshot(lua_State* l)
     Celx_CheckArgs(l, 1, 3, "Need 0 to 2 arguments for celestia:takescreenshot");
     CelestiaCore* appCore = this_celestia(l);
     LuaState* luastate = getLuaStateObject(l);
-    // make sure we don't timeout because of taking a screenshot:
-    double timeToTimeout = luastate->timeout - luastate->getTime();
+    const double start = luastate->getTime();
 
     const char* filetype = Celx_SafeGetString(l, 2, WrongType, "First argument to celestia:takescreenshot must be a string");
     if (filetype == nullptr)
@@ -2211,8 +2203,7 @@ static int celestia_takescreenshot(lua_State* l)
     success = appCore->saveScreenShot(filepath);
     lua_pushboolean(l, success);
 
-    // no matter how long it really took, make it look like 0.1s to timeout check:
-    luastate->timeout = luastate->getTime() + timeToTimeout - 0.1;
+    luastate->chargeIOTime(start);
     return 1;
 }
 
@@ -2245,12 +2236,36 @@ static int celestia_getscriptpath(lua_State* l)
 
 static int celestia_runscript(lua_State* l)
 {
-    Celx_CheckArgs(l, 2, 2, "One argument expected for celestia:runscript");
+    if (getLuaStateObject(l)->isCanceled())
+    {
+        GetLogger()->warn("Cannot launch a script from a canceled script\n");
+        return 0;
+    }
+    Celx_CheckArgs(l, 2, 4, "One to three arguments expected for celestia:runscript");
     const char* scriptfile = Celx_SafeGetString(l, 2, AllErrors, "Argument to celestia:runscript must be a string");
+    auto mode = CelestiaCore::ScriptRunMode::Default;
+    if (lua_gettop(l) >= 3)
+    {
+        std::string_view modeName = Celx_SafeGetString(l, 3, AllErrors, "Second argument to celestia:runscript must be a mode string");
+        if (modeName == "concurrent")
+        {
+            mode = CelestiaCore::ScriptRunMode::Concurrent;
+        }
+        else if (modeName == "replace")
+        {
+            mode = CelestiaCore::ScriptRunMode::Replace;
+        }
+        else if (modeName != "default")
+        {
+            Celx_DoError(l, "Script mode for celestia:runscript must be 'default', 'replace' or 'concurrent'");
+            return 0;
+        }
+    }
 
+    const bool i18n = Celx_SafeGetBoolean(l, 4, WrongType, "Third argument to celestia:runscript must be a boolean", true);
     std::filesystem::path base_dir = GetScriptPath(l);
     CelestiaCore* appCore = this_celestia(l);
-    appCore->runScript(base_dir / scriptfile);
+    appCore->runScript(base_dir / scriptfile, mode, i18n);
     return 0;
 }
 

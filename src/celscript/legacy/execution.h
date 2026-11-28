@@ -24,12 +24,14 @@ class Execution
     Execution(CommandSequence&&, ExecutionEnvironment&);
 
     bool tick(double);
+    void cancel() { canceled = true; }
 
  private:
     CommandSequence commandSequence;
     std::size_t currentCommand{ 0 };
     ExecutionEnvironment& env;
     double commandTime{ -1.0 };
+    bool canceled{ false };
 };
 
 } // end namespace celestia::scripts

@@ -276,10 +276,14 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     if (!options.configFileName.isEmpty())
         configFileName = QStringToPath(options.configFileName);
 
-    // Translate extras directories from QString to std::filesystem::path
-    std::vector<std::filesystem::path> extrasDirectories;
-    for (const auto& dir : options.extrasDirectories)
-        extrasDirectories.push_back(QStringToPath(dir));
+    auto toPaths = [](const QStringList& values)
+    {
+        std::vector<std::filesystem::path> paths;
+        paths.reserve(values.size());
+        for (const auto& value : values)
+            paths.push_back(QStringToPath(value));
+        return paths;
+    };
 
     initAppDataDirectory();
 
@@ -288,11 +292,13 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
     auto* progress = new AppProgressNotifier(this);
     alerter = new AppAlerter(this);
     m_appCore->setAlerter(alerter);
-    m_appCore->setScriptSystemAccessHandler([]
+    m_appCore->setScriptSystemAccessHandler([](const std::string& scriptPath)
     {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText(_("Script System Access"));
+        msgBox.setTextFormat(Qt::PlainText);
+        msgBox.setWindowTitle(_("Script System Access"));
+        msgBox.setText(QString::fromStdString(scriptPath));
         msgBox.setInformativeText(_("This script requests permission to read/write files "
                                  "and execute external programs. Allowing this can be "
                                  "dangerous.\n"
@@ -313,7 +319,8 @@ CelestiaAppWindow::init(const CelestiaCommandLineOptions& options)
         m_appCore->setLogFile(QStringToPath(logPath.absolutePath()));
 
     if (!m_appCore->initSimulation(configFileName,
-                                   extrasDirectories,
+                                   toPaths(options.extrasDirectories),
+                                   toPaths(options.luaHooks),
                                    progress))
     {
          // Error message is shown by celestiacore so we silently exit here.
@@ -974,7 +981,6 @@ CelestiaAppWindow::slotOpenScriptDialog()
 
     if (!scriptFileName.isEmpty())
     {
-        m_appCore->cancelScript();
         m_appCore->runScript(QStringToPath(scriptFileName));
 
         QFileInfo scriptFile(scriptFileName);
@@ -990,7 +996,6 @@ CelestiaAppWindow::slotOpenScript()
     QAction* action = qobject_cast<QAction*>(sender());
     if (action != nullptr)
     {
-        m_appCore->cancelScript();
         m_appCore->runScript(QStringToPath(action->data().toString()));
     }
 }
@@ -1001,7 +1006,6 @@ CelestiaAppWindow::slotRunDemo()
     const auto& demoScriptFile = m_appCore->getConfig()->paths.demoScriptFile;
     if (!demoScriptFile.empty())
     {
-        m_appCore->cancelScript();
         m_appCore->runScript(demoScriptFile);
     }
 }

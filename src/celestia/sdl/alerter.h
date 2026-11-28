@@ -23,6 +23,7 @@ class Alerter : public CelestiaCore::Alerter
 public:
     void setWindow(SDL_Window* window) noexcept { m_window = window; }
     void fatalError(const std::string& msg) override;
+    static CelestiaCore::ScriptSystemAccessPolicy requestScriptSystemAccess(const std::string& scriptPath);
 
 private:
     SDL_Window* m_window{ nullptr };

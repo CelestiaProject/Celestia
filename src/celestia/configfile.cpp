@@ -172,7 +172,16 @@ applyPaths(CelestiaConfig::Paths& paths, const AssociativeArray& hash)
     applyPath(paths.leapSecondsFile, hash, "LeapSecondsFile"sv);
 #ifdef CELX
     applyPath(paths.scriptScreenshotDirectory, hash, "ScriptScreenshotDirectory"sv);
-    applyPath(paths.luaHook, hash, "LuaHook"sv);
+    if (auto hook = hash.getPath("LuaHook"sv); hook.has_value())
+    {
+        paths.luaHooks.clear();
+        if (!hook->empty())
+            paths.luaHooks.push_back(*hook);
+    }
+    else
+    {
+        applyPathArray(paths.luaHooks, hash, "LuaHook"sv);
+    }
 #endif
 }
 
@@ -351,6 +360,7 @@ ReadCelestiaConfig(const std::filesystem::path& filename,
     applyString(config.temperatureScale, *configParams, "TemperatureScale"sv);
     applyString(config.layoutDirection, *configParams, "LayoutDirection"sv);
     applyString(config.scriptSystemAccessPolicy, *configParams, "ScriptSystemAccessPolicy"sv);
+    applyString(config.scriptRunMode, *configParams, "ScriptRunMode"sv);
 
     applyNumber(config.consoleLogRows, *configParams, "LogSize"sv);
 

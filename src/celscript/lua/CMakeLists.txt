@@ -31,3 +31,7 @@ set(CELX_SOURCES
 )
 
 add_library(celluascript OBJECT ${CELX_SOURCES})
+if(APPLE AND LUAJIT_FOUND)
+  # LuaJIT must unwind through checkTimeslice to reach the protected Lua call.
+  set_property(SOURCE celx.cpp APPEND PROPERTY COMPILE_OPTIONS -funwind-tables)
+endif()

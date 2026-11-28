@@ -13,11 +13,13 @@
 
 #include <filesystem>
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <lua.hpp>
 
+#include <celephem/scriptobject.h>
 #include <celutil/timer.h>
 #include <celengine/observer.h>
 
@@ -36,13 +38,14 @@ namespace celestia
 class View;
 }
 
-class LuaState
+class LuaState // NOSONAR S1448: the typed hook callback overloads all dispatch into this VM.
 {
 public:
     LuaState();
     ~LuaState();
 
     lua_State* getState() const;
+    celestia::ephem::ScriptedObjectContext catalogContext();
 
     int loadScript(std::istream&, const std::filesystem::path&);
     int loadScript(const std::string&);
@@ -56,9 +59,15 @@ public:
     void cleanup();
     bool isAlive() const;
     bool timesliceExpired();
+    void chargeIOTime(double start, double cost = 0.1);
     void requestIO();
 
     bool charEntered(const char*);
+    void requestKeyboard(bool requested, CelestiaCore&);
+    void markCanceled();
+    bool isCanceled() const { return m_canceled; }
+    bool hasSystemAccess() const { return ioMode == IOMode::Allowed; }
+    bool wantsKeyboard() const { return !m_keyboardCapture.expired(); }
     double getTime() const;
     int screenshotCount;
     double timeout;
@@ -69,6 +78,7 @@ public:
     bool handleTickEvent(double dt);
 
     // Lua hook handling
+    bool runHookInitialization();
     void setLuaPath(const std::string& s);
     void allowSystemAccess();
     void allowLuaPackageAccess();
@@ -81,20 +91,27 @@ public:
 
     enum class IOMode
     {
-        NotDetermined  = 1,
-        Asking         = 2,
-        Allowed        = 4,
-        Denied         = 8
+        NotDetermined,
+        Allowed,
+        Denied
     };
 
 private:
+    class Timeslice;
+    int callWithTimeslice(int nargs, int nresults);
     lua_State* state;
+    std::string m_scriptPath;
+    std::shared_ptr<celestia::ephem::ScriptedObjectVM> m_catalogContext;
     lua_State* costate{ nullptr }; // coroutine stack
     bool alive{ false };
-    Timer* timer;
+    bool m_timesliceActive{ false };
+    double m_ioTimeAdjustment{ 0.0 };
+    Timer timer;
     double scriptAwakenTime{ 0.0 };
     IOMode ioMode{ IOMode::NotDetermined };
     bool eventHandlerEnabled{ false };
+    std::weak_ptr<const bool> m_keyboardCapture;
+    bool m_canceled{ false };
 };
 
 celestia::View* getViewByObserver(const CelestiaCore*, const Observer*);

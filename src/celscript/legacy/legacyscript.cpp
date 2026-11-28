@@ -88,6 +88,11 @@ bool LegacyScript::tick(double dt)
     return m_runningScript->tick(dt);
 }
 
+void LegacyScript::markCanceled()
+{
+    m_runningScript->cancel();
+}
+
 bool LegacyScriptPlugin::isOurFile(const std::filesystem::path &p) const
 {
     return p.extension() == ".cel";

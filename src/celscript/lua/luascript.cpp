@@ -7,6 +7,7 @@
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
 
+#include <algorithm>
 #include <set>
 #include <string>
 #include <filesystem>
@@ -80,6 +81,16 @@ bool LuaScript::tick(double dt)
     return m_celxScript->tick(dt);
 }
 
+bool LuaScript::wantsKeyboard() const
+{
+    return m_celxScript->wantsKeyboard();
+}
+
+void LuaScript::markCanceled()
+{
+    m_celxScript->markCanceled();
+}
+
 bool LuaScriptPlugin::isOurFile(const std::filesystem::path &p) const
 {
     auto ext = p.extension();
@@ -115,29 +126,63 @@ unique_ptr<IScript> LuaScriptPlugin::loadScript(const std::filesystem::path &pat
     return script;
 }
 
+LuaHook::~LuaHook()
+{
+    const auto* context = celestia::ephem::GetScriptedObjectContext();
+    // Hook finalizers may still evaluate orbits in the private context or first hook.
+    while (m_states.size() > 1)
+        m_states.pop_back();
+    if (!m_privateContexts.empty())
+        m_states.clear();
+    if ((!m_privateContexts.empty() && m_privateContexts.back()->getState() == context) ||
+        (!m_states.empty() && m_states.front()->getState() == context))
+        celestia::ephem::SetScriptedObjectContext(nullptr);
+}
+
+bool LuaHook::wantsKeyboard() const
+{
+    return std::ranges::any_of(m_states, [](const auto& state) { return state->wantsKeyboard(); });
+}
+
+template<typename... Args>
+bool LuaHook::dispatch(const char* method, bool stopOnHandled, Args... args) const
+{
+    bool handled = false;
+    for (const auto& state : m_states)
+    {
+        if (state->callLuaHook(appCore(), method, args...))
+        {
+            handled = true;
+            if (stopOnHandled)
+                break;
+        }
+    }
+    return handled;
+}
+
 bool LuaHook::call(const char *method) const
 {
-    return m_state->callLuaHook(appCore(), method);
+    return dispatch(method, false);
 }
 
 bool LuaHook::call(const char *method, const char *keyName) const
 {
-    return m_state->callLuaHook(appCore(), method, keyName);
+    return dispatch(method, true, keyName);
 }
 
 bool LuaHook::call(const char *method, float x, float y) const
 {
-    return m_state->callLuaHook(appCore(), method, x, y);
+    return dispatch(method, true, x, y);
 }
 
 bool LuaHook::call(const char *method, float x, float y, int b) const
 {
-    return m_state->callLuaHook(appCore(), method, x, y, b);
+    return dispatch(method, true, x, y, b);
 }
 
 bool LuaHook::call(const char *method, double dt) const
 {
-    return m_state->callLuaHook(appCore(), method, dt);
+    return dispatch(method, false, dt);
 }
 
 class LuaPathFinder
@@ -191,101 +236,125 @@ static string lua_path(const CelestiaConfig *config)
     return LuaPath;
 }
 
-// Initialize the Lua hook table as well as the Lua state for scripted
-// objects. The Lua hook operates in a different Lua state than user loaded
-// scripts. It always has file system access via the IO package. If the script
-// system access policy is "allow", then scripted objects will run in the same
-// Lua context as the Lua hook. Sharing state between scripted objects and the
-// hook can be very useful, but it gives system access to scripted objects,
-// and therefore must be restricted based on the system access policy.
-bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier)
+static bool loadHook(LuaState& state, CelestiaCore& appCore, const std::filesystem::path& path,
+                     ProgressNotifier* progressNotifier)
 {
-    auto LuaPath = lua_path(config);
-
-    LuaState *luaHook = new LuaState();
-    luaHook->init(appCore);
-
-    // Always grant access for the Lua hook
-    luaHook->allowSystemAccess();
-    luaHook->setLuaPath(LuaPath);
-
-    int status = 0;
-    // Execute the Lua hook initialization script
-    if (!config->paths.luaHook.empty())
+    int status;
+    if (path.empty())
     {
-        ifstream scriptfile(config->paths.luaHook);
-        if (!scriptfile.good())
-            appCore->fatalError(fmt::format(fmt::runtime(_("Error opening LuaHook {}")), config->paths.luaHook));
-
-        if (progressNotifier != nullptr)
-            progressNotifier->update(util::PathToString(config->paths.luaHook));
-
-        status = luaHook->loadScript(scriptfile, config->paths.luaHook);
+        status = state.loadScript("");
     }
     else
     {
-        status = luaHook->loadScript("");
+        if (std::error_code ec; !std::filesystem::is_regular_file(path, ec))
+        {
+            appCore.fatalError(fmt::format(fmt::runtime(_("Error opening LuaHook {}")), path));
+            return false;
+        }
+        ifstream scriptfile(path);
+        if (!scriptfile.good())
+        {
+            appCore.fatalError(fmt::format(fmt::runtime(_("Error opening LuaHook {}")), path));
+            return false;
+        }
+        if (progressNotifier != nullptr)
+            progressNotifier->update(util::PathToString(path));
+        status = state.loadScript(scriptfile, path);
     }
 
     if (status != 0)
     {
         GetLogger()->debug("lua hook load failed\n");
-        string errMsg = luaHook->getErrorMessage();
-        if (errMsg.empty())
-            errMsg = _("Unknown error loading hook script");
-        appCore->fatalError(errMsg);
-        luaHook = nullptr;
+        string errMsg = state.getErrorMessage();
+        appCore.fatalError(errMsg.empty() ? _("Unknown error loading hook script") : errMsg);
+        return false;
     }
-    else
+    if (!state.createThread())
     {
-        // Coroutine execution; control may be transferred between the
-        // script and Celestia's event loop
-        if (!luaHook->createThread())
+        GetLogger()->debug("hook thread failed\n");
+        appCore.fatalError(_("Script coroutine initialization failed"));
+        return false;
+    }
+    return true;
+}
+
+bool LuaHook::createPrivateContext(const std::string& luaPath)
+{
+    auto context = make_unique<LuaState>();
+    context->init(appCore());
+    context->allowLuaPackageAccess(); // Allow require, but not loadlib.
+    context->setLuaPath(luaPath);
+    if (context->loadScript("") != 0)
+    {
+        GetLogger()->error("Cannot initialize private catalog context: {}\n", context->getErrorMessage());
+        celestia::ephem::SetScriptedObjectContext(nullptr);
+        return false;
+    }
+    m_privateContexts.push_back(std::move(context));
+    celestia::ephem::SetScriptedObjectContext(m_privateContexts.back()->catalogContext());
+    return true;
+}
+
+void LuaHook::restrictCatalogContext()
+{
+    const auto* active = celestia::ephem::GetScriptedObjectContext();
+    if ((!m_states.empty() && active == m_states.front()->getState()) ||
+        (!m_privateContexts.empty() && active == m_privateContexts.back()->getState() &&
+         m_privateContexts.back()->hasSystemAccess()))
+        createPrivateContext(lua_path(appCore()->getConfig()));
+}
+
+// Initialize the Lua hooks as well as the Lua state for scripted
+// objects. Each Lua hook operates in a different Lua state than user loaded
+// scripts. It always has file system access via the IO package. If the script
+// system access policy is "allow", then scripted objects will run in the same
+// Lua context as the first loaded hook. Sharing state between scripted objects
+// and the hook can be very useful, but it gives system access to scripted objects,
+// and therefore must be restricted based on the system access policy.
+bool CreateLuaEnvironment(CelestiaCore *appCore, const CelestiaConfig *config, ProgressNotifier *progressNotifier)
+{
+    auto LuaPath = lua_path(config);
+
+    auto hooks = make_unique<LuaHook>(appCore);
+    auto* hookSet = hooks.get();
+    appCore->setScriptHook(std::move(hooks));
+    auto hookPaths = config->paths.luaHooks;
+    std::erase(hookPaths, std::filesystem::path{});
+    if (hookPaths.empty())
+        hookPaths.emplace_back();
+
+    bool success = true;
+    for (const auto& path : hookPaths)
+    {
+        auto state = make_unique<LuaState>();
+        state->init(appCore);
+        state->allowSystemAccess();
+        state->setLuaPath(LuaPath);
+
+        if (!loadHook(*state, *appCore, path, progressNotifier) || !state->runHookInitialization())
         {
-            GetLogger()->debug("hook thread failed\n");
-            appCore->fatalError(_("Script coroutine initialization failed"));
-            luaHook = nullptr;
+            success = false;
+            state.reset(); // Run finalizers before reconciling keyboard capture.
+            appCore->updateScriptKeyboardInput();
+            continue;
         }
 
-        if (luaHook != nullptr)
-        {
-            auto lh = unique_ptr<LuaHook>(new LuaHook(appCore));
-            lh->m_state = unique_ptr<LuaState>(luaHook);
-            appCore->setScriptHook(std::move(lh));
-
-            while (!luaHook->tick(0.1)) ;
-        }
+        hookSet->m_states.push_back(std::move(state));
     }
 
     // Set up the script context; if the system access policy is allow,
-    // it will share the same context as the Lua hook. Otherwise, we
+    // it will share the same context as the first loaded hook. Otherwise, we
     // create a private context.
-    if (appCore->getScriptSystemAccessPolicy() == CelestiaCore::ScriptSystemAccessPolicy::Allow)
+    if (!hookSet->m_states.empty() && appCore->getScriptSystemAccessPolicy() == CelestiaCore::ScriptSystemAccessPolicy::Allow)
     {
-        if (luaHook != nullptr)
-            celestia::ephem::SetScriptedObjectContext(luaHook->getState());
+        celestia::ephem::SetScriptedObjectContext(hookSet->m_states.front()->catalogContext());
     }
-    else
+    else if (!hookSet->createPrivateContext(LuaPath))
     {
-        auto luaSandbox = new LuaState();
-        luaSandbox->init(appCore);
-
-        // Allow access to functions in package because we need 'require'
-        // But, loadlib is prohibited.
-        luaSandbox->allowLuaPackageAccess();
-        luaSandbox->setLuaPath(LuaPath);
-
-        status = luaSandbox->loadScript("");
-        if (status != 0)
-        {
-            luaSandbox = nullptr;
-            return false;
-        }
-
-        celestia::ephem::SetScriptedObjectContext(luaSandbox->getState());
+        return false;
     }
 
-    return true;
+    return success;
 }
 
 }

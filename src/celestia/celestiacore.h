@@ -49,6 +49,7 @@
 #include <celscript/lua/luascript.h>
 #endif
 #include <celscript/common/script.h>
+#include <celscript/common/scriptrunner.h>
 #include <celscript/legacy/legacyscript.h>
 #include <celscript/common/scriptmaps.h>
 
@@ -177,6 +178,13 @@ public:
         Deny        = 2,
     };
 
+    enum class ScriptRunMode
+    {
+        Replace,
+        Concurrent,
+        Default,
+    };
+
     enum class InteractionFlags : unsigned int
     {
         None                = 0x0,
@@ -191,6 +199,7 @@ public:
     static void initLocale();
     bool initSimulation(const std::filesystem::path& configFileName = std::filesystem::path(),
                         const std::vector<std::filesystem::path>& extrasDirs = {},
+                        const std::vector<std::filesystem::path>& luaHooks = {},
                         ProgressNotifier* progressNotifier = nullptr);
     bool initRenderer(celestia::engine::TextureResolution,
                       std::optional<bool> sRGBRendering = std::nullopt,
@@ -257,6 +266,8 @@ public:
     std::string getTimeZoneName() const;
     void setTimeZoneName(const std::string&);
     void setTextEnterMode(celestia::Hud::TextEnterMode);
+    void updateScriptKeyboardInput(std::optional<bool> request = std::nullopt);
+    std::weak_ptr<const bool> acquireScriptKeyboardCapture();
     celestia::Hud::TextEnterMode getTextEnterMode() const;
 
     void initMovieCapture(MovieCapture*);
@@ -266,7 +277,7 @@ public:
     bool isCaptureActive();
     bool isRecording();
 
-    void runScript(const std::filesystem::path& filename, bool i18n = true);
+    void runScript(const std::filesystem::path& filename, ScriptRunMode mode = ScriptRunMode::Default, bool i18n = true);
     void cancelScript();
 
     int getHudDetail();
@@ -423,10 +434,14 @@ public:
     ScriptSystemAccessPolicy getScriptSystemAccessPolicy() const;
     void setScriptSystemAccessPolicy(ScriptSystemAccessPolicy);
 
-    ScriptSystemAccessPolicy requestScriptSystemAccessPolicy();
+    ScriptRunMode getScriptRunMode() const;
+    void setScriptRunMode(ScriptRunMode mode);
 
-    void setScriptSystemAccessHandler(const std::optional<std::function<ScriptSystemAccessPolicy()>>&);
-    std::optional<std::function<ScriptSystemAccessPolicy()>> getScriptSystemAccessHandler() const;
+    using ScriptSystemAccessHandler = std::function<ScriptSystemAccessPolicy(const std::string&)>;
+    ScriptSystemAccessPolicy requestScriptSystemAccessPolicy(const std::string& scriptPath);
+
+    void setScriptSystemAccessHandler(const std::optional<ScriptSystemAccessHandler>&);
+    std::optional<ScriptSystemAccessHandler> getScriptSystemAccessHandler() const;
 
     celestia::LayoutDirection getLayoutDirection() const;
     void setLayoutDirection(celestia::LayoutDirection);
@@ -469,22 +484,18 @@ private:
     celestia::TimeInfo timeInfo;
     Timer* timer{ nullptr };
 
-    std::unique_ptr<celestia::scripts::IScript>             m_script;
+    celestia::scripts::ScriptRunner                         m_scripts;
+    bool                                                    m_scriptKeyboardRequested{ false };
+    std::shared_ptr<const bool>                             m_keyboardCapture;
     std::unique_ptr<celestia::scripts::IScriptHook>         m_scriptHook;
     std::unique_ptr<celestia::scripts::LegacyScriptPlugin>  m_legacyPlugin;
 #ifdef CELX
     std::unique_ptr<celestia::scripts::LuaScriptPlugin>     m_luaPlugin;
 #endif
 
-    celestia::scripts::ScriptMaps m_scriptMaps;
+    bool m_shuttingDown{ false };
 
-    enum ScriptState
-    {
-        ScriptCompleted,
-        ScriptRunning,
-        ScriptPaused,
-    };
-    ScriptState scriptState{ ScriptCompleted };
+    celestia::scripts::ScriptMaps m_scriptMaps;
 
     std::string timeZoneName;      // Name of the current time zone
 
@@ -521,7 +532,7 @@ private:
     CursorHandler* cursorHandler{ nullptr };
     CursorShape defaultCursorShape{ CelestiaCore::CrossCursor };
     ContextMenuHandler* contextMenuHandler{ nullptr };
-    std::optional<std::function<ScriptSystemAccessPolicy()>> scriptSystemAccessHandler{ std::nullopt };
+    std::optional<ScriptSystemAccessHandler> scriptSystemAccessHandler{ std::nullopt };
 
     std::string startURL;
 
@@ -548,6 +559,8 @@ private:
     bool needsUpdateFonts{ false };
 
     ScriptSystemAccessPolicy scriptSystemAccessPolicy { ScriptSystemAccessPolicy::Ask };
+    std::optional<ScriptSystemAccessPolicy> m_policyBeforeCatalogLoad;
+    ScriptRunMode scriptRunMode { ScriptRunMode::Replace };
 
     std::unique_ptr<Console> console;
     std::ofstream m_logfile;

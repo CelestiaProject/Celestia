@@ -12,10 +12,12 @@
 
 #include <config.h>
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <ctime>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <sstream>
 #include <string_view>
@@ -217,13 +219,13 @@ LuaState::LuaState() :
     timeout(MaxTimeslice)
 {
     state = luaL_newstate();
-    timer = new Timer();
     screenshotCount = 0;
 }
 
 LuaState::~LuaState()
 {
-    delete timer;
+    if (m_catalogContext)
+        m_catalogContext->state = nullptr;
     if (state != nullptr)
         lua_close(state);
 #if 0
@@ -237,10 +239,9 @@ lua_State* LuaState::getState() const
     return state;
 }
 
-
 double LuaState::getTime() const
 {
-    return timer->getTime();
+    return timer.getTime();
 }
 
 
@@ -273,38 +274,80 @@ static void checkTimeslice(lua_State* l, lua_Debug* /*ar*/)
 }
 
 
+// LuaJIT shares the instruction hook across the VM, but deadlines belong to calls.
+class LuaState::Timeslice
+{
+public:
+    Timeslice(LuaState& owner, double duration) :
+        vm(owner),
+        previousDeadline(vm.timeout),
+        initialIOAdjustment(vm.m_ioTimeAdjustment),
+        wasActive(std::exchange(vm.m_timesliceActive, true))
+    {
+        double deadline = vm.getTime() + duration;
+        vm.timeout = wasActive ? std::min(previousDeadline, deadline) : deadline;
+    }
+
+    Timeslice(const Timeslice&) = delete;
+    Timeslice& operator=(const Timeslice&) = delete;
+
+    ~Timeslice()
+    {
+        vm.timeout = wasActive ? previousDeadline + (vm.m_ioTimeAdjustment - initialIOAdjustment) : previousDeadline;
+        if (!wasActive)
+            vm.m_ioTimeAdjustment = 0.0;
+        vm.m_timesliceActive = wasActive;
+    }
+
+private:
+    LuaState& vm;
+    double previousDeadline;
+    double initialIOAdjustment;
+    bool wasActive;
+};
+
+void LuaState::chargeIOTime(double start, double cost)
+{
+    const double adjustment = (getTime() - start) - cost;
+    timeout += adjustment;
+    if (m_timesliceActive)
+        m_ioTimeAdjustment += adjustment;
+}
+
+int LuaState::callWithTimeslice(int nargs, int nresults)
+{
+    Timeslice slice(*this, 1.0);
+    return lua_pcall(costate, nargs, nresults, 0);
+}
+
+celestia::ephem::ScriptedObjectContext LuaState::catalogContext()
+{
+    if (!m_catalogContext)
+    {
+        m_catalogContext = std::make_shared<celestia::ephem::ScriptedObjectVM>();
+        m_catalogContext->state = state;
+        m_catalogContext->protectedCall = [this](int nargs, int nresults)
+        {
+            // No default catalog limit. Inherit an outer deadline or allow the
+            // callback to set its own, without leaking it into the next call.
+            Timeslice slice(*this, std::numeric_limits<double>::infinity());
+            return lua_pcall(state, nargs, nresults, 0);
+        };
+    }
+    return m_catalogContext;
+}
+
 // allow the script to perform cleanup
 void LuaState::cleanup()
 {
     if (!costate)
         return;
 
-    if (ioMode == IOMode::Asking)
-    {
-        // Restore renderflags:
-        CelestiaCore* appCore = getAppCore(costate, NoErrors);
-        if (appCore != nullptr)
-        {
-            lua_pushstring(state, "celestia-savedrenderflags");
-            lua_gettable(state, LUA_REGISTRYINDEX);
-            if (lua_isuserdata(state, -1))
-            {
-                auto savedrenderflags = static_cast<const RenderFlags*>(lua_touserdata(state, -1));
-                appCore->getRenderer()->setRenderFlags(*savedrenderflags);
-                // now delete entry:
-                lua_pushstring(state, "celestia-savedrenderflags");
-                lua_pushnil(state);
-                lua_settable(state, LUA_REGISTRYINDEX);
-            }
-            lua_pop(state,1);
-        }
-    }
     lua_getglobal(costate, CleanupCallback);
     if (lua_isnil(costate, -1))
         return;
 
-    timeout = getTime() + 1.0;
-    if (lua_pcall(costate, 0, 0, 0) != 0)
+    if (callWithTimeslice(0, 0) != 0)
     {
         GetLogger()->error("Error while executing cleanup-callback: {}\n",
                            lua_tostring(costate, -1));
@@ -345,7 +388,7 @@ string LuaState::getErrorMessage()
 
 bool LuaState::timesliceExpired()
 {
-    if (timeout < getTime())
+    if (m_timesliceActive && timeout < getTime())
     {
         // timeslice expired, make every instruction (including pcall) fail:
         lua_sethook(costate, checkTimeslice, LUA_MASKCOUNT, 1);
@@ -426,57 +469,34 @@ static const char* readStreamChunk(lua_State* /*unused*/, void* udata, size_t* s
 }
 
 
+void LuaState::requestKeyboard(bool requested, CelestiaCore& core)
+{
+    if (m_canceled)
+        return;
+    if (requested)
+        m_keyboardCapture = core.acquireScriptKeyboardCapture();
+    else
+        m_keyboardCapture.reset();
+    core.updateScriptKeyboardInput(requested);
+}
+
+void LuaState::markCanceled()
+{
+    m_canceled = true;
+    m_keyboardCapture.reset();
+}
+
 // Callback for CelestiaCore::charEntered.
 // Returns true if keypress has been consumed
 bool LuaState::charEntered(const char* c_p)
 {
-    if (ioMode == IOMode::Asking && getTime() > timeout)
-    {
-        int stackTop = lua_gettop(costate);
-        // TRANSLATORS: Y is first letter of Yes
-        if (compareIgnoringCase(c_p, "Y") == 0 || compareIgnoringCase(c_p, _("Y")) == 0)
-        {
-            openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
-            openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
-            openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
-            ioMode = IOMode::Allowed;
-        }
-        else
-        {
-            ioMode = IOMode::Denied;
-        }
-        CelestiaCore* appCore = getAppCore(costate, NoErrors);
-        if (appCore == nullptr)
-        {
-            GetLogger()->error("ERROR: appCore not found\n");
-            return true;
-        }
-        appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterMode::PassToScript);
-        appCore->showText("", 0, 0, 0, 0);
-        // Restore renderflags:
-        lua_pushstring(costate, "celestia-savedrenderflags");
-        lua_gettable(costate, LUA_REGISTRYINDEX);
-        if (lua_isuserdata(costate, -1))
-        {
-            auto savedrenderflags = static_cast<const RenderFlags*>(lua_touserdata(costate, -1));
-            appCore->getRenderer()->setRenderFlags(*savedrenderflags);
-            // now delete entry:
-            lua_pushstring(costate, "celestia-savedrenderflags");
-            lua_pushnil(costate);
-            lua_settable(costate, LUA_REGISTRYINDEX);
-        }
-        else
-        {
-            GetLogger()->warn("Oops, expected savedrenderflags to be userdata\n");
-        }
-        lua_settop(costate,stackTop);
-        return true;
-    }
+    if (m_keyboardCapture.expired())
+        return false;
+
     bool result = true;
     lua_getglobal(costate, KbdCallback);
     lua_pushstring(costate, c_p);
-    timeout = getTime() + 1.0;
-    if (lua_pcall(costate, 1, 1, 0) != 0)
+    if (callWithTimeslice(1, 1) != 0)
     {
         GetLogger()->error("Error while executing keyboard-callback: {}\n",
                            lua_tostring(costate, -1));
@@ -522,8 +542,7 @@ bool LuaState::handleKeyEvent(const char* key)
         lua_pushstring(costate, key);   // the default key handler accepts the key name as an argument
         lua_settable(costate, -3);
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 1, 1, 0) != 0)
+        if (callWithTimeslice(1, 1) != 0)
         {
             GetLogger()->error("Error while executing keyboard callback: {}\n",
                                lua_tostring(costate, -1));
@@ -576,8 +595,7 @@ bool LuaState::handleMouseButtonEvent(float x, float y, int button, bool down)
         lua_pushnumber(costate, y);
         lua_settable(costate, -3);
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 1, 1, 0) != 0)
+        if (callWithTimeslice(1, 1) != 0)
         {
             GetLogger()->error("Error while executing keyboard callback: {}\n",
                                lua_tostring(costate, -1));
@@ -627,8 +645,7 @@ bool LuaState::handleTickEvent(double dt)
         lua_pushnumber(costate, dt);   // the default key handler accepts the key name as an argument
         lua_settable(costate, -3);
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 1, 1, 0) != 0)
+        if (callWithTimeslice(1, 1) != 0)
         {
             GetLogger()->error("Error while executing tick callback: {}\n",
                                lua_tostring(costate, -1));
@@ -657,6 +674,7 @@ int LuaState::loadScript(istream& in, const std::filesystem::path& streamname)
     info.in = &in;
 
     const std::string streamNameUTF8 = celestia::util::PathToString(streamname);
+    m_scriptPath = streamNameUTF8;
 
     if (streamname != "string")
     {
@@ -672,6 +690,12 @@ int LuaState::loadScript(istream& in, const std::filesystem::path& streamname)
     int status = lua_load(state, readStreamChunk, &info,
                           streamNameUTF8.c_str());
 #endif
+    if (in.bad())
+    {
+        lua_pop(state, 1);
+        lua_pushfstring(state, "Error reading script: %s", streamNameUTF8.c_str());
+        status = LUA_ERRFILE;
+    }
     if (status != 0)
         cout << "Error loading script: " << lua_tostring(state, -1) << '\n';
 
@@ -697,8 +721,11 @@ int LuaState::resume()
     if (co != costate)
         return 0;
 
-    timeout = getTime() + MaxTimeslice;
-    int nArgs = resumeLuaThread(state, co, 0);
+    int nArgs;
+    {
+        Timeslice slice(*this, MaxTimeslice);
+        nArgs = resumeLuaThread(state, co, 0);
+    }
     if (nArgs < 0)
     {
         alive = false;
@@ -713,13 +740,6 @@ int LuaState::resume()
             appCore->fatalError(errorMessage);
 
         return 1; // just the error string
-    }
-
-    if (ioMode == IOMode::Asking)
-    {
-        // timeout now is used to first only display warning, and 1s
-        // later allow response to avoid accidental activation
-        timeout = getTime() + 1.0;
     }
 
     // The thread status is zero if it has terminated normally
@@ -759,52 +779,6 @@ bool LuaState::tick(double dt)
     if (!isAlive())
         return false;
 
-    if (ioMode == IOMode::Asking)
-    {
-        CelestiaCore* appCore = getAppCore(costate, NoErrors);
-        if (appCore == nullptr)
-        {
-            GetLogger()->error("ERROR: appCore not found\n");
-            return true;
-        }
-        lua_pushstring(state, "celestia-savedrenderflags");
-        lua_gettable(state, LUA_REGISTRYINDEX);
-        if (lua_isnil(state, -1))
-        {
-            lua_pushstring(state, "celestia-savedrenderflags");
-            void* userData = lua_newuserdata(state, sizeof(RenderFlags));
-            new (userData) RenderFlags(appCore->getRenderer()->getRenderFlags());
-            lua_settable(state, LUA_REGISTRYINDEX);
-            appCore->getRenderer()->setRenderFlags(RenderFlags::ShowNothing);
-        }
-        // now pop result of gettable
-        lua_pop(state, 1);
-
-        if (getTime() > timeout)
-        {
-            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
-                              "and execute external programs. Allowing this can be\n"
-                              "dangerous.\n"
-                              "Do you trust the script and want to allow this?\n\n"
-                              "y = yes, ESC = cancel script, any other key = no"),
-                              0, 0,
-                              -15, 5, 5);
-            appCore->setTextEnterMode(appCore->getTextEnterMode() | celestia::Hud::TextEnterMode::PassToScript);
-        }
-        else
-        {
-            appCore->showText(_("WARNING:\n\nThis script requests permission to read/write files\n"
-                              "and execute external programs. Allowing this can be\n"
-                              "dangerous.\n"
-                              "Do you trust the script and want to allow this?"),
-                              0, 0,
-                              -15, 5, 5);
-            appCore->setTextEnterMode(appCore->getTextEnterMode() & ~celestia::Hud::TextEnterMode::PassToScript);
-        }
-
-        return false;
-    }
-
     if (dt == 0 || scriptAwakenTime > getTime())
         return false;
 
@@ -830,30 +804,57 @@ bool LuaState::tick(double dt)
 }
 
 
+bool LuaState::runHookInitialization()
+{
+    while (!tick(0.1)) ;
+    return lua_status(costate) == 0;
+}
+
 void LuaState::requestIO()
 {
-    // the script requested IO, set the mode
-    // so we display the warning during tick
-    // and can request keyboard. We can't do this now
-    // because the script is still active and could
-    // disable keyboard again.
-    if (ioMode == IOMode::NotDetermined)
+    if (!m_canceled && ioMode == IOMode::NotDetermined)
     {
         CelestiaCore* appCore = getAppCore(state, AllErrors);
-        auto policy = appCore->requestScriptSystemAccessPolicy();
+        // A private catalog VM is shared by add-ons. A per-script prompt
+        // cannot authorize a VM-wide grant; require an explicit global Allow.
+        if (costate == nullptr && appCore->getScriptSystemAccessPolicy() != CelestiaCore::ScriptSystemAccessPolicy::Allow)
+            return;
+        const double start = getTime();
+        auto policy = appCore->requestScriptSystemAccessPolicy(m_scriptPath);
+        // Waiting for a modal frontend decision isn't script execution time.
+        chargeIOTime(start, 0.0);
+        // The frontend's permission callback can cancel this script before returning.
+        // cppcheck-suppress knownConditionTrueFalse
+        if (m_canceled)
+            return;
         switch (policy)
         {
         case CelestiaCore::ScriptSystemAccessPolicy::Allow:
-            openLuaLibrary(costate, LUA_LOADLIBNAME, luaopen_package);
-            openLuaLibrary(costate, LUA_IOLIBNAME, luaopen_io);
-            openLuaLibrary(costate, LUA_OSLIBNAME, luaopen_os);
+        {
+            auto* target = costate != nullptr ? costate : state;
+            const int top = lua_gettop(target);
+            // Reopening package can reset the catalog module search path.
+            lua_getglobal(target, "package");
+            const bool keepPath = costate == nullptr && lua_istable(target, -1);
+            if (keepPath)
+                lua_getfield(target, -1, "path");
+            const int savedPath = lua_gettop(target);
+            openLuaLibrary(target, LUA_LOADLIBNAME, luaopen_package);
+            if (keepPath)
+            {
+                lua_getglobal(target, "package");
+                lua_pushvalue(target, savedPath);
+                lua_setfield(target, -2, "path");
+            }
+            openLuaLibrary(target, LUA_IOLIBNAME, luaopen_io);
+            openLuaLibrary(target, LUA_OSLIBNAME, luaopen_os);
+            lua_settop(target, top);
             ioMode = IOMode::Allowed;
             break;
+        }
+        case CelestiaCore::ScriptSystemAccessPolicy::Ask:
         case CelestiaCore::ScriptSystemAccessPolicy::Deny:
             ioMode = IOMode::Denied;
-            break;
-        case CelestiaCore::ScriptSystemAccessPolicy::Ask:
-            ioMode = IOMode::Asking;
             break;
         default:
             GetLogger()->error("Unknown script system access policy {}", static_cast<int>(policy));
@@ -1185,6 +1186,12 @@ void LuaState::setLuaHookEventHandlerEnabled(bool enable)
 }
 
 
+static void logHookError(lua_State* l)
+{
+    const char* message = lua_tostring(l, -1);
+    GetLogger()->error("Error while executing Lua Hook: {}\n", message != nullptr ? message : luaL_typename(l, -1));
+}
+
 bool LuaState::callLuaHook(void* obj, const char* method)
 {
     if (!eventHandlerEnabled)
@@ -1206,11 +1213,9 @@ bool LuaState::callLuaHook(void* obj, const char* method)
         lua_pushvalue(costate, -2);          // push the Lua object the stack
         lua_remove(costate, -3);        // remove the Lua object from the stack
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 1, 1, 0) != 0)
+        if (callWithTimeslice(1, 1) != 0)
         {
-            GetLogger()->error("Error while executing Lua Hook: {}\n",
-                               lua_tostring(costate, -1));
+            logHookError(costate);
         }
         else
         {
@@ -1250,11 +1255,9 @@ bool LuaState::callLuaHook(void* obj, const char* method, const char* keyName)
 
         lua_pushstring(costate, keyName);    // push the char onto the stack
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 2, 1, 0) != 0)
+        if (callWithTimeslice(2, 1) != 0)
         {
-            GetLogger()->error("Error while executing Lua Hook: {}\n",
-                               lua_tostring(costate, -1));
+            logHookError(costate);
         }
         else
         {
@@ -1295,11 +1298,9 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y)
         lua_pushnumber(costate, x);          // push x onto the stack
         lua_pushnumber(costate, y);          // push y onto the stack
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 3, 1, 0) != 0)
+        if (callWithTimeslice(3, 1) != 0)
         {
-            GetLogger()->error("Error while executing Lua Hook: {}\n",
-                               lua_tostring(costate, -1));
+            logHookError(costate);
         }
         else
         {
@@ -1341,11 +1342,9 @@ bool LuaState::callLuaHook(void* obj, const char* method, float x, float y, int 
         lua_pushnumber(costate, y);          // push y onto the stack
         lua_pushnumber(costate, b);          // push b onto the stack
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 4, 1, 0) != 0)
+        if (callWithTimeslice(4, 1) != 0)
         {
-            GetLogger()->error("Error while executing Lua Hook: {}\n",
-                               lua_tostring(costate, -1));
+            logHookError(costate);
         }
         else
         {
@@ -1384,11 +1383,9 @@ bool LuaState::callLuaHook(void* obj, const char* method, double dt)
         lua_remove(costate, -3);             // remove the Lua object from the stack
         lua_pushnumber(costate, dt);
 
-        timeout = getTime() + 1.0;
-        if (lua_pcall(costate, 2, 1, 0) != 0)
+        if (callWithTimeslice(2, 1) != 0)
         {
-            GetLogger()->error("Error while executing Lua Hook: {}\n",
-                               lua_tostring(costate, -1));
+            logHookError(costate);
         }
         else
         {

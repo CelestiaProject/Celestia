@@ -32,7 +32,7 @@ bool Execution::tick(double dt)
         return false;
     }
 
-    while (dt > 0.0 && currentCommand < commandSequence.size())
+    while (!canceled && dt > 0.0 && currentCommand < commandSequence.size())
     {
         Command* cmd = commandSequence[currentCommand].get();
 
@@ -52,7 +52,7 @@ bool Execution::tick(double dt)
         }
     }
 
-    return currentCommand == commandSequence.size();
+    return canceled || currentCommand == commandSequence.size();
 }
 
 }
