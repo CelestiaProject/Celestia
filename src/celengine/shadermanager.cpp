@@ -1868,7 +1868,7 @@ buildFragmentShader(const ShaderProperties& props)
             source += "diff.rgb += shadow * " + LightProperty(i, "diffuse") + ";\n";
 
             if (props.hasShadowMap() && i == 0)
-                ApplyShadow(false);
+                source += ApplyShadow(false);
         }
     }
 
