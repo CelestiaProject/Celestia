@@ -329,7 +329,7 @@ void renderEllipsoid_GLSL(const RenderInfo& ri,
                 cloudTex->bind();
                 glActiveTexture(GL_TEXTURE0);
 
-                for (unsigned int lightIndex = 0; lightIndex < ls.nLights; lightIndex++)
+                for (unsigned int lightIndex = 0; lightIndex < shadprop.nLights; lightIndex++)
                 {
                     if (ls.lights[lightIndex].castsShadows)
                     {

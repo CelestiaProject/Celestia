@@ -239,8 +239,9 @@ GLSL_RenderContext::initLightingEnvironment()
     // The material properties will be set per mesh.
     shaderProps.nLights = std::min(lightingState.nLights, MaxShaderLights);
 
-    // Set the shadow information.
-    for (unsigned int li = 0; li < lightingState.nLights; li++)
+    // Set the shadow information. Only the first MaxShaderLights lights are
+    // passed to the shader, so ignore shadows from any additional lights.
+    for (unsigned int li = 0; li < shaderProps.nLights; li++)
     {
         if (lightingState.shadows[li] && !lightingState.shadows[li]->empty())
         {
@@ -370,7 +371,7 @@ GLSL_RenderContext::makeCurrent(const cmod::Material& m)
             glActiveTexture(GL_TEXTURE0);
 
             shaderProps.texUsage |= TexUsage::RingShadowTexture;
-            for (unsigned int lightIndex = 0; lightIndex < lightingState.nLights; lightIndex++)
+            for (unsigned int lightIndex = 0; lightIndex < shaderProps.nLights; lightIndex++)
             {
                 if (lightingState.lights[lightIndex].castsShadows &&
                     lightingState.shadowingRingSystem == lightingState.ringShadows[lightIndex].ringSystem)
